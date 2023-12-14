@@ -1,0 +1,9 @@
+.vscode
+node_modules
+modules
+.env
+
+main.js
+main.js.map
+main.min.js
+
