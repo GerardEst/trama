@@ -1,0 +1,62 @@
+@font-face
+  font-family: "Spartan"
+  src: url("./assets/fonts/Spartan-Regular.ttf")
+  font-weight: 400
+
+:root
+  /** Colors */
+  --grid-color: #dddddd
+  --light-gray: #fafafa
+  --medium-gray: #efefef
+  --dark-gray: #cccccc
+
+  /* Font family */
+  --primary-font-family: "Spartan", serif
+
+  /* board size es defineix desde js, pero sempre en aquesta variable.
+  // Posar-ho directament als estils inline fa que la llibreria ho sobreescrigui i peti. */
+  --board-size: 0
+
+  /* Nice shadow vars - https://www.joshwcomeau.com/shadow-palette/*/
+  --shadow-color: 286deg 36% 63%
+  --shadow-elevation-low: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.26),0.4px 0.8px 1px -1.2px hsl(var(--shadow-color) / 0.26),0.9px 1.8px 2.3px -2.5px hsl(var(--shadow-color) / 0.26)
+  --shadow-elevation-medium: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.28),0.8px 1.5px 1.9px -0.8px hsl(var(--shadow-color) / 0.28),1.8px 3.7px 4.6px -1.7px hsl(var(--shadow-color) / 0.28),4.4px 8.9px 11.2px -2.5px hsl(var(--shadow-color) / 0.28)
+  --shadow-elevation-high: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.26),1.2px 2.4px 3px -0.4px hsl(var(--shadow-color) / 0.26),2.1px 4.3px 5.4px -0.7px hsl(var(--shadow-color) / 0.26),3.5px 7px 8.8px -1.1px hsl(var(--shadow-color) / 0.26),5.5px 11.1px 13.9px -1.4px hsl(var(--shadow-color) / 0.26),8.6px 17.3px 21.7px -1.8px hsl(var(--shadow-color) / 0.26),13.1px 26.2px 33px -2.1px hsl(var(--shadow-color) / 0.26),19.3px 38.5px 48.5px -2.5px hsl(var(--shadow-color) / 0.26)
+
+  /* Icons */
+  --drag: url("/assets/icons/drag.svg")
+  --trash: url("/assets/icons/trash.svg")
+  --maximize: url("/assets/icons/maximize.svg")
+
+html
+  font-size: 14px
+
+body
+  margin: 0
+  height: 100vh
+  overflow: hidden
+  background-color: #fbfbfb
+
+p,h1,h2,h3,h4,h5,a,input,li,textarea
+  margin: 0
+  font-family: var(--primary-font-family)
+  font-size: 0.8rem
+
+li
+  list-style: none
+
+button
+  color: gray
+  border: none
+  border-radius: 0.5rem
+  padding: 0.5rem
+  background-color: var(--medium-gray)
+
+textarea
+  width: 100%
+  max-width: 100%
+  min-height: 4rem
+  box-sizing: border-box
+  border: 1px dotted #aaaaaa
+  padding: 0.5rem
+  font-size: 0.7rem

@@ -1,0 +1,95 @@
+import {
+  Component,
+  Input,
+  ElementRef,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { StorageService } from 'src/app/services/storage.service'
+import { AnswerComponent } from '../answer/answer.component'
+
+interface answer {
+  id: string
+  text: string
+}
+interface position {
+  x: number
+  y: number
+}
+
+@Component({
+  selector: 'polo-node',
+  standalone: true,
+  imports: [CommonModule, AnswerComponent],
+  templateUrl: './node.component.html',
+  styleUrls: ['./node.component.sass'],
+})
+export class NodeComponent {
+  @Input() text: string = ''
+  @Input() answers?: Array<answer>
+  @Input() position: position = { x: 0, y: 0 }
+  @Input() waitingForJoin: boolean = false
+  @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
+  @Output() haveJoined: EventEmitter<any> = new EventEmitter()
+  @Output() removeNode: EventEmitter<any> = new EventEmitter()
+
+  constructor(public storage: StorageService, public elementRef: ElementRef) {}
+
+  addAnswer() {
+    const newId = `answer_${
+      this.elementRef.nativeElement.id.split('_')[1]
+    }_${this.getIDForNewAnswer()}`
+
+    if (!this.answers) this.answers = []
+
+    this.answers.push({ id: newId, text: '' })
+
+    this.storage.createNodeAnswer(this.elementRef.nativeElement.id, newId)
+  }
+
+  removeAnswer(id: string) {
+    this.storage.removeAnswer(this.elementRef.nativeElement.id, id)
+    this.answers = this.answers?.filter((answer: any) => answer.id !== id)
+  }
+
+  saveNodeText(e: any) {
+    const id = this.elementRef.nativeElement.id
+    const newText = e.target.value
+
+    this.storage.updateNodeText(id, newText)
+  }
+
+  getIDForNewAnswer() {
+    let answer_ids = []
+
+    const answers = this.storage.getAnswersOfNode(
+      this.elementRef.nativeElement.id
+    )
+
+    if (!answers) return 0
+
+    for (let answer of answers) answer_ids.push(answer.id.split('_')[2])
+
+    const great_id = Math.max(...answer_ids) > 0 ? Math.max(...answer_ids) : 0
+
+    return great_id + 1
+  }
+
+  onRemoveNode() {
+    const data = {
+      nodeId: this.elementRef.nativeElement.id,
+      answers: this.answers?.map((answer) => answer.id),
+    }
+    this.removeNode.emit(data)
+  }
+
+  willJoin(answerId: string) {
+    this.onWillJoin.emit(answerId)
+  }
+
+  join() {
+    this.haveJoined.emit(this.elementRef.nativeElement.id)
+  }
+}

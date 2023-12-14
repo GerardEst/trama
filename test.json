@@ -1,0 +1,69 @@
+{
+  "name": "",
+  "nodes": [
+    {
+      "id": "node_0",
+      "text": "Et trobes un dromedari",
+      "top": 196,
+      "left": 164,
+      "answers": [
+        {
+          "id": "answer_0_1",
+          "join": [
+            { "node": "node_2" },
+            { "node": "node_3" },
+            { "node": "node_1" },
+            { "node": "0" }
+          ],
+          "text": "Donar-li aigua"
+        }
+      ]
+    },
+    {
+      "id": "node_1",
+      "text": "El dromedari, que parla, et diu:\nSegur??",
+      "top": 270,
+      "left": 558,
+      "answers": [
+        { "id": "answer_1_1", "text": "Si!", "join": [{ "node": "node_2" }] },
+        { "id": "answer_1_2", "text": "No" },
+        { "id": "answer_1_3" }
+      ]
+    },
+    {
+      "id": "node_2",
+      "text": "Agrait, et concedeix 3 desitjos",
+      "top": 231,
+      "left": 890
+    },
+    {
+      "id": "node_3",
+      "text": "El dromedari ja ha begut i l'escup",
+      "top": 680,
+      "left": 402,
+      "answers": [
+        {
+          "id": "answer_3_0",
+          "text": "Cagum tot",
+          "join": [{ "node": "node_4" }]
+        },
+        {
+          "id": "answer_3_1",
+          "text": "Beure't l'escopitajo",
+          "join": [{ "node": "node_6" }]
+        }
+      ]
+    },
+    {
+      "id": "node_4",
+      "top": 670,
+      "left": 808,
+      "text": "Eh! Aquesta boca",
+      "answers": [
+        { "id": "answer_4_0", "text": "Perdó", "join": [{ "node": "node_5" }] }
+      ]
+    },
+    { "id": "node_5", "top": 717, "left": 1109, "text": "Bueno tira va" },
+    { "id": "node_6", "top": 1009, "left": 862, "text": "Sembla saníssim" }
+  ]
+}

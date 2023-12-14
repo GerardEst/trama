@@ -1,0 +1,36 @@
+.board
+  width: 20000px
+  height: 20000px
+
+  // Veure que es mes optim, si houdini, això, o amb svg
+  //https: //screenspan.net/polka/
+  background-image: radial-gradient(rgb(230, 230, 230) 5%, transparent 5%)
+  background-position: 20px 20px
+  background-size: 40px 40px
+  background-color: rgb(255, 255, 255)
+
+  // Pos sembla que es bastant lo mateix
+  // I a sobre no es traba gaire amb cap de les dos demanant pintar un espai molt gran.
+
+  // https://heropatterns.com/
+  // background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e2e2' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+dragHandle
+  width: 100%
+
+.boardActions
+  position: fixed
+  bottom: 1.5rem
+  right: 1.5rem
+  & button
+    border: none
+    background-color: var(--dark-gray)
+    width: 35px
+    aspect-ratio: 1
+    border-radius: 100%
+    margin: 0.4rem
+    cursor: pointer
+  & .boardActions__export
+    background: var(--dark-gray) url("/assets/icons/export.svg") no-repeat center/16px
+  & .boardActions__run
+    background: var(--dark-gray) url("/assets/icons/play.svg") no-repeat center/16px

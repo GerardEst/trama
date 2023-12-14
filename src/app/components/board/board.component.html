@@ -1,0 +1,26 @@
+<div #board class="board" (click)="addNode($event)">
+  <polo-node
+    *ngFor="let node of tree.nodes"
+    #node
+    cdkDrag
+    id="{{ node.id }}"
+    (mouseenter)="dragDisabled()"
+    (mouseleave)="dragEnabled()"
+    (onWillJoin)="willJoin($event)"
+    (haveJoined)="haveJoined($event)"
+    (removeNode)="removeNode($event)"
+    [waitingForJoin]="waitingForJoin"
+    (cdkDragReleased)="dragReleased($event)"
+    [style.transform]="
+      'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'
+    "
+    [text]="node.text"
+    [answers]="node.answers"
+  >
+    <dragHandle cdkDragHandle></dragHandle>
+  </polo-node>
+  <polo-board-flows [connections]="joins"></polo-board-flows>
+</div>
+<section class="boardActions">
+  <button (click)="exportTree()" class="boardActions__export"></button>
+</section>

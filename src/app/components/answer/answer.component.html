@@ -1,0 +1,7 @@
+<span (click)="removeAnswer()" class="remove"></span>
+<textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
+<div
+  (click)="willJoin()"
+  id="{{ this.elementRef.nativeElement.id + '_join' }}"
+  class="union_point"
+></div>

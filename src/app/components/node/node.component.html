@@ -1,0 +1,25 @@
+<div class="node" [class.waitingForJoin]="waitingForJoin">
+  <div class="waitingForJoin" *ngIf="waitingForJoin" (click)="join()"></div>
+  <header>
+    <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
+    <ng-content select="dragHandle"></ng-content>
+    <div class="options">
+      <span class="options__expand"></span>
+      <span class="options__remove" (click)="onRemoveNode()"></span>
+    </div>
+  </header>
+  <main>
+    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <div *ngIf="answers && answers.length > 0" class="node__answers">
+      <polo-answer
+        *ngFor="let answer of answers"
+        id="{{ answer.id }}"
+        [nodeId]="elementRef.nativeElement.id"
+        [text]="answer.text"
+        (onRemoveAnswer)="removeAnswer($event)"
+        (onWillJoin)="willJoin($event)"
+      ></polo-answer>
+    </div>
+    <button (click)="addAnswer()">Add answer</button>
+  </main>
+</div>
