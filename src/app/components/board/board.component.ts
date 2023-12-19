@@ -3,6 +3,8 @@ import {
   Component,
   ElementRef,
   Input,
+  OnChanges,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
@@ -27,9 +29,10 @@ import { node } from 'src/app/marco_interfaces/node'
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
 })
-export class BoardComponent implements AfterViewInit {
+export class BoardComponent implements AfterViewInit, OnChanges {
   @ViewChild('board') board?: ElementRef
-  @Input() tree: any
+  @Input() tree?: any
+  @Input() treeId?: number
 
   // Joins
   waitingForJoin: boolean = false
@@ -47,9 +50,10 @@ export class BoardComponent implements AfterViewInit {
       //   // initialY: 2500,
     })
     //board.smoothMoveTo(-100, -100);
+  }
+  ngOnChanges(changes: SimpleChanges): void {
     this.drawJoins(this.tree.nodes)
   }
-
   dragDisabled() {
     this.boardReference.pause()
   }

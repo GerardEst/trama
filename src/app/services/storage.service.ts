@@ -131,7 +131,7 @@ export class StorageService {
 
   private getStoredTree() {
     //@ts-ignore
-    const storedTree = JSON.parse(localStorage.getItem('polo'))
+    const storedTree = JSON.parse(localStorage.getItem('polo-tree'))
 
     if (!storedTree) {
       return JSON.parse(this.createNewTree())
@@ -140,7 +140,7 @@ export class StorageService {
     return storedTree
   }
   private updateStoredTree(newTree: Array<any>) {
-    localStorage.setItem('polo', JSON.stringify(newTree))
+    localStorage.setItem('polo-tree', JSON.stringify(newTree))
   }
   private createNewTree() {
     const newTree = {
