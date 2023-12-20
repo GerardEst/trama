@@ -6,6 +6,16 @@ import { createClient } from '@supabase/supabase-js'
 })
 export class DatabaseService {
   supabase: any
+  newTree: object = {
+    name: 'Starter',
+    nodes: [
+      {
+        id: 'node_0',
+        left: 200,
+        top: 200,
+      },
+    ],
+  }
 
   constructor() {
     this.supabase = createClient(
@@ -29,6 +39,16 @@ export class DatabaseService {
       .eq('id', treeId)
 
     return trees[0].tree
+  }
+
+  async createNewTree() {
+    const { data, error } = await this.supabase
+      .from('trees')
+      .insert([{ name: 'My new tree', tree: this.newTree }])
+      .select()
+
+    if (error) return false
+    return data
   }
 
   async saveLocalToDB() {

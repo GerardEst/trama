@@ -1,1 +1,13 @@
-<p *ngFor="let tree of trees" (click)="loadTree(tree.id)">{{ tree.name }}</p>
+<aside>
+  <h2>Trees</h2>
+  <ul>
+    <li
+      *ngFor="let tree of trees"
+      (click)="loadTree(tree.id)"
+      [class.active]="tree.id === treeId"
+    >
+      {{ tree.name }}
+    </li>
+    <li (click)="createNewTree()">+ Add tree</li>
+  </ul>
+</aside>

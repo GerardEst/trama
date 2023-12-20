@@ -6,3 +6,15 @@
   height: 100vh
   padding: 1rem
   box-sizing: border-box
+  box-shadow: var(--shadow-elevation-medium)
+
+aside
+  ul
+    display: flex
+    flex-direction: column
+    gap: 0.5rem
+    margin-top: 1rem
+    li
+      cursor: pointer
+      &:hover, &.active
+        text-decoration: underline

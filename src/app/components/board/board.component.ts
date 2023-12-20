@@ -54,7 +54,10 @@ export class BoardComponent implements AfterViewInit, OnChanges {
     //board.smoothMoveTo(-100, -100);
   }
   ngOnChanges(changes: SimpleChanges): void {
-    this.drawJoins(this.tree.nodes)
+    if (this.tree) {
+      console.log(this.tree)
+      this.drawJoins(this.tree.nodes)
+    }
   }
   dragDisabled() {
     this.boardReference.pause()
@@ -74,6 +77,7 @@ export class BoardComponent implements AfterViewInit, OnChanges {
 
   drawJoins(nodes: Array<any>) {
     this.joins = []
+    console.log(nodes)
     for (let node of nodes) {
       if (node.answers) {
         for (let answer of node.answers) {

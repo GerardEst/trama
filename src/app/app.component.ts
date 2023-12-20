@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
 
   async loadTree(treeId: number) {
     this.tree = await this.db.getTree(treeId)
+    this.id = treeId
 
     localStorage.setItem('polo-id', treeId.toString())
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
@@ -40,17 +41,6 @@ export class AppComponent implements OnInit {
       this.tree = storedTree
 
       return
-    }
-
-    this.tree = {
-      name: 'Starter',
-      nodes: [
-        {
-          id: 'node_0',
-          left: 200,
-          top: 200,
-        },
-      ],
     }
   }
 }
