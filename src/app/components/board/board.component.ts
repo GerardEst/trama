@@ -15,6 +15,7 @@ import { BoardFlowsComponent } from '../board-flows/board-flows.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/marco_interfaces/node'
+import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({
   selector: 'polo-board',
@@ -39,9 +40,10 @@ export class BoardComponent implements AfterViewInit, OnChanges {
   willJoinId?: string
   joins: Array<any> = []
 
+  savingTree: boolean = false
   boardReference: any
 
-  constructor(private storage: StorageService) {}
+  constructor(private storage: StorageService, private db: DatabaseService) {}
 
   ngAfterViewInit(): void {
     //https://github.com/anvaka/panzoom
@@ -61,7 +63,17 @@ export class BoardComponent implements AfterViewInit, OnChanges {
     this.boardReference.resume()
   }
 
+  async saveToDb() {
+    this.savingTree = true
+    const resp = await this.db.saveLocalToDB()
+    console.log('Saved?', resp)
+    setTimeout(() => {
+      this.savingTree = false
+    }, 200)
+  }
+
   drawJoins(nodes: Array<any>) {
+    this.joins = []
     for (let node of nodes) {
       if (node.answers) {
         for (let answer of node.answers) {

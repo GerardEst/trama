@@ -37,20 +37,13 @@ export class DatabaseService {
     //@ts-ignore
     const treeId = JSON.parse(localStorage.getItem('polo-id'))
 
-    /**
-     * ✅ Carregar la historia des de supabase
-     * ✅ Guardar a localstorage el tree i, apart, l'id
-     * ✅ A partir d'aquet moment es fa servir el localstorage
-     * - Al guardar, fer servir l'id per saber quina historia cambiar a la db
-     * - Si la historia no es de l'usuari, para, pero aixo mes endavant
-     *
-     * - A marco, carregar la historia fent servir l'id
-     */
-    // Create a single supabase client for interacting with your database
-
     const { data, error } = await this.supabase
       .from('trees')
-      .insert([{ tree: savedTree }])
+      .update({ tree: savedTree })
+      .eq('id', treeId)
       .select()
+
+    if (error) return false
+    return true
   }
 }

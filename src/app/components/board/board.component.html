@@ -23,4 +23,9 @@
 </div>
 <section class="boardActions">
   <button (click)="exportTree()" class="boardActions__export"></button>
+  <button
+    (click)="saveToDb()"
+    [class.boardActions__save]="!savingTree"
+    [class.boardActions__waiting]="savingTree"
+  ></button>
 </section>
