@@ -4,4 +4,15 @@
   height="100%"
   preserveAspectRatio="none"
   viewBox="0 0 0 0"
-></svg>
+>
+  <line
+    *ngFor="let line of calculatedPositions"
+    [attr.x1]="line?.start?.left"
+    [attr.y1]="line?.start?.top"
+    [attr.x2]="line?.end?.left"
+    [attr.y2]="line?.end?.top"
+    stroke-width="1"
+    stroke="#cccccc"
+    style="pointer-events: auto"
+  ></line>
+</svg>

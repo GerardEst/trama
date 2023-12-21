@@ -12,6 +12,7 @@
       (removeNode)="removeNode($event)"
       [waitingForJoin]="waitingForJoin"
       (cdkDragReleased)="dragReleased($event)"
+      (cdkDragMoved)="dragCheck()"
       [style.transform]="
         'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'
       "

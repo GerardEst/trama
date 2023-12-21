@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core'
+import { Component, ElementRef, Input, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
 import createPanZoom from 'panzoom'
@@ -30,7 +22,7 @@ import { DatabaseService } from 'src/app/services/database.service'
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
 })
-export class BoardComponent implements AfterViewInit, OnChanges {
+export class BoardComponent {
   @ViewChild('board') board?: ElementRef
   @Input() tree?: any
   @Input() treeId?: number
@@ -45,6 +37,10 @@ export class BoardComponent implements AfterViewInit, OnChanges {
 
   constructor(private storage: StorageService, private db: DatabaseService) {}
 
+  ngOnChanges() {
+    if (this.tree) this.drawJoins(this.tree.nodes)
+  }
+
   ngAfterViewInit(): void {
     //https://github.com/anvaka/panzoom
     this.boardReference = createPanZoom(this.board?.nativeElement, {
@@ -53,12 +49,7 @@ export class BoardComponent implements AfterViewInit, OnChanges {
     })
     //board.smoothMoveTo(-100, -100);
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.tree) {
-      console.log(this.tree)
-      this.drawJoins(this.tree.nodes)
-    }
-  }
+
   dragDisabled() {
     this.boardReference.pause()
   }
@@ -77,7 +68,6 @@ export class BoardComponent implements AfterViewInit, OnChanges {
 
   drawJoins(nodes: Array<any>) {
     this.joins = []
-    console.log(nodes)
     for (let node of nodes) {
       if (node.answers) {
         for (let answer of node.answers) {
@@ -118,6 +108,8 @@ export class BoardComponent implements AfterViewInit, OnChanges {
     this.storage.updateAnswerJoin(this.willJoinId, nodeId)
   }
 
+  dragCheck() {}
+
   dragReleased({ source }: any) {
     const currentTransform = source.getRootElement().style.transform
     const finalTransform = combineTransforms(currentTransform)
@@ -129,6 +121,8 @@ export class BoardComponent implements AfterViewInit, OnChanges {
       finalTransform.x,
       finalTransform.y
     )
+
+    this.drawJoins(this.tree.nodes)
   }
 
   addNode(event: any) {
