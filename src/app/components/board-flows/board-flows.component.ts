@@ -38,6 +38,7 @@ export class BoardFlowsComponent {
         const startDivPosition = this.getPositionOf(connection.origin)
         const endDivPosition = this.getPositionOf(connection.destiny)
 
+        // Els control points haurien de ser la posicio + una mica
         if (startDivPosition && endDivPosition) {
           return {
             start: startDivPosition,
@@ -64,5 +65,17 @@ export class BoardFlowsComponent {
       return relativePosition
     }
     return undefined
+  }
+
+  getPath(line: any) {
+    const pcurvature = 50
+    const ncurvature = -50
+    const path = `M${line?.start?.left},${line?.start?.top} C${
+      line?.start?.left + pcurvature
+    },${line?.start?.top} ${line?.end?.left + ncurvature},${line?.end?.top} ${
+      line?.end?.left
+    },${line?.end?.top}`
+
+    return path
   }
 }

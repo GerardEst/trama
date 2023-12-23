@@ -5,14 +5,12 @@
   preserveAspectRatio="none"
   viewBox="0 0 0 0"
 >
-  <line
+  <path
     *ngFor="let line of calculatedPositions"
-    [attr.x1]="line?.start?.left"
-    [attr.y1]="line?.start?.top"
-    [attr.x2]="line?.end?.left"
-    [attr.y2]="line?.end?.top"
+    [attr.d]="getPath(line)"
     stroke-width="1"
     stroke="#cccccc"
-    style="pointer-events: auto"
-  ></line>
+    style="pointer-events: none"
+    fill="transparent"
+  ></path>
 </svg>

@@ -36,6 +36,14 @@ export class AnswerComponent {
     this.onRemoveAnswer.emit(id)
   }
 
+  manageEvents() {
+    console.log('manage events')
+  }
+
+  manageRequirements() {
+    console.log('manage requirements')
+  }
+
   willJoin() {
     this.onWillJoin.emit(this.elementRef.nativeElement.id)
   }
