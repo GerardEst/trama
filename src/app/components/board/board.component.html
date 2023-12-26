@@ -1,4 +1,5 @@
 <div #board class="board" (click)="addNode($event)">
+  <polo-board-flows [connections]="joins"></polo-board-flows>
   <ng-container *ngIf="tree">
     <polo-node
       *ngFor="let node of tree.nodes"
@@ -22,7 +23,6 @@
       <dragHandle cdkDragHandle></dragHandle>
     </polo-node>
   </ng-container>
-  <polo-board-flows [connections]="joins"></polo-board-flows>
 </div>
 <section class="boardActions">
   <button (click)="exportTree()" class="boardActions__export"></button>

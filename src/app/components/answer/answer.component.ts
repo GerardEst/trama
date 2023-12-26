@@ -4,9 +4,12 @@ import {
   EventEmitter,
   Input,
   Output,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
+import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
 
 @Component({
   selector: 'polo-answer',
@@ -20,6 +23,8 @@ export class AnswerComponent {
   @Input() text: string = ''
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
+  @ViewChild('requirementContainer', { read: ViewContainerRef })
+  requirementContainer?: ViewContainerRef
 
   constructor(private storage: StorageService, public elementRef: ElementRef) {}
 
@@ -38,10 +43,15 @@ export class AnswerComponent {
 
   manageEvents() {
     console.log('manage events')
+    /** Hauria d'obrir una finestreta amb  */
   }
 
   manageRequirements() {
-    console.log('manage requirements')
+    const ref = this.requirementContainer?.createComponent(
+      RequirementsManagerComponent
+    )
+    //@ts-ignore
+    ref.instance.answerId = this.elementRef.nativeElement.id
   }
 
   willJoin() {

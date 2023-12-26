@@ -1,0 +1,15 @@
+<p>Buscador</p>
+<polo-dropdown-buttons label="Crear">
+  <button (click)="createObjectRequirement()">Objecte</button>
+  <button (click)="createCharacterRequirement()">Personatge</button>
+  <button (click)="createConditionRequirement()">Condició</button>
+</polo-dropdown-buttons>
+<div class="requirements__list">
+  <polo-requirement
+    *ngFor="let requirement of requirements"
+    class="{{ 'requirement--' + requirement.type }}"
+    (created)="saveRequirement($event)"
+    [type]="requirement.type"
+    [requirementName]="requirement.name"
+  ></polo-requirement>
+</div>

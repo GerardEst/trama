@@ -122,11 +122,43 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  addRequirement(answerId: string, newRequirement: any) {
+    const savedTree = this.getStoredTree()
+
+    // Find answer in the tree
+    const answerNodeId = answerId.split('_')[1]
+    const node = savedTree.nodes.find(
+      (node: any) => node.id === `node_${answerNodeId}`
+    )
+    const answer = node.answers?.filter((answer: any) => answer.id === answerId)
+
+    if (answer[0].requirements) {
+      answer[0].requirements.push(newRequirement)
+    } else {
+      answer[0].requirements = [newRequirement]
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
   getAnswersOfNode(nodeId: string) {
     const savedTree = this.getStoredTree()
 
     const node = savedTree.nodes.find((node: any) => node.id === nodeId)
     return node.answers
+  }
+
+  getRequirementsOfAnswer(answerId: string) {
+    const savedTree = this.getStoredTree()
+
+    // Find answer in the tree
+    const answerNodeId = answerId.split('_')[1]
+    const node = savedTree.nodes.find(
+      (node: any) => node.id === `node_${answerNodeId}`
+    )
+    const answer = node.answers?.filter((answer: any) => answer.id === answerId)
+
+    return answer[0].requirements
   }
 
   private getStoredTree() {
