@@ -134,14 +134,52 @@ export class StorageService {
 
     this.updateStoredTree(savedTree)
   }
+  deleteRequirementFromAnswer(answerId: string, requirementId: string) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
 
-  saveRequirementDetails(requirementId: string, options: any) {
+    if (answer[0].requirements) {
+      answer[0].requirements = answer[0].requirements.filter((req: any) => {
+        return req.id !== requirementId
+      })
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
+  saveRequirementDetails(requirementId: string, details: any) {
     const savedTree = this.getStoredTree()
 
     if (!savedTree.refs) {
       savedTree.refs = {}
     }
-    savedTree.refs[requirementId] = { name: options.name }
+    savedTree.refs[requirementId] = { name: details.name }
+
+    this.updateStoredTree(savedTree)
+  }
+
+  updateRequiremenDetail_Name(requirementId: string, name: string) {
+    const savedTree = this.getStoredTree()
+
+    savedTree.refs[requirementId].name = name
+
+    this.updateStoredTree(savedTree)
+  }
+
+  updateRequirementAmount(
+    answerId: string,
+    requirementId: string,
+    amount: number
+  ) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    if (answer[0].requirements) {
+      const requirement = answer[0].requirements.find(
+        (req: any) => req.id === requirementId
+      )
+      requirement.amount = amount
+    }
 
     this.updateStoredTree(savedTree)
   }

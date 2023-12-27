@@ -6,9 +6,11 @@
 <div class="requirements__list">
   <polo-requirement
     *ngFor="let requirement of requirements"
-    id="{{ requirement.id }}"
     class="{{ 'requirement--' + requirement.type }}"
-    (updated)="updateRequirement($event)"
+    (updateName)="updateRequirementName($event)"
+    (updateAmount)="updateRequirementAmount($event)"
+    (deleted)="deleteRequirement($event)"
+    [id]="requirement.id"
     [type]="requirement.type"
     [requirementName]="requirement.name"
     [requirementAmount]="requirement.amount"

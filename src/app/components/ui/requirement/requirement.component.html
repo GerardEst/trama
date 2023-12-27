@@ -1,14 +1,14 @@
 <input
   #amount
   type="number"
-  (change)="changeAmount()"
+  (change)="changeAmount($event)"
   value="{{ requirementAmount }}"
 />
 <input
   #name
   type="text"
   placeholder="New requirement"
-  (change)="changeName()"
+  (change)="changeName($event)"
   value="{{ requirementName }}"
 />
 <button (click)="removeRequirement()">D</button>

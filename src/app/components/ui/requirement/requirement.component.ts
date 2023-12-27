@@ -19,7 +19,10 @@ import { CommonModule } from '@angular/common'
 export class RequirementComponent implements AfterViewInit {
   @ViewChild('name') name?: ElementRef
   @ViewChild('amount') amount?: ElementRef
-  @Output() updated: EventEmitter<any> = new EventEmitter()
+  @Output() updateName: EventEmitter<any> = new EventEmitter()
+  @Output() updateAmount: EventEmitter<any> = new EventEmitter()
+  @Output() deleted: EventEmitter<any> = new EventEmitter()
+  @Input() id?: string
   @Input() type?: string
   @Input() requirementName?: string
   @Input() requirementAmount?: number
@@ -27,23 +30,15 @@ export class RequirementComponent implements AfterViewInit {
   ngAfterViewInit() {
     // this.name?.nativeElement.focus()
   }
-  changeName() {
-    this.updated.emit({
-      name: this.name?.nativeElement.value,
-      amount: this.amount?.nativeElement.value,
-      type: this.type,
-    })
+  changeName(event: any) {
+    this.updateName.emit({ id: this.id, value: event.target.value })
   }
 
-  changeAmount() {
-    this.updated.emit({
-      name: this.name?.nativeElement.value,
-      amount: this.amount?.nativeElement.value,
-      type: this.type,
-    })
+  changeAmount(event: any) {
+    this.updateAmount.emit({ id: this.id, value: event.target.value })
   }
 
   removeRequirement() {
-    console.log('delete requirement')
+    this.deleted.emit(this.id)
   }
 }

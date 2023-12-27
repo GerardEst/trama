@@ -52,14 +52,35 @@ export class RequirementsManagerComponent {
       name,
     })
   }
+  updateRequirementName(options: any) {
+    const requirementId = options.id
+    const name = options.value
 
-  updateRequirement(event: any) {
-    console.log('Update')
-    // if (!this.answerId) return
-    // this.storage.addRequirementToAnswer(this.answerId, {
-    //   id: event.name,
-    //   amount: event.amount,
-    //   type: event.type,
-    // })
+    const requirement = this.requirements.find(
+      (req) => req.id === requirementId
+    )
+    if (requirement) requirement.name = name
+
+    this.storage.updateRequiremenDetail_Name(requirementId, name)
+  }
+
+  updateRequirementAmount(options: any) {
+    const requirementId = options.id
+    const amount = parseInt(options.value)
+
+    const requirement = this.requirements.find(
+      (req) => req.id === requirementId
+    )
+    if (requirement) requirement.amount = amount
+
+    this.storage.updateRequirementAmount(this.answerId, requirementId, amount)
+  }
+
+  deleteRequirement(requirementId: string) {
+    this.requirements = this.requirements.filter((requirement: any) => {
+      return requirement.id !== requirementId
+    })
+
+    this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
   }
 }
