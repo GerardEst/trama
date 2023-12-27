@@ -5,9 +5,10 @@ import { RequirementComponent } from '../ui/requirement/requirement.component'
 import { StorageService } from 'src/app/services/storage.service'
 
 interface requirement {
+  id: string
   name: string
   amount: number
-  type: 'object' | 'character' | 'condition'
+  type: 'stat' | 'condition'
 }
 
 @Component({
@@ -19,44 +20,46 @@ interface requirement {
 })
 export class RequirementsManagerComponent {
   requirements: Array<requirement> = []
-  @Input() answerId?: string
+  @Input() answerId: string = ''
 
   constructor(private storage: StorageService) {}
 
   ngOnInit() {
     if (this.answerId) {
       this.requirements =
-        this.storage.getRequirementsOfAnswer(this.answerId) || []
+        this.storage.getDetailedRequirementsOfAnswer(this.answerId) || []
     }
   }
 
-  createObjectRequirement() {
+  createRequirement(type: 'stat' | 'condition') {
+    const id = 'requirement_' + this.storage.getNewIdForRequirement()
+    const amount = 1
+    const name = 'New ' + type
     this.requirements.push({
-      name: '',
-      amount: 1,
-      type: 'object',
+      id,
+      name,
+      amount,
+      type,
+    })
+
+    this.storage.addRequirementToAnswer(this.answerId, {
+      id,
+      amount,
+      type,
+    })
+
+    this.storage.saveRequirementDetails(id, {
+      name,
     })
   }
-  createCharacterRequirement() {
-    this.requirements.push({
-      name: '',
-      amount: 1,
-      type: 'character',
-    })
-  }
-  createConditionRequirement() {
-    this.requirements.push({
-      name: '',
-      amount: 1,
-      type: 'condition',
-    })
-  }
-  saveRequirement(event: any) {
-    if (!this.answerId) return
-    this.storage.addRequirement(this.answerId, {
-      name: event.name,
-      amount: event.amount,
-      type: event.type,
-    })
+
+  updateRequirement(event: any) {
+    console.log('Update')
+    // if (!this.answerId) return
+    // this.storage.addRequirementToAnswer(this.answerId, {
+    //   id: event.name,
+    //   amount: event.amount,
+    //   type: event.type,
+    // })
   }
 }

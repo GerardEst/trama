@@ -122,15 +122,9 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  addRequirement(answerId: string, newRequirement: any) {
+  addRequirementToAnswer(answerId: string, newRequirement: any) {
     const savedTree = this.getStoredTree()
-
-    // Find answer in the tree
-    const answerNodeId = answerId.split('_')[1]
-    const node = savedTree.nodes.find(
-      (node: any) => node.id === `node_${answerNodeId}`
-    )
-    const answer = node.answers?.filter((answer: any) => answer.id === answerId)
+    const answer = this.findAnswerInTree(answerId, savedTree)
 
     if (answer[0].requirements) {
       answer[0].requirements.push(newRequirement)
@@ -141,6 +135,32 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  saveRequirementDetails(requirementId: string, options: any) {
+    const savedTree = this.getStoredTree()
+
+    if (!savedTree.refs) {
+      savedTree.refs = {}
+    }
+    savedTree.refs[requirementId] = { name: options.name }
+
+    this.updateStoredTree(savedTree)
+  }
+
+  getNewIdForRequirement() {
+    const savedTree = this.getStoredTree()
+
+    if (savedTree.refs) {
+      const ids = Object.keys(savedTree.refs).map((key) =>
+        parseInt(key.split('_')[1])
+      )
+
+      const maxId = Math.max(...ids)
+
+      return maxId + 1
+    }
+    return 1
+  }
+
   getAnswersOfNode(nodeId: string) {
     const savedTree = this.getStoredTree()
 
@@ -148,17 +168,20 @@ export class StorageService {
     return node.answers
   }
 
-  getRequirementsOfAnswer(answerId: string) {
+  getDetailedRequirementsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
 
-    // Find answer in the tree
-    const answerNodeId = answerId.split('_')[1]
-    const node = savedTree.nodes.find(
-      (node: any) => node.id === `node_${answerNodeId}`
+    const detailedRequirements = answer[0].requirements.map(
+      (requirement: any) => {
+        return {
+          ...requirement,
+          ...savedTree.refs[requirement.id],
+        }
+      }
     )
-    const answer = node.answers?.filter((answer: any) => answer.id === answerId)
 
-    return answer[0].requirements
+    return detailedRequirements
   }
 
   private getStoredTree() {
@@ -170,6 +193,13 @@ export class StorageService {
     }
 
     return storedTree
+  }
+  private findAnswerInTree(answerId: string, tree: any) {
+    const answerNodeId = answerId.split('_')[1]
+    const node = tree.nodes.find(
+      (node: any) => node.id === `node_${answerNodeId}`
+    )
+    return node.answers?.filter((answer: any) => answer.id === answerId)
   }
   private updateStoredTree(newTree: Array<any>) {
     localStorage.setItem('polo-tree', JSON.stringify(newTree))

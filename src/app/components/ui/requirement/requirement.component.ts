@@ -18,18 +18,27 @@ import { CommonModule } from '@angular/common'
 })
 export class RequirementComponent implements AfterViewInit {
   @ViewChild('name') name?: ElementRef
-  @Output() created: EventEmitter<any> = new EventEmitter()
+  @ViewChild('amount') amount?: ElementRef
+  @Output() updated: EventEmitter<any> = new EventEmitter()
   @Input() type?: string
   @Input() requirementName?: string
+  @Input() requirementAmount?: number
 
   ngAfterViewInit() {
-    this.name?.nativeElement.focus()
+    // this.name?.nativeElement.focus()
+  }
+  changeName() {
+    this.updated.emit({
+      name: this.name?.nativeElement.value,
+      amount: this.amount?.nativeElement.value,
+      type: this.type,
+    })
   }
 
-  checkContent() {
-    this.created.emit({
+  changeAmount() {
+    this.updated.emit({
       name: this.name?.nativeElement.value,
-      amount: 1,
+      amount: this.amount?.nativeElement.value,
       type: this.type,
     })
   }
