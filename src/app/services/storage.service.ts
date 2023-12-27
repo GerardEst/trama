@@ -210,6 +210,7 @@ export class StorageService {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
 
+    if (!answer[0].requirements) return []
     const detailedRequirements = answer[0].requirements.map(
       (requirement: any) => {
         return {
