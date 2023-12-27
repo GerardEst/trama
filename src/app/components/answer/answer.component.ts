@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
+import { EventsManagerComponent } from '../events-manager/events-manager.component'
 
 @Component({
   selector: 'polo-answer',
@@ -42,8 +43,11 @@ export class AnswerComponent {
   }
 
   manageEvents() {
-    console.log('manage events')
-    /** Hauria d'obrir una finestreta amb  */
+    const ref = this.requirementContainer?.createComponent(
+      EventsManagerComponent
+    )
+    //@ts-ignore
+    ref.instance.answerId = this.elementRef.nativeElement.id
   }
 
   manageRequirements() {

@@ -1,0 +1,16 @@
+<polo-dropdown-buttons label="Crear">
+  <button (click)="createEvent('alterStat')">Alter Stat</button>
+  <button (click)="createEvent('alterCondition')">Alter Condition</button>
+  <button (click)="createEvent('win')">Win</button>
+  <button (click)="createEvent('end')">End</button>
+</polo-dropdown-buttons>
+<div class="events__list">
+  <polo-event
+    *ngFor="let event of events"
+    (deleted)="deleteEvent($event)"
+    [id]="event.id"
+    [ref]="event.ref"
+    [target]="event.target"
+    [amount]="event.amount"
+  ></polo-event>
+</div>

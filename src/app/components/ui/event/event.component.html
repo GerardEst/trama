@@ -1,0 +1,14 @@
+<input
+  #targetInput
+  type="text"
+  placeholder="New requirement"
+  (change)="changeTarget($event)"
+  value="{{ ref }}"
+/>
+<input
+  #amountInput
+  type="number"
+  (change)="changeAmount($event)"
+  value="{{ amount }}"
+/>
+<button (click)="removeEvent()">D</button>

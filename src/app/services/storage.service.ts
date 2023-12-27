@@ -122,6 +122,40 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  addEventToAnswer(answerId: string, newRequirement: any) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    if (answer[0].events) {
+      answer[0].events.push(newRequirement)
+    } else {
+      answer[0].events = [newRequirement]
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
+  getEventsOfAnswer(answerId: string) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    if (!answer[0].events) return []
+    return answer[0].events
+  }
+
+  deleteEventFromAnswer(answerId: string, eventId: Event) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    if (answer[0].events) {
+      answer[0].events = answer[0].events.filter((event: any) => {
+        return event.id !== eventId
+      })
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
   addRequirementToAnswer(answerId: string, newRequirement: any) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
