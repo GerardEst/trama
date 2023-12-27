@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, Output, EventEmitter } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { RequirementComponent } from '../ui/requirement/requirement.component'
@@ -21,6 +21,7 @@ interface requirement {
 export class RequirementsManagerComponent {
   requirements: Array<requirement> = []
   @Input() answerId: string = ''
+  @Output() onClose: EventEmitter<any> = new EventEmitter()
 
   constructor(private storage: StorageService) {}
 
@@ -82,5 +83,9 @@ export class RequirementsManagerComponent {
     })
 
     this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
+  }
+
+  closeManager() {
+    this.onClose.emit()
   }
 }

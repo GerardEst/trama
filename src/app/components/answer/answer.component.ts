@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
 import { EventsManagerComponent } from '../events-manager/events-manager.component'
+import { PopupManagerService } from 'src/app/services/popup-manager.service'
 
 @Component({
   selector: 'polo-answer',
@@ -20,6 +21,7 @@ import { EventsManagerComponent } from '../events-manager/events-manager.compone
   styleUrls: ['./answer.component.sass'],
 })
 export class AnswerComponent {
+  private subscription: any
   @Input() nodeId: string = ''
   @Input() text: string = ''
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
@@ -27,7 +29,11 @@ export class AnswerComponent {
   @ViewChild('requirementContainer', { read: ViewContainerRef })
   requirementContainer?: ViewContainerRef
 
-  constructor(private storage: StorageService, public elementRef: ElementRef) {}
+  constructor(
+    private storage: StorageService,
+    public elementRef: ElementRef,
+    private popup: PopupManagerService
+  ) {}
 
   saveAnswerText(e: any) {
     const id = this.elementRef.nativeElement.id
@@ -43,22 +49,46 @@ export class AnswerComponent {
   }
 
   manageEvents() {
-    const ref = this.requirementContainer?.createComponent(
+    if (!this.requirementContainer) return
+
+    const ref = this.requirementContainer.createComponent(
       EventsManagerComponent
     )
-    //@ts-ignore
     ref.instance.answerId = this.elementRef.nativeElement.id
+
+    // Listen for the close event
+    this.subscription = ref.instance.onClose.subscribe(() => {
+      ref.destroy()
+    })
+
+    // Use the service to set the current component
+    this.popup.setCurrentComponent(ref)
   }
 
   manageRequirements() {
-    const ref = this.requirementContainer?.createComponent(
+    if (!this.requirementContainer) return
+
+    const ref = this.requirementContainer.createComponent(
       RequirementsManagerComponent
     )
-    //@ts-ignore
     ref.instance.answerId = this.elementRef.nativeElement.id
+
+    // Listen for the close event
+    this.subscription = ref.instance.onClose.subscribe(() => {
+      ref.destroy()
+    })
+
+    // Use the service to set the current component
+    this.popup.setCurrentComponent(ref)
   }
 
   willJoin() {
     this.onWillJoin.emit(this.elementRef.nativeElement.id)
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }
