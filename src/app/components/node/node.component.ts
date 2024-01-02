@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   ElementRef,
-  OnInit,
   Output,
   EventEmitter,
 } from '@angular/core'

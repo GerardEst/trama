@@ -6,12 +6,13 @@
       #node
       cdkDrag
       id="{{ node.id }}"
-      (mouseenter)="dragDisabled()"
-      (mouseleave)="dragEnabled()"
+      (mouseenter)="mouseEnter($event)"
+      (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"
       (haveJoined)="haveJoined($event)"
       (removeNode)="removeNode($event)"
       [waitingForJoin]="waitingForJoin"
+      (cdkDragStarted)="dragStarted($event)"
       (cdkDragReleased)="dragReleased($event)"
       (cdkDragMoved)="dragCheck()"
       [style.transform]="

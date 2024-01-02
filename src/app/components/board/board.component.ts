@@ -50,11 +50,42 @@ export class BoardComponent {
     //board.smoothMoveTo(-100, -100);
   }
 
-  dragDisabled() {
-    this.boardReference.pause()
+  focusNode(node: any) {
+    node.style.zIndex = 1
+  }
+  blurNode(node: any) {
+    node.style.zIndex = 0
   }
   dragEnabled() {
+    this.boardReference.pause()
+  }
+  dragDisabled() {
     this.boardReference.resume()
+  }
+  mouseEnter(event: any) {
+    this.dragEnabled()
+    this.focusNode(event.target)
+  }
+  mouseLeave(event: any) {
+    this.dragDisabled()
+    this.blurNode(event.target)
+  }
+  dragStarted(event: any) {
+    //this.focusNode(event)
+  }
+  dragReleased(event: any) {
+    const currentTransform = event.source.getRootElement().style.transform
+    const finalTransform = combineTransforms(currentTransform)
+
+    event.source.getRootElement().style.transform = `translate3d(${finalTransform.x}px, ${finalTransform.y}px, 0}px)`
+
+    this.storage.updateNodePosition(
+      event.source.getRootElement().id,
+      finalTransform.x,
+      finalTransform.y
+    )
+
+    this.drawJoins(this.tree.nodes)
   }
 
   async saveToDb() {
@@ -109,21 +140,6 @@ export class BoardComponent {
   }
 
   dragCheck() {}
-
-  dragReleased({ source }: any) {
-    const currentTransform = source.getRootElement().style.transform
-    const finalTransform = combineTransforms(currentTransform)
-
-    source.getRootElement().style.transform = `translate3d(${finalTransform.x}px, ${finalTransform.y}px, 0}px)`
-
-    this.storage.updateNodePosition(
-      source.getRootElement().id,
-      finalTransform.x,
-      finalTransform.y
-    )
-
-    this.drawJoins(this.tree.nodes)
-  }
 
   addNode(event: any) {
     if (!this.waitingForJoin || !this.willJoinId) return
