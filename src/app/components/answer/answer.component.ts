@@ -28,12 +28,17 @@ export class AnswerComponent {
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('requirementContainer', { read: ViewContainerRef })
   requirementContainer?: ViewContainerRef
+  optionsOpened: Boolean = false
 
   constructor(
     private storage: StorageService,
     public elementRef: ElementRef,
     private popup: PopupManagerService
   ) {}
+
+  openOptions() {
+    this.optionsOpened = true
+  }
 
   saveAnswerText(e: any) {
     const id = this.elementRef.nativeElement.id

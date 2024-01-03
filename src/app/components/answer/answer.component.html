@@ -1,7 +1,8 @@
-<div #requirementContainer class="answer__options">
-  <span (click)="manageRequirements()" class="requirements"></span>
-  <span (click)="manageEvents()" class="events"></span>
-  <span (click)="removeAnswer()" class="remove"></span>
+<span #requirementContainer (click)="openOptions()" class="options"></span>
+<div *ngIf="optionsOpened" class="options__list">
+  <li (click)="manageRequirements()" class="requirements">Add requirement</li>
+  <li (click)="manageEvents()" class="events"></li>
+  <li (click)="removeAnswer()" class="remove">Remove answer</li>
 </div>
 <textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
 <div
