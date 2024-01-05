@@ -1,5 +1,6 @@
-<input type="number" (input)="changeAmount($event)" [value]="amount" />
+<input type="number" (change)="changeAmount($event)" [value]="amount" />
 <polo-selector
+  #selector
   [selected]="id"
   (onNewOption)="newOption($event)"
   (onSelectOption)="changeElement($event)"

@@ -55,6 +55,12 @@ export class SelectorComponent implements OnInit {
     this.closeOptions()
   }
 
+  createOption(newOption: string) {
+    this.onNewOption.emit(newOption)
+
+    this.closeOptions()
+  }
+
   filterOptions(event: any) {
     const value = event.target.value
 
@@ -63,10 +69,6 @@ export class SelectorComponent implements OnInit {
     )
 
     this.newOption = this.searchedOptions[0]?.name != value ? value : undefined
-  }
-
-  createOption(newOption: string) {
-    this.onNewOption.emit(newOption)
   }
 
   toggleOptions() {

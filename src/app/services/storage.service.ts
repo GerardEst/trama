@@ -207,7 +207,7 @@ export class StorageService {
 
     this.updateStoredTree(savedTree)
 
-    return newId
+    return { id: newId, name: name }
   }
 
   updateRequirementAmount(

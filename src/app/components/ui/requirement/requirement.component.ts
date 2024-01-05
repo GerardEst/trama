@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Output,
+  Input,
+  ViewChild,
+  ElementRef,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../selector/selector.component'
 import { StorageService } from 'src/app/services/storage.service'
@@ -16,6 +23,7 @@ export class RequirementComponent {
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
   @Input() id?: string
   @Input() amount?: number = 3
+  @ViewChild('selector') selector?: any
 
   constructor(private storage: StorageService) {}
 
@@ -28,8 +36,15 @@ export class RequirementComponent {
   }
 
   newOption(value: string) {
-    const createdRefId = this.storage.createNewRef(value)
-    this.id = createdRefId
+    const createdRef = this.storage.createNewRef(value)
+    if (createdRef) {
+      if (this.selector) {
+        this.selector.selectOption({
+          id: createdRef.id,
+          name: createdRef.name,
+        })
+      }
+    }
   }
 
   removeRequirement() {
