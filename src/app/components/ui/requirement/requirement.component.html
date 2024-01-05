@@ -1,14 +1,8 @@
-<input
-  #amount
-  type="number"
-  (change)="changeAmount($event)"
-  value="{{ requirementAmount }}"
-/>
-<input
-  #name
-  type="text"
-  placeholder="New requirement"
-  (change)="changeName($event)"
-  value="{{ requirementName }}"
-/>
+<input type="number" (input)="changeAmount($event)" [value]="amount" />
+<polo-selector
+  [selected]="id"
+  (onNewOption)="newOption($event)"
+  (onSelectOption)="changeElement($event)"
+  [options]="getFormattedRequirementsOfTree()"
+></polo-selector>
 <button (click)="removeRequirement()">D</button>

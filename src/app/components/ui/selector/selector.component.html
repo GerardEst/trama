@@ -1,0 +1,17 @@
+<button (click)="toggleOptions()">{{ selectedOption?.name }}</button>
+<div class="dropdown" *ngIf="optionsOpened">
+  <input
+    #search
+    type="text"
+    (input)="filterOptions($event)"
+    placeholder="Search"
+  />
+  <button (click)="createOption(newOption)" *ngIf="newOption" class="newOption">
+    Create {{ newOption }}
+  </button>
+  <div class="dropdown__options">
+    <li (click)="selectOption(option)" *ngFor="let option of searchedOptions">
+      {{ option.name }}
+    </li>
+  </div>
+</div>

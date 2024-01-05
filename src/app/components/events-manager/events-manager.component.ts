@@ -14,7 +14,6 @@ import { EventComponent } from '../ui/event/event.component'
 export class EventsManagerComponent {
   events: Array<any> = []
   @Input() answerId: string = ''
-  @Output() onClose: EventEmitter<any> = new EventEmitter()
 
   constructor(private storage: StorageService) {}
 
@@ -47,9 +46,5 @@ export class EventsManagerComponent {
       return event.id !== eventId
     })
     this.storage.deleteEventFromAnswer(this.answerId, eventId)
-  }
-
-  closeManager() {
-    this.onClose.emit()
   }
 }

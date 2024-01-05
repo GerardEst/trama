@@ -156,18 +156,15 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  addRequirementToAnswer(answerId: string, newRequirement: any) {
+  saveAnswerRequirements(answerId: string, requirements: any) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
 
-    if (answer[0].requirements) {
-      answer[0].requirements.push(newRequirement)
-    } else {
-      answer[0].requirements = [newRequirement]
-    }
+    answer[0].requirements = requirements
 
     this.updateStoredTree(savedTree)
   }
+
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
@@ -192,12 +189,25 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  updateRequiremenDetail_Name(requirementId: string, name: string) {
+  createNewRef(name: string) {
     const savedTree = this.getStoredTree()
 
-    savedTree.refs[requirementId].name = name
+    // Check if the name already exists in the refs
+    const duplicatedRef = Object.keys(savedTree.refs).find(
+      (ref: any) => savedTree.refs[ref].name === name
+    )
+
+    if (duplicatedRef) {
+      console.warn('Duplicated ref. Skip creation')
+      return
+    }
+
+    const newId = 'requirement_' + this.getNewIdForRequirement()
+    savedTree.refs[newId] = { name }
 
     this.updateStoredTree(savedTree)
+
+    return newId
   }
 
   updateRequirementAmount(
@@ -218,7 +228,7 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  getNewIdForRequirement() {
+  private getNewIdForRequirement() {
     const savedTree = this.getStoredTree()
 
     if (savedTree.refs) {
@@ -240,6 +250,12 @@ export class StorageService {
     return node.answers
   }
 
+  getRequirementsOfAnswer(answerId: string) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    return answer[0].requirements
+  }
   getDetailedRequirementsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
@@ -255,6 +271,15 @@ export class StorageService {
     )
 
     return detailedRequirements
+  }
+
+  getAllRequirementsFormatted() {
+    const savedTree = this.getStoredTree()
+    const refs = savedTree.refs
+
+    return Object.keys(refs).map((option: any) => {
+      return { id: option, name: refs[option].name }
+    })
   }
 
   private getStoredTree() {

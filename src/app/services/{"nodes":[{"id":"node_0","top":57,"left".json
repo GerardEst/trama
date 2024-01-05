@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    {
+      "id": "node_0",
+      "top": 57,
+      "left": 219,
+      "text": "Gracies per trucar a orange, si té un problema amb el servei premi el numero 1",
+      "answers": [
+        { "id": "answer_0_1", "join": [{ "node": "node_1" }], "text": "1" }
+      ]
+    },
+    {
+      "id": "node_1",
+      "top": 300,
+      "left": 547,
+      "text": "Si el problema que té és referent a orange premi 1, en cas contrari premi 2",
+      "answers": [
+        { "id": "answer_1_0", "join": [{ "node": "node_2" }], "text": "1" },
+        {
+          "id": "answer_1_1",
+          "join": [{ "node": "node_2" }, { "node": "node_3" }],
+          "text": "2"
+        }
+      ]
+    },
+    {
+      "id": "node_2",
+      "top": 301,
+      "left": 220,
+      "text": "Si té un problema amb el servei premi 1",
+      "answers": [
+        { "id": "answer_2_0", "join": [{ "node": "node_1" }], "text": "1" }
+      ]
+    },
+    {
+      "id": "node_3",
+      "top": 260,
+      "left": 823,
+      "text": "Els requeriments depenen del que pugui tenir el personatge. A Polo no es defineix el personatge perque voldria dir tancar portes. No cal fer servir polo per fer nomes aventures.\n\nEntonses... El que es segur és que quan un event et dona algo, això forma part de l'arbre i per tant ho pots buscar. Si hi ha stats inicials, posaré alguna configuració general de base per poder afegir coses.",
+      "answers": [
+        {
+          "id": "answer_3_2",
+          "requirements": [
+            { "id": "requirement_7", "amount": 1, "type": "condition" }
+          ],
+          "events": [
+            {
+              "id": "answer_3_2_event_1704308469680",
+              "ref": "alterStat",
+              "target": "exp",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "refs": {
+    "requirement_1": { "name": "Resistencia" },
+    "requirement_2": { "name": "Inteligencia" },
+    "requirement_3": { "name": "Força" },
+    "requirement_4": { "name": "Gana" },
+    "requirement_5": { "name": "Son" },
+    "requirement_6": { "name": "Escaire" },
+    "requirement_7": { "name": "Martell" }
+  }
+}

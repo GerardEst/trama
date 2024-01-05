@@ -1,5 +1,3 @@
-<div (click)="closeManager()">Close</div>
-<p>Buscador</p>
 <polo-dropdown-buttons label="Crear">
   <button (click)="createRequirement('stat')">Stat</button>
   <button (click)="createRequirement('condition')">Condition</button>
@@ -7,13 +5,10 @@
 <div class="requirements__list">
   <polo-requirement
     *ngFor="let requirement of requirements"
-    class="{{ 'requirement--' + requirement.type }}"
-    (updateName)="updateRequirementName($event)"
-    (updateAmount)="updateRequirementAmount($event)"
-    (deleted)="deleteRequirement($event)"
+    (onDelete)="deleteRequirement($event)"
     [id]="requirement.id"
-    [type]="requirement.type"
-    [requirementName]="requirement.name"
-    [requirementAmount]="requirement.amount"
+    [amount]="requirement.amount"
+    (onChangeElement)="updateRequirementElement($event)"
+    (onChangeAmount)="updateRequirementAmount($event)"
   ></polo-requirement>
 </div>

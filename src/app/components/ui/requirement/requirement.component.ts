@@ -1,44 +1,42 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Output,
-  ViewChild,
-  Input,
-} from '@angular/core'
+import { Component, EventEmitter, Output, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { SelectorComponent } from '../selector/selector.component'
+import { StorageService } from 'src/app/services/storage.service'
 
 @Component({
   selector: 'polo-requirement',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SelectorComponent],
   templateUrl: './requirement.component.html',
   styleUrls: ['./requirement.component.sass'],
 })
-export class RequirementComponent implements AfterViewInit {
-  @ViewChild('name') name?: ElementRef
-  @ViewChild('amount') amount?: ElementRef
-  @Output() updateName: EventEmitter<any> = new EventEmitter()
-  @Output() updateAmount: EventEmitter<any> = new EventEmitter()
-  @Output() deleted: EventEmitter<any> = new EventEmitter()
+export class RequirementComponent {
+  @Output() onChangeElement: EventEmitter<any> = new EventEmitter()
+  @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
+  @Output() onDelete: EventEmitter<any> = new EventEmitter()
   @Input() id?: string
-  @Input() type?: string
-  @Input() requirementName?: string
-  @Input() requirementAmount?: number
+  @Input() amount?: number = 3
 
-  ngAfterViewInit() {
-    // this.name?.nativeElement.focus()
-  }
-  changeName(event: any) {
-    this.updateName.emit({ id: this.id, value: event.target.value })
+  constructor(private storage: StorageService) {}
+
+  changeElement(options: any) {
+    this.onChangeElement.emit(options)
   }
 
   changeAmount(event: any) {
-    this.updateAmount.emit({ id: this.id, value: event.target.value })
+    this.onChangeAmount.emit({ id: this.id, value: event.target.value })
+  }
+
+  newOption(value: string) {
+    const createdRefId = this.storage.createNewRef(value)
+    this.id = createdRefId
   }
 
   removeRequirement() {
-    this.deleted.emit(this.id)
+    this.onDelete.emit(this.id)
+  }
+
+  getFormattedRequirementsOfTree() {
+    return this.storage.getAllRequirementsFormatted()
   }
 }

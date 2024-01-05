@@ -1,68 +1,82 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { RequirementComponent } from '../ui/requirement/requirement.component'
+import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 
-interface requirement {
+interface element {
   id: string
   name: string
-  amount: number
-  type: 'stat' | 'condition'
+}
+
+interface requirement {
+  id?: string
+  name?: string
+  amount?: number
+  type?: 'stat' | 'condition'
 }
 
 @Component({
   selector: 'polo-requirements-manager',
   standalone: true,
-  imports: [CommonModule, DropdownButtonsComponent, RequirementComponent],
+  imports: [CommonModule, RequirementComponent, DropdownButtonsComponent],
   templateUrl: './requirements-manager.component.html',
   styleUrls: ['./requirements-manager.component.sass'],
 })
 export class RequirementsManagerComponent {
   requirements: Array<requirement> = []
   @Input() answerId: string = ''
-  @Output() onClose: EventEmitter<any> = new EventEmitter()
 
   constructor(private storage: StorageService) {}
 
   ngOnInit() {
     if (this.answerId) {
       this.requirements =
-        this.storage.getDetailedRequirementsOfAnswer(this.answerId) || []
+        this.storage.getRequirementsOfAnswer(this.answerId) || []
     }
+    console.log(this.requirements)
   }
 
   createRequirement(type: 'stat' | 'condition') {
-    const id = 'requirement_' + this.storage.getNewIdForRequirement()
+    /** A new requirement shouldn't have id or anything selected
+     * The amount might be 1, but the selector is empty.
+     *
+     * Then when the user selects an element on the selector, it calls the updateRequirementElement as always
+     * And maybe it finds the element with undefined id and everything works?
+     *
+     */
+    // const id = 'requirement_' + this.storage.getNewIdForRequirement()
     const amount = 1
-    const name = 'New ' + type
+    // const name = 'New ' + type
     this.requirements.push({
-      id,
-      name,
+      //id,
+      //name,
       amount,
-      type,
+      //type,
     })
 
-    this.storage.addRequirementToAnswer(this.answerId, {
-      id,
-      amount,
-      type,
-    })
+    // this.storage.addRequirementToAnswer(this.answerId, {
+    //   id,
+    //   amount,
+    //   type,
+    // })
 
-    this.storage.saveRequirementDetails(id, {
-      name,
-    })
+    // this.storage.saveRequirementDetails(id, {
+    //   name,
+    // })
   }
-  updateRequirementName(options: any) {
-    const requirementId = options.id
-    const name = options.value
 
+  updateRequirementElement(event: any) {
+    /** Here we receive the previous value and the new value
+     * We can update the this.requirements
+     */
     const requirement = this.requirements.find(
-      (req) => req.id === requirementId
+      (requirement) => requirement.id === event.previousValue
     )
-    if (requirement) requirement.name = name
+    if (requirement) requirement.id = event.value
 
-    this.storage.updateRequiremenDetail_Name(requirementId, name)
+    // I have to send the answer id and the new requirement id
+    this.storage.saveAnswerRequirements(this.answerId, this.requirements)
   }
 
   updateRequirementAmount(options: any) {
@@ -74,7 +88,7 @@ export class RequirementsManagerComponent {
     )
     if (requirement) requirement.amount = amount
 
-    this.storage.updateRequirementAmount(this.answerId, requirementId, amount)
+    this.storage.saveAnswerRequirements(this.answerId, this.requirements)
   }
 
   deleteRequirement(requirementId: string) {
@@ -83,9 +97,5 @@ export class RequirementsManagerComponent {
     })
 
     this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
-  }
-
-  closeManager() {
-    this.onClose.emit()
   }
 }

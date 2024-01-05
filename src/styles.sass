@@ -9,6 +9,7 @@
   --light-gray: #fafafa
   --medium-gray: #efefef
   --dark-gray: #cccccc
+  --text: rgb(55, 53, 47)
 
   /* Font family */
   --primary-font-family: "Spartan", serif
@@ -32,11 +33,12 @@ body
   overflow: hidden
   background-color: #fbfbfb
 
-p,h1,h2,h3,h4,h5,a,input,li,textarea
+p,h1,h2,h3,h4,h5,a,input,li,textarea,button
   margin: 0
   font-family: var(--primary-font-family)
   font-size: 0.8rem
-
+input
+  padding: 0.3rem 0.5rem
 ul
   padding: 0
   margin: 0
@@ -44,11 +46,12 @@ li
   list-style: none
 
 button
-  color: gray
+  color: var(--text)
   border: none
-  border-radius: 0.5rem
+  border-radius: 0.3rem
   padding: 0.5rem
   background-color: var(--medium-gray)
+  cursor: pointer
 
 textarea
   width: 100%
@@ -57,3 +60,4 @@ textarea
   box-sizing: border-box
   padding: 0.5rem
   font-size: 0.7rem
+  background: none
