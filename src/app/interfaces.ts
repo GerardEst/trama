@@ -1,4 +1,4 @@
-import { answer } from './answer'
+export interface answer {}
 
 export interface node {
   id: string
@@ -6,4 +6,10 @@ export interface node {
   left: string
   text?: string
   answers?: Array<answer>
+}
+
+export interface option {
+  id: string
+  name: string
+  type: string
 }

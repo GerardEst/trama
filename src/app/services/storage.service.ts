@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { node } from '../marco_interfaces/node'
+import { node } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -143,13 +143,13 @@ export class StorageService {
     return answer[0].events
   }
 
-  deleteEventFromAnswer(answerId: string, eventId: Event) {
+  deleteEventFromAnswer(answerId: string, eventTarget: string) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)
 
     if (answer[0].events) {
       answer[0].events = answer[0].events.filter((event: any) => {
-        return event.id !== eventId
+        return event.target !== eventTarget
       })
     }
 
@@ -161,6 +161,15 @@ export class StorageService {
     const answer = this.findAnswerInTree(answerId, savedTree)
 
     answer[0].requirements = requirements
+
+    this.updateStoredTree(savedTree)
+  }
+
+  saveAnswerEvents(answerId: string, events: any) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    answer[0].events = events
 
     this.updateStoredTree(savedTree)
   }

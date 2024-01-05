@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { RequirementComponent } from '../ui/requirement/requirement.component'
+import { RequirementComponent } from '../requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 
@@ -40,20 +40,16 @@ export class RequirementsManagerComponent {
       amount: 1,
       type,
     })
-
-    /** If it's a condition, it should be almost the same. But the requirement should
-     * be different if the requirement is a condition
-     */
   }
 
-  updateRequirementElement(event: any) {
+  updateRequirementElement(element: any) {
     /** Here we receive the previous value and the new value
      * We can update the this.requirements
      */
     const requirement = this.requirements.find(
-      (requirement) => requirement.id === event.previousValue
+      (requirement) => requirement.id === element.previousValue
     )
-    if (requirement) requirement.id = event.value
+    if (requirement) requirement.id = element.value
 
     // I have to send the answer id and the new requirement id
     this.storage.saveAnswerRequirements(this.answerId, this.requirements)

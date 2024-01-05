@@ -6,7 +6,7 @@ import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from '../board-flows/board-flows.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { combineTransforms } from 'src/app/utils/operations'
-import { node } from 'src/app/marco_interfaces/node'
+import { node } from 'src/app/interfaces'
 import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({

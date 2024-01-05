@@ -7,10 +7,11 @@
 <div class="events__list">
   <polo-event
     *ngFor="let event of events"
-    (deleted)="deleteEvent($event)"
-    [id]="event.id"
-    [ref]="event.ref"
-    [target]="event.target"
+    (onDelete)="deleteEvent($event)"
+    [id]="event.target"
     [amount]="event.amount"
+    [action]="event.action"
+    (onChangeElement)="updateEventElement($event)"
+    (onChangeAmount)="updateEventAmount($event)"
   ></polo-event>
 </div>

@@ -8,12 +8,7 @@ import {
   ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
-interface option {
-  id: string
-  name: string
-  type: string
-}
+import { option } from 'src/app/interfaces'
 
 @Component({
   selector: 'polo-selector',
@@ -38,7 +33,7 @@ export class SelectorComponent implements OnInit {
   ngOnInit(): void {
     this.searchedOptions = this.options
 
-    // If we receive a selected option id, we select it jaj
+    // If we receive a selected option id, we start with it selected
     if (this.selected) {
       this.selectedOption = this.options.find((option: any) => {
         return option.id === this.selected

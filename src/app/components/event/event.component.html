@@ -1,0 +1,21 @@
+<div>
+  <p>Modify {{ getTypeForEvent() }}</p>
+  <button (click)="removeEvent()">D</button>
+</div>
+<div>
+  <polo-selector
+    #selector
+    [selected]="id"
+    (onNewOption)="newOption($event)"
+    (onSelectOption)="changeElement($event)"
+    [options]="getFormattedRefsOfTree() || []"
+    message="Select a {{ getTypeForEvent() }} or create new one"
+  ></polo-selector>
+
+  <input
+    #amountInput
+    type="number"
+    (change)="changeAmount($event)"
+    value="{{ amount }}"
+  />
+</div>

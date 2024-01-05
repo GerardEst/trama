@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { SelectorComponent } from '../selector/selector.component'
+import { SelectorComponent } from '../ui/selector/selector.component'
 import { StorageService } from 'src/app/services/storage.service'
 
 @Component({
