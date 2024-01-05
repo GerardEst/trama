@@ -4,7 +4,6 @@ import {
   Output,
   Input,
   ViewChild,
-  ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../selector/selector.component'
@@ -23,6 +22,7 @@ export class RequirementComponent {
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
   @Input() id?: string
   @Input() amount?: number = 3
+  @Input() type?: 'stat' | 'condition'
   @ViewChild('selector') selector?: any
 
   constructor(private storage: StorageService) {}
@@ -35,8 +35,19 @@ export class RequirementComponent {
     this.onChangeAmount.emit({ id: this.id, value: event.target.value })
   }
 
+  changeCheckbox(event: any) {
+    this.onChangeAmount.emit({
+      id: this.id,
+      value: Number(event.target.checked),
+    })
+  }
+
   newOption(value: string) {
-    const createdRef = this.storage.createNewRef(value)
+    if (!this.type) {
+      console.warn('No type defined for this requirement')
+      return
+    }
+    const createdRef = this.storage.createNewRef(value, this.type)
     if (createdRef) {
       if (this.selector) {
         this.selector.selectOption({
@@ -51,7 +62,11 @@ export class RequirementComponent {
     this.onDelete.emit(this.id)
   }
 
-  getFormattedRequirementsOfTree() {
-    return this.storage.getAllRequirementsFormatted()
+  getFormattedRefsOfTree() {
+    if (!this.type) {
+      console.warn('No type defined for this requirement')
+      return
+    }
+    return this.storage.getRefsFormatted(this.type)
   }
 }

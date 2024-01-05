@@ -4,11 +4,6 @@ import { RequirementComponent } from '../ui/requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 
-interface element {
-  id: string
-  name: string
-}
-
 interface requirement {
   id?: string
   name?: string
@@ -38,32 +33,17 @@ export class RequirementsManagerComponent {
   }
 
   createRequirement(type: 'stat' | 'condition') {
-    /** A new requirement shouldn't have id or anything selected
-     * The amount might be 1, but the selector is empty.
-     *
-     * Then when the user selects an element on the selector, it calls the updateRequirementElement as always
-     * And maybe it finds the element with undefined id and everything works?
-     *
+    /** If this is a stat, we push an amount wiht emptyness and nothing
+     * gets added to the tree till the user selects an option
      */
-    // const id = 'requirement_' + this.storage.getNewIdForRequirement()
-    const amount = 1
-    // const name = 'New ' + type
     this.requirements.push({
-      //id,
-      //name,
-      amount,
-      //type,
+      amount: 1,
+      type,
     })
 
-    // this.storage.addRequirementToAnswer(this.answerId, {
-    //   id,
-    //   amount,
-    //   type,
-    // })
-
-    // this.storage.saveRequirementDetails(id, {
-    //   name,
-    // })
+    /** If it's a condition, it should be almost the same. But the requirement should
+     * be different if the requirement is a condition
+     */
   }
 
   updateRequirementElement(event: any) {

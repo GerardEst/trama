@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common'
 interface option {
   id: string
   name: string
+  type: string
 }
 
 @Component({
@@ -24,6 +25,7 @@ interface option {
 export class SelectorComponent implements OnInit {
   @Input() options: Array<option> = []
   @Input() selected?: string
+  @Input() message?: string
   @Output() onNewOption: EventEmitter<any> = new EventEmitter()
   @Output() onSelectOption: EventEmitter<any> = new EventEmitter()
   @ViewChild('search') search?: ElementRef

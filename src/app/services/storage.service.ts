@@ -189,12 +189,13 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  createNewRef(name: string) {
+  createNewRef(name: string, type: 'stat' | 'condition') {
     const savedTree = this.getStoredTree()
 
     // Check if the name already exists in the refs
     const duplicatedRef = Object.keys(savedTree.refs).find(
-      (ref: any) => savedTree.refs[ref].name === name
+      (ref: any) =>
+        savedTree.refs[ref].name === name && savedTree.refs[ref].type === type
     )
 
     if (duplicatedRef) {
@@ -202,12 +203,12 @@ export class StorageService {
       return
     }
 
-    const newId = 'requirement_' + this.getNewIdForRequirement()
-    savedTree.refs[newId] = { name }
+    const newId = type + '_' + this.getNewIdForRequirement()
+    savedTree.refs[newId] = { name, type }
 
     this.updateStoredTree(savedTree)
 
-    return { id: newId, name: name }
+    return { id: newId, name: name, type }
   }
 
   updateRequirementAmount(
@@ -273,13 +274,15 @@ export class StorageService {
     return detailedRequirements
   }
 
-  getAllRequirementsFormatted() {
+  getRefsFormatted(type: 'stat' | 'condition') {
     const savedTree = this.getStoredTree()
     const refs = savedTree.refs
 
-    return Object.keys(refs).map((option: any) => {
-      return { id: option, name: refs[option].name }
-    })
+    return Object.keys(refs)
+      .filter((ref: any) => refs[ref].type === type)
+      .map((option: any) => {
+        return { id: option, name: refs[option].name, type: refs[option].type }
+      })
   }
 
   private getStoredTree() {

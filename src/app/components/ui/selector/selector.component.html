@@ -6,6 +6,7 @@
     (input)="filterOptions($event)"
     placeholder="Search"
   />
+  <p class="message">{{ message }}</p>
   <button (click)="createOption(newOption)" *ngIf="newOption" class="newOption">
     Create {{ newOption }}
   </button>

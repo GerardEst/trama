@@ -1,9 +1,21 @@
-<input type="number" (change)="changeAmount($event)" [value]="amount" />
+<input
+  *ngIf="type === 'stat'"
+  type="number"
+  (change)="changeAmount($event)"
+  [value]="amount"
+/>
+<input
+  *ngIf="type === 'condition'"
+  type="checkbox"
+  [checked]="amount"
+  (change)="changeCheckbox($event)"
+/>
 <polo-selector
   #selector
   [selected]="id"
   (onNewOption)="newOption($event)"
   (onSelectOption)="changeElement($event)"
-  [options]="getFormattedRequirementsOfTree()"
+  [options]="getFormattedRefsOfTree() || []"
+  message="Select a {{ type }} or create new one"
 ></polo-selector>
 <button (click)="removeRequirement()">D</button>
