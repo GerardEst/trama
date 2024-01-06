@@ -1,8 +1,9 @@
 <polo-popup-menu>
-  <p>Requirements</p>
+  <h3>Requirements</h3>
   <polo-requirements-manager [answerId]="answerId"></polo-requirements-manager>
-  <p>Events</p>
+  <polo-divider></polo-divider>
+  <h3>Events</h3>
   <polo-events-manager [answerId]="answerId"></polo-events-manager>
   <polo-divider></polo-divider>
-  <button (click)="removeAnswer()">Remove answer</button>
+  <button (click)="removeAnswer()">Delete answer</button>
 </polo-popup-menu>
