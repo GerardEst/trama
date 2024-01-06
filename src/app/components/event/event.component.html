@@ -12,18 +12,31 @@
     message="Select a {{ getTypeForEvent() }} or create new one"
   ></polo-selector>
   <input
-    #amountInput
+    *ngIf="getTypeForEvent() === 'stat'"
     type="number"
     (change)="changeAmount($event)"
+    value="{{ amount }}"
+  />
+  <input
+    *ngIf="getTypeForEvent() === 'condition'"
+    type="checkbox"
+    [checked]="amount"
+    (change)="changeCheckbox($event)"
     value="{{ amount }}"
   />
   <div class="info">
     <p>i</p>
     <div class="info__data">
-      <p>
+      <p *ngIf="getTypeForEvent() === 'stat'">
         <span class="txt_bold">{{ infoData.value }}</span> will
-        {{ infoData.operation }} by
-        <span class="txt_bold">{{ infoData.amount }}</span>
+        {{ infoData.amount >= 0 ? 'increase' : 'decrease' }} by
+        <span class="txt_bold">{{ getMathAbs(infoData.amount) }}</span>
+      </p>
+      <p *ngIf="getTypeForEvent() === 'condition'">
+        <span class="txt_bold">{{ infoData.value }}</span> will be
+        <span class="txt_bold">{{
+          this.amount === 0 ? 'loosed' : 'gained'
+        }}</span>
       </p>
     </div>
   </div>

@@ -25,7 +25,6 @@ export class EventComponent implements AfterViewInit {
   @Input() id?: string
   @Input() amount?: number
   @Input() action?: 'alterStat' | 'alterCondition' | 'win' | 'end'
-  type?: 'stat' | 'condition'
   infoData: any = {}
   infoMessage?: string
   @ViewChild('selector') selector?: any
@@ -36,8 +35,7 @@ export class EventComponent implements AfterViewInit {
     // Update the info message
     this.infoData = {
       value: this.id ? this.storage.getRefName(this.id) : '',
-      amount: this.amount ? Math.abs(this.amount) : 0,
-      operation: this.amount && this.amount >= 0 ? 'increase' : 'decrease',
+      amount: this.amount,
     }
   }
 
@@ -53,8 +51,15 @@ export class EventComponent implements AfterViewInit {
 
     // Update the info message
     this.infoData.amount = event.target.value
-    this.infoData.operation =
-      this.amount && this.amount >= 0 ? 'increase' : 'decrease'
+  }
+
+  changeCheckbox(event: any) {
+    this.onChangeAmount.emit({
+      id: this.id,
+      value: Number(event.target.checked),
+    })
+    // Update the info message
+    this.infoData.amount = event.target.value
   }
 
   newOption(value: string) {
@@ -96,5 +101,9 @@ export class EventComponent implements AfterViewInit {
       : this.action === 'alterCondition'
       ? 'condition'
       : undefined
+  }
+
+  getMathAbs(val: number) {
+    return Math.abs(val)
   }
 }
