@@ -1,2 +1,4 @@
-<div>{{ label }}</div>
-<ng-content></ng-content>
+<button (click)="toggleDropdown()">{{ label }}</button>
+<div *ngIf="openedDropdown" class="dropdown">
+  <ng-content></ng-content>
+</div>

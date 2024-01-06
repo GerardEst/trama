@@ -1,19 +1,18 @@
 :host
-  border: 1px solid var(--medium-gray)
-  padding: 0.3rem
+  padding: 0.3rem 0.5rem
+  background-color: var(--light-gray)
+
 .menu
   display: flex
   justify-content: space-between
   align-items: center
+  height: 1.5rem
+  button
+    background: url("/assets/icons/trash.svg") no-repeat center/1rem
 .data
   display: flex
   gap: 0.3rem
   margin-top: 0.3rem
-input[type="number"]
-  width: 2.2rem
-  padding: 0
-  padding-left: 0.2rem
-  box-sizing: border-box
 .info
   position: relative
   min-width: 1rem
@@ -28,6 +27,7 @@ input[type="number"]
   border-radius: 100%
   p
     pointer-events: none
+    font-size: var(--small-text)
   &__data
     display: none
     position: absolute
@@ -36,7 +36,5 @@ input[type="number"]
     padding: 0.5rem
     text-align: left
     width: 8rem
-    p
-      font-size: var(--small-text)
   &:hover &__data
     display: flex

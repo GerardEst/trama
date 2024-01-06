@@ -10,4 +10,9 @@ import { CommonModule } from '@angular/common'
 })
 export class DropdownButtonsComponent {
   @Input() label?: string
+  openedDropdown: boolean = false
+
+  toggleDropdown() {
+    this.openedDropdown = !this.openedDropdown
+  }
 }
