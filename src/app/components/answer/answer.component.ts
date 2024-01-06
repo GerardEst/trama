@@ -1,8 +1,10 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   ViewChild,
   ViewContainerRef,
@@ -19,7 +21,7 @@ import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answe
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],
 })
-export class AnswerComponent {
+export class AnswerComponent implements AfterViewInit {
   private subscription: any
   @Input() nodeId: string = ''
   @Input() text: string = ''
@@ -33,6 +35,10 @@ export class AnswerComponent {
     public elementRef: ElementRef,
     private popup: PopupManagerService
   ) {}
+
+  ngAfterViewInit(): void {
+    this.openOptions()
+  }
 
   openOptions() {
     if (!this.optionsContainer) return

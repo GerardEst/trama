@@ -294,6 +294,13 @@ export class StorageService {
       })
   }
 
+  getRefName(refId: string) {
+    const savedTree = this.getStoredTree()
+    const refs = savedTree.refs
+
+    return refs[refId].name
+  }
+
   private getStoredTree() {
     //@ts-ignore
     const storedTree = JSON.parse(localStorage.getItem('polo-tree'))

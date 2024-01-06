@@ -5,6 +5,7 @@ import {
   ElementRef,
   Output,
   EventEmitter,
+  AfterViewInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
@@ -17,7 +18,7 @@ import { StorageService } from 'src/app/services/storage.service'
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.sass'],
 })
-export class EventComponent {
+export class EventComponent implements AfterViewInit {
   @Output() onChangeElement: EventEmitter<any> = new EventEmitter()
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
@@ -25,16 +26,35 @@ export class EventComponent {
   @Input() amount?: number
   @Input() action?: 'alterStat' | 'alterCondition' | 'win' | 'end'
   type?: 'stat' | 'condition'
+  infoData: any = {}
+  infoMessage?: string
   @ViewChild('selector') selector?: any
 
   constructor(private storage: StorageService) {}
 
+  ngAfterViewInit() {
+    // Update the info message
+    this.infoData = {
+      value: this.id ? this.storage.getRefName(this.id) : '',
+      amount: this.amount ? Math.abs(this.amount) : 0,
+      operation: this.amount && this.amount >= 0 ? 'increase' : 'decrease',
+    }
+  }
+
   changeElement(options: any) {
     this.onChangeElement.emit(options)
+
+    // Update the info message
+    this.infoData.value = this.storage.getRefName(options.id)
   }
 
   changeAmount(event: any) {
     this.onChangeAmount.emit({ id: this.id, value: event.target.value })
+
+    // Update the info message
+    this.infoData.amount = event.target.value
+    this.infoData.operation =
+      this.amount && this.amount >= 0 ? 'increase' : 'decrease'
   }
 
   newOption(value: string) {

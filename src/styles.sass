@@ -26,6 +26,9 @@
   /* Font family */
   --primary-font-family: "Spartan", serif
 
+  /* Text sizes */
+  --small-text: 0.7rem
+
   /* board size es defineix desde js, pero sempre en aquesta variable.
   // Posar-ho directament als estils inline fa que la llibreria ho sobreescrigui i peti. */
   --board-size: 0
@@ -73,3 +76,7 @@ textarea
   padding: 0.5rem
   font-size: 0.7rem
   background: none
+
+:is(p,span)
+  &.txt_bold
+    font-weight: bold
