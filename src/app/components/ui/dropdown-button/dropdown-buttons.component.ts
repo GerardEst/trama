@@ -15,4 +15,8 @@ export class DropdownButtonsComponent {
   toggleDropdown() {
     this.openedDropdown = !this.openedDropdown
   }
+
+  closeDropdown() {
+    this.openedDropdown = false
+  }
 }
