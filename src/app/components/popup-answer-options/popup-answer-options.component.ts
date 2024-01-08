@@ -6,7 +6,6 @@ import {
   Input,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { PopupMenuComponent } from '../ui/popup-menu/popup-menu.component'
 import { DividerComponent } from '../ui/divider/divider.component'
 import { EventsManagerComponent } from '../events-manager/events-manager.component'
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
@@ -16,7 +15,6 @@ import { RequirementsManagerComponent } from '../requirements-manager/requiremen
   standalone: true,
   imports: [
     CommonModule,
-    PopupMenuComponent,
     DividerComponent,
     EventsManagerComponent,
     RequirementsManagerComponent,
@@ -26,6 +24,7 @@ import { RequirementsManagerComponent } from '../requirements-manager/requiremen
 })
 export class PopupAnswerOptionsComponent {
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
+  @Output() onClosePopup: EventEmitter<any> = new EventEmitter()
   @Input() answerId: string = ''
 
   constructor(public elementRef: ElementRef) {}
@@ -33,5 +32,9 @@ export class PopupAnswerOptionsComponent {
   removeAnswer() {
     const id = this.answerId
     this.onRemoveAnswer.emit(id)
+  }
+
+  closePopup() {
+    this.onClosePopup.emit()
   }
 }

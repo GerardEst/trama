@@ -1,4 +1,5 @@
-<polo-popup-menu>
+<div (click)="closePopup()" class="overlay"></div>
+<div class="popup">
   <h3>Requirements</h3>
   <polo-requirements-manager [answerId]="answerId"></polo-requirements-manager>
   <polo-divider></polo-divider>
@@ -6,4 +7,4 @@
   <polo-events-manager [answerId]="answerId"></polo-events-manager>
   <polo-divider></polo-divider>
   <button (click)="removeAnswer()">Delete answer</button>
-</polo-popup-menu>
+</div>

@@ -9,7 +9,6 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
-import { PopupManagerService } from 'src/app/services/popup-manager.service'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
 
 @Component({
@@ -20,7 +19,6 @@ import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answe
   styleUrls: ['./answer.component.sass'],
 })
 export class AnswerComponent {
-  private subscription: any
   @Input() nodeId: string = ''
   @Input() text: string = ''
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
@@ -28,24 +26,32 @@ export class AnswerComponent {
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
 
-  constructor(
-    private storage: StorageService,
-    public elementRef: ElementRef,
-    private popup: PopupManagerService
-  ) {}
+  constructor(private storage: StorageService, public elementRef: ElementRef) {}
 
   openOptions() {
     if (!this.optionsContainer) return
 
+    // Create the component
     const ref = this.optionsContainer.createComponent(
       PopupAnswerOptionsComponent
     )
     ref.instance.answerId = this.elementRef.nativeElement.id
-    this.subscription = ref.instance.onRemoveAnswer.subscribe(() => {
-      this.removeAnswer()
-    })
 
-    this.popup.setCurrentComponent(ref)
+    // Manage subscriptions to talk with answer component, because this is a dinamically created component
+    const subscriptions: Array<any> = []
+    subscriptions.push(
+      ref.instance.onRemoveAnswer.subscribe(() => {
+        this.removeAnswer()
+      }),
+      ref.instance.onClosePopup.subscribe(() => {
+        ref.destroy()
+        for (let subscription of subscriptions) {
+          // I checked that if we don't unsubscribe, the subscription status closed is false even when I close the popup.
+          // So this is necessary
+          subscription.unsubscribe()
+        }
+      })
+    )
   }
 
   saveAnswerText(e: any) {
@@ -63,11 +69,5 @@ export class AnswerComponent {
     const id = this.elementRef.nativeElement.id
 
     this.onRemoveAnswer.emit(id)
-  }
-
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
   }
 }
