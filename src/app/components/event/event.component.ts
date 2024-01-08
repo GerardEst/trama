@@ -41,7 +41,7 @@ export class EventComponent implements OnInit {
     this.onChangeElement.emit(options)
 
     // Update the info message
-    this.infoData.value = this.storage.getRefName(options.id)
+    this.infoData.value = this.storage.getRefName(options.value)
   }
 
   changeAmount(event: any) {

@@ -21,7 +21,6 @@ export class EventsManagerComponent {
     if (this.answerId) {
       this.events = this.storage.getEventsOfAnswer(this.answerId) || []
     }
-    console.log(this.events)
   }
 
   createEvent(action: 'alterStat' | 'alterCondition' | 'win' | 'end') {
@@ -41,7 +40,6 @@ export class EventsManagerComponent {
   }
 
   updateEventAmount(options: any) {
-    console.log(options)
     const eventId = options.id
     const amount = parseInt(options.value)
 
@@ -52,8 +50,6 @@ export class EventsManagerComponent {
   }
 
   deleteEvent(eventTarget: string) {
-    console.log(eventTarget)
-    console.log(this.events)
     this.events = this.events.filter((event: any) => {
       return event.target !== eventTarget
     })
