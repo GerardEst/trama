@@ -1,6 +1,8 @@
-<button [class.active]="openedDropdown" (click)="toggleDropdown()">
-  {{ label }}
-</button>
-<div (click)="closeDropdown()" *ngIf="openedDropdown" class="dropdown">
-  <ng-content></ng-content>
+<div (mouseleave)="closeDropdown()">
+  <button [class.active]="openedDropdown" (click)="toggleDropdown()">
+    {{ label }}
+  </button>
+  <div (click)="closeDropdown()" *ngIf="openedDropdown" class="dropdown">
+    <ng-content></ng-content>
+  </div>
 </div>

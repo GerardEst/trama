@@ -2,10 +2,9 @@ import {
   Component,
   Input,
   ViewChild,
-  ElementRef,
   Output,
   EventEmitter,
-  AfterViewInit,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
@@ -18,7 +17,7 @@ import { StorageService } from 'src/app/services/storage.service'
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.sass'],
 })
-export class EventComponent implements AfterViewInit {
+export class EventComponent implements OnInit {
   @Output() onChangeElement: EventEmitter<any> = new EventEmitter()
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
@@ -31,8 +30,7 @@ export class EventComponent implements AfterViewInit {
 
   constructor(private storage: StorageService) {}
 
-  ngAfterViewInit() {
-    // Update the info message
+  ngOnInit() {
     this.infoData = {
       value: this.id ? this.storage.getRefName(this.id) : '',
       amount: this.amount,

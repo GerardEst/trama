@@ -16,6 +16,9 @@ import { option } from 'src/app/interfaces'
   imports: [CommonModule],
   templateUrl: './selector.component.html',
   styleUrls: ['./selector.component.sass'],
+  host: {
+    '(document:click)': 'onClickOutside($event)',
+  },
 })
 export class SelectorComponent implements OnInit {
   @Input() options: Array<option> = []
@@ -29,6 +32,8 @@ export class SelectorComponent implements OnInit {
   selectedOption?: option
   newOption?: string
   optionsOpened: boolean = false
+
+  constructor(private elementRef: ElementRef) {}
 
   ngOnInit(): void {
     this.searchedOptions = this.options
@@ -78,6 +83,13 @@ export class SelectorComponent implements OnInit {
       }, 0)
     }
   }
+
+  onClickOutside(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.closeOptions()
+    }
+  }
+
   closeOptions() {
     this.optionsOpened = false
     this.searchedOptions = this.options
