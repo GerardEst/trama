@@ -37,7 +37,7 @@ export class MenuComponent implements OnInit {
           nodes: [
             {
               id: 'node_0',
-              left: 200,
+              left: 500,
               top: 5000,
             },
           ],
