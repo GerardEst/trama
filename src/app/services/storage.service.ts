@@ -201,19 +201,19 @@ export class StorageService {
   createNewRef(name: string, type: 'stat' | 'condition') {
     const savedTree = this.getStoredTree()
 
-    if (savedTree.refs) {
-      // Check if the name already exists in the refs
-      const duplicatedRef = Object.keys(savedTree.refs).find(
-        (ref: any) =>
-          savedTree.refs[ref].name === name && savedTree.refs[ref].type === type
-      )
-
-      if (duplicatedRef) {
-        console.warn('Duplicated ref. Skip creation')
-        return
-      }
-    } else {
+    if (!savedTree.refs) {
       savedTree.refs = {}
+    }
+
+    // Check if the name already exists in the refs
+    const duplicatedRef = Object.keys(savedTree.refs).find(
+      (ref: any) =>
+        savedTree.refs[ref].name === name && savedTree.refs[ref].type === type
+    )
+
+    if (duplicatedRef) {
+      console.warn('Duplicated ref. Skip creation')
+      return
     }
 
     const newId = type + '_' + this.getNewIdForRequirement()
