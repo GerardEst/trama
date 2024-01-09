@@ -44,10 +44,17 @@ export class BoardComponent {
   ngAfterViewInit(): void {
     //https://github.com/anvaka/panzoom
     this.boardReference = createPanZoom(this.board?.nativeElement, {
-      //   // initialX: 2500,
-      //   // initialY: 2500,
+      maxZoom: 1,
+      minZoom: 0.5,
     })
-    //board.smoothMoveTo(-100, -100);
+    this.centerToNode(this.tree.nodes[0])
+  }
+
+  public centerToNode(node: any) {
+    const finalX = -node.left + window.innerWidth / 2 - 100
+    const finalY = -node.top + window.innerHeight / 2 - 200
+
+    this.boardReference.moveTo(finalX, finalY)
   }
 
   focusNode(node: any) {

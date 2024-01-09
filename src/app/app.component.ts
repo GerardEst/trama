@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from './components/board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -12,6 +12,7 @@ import { DatabaseService } from './services/database.service'
   styleUrls: ['./app.component.sass'],
 })
 export class AppComponent implements OnInit {
+  @ViewChild('board') board?: BoardComponent
   tree?: any
   id?: number
 
@@ -27,6 +28,8 @@ export class AppComponent implements OnInit {
 
     localStorage.setItem('polo-id', treeId.toString())
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
+
+    this.board?.centerToNode(this.tree.nodes[0])
   }
 
   initBoard() {
