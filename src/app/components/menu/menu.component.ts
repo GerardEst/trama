@@ -29,7 +29,23 @@ export class MenuComponent implements OnInit {
   }
 
   async createNewTree() {
-    const newTree = await this.db.createNewTree()
+    const newTreeData = [
+      {
+        name: 'My new tree',
+        tree: {
+          name: 'Starter',
+          nodes: [
+            {
+              id: 'node_0',
+              left: 200,
+              top: 5000,
+            },
+          ],
+        },
+      },
+    ]
+
+    const newTree = await this.db.createNewTree(newTreeData)
     if (!newTree) {
       console.warn("Can't create new tree")
       return
