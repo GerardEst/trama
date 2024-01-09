@@ -67,24 +67,18 @@ export class BoardComponent {
   blurNode(node: any) {
     node.style.zIndex = 0
   }
-  dragEnabled() {
-    this.boardReference.pause()
-  }
-  dragDisabled() {
-    this.boardReference.resume()
-  }
   mouseEnter(event: any) {
-    this.dragEnabled()
     this.focusNode(event.target)
   }
   mouseLeave(event: any) {
-    this.dragDisabled()
     this.blurNode(event.target)
   }
   dragStarted(event: any) {
-    //this.focusNode(event)
+    this.boardReference.pause()
+    this.focusNode(event.source.element.nativeElement)
   }
   dragReleased(event: any) {
+    this.boardReference.resume()
     const currentTransform = event.source.getRootElement().style.transform
     const finalTransform = combineTransforms(currentTransform)
 
@@ -179,8 +173,6 @@ export class BoardComponent {
   }
 
   removeNode(event: any) {
-    this.dragEnabled()
-
     // Remove node from tree
     this.tree.nodes = this.tree.nodes.filter(
       (node: any) => node.id !== event.nodeId
