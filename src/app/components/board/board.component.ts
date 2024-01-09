@@ -51,8 +51,12 @@ export class BoardComponent {
   }
 
   public centerToNode(node: any) {
-    const finalX = -node.left + window.innerWidth / 2 - 100
-    const finalY = -node.top + window.innerHeight / 2 - 200
+    // Here we should calculate the correct transform taken into account the zoom level
+    // Now it "works" but it's not perfect
+    const scale = this.boardReference.getTransform().scale
+
+    const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
+    const finalY = (-node.top + window.innerHeight / 2 - 200) * scale
 
     this.boardReference.moveTo(finalX, finalY)
   }
