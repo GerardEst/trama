@@ -6,5 +6,14 @@
   <h3>Events</h3>
   <polo-events-manager [answerId]="answerId"></polo-events-manager>
   <polo-divider></polo-divider>
+  <ng-container *ngIf="joins.length > 0">
+    <h3>Joins</h3>
+    <polo-joins-manager
+      [answerId]="answerId"
+      [joins]="joins"
+      (onRemoveJoin)="updateJoins($event)"
+    ></polo-joins-manager>
+    <polo-divider></polo-divider>
+  </ng-container>
   <button (click)="removeAnswer()">Delete answer</button>
 </div>

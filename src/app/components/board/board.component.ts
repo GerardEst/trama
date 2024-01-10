@@ -38,6 +38,7 @@ export class BoardComponent {
   constructor(private storage: StorageService, private db: DatabaseService) {}
 
   ngOnChanges() {
+    console.log(this.tree.nodes)
     if (this.tree) this.drawJoins(this.tree.nodes)
   }
 
@@ -103,6 +104,9 @@ export class BoardComponent {
   }
 
   drawJoins(nodes: Array<any>) {
+    /** TODO -> Replantejar això. No té sentit calcular absolutament totes les linies cada vegada que es mou algo
+     * Mes endavant segurament serà font de problemes de rendiment
+     */
     this.joins = []
     for (let node of nodes) {
       if (node.answers) {
@@ -119,6 +123,7 @@ export class BoardComponent {
         }
       }
     }
+    console.log(this.joins)
   }
 
   willJoin(answerId: string) {
@@ -131,8 +136,6 @@ export class BoardComponent {
   }
   haveJoined(nodeId: string) {
     if (!this.willJoinId) return
-
-    console.warn(nodeId + ' have joined ' + this.willJoinId)
 
     this.joins.push({
       origin: this.willJoinId + '_join',

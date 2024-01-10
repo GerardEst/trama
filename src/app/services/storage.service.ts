@@ -68,6 +68,15 @@ export class StorageService {
     )
     const answer = node.answers?.filter((answer: any) => answer.id === answerId)
 
+    const duplicatedJoin = answer[0].join?.find((join: any) => {
+      return join.node === nodeId
+    })
+
+    if (duplicatedJoin) {
+      console.warn('Duplicated join. Skip creation')
+      return
+    }
+
     if (answer[0].join) {
       answer[0].join.push({ node: nodeId })
     } else {
@@ -270,6 +279,29 @@ export class StorageService {
 
     return answer[0].requirements
   }
+
+  getJoinsOfAnswer(answerId: string) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    return answer[0].join
+  }
+
+  removeJoinFromAnswer(answerId: string, nodeId: string) {
+    const savedTree = this.getStoredTree()
+    const answer = this.findAnswerInTree(answerId, savedTree)
+
+    if (answer[0].join) {
+      answer[0].join = answer[0].join.filter((join: any) => {
+        return join.node !== nodeId
+      })
+    }
+
+    this.updateStoredTree(savedTree)
+
+    return answer[0].join
+  }
+
   getDetailedRequirementsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
     const answer = this.findAnswerInTree(answerId, savedTree)

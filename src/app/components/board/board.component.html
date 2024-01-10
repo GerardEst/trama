@@ -21,7 +21,9 @@
       [text]="node.text"
       [answers]="node.answers"
     >
-      <dragHandle cdkDragHandle></dragHandle>
+      <dragHandle cdkDragHandle>
+        <p>{{ node.id }}</p>
+      </dragHandle>
     </polo-node>
   </ng-container>
 </div>

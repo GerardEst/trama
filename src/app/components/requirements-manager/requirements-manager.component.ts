@@ -29,7 +29,6 @@ export class RequirementsManagerComponent {
       this.requirements =
         this.storage.getRequirementsOfAnswer(this.answerId) || []
     }
-    console.log(this.requirements)
   }
 
   createRequirement(type: 'stat' | 'condition') {
