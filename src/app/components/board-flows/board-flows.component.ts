@@ -22,7 +22,7 @@ export class BoardFlowsComponent {
 
   updateFlowLines() {
     // This is called a lot. Caution.
-    console.log('updateFlowLines')
+    // console.log('updateFlowLines')
 
     const svgContainer = this.svg?.nativeElement
 

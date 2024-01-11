@@ -8,6 +8,8 @@ import { StorageService } from 'src/app/services/storage.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
 import { DatabaseService } from 'src/app/services/database.service'
+import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { findAnswerInTree } from 'src/app/utils/tree-searching'
 
 @Component({
   selector: 'polo-board',
@@ -35,11 +37,23 @@ export class BoardComponent {
   savingTree: boolean = false
   boardReference: any
 
-  constructor(private storage: StorageService, private db: DatabaseService) {}
+  constructor(
+    private storage: StorageService,
+    private db: DatabaseService,
+    private sharedBoardService: SharedBoardService
+  ) {}
+
+  ngOnInit() {
+    this.sharedBoardService.updatedJoins.subscribe((joinsData: any) => {
+      const answer = findAnswerInTree(joinsData.answerId, this.tree)
+      answer[0].join = joinsData.joins
+      this.calculateJoins(this.tree.nodes)
+    })
+  }
 
   ngOnChanges() {
     console.log(this.tree.nodes)
-    if (this.tree) this.drawJoins(this.tree.nodes)
+    if (this.tree) this.calculateJoins(this.tree.nodes)
   }
 
   ngAfterViewInit(): void {
@@ -91,7 +105,7 @@ export class BoardComponent {
       finalTransform.y
     )
 
-    this.drawJoins(this.tree.nodes)
+    this.calculateJoins(this.tree.nodes)
   }
 
   async saveToDb() {
@@ -103,7 +117,7 @@ export class BoardComponent {
     }, 200)
   }
 
-  drawJoins(nodes: Array<any>) {
+  calculateJoins(nodes: Array<any>) {
     /** TODO -> Replantejar això. No té sentit calcular absolutament totes les linies cada vegada que es mou algo
      * Mes endavant segurament serà font de problemes de rendiment
      */

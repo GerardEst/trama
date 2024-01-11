@@ -1,6 +1,7 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
+import { SharedBoardService } from 'src/app/services/shared-board-service'
 
 @Component({
   selector: 'polo-joins-manager',
@@ -14,13 +15,24 @@ export class JoinsManagerComponent {
   @Input() joins: Array<any> = []
   @Output() onRemoveJoin: EventEmitter<any> = new EventEmitter()
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private sharedBoardService: SharedBoardService
+  ) {}
 
   unlinkJoin(joinId: string) {
     if (!this.answerId) return
 
-    const newJoins = this.storage.removeJoinFromAnswer(this.answerId, joinId)
+    const updatedJoins = this.storage.removeJoinFromAnswer(
+      this.answerId,
+      joinId
+    )
 
-    this.onRemoveJoin.emit(newJoins)
+    this.sharedBoardService.updatedJoins.next({
+      answerId: this.answerId,
+      joins: updatedJoins,
+    })
+
+    this.onRemoveJoin.emit(updatedJoins)
   }
 }

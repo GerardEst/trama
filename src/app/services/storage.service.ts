@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
 import { node } from '../interfaces'
+import { findAnswerInTree } from '../utils/tree-searching'
 
 @Injectable({
   providedIn: 'root',
@@ -133,7 +134,7 @@ export class StorageService {
 
   addEventToAnswer(answerId: string, newRequirement: any) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (answer[0].events) {
       answer[0].events.push(newRequirement)
@@ -146,7 +147,7 @@ export class StorageService {
 
   getEventsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (!answer[0].events) return []
     return answer[0].events
@@ -154,7 +155,7 @@ export class StorageService {
 
   deleteEventFromAnswer(answerId: string, eventTarget: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (answer[0].events) {
       answer[0].events = answer[0].events.filter((event: any) => {
@@ -167,7 +168,7 @@ export class StorageService {
 
   saveAnswerRequirements(answerId: string, requirements: any) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     answer[0].requirements = requirements
 
@@ -176,7 +177,7 @@ export class StorageService {
 
   saveAnswerEvents(answerId: string, events: any) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     answer[0].events = events
 
@@ -185,7 +186,7 @@ export class StorageService {
 
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (answer[0].requirements) {
       answer[0].requirements = answer[0].requirements.filter((req: any) => {
@@ -239,7 +240,7 @@ export class StorageService {
     amount: number
   ) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (answer[0].requirements) {
       const requirement = answer[0].requirements.find(
@@ -275,21 +276,21 @@ export class StorageService {
 
   getRequirementsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     return answer[0].requirements
   }
 
   getJoinsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     return answer[0].join
   }
 
   removeJoinFromAnswer(answerId: string, nodeId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (answer[0].join) {
       answer[0].join = answer[0].join.filter((join: any) => {
@@ -304,7 +305,7 @@ export class StorageService {
 
   getDetailedRequirementsOfAnswer(answerId: string) {
     const savedTree = this.getStoredTree()
-    const answer = this.findAnswerInTree(answerId, savedTree)
+    const answer = findAnswerInTree(answerId, savedTree)
 
     if (!answer[0].requirements) return []
     const detailedRequirements = answer[0].requirements.map(
@@ -348,15 +349,7 @@ export class StorageService {
 
     return storedTree
   }
-  private findAnswerInTree(answerId: string, tree: any) {
-    const answerNodeId = answerId.split('_')[1]
 
-    const node = tree.nodes.find(
-      (node: any) => node.id === `node_${answerNodeId}`
-    )
-
-    return node.answers?.filter((answer: any) => answer.id === answerId)
-  }
   private updateStoredTree(newTree: Array<any>) {
     localStorage.setItem('polo-tree', JSON.stringify(newTree))
   }
