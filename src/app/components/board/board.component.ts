@@ -104,8 +104,6 @@ export class BoardComponent {
       finalTransform.x,
       finalTransform.y
     )
-
-    this.calculateJoins(this.tree.nodes)
   }
 
   async saveToDb() {
