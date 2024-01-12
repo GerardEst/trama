@@ -13,10 +13,22 @@ import { DatabaseService } from 'src/app/services/database.service'
   styleUrls: ['./playground.component.sass'],
 })
 export class PlaygroundComponent implements OnInit {
+  tracking: boolean = false
+  gotUserInfo: boolean = false
+  userName: string = ''
+
   constructor(private db: DatabaseService) {}
 
   ngOnInit(): void {
     this.loadAdventure()
+  }
+
+  setUserName(event: any) {
+    this.userName = event.target?.value
+  }
+
+  startAdventure() {
+    this.gotUserInfo = true
   }
 
   async getTree(treeId: number) {
@@ -26,19 +38,17 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async loadAdventure() {
+    this.tracking = await this.db.getTrackingOf(21)
     const tree = await this.getTree(21)
 
     const adventure = new Marco({
       domPlace: '.adventure', // El lloc del DOM on es crearà la interacció
       guidebook: tree, // ⚠ Guia on es defineix tot lo relatiu a l'aventura
       config: {
-        defaultJournalEntries: true,
         showLockedAnswers: true,
       },
       character: {
-        name: 'Hero',
-        level: 0,
-        exp: 0,
+        name: 'User',
       },
     })
 
