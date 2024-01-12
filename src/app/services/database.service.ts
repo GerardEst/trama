@@ -87,10 +87,10 @@ export class DatabaseService {
     return data[0].id
   }
 
-  async saveNewGameTo(userId: string, result: any) {
+  async saveNewGameTo(userId: string, tree: number, result: any) {
     const { data, error } = await this.supabase
       .from('games')
-      .insert([{ result, player: userId }])
+      .insert([{ result, player: userId, tree }])
       .select()
   }
 }

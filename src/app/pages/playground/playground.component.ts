@@ -57,10 +57,6 @@ export class PlaygroundComponent implements OnInit {
     adventure.start()
 
     adventure.onWin = (event: any) => {
-      /** Aqui es on hauria de pillar els stats de l'heroi i penjar-los
-       * Necessitaria una manera d'obtenir els stats de l'heroi a marco
-       * tipo adventure.getAllStats() o algo així
-       */
       if (this.tracking) {
         const userFinalStats = adventure.getAllStats()
         this.saveGame(userFinalStats)
@@ -75,6 +71,6 @@ export class PlaygroundComponent implements OnInit {
   async saveGame(result: any) {
     console.log(result)
     const newUserId = await this.db.saveNewAnonymousUser(this.userName)
-    this.db.saveNewGameTo(newUserId, result)
+    this.db.saveNewGameTo(newUserId, this.treeId, result)
   }
 }
