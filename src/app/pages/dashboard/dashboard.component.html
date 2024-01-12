@@ -1,2 +1,10 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
 <polo-menu [treeId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
+<label style="position: absolute; bottom: 0; right: 0">
+  <span>Enable tracking</span>
+  <input
+    (change)="toggleTracking()"
+    type="checkbox"
+    [checked]="trackingEnabled"
+  />
+</label>

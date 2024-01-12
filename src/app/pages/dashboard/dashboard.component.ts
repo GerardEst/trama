@@ -15,11 +15,23 @@ export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
   tree?: any
   id?: number
+  trackingEnabled: boolean = false
 
   constructor(private db: DatabaseService) {}
 
   ngOnInit(): void {
     this.initBoard()
+    this.updateTracking()
+  }
+
+  async updateTracking() {
+    if (this.id) this.trackingEnabled = await this.db.getTrackingOf(this.id)
+  }
+  toggleTracking() {
+    if (this.id) {
+      this.trackingEnabled = !this.trackingEnabled
+      this.db.setTrackingOf(this.id, this.trackingEnabled)
+    }
   }
 
   async loadTree(treeId: number) {
@@ -30,6 +42,7 @@ export class DashboardComponent {
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
 
     this.board?.centerToNode(this.tree.nodes[0])
+    this.updateTracking()
   }
 
   initBoard() {

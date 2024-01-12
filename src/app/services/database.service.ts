@@ -56,4 +56,23 @@ export class DatabaseService {
     if (error) return false
     return true
   }
+
+  async getTrackingOf(treeId: number) {
+    let { data, error } = await this.supabase
+      .from('trees')
+      .select('tracking')
+      .eq('id', treeId)
+
+    return data[0].tracking
+  }
+  async setTrackingOf(treeId: number, tracking: boolean) {
+    const { data, error } = await this.supabase
+      .from('trees')
+      .update({ tracking: tracking })
+      .eq('id', treeId)
+      .select()
+
+    if (error) return false
+    return true
+  }
 }
