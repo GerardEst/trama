@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 /** Load ✨marco✨ */
 //@ts-ignore
@@ -16,11 +16,16 @@ export class PlaygroundComponent implements OnInit {
   tracking: boolean = false
   gotUserInfo: boolean = false
   userName: string = ''
+  treeId: number = 0
+  @Input() set id(treeId: number) {
+    this.treeId = treeId
+  }
 
   constructor(private db: DatabaseService) {}
 
   ngOnInit(): void {
-    this.loadAdventure()
+    this.getTreeConfiguration(this.treeId)
+    this.loadAdventure(this.treeId)
   }
 
   setUserName(event: any) {
@@ -31,15 +36,12 @@ export class PlaygroundComponent implements OnInit {
     this.gotUserInfo = true
   }
 
-  async getTree(treeId: number) {
-    const tree = await this.db.getTree(treeId)
-
-    return tree
+  async getTreeConfiguration(treeId: number) {
+    this.tracking = await this.db.getTrackingOf(treeId)
   }
 
-  async loadAdventure() {
-    this.tracking = await this.db.getTrackingOf(21)
-    const tree = await this.getTree(21)
+  async loadAdventure(treeId: number) {
+    const tree = await this.db.getTree(treeId)
 
     const adventure = new Marco({
       domPlace: '.adventure', // El lloc del DOM on es crearà la interacció
@@ -53,5 +55,18 @@ export class PlaygroundComponent implements OnInit {
     })
 
     adventure.start()
+
+    adventure.onWin = (event: any) => {
+      /** Aqui es on hauria de pillar els stats de l'heroi i penjar-los
+       * Necessitaria una manera d'obtenir els stats de l'heroi a marco
+       * tipo adventure.getAllStats() o algo així
+       */
+      const userFinalStats = adventure.getAllStats()
+      console.log(userFinalStats)
+    }
+
+    adventure.onAlterStat = (event: any) => {
+      console.log('Stat altered', event)
+    }
   }
 }

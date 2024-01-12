@@ -208,7 +208,7 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  createNewRef(name: string, type: 'stat' | 'condition') {
+  createNewRef(name: string, type: 'stat' | 'condition' | 'win' | 'end') {
     const savedTree = this.getStoredTree()
 
     if (!savedTree.refs) {
@@ -320,7 +320,7 @@ export class StorageService {
     return detailedRequirements
   }
 
-  getRefsFormatted(type: 'stat' | 'condition') {
+  getRefsFormatted(type: 'stat' | 'condition' | 'win' | 'end') {
     const savedTree = this.getStoredTree()
     const refs = savedTree.refs
 

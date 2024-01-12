@@ -54,7 +54,7 @@ export class Marco {
   }
 
   alterStat(event) {
-    console.log('alter stat: ', event)
+    // console.log('alter stat: ', event)
     if (!this.character.stats) {
       if (event.amount > 0) {
         this.character.stats = []
@@ -83,7 +83,7 @@ export class Marco {
   }
 
   alterCondition(event) {
-    console.log('alter condition: ', event)
+    // console.log('alter condition: ', event)
     if (event.amount) {
       if (!this.character.conditions) this.character.conditions = []
     } else {
@@ -171,7 +171,13 @@ export class Marco {
 
     // Register every event
     if (answer.events) {
-      for (let event of answer.events) {
+      // We must launch the alterations first, and then the ends, for answers that ends the history but also do some last modification
+      const alters = answer.events.filter(event => event.action === 'alterStat' || event.action === 'alterCondition')
+      const ends = answer.events.filter(event => event.action === 'win' || event.action === 'end')
+      for (let event of alters) {
+        answerLayout.addEventListener('click', () => this[event.action](event))
+      }
+      for (let event of ends) {
         answerLayout.addEventListener('click', () => this[event.action](event))
       }
     }
@@ -194,5 +200,9 @@ export class Marco {
     answerLayout.addEventListener('click', () => this.drawNode(node))
 
     return answerLayout
+  }
+
+  getAllStats() {
+    return this.character
   }
 }

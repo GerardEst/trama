@@ -98,6 +98,10 @@ export class EventComponent implements OnInit {
       ? 'stat'
       : this.action === 'alterCondition'
       ? 'condition'
+      : this.action === 'win'
+      ? 'win'
+      : this.action === 'end'
+      ? 'end'
       : undefined
   }
 

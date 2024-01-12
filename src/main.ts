@@ -1,5 +1,9 @@
 import { bootstrapApplication } from '@angular/platform-browser'
-import { provideRouter, Routes } from '@angular/router'
+import {
+  provideRouter,
+  Routes,
+  withComponentInputBinding,
+} from '@angular/router'
 import { AppComponent } from './app/app.component'
 import { provideAnimations } from '@angular/platform-browser/animations'
 import { DashboardComponent } from './app/pages/dashboard/dashboard.component'
@@ -12,5 +16,8 @@ const appRoutes: Routes = [
 ]
 
 bootstrapApplication(AppComponent, {
-  providers: [provideRouter(appRoutes), provideAnimations()],
+  providers: [
+    provideRouter(appRoutes, withComponentInputBinding()),
+    provideAnimations(),
+  ],
 })
