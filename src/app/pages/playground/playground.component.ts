@@ -61,12 +61,20 @@ export class PlaygroundComponent implements OnInit {
        * Necessitaria una manera d'obtenir els stats de l'heroi a marco
        * tipo adventure.getAllStats() o algo així
        */
-      const userFinalStats = adventure.getAllStats()
-      console.log(userFinalStats)
+      if (this.tracking) {
+        const userFinalStats = adventure.getAllStats()
+        this.saveGame(userFinalStats)
+      }
     }
 
     adventure.onAlterStat = (event: any) => {
       console.log('Stat altered', event)
     }
+  }
+
+  async saveGame(result: any) {
+    console.log(result)
+    const newUserId = await this.db.saveNewAnonymousUser(this.userName)
+    this.db.saveNewGameTo(newUserId, result)
   }
 }

@@ -75,4 +75,22 @@ export class DatabaseService {
     if (error) return false
     return true
   }
+
+  async saveNewAnonymousUser(name: string) {
+    const { data, error } = await this.supabase
+      .from('anonymous_players')
+      .insert([{ name }])
+      .select()
+    if (error) {
+      return false
+    }
+    return data[0].id
+  }
+
+  async saveNewGameTo(userId: string, result: any) {
+    const { data, error } = await this.supabase
+      .from('games')
+      .insert([{ result, player: userId }])
+      .select()
+  }
 }
