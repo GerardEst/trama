@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'polo-dashboard',
@@ -16,8 +17,9 @@ export class DashboardComponent {
   tree?: any
   id?: number
   trackingEnabled: boolean = false
+  savingTree: boolean = false
 
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService, private router: Router) {}
 
   ngOnInit(): void {
     this.initBoard()
@@ -32,6 +34,26 @@ export class DashboardComponent {
       this.trackingEnabled = !this.trackingEnabled
       this.db.setTrackingOf(this.id, this.trackingEnabled)
     }
+  }
+
+  goToPlayground() {
+    // Use the router to navigate to the playground with the id of the tree
+
+    this.router.navigate(['/playground', this.id])
+  }
+
+  async saveToDb() {
+    this.savingTree = true
+    const resp = await this.db.saveLocalToDB()
+    console.log('Saved?', resp)
+    setTimeout(() => {
+      this.savingTree = false
+    }, 200)
+  }
+
+  exportTree() {
+    //@ts-ignore
+    navigator.clipboard.writeText(localStorage.getItem('polo-tree'))
   }
 
   async loadTree(treeId: number) {

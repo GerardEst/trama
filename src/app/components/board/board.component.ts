@@ -34,7 +34,6 @@ export class BoardComponent {
   willJoinId?: string
   joins: Array<any> = []
 
-  savingTree: boolean = false
   boardReference: any
 
   constructor(
@@ -106,15 +105,6 @@ export class BoardComponent {
     )
   }
 
-  async saveToDb() {
-    this.savingTree = true
-    const resp = await this.db.saveLocalToDB()
-    console.log('Saved?', resp)
-    setTimeout(() => {
-      this.savingTree = false
-    }, 200)
-  }
-
   calculateJoins(nodes: Array<any>) {
     /** TODO -> Replantejar això. No té sentit calcular absolutament totes les linies cada vegada que es mou algo
      * Mes endavant segurament serà font de problemes de rendiment
@@ -180,11 +170,6 @@ export class BoardComponent {
     this.storage.updateAnswerJoin(this.willJoinId, newNodeInfo.id)
 
     this.waitingForJoin = false
-  }
-
-  exportTree() {
-    //@ts-ignore
-    navigator.clipboard.writeText(localStorage.getItem('polo'))
   }
 
   removeNode(event: any) {
