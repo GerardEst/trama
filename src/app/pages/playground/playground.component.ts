@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common'
 //@ts-ignore
 import { Marco } from '../../modules/marco/Marco.js'
 import { DatabaseService } from 'src/app/services/database.service'
+import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ModalWindowComponent],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })
