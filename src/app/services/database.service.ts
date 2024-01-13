@@ -65,6 +65,7 @@ export class DatabaseService {
 
     return data[0].tracking
   }
+
   async setTrackingOf(treeId: number, tracking: boolean) {
     const { data, error } = await this.supabase
       .from('trees')
@@ -74,6 +75,17 @@ export class DatabaseService {
 
     if (error) return false
     return true
+  }
+
+  async getStadisticsOfTree(treeId: number) {
+    const { data, error } = await this.supabase
+      .from('games')
+      .select('created_at, result, player(name)')
+      .eq('tree', treeId)
+
+    if (error) return false
+
+    return data
   }
 
   async saveNewAnonymousUser(name: string) {

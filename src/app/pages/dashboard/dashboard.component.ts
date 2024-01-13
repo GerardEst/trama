@@ -42,6 +42,16 @@ export class DashboardComponent {
     this.router.navigate(['/playground', this.id])
   }
 
+  async openStadistics() {
+    if (!this.id) {
+      console.warn('No tree selected')
+      return
+    }
+    const treeStadistics = await this.db.getStadisticsOfTree(this.id)
+
+    alert(JSON.stringify(treeStadistics))
+  }
+
   async saveToDb() {
     this.savingTree = true
     const resp = await this.db.saveLocalToDB()
