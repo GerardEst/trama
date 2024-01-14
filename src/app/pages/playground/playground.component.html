@@ -1,6 +1,6 @@
 <p>{{ this.userName }}</p>
 <section class="adventure"></section>
-<polo-modal-window *ngIf="tracking && !gotUserInfo">
+<polo-modal-window *ngIf="tracking && !gotUserInfo" [locked]="true">
   <div class="playerForm">
     <input type="text" (change)="setUserName($event)" placeholder="Nom" />
     <button (click)="startAdventure()">Començar!</button>

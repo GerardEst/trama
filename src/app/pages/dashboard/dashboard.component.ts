@@ -37,19 +37,11 @@ export class DashboardComponent {
   }
 
   goToPlayground() {
-    // Use the router to navigate to the playground with the id of the tree
-
     this.router.navigate(['/playground', this.id])
   }
 
   async openStadistics() {
-    if (!this.id) {
-      console.warn('No tree selected')
-      return
-    }
-    const treeStadistics = await this.db.getStadisticsOfTree(this.id)
-
-    alert(JSON.stringify(treeStadistics))
+    this.router.navigate(['/stadistics', this.id])
   }
 
   async saveToDb() {

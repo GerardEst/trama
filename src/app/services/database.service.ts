@@ -88,6 +88,20 @@ export class DatabaseService {
     return data
   }
 
+  async getRefsOfTree(treeId: number) {
+    const { data, error } = await this.supabase
+      .from('trees')
+      .select(`refs: tree->refs`)
+      .eq('id', treeId)
+
+    if (error) {
+      console.log(error)
+      return
+    }
+
+    return data[0].refs
+  }
+
   async saveNewAnonymousUser(name: string) {
     const { data, error } = await this.supabase
       .from('anonymous_players')

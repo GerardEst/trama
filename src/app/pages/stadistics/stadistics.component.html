@@ -1,0 +1,8 @@
+<div *ngFor="let play of plays">
+  <p>{{ normalizeDate(play.created_at) }}</p>
+  <p>{{ play.player.name }}</p>
+  <div *ngFor="let stat of play.result.stats" class="">
+    <p>{{ getRefName(stat.id) }}</p>
+    <p>{{ stat.amount }}</p>
+  </div>
+</div>
