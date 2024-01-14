@@ -25,8 +25,8 @@ export class PlaygroundComponent implements OnInit {
 
   constructor(private db: DatabaseService) {}
 
-  ngOnInit(): void {
-    this.getTreeConfiguration(this.treeId)
+  async ngOnInit(): Promise<void> {
+    await this.getTreeConfiguration(this.treeId)
     if (!this.tracking) this.startAdventure()
   }
 
