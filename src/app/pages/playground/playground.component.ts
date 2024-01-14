@@ -27,6 +27,7 @@ export class PlaygroundComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTreeConfiguration(this.treeId)
+    if (!this.tracking) this.startAdventure()
   }
 
   setUserName(event: any) {

@@ -37,7 +37,7 @@ export class DashboardComponent {
   }
 
   goToPlayground() {
-    this.router.navigate(['/playground', this.id])
+    window.open('/playground/' + this.id, '_blank')
   }
 
   async openStadistics() {
