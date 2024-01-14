@@ -31,9 +31,6 @@ export class StadisticsComponent implements OnInit {
 
     this.refs = await this.db.getRefsOfTree(this.treeId)
     this.plays = await this.db.getStadisticsOfTree(this.treeId)
-
-    console.log(this.refs)
-    console.log(this.plays)
   }
 
   getRefName(id: number) {
