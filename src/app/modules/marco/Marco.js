@@ -123,11 +123,17 @@ export class Marco {
 
     document.querySelector('.node')?.remove()
 
+    /* the text can have <data> that has to be replaced */
+    const textWithParams = node.text.replace(
+      /<([a-zA-Z0-9]+)>/g,
+      (match, p1) => this.character[p1]
+    )
+
     let nodeLayout = document.createElement('div')
     nodeLayout.className = 'node'
     nodeLayout.id = node.id
     nodeLayout.dataset.join = node.join
-    nodeLayout.innerHTML = `<div class="node__text"><p>${node.text}</p></div>`
+    nodeLayout.innerHTML = `<div class="node__text"><p>${textWithParams}</p></div>`
 
     let nodeAnswers = document.createElement('div')
     nodeAnswers.className = 'node__answers'
@@ -145,11 +151,17 @@ export class Marco {
   }
 
   drawAnswer(answer) {
+    /* the text can have <data> that has to be replaced */
+    const textWithParams = answer.text.replace(
+      /<([a-zA-Z0-9]+)>/g,
+      (match, p1) => this.character[p1]
+    )
+
     let answerLayout = document.createElement('div')
     answerLayout.className = 'answer'
     answerLayout.id = answer.id
     answerLayout.dataset.join = answer.join
-    answerLayout.innerHTML = `<p>${answer.text}</p>`
+    answerLayout.innerHTML = `<p>${textWithParams}</p>`
 
     // Check if answer is available based on requirements vs character stats
     let { availableAnswer, checkedRequirements } = hasRequirements(

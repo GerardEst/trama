@@ -1,8 +1,12 @@
-.player
-  border: 1px solid var(--medium-gray)
-  max-width: 200px
-  padding: 1rem
+.cards
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
+  grid-gap: 1rem
   margin: 1rem
+
+.player
+  border: 1px solid var(--dark-gray)
+  padding: 1rem
   &__data
     display: flex
     justify-content: space-between

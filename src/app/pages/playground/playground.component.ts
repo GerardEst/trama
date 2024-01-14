@@ -16,6 +16,7 @@ import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-w
 export class PlaygroundComponent implements OnInit {
   tracking: boolean = false
   gotUserInfo: boolean = false
+  endGame: boolean = false
   userName: string = ''
   treeId: number = 0
   @Input() set id(treeId: number) {
@@ -26,7 +27,6 @@ export class PlaygroundComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTreeConfiguration(this.treeId)
-    this.loadAdventure(this.treeId)
   }
 
   setUserName(event: any) {
@@ -34,6 +34,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   startAdventure() {
+    this.loadAdventure(this.treeId, this.userName)
     this.gotUserInfo = true
   }
 
@@ -41,7 +42,7 @@ export class PlaygroundComponent implements OnInit {
     this.tracking = await this.db.getTrackingOf(treeId)
   }
 
-  async loadAdventure(treeId: number) {
+  async loadAdventure(treeId: number, playerName: string) {
     const tree = await this.db.getTree(treeId)
 
     const adventure = new Marco({
@@ -51,7 +52,7 @@ export class PlaygroundComponent implements OnInit {
         showLockedAnswers: true,
       },
       character: {
-        name: 'User',
+        name: playerName,
       },
     })
 
@@ -62,16 +63,24 @@ export class PlaygroundComponent implements OnInit {
         const userFinalStats = adventure.getAllStats()
         this.saveGame(userFinalStats)
       }
+      this.endGame = true
     }
-
-    adventure.onAlterStat = (event: any) => {
-      console.log('Stat altered', event)
+    adventure.onEnd = (event: any) => {
+      if (this.tracking) {
+        const userFinalStats = adventure.getAllStats()
+        this.saveGame(userFinalStats)
+      }
+      this.endGame = true
     }
   }
 
   async saveGame(result: any) {
-    console.log(result)
     const newUserId = await this.db.saveNewAnonymousUser(this.userName)
-    this.db.saveNewGameTo(newUserId, this.treeId, result)
+    const saved = await this.db.saveNewGameTo(newUserId, this.treeId, result)
+    if (saved) {
+      console.log('Game saved!', saved)
+    } else {
+      console.error('Error saving game')
+    }
   }
 }

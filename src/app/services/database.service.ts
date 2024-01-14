@@ -118,5 +118,11 @@ export class DatabaseService {
       .from('games')
       .insert([{ result, player: userId, tree }])
       .select()
+    if (error) {
+      console.log(error)
+      return false
+    }
+
+    return data[0]
   }
 }
