@@ -21,32 +21,33 @@ export class Marco {
 
     const style = document.createElement('style');
     style.innerHTML = `
-      p{
+
+      .adventure p{
         font-size: 1rem;
         line-height: 150%;
       }
-      .node{
+      .adventure .node{
         display: flex;
         flex-direction: column;
       }
-      .node__answers{
+      .adventure .node__answers{
         display: flex;
         flex-direction: column;
         gap: 1rem;
         margin-top: 3rem;
       }
-      .answer{
+      .adventure .answer{
         cursor: pointer;
         padding: 0.8rem 1rem;
         background-color: #eeeeee;
       }
-      .answer:hover{
+      .adventure .answer:hover{
 
       }
-      .answer--notAvailable{
+      .adventure .answer--notAvailable{
         opacity: 0.2;
       }
-      .answer--notAvailable--hidden{
+      .adventure .answer--notAvailable--hidden{
         display: none;
       }
     `;
