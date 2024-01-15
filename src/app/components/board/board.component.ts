@@ -51,8 +51,7 @@ export class BoardComponent {
   }
 
   ngOnChanges() {
-    console.log(this.tree.nodes)
-    if (this.tree) this.calculateJoins(this.tree.nodes)
+    if (this.tree) this.calculateJoins(this.tree?.nodes)
   }
 
   ngAfterViewInit(): void {
@@ -61,7 +60,7 @@ export class BoardComponent {
       maxZoom: 1,
       minZoom: 0.5,
     })
-    this.centerToNode(this.tree.nodes[0])
+    if (this.tree) this.centerToNode(this.tree.nodes[0])
   }
 
   public centerToNode(node: any) {
@@ -107,7 +106,7 @@ export class BoardComponent {
 
   calculateJoins(nodes: Array<any>) {
     /** TODO -> Replantejar això. No té sentit calcular absolutament totes les linies cada vegada que es mou algo
-     * Mes endavant segurament serà font de problemes de rendiment
+     * Mes endavant segurament donarà problemes de rendiment
      */
     this.joins = []
     for (let node of nodes) {
@@ -125,7 +124,6 @@ export class BoardComponent {
         }
       }
     }
-    console.log(this.joins)
   }
 
   willJoin(answerId: string) {

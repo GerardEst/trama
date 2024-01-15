@@ -70,17 +70,29 @@ export class DashboardComponent {
   }
 
   initBoard() {
-    // When there is local data, we use it
-    if (localStorage.getItem('polo-id') && localStorage.getItem('polo-tree')) {
-      //@ts-ignore
-      const storedTree = JSON.parse(localStorage.getItem('polo-tree'))
-      //@ts-ignore
-      const storedTreeId = JSON.parse(localStorage.getItem('polo-id'))
+    const currentSession = sessionStorage.getItem('polo-session')
+    const localTree = localStorage.getItem('polo-tree')
+    const localTreeId = localStorage.getItem('polo-id')
 
-      this.id = storedTreeId
-      this.tree = storedTree
+    if (currentSession && localTreeId && localTree) {
+      console.log('Tree loaded from local')
 
-      return
+      // When there is local data, and we are in the same session, we use local data
+      this.id = JSON.parse(localTreeId)
+      this.tree = JSON.parse(localTree)
+      // this.board?.centerToNode(this.tree.nodes[0])
+    } else if (!currentSession && localTreeId) {
+      console.warn('Tree loaded from db')
+
+      // When there is local data, but we are not in the same session, we use the db data to load the local tree
+      this.loadTree(JSON.parse(localTreeId))
+      sessionStorage.setItem('polo-session', 'true')
+    } else {
+      console.warn('Tree not loaded')
+
+      this.tree = undefined
+      this.id = undefined
+      sessionStorage.setItem('polo-session', 'true')
     }
   }
 }
