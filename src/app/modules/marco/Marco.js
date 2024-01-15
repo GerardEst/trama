@@ -125,7 +125,7 @@ export class Marco {
     document.querySelector('.node')?.remove()
 
     /* the text can have <data> that has to be replaced */
-    const textWithParams = node.text.replace(
+    const textWithParams = node.text?.replace(
       /<([a-zA-Z0-9]+)>/g,
       (match, p1) => this.player[p1]
     )
@@ -153,7 +153,7 @@ export class Marco {
 
   drawAnswer(answer) {
     /* the text can have <data> that has to be replaced */
-    const textWithParams = answer.text.replace(
+    const textWithParams = answer.text?.replace(
       /<([a-zA-Z0-9]+)>/g,
       (match, p1) => this.player[p1]
     )
@@ -195,7 +195,7 @@ export class Marco {
     }
 
     // It there is no node to join, go on (the click will activate the events and journal, but will stay on the same node without updating)
-    if (!answer.join) return answerLayout
+    if (!answer.join || answer.join.length === 0) return answerLayout
 
     let destiny = getJoinRandom(answer.join)
 
