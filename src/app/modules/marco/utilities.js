@@ -46,52 +46,35 @@ export function checkErrorsInProbabilities(probabilities) {
 
 export function hasRequirements(player, requirements) {
 
-  if (!requirements) {
-    return true
-  }
+  if (!requirements) return true
 
+  // If just some of the requirements is not met, we can throw false and stop checking
   for (let requirement of requirements) {
     if (requirement.type === 'stat') {
 
-      // Si el jugador no té stats, directament fora
       if (player.stats.length === 0) return false
 
-      // Si té stats però cap és l'id que ens interessa, res
       const playerHasSomeRequiredStats = player.stats.some(stat => stat.id === requirement.id)
       if (!playerHasSomeRequiredStats) return false
 
-      // Si arriba aqui, entenem que hi ha un o més estats que ens interessen
-      // Si algun d'aquets és fals, hem de retornar false. Busquem si n'hi ha algun
       const someUnsatisfiedStat = player.stats.some(stat => stat.amount < requirement.amount)
       if (someUnsatisfiedStat) return false
-
     }
     if (requirement.type === 'condition') {
 
+      // In conditions, the requirement might be that the condition is not checked
       const conditionIsRequired = requirement.amount === 1
 
-      // Si la condició és requerida (1) i el jugador no la té, fora
-      if (conditionIsRequired && player.conditions.length === 0) {
-        return false
-      }
+      // If condition should be checked but player doesn't have any conditions
+      if (conditionIsRequired && player.conditions.length === 0) return false
 
+      // If condition should be checked but player doesn't have this condition
       const playerHasSomeRequiredConditions = player.conditions.some(condition => condition.id === requirement.id)
-      // Si la condicio es requerida pero no en tenim ni una, estem fora
-      if (conditionIsRequired && !playerHasSomeRequiredConditions) {
-        return false
-      }
+      if (conditionIsRequired && !playerHasSomeRequiredConditions) return false
 
-      // Si arriba aqui, entenem que hi ha una o més condicions que ens interessen
-      // Ara ens trobem amb condicions que tenen 0 o 1
-      // Aqui hauria de fer un for o algo perque aixo no xuta
       for (let condition of player.conditions) {
-        if (condition.id === requirement.id) {
-          // Si es el que busquem, checkeguem
-          if (!conditionIsRequired) {
-            // Si la condicio havia de ser negada, pos al tenirla hem de tornar false
-            return false
-          }
-        }
+        // If player has the condition, but it should not be checked
+        if (condition.id === requirement.id && !conditionIsRequired) return false
       }
     }
   }
