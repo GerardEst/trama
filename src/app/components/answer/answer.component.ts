@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
+import { SharedBoardService } from 'src/app/services/shared-board-service'
 
 @Component({
   selector: 'polo-answer',
@@ -26,7 +27,11 @@ export class AnswerComponent {
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
 
-  constructor(private storage: StorageService, public elementRef: ElementRef) {}
+  constructor(
+    private storage: StorageService,
+    public elementRef: ElementRef,
+    private sharedBoard: SharedBoardService
+  ) {}
 
   openOptions() {
     if (!this.optionsContainer) return
@@ -41,9 +46,11 @@ export class AnswerComponent {
     const subscriptions: Array<any> = []
     subscriptions.push(
       ref.instance.onRemoveAnswer.subscribe(() => {
+        this.sharedBoard.resumeBoardDrag()
         this.removeAnswer()
       }),
       ref.instance.onClosePopup.subscribe(() => {
+        this.sharedBoard.resumeBoardDrag()
         ref.destroy()
         for (let subscription of subscriptions) {
           // I checked that if we don't unsubscribe, the subscription status closed is false even when I close the popup.

@@ -34,8 +34,6 @@ export class BoardComponent {
   willJoinId?: string
   joins: Array<any> = []
 
-  boardReference: any
-
   constructor(
     private storage: StorageService,
     private db: DatabaseService,
@@ -56,26 +54,29 @@ export class BoardComponent {
 
   ngAfterViewInit(): void {
     //https://github.com/anvaka/panzoom
-    this.boardReference = createPanZoom(this.board?.nativeElement, {
-      maxZoom: 1,
-      minZoom: 0.5,
-      filterKey: function (/* e, dx, dy, dz */) {
-        // don't let panzoom handle this event:
-        return true
-      },
-    })
+    this.sharedBoardService.boardReference = createPanZoom(
+      this.board?.nativeElement,
+      {
+        maxZoom: 1,
+        minZoom: 0.5,
+        filterKey: function (/* e, dx, dy, dz */) {
+          // don't let panzoom handle this event:
+          return true
+        },
+      }
+    )
     if (this.tree) this.centerToNode(this.tree.nodes[0])
   }
 
   public centerToNode(node: any) {
     // Here we should calculate the correct transform taken into account the zoom level
     // Now it "works" but it's not perfect
-    const scale = this.boardReference.getTransform().scale
+    const scale = this.sharedBoardService.boardReference.getTransform().scale
 
     const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
     const finalY = (-node.top + window.innerHeight / 2 - 200) * scale
 
-    this.boardReference.moveTo(finalX, finalY)
+    this.sharedBoardService.boardReference.moveTo(finalX, finalY)
   }
 
   focusNode(node: any) {
@@ -85,11 +86,11 @@ export class BoardComponent {
     node.style.zIndex = 0
   }
   mouseEnter(event: any) {
-    this.boardReference.pause()
+    this.sharedBoardService.boardReference.pause()
     this.focusNode(event.target)
   }
   mouseLeave(event: any) {
-    this.boardReference.resume()
+    this.sharedBoardService.boardReference.resume()
     this.blurNode(event.target)
   }
   dragStarted(event: any) {
