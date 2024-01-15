@@ -52,7 +52,7 @@ export class PlaygroundComponent implements OnInit {
       config: {
         showLockedAnswers: true,
       },
-      character: {
+      player: {
         name: playerName,
       },
     })
@@ -72,6 +72,9 @@ export class PlaygroundComponent implements OnInit {
         this.saveGame(userFinalStats)
       }
       this.endGame = true
+    }
+    adventure.onAlterCondition = (event: any) => {
+      console.log(adventure.getAllStats())
     }
   }
 

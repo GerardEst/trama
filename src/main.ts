@@ -14,7 +14,6 @@ const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'playground/:id', component: PlaygroundComponent },
   { path: 'stadistics/:id', component: StadisticsComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 ]
 
 bootstrapApplication(AppComponent, {

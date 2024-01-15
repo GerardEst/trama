@@ -12,7 +12,7 @@ export class Marco {
 
     this.guidebook = options.guidebook
     this.domPlace = options.domPlace
-    this.character = options.character
+    this.player = { stats: [], conditions: [], ...options.player }
     this.config = options.config
   }
 
@@ -56,25 +56,25 @@ export class Marco {
 
   alterStat(event) {
     // console.log('alter stat: ', event)
-    if (!this.character.stats) {
+    if (!this.player.stats) {
       if (event.amount > 0) {
-        this.character.stats = []
+        this.player.stats = []
       } else {
         return
       }
     }
 
-    let statIndex = this.character.stats.findIndex(
+    let statIndex = this.player.stats.findIndex(
       (element) => element.id === event.target
     )
-    let stat = this.character.stats[statIndex]
+    let stat = this.player.stats[statIndex]
 
     if (stat) {
       stat.amount += parseInt(event.amount)
-      if (stat.amount <= 0) this.character.stats.splice(statIndex, 1)
+      if (stat.amount <= 0) this.player.stats.splice(statIndex, 1)
     } else {
       if (event.amount <= 0) return
-      this.character.stats.push({
+      this.player.stats.push({
         id: event.target,
         amount: parseInt(event.amount),
       })
@@ -86,23 +86,23 @@ export class Marco {
   alterCondition(event) {
     // console.log('alter condition: ', event)
     if (event.amount) {
-      if (!this.character.conditions) this.character.conditions = []
+      if (!this.player.conditions) this.player.conditions = []
     } else {
-      if (!this.character.conditions) return
+      if (!this.player.conditions) return
     }
 
     if (event.amount) {
-      let condition = this.character.conditions.find(
+      let condition = this.player.conditions.find(
         (element) => element.id === event.target
       )
 
-      if (!condition) this.character.conditions.push({ id: event.target })
+      if (!condition) this.player.conditions.push({ id: event.target })
     } else {
-      let condition = this.character.conditions.findIndex(
+      let condition = this.player.conditions.findIndex(
         (condition) => condition.id === event.target
       )
 
-      this.character.conditions.splice(condition, 1)
+      this.player.conditions.splice(condition, 1)
     }
 
     if (this.onAlterCondition) this.onAlterCondition(event)
@@ -127,7 +127,7 @@ export class Marco {
     /* the text can have <data> that has to be replaced */
     const textWithParams = node.text.replace(
       /<([a-zA-Z0-9]+)>/g,
-      (match, p1) => this.character[p1]
+      (match, p1) => this.player[p1]
     )
 
     let nodeLayout = document.createElement('div')
@@ -155,7 +155,7 @@ export class Marco {
     /* the text can have <data> that has to be replaced */
     const textWithParams = answer.text.replace(
       /<([a-zA-Z0-9]+)>/g,
-      (match, p1) => this.character[p1]
+      (match, p1) => this.player[p1]
     )
 
     let answerLayout = document.createElement('div')
@@ -164,9 +164,9 @@ export class Marco {
     answerLayout.dataset.join = answer.join
     answerLayout.innerHTML = `<p>${textWithParams}</p>`
 
-    // Check if answer is available based on requirements vs character stats
-    let { availableAnswer, checkedRequirements } = hasRequirements(
-      this.character,
+    // Check if answer is available based on requirements vs player stats
+    let availableAnswer = hasRequirements(
+      this.player,
       answer.requirements
     )
 
@@ -177,8 +177,7 @@ export class Marco {
           ? 'answer--notAvailable'
           : 'answer--notAvailable--hidden'
       )
-      if (this.onFailedRequirements)
-        this.onFailedRequirements(checkedRequirements, answer.id)
+
       return answerLayout
     }
 
@@ -216,6 +215,6 @@ export class Marco {
   }
 
   getAllStats() {
-    return this.character
+    return this.player
   }
 }

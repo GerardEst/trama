@@ -44,68 +44,56 @@ export function checkErrorsInProbabilities(probabilities) {
   return false
 }
 
-export function hasRequirements(hero, requirements) {
-  let checkedRequirements = {
-    stats: [],
-    conditions: [],
-  }
-  let availableAnswer = true
+export function hasRequirements(player, requirements) {
 
-  if (!requirements)
-    return {
-      availableAnswer: true,
-      checkedRequirements: 'Answer with 0 requirements',
-    }
+  if (!requirements) {
+    return true
+  }
 
   for (let requirement of requirements) {
     if (requirement.type === 'stat') {
-      checkedRequirements.stats.push(requirement)
-      if (hero.stats && hero.stats.length > 0) {
-        for (let heroStat of hero.stats) {
-          if (
-            requirement.id === heroStat.id &&
-            requirement.amount <= heroStat.amount
-          ) {
-            checkedRequirements.stats.slice(-1)[0].available = true
-            break
-          } else {
-            checkedRequirements.stats.slice(-1)[0].available = false
-          }
-        }
-        if (availableAnswer)
-          availableAnswer = checkedRequirements.stats.slice(-1)[0].available
-      } else {
-        checkedRequirements.stats.slice(-1)[0].available = false
-        availableAnswer = false
-      }
-    }
 
+      // Si el jugador no té stats, directament fora
+      if (player.stats.length === 0) return false
+
+      // Si té stats però cap és l'id que ens interessa, res
+      const playerHasSomeRequiredStats = player.stats.some(stat => stat.id === requirement.id)
+      if (!playerHasSomeRequiredStats) return false
+
+      // Si arriba aqui, entenem que hi ha un o més estats que ens interessen
+      // Si algun d'aquets és fals, hem de retornar false. Busquem si n'hi ha algun
+      const someUnsatisfiedStat = player.stats.some(stat => stat.amount < requirement.amount)
+      if (someUnsatisfiedStat) return false
+
+    }
     if (requirement.type === 'condition') {
-      checkedRequirements.conditions.push(requirement)
-      if (hero.conditions && hero.conditions.length > 0) {
-        for (let heroCondition of hero.conditions) {
-          if (requirement.id === heroCondition.id) {
-            checkedRequirements.conditions.slice(-1)[0].available =
-              requirement.amount === '0' ? false : true
-            break
-          } else {
-            checkedRequirements.conditions.slice(-1)[0].available =
-              requirement.amount === '0' ? true : false
+
+      const conditionIsRequired = requirement.amount === 1
+
+      // Si la condició és requerida (1) i el jugador no la té, fora
+      if (conditionIsRequired && player.conditions.length === 0) {
+        return false
+      }
+
+      const playerHasSomeRequiredConditions = player.conditions.some(condition => condition.id === requirement.id)
+      // Si la condicio es requerida pero no en tenim ni una, estem fora
+      if (conditionIsRequired && !playerHasSomeRequiredConditions) {
+        return false
+      }
+
+      // Si arriba aqui, entenem que hi ha una o més condicions que ens interessen
+      // Ara ens trobem amb condicions que tenen 0 o 1
+      // Aqui hauria de fer un for o algo perque aixo no xuta
+      for (let condition of player.conditions) {
+        if (condition.id === requirement.id) {
+          // Si es el que busquem, checkeguem
+          if (!conditionIsRequired) {
+            // Si la condicio havia de ser negada, pos al tenirla hem de tornar false
+            return false
           }
-        }
-        if (availableAnswer)
-          availableAnswer =
-            checkedRequirements.conditions.slice(-1)[0].available
-      } else {
-        if (requirement.amount === '0') {
-          checkedRequirements.conditions.slice(-1)[0].available = true
-        } else {
-          checkedRequirements.conditions.slice(-1)[0].available = false
-          availableAnswer = false
         }
       }
     }
   }
-
-  return { availableAnswer, checkedRequirements }
+  return true
 }
