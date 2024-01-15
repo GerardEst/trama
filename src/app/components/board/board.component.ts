@@ -59,6 +59,10 @@ export class BoardComponent {
     this.boardReference = createPanZoom(this.board?.nativeElement, {
       maxZoom: 1,
       minZoom: 0.5,
+      filterKey: function (/* e, dx, dy, dz */) {
+        // don't let panzoom handle this event:
+        return true
+      },
     })
     if (this.tree) this.centerToNode(this.tree.nodes[0])
   }
@@ -81,17 +85,17 @@ export class BoardComponent {
     node.style.zIndex = 0
   }
   mouseEnter(event: any) {
+    this.boardReference.pause()
     this.focusNode(event.target)
   }
   mouseLeave(event: any) {
+    this.boardReference.resume()
     this.blurNode(event.target)
   }
   dragStarted(event: any) {
-    this.boardReference.pause()
     this.focusNode(event.source.element.nativeElement)
   }
   dragReleased(event: any) {
-    this.boardReference.resume()
     const currentTransform = event.source.getRootElement().style.transform
     const finalTransform = combineTransforms(currentTransform)
 
