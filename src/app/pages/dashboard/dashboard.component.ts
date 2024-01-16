@@ -95,4 +95,9 @@ export class DashboardComponent {
       sessionStorage.setItem('polo-session', 'true')
     }
   }
+
+  logout() {
+    this.db.supabase.auth.signOut()
+    this.router.navigate(['/login'])
+  }
 }

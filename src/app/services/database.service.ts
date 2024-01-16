@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js'
   providedIn: 'root',
 })
 export class DatabaseService {
-  supabase: any
+  public supabase: any
 
   constructor() {
     this.supabase = createClient(

@@ -10,12 +10,22 @@ import { DashboardComponent } from './app/pages/dashboard/dashboard.component'
 import { PlaygroundComponent } from './app/pages/playground/playground.component'
 import { StadisticsComponent } from './app/pages/stadistics/stadistics.component'
 import { LoginComponent } from './app/pages/login/login.component'
+import { authGuard } from './app/guards/auth.guard'
 
 const appRoutes: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
   { path: 'playground/:id', component: PlaygroundComponent },
-  { path: 'stadistics/:id', component: StadisticsComponent },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'stadistics/:id',
+    component: StadisticsComponent,
+    canActivate: [authGuard],
+  },
 ]
 
 bootstrapApplication(AppComponent, {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'polo-login',
@@ -11,7 +12,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
   styleUrls: ['./login.component.sass'],
 })
 export class LoginComponent {
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService, private router: Router) {}
 
   login_email = new FormControl('', [Validators.required, Validators.email])
   login_password = new FormControl('', Validators.required)
@@ -60,6 +61,7 @@ export class LoginComponent {
     })
 
     if (error) return console.error(error)
-    console.log('user loged', data)
+
+    this.router.navigate(['/dashboard'])
   }
 }
