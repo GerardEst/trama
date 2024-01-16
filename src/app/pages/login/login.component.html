@@ -1,0 +1,30 @@
+<form>
+  <label for="login_email">email</label>
+  <input id="login_email" type="text" [formControl]="login_email" />
+  <label for="login_password">password</label>
+  <input id="login_password" type="password" [formControl]="login_password" />
+  <button
+    (click)="signInWithEmail($event, login_email, login_password)"
+    [disabled]="false"
+  >
+    Login
+  </button>
+</form>
+
+<form>
+  Register
+  <label for="register_email">email</label>
+  <input id="register_email" type="text" [formControl]="register_email" />
+  <label for="register_password">password</label>
+  <input
+    id="register_password"
+    type="password"
+    [formControl]="register_password"
+  />
+  <button
+    (click)="signUpNewUser($event, register_email, register_password)"
+    [disabled]="false"
+  >
+    Register
+  </button>
+</form>

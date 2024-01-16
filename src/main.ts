@@ -9,8 +9,10 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { DashboardComponent } from './app/pages/dashboard/dashboard.component'
 import { PlaygroundComponent } from './app/pages/playground/playground.component'
 import { StadisticsComponent } from './app/pages/stadistics/stadistics.component'
+import { LoginComponent } from './app/pages/login/login.component'
 
 const appRoutes: Routes = [
+  { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'playground/:id', component: PlaygroundComponent },
   { path: 'stadistics/:id', component: StadisticsComponent },
