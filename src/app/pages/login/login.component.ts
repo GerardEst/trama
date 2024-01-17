@@ -48,7 +48,7 @@ export class LoginComponent {
 
     const { data: loged_data, error: loged_error } = await this.db.supabase
       .from('users')
-      .insert([{ user_uuid: userUuid, name: username, email: userEmail }])
+      .insert([{ user_uuid: userUuid, name: username.value, email: userEmail }])
       .select()
 
     if (loged_error) return console.error(loged_error)

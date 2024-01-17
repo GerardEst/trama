@@ -54,6 +54,7 @@ export class DatabaseService {
       .select()
 
     if (error) return false
+    console.log(data)
     return true
   }
 
