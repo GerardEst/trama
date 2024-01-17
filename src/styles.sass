@@ -47,7 +47,7 @@ body
   height: 100vh
   background-color: #fbfbfb
 
-p,h1,h2,h3,h4,h5,a,input,li,textarea,button
+p,h1,h2,h3,h4,h5,a,input,li,textarea,button,label
   margin: 0
   font-family: var(--primary-font-family)
   font-size: 0.8rem
@@ -93,7 +93,8 @@ textarea
   background: none
 label
   display: flex
-  align-items: center
+  gap: 0.3rem
+  flex-direction: column
 :is(p,span)
   &.txt_bold
     font-weight: bold

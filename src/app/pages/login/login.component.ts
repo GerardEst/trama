@@ -14,12 +14,20 @@ import { Router } from '@angular/router'
 export class LoginComponent {
   constructor(private db: DatabaseService, private router: Router) {}
 
+  register = false
+
   login_email = new FormControl('', [Validators.required, Validators.email])
   login_password = new FormControl('', Validators.required)
   register_email = new FormControl('', [Validators.required, Validators.email])
   register_password = new FormControl('', Validators.required)
+  register_username = new FormControl('', Validators.required)
 
-  async signUpNewUser(event: Event, email: FormControl, password: FormControl) {
+  async signUpNewUser(
+    event: Event,
+    email: FormControl,
+    password: FormControl,
+    username: FormControl
+  ) {
     event.preventDefault()
     if (email.invalid || password.invalid) return
 
@@ -40,7 +48,7 @@ export class LoginComponent {
 
     const { data: loged_data, error: loged_error } = await this.db.supabase
       .from('users')
-      .insert([{ user_uuid: userUuid, name: '', email: userEmail }])
+      .insert([{ user_uuid: userUuid, name: username, email: userEmail }])
       .select()
 
     if (loged_error) return console.error(loged_error)
@@ -63,5 +71,12 @@ export class LoginComponent {
     if (error) return console.error(error)
 
     this.router.navigate(['/dashboard'])
+  }
+
+  goToRegister() {
+    this.register = true
+  }
+  goToLogin() {
+    this.register = false
   }
 }
