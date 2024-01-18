@@ -1,6 +1,56 @@
 <div class="loginBox">
   <div class="box">
-    <form *ngIf="!register">
+    @if(register){
+    <form>
+      <h3>Create an account</h3>
+      <label>
+        <p>User name</p>
+        <input
+          id="register_username"
+          type="text"
+          [formControl]="register_username"
+        />
+      </label>
+      <label>
+        <p>Your email</p>
+        <input id="register_email" type="text" [formControl]="register_email" />
+      </label>
+      <label>
+        <p>New password</p>
+        <input
+          id="register_password"
+          type="password"
+          [formControl]="register_password"
+        />
+      </label>
+
+      @if(checkMail){
+      <div class="checkMailboxMessage">
+        <p>Please check your mailbox to confirm your email</p>
+      </div>
+      }
+
+      <button
+        (click)="
+          signUpNewUser(
+            $event,
+            register_email,
+            register_password,
+            register_username
+          )
+        "
+        [disabled]="false"
+      >
+        Register
+      </button>
+      <div class="separator"></div>
+      <div class="change">
+        <p>Already have an account?</p>
+        <button (click)="goToLogin()">Login</button>
+      </div>
+    </form>
+    }@else {
+    <form>
       <h3>Log in</h3>
       <label>
         <p>Your email</p>
@@ -26,52 +76,6 @@
         <button (click)="goToRegister()">Register</button>
       </div>
     </form>
-
-    <form *ngIf="register">
-      <h3>Create an account</h3>
-      <label>
-        <p>User name</p>
-        <input
-          id="register_username"
-          type="text"
-          [formControl]="register_username"
-        />
-      </label>
-      <label>
-        <p>Your email</p>
-        <input id="register_email" type="text" [formControl]="register_email" />
-      </label>
-      <label>
-        <p>New password</p>
-        <input
-          id="register_password"
-          type="password"
-          [formControl]="register_password"
-        />
-      </label>
-
-      <div class="checkMailboxMessage">
-        Please check your mailbox to confirm your email
-      </div>
-
-      <button
-        (click)="
-          signUpNewUser(
-            $event,
-            register_email,
-            register_password,
-            register_username
-          )
-        "
-        [disabled]="false"
-      >
-        Register
-      </button>
-      <div class="separator"></div>
-      <div class="change">
-        <p>Already have an account?</p>
-        <button (click)="goToLogin()">Login</button>
-      </div>
-    </form>
+    }
   </div>
 </div>
