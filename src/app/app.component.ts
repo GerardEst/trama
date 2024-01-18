@@ -9,9 +9,4 @@ import { RouterOutlet } from '@angular/router'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass'],
 })
-export class AppComponent {
-  constructor() {}
-  ngOnInit() {
-    console.log('app component')
-  }
-}
+export class AppComponent {}
