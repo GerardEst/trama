@@ -21,6 +21,7 @@ export class LoginComponent {
   register_email = new FormControl('', [Validators.required, Validators.email])
   register_password = new FormControl('', Validators.required)
   register_username = new FormControl('', Validators.required)
+  checkMail: boolean = false
 
   async signUpNewUser(
     event: Event,
@@ -36,23 +37,14 @@ export class LoginComponent {
         email: email.value,
         password: password.value,
         options: {
-          emailRedirectTo: 'localhost:4200',
+          emailRedirectTo: 'https://polo-rust.vercel.app/dashboard',
         },
       })
 
     if (registered_error) return console.error(registered_error)
     console.log('user registered', registered_data)
 
-    const userUuid = registered_data.user.id
-    const userEmail = registered_data.user.email
-
-    const { data: loged_data, error: loged_error } = await this.db.supabase
-      .from('users')
-      .insert([{ user_uuid: userUuid, name: username.value, email: userEmail }])
-      .select()
-
-    if (loged_error) return console.error(loged_error)
-    console.log('user created', loged_data)
+    this.checkMail = true
   }
 
   async signInWithEmail(
