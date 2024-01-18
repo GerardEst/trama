@@ -57,10 +57,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "polo-angular:build:production"
+              "buildTarget": "polo-angular:build:production"
             },
             "development": {
-              "browserTarget": "polo-angular:build:development"
+              "buildTarget": "polo-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +68,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "polo-angular:build"
+            "buildTarget": "polo-angular:build"
           }
         },
         "test": {
