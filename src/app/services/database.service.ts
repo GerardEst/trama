@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core'
 import { createClient } from '@supabase/supabase-js'
+import { environment } from 'src/environments/environment'
 
 @Injectable({
   providedIn: 'root',
 })
 export class DatabaseService {
   public supabase: any
+  prod = !environment.production
 
   constructor() {
     this.supabase = createClient(
@@ -15,7 +17,11 @@ export class DatabaseService {
   }
 
   async getAllTrees() {
-    console.log('db call to get all the trees id and name')
+    if (this.prod)
+      console.log(
+        '%cdb call to get all the trees id and name',
+        'color: #9999ff'
+      )
     let { data: trees, error } = await this.supabase
       .from('trees')
       .select('id,name')
@@ -24,7 +30,8 @@ export class DatabaseService {
   }
 
   async getTree(treeId: number) {
-    console.log('db call to get everything about a tree')
+    if (this.prod)
+      console.log('%cdb call to get everything about a tree', 'color: #9999ff')
     let { data: trees, error } = await this.supabase
       .from('trees')
       .select('*')
@@ -34,7 +41,8 @@ export class DatabaseService {
   }
 
   async createNewTree(tree: object) {
-    console.log('db call to create a new tree')
+    if (this.prod)
+      console.log('%cdb call to create a new tree', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('trees')
       .insert(tree)
@@ -45,7 +53,8 @@ export class DatabaseService {
   }
 
   async saveLocalToDB() {
-    console.log('db call to save local tree to db')
+    if (this.prod)
+      console.log('%cdb call to save local tree to db', 'color: #9999ff')
     //@ts-ignore
     const savedTree = JSON.parse(localStorage.getItem('polo-tree'))
     //@ts-ignore
@@ -62,7 +71,11 @@ export class DatabaseService {
   }
 
   async getTrackingOf(treeId: number) {
-    console.log('db call to get the tracking status of a tree')
+    if (this.prod)
+      console.log(
+        '%cdb call to get the tracking status of a tree',
+        'color: #9999ff'
+      )
     let { data, error } = await this.supabase
       .from('trees')
       .select('tracking')
@@ -72,7 +85,11 @@ export class DatabaseService {
   }
 
   async setTrackingOf(treeId: number, tracking: boolean) {
-    console.log('db call to set the tracking status of a tree')
+    if (this.prod)
+      console.log(
+        '%cdb call to set the tracking status of a tree',
+        'color: #9999ff'
+      )
     const { data, error } = await this.supabase
       .from('trees')
       .update({ tracking: tracking })
@@ -83,7 +100,8 @@ export class DatabaseService {
   }
 
   async getStadisticsOfTree(treeId: number) {
-    console.log('db call to get the stadistics of a tree')
+    if (this.prod)
+      console.log('%cdb call to get the stadistics of a tree', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('games')
       .select('created_at, result, user_name')
@@ -95,7 +113,8 @@ export class DatabaseService {
   }
 
   async getRefsOfTree(treeId: number) {
-    console.log('db call to get only the refs of a tree')
+    if (this.prod) console.log('db call to get only the refs of a tree')
+    console.log('%cdb call to get everything about a tree', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('trees')
       .select(`refs: tree->refs`)
@@ -110,7 +129,8 @@ export class DatabaseService {
   }
 
   async saveNewGameTo(username: string, tree: number, result: any) {
-    console.log('db call to save a new anonymous game')
+    if (this.prod)
+      console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('games')
       .insert([{ result, user_name: username, tree }])
