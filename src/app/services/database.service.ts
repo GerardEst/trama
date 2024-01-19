@@ -15,6 +15,7 @@ export class DatabaseService {
   }
 
   async getAllTrees() {
+    console.log('db call to get all the trees id and name')
     let { data: trees, error } = await this.supabase
       .from('trees')
       .select('id,name')
@@ -23,6 +24,7 @@ export class DatabaseService {
   }
 
   async getTree(treeId: number) {
+    console.log('db call to get everything about a tree')
     let { data: trees, error } = await this.supabase
       .from('trees')
       .select('*')
@@ -32,6 +34,7 @@ export class DatabaseService {
   }
 
   async createNewTree(tree: object) {
+    console.log('db call to create a new tree')
     const { data, error } = await this.supabase
       .from('trees')
       .insert(tree)
@@ -42,6 +45,7 @@ export class DatabaseService {
   }
 
   async saveLocalToDB() {
+    console.log('db call to save local tree to db')
     //@ts-ignore
     const savedTree = JSON.parse(localStorage.getItem('polo-tree'))
     //@ts-ignore
@@ -58,6 +62,7 @@ export class DatabaseService {
   }
 
   async getTrackingOf(treeId: number) {
+    console.log('db call to get the tracking status of a tree')
     let { data, error } = await this.supabase
       .from('trees')
       .select('tracking')
@@ -67,6 +72,7 @@ export class DatabaseService {
   }
 
   async setTrackingOf(treeId: number, tracking: boolean) {
+    console.log('db call to set the tracking status of a tree')
     const { data, error } = await this.supabase
       .from('trees')
       .update({ tracking: tracking })
@@ -77,6 +83,7 @@ export class DatabaseService {
   }
 
   async getStadisticsOfTree(treeId: number) {
+    console.log('db call to get the stadistics of a tree')
     const { data, error } = await this.supabase
       .from('games')
       .select('created_at, result, user_name')
@@ -88,6 +95,7 @@ export class DatabaseService {
   }
 
   async getRefsOfTree(treeId: number) {
+    console.log('db call to get only the refs of a tree')
     const { data, error } = await this.supabase
       .from('trees')
       .select(`refs: tree->refs`)
@@ -102,6 +110,7 @@ export class DatabaseService {
   }
 
   async saveNewGameTo(username: string, tree: number, result: any) {
+    console.log('db call to save a new anonymous game')
     const { data, error } = await this.supabase
       .from('games')
       .insert([{ result, user_name: username, tree }])
