@@ -17,19 +17,35 @@ export class Marco {
   }
 
   start() {
-    this.drawNode(this.guidebook.nodes[0])
+    this.drawNode(this.guidebook.nodes[0], true)
 
     const style = document.createElement('style');
     style.innerHTML = `
 
       .adventure p{
         font-family: "Baskerville";
-        font-size: 1rem;
-        line-height: 1.7rem;
+        font-size: 1.1rem;
+        line-height: 1.9rem;
       }
       .adventure .node{
         display: flex;
         flex-direction: column;
+        margin-top: 3rem;
+        transition: 2s;
+        opacity: 0;
+      }
+      .adventure .node.node--show{
+        opacity: 1;
+      }
+      .adventure .node.node--unplayable{
+        pointer-events: none;
+        opacity: 0.5;
+      }
+      .adventure .node__answers{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 3rem;
       }
       .adventure .node__answers{
         display: flex;
@@ -43,6 +59,10 @@ export class Marco {
         border: 2px solid rgb(112 110 107);
         border-radius: 0.4rem;
       }
+      .adventure .answer.answer--selected{
+        animation: flicker 700ms;
+        animation-fill-mode: forwards;
+      }
       .adventure .answer:hover{
         background-color: var(--medium-gray);
       }
@@ -51,6 +71,39 @@ export class Marco {
       }
       .adventure .answer--notAvailable--hidden{
         display: none;
+      }
+
+      @keyframes flicker {
+        0% {
+          background-color: var(--dark-gray);
+        }
+        20%{
+          background-color: var(--dark-gray);
+        }
+        21%{
+          background-color: unset;
+        }
+        40%{
+          background-color: unset;
+        }
+        41%{
+          background-color: var(--dark-gray);
+        }
+        60%{
+          background-color: var(--dark-gray);
+        }
+        61% {
+          background-color: unset;
+        }
+        80% {
+          background-color: unset;
+        }
+        81%{
+        	background-color: var(--dark-gray);
+        }
+        100%{
+          background-color: var(--dark-gray);
+        }
       }
     `;
     document.head.appendChild(style);
@@ -118,13 +171,20 @@ export class Marco {
     if (this.onEnd) this.onEnd(event)
   }
 
-  drawNode(node) {
+  drawNode(node, first = false) {
     if (!node) {
       console.error('Nothing to draw, empty path')
       return
     }
 
-    document.querySelector('.node')?.remove()
+    // TODO -> Afegir una opció per activar o desactivar això
+    // document.querySelector('.node')?.remove()
+
+    const nodes = document.querySelectorAll('.node')
+    for (let node of nodes) {
+      // Remove eventlisteners
+      node.classList.add('node--unplayable')
+    }
 
     /* the text can have <data> that has to be replaced */
     const textWithParams = node.text?.replace(
@@ -138,6 +198,7 @@ export class Marco {
     nodeLayout.dataset.join = node.join
     nodeLayout.innerHTML = `<div class="node__text"><p>${textWithParams}</p></div>`
 
+    //Animate the opacity
     let nodeAnswers = document.createElement('div')
     nodeAnswers.className = 'node__answers'
 
@@ -149,6 +210,16 @@ export class Marco {
     }
 
     document.querySelector(this.domPlace).appendChild(nodeLayout)
+
+    if (!first) {
+      setTimeout(() => {
+        nodeLayout.scrollIntoView({behavior: "smooth"});
+      },1000)
+    }
+
+    setTimeout(() => {
+      nodeLayout.classList.add('node--show')
+    },1000)
 
     if (this.onDrawNode) this.onDrawNode(node)
   }
@@ -211,9 +282,15 @@ export class Marco {
     }
 
     const node = this.guidebook.nodes.find((node) => node.id === destiny.node)
+    answerLayout.addEventListener('click', () => this.selectAnswerAnimation(answerLayout))
     answerLayout.addEventListener('click', () => this.drawNode(node))
 
     return answerLayout
+  }
+
+  selectAnswerAnimation(answerLayout) {
+    console.log(answerLayout)
+    answerLayout.classList.add('answer--selected')
   }
 
   getAllStats() {
