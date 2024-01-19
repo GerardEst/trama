@@ -79,8 +79,11 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async saveGame(result: any) {
-    const newUserId = await this.db.saveNewAnonymousUser(this.userName)
-    const saved = await this.db.saveNewGameTo(newUserId, this.treeId, result)
+    const saved = await this.db.saveNewGameTo(
+      this.userName,
+      this.treeId,
+      result
+    )
     if (saved) {
       console.log('Game saved!', saved)
     } else {

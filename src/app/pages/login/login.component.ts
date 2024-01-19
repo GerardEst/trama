@@ -32,8 +32,6 @@ export class LoginComponent {
     event.preventDefault()
     if (email.invalid || password.invalid) return
 
-    //https://supabase.com/docs/guides/auth/managing-user-data
-    //https://dev.to/sruhleder/creating-user-profiles-on-sign-up-in-supabase-5037
     const { data: registered_data, error: registered_error } =
       await this.db.supabase.auth.signUp({
         email: email.value,

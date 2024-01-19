@@ -51,10 +51,9 @@ export class DatabaseService {
       .from('trees')
       .update({ tree: savedTree })
       .eq('id', treeId)
-      .select()
 
     if (error) return false
-    console.log(data)
+
     return true
   }
 
@@ -72,7 +71,6 @@ export class DatabaseService {
       .from('trees')
       .update({ tracking: tracking })
       .eq('id', treeId)
-      .select()
 
     if (error) return false
     return true
@@ -81,7 +79,7 @@ export class DatabaseService {
   async getStadisticsOfTree(treeId: number) {
     const { data, error } = await this.supabase
       .from('games')
-      .select('created_at, result, player(name)')
+      .select('created_at, result, user_name')
       .eq('tree', treeId)
 
     if (error) return false
@@ -103,27 +101,15 @@ export class DatabaseService {
     return data[0].refs
   }
 
-  async saveNewAnonymousUser(name: string) {
-    const { data, error } = await this.supabase
-      .from('anonymous_players')
-      .insert([{ name }])
-      .select()
-    if (error) {
-      return false
-    }
-    return data[0].id
-  }
-
-  async saveNewGameTo(userId: string, tree: number, result: any) {
+  async saveNewGameTo(username: string, tree: number, result: any) {
     const { data, error } = await this.supabase
       .from('games')
-      .insert([{ result, player: userId, tree }])
-      .select()
+      .insert([{ result, user_name: username, tree }])
     if (error) {
       console.log(error)
       return false
     }
 
-    return data[0]
+    return true
   }
 }
