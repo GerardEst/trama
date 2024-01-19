@@ -23,8 +23,9 @@ export class Marco {
     style.innerHTML = `
 
       .adventure p{
+        font-family: "Baskerville";
         font-size: 1rem;
-        line-height: 150%;
+        line-height: 1.7rem;
       }
       .adventure .node{
         display: flex;
@@ -39,10 +40,11 @@ export class Marco {
       .adventure .answer{
         cursor: pointer;
         padding: 0.8rem 1rem;
-        background-color: #eeeeee;
+        border: 2px solid rgb(112 110 107);
+        border-radius: 0.4rem;
       }
       .adventure .answer:hover{
-
+        background-color: var(--medium-gray);
       }
       .adventure .answer--notAvailable{
         opacity: 0.2;
