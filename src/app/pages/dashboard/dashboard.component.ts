@@ -17,6 +17,7 @@ export class DashboardComponent {
   tree?: any
   id?: number
   trackingEnabled: boolean = false
+  bookviewEnabled: boolean = false
   savingTree: boolean = false
 
   constructor(private db: DatabaseService, private router: Router) {}
@@ -27,12 +28,21 @@ export class DashboardComponent {
   }
 
   async updateTracking() {
-    if (this.id) this.trackingEnabled = await this.db.getTrackingOf(this.id)
+    if (this.id) {
+      const configuration = await this.db.getConfigurationOf(this.id)
+      this.trackingEnabled = configuration.tracking
+    }
   }
   toggleTracking() {
     if (this.id) {
       this.trackingEnabled = !this.trackingEnabled
       this.db.setTrackingOf(this.id, this.trackingEnabled)
+    }
+  }
+  toggleBookview() {
+    if (this.id) {
+      this.bookviewEnabled = !this.bookviewEnabled
+      this.db.setBookviewOf(this.id, this.bookviewEnabled)
     }
   }
 

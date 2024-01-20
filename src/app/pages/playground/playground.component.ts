@@ -15,6 +15,7 @@ import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-w
 })
 export class PlaygroundComponent implements OnInit {
   tracking: boolean = false
+  view: string | null = null
   gotUserInfo: boolean = false
   endGame: boolean = false
   userName: string = ''
@@ -40,7 +41,11 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async getTreeConfiguration(treeId: number) {
-    this.tracking = await this.db.getTrackingOf(treeId)
+    // TODO -> Aixo es podria obtenir al mateix getTree no?
+    const configuration = await this.db.getConfigurationOf(treeId)
+
+    this.tracking = configuration.tracking
+    this.view = configuration.view
   }
 
   async loadAdventure(treeId: number, playerName: string) {
@@ -51,6 +56,7 @@ export class PlaygroundComponent implements OnInit {
       guidebook: tree, // ⚠ Guia on es defineix tot lo relatiu a l'aventura
       config: {
         showLockedAnswers: true,
+        view: this.view,
       },
       player: {
         name: playerName,
