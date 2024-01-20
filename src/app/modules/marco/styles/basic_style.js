@@ -1,3 +1,4 @@
+export const basic_style = `
 .adventure p{
   font-family: "Baskerville";
   font-size: 1.1rem;
@@ -81,3 +82,4 @@
     background-color: var(--dark-gray);
   }
 }
+`

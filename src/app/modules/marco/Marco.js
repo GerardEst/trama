@@ -4,6 +4,7 @@ import {
   getJoinRandom,
   checkErrorsInProbabilities,
 } from './utilities.js'
+import { basic_style } from './styles/basic_style.js'
 
 export class Marco {
   constructor(options) {
@@ -20,7 +21,7 @@ export class Marco {
     this.drawNode(this.guidebook.nodes[0], true)
 
     const style = document.createElement('style');
-    style.setAttribute('href', "./styles/basic_style.css");
+    style.innerHTML = basic_style
     document.head.appendChild(style);
   }
 
