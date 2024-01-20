@@ -7,7 +7,7 @@ export const basic_style = `
 .adventure .node{
   display: flex;
   flex-direction: column;
-  margin-top: 3rem;
+  padding-top: 3rem;
   transition: 2s;
   opacity: 0;
 }
