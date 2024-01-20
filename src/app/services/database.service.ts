@@ -73,7 +73,7 @@ export class DatabaseService {
   async getConfigurationOf(treeId: number) {
     if (this.prod)
       console.log(
-        '%cdb call to get the tracking status of a tree',
+        '%cdb call to get the configuration of a tree',
         'color: #9999ff'
       )
     let { data, error } = await this.supabase
@@ -81,6 +81,7 @@ export class DatabaseService {
       .select('tracking, view')
       .eq('id', treeId)
 
+    console.log(data[0])
     return data[0]
   }
 
@@ -99,15 +100,15 @@ export class DatabaseService {
     return true
   }
 
-  async setBookviewOf(treeId: number, tracking: boolean) {
+  async setBookviewOf(treeId: number, view: string | null) {
     if (this.prod)
       console.log(
-        '%cdb call to set the bookview status of a tree',
+        '%cdb call to set the view status of a tree',
         'color: #9999ff'
       )
     const { data, error } = await this.supabase
       .from('trees')
-      .update({ view: 'book' })
+      .update({ view: view })
       .eq('id', treeId)
 
     if (error) return false

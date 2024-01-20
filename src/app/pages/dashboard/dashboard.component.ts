@@ -31,6 +31,7 @@ export class DashboardComponent {
     if (this.id) {
       const configuration = await this.db.getConfigurationOf(this.id)
       this.trackingEnabled = configuration.tracking
+      this.bookviewEnabled = configuration.view === 'book'
     }
   }
   toggleTracking() {
@@ -42,11 +43,12 @@ export class DashboardComponent {
   toggleBookview() {
     if (this.id) {
       this.bookviewEnabled = !this.bookviewEnabled
-      this.db.setBookviewOf(this.id, this.bookviewEnabled)
+      this.db.setBookviewOf(this.id, this.bookviewEnabled ? 'book' : null)
     }
   }
 
-  goToPlayground() {
+  async goToPlayground() {
+    await this.saveToDb()
     window.open('/playground/' + this.id, '_blank')
   }
 
@@ -54,13 +56,17 @@ export class DashboardComponent {
     this.router.navigate(['/stadistics', this.id])
   }
 
-  async saveToDb() {
-    this.savingTree = true
-    const resp = await this.db.saveLocalToDB()
-    console.log('Saved?', resp)
-    setTimeout(() => {
-      this.savingTree = false
-    }, 200)
+  async saveToDb(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.savingTree = true
+      this.db.saveLocalToDB().then((resp) => {
+        console.log('Saved?', resp)
+        setTimeout(() => {
+          this.savingTree = false
+          resolve() // Resolve the promise when saving is complete
+        }, 200)
+      })
+    })
   }
 
   exportTree() {
