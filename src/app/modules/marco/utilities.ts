@@ -1,38 +1,6 @@
-export function getJoinFromProbabilities(customProbabilities:any) {
-  const random = Math.floor(Math.random() * 100)
-  let last = 0
-  let destiny
-
-  for (let answer of customProbabilities) {
-    const max = answer.probability + last
-    answer.range = [last, max]
-
-    if (random >= last && random < max) {
-      destiny = answer.node
-    }
-    last = max
-  }
-
-  return destiny
-}
-
 export function getJoinRandom(answerJoins:any) {
   const randomJoinIndex = Math.floor(Math.random() * answerJoins.length)
   return answerJoins[randomJoinIndex]
-}
-
-// ref -> tot aixo es pot treure probablement
-export function checkErrorsInProbabilities(probabilities:any) {
-  const totalProb = probabilities
-    .map((join:any) => join.probability)
-    .reduce((total:any, actual:any) => total + actual)
-
-  if (totalProb === 100) {
-    return true
-  }
-  console.error('There is some problem with the probabilities')
-
-  return false
 }
 
 export function hasRequirements(player:any, requirements:any) {

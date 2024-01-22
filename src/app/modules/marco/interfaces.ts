@@ -1,8 +1,15 @@
 export interface initial_parameters{
   guidebook: any,
   domPlace: string,
-  player: any,
-  config: any
+  player: player,
+  config: config
+}
+
+export interface player{
+  name?: string,
+  stats?: Array<stat>,
+  conditions?: Array<condition>,
+  [key: string]: any; // Basicament pot tenir qualsevol cosa que se li vulgui fotre
 }
 
 export interface config{
@@ -11,11 +18,41 @@ export interface config{
 }
 
 export interface guidebook{
-  nodes: Array<any>
+  nodes: Array<node>
 }
 
-export interface node_event{
+export interface node{
+  id: string,
+  left: number,
+  top: number,
+  answers: Array<node_answer>,
+  text: string
+}
+
+export interface node_answer{
+  id: string,
+  join: string,
+  text: string,
+  events: Array<answer_event>
+  requirements: Array<answer_requirement>
+}
+
+export interface answer_event{
+  id: string,
   action: 'alterStat' | 'alterCondition' | 'win' | 'end',
-  amount: string, // per ara ha de ser string perque ve del json stringified i tot son strings
+  amount: string,
   target: string
+}
+export interface answer_requirement{
+  id: string,
+  type: 'stat' | 'condition',
+  amount: string
+}
+
+export interface stat{
+  id: string,
+  amount: number
+}
+export interface condition{
+  id: string,
 }

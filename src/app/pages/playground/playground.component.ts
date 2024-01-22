@@ -56,7 +56,7 @@ export class PlaygroundComponent implements OnInit {
       guidebook: tree, // ⚠ Guia on es defineix tot lo relatiu a l'aventura
       config: {
         showLockedAnswers: true,
-        view: this.view,
+        view: this.view || 'normal',
       },
       player: {
         name: playerName,
