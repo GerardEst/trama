@@ -35,7 +35,6 @@ export class Marco {
   alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
-    console.log(event.target, amount)
     let statIndex = this.player.stats?.findIndex(
       (element: stat) => element.id === event.target
     )
@@ -82,7 +81,6 @@ export class Marco {
   }
 
   drawNode(node: node, first = false) {
-    console.log(this.player)
     if (!node) return console.error('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
@@ -195,7 +193,6 @@ export class Marco {
   }
 
   selectAnswerAnimation(answerLayout:HTMLElement) {
-    console.log(answerLayout)
     answerLayout.classList.add('answer--selected')
   }
 
