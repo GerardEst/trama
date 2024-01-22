@@ -130,7 +130,7 @@ export class Marco {
 
     setTimeout(() => {
       nodeLayout.classList.add('node--show')
-    },2000)
+    },first ? 0 : 2000)
 
     if (this.onDrawNode) this.onDrawNode(node)
   }
