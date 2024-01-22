@@ -3,11 +3,23 @@ import {
   getJoinFromProbabilities,
   getJoinRandom,
   checkErrorsInProbabilities,
-} from './utilities.js'
-import { basic_style } from './styles/basic_style.js'
+} from './utilities'
+import { basic_style } from './styles/basic_style'
+import { initial_parameters, config, guidebook, node_event } from './interfaces'
 
 export class Marco {
-  constructor(options) {
+  guidebook: guidebook
+  domPlace: string
+  config: config
+  player: any
+
+  onAlterStat: any
+  onAlterCondition: any
+  onWin: any
+  onEnd: any
+  onDrawNode: any
+
+  constructor(options: initial_parameters) {
     if (!options.guidebook) console.warn('You must pass a guidebook')
     if (!options.domPlace) console.warn('You must define a DOM element')
 
@@ -25,10 +37,11 @@ export class Marco {
     document.head.appendChild(style);
   }
 
-  alterStat(event) {
-    // console.log('alter stat: ', event)
+  alterStat(event: node_event) {
+    const amount = parseInt(event.amount)
+    // ref -> Possiblement aquet bloc es pot treure
     if (!this.player.stats) {
-      if (event.amount > 0) {
+      if (amount > 0) {
         this.player.stats = []
       } else {
         return
@@ -36,26 +49,26 @@ export class Marco {
     }
 
     let statIndex = this.player.stats.findIndex(
-      (element) => element.id === event.target
+      (element:{id:string}) => element.id === event.target
     )
     let stat = this.player.stats[statIndex]
 
     if (stat) {
-      stat.amount += parseInt(event.amount)
+      stat.amount += amount
       if (stat.amount <= 0) this.player.stats.splice(statIndex, 1)
     } else {
-      if (event.amount <= 0) return
+      if (amount <= 0) return
       this.player.stats.push({
         id: event.target,
-        amount: parseInt(event.amount),
+        amount: amount,
       })
     }
 
     if (this.onAlterStat) this.onAlterStat(event)
   }
 
-  alterCondition(event) {
-    // console.log('alter condition: ', event)
+  alterCondition(event: node_event) {
+    // ref -> possiblement aixo es pot treure
     if (event.amount) {
       if (!this.player.conditions) this.player.conditions = []
     } else {
@@ -64,13 +77,13 @@ export class Marco {
 
     if (event.amount) {
       let condition = this.player.conditions.find(
-        (element) => element.id === event.target
+        (element:{id:string}) => element.id === event.target
       )
 
       if (!condition) this.player.conditions.push({ id: event.target })
     } else {
       let condition = this.player.conditions.findIndex(
-        (condition) => condition.id === event.target
+        (condition:{id:string}) => condition.id === event.target
       )
 
       this.player.conditions.splice(condition, 1)
@@ -79,42 +92,42 @@ export class Marco {
     if (this.onAlterCondition) this.onAlterCondition(event)
   }
 
-  win(event) {
+  win(event:node_event) {
     if (this.onWin) this.onWin(event)
   }
 
-  end(event) {
+  end(event:node_event) {
     if (this.onEnd) this.onEnd(event)
   }
 
-  drawNode(node, first = false) {
+  drawNode(node:any, first = false) {
     if (!node) return console.error('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
-      const nodes = document.querySelectorAll('.node')
+      const nodes = Array.from(document.querySelectorAll('.node'));
       for (let node of nodes) {
         // TODO -> Remove eventlisteners
-        node.classList.add('node--unplayable')
+        node.classList.add('node--unplayable');
       }
     } else {
-      const previousNode = document.querySelector('.node')
-      previousNode?.classList.remove('node--show')
+      const previousNode = document.querySelector('.node');
+      previousNode?.classList.remove('node--show');
       setTimeout(() => {
-        previousNode?.remove()
-      },2000)
+        previousNode?.remove();
+      },2000);
     }
 
 
     /* the text can have <data> that has to be replaced */
     const textWithParams = node.text?.replace(
       /<([a-zA-Z0-9]+)>/g,
-      (match, p1) => this.player[p1]
+      (match:any, p1:any) => this.player[p1]
     )
 
     let nodeLayout = document.createElement('div')
     nodeLayout.className = 'node'
     nodeLayout.id = node.id
-    nodeLayout.dataset.join = node.join
+    nodeLayout.dataset['join'] = node.join
     nodeLayout.innerHTML = `<div class="node__text"><p>${textWithParams}</p></div>`
 
     let nodeAnswers = document.createElement('div')
@@ -127,7 +140,7 @@ export class Marco {
         nodeAnswers.appendChild(this.drawAnswer(answer))
     }
 
-    document.querySelector(this.domPlace).appendChild(nodeLayout)
+    document.querySelector(this.domPlace)?.appendChild(nodeLayout)
 
     if (this.config.view === 'book') {
       if (!first) {
@@ -144,17 +157,17 @@ export class Marco {
     if (this.onDrawNode) this.onDrawNode(node)
   }
 
-  drawAnswer(answer) {
+  drawAnswer(answer:any) {
     /* the text can have <data> that has to be replaced */
     const textWithParams = answer.text?.replace(
       /<([a-zA-Z0-9]+)>/g,
-      (match, p1) => this.player[p1]
+      (match:any, p1:any) => this.player[p1]
     )
 
     let answerLayout = document.createElement('div')
     answerLayout.className = 'answer'
     answerLayout.id = answer.id
-    answerLayout.dataset.join = answer.join
+    answerLayout.dataset['join'] = answer.join
     answerLayout.innerHTML = `<p>${textWithParams}</p>`
 
     // Check if answer is available based on requirements vs player stats
@@ -177,12 +190,14 @@ export class Marco {
     // Register every event
     if (answer.events) {
       // We must launch the alterations first, and then the ends, for answers that ends the history but also do some last modification
-      const alters = answer.events.filter(event => event.action === 'alterStat' || event.action === 'alterCondition')
-      const ends = answer.events.filter(event => event.action === 'win' || event.action === 'end')
+      const alters = answer.events.filter((event:node_event) => event.action === 'alterStat' || event.action === 'alterCondition')
+      const ends = answer.events.filter((event:node_event) => event.action === 'win' || event.action === 'end')
       for (let event of alters) {
+        //@ts-ignore
         answerLayout.addEventListener('click', () => this[event.action](event))
       }
       for (let event of ends) {
+        //@ts-ignore
         answerLayout.addEventListener('click', () => this[event.action](event))
       }
     }
@@ -192,13 +207,14 @@ export class Marco {
 
     let destiny = getJoinRandom(answer.join)
 
-    const customProbabilities = answer.join.filter((join) => join.probability)
+    // ref -> possiblement es pot treure tot aixo
+    const customProbabilities = answer.join.filter((join:any) => join.probability)
     if (
       customProbabilities.length > 0 &&
       checkErrorsInProbabilities(customProbabilities)
     ) {
       const destinyNode = getJoinFromProbabilities(customProbabilities)
-      destiny = answer.join.find((answer) => answer.node === destinyNode)
+      destiny = answer.join.find((answer:any) => answer.node === destinyNode)
     }
 
     const node = this.guidebook.nodes.find((node) => node.id === destiny.node)
@@ -208,7 +224,7 @@ export class Marco {
     return answerLayout
   }
 
-  selectAnswerAnimation(answerLayout) {
+  selectAnswerAnimation(answerLayout:any) {
     console.log(answerLayout)
     answerLayout.classList.add('answer--selected')
   }

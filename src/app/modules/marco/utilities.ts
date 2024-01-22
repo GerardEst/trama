@@ -1,4 +1,4 @@
-export function getJoinFromProbabilities(customProbabilities) {
+export function getJoinFromProbabilities(customProbabilities:any) {
   const random = Math.floor(Math.random() * 100)
   let last = 0
   let destiny
@@ -16,35 +16,26 @@ export function getJoinFromProbabilities(customProbabilities) {
   return destiny
 }
 
-export function getJoinRandom(answerJoins) {
+export function getJoinRandom(answerJoins:any) {
   const randomJoinIndex = Math.floor(Math.random() * answerJoins.length)
   return answerJoins[randomJoinIndex]
 }
 
-export function checkErrorsInProbabilities(probabilities) {
+// ref -> tot aixo es pot treure probablement
+export function checkErrorsInProbabilities(probabilities:any) {
   const totalProb = probabilities
-    .map((join) => join.probability)
-    .reduce((total, actual) => total + actual)
+    .map((join:any) => join.probability)
+    .reduce((total:any, actual:any) => total + actual)
 
   if (totalProb === 100) {
     return true
-  }
-  if (totalProb != 100) {
-    console.error(
-      'In a random join with custom probabilities, probabilities must sume 100(%)'
-    )
-  }
-  if (probabilities.length != answer.join.length) {
-    console.error(
-      'In a random join with custom probabilities, all the destinies must have a probability'
-    )
   }
   console.error('There is some problem with the probabilities')
 
   return false
 }
 
-export function hasRequirements(player, requirements) {
+export function hasRequirements(player:any, requirements:any) {
 
   if (!requirements) return true
 
@@ -54,10 +45,10 @@ export function hasRequirements(player, requirements) {
 
       if (player.stats.length === 0) return false
 
-      const playerHasSomeRequiredStats = player.stats.some(stat => stat.id === requirement.id)
+      const playerHasSomeRequiredStats = player.stats.some((stat:any) => stat.id === requirement.id)
       if (!playerHasSomeRequiredStats) return false
 
-      const someUnsatisfiedStat = player.stats.some(stat => stat.amount < requirement.amount)
+      const someUnsatisfiedStat = player.stats.some((stat:any) => stat.amount < requirement.amount)
       if (someUnsatisfiedStat) return false
     }
     if (requirement.type === 'condition') {
@@ -69,7 +60,7 @@ export function hasRequirements(player, requirements) {
       if (conditionIsRequired && player.conditions.length === 0) return false
 
       // If condition should be checked but player doesn't have this condition
-      const playerHasSomeRequiredConditions = player.conditions.some(condition => condition.id === requirement.id)
+      const playerHasSomeRequiredConditions = player.conditions.some((condition:any) => condition.id === requirement.id)
       if (conditionIsRequired && !playerHasSomeRequiredConditions) return false
 
       for (let condition of player.conditions) {

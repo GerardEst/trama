@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 /** Load ✨marco✨ */
 //@ts-ignore
-import { Marco } from '../../modules/marco/Marco.js'
+import { Marco } from '../../modules/marco/Marco'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 
