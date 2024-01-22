@@ -44,6 +44,8 @@ export class PopupAnswerOptionsComponent implements OnInit {
     this.joins = joins
   }
 
+  // Aqui s'hauria d'enviar un event que ve de events-manager?
+
   removeAnswer() {
     const id = this.answerId
     this.onRemoveAnswer.emit(id)

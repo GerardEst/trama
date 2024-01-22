@@ -88,20 +88,22 @@ export class Marco {
   }
 
   drawNode(node, first = false) {
-    if (!node) {
-      console.error('Nothing to draw, empty path')
-      return
+    if (!node) return console.error('Nothing to draw, empty path')
+
+    if (this.config.view === 'book') {
+      const nodes = document.querySelectorAll('.node')
+      for (let node of nodes) {
+        // TODO -> Remove eventlisteners
+        node.classList.add('node--unplayable')
+      }
+    } else {
+      const previousNode = document.querySelector('.node')
+      previousNode?.classList.remove('node--show')
+      setTimeout(() => {
+        previousNode?.remove()
+      },2000)
     }
 
-    if (this.config.view !== 'book') {
-      document.querySelector('.node')?.remove()
-    }
-
-    const nodes = document.querySelectorAll('.node')
-    for (let node of nodes) {
-      // Remove eventlisteners
-      node.classList.add('node--unplayable')
-    }
 
     /* the text can have <data> that has to be replaced */
     const textWithParams = node.text?.replace(
@@ -115,7 +117,6 @@ export class Marco {
     nodeLayout.dataset.join = node.join
     nodeLayout.innerHTML = `<div class="node__text"><p>${textWithParams}</p></div>`
 
-    //Animate the opacity
     let nodeAnswers = document.createElement('div')
     nodeAnswers.className = 'node__answers'
 
@@ -128,15 +129,17 @@ export class Marco {
 
     document.querySelector(this.domPlace).appendChild(nodeLayout)
 
-    if (!first) {
-      setTimeout(() => {
-        nodeLayout.scrollIntoView({behavior: "smooth"});
-      },1000)
+    if (this.config.view === 'book') {
+      if (!first) {
+        setTimeout(() => {
+          nodeLayout.scrollIntoView({ behavior: "smooth" });
+        }, 2000)
+      }
     }
 
     setTimeout(() => {
       nodeLayout.classList.add('node--show')
-    },1000)
+    },2000)
 
     if (this.onDrawNode) this.onDrawNode(node)
   }
