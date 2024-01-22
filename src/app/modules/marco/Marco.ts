@@ -35,12 +35,13 @@ export class Marco {
   alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
+    console.log(event.target, amount)
     let statIndex = this.player.stats?.findIndex(
-      (element:stat) => element.id === event.target
+      (element: stat) => element.id === event.target
     )
-    let stat = statIndex && this.player.stats?.[statIndex]
+    let stat = this.player.stats?.[statIndex]
 
-    if (stat && statIndex) {
+    if (stat) {
       stat.amount += amount
       if (stat.amount <= 0) this.player.stats?.splice(statIndex, 1)
     } else {
@@ -80,7 +81,8 @@ export class Marco {
     if (this.onEnd) this.onEnd(event)
   }
 
-  drawNode(node:node, first = false) {
+  drawNode(node: node, first = false) {
+    console.log(this.player)
     if (!node) return console.error('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
@@ -145,7 +147,7 @@ export class Marco {
     let answerLayout = document.createElement('div')
     answerLayout.className = 'answer'
     answerLayout.id = answer.id
-    answerLayout.dataset['join'] = answer.join
+    //answerLayout.dataset['join'] = answer.join
     answerLayout.innerHTML = `<p>${textWithParams}</p>`
 
     // Check if answer is available based on requirements vs player stats
@@ -171,11 +173,9 @@ export class Marco {
       const alters = answer.events.filter((event:answer_event) => event.action === 'alterStat' || event.action === 'alterCondition')
       const ends = answer.events.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
       for (let event of alters) {
-        //@ts-ignore
         answerLayout.addEventListener('click', () => this[event.action](event))
       }
       for (let event of ends) {
-        //@ts-ignore
         answerLayout.addEventListener('click', () => this[event.action](event))
       }
     }

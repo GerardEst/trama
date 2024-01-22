@@ -1,14 +1,14 @@
 export interface initial_parameters{
   guidebook: any,
   domPlace: string,
-  player: player,
+  player: Partial<player>,
   config: config
 }
 
 export interface player{
   name?: string,
-  stats?: Array<stat>,
-  conditions?: Array<condition>,
+  stats: Array<stat>,
+  conditions: Array<condition>,
   [key: string]: any; // Basicament pot tenir qualsevol cosa que se li vulgui fotre
 }
 
@@ -31,7 +31,7 @@ export interface node{
 
 export interface node_answer{
   id: string,
-  join: string,
+  join: Array<join>,
   text: string,
   events: Array<answer_event>
   requirements: Array<answer_requirement>
@@ -55,4 +55,7 @@ export interface stat{
 }
 export interface condition{
   id: string,
+}
+export interface join{
+  node: string,
 }
