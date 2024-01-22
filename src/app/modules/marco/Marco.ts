@@ -8,11 +8,11 @@ export class Marco {
   config: config
   player: player
 
-  onAlterStat: any
-  onAlterCondition: any
-  onWin: any
-  onEnd: any
-  onDrawNode: any
+  onAlterStat: ((event: answer_event) => void) | undefined
+  onAlterCondition: ((event: answer_event) => void) | undefined
+  onWin: ((event: answer_event) => void) | undefined
+  onEnd: ((event: answer_event) => void) | undefined
+  onDrawNode: ((node: node) => void) | undefined
 
   constructor(options: initial_parameters) {
     if (!options.guidebook) console.warn('You must pass a guidebook')
