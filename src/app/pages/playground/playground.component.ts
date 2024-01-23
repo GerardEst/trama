@@ -20,6 +20,8 @@ export class PlaygroundComponent implements OnInit {
   endGame: boolean = false
   userName: string = ''
   treeId: number = 0
+  playerPath: Array<any> = []
+
   @Input() set id(treeId: number) {
     this.treeId = treeId
   }
@@ -71,6 +73,7 @@ export class PlaygroundComponent implements OnInit {
         this.saveGame(userFinalStats)
       }
       this.endGame = true
+      console.log(this.playerPath)
     }
     adventure.onEnd = (event: any) => {
       if (this.tracking) {
@@ -78,6 +81,25 @@ export class PlaygroundComponent implements OnInit {
         this.saveGame(userFinalStats)
       }
       this.endGame = true
+      console.log(this.playerPath)
+    }
+    adventure.onSelectAnswer = (answer: any) => {
+      if (this.tracking) {
+        this.playerPath.push({
+          type: 'answer',
+          id: answer.id,
+          text: answer.text,
+        })
+      }
+    }
+    adventure.onDrawNode = (node: any) => {
+      if (this.tracking) {
+        this.playerPath.push({
+          type: 'node',
+          id: node.id,
+          text: node.text,
+        })
+      }
     }
     adventure.onAlterCondition = (event: any) => {
       console.log(adventure.getAllStats())
@@ -88,6 +110,7 @@ export class PlaygroundComponent implements OnInit {
     const saved = await this.db.saveNewGameTo(
       this.userName,
       this.treeId,
+      this.playerPath,
       result
     )
     if (saved) {

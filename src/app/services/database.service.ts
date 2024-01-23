@@ -144,12 +144,17 @@ export class DatabaseService {
     return data[0].refs
   }
 
-  async saveNewGameTo(username: string, tree: number, result: any) {
+  async saveNewGameTo(
+    username: string,
+    tree: number,
+    path: Array<any>,
+    result: any
+  ) {
     if (this.prod)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('games')
-      .insert([{ result, user_name: username, tree }])
+      .insert([{ result, user_name: username, tree, path }])
     if (error) {
       console.log(error)
       return false

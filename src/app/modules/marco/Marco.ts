@@ -13,6 +13,7 @@ export class Marco {
   onWin: ((event: answer_event) => void) | undefined
   onEnd: ((event: answer_event) => void) | undefined
   onDrawNode: ((node: node) => void) | undefined
+  onSelectAnswer: ((answer: node_answer) => void) | undefined
 
   constructor(options: initial_parameters) {
     if (!options.guidebook) console.warn('You must pass a guidebook')
@@ -185,9 +186,14 @@ export class Marco {
 
     const node = this.guidebook.nodes.find((node) => node.id === destiny.node)
     if (node) {
+      answerLayout.addEventListener('click', () => {
+        if (this.onSelectAnswer) this.onSelectAnswer(answer)
+      })
       answerLayout.addEventListener('click', () => this.selectAnswerAnimation(answerLayout))
       answerLayout.addEventListener('click', () => this.drawNode(node))
     }
+
+
 
     return answerLayout
   }
