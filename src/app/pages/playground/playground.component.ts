@@ -89,6 +89,7 @@ export class PlaygroundComponent implements OnInit {
           type: 'answer',
           id: answer.id,
           text: answer.text,
+          timestamp: Date.now,
         })
       }
     }
@@ -98,6 +99,7 @@ export class PlaygroundComponent implements OnInit {
           type: 'node',
           id: node.id,
           text: node.text,
+          timestamp: Date.now,
         })
       }
     }
