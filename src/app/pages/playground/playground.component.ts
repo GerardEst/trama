@@ -54,8 +54,8 @@ export class PlaygroundComponent implements OnInit {
     const tree = await this.db.getTree(treeId)
 
     const adventure = new Marco({
-      domPlace: '.adventure', // El lloc del DOM on es crearà la interacció
-      guidebook: tree, // ⚠ Guia on es defineix tot lo relatiu a l'aventura
+      domPlace: '.adventure',
+      guidebook: tree, // ⚠ Guia on es defineixen els nodes
       config: {
         showLockedAnswers: true,
         view: this.view || 'normal',

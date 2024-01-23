@@ -1,12 +1,13 @@
-import { hasRequirements, getJoinRandom } from './utilities'
+import { playerHasAnswerRequirements, getJoinRandom } from './utilities'
 import { basic_style } from './styles/basic_style'
-import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat } from './interfaces'
+import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join } from './interfaces'
 
 export class Marco {
   guidebook: guidebook
   domPlace: string
   config: config
   player: player
+  timings: number
 
   onAlterStat: ((event: answer_event) => void) | undefined
   onAlterCondition: ((event: answer_event) => void) | undefined
@@ -14,6 +15,8 @@ export class Marco {
   onEnd: ((event: answer_event) => void) | undefined
   onDrawNode: ((node: node) => void) | undefined
   onSelectAnswer: ((answer: node_answer) => void) | undefined
+
+  DOMNodes: Array<HTMLElement> = []
 
   constructor(options: initial_parameters) {
     if (!options.guidebook) console.warn('You must pass a guidebook')
@@ -23,17 +26,169 @@ export class Marco {
     this.domPlace = options.domPlace
     this.player = { stats: [], conditions: [], ...options.player }
     this.config = options.config
+
+    // move this to config when ready
+    this.timings = 1000
   }
 
-  start() {
+  public start() {
+    this.appendGlobalStyle()
     this.drawNode(this.guidebook.nodes[0], true)
+  }
 
+  private appendGlobalStyle() {
     const style = document.createElement('style');
-    style.innerHTML = basic_style
+    style.innerHTML = basic_style(this.timings)
     document.head.appendChild(style);
   }
 
-  alterStat(event: answer_event) {
+  private drawNode(node: node, isTheFirstNode = false) {
+    if (!node) return console.warn('Nothing to draw, empty path')
+
+    if (this.config.view === 'book') {
+      this.blockExistentDOMNodes()
+    } else {
+      const lastNode = this.DOMNodes.at(-1)
+      this.fadeOutNode(lastNode)
+    }
+
+    let nodeLayout = this.createDOMNode(node.id, this.getTextWithFinalParameters(node.text), node.answers)
+    this.DOMNodes.push(nodeLayout)
+    this.addNodeToDOM(nodeLayout)
+    this.centerNodeToView(nodeLayout, isTheFirstNode, this.timings)
+    this.fadeInNodeAfterMiliseconds(nodeLayout,isTheFirstNode ? 0 : this.timings)
+
+    // Call the function to "subscribers"
+    if (this.onDrawNode) this.onDrawNode(node)
+  }
+
+  private drawAnswer(answer:node_answer) {
+    const answerLayout = this.createDOMAnswer(answer.id, this.getTextWithFinalParameters(answer.text))
+    const answerIsAvailable = playerHasAnswerRequirements(this.player, answer.requirements)
+
+    if (!answerIsAvailable) {
+      this.hideUnavailableAnswer(answerLayout)
+      return answerLayout
+    }
+
+    this.registerAnswerEvents(answer.events, answerLayout)
+    const destiniyNode = this.findAnswerDestinationNode(answer.join)
+
+    if (destiniyNode) {
+      answerLayout.addEventListener('click', () => this.selectAnswerAnimation(answerLayout))
+      answerLayout.addEventListener('click', () => this.drawNode(destiniyNode))
+      answerLayout.addEventListener('click', () => {
+        // Call the function to "subscribers"
+        if (this.onSelectAnswer) this.onSelectAnswer(answer)
+      })
+    }
+    return answerLayout
+  }
+
+  private blockExistentDOMNodes() {
+      for (let node of this.DOMNodes) {
+        // TODO -> Remove eventlisteners
+        node.classList.add('node--unplayable');
+      }
+  }
+
+  private centerNodeToView(nodeElement: HTMLElement, isTheFirstNode: boolean, timing:number) {
+    if (!isTheFirstNode) {
+      setTimeout(() => {
+        nodeElement.scrollIntoView({ behavior: "smooth" });
+      }, timing)
+    }
+  }
+
+  // Create all the node, calls the creation of answers of node too
+  private createDOMNode(id:string, text:string, answers: Array<node_answer>) {
+    let DOMNode = document.createElement('div')
+    DOMNode.className = 'node'
+    DOMNode.id = id
+    DOMNode.innerHTML = `<div class="node__text"><p>${text}</p></div>`
+
+    let DOMAnswers = document.createElement('div')
+    DOMAnswers.className = 'node__answers'
+    if (!answers || answers.length === 0) return DOMNode
+
+    for (let answer of answers) DOMAnswers.appendChild(this.drawAnswer(answer))
+
+    DOMNode.appendChild(DOMAnswers)
+
+    return DOMNode
+  }
+
+  private addNodeToDOM(node: HTMLElement) {
+    document.querySelector(this.domPlace)?.appendChild(node)
+  }
+
+  private fadeInNodeAfterMiliseconds(node: HTMLElement, timing: number) {
+    setTimeout(() => {
+      node.classList.add('node--show')
+    }, timing)
+  }
+
+  private fadeOutNode(node: HTMLElement | undefined) {
+    if (!node) return
+
+    node.classList.remove('node--show');
+    setTimeout(() => {
+      node.remove();
+    }, this.timings);
+  }
+
+  private getTextWithFinalParameters(text: string) {
+    // the text can have <data> that has to be replaced
+    return text.replace(
+      /<([a-zA-Z0-9]+)>/g,
+      (match:string, p1:string) => this.player[p1]
+    )
+  }
+
+  private createDOMAnswer(id: string, text: string) {
+    const DOMAnswer = document.createElement('div')
+    DOMAnswer.className = 'answer'
+    DOMAnswer.id = id
+    DOMAnswer.innerHTML = `<p>${text}</p>`
+
+    return DOMAnswer
+  }
+
+  private hideUnavailableAnswer(answer: HTMLElement) {
+    answer.classList.add(
+        this.config.showLockedAnswers
+          ? 'answer--notAvailable'
+          : 'answer--notAvailable--hidden'
+      )
+  }
+
+  private registerAnswerEvents(answerEvents: Array<answer_event> = [], DOMAnswer: HTMLElement) {
+      // We must launch the alterations first, and then the ends
+      const alters = answerEvents.filter((event:answer_event) => event.action === 'alterStat' || event.action === 'alterCondition')
+      const ends = answerEvents.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
+      for (let event of alters) {
+        DOMAnswer.addEventListener('click', () => this[event.action](event))
+      }
+      for (let event of ends) {
+        DOMAnswer.addEventListener('click', () => this[event.action](event))
+      }
+  }
+
+  private findAnswerDestinationNode(answerJoin: Array<join>) {
+    if (!answerJoin || answerJoin.length === 0) return undefined
+
+    const destiny = getJoinRandom(answerJoin)
+    const node = this.guidebook.nodes.find((node) => node.id === destiny.node)
+
+    return node
+  }
+
+  private selectAnswerAnimation(answerLayout:HTMLElement) {
+    answerLayout.classList.add('answer--selected')
+  }
+
+  // Events
+  private alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
     let statIndex = this.player.stats?.findIndex(
@@ -55,7 +210,7 @@ export class Marco {
     if (this.onAlterStat) this.onAlterStat(event)
   }
 
-  alterCondition(event: answer_event) {
+  private alterCondition(event: answer_event) {
     if (event.amount) {
       let condition = this.player.conditions?.find(
         (element:condition) => element.id === event.target
@@ -73,136 +228,16 @@ export class Marco {
     if (this.onAlterCondition) this.onAlterCondition(event)
   }
 
-  win(event:answer_event) {
+  private win(event:answer_event) {
     if (this.onWin) this.onWin(event)
   }
 
-  end(event:answer_event) {
+  private end(event:answer_event) {
     if (this.onEnd) this.onEnd(event)
   }
 
-  drawNode(node: node, first = false) {
-    if (!node) return console.error('Nothing to draw, empty path')
-
-    if (this.config.view === 'book') {
-      const nodes = Array.from(document.querySelectorAll('.node'));
-      for (let node of nodes) {
-        // TODO -> Remove eventlisteners
-        node.classList.add('node--unplayable');
-      }
-    } else {
-      const previousNode = document.querySelector('.node');
-      previousNode?.classList.remove('node--show');
-      setTimeout(() => {
-        previousNode?.remove();
-      },2000);
-    }
-
-    /* the text can have <data> that has to be replaced */
-    const textWithParams = node.text?.replace(
-      /<([a-zA-Z0-9]+)>/g,
-      (match:string, p1:string) => this.player[p1]
-    )
-
-    let nodeLayout = document.createElement('div')
-    nodeLayout.className = 'node'
-    nodeLayout.id = node.id
-    nodeLayout.innerHTML = `<div class="node__text"><p>${textWithParams}</p></div>`
-
-    let nodeAnswers = document.createElement('div')
-    nodeAnswers.className = 'node__answers'
-
-    nodeLayout.appendChild(nodeAnswers)
-
-    if (node.answers) {
-      for (let answer of node.answers)
-        nodeAnswers.appendChild(this.drawAnswer(answer))
-    }
-
-    document.querySelector(this.domPlace)?.appendChild(nodeLayout)
-
-    if (this.config.view === 'book') {
-      if (!first) {
-        setTimeout(() => {
-          nodeLayout.scrollIntoView({ behavior: "smooth" });
-        }, 2000)
-      }
-    }
-
-    setTimeout(() => {
-      nodeLayout.classList.add('node--show')
-    },first ? 0 : 2000)
-
-    if (this.onDrawNode) this.onDrawNode(node)
-  }
-
-  drawAnswer(answer:node_answer) {
-    /* the text can have <data> that has to be replaced */
-    const textWithParams = answer.text?.replace(
-      /<([a-zA-Z0-9]+)>/g,
-      (match:string, p1:string) => this.player[p1]
-    )
-
-    let answerLayout = document.createElement('div')
-    answerLayout.className = 'answer'
-    answerLayout.id = answer.id
-    //answerLayout.dataset['join'] = answer.join
-    answerLayout.innerHTML = `<p>${textWithParams}</p>`
-
-    // Check if answer is available based on requirements vs player stats
-    let availableAnswer = hasRequirements(
-      this.player,
-      answer.requirements
-    )
-
-    // Return unavailable answer if not cumplen the requirements
-    if (!availableAnswer) {
-      answerLayout.classList.add(
-        this.config.showLockedAnswers
-          ? 'answer--notAvailable'
-          : 'answer--notAvailable--hidden'
-      )
-
-      return answerLayout
-    }
-
-    // Register every event
-    if (answer.events) {
-      // We must launch the alterations first, and then the ends, for answers that ends the history but also do some last modification
-      const alters = answer.events.filter((event:answer_event) => event.action === 'alterStat' || event.action === 'alterCondition')
-      const ends = answer.events.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
-      for (let event of alters) {
-        answerLayout.addEventListener('click', () => this[event.action](event))
-      }
-      for (let event of ends) {
-        answerLayout.addEventListener('click', () => this[event.action](event))
-      }
-    }
-
-    // It there is no node to join, go on (the click will activate the events, but will stay on the same node without updating)
-    if (!answer.join || answer.join.length === 0) return answerLayout
-
-    let destiny = getJoinRandom(answer.join)
-
-    const node = this.guidebook.nodes.find((node) => node.id === destiny.node)
-    if (node) {
-      answerLayout.addEventListener('click', () => {
-        if (this.onSelectAnswer) this.onSelectAnswer(answer)
-      })
-      answerLayout.addEventListener('click', () => this.selectAnswerAnimation(answerLayout))
-      answerLayout.addEventListener('click', () => this.drawNode(node))
-    }
-
-
-
-    return answerLayout
-  }
-
-  selectAnswerAnimation(answerLayout:HTMLElement) {
-    answerLayout.classList.add('answer--selected')
-  }
-
-  getAllStats() {
+  // Public methods to use with Marco instance
+  public getAllStats() {
     return this.player
   }
 }

@@ -5,7 +5,7 @@ export function getJoinRandom(answerJoins:Array<join>) {
   return answerJoins[randomJoinIndex]
 }
 
-export function hasRequirements(player:player, requirements:Array<answer_requirement>) {
+export function playerHasAnswerRequirements(player:player, requirements:Array<answer_requirement>) {
 
   if (!requirements) return true
 
