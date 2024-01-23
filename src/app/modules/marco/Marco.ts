@@ -49,7 +49,7 @@ export class Marco {
       this.blockExistentDOMNodes()
     } else {
       const lastNode = this.DOMNodes.at(-1)
-      this.fadeOutNode(lastNode)
+      this.fadeOutNode(lastNode, this.timings)
     }
 
     let nodeLayout = this.createDOMNode(node.id, this.getTextWithFinalParameters(node.text), node.answers)
@@ -128,13 +128,13 @@ export class Marco {
     }, timing)
   }
 
-  private fadeOutNode(node: HTMLElement | undefined) {
+  private fadeOutNode(node: HTMLElement | undefined, timing: number) {
     if (!node) return
 
     node.classList.remove('node--show');
     setTimeout(() => {
       node.remove();
-    }, this.timings);
+    }, timing);
   }
 
   private getTextWithFinalParameters(text: string) {
