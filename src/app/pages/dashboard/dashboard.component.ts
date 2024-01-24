@@ -75,7 +75,8 @@ export class DashboardComponent {
   }
 
   async loadTree(treeId: number) {
-    this.tree = await this.db.getTree(treeId)
+    const history = await this.db.getTree(treeId)
+    this.tree = history.tree
     this.id = treeId
 
     localStorage.setItem('polo-id', treeId.toString())

@@ -59,3 +59,7 @@ export interface condition{
 export interface join{
   node: string,
 }
+export interface externalEvent{
+  name: 'leaveTab' | 'goBackToTab' | 'blurWindow' | 'focusWindow',
+  time: number
+}

@@ -1,5 +1,5 @@
 <section class="adventure"></section>
-<polo-modal-window *ngIf="tracking && !gotUserInfo" [locked]="true">
+<polo-modal-window *ngIf="tree?.tracking && !gotUserInfo" [locked]="true">
   <form class="playerForm">
     <input type="text" (change)="setUserName($event)" placeholder="Nom" />
     <button type="submit" (click)="startAdventure()">Començar!</button>

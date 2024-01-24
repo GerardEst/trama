@@ -1,6 +1,6 @@
 import { playerHasAnswerRequirements, getJoinRandom } from './utilities'
 import { basic_style } from './styles/basic_style'
-import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join } from './interfaces'
+import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join, externalEvent } from './interfaces'
 
 export class Marco {
   guidebook: guidebook
@@ -8,6 +8,7 @@ export class Marco {
   config: config
   player: player
   timings: number
+  externalEvents: Array<externalEvent>
 
   onAlterStat: ((event: answer_event) => void) | undefined
   onAlterCondition: ((event: answer_event) => void) | undefined
@@ -15,6 +16,7 @@ export class Marco {
   onEnd: ((event: answer_event) => void) | undefined
   onDrawNode: ((node: node) => void) | undefined
   onSelectAnswer: ((answer: node_answer) => void) | undefined
+  onExternalEvent: ((externalEvent: externalEvent) => void) | undefined
 
   DOMNodes: Array<HTMLElement> = []
 
@@ -27,6 +29,7 @@ export class Marco {
     this.player = { stats: [], conditions: [], ...options.player }
     this.config = options.config
 
+    this.externalEvents = []
     // move this to config when ready
     this.timings = 1000
   }

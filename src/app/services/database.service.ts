@@ -37,7 +37,7 @@ export class DatabaseService {
       .select('*')
       .eq('id', treeId)
 
-    return trees[0].tree
+    return trees[0]
   }
 
   async createNewTree(tree: object) {
@@ -148,13 +148,20 @@ export class DatabaseService {
     username: string,
     tree: number,
     path: Array<any>,
-    result: any
+    result: any,
+    externalEvents: Array<any>
   ) {
     if (this.prod)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
-    const { data, error } = await this.supabase
-      .from('games')
-      .insert([{ result, user_name: username, tree, path }])
+    const { data, error } = await this.supabase.from('games').insert([
+      {
+        result,
+        user_name: username,
+        tree,
+        path,
+        external_events: externalEvents,
+      },
+    ])
     if (error) {
       console.log(error)
       return false
