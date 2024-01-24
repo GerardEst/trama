@@ -12,8 +12,8 @@ import { DatabaseService } from '../../services/database.service'
 export class StadisticsComponent implements OnInit {
   plays: any
   refs: any
-  treeId?: number
-  @Input() set id(treeId: number) {
+  treeId?: string
+  @Input() set id(treeId: string) {
     this.treeId = treeId
   }
 

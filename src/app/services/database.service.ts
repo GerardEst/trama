@@ -19,33 +19,33 @@ export class DatabaseService {
   async getAllTrees() {
     if (this.prod)
       console.log(
-        '%cdb call to get all the trees id and name',
+        '%cdb call to get all the stories id and name',
         'color: #9999ff'
       )
-    let { data: trees, error } = await this.supabase
-      .from('trees')
+    let { data: stories, error } = await this.supabase
+      .from('stories')
       .select('id,name')
 
-    return trees
+    return stories
   }
 
-  async getTree(treeId: number) {
+  async getTree(storyId: string) {
     if (this.prod)
-      console.log('%cdb call to get everything about a tree', 'color: #9999ff')
-    let { data: trees, error } = await this.supabase
-      .from('trees')
+      console.log('%cdb call to get everything about a story', 'color: #9999ff')
+    let { data: stories, error } = await this.supabase
+      .from('stories')
       .select('*')
-      .eq('id', treeId)
+      .eq('id', storyId)
 
-    return trees[0]
+    return stories[0]
   }
 
-  async createNewTree(tree: object) {
+  async createNewTree(story: object) {
     if (this.prod)
-      console.log('%cdb call to create a new tree', 'color: #9999ff')
+      console.log('%cdb call to create a new story', 'color: #9999ff')
     const { data, error } = await this.supabase
-      .from('trees')
-      .insert(tree)
+      .from('stories')
+      .insert(story)
       .select()
 
     if (error) return false
@@ -54,87 +54,92 @@ export class DatabaseService {
 
   async saveLocalToDB() {
     if (this.prod)
-      console.log('%cdb call to save local tree to db', 'color: #9999ff')
+      console.log('%cdb call to save local story to db', 'color: #9999ff')
     //@ts-ignore
     const savedTree = JSON.parse(localStorage.getItem('polo-tree'))
     //@ts-ignore
-    const treeId = JSON.parse(localStorage.getItem('polo-id'))
+    const storyId = localStorage.getItem('polo-id')
 
     const { data, error } = await this.supabase
-      .from('trees')
+      .from('stories')
       .update({ tree: savedTree })
-      .eq('id', treeId)
+      .eq('id', storyId)
 
     if (error) return false
 
     return true
   }
 
-  async getConfigurationOf(treeId: number) {
+  async getConfigurationOf(storyId: string) {
     if (this.prod)
       console.log(
-        '%cdb call to get the configuration of a tree',
+        '%cdb call to get the configuration of a story',
         'color: #9999ff'
       )
     let { data, error } = await this.supabase
-      .from('trees')
+      .from('stories')
       .select('tracking, view')
-      .eq('id', treeId)
+      .eq('id', storyId)
+
+    if (error) return console.error(error)
 
     console.log(data[0])
     return data[0]
   }
 
-  async setTrackingOf(treeId: number, tracking: boolean) {
+  async setTrackingOf(storyId: string, tracking: boolean) {
     if (this.prod)
       console.log(
-        '%cdb call to set the tracking status of a tree',
+        '%cdb call to set the tracking status of a story',
         'color: #9999ff'
       )
     const { data, error } = await this.supabase
-      .from('trees')
+      .from('stories')
       .update({ tracking: tracking })
-      .eq('id', treeId)
+      .eq('id', storyId)
 
     if (error) return false
     return true
   }
 
-  async setBookviewOf(treeId: number, view: string | null) {
+  async setBookviewOf(storyId: string, view: string | null) {
     if (this.prod)
       console.log(
-        '%cdb call to set the view status of a tree',
+        '%cdb call to set the view status of a story',
         'color: #9999ff'
       )
     const { data, error } = await this.supabase
-      .from('trees')
+      .from('stories')
       .update({ view: view })
-      .eq('id', treeId)
+      .eq('id', storyId)
 
     if (error) return false
     return true
   }
 
-  async getStadisticsOfTree(treeId: number) {
+  async getStadisticsOfTree(storyId: string) {
     if (this.prod)
-      console.log('%cdb call to get the stadistics of a tree', 'color: #9999ff')
+      console.log(
+        '%cdb call to get the stadistics of a story',
+        'color: #9999ff'
+      )
     const { data, error } = await this.supabase
       .from('games')
       .select('created_at, result, user_name')
-      .eq('tree', treeId)
+      .eq('tree', storyId)
 
     if (error) return false
 
     return data
   }
 
-  async getRefsOfTree(treeId: number) {
-    if (this.prod) console.log('db call to get only the refs of a tree')
+  async getRefsOfTree(storyId: string) {
+    if (this.prod) console.log('db call to get only the refs of a story')
     console.log('%cdb call to get everything about a tree', 'color: #9999ff')
     const { data, error } = await this.supabase
-      .from('trees')
+      .from('stories')
       .select(`refs: tree->refs`)
-      .eq('id', treeId)
+      .eq('id', storyId)
 
     if (error) {
       console.log(error)
@@ -145,23 +150,23 @@ export class DatabaseService {
   }
 
   async saveNewGameTo(
+    id: string,
     username: string,
-    tree: number,
+    story: string,
     path: Array<any>,
     result: any,
     externalEvents: Array<any>
   ) {
     if (this.prod)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
-    const { data, error } = await this.supabase.from('games').insert([
-      {
-        result,
-        user_name: username,
-        tree,
-        path,
-        external_events: externalEvents,
-      },
-    ])
+    const { data, error } = await this.supabase.from('games').upsert({
+      id,
+      result,
+      user_name: username,
+      story,
+      path,
+      external_events: externalEvents,
+    })
     if (error) {
       console.log(error)
       return false

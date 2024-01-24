@@ -17,16 +17,17 @@ export class PlaygroundComponent implements OnInit {
   gotUserInfo: boolean = false
   endGame: boolean = false
 
+  gameId?: string
   userName: string = ''
   playerPath: Array<any> = []
   externalEvents: Array<any> = []
 
-  treeId: number = 0
+  treeId: string = ''
   tree: any
 
   adventure: any
 
-  @Input() set id(treeId: number) {
+  @Input() set id(treeId: string) {
     this.treeId = treeId
   }
 
@@ -35,19 +36,22 @@ export class PlaygroundComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.tree = await this.db.getTree(this.treeId)
 
-    if (!this.tree.tracking) this.startAdventure()
+    if (!this.tree.tracking) this.prepareGame()
   }
 
-  setUserName(event: any) {
-    this.userName = event.target?.value
+  async prepareGame() {
+    if (this.tree.tracking) {
+      this.gotUserInfo = true
+      this.gameId = self.crypto.randomUUID()
+
+      // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
+      this.saveGame({})
+    }
+
+    this.generateAdventure()
   }
 
-  startAdventure() {
-    this.gotUserInfo = true
-    this.loadAdventure()
-  }
-
-  async loadAdventure() {
+  private async generateAdventure() {
     this.adventure = new Marco({
       domPlace: '.adventure',
       guidebook: this.tree.tree, // ⚠ Guia on es defineixen els nodes
@@ -61,8 +65,11 @@ export class PlaygroundComponent implements OnInit {
     })
 
     this.adventure.start()
-    this.startTabChangeDetection()
-    this.startBlurWindowDetection()
+
+    if (this.tree.tracking) {
+      this.startTabChangeDetection()
+      this.startBlurWindowDetection()
+    }
 
     this.adventure.onWin = (event: any) => {
       if (this.tree.tracking) {
@@ -86,7 +93,7 @@ export class PlaygroundComponent implements OnInit {
           type: 'answer',
           id: answer.id,
           text: answer.text,
-          timestamp: Date.now,
+          timestamp: Date.now(),
         })
       }
     }
@@ -96,20 +103,20 @@ export class PlaygroundComponent implements OnInit {
           type: 'node',
           id: node.id,
           text: node.text,
-          timestamp: Date.now,
+          timestamp: Date.now(),
         })
       }
     }
     this.adventure.onAlterCondition = (event: any) => {
       console.log(this.adventure.getAllStats())
     }
-    this.adventure.onExternalEvent = (event: any) => {
-      console.log(event)
-    }
   }
 
-  async saveGame(result: any) {
+  private async saveGame(result: any) {
+    if (!this.gameId) return console.error('Cannot save adventure')
+
     const saved = await this.db.saveNewGameTo(
+      this.gameId,
       this.userName,
       this.treeId,
       this.playerPath,
@@ -151,5 +158,9 @@ export class PlaygroundComponent implements OnInit {
       }
       this.externalEvents.push(externalEvent)
     })
+  }
+
+  setUserName(event: any) {
+    this.userName = event.target?.value
   }
 }

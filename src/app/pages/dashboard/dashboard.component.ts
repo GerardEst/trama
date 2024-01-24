@@ -15,7 +15,7 @@ import { Router } from '@angular/router'
 export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
   tree?: any
-  id?: number
+  id?: string
   trackingEnabled: boolean = false
   bookviewEnabled: boolean = false
   savingTree: boolean = false
@@ -74,12 +74,12 @@ export class DashboardComponent {
     navigator.clipboard.writeText(localStorage.getItem('polo-tree'))
   }
 
-  async loadTree(treeId: number) {
+  async loadTree(treeId: string) {
     const history = await this.db.getTree(treeId)
     this.tree = history.tree
     this.id = treeId
 
-    localStorage.setItem('polo-id', treeId.toString())
+    localStorage.setItem('polo-id', treeId)
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
 
     this.board?.centerToNode(this.tree.nodes[0])
@@ -95,14 +95,14 @@ export class DashboardComponent {
       console.log('Tree loaded from local')
 
       // When there is local data, and we are in the same session, we use local data
-      this.id = JSON.parse(localTreeId)
+      this.id = localTreeId
       this.tree = JSON.parse(localTree)
       // this.board?.centerToNode(this.tree.nodes[0])
     } else if (!currentSession && localTreeId) {
       console.warn('Tree loaded from db')
 
       // When there is local data, but we are not in the same session, we use the db data to load the local tree
-      this.loadTree(JSON.parse(localTreeId))
+      this.loadTree(localTreeId)
       sessionStorage.setItem('polo-session', 'true')
     } else {
       console.warn('Tree not loaded')

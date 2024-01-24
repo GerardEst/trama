@@ -2,7 +2,7 @@
 <polo-modal-window *ngIf="tree?.tracking && !gotUserInfo" [locked]="true">
   <form class="playerForm">
     <input type="text" (change)="setUserName($event)" placeholder="Nom" />
-    <button type="submit" (click)="startAdventure()">Començar!</button>
+    <button type="submit" (click)="prepareGame()">Començar!</button>
   </form>
 </polo-modal-window>
 <polo-modal-window *ngIf="endGame" [locked]="true">
