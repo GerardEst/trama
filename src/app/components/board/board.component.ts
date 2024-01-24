@@ -27,7 +27,7 @@ import { findAnswerInTree } from 'src/app/utils/tree-searching'
 export class BoardComponent {
   @ViewChild('board') board?: ElementRef
   @Input() tree?: any
-  @Input() treeId?: number
+  @Input() treeId?: string
 
   // Joins
   waitingForJoin: boolean = false

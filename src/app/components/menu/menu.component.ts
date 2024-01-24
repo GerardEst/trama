@@ -2,10 +2,6 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 
-interface treeInfo {
-  id: number
-  name: string
-}
 @Component({
   selector: 'polo-menu',
   standalone: true,
@@ -14,8 +10,8 @@ interface treeInfo {
   styleUrls: ['./menu.component.sass'],
 })
 export class MenuComponent implements OnInit {
-  trees?: Array<treeInfo>
-  @Input() treeId?: number
+  trees?: Array<any>
+  @Input() treeId?: string
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
 
   constructor(private db: DatabaseService) {}

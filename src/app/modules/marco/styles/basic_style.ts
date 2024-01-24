@@ -1,4 +1,4 @@
-export const basic_style = `
+export const basic_style = (timing:number) => `
 .adventure p{
   font-family: "Baskerville";
   font-size: 1.1rem;
@@ -8,7 +8,7 @@ export const basic_style = `
   display: flex;
   flex-direction: column;
   padding-top: 3rem;
-  transition: 2s;
+  transition: ${timing}ms;
   opacity: 0;
 }
 .adventure .node.node--show{

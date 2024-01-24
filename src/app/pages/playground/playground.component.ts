@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 /** Load ✨marco✨ */
 //@ts-ignore
-import { Marco } from '../../modules/marco/Marco.js'
+import { Marco } from '../../modules/marco/Marco'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 
@@ -14,86 +14,153 @@ import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-w
   styleUrls: ['./playground.component.sass'],
 })
 export class PlaygroundComponent implements OnInit {
-  tracking: boolean = false
-  view: string | null = null
   gotUserInfo: boolean = false
   endGame: boolean = false
+
+  gameId?: string
   userName: string = ''
-  treeId: number = 0
-  @Input() set id(treeId: number) {
+  playerPath: Array<any> = []
+  externalEvents: Array<any> = []
+
+  treeId: string = ''
+  tree: any
+
+  adventure: any
+
+  @Input() set id(treeId: string) {
     this.treeId = treeId
   }
 
   constructor(private db: DatabaseService) {}
 
   async ngOnInit(): Promise<void> {
-    await this.getTreeConfiguration(this.treeId)
-    if (!this.tracking) this.startAdventure()
+    this.tree = await this.db.getTree(this.treeId)
+
+    if (!this.tree.tracking) this.prepareGame()
   }
 
-  setUserName(event: any) {
-    this.userName = event.target?.value
+  async prepareGame() {
+    if (this.tree.tracking) {
+      this.gotUserInfo = true
+      this.gameId = self.crypto.randomUUID()
+
+      // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
+      this.saveGame({})
+    }
+
+    this.generateAdventure()
   }
 
-  startAdventure() {
-    this.loadAdventure(this.treeId, this.userName)
-    this.gotUserInfo = true
-  }
-
-  async getTreeConfiguration(treeId: number) {
-    // TODO -> Aixo es podria obtenir al mateix getTree no?
-    const configuration = await this.db.getConfigurationOf(treeId)
-
-    this.tracking = configuration.tracking
-    this.view = configuration.view
-  }
-
-  async loadAdventure(treeId: number, playerName: string) {
-    const tree = await this.db.getTree(treeId)
-
-    const adventure = new Marco({
-      domPlace: '.adventure', // El lloc del DOM on es crearà la interacció
-      guidebook: tree, // ⚠ Guia on es defineix tot lo relatiu a l'aventura
+  private async generateAdventure() {
+    this.adventure = new Marco({
+      domPlace: '.adventure',
+      guidebook: this.tree.tree, // ⚠ Guia on es defineixen els nodes
       config: {
         showLockedAnswers: true,
-        view: this.view,
+        view: this.tree.view || 'normal',
       },
       player: {
-        name: playerName,
+        name: this.userName,
       },
     })
 
-    adventure.start()
+    this.adventure.start()
 
-    adventure.onWin = (event: any) => {
-      if (this.tracking) {
-        const userFinalStats = adventure.getAllStats()
+    if (this.tree.tracking) {
+      this.startTabChangeDetection()
+      this.startBlurWindowDetection()
+    }
+
+    this.adventure.onWin = (event: any) => {
+      if (this.tree.tracking) {
+        const userFinalStats = this.adventure.getAllStats()
         this.saveGame(userFinalStats)
       }
       this.endGame = true
+      console.log(this.playerPath)
     }
-    adventure.onEnd = (event: any) => {
-      if (this.tracking) {
-        const userFinalStats = adventure.getAllStats()
+    this.adventure.onEnd = (event: any) => {
+      if (this.tree.tracking) {
+        const userFinalStats = this.adventure.getAllStats()
         this.saveGame(userFinalStats)
       }
       this.endGame = true
+      console.log(this.playerPath)
     }
-    adventure.onAlterCondition = (event: any) => {
-      console.log(adventure.getAllStats())
+    this.adventure.onSelectAnswer = (answer: any) => {
+      if (this.tree.tracking) {
+        this.playerPath.push({
+          type: 'answer',
+          id: answer.id,
+          text: answer.text,
+          timestamp: Date.now(),
+        })
+      }
+    }
+    this.adventure.onDrawNode = (node: any) => {
+      if (this.tree.tracking) {
+        this.playerPath.push({
+          type: 'node',
+          id: node.id,
+          text: node.text,
+          timestamp: Date.now(),
+        })
+      }
+    }
+    this.adventure.onAlterCondition = (event: any) => {
+      console.log(this.adventure.getAllStats())
     }
   }
 
-  async saveGame(result: any) {
+  private async saveGame(result: any) {
+    if (!this.gameId) return console.error('Cannot save adventure')
+
     const saved = await this.db.saveNewGameTo(
+      this.gameId,
       this.userName,
       this.treeId,
-      result
+      this.playerPath,
+      result,
+      this.externalEvents
     )
     if (saved) {
       console.log('Game saved!', saved)
     } else {
       console.error('Error saving game')
     }
+  }
+
+  private startTabChangeDetection() {
+    document.addEventListener('visibilitychange', () => {
+      let externalEvent
+      if (document.hidden) {
+        externalEvent = { name: 'leaveTab', time: Date.now() }
+        this.externalEvents.push(externalEvent)
+      } else {
+        externalEvent = { name: 'goBackToTab', time: Date.now() }
+        this.externalEvents.push(externalEvent)
+      }
+    })
+  }
+
+  private startBlurWindowDetection() {
+    window.addEventListener('focus', () => {
+      let externalEvent = {
+        name: 'focusWindow',
+        time: Date.now(),
+      }
+      this.externalEvents.push(externalEvent)
+    })
+    window.addEventListener('blur', () => {
+      let externalEvent = {
+        name: 'blurWindow',
+        time: Date.now(),
+      }
+      this.externalEvents.push(externalEvent)
+    })
+  }
+
+  setUserName(event: any) {
+    this.userName = event.target?.value
   }
 }
