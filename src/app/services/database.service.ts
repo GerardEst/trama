@@ -126,7 +126,7 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('games')
       .select('created_at, result, user_name')
-      .eq('tree', storyId)
+      .eq('story', storyId)
 
     if (error) return false
 
