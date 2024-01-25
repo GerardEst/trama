@@ -10,6 +10,7 @@ export const basic_style = (timing:number) => `
   padding-top: 3rem;
   transition: ${timing}ms;
   opacity: 0;
+  white-space: pre-wrap
 }
 .adventure .node.node--show{
   opacity: 1;
