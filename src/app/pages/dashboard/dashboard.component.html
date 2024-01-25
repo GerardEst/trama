@@ -1,5 +1,6 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
 <polo-menu [treeId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
+<polo-tree-error-notifier></polo-tree-error-notifier>
 <section class="boardActions">
   <label>
     <span>Enable tracking</span>

@@ -4,11 +4,17 @@ import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
 import { Router } from '@angular/router'
+import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 
 @Component({
   selector: 'polo-dashboard',
   standalone: true,
-  imports: [CommonModule, BoardComponent, MenuComponent],
+  imports: [
+    CommonModule,
+    BoardComponent,
+    MenuComponent,
+    TreeErrorNotifierComponent,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
 })

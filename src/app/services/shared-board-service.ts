@@ -3,7 +3,7 @@ import { Subject } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class SharedBoardService {
-  updatedJoins = new Subject()
+  public updatedJoins = new Subject()
   boardReference: any
 
   constructor() {}

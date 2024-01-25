@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core'
 import { node } from '../interfaces'
 import { findAnswerInTree } from '../utils/tree-searching'
+import { TreeErrorFinderService } from './tree-error-finder.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
-  constructor() {}
+  constructor(private errorFinder: TreeErrorFinderService) {}
 
   updateNodeText(nodeId: string, newText: string) {
     const savedTree = this.getStoredTree()
@@ -352,6 +353,8 @@ export class StorageService {
 
   private updateStoredTree(newTree: Array<any>) {
     localStorage.setItem('polo-tree', JSON.stringify(newTree))
+
+    this.errorFinder.checkErrors(newTree)
   }
   private createNewTree() {
     const newTree = {
