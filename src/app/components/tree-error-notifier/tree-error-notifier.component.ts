@@ -10,9 +10,22 @@ import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.servi
 })
 export class TreeErrorNotifierComponent {
   errors: any
+  show: boolean = false
+
   constructor(private treeError: TreeErrorFinderService) {
     this.treeError.errors$.subscribe((error) => {
       this.errors = error
     })
+  }
+
+  /** Maybe it's good to have it opened, so don't make it close when user
+   * click outside. Allow it to be opened but make it clear how to close
+   */
+  toggleErrors() {
+    this.show = !this.show
+  }
+
+  thereAreErrors() {
+    return this.errors.find((error: any) => error.type === 'error')
   }
 }

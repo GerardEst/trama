@@ -2,3 +2,46 @@
   position: fixed
   top: 1rem
   right: 1rem
+  &__button
+    width: 2.5rem
+    display: flex
+    align-items: center
+    justify-content: center
+    aspect-ratio: 1
+    border-radius: 100%
+    border: 1px solid var(--dark-gray)
+    background-color: white
+    padding: 0
+    &:has(.notifier__button__badge--severe)
+      border-color: tomato
+    &:has(.notifier__button__badge--light)
+      border-color: gold
+    &__badge
+      position: absolute
+      border-radius: 100%
+      width: 1.1rem
+      aspect-ratio: 1
+      display: grid
+      place-content: center
+      bottom: -2px
+      right: -2px
+      font-size: 0.7rem
+      background-color: yellowgreen
+      color: white
+      font-family: math
+      &--severe
+        background-color: tomato
+      &--light
+        background-color: gold
+  &__list
+    display: flex
+    flex-direction: column
+    gap: 0.5rem
+    position: absolute
+    top: calc(100% + 0.5rem)
+    right: 0
+    border: 1px solid var(--dark-gray)
+    border-radius: 0.5rem
+    background-color: white
+    padding: 1rem
+    min-width: 250px

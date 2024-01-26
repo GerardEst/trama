@@ -20,9 +20,19 @@ export class TreeErrorFinderService {
     console.log('checking errors on the tree')
     for (let node of tree.nodes) {
       if (this.hasEmptyText(node))
-        this.errorList.push({ type: 'node-empty_text', element: node.id })
+        this.errorList.push({
+          type: 'warning',
+          name: 'node-empty_text',
+          element: node.id,
+          text: `Empty text in ${node.id}`,
+        })
       if (!node.answers) {
-        this.errorList.push({ type: 'node-no_answers', element: node.id })
+        this.errorList.push({
+          type: 'error',
+          name: 'node-no_answers',
+          element: node.id,
+          text: `Dead end in ${node.id}`,
+        })
         return
       }
       for (let answer of node.answers) {
@@ -32,13 +42,20 @@ export class TreeErrorFinderService {
           })
           if (!answerHaveWinOrEnd || !answer.events) {
             this.errorList.push({
-              type: 'answer-no_join_nor_end',
+              type: 'error',
+              name: 'answer-no_join_nor_end',
               element: answer.id,
+              text: `Answer with dead end in ${node.id}`,
             })
           }
         }
         if (this.hasEmptyText(answer))
-          this.errorList.push({ type: 'answer-empty_text', element: answer.id })
+          this.errorList.push({
+            type: 'warning',
+            name: 'answer-empty_text',
+            element: answer.id,
+            text: `Empty answer text in ${node.id}`,
+          })
       }
     }
 
