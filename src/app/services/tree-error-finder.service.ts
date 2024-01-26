@@ -36,16 +36,25 @@ export class TreeErrorFinderService {
         return
       }
       for (let answer of node.answers) {
+        const answerHaveWinOrEnd = answer.events?.find((event: any) => {
+          return event.action === 'win' || event.action === 'end'
+        })
         if (!answer.join || answer.join.length === 0) {
-          const answerHaveWinOrEnd = answer.events?.find((event: any) => {
-            return event.action === 'win' || event.action === 'end'
-          })
           if (!answerHaveWinOrEnd || !answer.events) {
             this.errorList.push({
               type: 'error',
               name: 'answer-no_join_nor_end',
               element: answer.id,
               text: `Answer with dead end in ${node.id}`,
+            })
+          }
+        } else {
+          if (answerHaveWinOrEnd) {
+            this.errorList.push({
+              type: 'error',
+              name: 'answer-win_and_join',
+              element: answer.id,
+              text: `Answer has unaccessible join in ${node.id}`,
             })
           }
         }
