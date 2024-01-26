@@ -7,7 +7,6 @@ import { BoardFlowsComponent } from '../board-flows/board-flows.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
-import { DatabaseService } from 'src/app/services/database.service'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { findAnswerInTree } from 'src/app/utils/tree-searching'
 
@@ -36,7 +35,6 @@ export class BoardComponent {
 
   constructor(
     private storage: StorageService,
-    private db: DatabaseService,
     private sharedBoardService: SharedBoardService
   ) {}
 
