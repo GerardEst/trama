@@ -9,9 +9,10 @@ import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.servi
   styleUrl: './tree-error-notifier.component.sass',
 })
 export class TreeErrorNotifierComponent {
+  errors: any
   constructor(private treeError: TreeErrorFinderService) {
     this.treeError.errors$.subscribe((error) => {
-      console.log('notifier says', error)
+      this.errors = error
     })
   }
 }

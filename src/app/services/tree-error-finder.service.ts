@@ -16,12 +16,13 @@ export class TreeErrorFinderService {
   private errorList: any = []
 
   checkErrors(tree: any) {
+    this.errorList = []
     console.log('checking errors on the tree')
     for (let node of tree.nodes) {
       if (this.hasEmptyText(node))
-        this.errorList.push({ type: 'node-empty_text', node: node.id })
+        this.errorList.push({ type: 'node-empty_text', element: node.id })
       if (!node.answers) {
-        this.errorList.push({ type: 'node-no_answers', node: node.id })
+        this.errorList.push({ type: 'node-no_answers', element: node.id })
         return
       }
       for (let answer of node.answers) {
@@ -32,12 +33,12 @@ export class TreeErrorFinderService {
           if (!answerHaveWinOrEnd || !answer.events) {
             this.errorList.push({
               type: 'answer-no_join_nor_end',
-              answer: answer.id,
+              element: answer.id,
             })
           }
         }
         if (this.hasEmptyText(answer))
-          this.errorList.push({ type: 'answer-empty_text', answer: answer.id })
+          this.errorList.push({ type: 'answer-empty_text', element: answer.id })
       }
     }
 

@@ -1,1 +1,5 @@
-<p>tree-error-notifier works!</p>
+<section class="notifier">
+  @for (error of errors; track $index) {
+  <p>{{ error.type }} -> {{ error.element }}</p>
+  }
+</section>

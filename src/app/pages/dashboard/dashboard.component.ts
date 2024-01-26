@@ -5,6 +5,7 @@ import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
 import { Router } from '@angular/router'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
+import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -26,14 +27,19 @@ export class DashboardComponent {
   bookviewEnabled: boolean = false
   savingTree: boolean = false
 
-  constructor(private db: DatabaseService, private router: Router) {}
+  constructor(
+    private db: DatabaseService,
+    private router: Router,
+    private errorFider: TreeErrorFinderService
+  ) {}
 
   ngOnInit(): void {
     this.initBoard()
-    this.updateTracking()
+    this.updateConfiguration()
+    this.errorFider.checkErrors(this.tree)
   }
 
-  async updateTracking() {
+  async updateConfiguration() {
     if (this.id) {
       const configuration = await this.db.getConfigurationOf(this.id)
       this.trackingEnabled = configuration.tracking
@@ -89,7 +95,7 @@ export class DashboardComponent {
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
 
     this.board?.centerToNode(this.tree.nodes[0])
-    this.updateTracking()
+    this.updateConfiguration()
   }
 
   initBoard() {
