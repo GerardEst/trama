@@ -17,8 +17,11 @@ export class TreeErrorFinderService {
 
   checkErrors(tree: any) {
     this.errorList = []
+    console.log('checking errors?')
+    if (!tree || tree.nodes.length === 0) return
     console.log('checking errors on the tree')
     for (let node of tree.nodes) {
+      console.log(node)
       if (this.hasEmptyText(node))
         this.errorList.push({
           type: 'warning',
@@ -33,41 +36,43 @@ export class TreeErrorFinderService {
           element: node.id,
           text: `Dead end in ${node.id}`,
         })
-        return
       }
-      for (let answer of node.answers) {
-        const answerHaveWinOrEnd = answer.events?.find((event: any) => {
-          return event.action === 'win' || event.action === 'end'
-        })
-        if (!answer.join || answer.join.length === 0) {
-          if (!answerHaveWinOrEnd || !answer.events) {
-            this.errorList.push({
-              type: 'error',
-              name: 'answer-no_join_nor_end',
-              element: answer.id,
-              text: `Answer with dead end in ${node.id}`,
-            })
-          }
-        } else {
-          if (answerHaveWinOrEnd) {
-            this.errorList.push({
-              type: 'error',
-              name: 'answer-win_and_join',
-              element: answer.id,
-              text: `Answer has unaccessible join in ${node.id}`,
-            })
-          }
-        }
-        if (this.hasEmptyText(answer))
-          this.errorList.push({
-            type: 'warning',
-            name: 'answer-empty_text',
-            element: answer.id,
-            text: `Empty answer text in ${node.id}`,
+      if (node.answers && node.answers.length > 0) {
+        for (let answer of node.answers) {
+          const answerHaveWinOrEnd = answer.events?.find((event: any) => {
+            return event.action === 'win' || event.action === 'end'
           })
+          if (!answer.join || answer.join.length === 0) {
+            if (!answerHaveWinOrEnd || !answer.events) {
+              this.errorList.push({
+                type: 'error',
+                name: 'answer-no_join_nor_end',
+                element: answer.id,
+                text: `Answer with dead end in ${node.id}`,
+              })
+            }
+          } else {
+            if (answerHaveWinOrEnd) {
+              this.errorList.push({
+                type: 'error',
+                name: 'answer-win_and_join',
+                element: answer.id,
+                text: `Answer has unaccessible join in ${node.id}`,
+              })
+            }
+          }
+          if (this.hasEmptyText(answer))
+            this.errorList.push({
+              type: 'warning',
+              name: 'answer-empty_text',
+              element: answer.id,
+              text: `Empty answer text in ${node.id}`,
+            })
+        }
       }
     }
 
+    console.log(this.errorList)
     this.errorsSubject.next(this.errorList)
   }
 

@@ -9,7 +9,7 @@ import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.servi
   styleUrl: './tree-error-notifier.component.sass',
 })
 export class TreeErrorNotifierComponent {
-  errors: any
+  errors: any = []
   show: boolean = false
 
   constructor(private treeError: TreeErrorFinderService) {
