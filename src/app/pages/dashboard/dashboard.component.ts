@@ -96,6 +96,8 @@ export class DashboardComponent {
 
     this.board?.centerToNode(this.tree.nodes[0])
     this.updateConfiguration()
+
+    this.errorFider.checkErrors(this.tree)
   }
 
   initBoard() {
