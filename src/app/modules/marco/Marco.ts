@@ -55,7 +55,7 @@ export class Marco {
       this.fadeOutNode(lastNode, this.timings)
     }
 
-    let nodeLayout = this.createDOMNode(node.id, this.getTextWithFinalParameters(node.text), node.answers)
+    let nodeLayout = this.createDOMNode(node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers)
     this.DOMNodes.push(nodeLayout)
     this.addNodeToDOM(nodeLayout)
     this.centerNodeToView(nodeLayout, isTheFirstNode, this.timings)
@@ -65,8 +65,9 @@ export class Marco {
     if (this.onDrawNode) this.onDrawNode(node)
   }
 
-  private drawAnswer(answer:node_answer) {
-    const answerLayout = this.createDOMAnswer(answer.id, this.getTextWithFinalParameters(answer.text))
+  private drawAnswer(answer: node_answer) {
+
+    const answerLayout = this.createDOMAnswer(answer.id, answer.text ? this.getTextWithFinalParameters(answer.text) : '')
     const answerIsAvailable = playerHasAnswerRequirements(this.player, answer.requirements)
 
     if (!answerIsAvailable) {
