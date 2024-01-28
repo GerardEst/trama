@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
+import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
 
 @Component({
   selector: 'polo-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SeparatorComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],
 })

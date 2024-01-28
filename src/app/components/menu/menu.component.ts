@@ -1,11 +1,13 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
+import { Router } from '@angular/router'
+import { SeparatorComponent } from '../ui/separator/separator.component'
 
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SeparatorComponent],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })
@@ -14,7 +16,7 @@ export class MenuComponent implements OnInit {
   @Input() treeId?: string
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
 
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService, private router: Router) {}
 
   async ngOnInit(): Promise<void> {
     this.trees = await this.db.getAllTrees()
@@ -52,5 +54,10 @@ export class MenuComponent implements OnInit {
       name: newTree[0].name,
     })
     this.loadTree(newTree[0].id)
+  }
+
+  logout() {
+    this.db.supabase.auth.signOut()
+    this.router.navigate(['/login'])
   }
 }
