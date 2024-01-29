@@ -2,10 +2,6 @@
 <polo-menu-top #menuTop [treeId]="id"></polo-menu-top>
 <polo-menu [activeStoryId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
 <section class="boardActions">
-  <!-- La idea és que aquí quedin coses per treballar en la historia,
-  com lo dels tags, el play, els errors... i a dalt opcions generals
-  de la historia, visualització de l'aventura, tracking, etc
-  I a l'esquerra coses del perfil: llista d'aventures, logout... -->
-  <button (click)="goToPlayground()">Preview</button>
   <polo-tree-error-notifier></polo-tree-error-notifier>
+  <button class="preview" (click)="goToPlayground()">Preview</button>
 </section>
