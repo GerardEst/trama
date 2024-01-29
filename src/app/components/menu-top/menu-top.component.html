@@ -1,0 +1,12 @@
+<div class="menu">
+  <input (change)="updateStoryName($event)" value="{{ storyName }}" />
+  <button
+    (click)="saveToDb()"
+    [class.boardActions__save]="!savingTree"
+    [class.boardActions__waiting]="savingTree"
+  >
+    Save
+  </button>
+
+  <polo-tree-error-notifier></polo-tree-error-notifier>
+</div>

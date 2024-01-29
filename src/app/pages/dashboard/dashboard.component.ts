@@ -6,6 +6,7 @@ import { DatabaseService } from '../../services/database.service'
 import { Router } from '@angular/router'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
+import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
 
 @Component({
   selector: 'polo-dashboard',
@@ -15,6 +16,7 @@ import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.servi
     BoardComponent,
     MenuComponent,
     TreeErrorNotifierComponent,
+    MenuTopComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
@@ -23,6 +25,7 @@ export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
   tree?: any
   id?: string
+  name?: string
   trackingEnabled: boolean = false
   bookviewEnabled: boolean = false
   savingTree: boolean = false
@@ -60,25 +63,12 @@ export class DashboardComponent {
   }
 
   async goToPlayground() {
-    await this.saveToDb()
+    //await this.saveToDb()
     window.open('/playground/' + this.id, '_blank')
   }
 
   async openStadistics() {
     this.router.navigate(['/stadistics', this.id])
-  }
-
-  async saveToDb(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      this.savingTree = true
-      this.db.saveLocalToDB().then((resp) => {
-        console.log('Saved?', resp)
-        setTimeout(() => {
-          this.savingTree = false
-          resolve() // Resolve the promise when saving is complete
-        }, 200)
-      })
-    })
   }
 
   exportTree() {
@@ -87,12 +77,14 @@ export class DashboardComponent {
   }
 
   async loadTree(treeId: string) {
-    const history = await this.db.getTree(treeId)
-    this.tree = history.tree
+    const story = await this.db.getTree(treeId)
+    this.tree = story.tree
     this.id = treeId
+    this.name = story.name
 
     localStorage.setItem('polo-id', treeId)
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
+    localStorage.setItem('polo-name', story.name)
 
     this.board?.centerToNode(this.tree.nodes[0])
     this.updateConfiguration()
@@ -104,6 +96,7 @@ export class DashboardComponent {
     const currentSession = sessionStorage.getItem('polo-session')
     const localTree = localStorage.getItem('polo-tree')
     const localTreeId = localStorage.getItem('polo-id')
+    const localTreeName = localStorage.getItem('polo-name')
 
     if (currentSession && localTreeId && localTree) {
       console.log('Tree loaded from local')
@@ -111,6 +104,7 @@ export class DashboardComponent {
       // When there is local data, and we are in the same session, we use local data
       this.id = localTreeId
       this.tree = JSON.parse(localTree)
+      this.name = localTreeName || ''
       // this.board?.centerToNode(this.tree.nodes[0])
     } else if (!currentSession && localTreeId) {
       console.warn('Tree loaded from db')
@@ -123,6 +117,7 @@ export class DashboardComponent {
 
       this.tree = undefined
       this.id = undefined
+      this.name = undefined
       sessionStorage.setItem('polo-session', 'true')
     }
   }

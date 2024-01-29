@@ -1,6 +1,6 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
+<polo-menu-top [storyName]="name"></polo-menu-top>
 <polo-menu [treeId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
-<polo-tree-error-notifier></polo-tree-error-notifier>
 <section class="boardActions">
   <label>
     <span>Enable tracking</span>
@@ -20,12 +20,5 @@
   </label>
   <button (click)="goToPlayground()">Play</button>
   <button (click)="exportTree()" class="boardActions__export">Export</button>
-  <button
-    (click)="saveToDb()"
-    [class.boardActions__save]="!savingTree"
-    [class.boardActions__waiting]="savingTree"
-  >
-    Save
-  </button>
   <button (click)="openStadistics()">Stadistics</button>
 </section>

@@ -117,6 +117,18 @@ export class DatabaseService {
     return true
   }
 
+  async saveNewStoryName(storyId: string, name: string) {
+    if (this.prod)
+      console.log('%cdb call to set a new name for a story', 'color: #9999ff')
+    const { data, error } = await this.supabase
+      .from('stories')
+      .update({ name: name })
+      .eq('id', storyId)
+
+    if (error) return false
+    return true
+  }
+
   async getStadisticsOfTree(storyId: string) {
     if (this.prod)
       console.log(

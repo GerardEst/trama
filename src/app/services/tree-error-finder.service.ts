@@ -17,11 +17,8 @@ export class TreeErrorFinderService {
 
   checkErrors(tree: any) {
     this.errorList = []
-    console.log('checking errors?')
     if (!tree || tree.nodes.length === 0) return
-    console.log('checking errors on the tree')
     for (let node of tree.nodes) {
-      console.log(node)
       if (this.hasEmptyText(node))
         this.errorList.push({
           type: 'warning',
@@ -72,7 +69,6 @@ export class TreeErrorFinderService {
       }
     }
 
-    console.log(this.errorList)
     this.errorsSubject.next(this.errorList)
   }
 
