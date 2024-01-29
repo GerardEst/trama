@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
-import { Router } from '@angular/router'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
@@ -23,57 +22,25 @@ import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component
 })
 export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
+  @ViewChild('menuTop') menuTop?: MenuTopComponent
   tree?: any
   id?: string
   name?: string
-  trackingEnabled: boolean = false
-  bookviewEnabled: boolean = false
   savingTree: boolean = false
 
   constructor(
     private db: DatabaseService,
-    private router: Router,
     private errorFider: TreeErrorFinderService
   ) {}
 
   ngOnInit(): void {
     this.initBoard()
-    this.updateConfiguration()
     this.errorFider.checkErrors(this.tree)
-  }
-
-  async updateConfiguration() {
-    if (this.id) {
-      const configuration = await this.db.getConfigurationOf(this.id)
-      this.trackingEnabled = configuration.tracking
-      this.bookviewEnabled = configuration.view === 'book'
-    }
-  }
-  toggleTracking() {
-    if (this.id) {
-      this.trackingEnabled = !this.trackingEnabled
-      this.db.setTrackingOf(this.id, this.trackingEnabled)
-    }
-  }
-  toggleBookview() {
-    if (this.id) {
-      this.bookviewEnabled = !this.bookviewEnabled
-      this.db.setBookviewOf(this.id, this.bookviewEnabled ? 'book' : null)
-    }
   }
 
   async goToPlayground() {
     //await this.saveToDb()
     window.open('/playground/' + this.id, '_blank')
-  }
-
-  async openStadistics() {
-    this.router.navigate(['/stadistics', this.id])
-  }
-
-  exportTree() {
-    //@ts-ignore
-    navigator.clipboard.writeText(localStorage.getItem('polo-tree'))
   }
 
   async loadTree(treeId: string) {
@@ -87,7 +54,7 @@ export class DashboardComponent {
     localStorage.setItem('polo-name', story.name)
 
     this.board?.centerToNode(this.tree.nodes[0])
-    this.updateConfiguration()
+    this.menuTop?.updateConfiguration()
 
     this.errorFider.checkErrors(this.tree)
   }

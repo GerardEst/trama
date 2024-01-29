@@ -1,24 +1,9 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
-<polo-menu-top [storyName]="name"></polo-menu-top>
+<polo-menu-top #menuTop [treeId]="id" [storyName]="name"></polo-menu-top>
 <polo-menu [treeId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
 <section class="boardActions">
-  <label>
-    <span>Enable tracking</span>
-    <input
-      (change)="toggleTracking()"
-      type="checkbox"
-      [checked]="trackingEnabled"
-    />
-  </label>
-  <label>
-    <span>Book view</span>
-    <input
-      (change)="toggleBookview()"
-      type="checkbox"
-      [checked]="bookviewEnabled"
-    />
-  </label>
+  <!-- La idea és que aquí quedin coses per treballar en la historia,
+  com lo dels tags, el play, els errors... i a dalt opcions generals
+  de la historia, visualització de l'aventura, tracking, etc -->
   <button (click)="goToPlayground()">Play</button>
-  <button (click)="exportTree()" class="boardActions__export">Export</button>
-  <button (click)="openStadistics()">Stadistics</button>
 </section>
