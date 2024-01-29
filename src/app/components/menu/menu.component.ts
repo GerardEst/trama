@@ -28,24 +28,7 @@ export class MenuComponent implements OnInit {
     private db: DatabaseService,
     private router: Router,
     public activeStory: ActiveStoryService
-  ) {
-    effect(() => {
-      if (activeStory.storyName()) {
-        // Detectem sempre que storyName cambia i així fem update de stories
-        // trobem la activa i li cambiem el nom
-        console.log(this.stories)
-      }
-    })
-  }
-
-  /** Al menu s'hi carreguen unes histories que venen de la db
-   * D'aquestes histories n'hi ha una que és la activa,
-   * que la sabem perque tenim activeStoryId, però podriem
-   * saber-ho per un servei compartit de activeStory on guardar
-   * l'id, el nom, el track etc en signals
-   *
-   *
-   */
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.stories = await this.db.getAllTrees()

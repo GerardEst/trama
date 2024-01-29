@@ -1,5 +1,6 @@
 <div class="menu">
   <input
+    class="txt-"
     (change)="updateStoryName($event)"
     value="{{ activeStory.storyName() }}"
   />
@@ -13,7 +14,6 @@
   <button (click)="toggleOptions()">Options</button>
   @if(options){
   <div class="dropdown">
-    <!--aqui hi poso les opcions varies que vagin al dropdown-->
     <label>
       <span>Enable tracking</span>
       <input
@@ -30,8 +30,10 @@
         [checked]="bookviewEnabled"
       />
     </label>
-    <button (click)="openStadistics()">Stadistics</button>
-    <button (click)="exportTree()" class="boardActions__export">Export</button>
+    <button (click)="openStadistics()">See stadistics</button>
+    <button (click)="exportTree()" class="boardActions__export">
+      Export tree
+    </button>
   </div>
   }
 </div>
