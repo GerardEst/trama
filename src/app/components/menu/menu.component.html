@@ -3,13 +3,14 @@
   <polo-separator [space]="true"></polo-separator>
   <h2>Trees</h2>
   <ul>
+    @for (story of stories; track $index) {
     <li
-      *ngFor="let tree of trees"
-      (click)="loadTree(tree.id)"
-      [class.active]="tree.id === treeId"
+      (click)="loadTree(story.id)"
+      [class.active]="story.id === activeStoryId"
     >
-      {{ tree.name }}
+      {{ story.id === activeStoryId ? activeStory.storyName() : story.name }}
     </li>
-    <li (click)="createNewTree()">+ Add tree</li>
+    }
+    <li (click)="createNewTree()">+ Create a story</li>
   </ul>
 </aside>

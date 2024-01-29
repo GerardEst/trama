@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-menu-top',
@@ -10,14 +11,17 @@ import { Router } from '@angular/router'
   styleUrl: './menu-top.component.sass',
 })
 export class MenuTopComponent {
-  @Input() storyName?: string
   @Input() treeId?: string
   options = false
   savingTree = false
   trackingEnabled: boolean = false
   bookviewEnabled: boolean = false
 
-  constructor(private db: DatabaseService, private router: Router) {}
+  constructor(
+    private db: DatabaseService,
+    private router: Router,
+    public activeStory: ActiveStoryService
+  ) {}
 
   ngOnInit(): void {
     this.updateConfiguration()
@@ -27,6 +31,9 @@ export class MenuTopComponent {
     const storyId = localStorage.getItem('polo-id')
     const newName = $event.target.value.trim()
     if (!storyId || newName.length === 0) return
+
+    this.activeStory.storyName.set(newName)
+    localStorage.setItem('polo-name', newName)
 
     await this.db.saveNewStoryName(storyId, $event.target.value)
   }

@@ -1,8 +1,16 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  effect,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from '../ui/separator/separator.component'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-menu',
@@ -12,14 +20,35 @@ import { SeparatorComponent } from '../ui/separator/separator.component'
   styleUrls: ['./menu.component.sass'],
 })
 export class MenuComponent implements OnInit {
-  trees?: Array<any>
-  @Input() treeId?: string
+  stories?: Array<any>
+  @Input() activeStoryId?: string
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
 
-  constructor(private db: DatabaseService, private router: Router) {}
+  constructor(
+    private db: DatabaseService,
+    private router: Router,
+    public activeStory: ActiveStoryService
+  ) {
+    effect(() => {
+      if (activeStory.storyName()) {
+        // Detectem sempre que storyName cambia i així fem update de stories
+        // trobem la activa i li cambiem el nom
+        console.log(this.stories)
+      }
+    })
+  }
+
+  /** Al menu s'hi carreguen unes histories que venen de la db
+   * D'aquestes histories n'hi ha una que és la activa,
+   * que la sabem perque tenim activeStoryId, però podriem
+   * saber-ho per un servei compartit de activeStory on guardar
+   * l'id, el nom, el track etc en signals
+   *
+   *
+   */
 
   async ngOnInit(): Promise<void> {
-    this.trees = await this.db.getAllTrees()
+    this.stories = await this.db.getAllTrees()
   }
 
   loadTree(treeId: number) {
@@ -49,7 +78,7 @@ export class MenuComponent implements OnInit {
       return
     }
 
-    this.trees?.push({
+    this.stories?.push({
       id: newTree[0].id,
       name: newTree[0].name,
     })

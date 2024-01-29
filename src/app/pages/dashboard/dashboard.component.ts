@@ -6,6 +6,7 @@ import { DatabaseService } from '../../services/database.service'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -25,12 +26,12 @@ export class DashboardComponent {
   @ViewChild('menuTop') menuTop?: MenuTopComponent
   tree?: any
   id?: string
-  name?: string
   savingTree: boolean = false
 
   constructor(
     private db: DatabaseService,
-    private errorFider: TreeErrorFinderService
+    private errorFider: TreeErrorFinderService,
+    private activeStory: ActiveStoryService
   ) {}
 
   ngOnInit(): void {
@@ -47,11 +48,13 @@ export class DashboardComponent {
     const story = await this.db.getTree(treeId)
     this.tree = story.tree
     this.id = treeId
-    this.name = story.name
 
     localStorage.setItem('polo-id', treeId)
     localStorage.setItem('polo-tree', JSON.stringify(this.tree))
     localStorage.setItem('polo-name', story.name)
+
+    // Set active-story state
+    this.activeStory.storyName.set(story.name)
 
     this.board?.centerToNode(this.tree.nodes[0])
     this.menuTop?.updateConfiguration()
@@ -71,7 +74,10 @@ export class DashboardComponent {
       // When there is local data, and we are in the same session, we use local data
       this.id = localTreeId
       this.tree = JSON.parse(localTree)
-      this.name = localTreeName || ''
+
+      // Set active-story state
+      this.activeStory.storyName.set(localTreeName || '')
+
       // this.board?.centerToNode(this.tree.nodes[0])
     } else if (!currentSession && localTreeId) {
       console.warn('Tree loaded from db')
@@ -84,7 +90,7 @@ export class DashboardComponent {
 
       this.tree = undefined
       this.id = undefined
-      this.name = undefined
+
       sessionStorage.setItem('polo-session', 'true')
     }
   }

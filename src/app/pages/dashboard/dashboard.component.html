@@ -1,6 +1,6 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
-<polo-menu-top #menuTop [treeId]="id" [storyName]="name"></polo-menu-top>
-<polo-menu [treeId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
+<polo-menu-top #menuTop [treeId]="id"></polo-menu-top>
+<polo-menu [activeStoryId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
 <section class="boardActions">
   <!-- La idea és que aquí quedin coses per treballar en la historia,
   com lo dels tags, el play, els errors... i a dalt opcions generals

@@ -1,5 +1,8 @@
 <div class="menu">
-  <input (change)="updateStoryName($event)" value="{{ storyName }}" />
+  <input
+    (change)="updateStoryName($event)"
+    value="{{ activeStory.storyName() }}"
+  />
   <button
     (click)="saveToDb()"
     [class.boardActions__save]="!savingTree"

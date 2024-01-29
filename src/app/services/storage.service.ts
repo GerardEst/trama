@@ -358,7 +358,6 @@ export class StorageService {
   }
   private createNewTree() {
     const newTree = {
-      name: '',
       nodes: [{ id: 'node_0', text: 'Start' }],
     }
     return JSON.stringify(newTree)
