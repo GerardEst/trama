@@ -18,9 +18,6 @@ export class TreeErrorNotifierComponent {
     })
   }
 
-  /** Maybe it's good to have it opened, so don't make it close when user
-   * click outside. Allow it to be opened but make it clear how to close
-   */
   toggleErrors() {
     this.show = !this.show
   }

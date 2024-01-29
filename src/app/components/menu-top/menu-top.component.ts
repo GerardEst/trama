@@ -1,12 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core'
-import { TreeErrorNotifierComponent } from '../tree-error-notifier/tree-error-notifier.component'
+import { Component, Input } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [TreeErrorNotifierComponent],
+  imports: [],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.sass',
 })
