@@ -1,16 +1,26 @@
-<aside>
-  <button (click)="logout()">Logout</button>
-  <polo-separator [space]="true"></polo-separator>
-  <h2>Your stories</h2>
-  <ul>
-    @for (story of stories; track $index) {
-    <li
-      (click)="loadTree(story.id)"
-      [class.active]="story.id === activeStoryId"
-    >
-      {{ story.id === activeStoryId ? activeStory.storyName() : story.name }}
-    </li>
-    }
-    <li (click)="createNewTree()">+ Create a story</li>
-  </ul>
-</aside>
+<div [class.fixedMenu]="fixedMenu" class="menu">
+  <nav>
+    <header>
+      @if(fixedMenu){
+      <button class="closeMenu" (click)="toggleMenu()"></button>
+      }
+    </header>
+    <button (click)="logout()">Logout</button>
+    <polo-separator [space]="true"></polo-separator>
+    <h2>Your stories</h2>
+    <ul>
+      @for (story of stories; track $index) {
+      <li
+        (click)="loadTree(story.id)"
+        [class.active]="story.id === activeStoryId"
+      >
+        {{ story.id === activeStoryId ? activeStory.storyName() : story.name }}
+      </li>
+      }
+      <li (click)="createNewTree()">+ Create a story</li>
+    </ul>
+  </nav>
+  @if(!fixedMenu){
+  <button class="openMenu" (click)="toggleMenu()"></button>
+  }
+</div>

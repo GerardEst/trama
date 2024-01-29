@@ -1,22 +1,53 @@
-:host
+.menu
   position: fixed
   top: 0
-  width: 200px
-  background: white
-  height: 100vh
-  padding: 1rem
-  box-sizing: border-box
-  box-shadow: var(--shadow-elevation-medium)
-
-aside
-  ul
-    display: flex
-    flex-direction: column
-    gap: 0.5rem
-    margin-top: 1rem
-    li
-      cursor: pointer
-      &:hover, &.active
-        text-decoration: underline
-      &:last-child
-        margin-top: 1rem
+  width: 240px
+  left: -200px
+  transition: 0.2s ease
+  &.fixedMenu
+    left: 0
+  &:hover
+    left: 0
+  nav
+    margin-top: 50px
+    box-sizing: border-box
+    width: 200px
+    background: white
+    padding: 1rem
+    box-shadow: var(--shadow-elevation-medium)
+    transition: 0.4s ease
+    border-radius: 1rem
+    height: auto
+    ul
+      display: flex
+      flex-direction: column
+      gap: 0.5rem
+      margin-top: 1rem
+      li
+        cursor: pointer
+        &:hover, &.active
+          text-decoration: underline
+        &:last-child
+          margin-top: 1rem
+    header
+      display: flex
+      justify-content: flex-end
+  &.fixedMenu
+    height: 100vh
+  &.fixedMenu nav
+    margin-top: 0
+    border-radius: 0
+    height: 100%
+.openMenu
+  position: fixed
+  width: 2rem
+  height: 2rem
+  left: 1rem
+  top: 1rem
+  background: var(--medium-gray) url("/assets/icons/hamburger-menu.svg") no-repeat center/15px
+  &:hover
+    background: var(--medium-gray) url("/assets/icons/chevron-right.svg") no-repeat center/15px
+.closeMenu
+  width: 2rem
+  height: 2rem
+  background: var(--medium-gray) url("/assets/icons/chevron-left.svg") no-repeat center/15px

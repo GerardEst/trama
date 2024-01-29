@@ -20,6 +20,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
   styleUrls: ['./menu.component.sass'],
 })
 export class MenuComponent implements OnInit {
+  fixedMenu: boolean = true
   stories?: Array<any>
   @Input() activeStoryId?: string
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
@@ -71,5 +72,9 @@ export class MenuComponent implements OnInit {
   logout() {
     this.db.supabase.auth.signOut()
     this.router.navigate(['/login'])
+  }
+
+  toggleMenu() {
+    this.fixedMenu = !this.fixedMenu
   }
 }

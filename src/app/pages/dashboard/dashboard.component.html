@@ -1,7 +1,7 @@
 <polo-board #board [treeId]="id" [tree]="tree"></polo-board>
 <polo-menu-top #menuTop [treeId]="id"></polo-menu-top>
 <polo-menu [activeStoryId]="id" (onChangeTree)="loadTree($event)"></polo-menu>
-<section class="boardActions">
+<div class="boardActions">
   <polo-tree-error-notifier></polo-tree-error-notifier>
   <button class="preview" (click)="goToPlayground()">Preview</button>
-</section>
+</div>
