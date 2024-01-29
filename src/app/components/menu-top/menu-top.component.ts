@@ -12,7 +12,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 })
 export class MenuTopComponent {
   @Input() treeId?: string
-  options = true
+  options = false
   savingTree = false
   trackingEnabled: boolean = false
   bookviewEnabled: boolean = false
