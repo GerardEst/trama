@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
-import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
 
 @Component({
   selector: 'polo-dashboard',
@@ -15,8 +15,8 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
     CommonModule,
     BoardComponent,
     MenuComponent,
-    TreeErrorNotifierComponent,
     MenuTopComponent,
+    MenuTreeLegendComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
@@ -37,11 +37,6 @@ export class DashboardComponent {
   ngOnInit(): void {
     this.initBoard()
     this.errorFider.checkErrors(this.tree)
-  }
-
-  async goToPlayground() {
-    //await this.saveToDb()
-    window.open('/playground/' + this.id, '_blank')
   }
 
   async loadTree(treeId: string) {
