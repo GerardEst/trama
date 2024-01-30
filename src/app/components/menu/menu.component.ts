@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  Input,
-  effect,
-} from '@angular/core'
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'

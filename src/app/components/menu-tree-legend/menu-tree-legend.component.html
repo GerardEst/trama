@@ -1,6 +1,9 @@
 <div class="legend">
   <div class="legend__content">
-    <p>Legend legend legend legend legend</p>
+    <p class="">Refs</p>
+    @for (ref of arrayOfRefs; track $index) {
+    <p>{{ ref.name }} - {{ ref.type }}</p>
+    }
   </div>
   <div class="legend__header">
     <polo-tree-error-notifier></polo-tree-error-notifier>

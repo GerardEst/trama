@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core'
 import { node } from '../interfaces'
 import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
+import { ActiveStoryService } from './active-story.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
-  constructor(private errorFinder: TreeErrorFinderService) {}
+  constructor(
+    private errorFinder: TreeErrorFinderService,
+    private activeStory: ActiveStoryService
+  ) {}
 
   updateNodeText(nodeId: string, newText: string) {
     const savedTree = this.getStoredTree()
@@ -229,6 +233,9 @@ export class StorageService {
 
     const newId = type + '_' + this.getNewIdForRequirement()
     savedTree.refs[newId] = { name, type }
+    /** Apart from adding to localstorage, we add it to the signal too, to test
+     * if maybe in the future I have everything on signals */
+    this.activeStory.storyRefs.set(savedTree.refs)
 
     this.updateStoredTree(savedTree)
 

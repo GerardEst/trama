@@ -50,6 +50,7 @@ export class DashboardComponent {
 
     // Set active-story state
     this.activeStory.storyName.set(story.name)
+    this.activeStory.storyRefs.set(this.tree.refs)
 
     this.board?.centerToNode(this.tree.nodes[0])
     this.menuTop?.updateConfiguration()
@@ -72,6 +73,7 @@ export class DashboardComponent {
 
       // Set active-story state
       this.activeStory.storyName.set(localTreeName || '')
+      this.activeStory.storyRefs.set(JSON.parse(localTree).refs)
 
       // this.board?.centerToNode(this.tree.nodes[0])
     } else if (!currentSession && localTreeId) {

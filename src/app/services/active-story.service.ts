@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core'
+import { Injectable, signal, computed } from '@angular/core'
 
 @Injectable({
   providedIn: 'root',
@@ -8,6 +8,7 @@ export class ActiveStoryService {
    * de la historia activa, com el track i la vista
    */
   storyName = signal('')
+  storyRefs = signal({})
 
   constructor() {}
 }
