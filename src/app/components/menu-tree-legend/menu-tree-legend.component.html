@@ -1,8 +1,8 @@
 <div class="legend">
   <div class="legend__content">
-    <p class="">Refs</p>
+    <p class="legend__content__title">Refs</p>
     @for (ref of arrayOfRefs; track $index) {
-    <p>{{ ref.name }} - {{ ref.type }}</p>
+    <p>{{ ref.name }} - {{ ref.type }} - {{ ref.times }}</p>
     }
   </div>
   <div class="legend__header">

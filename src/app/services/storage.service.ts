@@ -242,6 +242,34 @@ export class StorageService {
     return { id: newId, name: name, type }
   }
 
+  // Did an object bc will have also the info about WHERE it has been found
+  getAmountsOfRefs() {
+    const savedTree = this.getStoredTree()
+    const amounts: any = {}
+
+    for (let node of savedTree.nodes) {
+      if (!node.answers) break
+      for (let answer of node.answers) {
+        if (answer.events) {
+          for (let event of answer.events) {
+            amounts[event.target]
+              ? (amounts[event.target] += 1)
+              : (amounts[event.target] = 1)
+          }
+        }
+        if (answer.requirements) {
+          for (let requirement of answer.requirements) {
+            amounts[requirement.target]
+              ? (amounts[requirement.target] += 1)
+              : (amounts[requirement.target] = 1)
+          }
+        }
+      }
+    }
+
+    return amounts
+  }
+
   updateRequirementAmount(
     answerId: string,
     requirementId: string,
