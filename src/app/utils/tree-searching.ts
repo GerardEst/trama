@@ -7,3 +7,8 @@ export function findAnswerInTree(answerId: string, tree: any) {
 
   return node.answers?.filter((answer: any) => answer.id === answerId)
 }
+export function getNodeIdFromAnswerId(answerId: string) {
+  const nodeNumber = answerId.split('_')[1]
+  console.log(nodeNumber)
+  return 'node_' + nodeNumber
+}

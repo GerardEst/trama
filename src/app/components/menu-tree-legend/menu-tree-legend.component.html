@@ -2,7 +2,12 @@
   <div class="legend__content">
     <p class="legend__content__title">Refs</p>
     @for (ref of arrayOfRefs; track $index) {
-    <p>{{ ref.name }} - {{ ref.type }} - {{ ref.times }}</p>
+    <p
+      (mouseover)="focusNodesWith(ref.id)"
+      (mouseleave)="blurNodesWith(ref.id)"
+    >
+      {{ ref.name }} - {{ ref.times }}
+    </p>
     }
   </div>
   <div class="legend__header">

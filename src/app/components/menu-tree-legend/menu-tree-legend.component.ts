@@ -1,7 +1,6 @@
 import { Component, Input, effect } from '@angular/core'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { StorageService } from 'src/app/services/storage.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -12,45 +11,46 @@ import { StorageService } from 'src/app/services/storage.service'
 })
 export class MenuTreeLegendComponent {
   @Input() treeId?: string
-  arrayOfRefs: Array<any> = []
-  amountsOfRefs: any = {}
+  arrayOfRefs: any = []
 
-  constructor(
-    public activeStory: ActiveStoryService,
-    private storage: StorageService
-  ) {
+  constructor(public activeStory: ActiveStoryService) {
     effect(() => {
-      this.arrayOfRefs = []
-      // Pos aquí he de fer aquesta merda perquè vaig decidir guardar els refs amb objectes
-      // podria cambiarho directament si això es complica
-      // Ara reacciona aixo a quan s'afegeix una ref, pero no a quan s'afegeix una que ja
-      // existeix
-      if (activeStory.storyRefs()) {
-        for (let ref in activeStory.storyRefs()) {
-          let data: { [key: string]: any } = activeStory.storyRefs()
-          this.arrayOfRefs.push({
-            ref,
-            name: data[ref].name,
-            type: data[ref].type,
-            times: this.amountsOfRefs[ref],
-          })
-        }
-      }
+      const countById = activeStory
+        .storyRefs()
+        .reduce((acc: any, { id, name }: { id: string; name: string }) => {
+          acc[id] = acc[id] || { id, name, times: 0 }
+          acc[id].times++
+          return acc
+        }, {})
+
+      this.arrayOfRefs = Object.values(countById)
     })
   }
 
-  ngOnInit() {
-    this.amountsOfRefs = this.storage.getAmountsOfRefs()
+  focusNodesWith(refId: string) {
+    // todo -> si els nodes estiguessin en una signal, podria
+    // reflexar els canvis tranquilament?
+    // I no és reactiu, seguuur que es pot fer millor
+    const refs = this.activeStory
+      .storyRefs()
+      .filter((ref: any) => ref.id === refId)
+    for (let ref of refs) {
+      const DOMNode = document.querySelector('#' + ref.node)
+      if (DOMNode) DOMNode.classList.add('highlighted')
+    }
   }
-  /** Necessito que aquí es pintin tots els tags que s'han fet servir
-   * en directe mentre canvien
-   * Podria posar-los al service que vaig fer, dins una signal tipo array...
-   * i veure si es pot
-   *
-   * Despres aqui quan canvii aquella signal pos res, que la pinti.
-   * Com que la signal cambia pos quan cambia, no s'inicia. La he d'iniciar o pillant
-   * el localstorage directament, o al iniciar l'arbre, millor.
-   */
+  blurNodesWith(refId: string) {
+    // todo -> si els nodes estiguessin en una signal, podria
+    // reflexar els canvis tranquilament?
+    // I no és reactiu, seguuur que es pot fer millor
+    const refs = this.activeStory
+      .storyRefs()
+      .filter((ref: any) => ref.id === refId)
+    for (let ref of refs) {
+      const DOMNode = document.querySelector('#' + ref.node)
+      if (DOMNode) DOMNode.classList.remove('highlighted')
+    }
+  }
 
   async goToPlayground() {
     //await this.saveToDb()

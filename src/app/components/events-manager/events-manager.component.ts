@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { EventComponent } from '../event/event.component'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-events-manager',
@@ -15,7 +16,10 @@ export class EventsManagerComponent {
   events: Array<any> = []
   @Input() answerId: string = ''
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private activeStory: ActiveStoryService
+  ) {}
 
   ngOnInit() {
     if (this.answerId) {
@@ -37,6 +41,16 @@ export class EventsManagerComponent {
     if (event) event.target = element.value
 
     this.storage.saveAnswerEvents(this.answerId, this.events)
+    this.activeStory.addRef(
+      {
+        id: element.value,
+        answer: this.answerId,
+      },
+      {
+        id: element.previousValue,
+        answer: this.answerId,
+      }
+    )
   }
 
   updateEventAmount(options: any) {
@@ -49,10 +63,11 @@ export class EventsManagerComponent {
     this.storage.saveAnswerEvents(this.answerId, this.events)
   }
 
-  deleteEvent(eventTarget: string) {
+  deleteEvent(eventId: string) {
     this.events = this.events.filter((event: any) => {
-      return event.target !== eventTarget
+      return event.target !== eventId
     })
-    this.storage.deleteEventFromAnswer(this.answerId, eventTarget)
+    this.storage.deleteEventFromAnswer(this.answerId, eventId)
+    this.activeStory.removeRef({ id: eventId, answer: this.answerId })
   }
 }

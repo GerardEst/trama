@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'
 import { RequirementComponent } from '../requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 interface requirement {
   id?: string
@@ -22,7 +23,10 @@ export class RequirementsManagerComponent {
   requirements: Array<requirement> = []
   @Input() answerId: string = ''
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private activeStory: ActiveStoryService
+  ) {}
 
   ngOnInit() {
     if (this.answerId) {
@@ -32,7 +36,7 @@ export class RequirementsManagerComponent {
   }
 
   createRequirement(type: 'stat' | 'condition') {
-    /** If this is a stat, we push an amount wiht emptyness and nothing
+    /** If this is a stat, we push an amount with emptyness and nothing
      * gets added to the tree till the user selects an option
      */
     this.requirements.push({
@@ -52,6 +56,17 @@ export class RequirementsManagerComponent {
 
     // I have to send the answer id and the new requirement id
     this.storage.saveAnswerRequirements(this.answerId, this.requirements)
+
+    this.activeStory.addRef(
+      {
+        id: element.value,
+        answer: this.answerId,
+      },
+      {
+        id: element.previousValue,
+        answer: this.answerId,
+      }
+    )
   }
 
   updateRequirementAmount(options: any) {
@@ -72,5 +87,6 @@ export class RequirementsManagerComponent {
     })
 
     this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
+    this.activeStory.removeRef({ id: requirementId, answer: this.answerId })
   }
 }

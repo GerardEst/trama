@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
+import { getNodeIdFromAnswerId } from '../utils/tree-searching'
 
 @Injectable({
   providedIn: 'root',
@@ -7,8 +8,80 @@ export class ActiveStoryService {
   /** todo -> Aqui s'ha de posar i gestionar des d'aqui les opcions
    * de la historia activa, com el track i la vista
    */
+  entireTree: any = {}
   storyName = signal('')
-  storyRefs = signal({})
+  storyRefs: any = signal([])
 
   constructor() {}
+
+  initTreeRefs(tree: any) {
+    const builtRefs: any = []
+    for (let node of tree.nodes) {
+      if (node.answers) {
+        for (let answer of node.answers) {
+          if (answer.requirements) {
+            for (let requirement of answer.requirements) {
+              if (requirement.id) {
+                builtRefs.push({
+                  id: requirement.id,
+                  name: tree.refs[requirement.id].name,
+                  type: tree.refs[requirement.id].type,
+                  node: node.id,
+                  answer: answer.id,
+                  on: 'requirement',
+                })
+              }
+            }
+          }
+          if (answer.events) {
+            for (let event of answer.events) {
+              if (event.target) {
+                builtRefs.push({
+                  id: event.target,
+                  name: tree.refs[event.target].name,
+                  type: tree.refs[event.target].type,
+                  node: node.id,
+                  answer: answer.id,
+                  on: 'event',
+                })
+              }
+            }
+          }
+        }
+      }
+    }
+
+    this.storyRefs.set(builtRefs)
+  }
+
+  addRef(refId: any, previousRef?: any) {
+    console.log('previousref ', previousRef)
+    console.log('new ref ', refId)
+    if (previousRef) this.removeRef(previousRef)
+
+    const withNewRef = [
+      ...this.storyRefs(),
+      {
+        id: refId.id,
+        answer: refId.answer,
+        name: this.entireTree.refs[refId.id].name,
+        type: this.entireTree.refs[refId.id].type,
+        on: undefined,
+        node: getNodeIdFromAnswerId(refId.answer),
+      },
+    ]
+
+    this.storyRefs.set(withNewRef)
+    console.log(this.storyRefs())
+  }
+
+  removeRef(refToRemove: any) {
+    const withoutRef = this.storyRefs().filter(
+      (ref: any) =>
+        !(ref.id === refToRemove.id && ref.answer === refToRemove.answer)
+    )
+
+    this.storyRefs.set(withoutRef)
+    console.log(this.storyRefs())
+  }
 }

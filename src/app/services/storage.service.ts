@@ -233,41 +233,10 @@ export class StorageService {
 
     const newId = type + '_' + this.getNewIdForRequirement()
     savedTree.refs[newId] = { name, type }
-    /** Apart from adding to localstorage, we add it to the signal too, to test
-     * if maybe in the future I have everything on signals */
-    this.activeStory.storyRefs.set(savedTree.refs)
 
     this.updateStoredTree(savedTree)
 
     return { id: newId, name: name, type }
-  }
-
-  // Did an object bc will have also the info about WHERE it has been found
-  getAmountsOfRefs() {
-    const savedTree = this.getStoredTree()
-    const amounts: any = {}
-
-    for (let node of savedTree.nodes) {
-      if (!node.answers) break
-      for (let answer of node.answers) {
-        if (answer.events) {
-          for (let event of answer.events) {
-            amounts[event.target]
-              ? (amounts[event.target] += 1)
-              : (amounts[event.target] = 1)
-          }
-        }
-        if (answer.requirements) {
-          for (let requirement of answer.requirements) {
-            amounts[requirement.target]
-              ? (amounts[requirement.target] += 1)
-              : (amounts[requirement.target] = 1)
-          }
-        }
-      }
-    }
-
-    return amounts
   }
 
   updateRequirementAmount(
@@ -388,7 +357,8 @@ export class StorageService {
 
   private updateStoredTree(newTree: Array<any>) {
     localStorage.setItem('polo-tree', JSON.stringify(newTree))
-
+    // Slowly moving to activeStory tree?? From now, use both. I will decide
+    this.activeStory.entireTree = newTree
     this.errorFinder.checkErrors(newTree)
   }
   private createNewTree() {
