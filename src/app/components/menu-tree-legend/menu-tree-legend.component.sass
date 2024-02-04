@@ -24,7 +24,7 @@
 .tag
   display: flex
   align-items: center
-  justify-content: space-between
+  gap: 0.6rem
   input
     background: none
     border: none
@@ -33,3 +33,24 @@
       cursor: pointer
     &:focus
       padding-left: 0.5rem
+  &__type
+    min-width: 1.2rem
+    min-height: 1.2rem
+    background: no-repeat center/15px
+    &--stat
+      background-image: url('/assets/icons/stat.svg')
+    &--condition
+      background-image: url('/assets/icons/condition.svg')
+    &--win
+      background-image: url('/assets/icons/tick.svg')
+    &--end
+      background-image: url('/assets/icons/cross.svg')
+  &__times
+    margin-left: auto
+  &__delete
+    min-width: 1.2rem
+    min-height: 1.2rem
+    margin-left: auto
+    cursor: pointer
+    background: no-repeat center/15px
+    background-image: url('/assets/icons/trash.svg')
