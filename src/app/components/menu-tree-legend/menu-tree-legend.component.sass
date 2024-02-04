@@ -12,7 +12,24 @@
     gap: 1rem
     justify-content: flex-end
   &__content
-    height: 100px
+    min-height: 100px
     padding: 0.7rem
     &__title
       font-weight: 600
+    &__refs
+      display: flex
+      flex-direction: column
+      gap: 0.5rem
+      margin-top: 1rem
+.tag
+  display: flex
+  align-items: center
+  justify-content: space-between
+  input
+    background: none
+    border: none
+    padding: 0.5rem 0
+    &:not(:focus):hover
+      cursor: pointer
+    &:focus
+      padding-left: 0.5rem

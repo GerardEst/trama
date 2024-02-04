@@ -239,6 +239,12 @@ export class StorageService {
     return { id: newId, name: name, type }
   }
 
+  updateRefName(refId: string, newName: string) {
+    const savedTree = this.getStoredTree()
+    savedTree.refs[refId].name = newName
+    this.updateStoredTree(savedTree)
+  }
+
   updateRequirementAmount(
     answerId: string,
     requirementId: string,

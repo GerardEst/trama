@@ -1,6 +1,7 @@
 import { Component, Input, effect } from '@angular/core'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { StorageService } from 'src/app/services/storage.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -13,7 +14,10 @@ export class MenuTreeLegendComponent {
   @Input() treeId?: string
   arrayOfRefs: any = []
 
-  constructor(public activeStory: ActiveStoryService) {
+  constructor(
+    public activeStory: ActiveStoryService,
+    private storage: StorageService
+  ) {
     effect(() => {
       const countById = activeStory
         .storyRefs()
@@ -50,6 +54,10 @@ export class MenuTreeLegendComponent {
       const DOMNode = document.querySelector('#' + ref.node)
       if (DOMNode) DOMNode.classList.remove('highlighted')
     }
+  }
+
+  updateRefName(event: any, refId: string) {
+    this.storage.updateRefName(refId, event.target.value)
   }
 
   async goToPlayground() {
