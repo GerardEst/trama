@@ -1,14 +1,33 @@
 <div class="legend">
   <div class="legend__content">
-    <p class="legend__content__title">Refs</p>
-    @for (ref of arrayOfRefs; track $index) {
-    <p
-      (mouseover)="focusNodesWith(ref.id)"
-      (mouseleave)="blurNodesWith(ref.id)"
-    >
-      {{ ref.name }} - {{ ref.times }}
-    </p>
-    }
+    <p class="legend__content__title">Legend</p>
+    <div class="legend__content__refs">
+      @for (ref of arrayOfRefs; track $index) {
+      <div
+        class="tag"
+        (mouseover)="focusNodesWith(ref.id)"
+        (mouseleave)="blurNodesWith(ref.id)"
+      >
+        <span class="tag__type tag__type--{{ ref.type }}"></span>
+        <input
+          type="text"
+          (change)="updateRefName($event, ref.id)"
+          value="{{ ref.name }}"
+        />
+        <span class="tag__times">{{ ref.times }}</span>
+      </div>
+      } @for (ref of unusedRefs; track $index) {
+      <div class="tag">
+        <span class="tag__type tag__type--{{ ref.type }}"></span>
+        <input
+          type="text"
+          (change)="updateRefName($event, ref.id)"
+          value="{{ ref.name }}"
+        />
+        <span class="tag__delete" (click)="deleteRef(ref.id)"></span>
+      </div>
+      }
+    </div>
   </div>
   <div class="legend__header">
     <polo-tree-error-notifier></polo-tree-error-notifier>

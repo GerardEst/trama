@@ -1,6 +1,7 @@
 import { Component, Input, effect } from '@angular/core'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { StorageService } from 'src/app/services/storage.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -12,18 +13,41 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class MenuTreeLegendComponent {
   @Input() treeId?: string
   arrayOfRefs: any = []
+  unusedRefs: any = []
 
-  constructor(public activeStory: ActiveStoryService) {
+  constructor(
+    public activeStory: ActiveStoryService,
+    private storage: StorageService
+  ) {
     effect(() => {
+      this.unusedRefs = []
       const countById = activeStory
         .storyRefs()
-        .reduce((acc: any, { id, name }: { id: string; name: string }) => {
-          acc[id] = acc[id] || { id, name, times: 0 }
-          acc[id].times++
-          return acc
-        }, {})
+        .reduce(
+          (
+            acc: any,
+            { id, name, type }: { id: string; name: string; type: string }
+          ) => {
+            acc[id] = acc[id] || { id, name, type, times: 0 }
+            acc[id].times++
+            return acc
+          },
+          {}
+        )
 
       this.arrayOfRefs = Object.values(countById)
+
+      // Check and list unused refs
+      const allRefs = this.storage.getRefs()
+      for (let refId in allRefs) {
+        if (!this.arrayOfRefs.find((ref: any) => ref.id === refId)) {
+          this.unusedRefs.push({
+            id: refId,
+            name: allRefs[refId].name,
+            type: allRefs[refId].type,
+          })
+        }
+      }
     })
   }
 
@@ -52,8 +76,16 @@ export class MenuTreeLegendComponent {
     }
   }
 
+  updateRefName(event: any, refId: string) {
+    this.storage.updateRefName(refId, event.target.value)
+  }
+
+  deleteRef(refId: string) {
+    this.storage.deleteRef(refId)
+    this.unusedRefs = this.unusedRefs.filter((ref: any) => ref.id !== refId)
+  }
+
   async goToPlayground() {
-    //await this.saveToDb()
     window.open('/playground/' + this.treeId, '_blank')
   }
 }

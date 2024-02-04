@@ -239,6 +239,18 @@ export class StorageService {
     return { id: newId, name: name, type }
   }
 
+  updateRefName(refId: string, newName: string) {
+    const savedTree = this.getStoredTree()
+    savedTree.refs[refId].name = newName
+    this.updateStoredTree(savedTree)
+  }
+
+  deleteRef(refId: string) {
+    const savedTree = this.getStoredTree()
+    delete savedTree.refs[refId]
+    this.updateStoredTree(savedTree)
+  }
+
   updateRequirementAmount(
     answerId: string,
     requirementId: string,
@@ -323,6 +335,11 @@ export class StorageService {
     )
 
     return detailedRequirements
+  }
+
+  getRefs() {
+    const savedTree = this.getStoredTree()
+    return savedTree.refs
   }
 
   getRefsFormatted(type: 'stat' | 'condition' | 'win' | 'end') {
