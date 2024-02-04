@@ -30,7 +30,7 @@
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
-        <span>0</span>
+        <button (click)="deleteRef(ref.id)">Delete</button>
       </div>
       }
     </div>

@@ -245,6 +245,12 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  deleteRef(refId: string) {
+    const savedTree = this.getStoredTree()
+    delete savedTree.refs[refId]
+    this.updateStoredTree(savedTree)
+  }
+
   updateRequirementAmount(
     answerId: string,
     requirementId: string,

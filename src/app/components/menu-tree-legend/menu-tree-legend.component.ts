@@ -80,6 +80,11 @@ export class MenuTreeLegendComponent {
     this.storage.updateRefName(refId, event.target.value)
   }
 
+  deleteRef(refId: string) {
+    this.storage.deleteRef(refId)
+    this.unusedRefs = this.unusedRefs.filter((ref: any) => ref.id !== refId)
+  }
+
   async goToPlayground() {
     window.open('/playground/' + this.treeId, '_blank')
   }
