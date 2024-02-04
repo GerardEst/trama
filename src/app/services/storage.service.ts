@@ -331,6 +331,11 @@ export class StorageService {
     return detailedRequirements
   }
 
+  getRefs() {
+    const savedTree = this.getStoredTree()
+    return savedTree.refs
+  }
+
   getRefsFormatted(type: 'stat' | 'condition' | 'win' | 'end') {
     const savedTree = this.getStoredTree()
     const refs = savedTree.refs

@@ -8,12 +8,29 @@
         (mouseover)="focusNodesWith(ref.id)"
         (mouseleave)="blurNodesWith(ref.id)"
       >
+        <span>
+          @if (ref.type === 'stat') { S }@else if(ref.type==='condition') { C
+          }@else if (ref.type==='win') { W }@else if (ref.type==='end') { E }
+        </span>
         <input
           type="text"
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
         <span>{{ ref.times }}</span>
+      </div>
+      } @for (ref of unusedRefs; track $index) {
+      <div class="tag">
+        <span>
+          @if (ref.type === 'stat') { S }@else if(ref.type==='condition') { C
+          }@else if (ref.type==='win') { W }@else if (ref.type==='end') { E }
+        </span>
+        <input
+          type="text"
+          (change)="updateRefName($event, ref.id)"
+          value="{{ ref.name }}"
+        />
+        <span>0</span>
       </div>
       }
     </div>
