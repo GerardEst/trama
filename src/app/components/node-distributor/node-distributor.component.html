@@ -1,0 +1,19 @@
+<div class="node" [class.waitingForJoin]="waitingForJoin">
+  @if(waitingForJoin){
+  <div class="waitingForJoin" (click)="join()"></div>
+  }
+  <header>
+    <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
+    <ng-content select="dragHandle"> </ng-content>
+    <div class="options">
+      <span class="options__remove" (click)="onRemoveNode()"></span>
+    </div>
+  </header>
+  <main>
+    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    @if(conditions && conditions.length){
+    <div class="node__answers"></div>
+    }
+    <button (click)="addAnswer()">Add answer</button>
+  </main>
+</div>
