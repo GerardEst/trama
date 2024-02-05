@@ -56,11 +56,12 @@ export class BoardComponent {
       this.board?.nativeElement,
       {
         maxZoom: 1,
-        minZoom: 0.5,
+        minZoom: 0.4,
         filterKey: function (/* e, dx, dy, dz */) {
           // don't let panzoom handle this event:
           return true
         },
+        zoomSpeed: 0.065,
       }
     )
     if (this.tree) this.centerToNode(this.tree.nodes[0])

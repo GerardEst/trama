@@ -68,8 +68,8 @@ export class BoardFlowsComponent {
   }
 
   getPath(line: any) {
-    const pcurvature = 50
-    const ncurvature = -50
+    const pcurvature = 30
+    const ncurvature = -30
     const path = `M${line?.start?.left},${line?.start?.top} C${
       line?.start?.left + pcurvature
     },${line?.start?.top} ${line?.end?.left + ncurvature},${line?.end?.top} ${
