@@ -11,7 +11,7 @@
     [style.left.px]="contextMenuPosition.x"
     [style.top.px]="contextMenuPosition.y"
   >
-    <p>Node</p>
+    <p (click)="addNode($event)">Node</p>
     <p>Distributor</p>
     <p>End</p>
   </div>

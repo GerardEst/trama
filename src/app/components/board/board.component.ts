@@ -172,25 +172,44 @@ export class BoardComponent {
     this.addNode(event)
   }
 
-  addNode(event: any) {
-    if (!this.waitingForJoin || !this.willJoinId) return
+  addNode(event: any): void {
+    event.stopPropagation()
 
+    if (this.contextMenuActive) {
+      this.contextMenuActive = false
+      const contextMenuPosition = {
+        top: this.contextMenu.nativeElement.style.top.slice(0, -2),
+        left: this.contextMenu.nativeElement.style.left.slice(0, -2),
+      }
+      this.createNode(contextMenuPosition.top, contextMenuPosition.left)
+
+      return
+    }
+
+    if (this.waitingForJoin && this.willJoinId) {
+      const newNodeInfo = this.createNode(event.offsetY, event.offsetX)
+
+      this.joins.push({
+        origin: this.willJoinId + '_join',
+        destiny: newNodeInfo.id + '_join',
+      })
+
+      this.storage.updateAnswerJoin(this.willJoinId, newNodeInfo.id)
+
+      this.waitingForJoin = false
+    }
+  }
+
+  createNode(top: string, left: string) {
     const newNodeInfo: node = {
       id: 'node_' + this.getIDForNewNode(),
-      top: event.offsetY,
-      left: event.offsetX,
+      top,
+      left,
     }
     this.tree.nodes.push(newNodeInfo)
     this.storage.createNode(newNodeInfo)
 
-    this.joins.push({
-      origin: this.willJoinId + '_join',
-      destiny: newNodeInfo.id + '_join',
-    })
-
-    this.storage.updateAnswerJoin(this.willJoinId, newNodeInfo.id)
-
-    this.waitingForJoin = false
+    return newNodeInfo
   }
 
   removeNode(event: any) {
