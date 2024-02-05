@@ -28,6 +28,11 @@ export class BoardComponent {
   @Input() tree?: any
   @Input() treeId?: string
 
+  // context menu
+  contextMenuPosition = { x: 0, y: 0 }
+  contextMenuActive = false
+  @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
+
   // Joins
   waitingForJoin: boolean = false
   willJoinId?: string
@@ -65,6 +70,15 @@ export class BoardComponent {
       }
     )
     if (this.tree) this.centerToNode(this.tree.nodes[0])
+  }
+
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault()
+
+    this.contextMenuPosition.x = event.offsetX
+    this.contextMenuPosition.y = event.offsetY
+
+    this.contextMenuActive = true
   }
 
   public centerToNode(node: any) {
@@ -152,6 +166,11 @@ export class BoardComponent {
   }
 
   dragCheck() {}
+
+  boardClick(event: any) {
+    this.contextMenuActive = false
+    this.addNode(event)
+  }
 
   addNode(event: any) {
     if (!this.waitingForJoin || !this.willJoinId) return

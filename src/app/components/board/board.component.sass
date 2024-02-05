@@ -21,3 +21,12 @@ dragHandle
   align-items: center
   padding-left: 2.5rem
   color: var(--text)
+
+.contextMenu
+  display: none
+  position: fixed
+  background-color: red
+  z-index: 2
+  flex-direction: column
+  &.active
+    display: flex

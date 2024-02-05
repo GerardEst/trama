@@ -1,4 +1,21 @@
-<div #board class="board" (click)="addNode($event)">
+<div
+  #board
+  class="board"
+  (contextmenu)="onRightClick($event)"
+  (click)="boardClick($event)"
+>
+  <div
+    #contextMenu
+    class="contextMenu"
+    [class.active]="contextMenuActive"
+    [style.left.px]="contextMenuPosition.x"
+    [style.top.px]="contextMenuPosition.y"
+  >
+    <p>Node</p>
+    <p>Distributor</p>
+    <p>End</p>
+  </div>
+
   <polo-board-flows [connections]="joins"></polo-board-flows>
   <ng-container *ngIf="tree">
     <polo-node
