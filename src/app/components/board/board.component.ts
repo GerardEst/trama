@@ -169,25 +169,30 @@ export class BoardComponent {
 
   boardClick(event: any) {
     this.contextMenuActive = false
-    this.addNode(event)
+    this.addNode(event, 'content')
   }
 
-  addNode(event: any): void {
+  addNode(event: any, type: 'content' | 'distributor' | 'end'): void {
     event.stopPropagation()
 
     if (this.contextMenuActive) {
       this.contextMenuActive = false
-      const contextMenuPosition = {
-        top: this.contextMenu.nativeElement.style.top.slice(0, -2),
-        left: this.contextMenu.nativeElement.style.left.slice(0, -2),
-      }
-      this.createNode(contextMenuPosition.top, contextMenuPosition.left)
+      this.createNode(
+        {
+          top: this.contextMenu.nativeElement.style.top.slice(0, -2),
+          left: this.contextMenu.nativeElement.style.left.slice(0, -2),
+        },
+        type
+      )
 
       return
     }
 
     if (this.waitingForJoin && this.willJoinId) {
-      const newNodeInfo = this.createNode(event.offsetY, event.offsetX)
+      const newNodeInfo = this.createNode(
+        { top: event.offsetY, left: event.offsetX },
+        type
+      )
 
       this.joins.push({
         origin: this.willJoinId + '_join',
@@ -200,11 +205,17 @@ export class BoardComponent {
     }
   }
 
-  createNode(top: string, left: string) {
+  createNode(
+    position: { top: string; left: string },
+    type: 'content' | 'distributor' | 'end'
+  ) {
+    console.log('new ' + type + ' node')
+
     const newNodeInfo: node = {
       id: 'node_' + this.getIDForNewNode(),
-      top,
-      left,
+      type,
+      top: position.top,
+      left: position.left,
     }
     this.tree.nodes.push(newNodeInfo)
     this.storage.createNode(newNodeInfo)

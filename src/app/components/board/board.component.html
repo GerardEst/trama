@@ -11,9 +11,9 @@
     [style.left.px]="contextMenuPosition.x"
     [style.top.px]="contextMenuPosition.y"
   >
-    <p (click)="addNode($event)">Node</p>
-    <p>Distributor</p>
-    <p>End</p>
+    <p (click)="addNode($event, 'content')">Node</p>
+    <p (click)="addNode($event, 'distributor')">Distributor</p>
+    <p (click)="addNode($event, 'end')">End</p>
   </div>
 
   <polo-board-flows [connections]="joins"></polo-board-flows>
@@ -23,6 +23,7 @@
       #node
       cdkDrag
       id="{{ node.id }}"
+      [type]="node.type"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"

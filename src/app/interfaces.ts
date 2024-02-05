@@ -6,6 +6,7 @@ export interface node {
   left: string
   text?: string
   answers?: Array<answer>
+  type: 'content' | 'distributor' | 'end'
 }
 
 export interface option {

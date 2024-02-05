@@ -102,11 +102,12 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  createNode({ id, top, left }: any) {
+  createNode({ id, top, left, type }: any) {
     const savedTree = this.getStoredTree()
 
     const newNode: node = {
       id,
+      type,
       top,
       left,
     }

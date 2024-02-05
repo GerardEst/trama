@@ -30,6 +30,7 @@ export class NodeComponent {
   @Input() answers?: Array<answer>
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
+  @Input() type: 'content' | 'distributor' | 'end' = 'content'
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
