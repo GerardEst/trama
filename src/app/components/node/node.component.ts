@@ -8,6 +8,7 @@ import {
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
+import { ConditionComponent } from '../condition/condition.component'
 
 interface answer {
   id: string
@@ -21,13 +22,14 @@ interface position {
 @Component({
   selector: 'polo-node',
   standalone: true,
-  imports: [CommonModule, AnswerComponent],
+  imports: [CommonModule, AnswerComponent, ConditionComponent],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
 })
 export class NodeComponent {
   @Input() text: string = ''
   @Input() answers?: Array<answer>
+  @Input() conditions?: Array<answer>
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
@@ -49,9 +51,28 @@ export class NodeComponent {
     this.storage.createNodeAnswer(this.elementRef.nativeElement.id, newId)
   }
 
+  addCondition() {
+    const newId = `condition_${
+      this.elementRef.nativeElement.id.split('_')[1]
+    }_${this.getIDForNewAnswer()}`
+
+    if (!this.conditions) this.conditions = []
+
+    this.conditions.push({ id: newId, text: '' })
+
+    //this.storage.createNodeAnswer(this.elementRef.nativeElement.id, newId)
+  }
+
   removeAnswer(id: string) {
     this.storage.removeAnswer(this.elementRef.nativeElement.id, id)
     this.answers = this.answers?.filter((answer: any) => answer.id !== id)
+  }
+
+  removeCondition(id: string) {
+    // this.storage.removeAnswer(this.elementRef.nativeElement.id, id)
+    this.conditions = this.conditions?.filter(
+      (condition: any) => condition.id !== id
+    )
   }
 
   saveNodeText(e: any) {

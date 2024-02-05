@@ -9,18 +9,17 @@
   </header>
   <main>
     @if(type==='distributor'){
-    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
-    <div *ngIf="answers && answers.length > 0" class="node__answers">
-      <polo-answer
-        *ngFor="let answer of answers"
-        id="{{ answer.id }}"
+    <div *ngIf="conditions && conditions.length > 0" class="node__answers">
+      <polo-condition
+        *ngFor="let condition of conditions"
+        id="{{ condition.id }}"
         [nodeId]="elementRef.nativeElement.id"
-        [text]="answer.text"
-        (onRemoveAnswer)="removeAnswer($event)"
+        [text]="condition.text"
+        (onRemoveCondition)="removeCondition($event)"
         (onWillJoin)="willJoin($event)"
-      ></polo-answer>
+      ></polo-condition>
     </div>
-    <button (click)="addAnswer()">Add condition</button>
+    <button (click)="addCondition()">Add condition</button>
     } @else if(type==='end'){
     <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     }@else {

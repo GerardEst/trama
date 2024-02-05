@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NodeDistributorComponent } from './node-distributor.component';
+import { ConditionComponent } from './condition.component';
 
-describe('NodeDistributorComponent', () => {
-  let component: NodeDistributorComponent;
-  let fixture: ComponentFixture<NodeDistributorComponent>;
+describe('ConditionComponent', () => {
+  let component: ConditionComponent;
+  let fixture: ComponentFixture<ConditionComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NodeDistributorComponent]
+      imports: [ConditionComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(NodeDistributorComponent);
+    fixture = TestBed.createComponent(ConditionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
