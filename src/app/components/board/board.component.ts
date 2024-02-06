@@ -162,7 +162,7 @@ export class BoardComponent {
 
     this.waitingForJoin = false
 
-    this.storage.updateAnswerJoin(this.willJoinId, nodeId)
+    this.storage.updateOptionJoin(this.willJoinId, nodeId)
   }
 
   dragCheck() {}
@@ -199,7 +199,7 @@ export class BoardComponent {
         destiny: newNodeInfo.id + '_join',
       })
 
-      this.storage.updateAnswerJoin(this.willJoinId, newNodeInfo.id)
+      this.storage.updateOptionJoin(this.willJoinId, newNodeInfo.id)
 
       this.waitingForJoin = false
     }

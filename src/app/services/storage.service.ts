@@ -114,16 +114,22 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  updateAnswerJoin(answerId: string, nodeId: string) {
+  // changed to option. option can be answer or conditions
+  updateOptionJoin(optionId: string, nodeId: string) {
     const savedTree = this.getStoredTree()
 
-    const answerNodeId = answerId.split('_')[1]
+    const optionNodeType = optionId.split('_')[0]
+    const optionNodeId = optionId.split('_')[1]
     const node = savedTree.nodes.find(
-      (node: any) => node.id === `node_${answerNodeId}`
+      (node: any) => node.id === `node_${optionNodeId}`
     )
-    const answer = node.answers?.filter((answer: any) => answer.id === answerId)
 
-    const duplicatedJoin = answer[0].join?.find((join: any) => {
+    // todo -> aixo es horrible. Fer servir l'id per això i a sobre afegir-li una s jajaj
+    const option = node[optionNodeType + 's']?.filter(
+      (option: any) => option.id === optionId
+    )
+
+    const duplicatedJoin = option[0].join?.find((join: any) => {
       return join.node === nodeId
     })
 
@@ -132,10 +138,10 @@ export class StorageService {
       return
     }
 
-    if (answer[0].join) {
-      answer[0].join.push({ node: nodeId })
+    if (option[0].join) {
+      option[0].join.push({ node: nodeId })
     } else {
-      answer[0].join = [{ node: nodeId }]
+      option[0].join = [{ node: nodeId }]
     }
 
     this.updateStoredTree(savedTree)
