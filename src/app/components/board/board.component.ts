@@ -141,6 +141,18 @@ export class BoardComponent {
           }
         }
       }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            for (let join of condition.join) {
+              this.joins.push({
+                origin: condition.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
     }
   }
 
