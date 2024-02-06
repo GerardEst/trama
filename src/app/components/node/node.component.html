@@ -14,7 +14,9 @@
         *ngFor="let condition of conditions"
         id="{{ condition.id }}"
         [nodeId]="elementRef.nativeElement.id"
-        [text]="condition.text"
+        [selectedRef]="condition.ref"
+        [comparator]="condition.comparator"
+        [value]="condition.value"
         (onRemoveCondition)="removeCondition($event)"
         (onWillJoin)="willJoin($event)"
       ></polo-condition>

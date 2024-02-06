@@ -7,10 +7,8 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
-import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
-import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-condition',
@@ -21,7 +19,9 @@ import { SharedBoardService } from 'src/app/services/shared-board-service'
 })
 export class ConditionComponent {
   @Input() nodeId: string = ''
-  @Input() text: string = ''
+  @Input() selectedRef?: string
+  @Input() comparator?: string
+  @Input() value?: number = 0
   @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
@@ -30,49 +30,33 @@ export class ConditionComponent {
   constructor(
     private storage: StorageService,
     public elementRef: ElementRef,
-    private sharedBoard: SharedBoardService
+    public activeStory: ActiveStoryService
   ) {}
 
-  openOptions() {
-    if (!this.optionsContainer) return
-
-    // Create the component
-    const ref = this.optionsContainer.createComponent(
-      PopupAnswerOptionsComponent
-    )
-    ref.instance.answerId = this.elementRef.nativeElement.id
-
-    // Manage subscriptions to talk with answer component, because this is a dinamically created component
-    const subscriptions: Array<any> = []
-    subscriptions.push(
-      ref.instance.onRemoveAnswer.subscribe(() => {
-        this.sharedBoard.resumeBoardDrag()
-        this.removeAnswer()
-      }),
-      ref.instance.onClosePopup.subscribe(() => {
-        this.sharedBoard.resumeBoardDrag()
-        ref.destroy()
-        for (let subscription of subscriptions) {
-          // I checked that if we don't unsubscribe, the subscription status closed is false even when I close the popup.
-          // So this is necessary
-          subscription.unsubscribe()
-        }
-      })
-    )
-  }
-
-  saveAnswerText(e: any) {
+  saveCondition(event: any) {
     const id = this.elementRef.nativeElement.id
-    const text = e.target.value
 
-    this.storage.updateAnswerText(id, text)
+    if (event.target.id === 'ref') {
+      this.selectedRef = event.target.selectedOptions[0].id
+    } else if (event.target.id === 'comparator') {
+      this.comparator = event.target.selectedOptions[0].id
+    } else if (event.target.id === 'value') {
+      this.value = event.target.value
+    }
+
+    this.storage.updateConditionValues(id, {
+      id,
+      ref: this.selectedRef,
+      comparator: this.comparator,
+      value: this.value,
+    })
   }
 
   willJoin() {
     this.onWillJoin.emit(this.elementRef.nativeElement.id)
   }
 
-  removeAnswer() {
+  removeCondition() {
     const id = this.elementRef.nativeElement.id
 
     this.onRemoveCondition.emit(id)

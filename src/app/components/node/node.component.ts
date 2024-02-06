@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
+import { condition } from 'src/app/interfaces'
 
 interface answer {
   id: string
@@ -29,7 +30,7 @@ interface position {
 export class NodeComponent {
   @Input() text: string = ''
   @Input() answers?: Array<answer>
-  @Input() conditions?: Array<answer>
+  @Input() conditions?: Array<condition>
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
@@ -54,13 +55,18 @@ export class NodeComponent {
   addCondition() {
     const newId = `condition_${
       this.elementRef.nativeElement.id.split('_')[1]
-    }_${this.getIDForNewAnswer()}`
+    }_${this.getIDForNewCondition()}`
 
     if (!this.conditions) this.conditions = []
 
-    this.conditions.push({ id: newId, text: '' })
+    this.conditions.push({
+      id: newId,
+      ref: '',
+      comparator: '',
+      value: 0,
+    })
 
-    //this.storage.createNodeAnswer(this.elementRef.nativeElement.id, newId)
+    this.storage.createNodeCondition(this.elementRef.nativeElement.id, newId)
   }
 
   removeAnswer(id: string) {
@@ -69,7 +75,7 @@ export class NodeComponent {
   }
 
   removeCondition(id: string) {
-    // this.storage.removeAnswer(this.elementRef.nativeElement.id, id)
+    this.storage.removeCondition(this.elementRef.nativeElement.id, id)
     this.conditions = this.conditions?.filter(
       (condition: any) => condition.id !== id
     )
@@ -94,6 +100,24 @@ export class NodeComponent {
     for (let answer of answers) answer_ids.push(answer.id.split('_')[2])
 
     const great_id = Math.max(...answer_ids) > 0 ? Math.max(...answer_ids) : 0
+
+    return great_id + 1
+  }
+
+  getIDForNewCondition() {
+    let condition_ids = []
+
+    const conditions = this.storage.getConditionsOfNode(
+      this.elementRef.nativeElement.id
+    )
+
+    if (!conditions) return 0
+
+    for (let condition of conditions)
+      condition_ids.push(condition.id.split('_')[2])
+
+    const great_id =
+      Math.max(...condition_ids) > 0 ? Math.max(...condition_ids) : 0
 
     return great_id + 1
   }

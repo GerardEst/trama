@@ -3,6 +3,7 @@ import { node } from '../interfaces'
 import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
 import { ActiveStoryService } from './active-story.service'
+import { condition } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,25 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  updateConditionValues(conditionId: string, values: condition) {
+    const savedTree = this.getStoredTree()
+
+    const conditionNodeId = conditionId.split('_')[1]
+
+    const node = savedTree.nodes.find(
+      (node: any) => node.id === `node_${conditionNodeId}`
+    )
+    const conditions = node.conditions?.filter(
+      (condition: any) => condition.id === conditionId
+    )
+
+    conditions[0].ref = values.ref
+    conditions[0].comparator = values.comparator
+    conditions[0].value = values.value
+
+    this.updateStoredTree(savedTree)
+  }
+
   createNodeAnswer(nodeId: string, answerId: string) {
     const savedTree = this.getStoredTree()
 
@@ -52,6 +72,22 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  createNodeCondition(nodeId: string, conditionId: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.filter((node: any) => node.id === nodeId)
+
+    if (node[0].conditions) {
+      node[0].conditions.push({
+        id: conditionId,
+      })
+    } else {
+      node[0].conditions = [{ id: conditionId }]
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
   removeAnswer(nodeId: string, answerId: string) {
     const savedTree = this.getStoredTree()
 
@@ -61,6 +97,19 @@ export class StorageService {
     )
 
     node.answers = newAnswers
+
+    this.updateStoredTree(savedTree)
+  }
+
+  removeCondition(nodeId: string, conditionId: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+    const newConditions = node.conditions?.filter(
+      (condition: any) => condition.id !== conditionId
+    )
+
+    node.conditions = newConditions
 
     this.updateStoredTree(savedTree)
   }
@@ -273,6 +322,8 @@ export class StorageService {
   private getNewIdForRequirement() {
     const savedTree = this.getStoredTree()
 
+    if (!savedTree.refs || !savedTree.refs[0]) return 0
+
     if (savedTree.refs) {
       const ids = Object.keys(savedTree.refs).map((key) =>
         parseInt(key.split('_')[1])
@@ -290,6 +341,13 @@ export class StorageService {
 
     const node = savedTree.nodes.find((node: any) => node.id === nodeId)
     return node.answers
+  }
+
+  getConditionsOfNode(nodeId: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+    return node.conditions
   }
 
   getRequirementsOfAnswer(answerId: string) {
