@@ -25,8 +25,10 @@ export interface node{
   id: string,
   left: number,
   top: number,
-  answers: Array<node_answer>,
-  text: string
+  answers?: Array<node_answer>,
+  conditions?: Array<node_conditions>,
+  text: string,
+  type: string,
 }
 
 export interface node_answer{
@@ -35,6 +37,14 @@ export interface node_answer{
   text: string,
   events: Array<answer_event>
   requirements: Array<answer_requirement>
+}
+
+export interface node_conditions{
+  id: string,
+  join: Array<join>,
+  ref: string,
+  comparator: string,
+  value: number
 }
 
 export interface answer_event{

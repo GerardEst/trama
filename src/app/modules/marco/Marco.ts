@@ -46,6 +46,20 @@ export class Marco {
   }
 
   private drawNode(node: node, isTheFirstNode = false) {
+    // todo -> treure això d'aquí
+    if (node.type === 'distributor') {
+      console.log('amoa distribui')
+      console.log(node)
+
+      if(!node.conditions) return console.warn('Distributor node with no conditions')
+      for (let condition of node.conditions) {
+      // check de cada condició una a una i per ordre, a la que es compleix una ja somhi
+      // player hauria de tenir les coses necessaries
+      console.log(this.player)
+        console.log(condition.ref)
+      }
+    }
+    /** Si el node a dibuixar és distributor, cudiao */
     if (!node) return console.warn('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
@@ -105,7 +119,7 @@ export class Marco {
   }
 
   // Create all the node, calls the creation of answers of node too
-  private createDOMNode(id:string, text:string, answers: Array<node_answer>) {
+  private createDOMNode(id:string, text:string, answers?: Array<node_answer>) {
     let DOMNode = document.createElement('div')
     DOMNode.className = 'node'
     DOMNode.id = id
