@@ -19,7 +19,7 @@ export function playerHasAnswerRequirements(player:player, requirements:Array<an
       const playerHasSomeRequiredStats = player.stats.some((stat:stat) => stat.id === requirement.id)
       if (!playerHasSomeRequiredStats) return false
 
-      const someUnsatisfiedStat = player.stats.some((stat:stat) => stat.amount < requirement_amount)
+      const someUnsatisfiedStat = player.stats.some((stat:stat) => parseInt(stat.amount) < requirement_amount)
       if (someUnsatisfiedStat) return false
     }
     if (requirement.type === 'condition') {

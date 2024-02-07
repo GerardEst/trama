@@ -46,20 +46,57 @@ export class Marco {
   }
 
   private drawNode(node: node, isTheFirstNode = false) {
-    // todo -> treure això d'aquí
-    if (node.type === 'distributor') {
-      console.log('amoa distribui')
-      console.log(node)
 
+    // todo -> treure això d'aquí i fer-ho bé
+    if (node.type === 'distributor') {
       if(!node.conditions) return console.warn('Distributor node with no conditions')
-      for (let condition of node.conditions) {
-      // check de cada condició una a una i per ordre, a la que es compleix una ja somhi
-      // player hauria de tenir les coses necessaries
-      console.log(this.player)
-        console.log(condition.ref)
+      for (let distributorCondition of node.conditions) {
+        const stat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
+        if (stat) {
+          if (distributorCondition.comparator === 'equalto') {
+            if (parseInt(distributorCondition.value) === parseInt(stat.amount)) {
+              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+              if (destiniyNode) {
+                console.log('destiniyNode ', destiniyNode)
+                this.drawNode(destiniyNode)
+                break
+              }
+            }
+          }
+          if (distributorCondition.comparator === 'lessthan') {
+            if (parseInt(stat.amount) < parseInt(distributorCondition.value)) {
+              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+              console.log('magia', destiniyNode)
+              if (destiniyNode) this.drawNode(destiniyNode)
+              break
+            }
+          }
+          if (distributorCondition.comparator === 'morethan') {
+            if (parseInt(stat.amount) > parseInt(distributorCondition.value)) {
+              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+              if (destiniyNode) this.drawNode(destiniyNode)
+              break
+            }
+          }
+        }
+        const condition = this.player.conditions.find(condition => condition.id === distributorCondition.ref)
+        if (condition) {
+          if (parseInt(distributorCondition.value) === 1) {
+            const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+            if (destiniyNode) this.drawNode(destiniyNode)
+            break
+          }
+        } else {
+          if (parseInt(distributorCondition.value) === 0) {
+            const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+            if (destiniyNode) this.drawNode(destiniyNode)
+            break
+          }
+        }
       }
+      return
     }
-    /** Si el node a dibuixar és distributor, cudiao */
+
     if (!node) return console.warn('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
@@ -216,12 +253,12 @@ export class Marco {
 
     if (stat) {
       stat.amount += amount
-      if (stat.amount <= 0) this.player.stats?.splice(statIndex, 1)
+      if (parseInt(stat.amount) <= 0) this.player.stats?.splice(statIndex, 1)
     } else {
       if (amount <= 0) return
       this.player.stats?.push({
         id: event.target,
-        amount: amount,
+        amount: amount.toString(),
       })
     }
 

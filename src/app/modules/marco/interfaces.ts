@@ -44,7 +44,7 @@ export interface node_conditions{
   join: Array<join>,
   ref: string,
   comparator: string,
-  value: number
+  value: string
 }
 
 export interface answer_event{
@@ -61,7 +61,7 @@ export interface answer_requirement{
 
 export interface stat{
   id: string,
-  amount: number
+  amount: string
 }
 export interface condition{
   id: string,
