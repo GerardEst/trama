@@ -328,7 +328,7 @@ export class StorageService {
   private getNewIdForRequirement() {
     const savedTree = this.getStoredTree()
 
-    if (!savedTree.refs || !savedTree.refs[0]) return 0
+    if (!savedTree.refs || Object.keys(savedTree.refs).length === 0) return 0
 
     if (savedTree.refs) {
       const ids = Object.keys(savedTree.refs).map((key) =>
