@@ -1,0 +1,29 @@
+:host
+  position: relative
+  display: flex
+  gap: 0.5rem
+:host:hover .answer__options
+  display: flex
+
+.union_point
+  width: 1.5rem
+  height: 1rem
+  background-color: white
+  border: 1px solid var(--dark-gray)
+  border-radius: 0.6rem
+  align-self: center
+  cursor: pointer
+  position: absolute
+  right: 0
+  transform: translateX(73%)
+.union_point:hover
+  background-color: var(--medium-gray)
+.options
+  display: flex
+  gap: 0.5rem
+.options__more
+  width: 1.3rem
+  height: 1.1rem
+  border-radius: 5px
+  cursor: pointer
+  background: var(--medium-gray) url("/assets/icons/more-options.svg") no-repeat center/0.9rem

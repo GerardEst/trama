@@ -28,6 +28,11 @@ export class BoardComponent {
   @Input() tree?: any
   @Input() treeId?: string
 
+  // context menu
+  contextMenuPosition = { x: 0, y: 0 }
+  contextMenuActive = false
+  @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
+
   // Joins
   waitingForJoin: boolean = false
   willJoinId?: string
@@ -65,6 +70,15 @@ export class BoardComponent {
       }
     )
     if (this.tree) this.centerToNode(this.tree.nodes[0])
+  }
+
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault()
+
+    this.contextMenuPosition.x = event.offsetX
+    this.contextMenuPosition.y = event.offsetY
+
+    this.contextMenuActive = true
   }
 
   public centerToNode(node: any) {
@@ -127,6 +141,18 @@ export class BoardComponent {
           }
         }
       }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            for (let join of condition.join) {
+              this.joins.push({
+                origin: condition.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
     }
   }
 
@@ -148,30 +174,65 @@ export class BoardComponent {
 
     this.waitingForJoin = false
 
-    this.storage.updateAnswerJoin(this.willJoinId, nodeId)
+    this.storage.updateOptionJoin(this.willJoinId, nodeId)
   }
 
   dragCheck() {}
 
-  addNode(event: any) {
-    if (!this.waitingForJoin || !this.willJoinId) return
+  boardClick(event: any) {
+    this.contextMenuActive = false
+    this.addNode(event, 'content')
+  }
+
+  addNode(event: any, type: 'content' | 'distributor' | 'end'): void {
+    event.stopPropagation()
+
+    if (this.contextMenuActive) {
+      this.contextMenuActive = false
+      this.createNode(
+        {
+          top: this.contextMenu.nativeElement.style.top.slice(0, -2),
+          left: this.contextMenu.nativeElement.style.left.slice(0, -2),
+        },
+        type
+      )
+
+      return
+    }
+
+    if (this.waitingForJoin && this.willJoinId) {
+      const newNodeInfo = this.createNode(
+        { top: event.offsetY, left: event.offsetX },
+        type
+      )
+
+      this.joins.push({
+        origin: this.willJoinId + '_join',
+        destiny: newNodeInfo.id + '_join',
+      })
+
+      this.storage.updateOptionJoin(this.willJoinId, newNodeInfo.id)
+
+      this.waitingForJoin = false
+    }
+  }
+
+  createNode(
+    position: { top: string; left: string },
+    type: 'content' | 'distributor' | 'end'
+  ) {
+    console.log('new ' + type + ' node')
 
     const newNodeInfo: node = {
       id: 'node_' + this.getIDForNewNode(),
-      top: event.offsetY,
-      left: event.offsetX,
+      type,
+      top: position.top,
+      left: position.left,
     }
     this.tree.nodes.push(newNodeInfo)
     this.storage.createNode(newNodeInfo)
 
-    this.joins.push({
-      origin: this.willJoinId + '_join',
-      destiny: newNodeInfo.id + '_join',
-    })
-
-    this.storage.updateAnswerJoin(this.willJoinId, newNodeInfo.id)
-
-    this.waitingForJoin = false
+    return newNodeInfo
   }
 
   removeNode(event: any) {

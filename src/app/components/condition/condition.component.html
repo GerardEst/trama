@@ -1,0 +1,30 @@
+<select id="ref" (change)="saveCondition($event)">
+  <option selected>None</option>
+  @for (ref of activeStory.storyRefs(); track $index) {
+  <option [selected]="selectedRef === ref.id" id="{{ ref.id }}">
+    {{ ref.name }}
+  </option>
+  }
+</select>
+<select id="comparator" (change)="saveCondition($event)">
+  <option selected>None</option>
+  <option [selected]="comparator === 'equalto'" id="equalto">equal to</option>
+  <option [selected]="comparator === 'lessthan'" id="lessthan">
+    less than
+  </option>
+  <option [selected]="comparator === 'morethan'" id="morethan">
+    more than
+  </option>
+</select>
+<input
+  id="value"
+  (change)="saveCondition($event)"
+  type="number"
+  value="{{ value }}"
+/>
+<button (click)="removeCondition()">Remove</button>
+<div
+  (click)="willJoin()"
+  id="{{ this.elementRef.nativeElement.id + '_join' }}"
+  class="union_point"
+></div>

@@ -8,6 +8,23 @@
     </div>
   </header>
   <main>
+    @if(type==='distributor'){
+    <div *ngIf="conditions && conditions.length > 0" class="node__answers">
+      <polo-condition
+        *ngFor="let condition of conditions"
+        id="{{ condition.id }}"
+        [nodeId]="elementRef.nativeElement.id"
+        [selectedRef]="condition.ref"
+        [comparator]="condition.comparator"
+        [value]="condition.value"
+        (onRemoveCondition)="removeCondition($event)"
+        (onWillJoin)="willJoin($event)"
+      ></polo-condition>
+    </div>
+    <button (click)="addCondition()">Add condition</button>
+    } @else if(type==='end'){
+    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    }@else {
     <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">
       <polo-answer
@@ -20,5 +37,6 @@
       ></polo-answer>
     </div>
     <button (click)="addAnswer()">Add answer</button>
+    }
   </main>
 </div>

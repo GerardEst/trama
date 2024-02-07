@@ -1,4 +1,21 @@
-<div #board class="board" (click)="addNode($event)">
+<div
+  #board
+  class="board"
+  (contextmenu)="onRightClick($event)"
+  (click)="boardClick($event)"
+>
+  <div
+    #contextMenu
+    class="contextMenu"
+    [class.active]="contextMenuActive"
+    [style.left.px]="contextMenuPosition.x"
+    [style.top.px]="contextMenuPosition.y"
+  >
+    <p (click)="addNode($event, 'content')">Node</p>
+    <p (click)="addNode($event, 'distributor')">Distributor</p>
+    <p (click)="addNode($event, 'end')">End</p>
+  </div>
+
   <polo-board-flows [connections]="joins"></polo-board-flows>
   <ng-container *ngIf="tree">
     <polo-node
@@ -6,6 +23,7 @@
       #node
       cdkDrag
       id="{{ node.id }}"
+      [type]="node.type"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"
@@ -20,6 +38,7 @@
       "
       [text]="node.text"
       [answers]="node.answers"
+      [conditions]="node.conditions"
     >
       <dragHandle cdkDragHandle>
         <p>{{ node.id }}</p>
