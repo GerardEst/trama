@@ -12,7 +12,6 @@ export class Marco {
 
   onAlterStat: ((event: answer_event) => void) | undefined
   onAlterCondition: ((event: answer_event) => void) | undefined
-  //onWin: ((event: answer_event) => void) | undefined
   onEnd: (() => void) | undefined
   onDrawNode: ((node: node) => void) | undefined
   onSelectAnswer: ((answer: node_answer) => void) | undefined
@@ -45,9 +44,12 @@ export class Marco {
     document.head.appendChild(style);
   }
 
-  private drawNode(node: node, isTheFirstNode = false) {
+  private decideNode(node: node, isTheFirstNode = false) {
+    if (node.type === 'distributor') this.distributeNode(node)
+    if (node.type === 'content') this.drawNode(node, isTheFirstNode)
+  }
 
-    // todo -> treure això d'aquí i fer-ho bé
+  private distributeNode(node: node) {
     if (node.type === 'distributor') {
       if(!node.conditions) return console.warn('Distributor node with no conditions')
       for (let distributorCondition of node.conditions) {
@@ -58,7 +60,7 @@ export class Marco {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
               if (destiniyNode) {
                 console.log('destiniyNode ', destiniyNode)
-                this.drawNode(destiniyNode)
+                this.decideNode(destiniyNode)
                 break
               }
             }
@@ -67,14 +69,14 @@ export class Marco {
             if (parseInt(stat.amount) < parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
               console.log('magia', destiniyNode)
-              if (destiniyNode) this.drawNode(destiniyNode)
+              if (destiniyNode) this.decideNode(destiniyNode)
               break
             }
           }
           if (distributorCondition.comparator === 'morethan') {
             if (parseInt(stat.amount) > parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) this.drawNode(destiniyNode)
+              if (destiniyNode) this.decideNode(destiniyNode)
               break
             }
           }
@@ -83,20 +85,22 @@ export class Marco {
         if (condition) {
           if (parseInt(distributorCondition.value) === 1) {
             const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-            if (destiniyNode) this.drawNode(destiniyNode)
+            if (destiniyNode) this.decideNode(destiniyNode)
             break
           }
         } else {
           if (parseInt(distributorCondition.value) === 0) {
             const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-            if (destiniyNode) this.drawNode(destiniyNode)
+            if (destiniyNode) this.decideNode(destiniyNode)
             break
           }
         }
       }
       return
     }
+  }
 
+  private drawNode(node: node, isTheFirstNode = false) {
     if (!node) return console.warn('Nothing to draw, empty path')
 
     if (this.config.view === 'book') {
@@ -112,12 +116,8 @@ export class Marco {
     this.centerNodeToView(nodeLayout, isTheFirstNode, this.timings)
     this.fadeInNodeAfterMiliseconds(nodeLayout,isTheFirstNode ? 0 : this.timings)
 
-    // Call the function to "subscribers"
     if (this.onDrawNode) this.onDrawNode(node)
-    // If it's an end node, call the end event
-    if (node.type === 'end') {
-      if (this.onEnd) this.onEnd()
-    }
+    if (this.onEnd && node.type === 'end') this.onEnd()
   }
 
   private drawAnswer(answer: node_answer) {
@@ -135,9 +135,8 @@ export class Marco {
 
     if (destiniyNode) {
       answerLayout.addEventListener('click', () => this.selectAnswerAnimation(answerLayout))
-      answerLayout.addEventListener('click', () => this.drawNode(destiniyNode))
+      answerLayout.addEventListener('click', () => this.decideNode(destiniyNode))
       answerLayout.addEventListener('click', () => {
-        // Call the function to "subscribers"
         if (this.onSelectAnswer) this.onSelectAnswer(answer)
       })
     }
@@ -222,15 +221,10 @@ export class Marco {
   }
 
   private registerAnswerEvents(answerEvents: Array<answer_event> = [], DOMAnswer: HTMLElement) {
-      // We must launch the alterations first, and then the ends
       const alters = answerEvents.filter((event:answer_event) => event.action === 'alterStat' || event.action === 'alterCondition')
-      // const ends = answerEvents.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
       for (let event of alters) {
         DOMAnswer.addEventListener('click', () => this[event.action](event))
       }
-      // for (let event of ends) {
-      //   DOMAnswer.addEventListener('click', () => this[event.action](event))
-      // }
   }
 
   private findAnswerDestinationNode(answerJoin: Array<join>) {
@@ -286,14 +280,6 @@ export class Marco {
 
     if (this.onAlterCondition) this.onAlterCondition(event)
   }
-
-  // private win(event:answer_event) {
-  //   if (this.onWin) this.onWin(event)
-  // }
-
-  // private end(event:answer_event) {
-  //   if (this.onEnd) this.onEnd(event)
-  // }
 
   // Public methods to use with Marco instance
   public getAllStats() {
