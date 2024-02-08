@@ -49,7 +49,7 @@ export interface node_conditions{
 
 export interface answer_event{
   id: string,
-  action: 'alterStat' | 'alterCondition' | 'win' | 'end',
+  action: 'alterStat' | 'alterCondition',
   amount: string,
   target: string
 }

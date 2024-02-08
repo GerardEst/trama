@@ -12,8 +12,8 @@ export class Marco {
 
   onAlterStat: ((event: answer_event) => void) | undefined
   onAlterCondition: ((event: answer_event) => void) | undefined
-  onWin: ((event: answer_event) => void) | undefined
-  onEnd: ((event: answer_event) => void) | undefined
+  //onWin: ((event: answer_event) => void) | undefined
+  onEnd: (() => void) | undefined
   onDrawNode: ((node: node) => void) | undefined
   onSelectAnswer: ((answer: node_answer) => void) | undefined
   onExternalEvent: ((externalEvent: externalEvent) => void) | undefined
@@ -114,6 +114,10 @@ export class Marco {
 
     // Call the function to "subscribers"
     if (this.onDrawNode) this.onDrawNode(node)
+    // If it's an end node, call the end event
+    if (node.type === 'end') {
+      if (this.onEnd) this.onEnd()
+    }
   }
 
   private drawAnswer(answer: node_answer) {
@@ -220,13 +224,13 @@ export class Marco {
   private registerAnswerEvents(answerEvents: Array<answer_event> = [], DOMAnswer: HTMLElement) {
       // We must launch the alterations first, and then the ends
       const alters = answerEvents.filter((event:answer_event) => event.action === 'alterStat' || event.action === 'alterCondition')
-      const ends = answerEvents.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
+      // const ends = answerEvents.filter((event:answer_event) => event.action === 'win' || event.action === 'end')
       for (let event of alters) {
         DOMAnswer.addEventListener('click', () => this[event.action](event))
       }
-      for (let event of ends) {
-        DOMAnswer.addEventListener('click', () => this[event.action](event))
-      }
+      // for (let event of ends) {
+      //   DOMAnswer.addEventListener('click', () => this[event.action](event))
+      // }
   }
 
   private findAnswerDestinationNode(answerJoin: Array<join>) {
@@ -283,13 +287,13 @@ export class Marco {
     if (this.onAlterCondition) this.onAlterCondition(event)
   }
 
-  private win(event:answer_event) {
-    if (this.onWin) this.onWin(event)
-  }
+  // private win(event:answer_event) {
+  //   if (this.onWin) this.onWin(event)
+  // }
 
-  private end(event:answer_event) {
-    if (this.onEnd) this.onEnd(event)
-  }
+  // private end(event:answer_event) {
+  //   if (this.onEnd) this.onEnd(event)
+  // }
 
   // Public methods to use with Marco instance
   public getAllStats() {
