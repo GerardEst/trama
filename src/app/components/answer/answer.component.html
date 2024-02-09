@@ -1,7 +1,7 @@
 <div class="options">
   <span #optionsContainer (click)="openOptions()" class="options__more"></span>
 </div>
-<textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
+<textarea #textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
 <div
   (click)="willJoin()"
   id="{{ this.elementRef.nativeElement.id + '_join' }}"

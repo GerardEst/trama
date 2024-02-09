@@ -4,6 +4,7 @@ import {
   ElementRef,
   Output,
   EventEmitter,
+  ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
@@ -37,8 +38,15 @@ export class NodeComponent {
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
+  @ViewChild('textarea') textarea?: ElementRef
 
   constructor(public storage: StorageService, public elementRef: ElementRef) {}
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.textarea?.nativeElement.focus()
+    }, 0)
+  }
 
   addAnswer() {
     const newId = `answer_${

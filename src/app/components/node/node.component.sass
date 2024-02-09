@@ -10,16 +10,17 @@
 .node
   width: 20rem
   height: auto
-  border: 1px solid gray
-  background-color: #ffffffcc
-  box-shadow: var(--shadow-elevation-medium)
+  border: 1px solid var(--dark-gray)
+  background-color: #ffffff
   border-radius: 0.5rem
   box-sizing: border-box
+  padding: 0 0.3rem
 
   &__answers
     display: flex
     flex-direction: column
     gap: 0.5rem
+    padding: 0.5rem 0.2rem
 
   &.waitingForJoin
     opacity: 0.5
@@ -27,17 +28,32 @@
     opacity: 1
 
   main
-    padding: 0.8rem
     display: flex
     flex-direction: column
     gap: 1rem
+    textarea
+      position: relative
+      border: none
+      border-bottom: 1px dashed var(--medium-gray)
+      &:focus
+        border-bottom: none
+  footer
+    padding: 0.5rem 0.2rem
+    display: flex
+    align-items: center
+    p
+      color: var(--light-text)
+    button
+      margin-left: auto
+
 :host.highlighted .node
   outline: 2px solid salmon
 header
   display: flex
   border-radius: 0.5rem 0.5rem 0 0
-  background: var(--medium-gray) url("/assets/icons/drag.svg") no-repeat left 0.5rem center/1.5rem
-  height: 2rem
+  background: white url("/assets/icons/drag.svg") no-repeat left 0.5rem center/1.3rem
+  padding: 0.3rem 0
+  border-bottom: 1px solid var(--medium-gray)
 
 .options
   display: flex
@@ -53,4 +69,8 @@ header
     aspect-ratio: 1
 
   &__remove
-    background: url("/assets/icons/trash.svg") no-repeat center/1.2rem
+    height: 2rem
+    background-image: url("/assets/icons/trash.svg")
+    background-repeat: no-repeat
+    background-size: 1.1rem
+    background-position: center

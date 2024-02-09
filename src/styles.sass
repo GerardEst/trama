@@ -22,6 +22,7 @@
   --medium-gray: #efefef
   --dark-gray: #cccccc
   --text: rgb(55, 53, 47)
+  --light-text: #a8a8a8
   --success: #86d47f
   /* Font family */
   --primary-font-family: "Spartan", serif
@@ -69,12 +70,16 @@ button
   color: var(--text)
   border: 1px solid var(--medium-gray)
   border-radius: 0.3rem
-  padding: 0.5rem
-  background-color: var(--medium-gray)
+  padding: 0.7rem
+  background-color: var(--light-gray)
   cursor: pointer
+  &:hover
+    background-color: var(--medium-gray)
 input
   border-radius: 0.3rem
   border: 1px solid var(--dark-gray)
+  &:focus
+    outline: 1px solid black
 input[type="number"]
   width: 2.7rem
   padding: 0
@@ -86,11 +91,13 @@ input[type="checkbox"]
 textarea
   width: 100%
   max-width: 100%
-  min-height: 4rem
+  min-height: 6rem
   box-sizing: border-box
   padding: 0.5rem
   font-size: 0.7rem
   background: none
+  &:focus
+    outline: 1px solid black
 label
   display: flex
   gap: 0.3rem

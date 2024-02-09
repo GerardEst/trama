@@ -26,7 +26,7 @@
       #node
       cdkDrag
       id="{{ node.id }}"
-      [type]="node.type"
+      [type]="node.type || 'content'"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"
@@ -44,7 +44,12 @@
       [conditions]="node.conditions"
     >
       <dragHandle cdkDragHandle>
-        <p>{{ node.id }}</p>
+        <p>
+          <span style="text-transform: capitalize">{{
+            node.type || 'content'
+          }}</span>
+          node
+        </p>
       </dragHandle>
     </polo-node>
   </ng-container>

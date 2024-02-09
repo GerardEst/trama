@@ -2,19 +2,18 @@
   display: flex
   gap: 0.5rem
   background-color: white
-  padding: 0.3rem 0.3rem 0.3rem 1rem
+  padding: 0.3rem 0.3rem 0.3rem 0.5rem
   border-radius: 5px
   box-shadow: var(--menu-shadow)
   input
     border: none
     font-weight: 600
-    &:hover
-      &:not(:focus)
-        background-image: url("/assets/icons/edit.svg")
-        background-repeat: no-repeat
-        background-position: left center
-        background-size: 16px
-        text-indent: 1.2rem
+    &:hover, &:focus
+      background-image: url("/assets/icons/edit.svg")
+      background-repeat: no-repeat
+      background-position: left 3px center
+      background-size: 16px
+      text-indent: 1.2rem
     &:not(:focus)
       cursor: pointer
   .dropdown
@@ -26,7 +25,7 @@
     flex-direction: column
     gap: 0.5rem
     width: 160px
-    border: 1px solid var(--dark-gray)
+    box-shadow: var(--menu-shadow)
     padding: 1rem
     border-radius: 5px
     label

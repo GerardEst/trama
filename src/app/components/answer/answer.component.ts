@@ -26,6 +26,7 @@ export class AnswerComponent {
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
+  @ViewChild('textarea') textarea?: ElementRef
 
   constructor(
     private storage: StorageService,
@@ -33,6 +34,12 @@ export class AnswerComponent {
     private sharedBoard: SharedBoardService
   ) {}
 
+  ngOnInit() {
+    setTimeout(() => {
+      const textarea = this.textarea
+      if (textarea) textarea.nativeElement.focus()
+    }, 0)
+  }
   openOptions() {
     if (!this.optionsContainer) return
 

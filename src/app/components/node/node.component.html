@@ -4,7 +4,11 @@
     <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
-      <span class="options__remove" (click)="onRemoveNode()"></span>
+      <button
+        title="Delete node"
+        class="options__remove"
+        (click)="onRemoveNode()"
+      ></button>
     </div>
   </header>
   <main>
@@ -21,11 +25,10 @@
         (onWillJoin)="willJoin($event)"
       ></polo-condition>
     </div>
-    <button (click)="addCondition()">Add condition</button>
     } @else if(type==='end'){
-    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     }@else {
-    <textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">
       <polo-answer
         *ngFor="let answer of answers"
@@ -36,7 +39,14 @@
         (onWillJoin)="willJoin($event)"
       ></polo-answer>
     </div>
-    <button (click)="addAnswer()">Add answer</button>
     }
   </main>
+  <footer>
+    <p>{{ elementRef.nativeElement.id }}</p>
+    @if(type==='distributor'){
+    <button (click)="addCondition()">Add condition</button>
+    }@else if(type==='content'){
+    <button (click)="addAnswer()">Add answer</button>
+    }
+  </footer>
 </div>

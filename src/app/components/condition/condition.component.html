@@ -1,3 +1,8 @@
+<button
+  class="removeCondition"
+  (click)="removeCondition()"
+  title="Remove condition"
+></button>
 <select id="ref" (change)="saveCondition($event)">
   <option selected>None</option>
   @for (ref of activeStory.storyRefs(); track $index) {
@@ -22,7 +27,6 @@
   type="number"
   value="{{ value }}"
 />
-<button (click)="removeCondition()">Remove</button>
 <div
   (click)="willJoin()"
   id="{{ this.elementRef.nativeElement.id + '_join' }}"
