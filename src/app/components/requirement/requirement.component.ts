@@ -23,6 +23,7 @@ export class RequirementComponent {
   @Input() id?: string
   @Input() amount?: number = 3
   @Input() type?: 'stat' | 'condition'
+  // REF-1 @Input() alreadyUsedRequirements?: Array<any>
   @ViewChild('selector') selector?: any
 
   constructor(private storage: StorageService) {}
@@ -67,6 +68,25 @@ export class RequirementComponent {
       console.warn('No type defined for this requirement')
       return
     }
-    return this.storage.getRefsFormatted(this.type)
+    /**
+     * REF-1 ->
+    /** Tenim els refs possibles a refs, que retorna tot lo que podriem voler posar al selector
+     * Tenim els alreadyUsedRequirements amb tot lo que ja hi ha seleccionat al requirement
+     *
+     * Volem que els refs eliminin el que ja està fet servir, per tant hauria de ser algo com agafar els
+     * used i fer un negatiu
+     *
+     * Ara el problema es que com que no retorna, tampoc emplenem els bujeros del select
+     * Ames no s'actualitza al moment
+     */
+
+    const refs = this.storage.getRefsFormatted(this.type)
+
+    // if (!this.alreadyUsedRequirements) return refs
+
+    // let usedRefIds = this.alreadyUsedRequirements.map((ref) => ref.id)
+    // let result = refs.filter((ref) => !usedRefIds.includes(ref.id))
+
+    return refs
   }
 }

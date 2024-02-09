@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core'
+import { Injectable, effect, signal } from '@angular/core'
 import { getNodeIdFromAnswerId } from '../utils/tree-searching'
 
 @Injectable({
@@ -12,7 +12,12 @@ export class ActiveStoryService {
   storyName = signal('')
   storyRefs: any = signal([])
 
-  constructor() {}
+  constructor() {
+    effect(() => {
+      const pageTitle = document.querySelector('title')
+      if (pageTitle) pageTitle.innerHTML = this.storyName()
+    })
+  }
 
   initTreeRefs(tree: any) {
     const builtRefs: any = []
