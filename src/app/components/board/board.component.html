@@ -11,9 +11,12 @@
     [style.left.px]="contextMenuPosition.x"
     [style.top.px]="contextMenuPosition.y"
   >
-    <p (click)="addNode($event, 'content')">Node</p>
-    <p (click)="addNode($event, 'distributor')">Distributor</p>
-    <p (click)="addNode($event, 'end')">End</p>
+    <header>
+      <p>Create new node</p>
+    </header>
+    <li (click)="addNode($event, 'content')">Content node</li>
+    <li (click)="addNode($event, 'distributor')">Distributor node</li>
+    <li (click)="addNode($event, 'end')">End node</li>
   </div>
 
   <polo-board-flows [connections]="joins"></polo-board-flows>
