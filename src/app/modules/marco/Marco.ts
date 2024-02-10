@@ -191,10 +191,17 @@ export class Marco {
     let button = document.createElement('button');
     button.innerHTML = 'Share';
     button.onclick = function() {
-        let text = 'This is the message I want to share.';
-        let url = 'https://example.com/image.jpg';
-        let message = encodeURIComponent(text) + ' - ' + encodeURIComponent(url);
-        window.open('https://wa.me/?text=' + message);
+        if (navigator.share) {
+            navigator.share({
+                title: 'Title of the content',
+                text: 'This is the message I want to share.',
+                url: 'https://example.com/image.jpg',
+            })
+            .then(() => console.log('Successful share'))
+            .catch((error) => console.log('Error sharing', error));
+        } else {
+            console.log('Web Share API is not supported in your browser.');
+        }
     };
 
     shares.appendChild(button);
