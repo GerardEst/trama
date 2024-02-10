@@ -185,6 +185,7 @@ export class Marco {
   }
 
   private crateDOMShares() {
+    console.log("Shareable info:", this.guidebook, this.player)
     let shares = document.createElement('div')
     shares.className = 'shares'
 
@@ -193,9 +194,9 @@ export class Marco {
     button.onclick = function() {
         if (navigator.share) {
             navigator.share({
-                title: 'Title of the content',
-                text: 'This is the message I want to share.',
-                url: 'https://example.com/image.jpg',
+                title: 'I DID AN AMAZING QUIZZ LOOK LOOOK!',
+                text: 'I SAID LOOOOK!',
+                url: window.location.href,
             })
             .then(() => console.log('Successful share'))
             .catch((error) => console.log('Error sharing', error));
