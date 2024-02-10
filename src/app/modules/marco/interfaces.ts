@@ -28,7 +28,7 @@ export interface node{
   answers?: Array<node_answer>,
   conditions?: Array<node_conditions>,
   text: string,
-  type: string,
+  type: 'content' | 'distributor' | 'end',
 }
 
 export interface node_answer{
@@ -56,12 +56,12 @@ export interface answer_event{
 export interface answer_requirement{
   id: string,
   type: 'stat' | 'condition',
-  amount: string
+  amount: number
 }
 
 export interface stat{
   id: string,
-  amount: string
+  amount: number
 }
 export interface condition{
   id: string,

@@ -71,14 +71,6 @@ export class PlaygroundComponent implements OnInit {
       this.startBlurWindowDetection()
     }
 
-    this.adventure.onWin = (event: any) => {
-      if (this.tree.tracking) {
-        const userFinalStats = this.adventure.getAllStats()
-        this.saveGame(userFinalStats)
-      }
-      this.endGame = true
-      console.log(this.playerPath)
-    }
     this.adventure.onEnd = (event: any) => {
       if (this.tree.tracking) {
         const userFinalStats = this.adventure.getAllStats()

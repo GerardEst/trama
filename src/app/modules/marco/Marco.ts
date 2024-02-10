@@ -45,36 +45,37 @@ export class Marco {
   }
 
   private decideNode(node: node, isTheFirstNode = false) {
-    if (node.type === 'distributor') this.distributeNode(node)
-    if (node.type === 'content') this.drawNode(node, isTheFirstNode)
+    if (node.type === 'distributor') {
+      this.distributeNode(node)
+      return
+    }
+    this.drawNode(node, isTheFirstNode)
   }
 
   private distributeNode(node: node) {
     if (node.type === 'distributor') {
+      console.log('distribute!', node)
       if(!node.conditions) return console.warn('Distributor node with no conditions')
       for (let distributorCondition of node.conditions) {
         const stat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
+        console.log(stat)
         if (stat) {
           if (distributorCondition.comparator === 'equalto') {
-            if (parseInt(distributorCondition.value) === parseInt(stat.amount)) {
+            if (parseInt(distributorCondition.value) === stat.amount) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) {
-                console.log('destiniyNode ', destiniyNode)
-                this.decideNode(destiniyNode)
-                break
-              }
+              if (destiniyNode) this.decideNode(destiniyNode)
+              break
             }
           }
           if (distributorCondition.comparator === 'lessthan') {
-            if (parseInt(stat.amount) < parseInt(distributorCondition.value)) {
+            if (stat.amount < parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              console.log('magia', destiniyNode)
               if (destiniyNode) this.decideNode(destiniyNode)
               break
             }
           }
           if (distributorCondition.comparator === 'morethan') {
-            if (parseInt(stat.amount) > parseInt(distributorCondition.value)) {
+            if (stat.amount > parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
               if (destiniyNode) this.decideNode(destiniyNode)
               break
@@ -110,7 +111,7 @@ export class Marco {
       this.fadeOutNode(lastNode, this.timings)
     }
 
-    let nodeLayout = this.createDOMNode(node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers)
+    let nodeLayout = this.createDOMNode(node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers, node.type)
     this.DOMNodes.push(nodeLayout)
     this.addNodeToDOM(nodeLayout)
     this.centerNodeToView(nodeLayout, isTheFirstNode, this.timings)
@@ -159,7 +160,9 @@ export class Marco {
   }
 
   // Create all the node, calls the creation of answers of node too
-  private createDOMNode(id:string, text:string, answers?: Array<node_answer>) {
+  private createDOMNode(id: string, text: string, answers?: Array<node_answer>, type?: 'content' | 'distributor' | 'end') {
+    console.log(type)
+
     let DOMNode = document.createElement('div')
     DOMNode.className = 'node'
     DOMNode.id = id
@@ -167,13 +170,36 @@ export class Marco {
 
     let DOMAnswers = document.createElement('div')
     DOMAnswers.className = 'node__answers'
-    if (!answers || answers.length === 0) return DOMNode
 
-    for (let answer of answers) DOMAnswers.appendChild(this.drawAnswer(answer))
+    if (answers) {
+      for (let answer of answers) DOMAnswers.appendChild(this.drawAnswer(answer))
+      DOMNode.appendChild(DOMAnswers)
+    }
 
-    DOMNode.appendChild(DOMAnswers)
+    if (type === 'end') {
+      let shares = this.crateDOMShares()
+      DOMNode.appendChild(shares)
+    }
 
     return DOMNode
+  }
+
+  private crateDOMShares() {
+    let shares = document.createElement('div')
+    shares.className = 'shares'
+
+    let button = document.createElement('button');
+    button.innerHTML = 'Share';
+    button.onclick = function() {
+        let text = 'This is the message I want to share.';
+        let url = 'https://example.com/image.jpg';
+        let message = encodeURIComponent(text) + ' - ' + encodeURIComponent(url);
+        window.open('https://wa.me/?text=' + message);
+    };
+
+    shares.appendChild(button);
+
+    return shares
   }
 
   private addNodeToDOM(node: HTMLElement) {
@@ -251,12 +277,12 @@ export class Marco {
 
     if (stat) {
       stat.amount += amount
-      if (parseInt(stat.amount) <= 0) this.player.stats?.splice(statIndex, 1)
+      if (stat.amount <= 0) this.player.stats?.splice(statIndex, 1)
     } else {
       if (amount <= 0) return
       this.player.stats?.push({
         id: event.target,
-        amount: amount.toString(),
+        amount,
       })
     }
 

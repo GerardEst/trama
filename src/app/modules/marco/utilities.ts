@@ -11,7 +11,7 @@ export function playerHasAnswerRequirements(player:player, requirements:Array<an
 
   // If just some of the requirements is not met, we can throw false and stop checking
   for (let requirement of requirements) {
-    let requirement_amount = parseInt(requirement.amount)
+    let requirement_amount = requirement.amount
     if (requirement.type === 'stat') {
 
       if (player.stats.length === 0) return false
@@ -19,7 +19,7 @@ export function playerHasAnswerRequirements(player:player, requirements:Array<an
       const playerHasSomeRequiredStats = player.stats.some((stat:stat) => stat.id === requirement.id)
       if (!playerHasSomeRequiredStats) return false
 
-      const someUnsatisfiedStat = player.stats.some((stat:stat) => parseInt(stat.amount) < requirement_amount)
+      const someUnsatisfiedStat = player.stats.some((stat:stat) => stat.amount < requirement_amount)
       if (someUnsatisfiedStat) return false
     }
     if (requirement.type === 'condition') {
