@@ -13,6 +13,7 @@ export interface player{
 }
 
 export interface config{
+  title?: string,
   showLockedAnswers?: boolean,
   view?: string
 }

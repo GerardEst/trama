@@ -177,17 +177,22 @@ export class Marco {
     }
 
     if (type === 'end') {
-      let shares = this.crateDOMShares()
+      let shares = this.crateDOMShares(text)
       DOMNode.appendChild(shares)
     }
 
     return DOMNode
   }
 
-  private crateDOMShares() {
+  private crateDOMShares(finalNodeText:string) {
     console.log("Shareable info:", this.guidebook, this.player)
     let shares = document.createElement('div')
     shares.className = 'shares'
+
+    const message = `
+      ${this.config.title}\n\n
+      ${finalNodeText}\n\n
+    `
 
     let button = document.createElement('button');
     button.innerHTML = 'Share result';
@@ -195,10 +200,9 @@ export class Marco {
       console.log('waiting share context')
         if (navigator.share) {
             navigator.share({
-              title: `Title <br> with /n some
-                tries`,
-                text: 'Text ending \n with a *jumpline* \n',
-                url: window.location.href,
+              // title: `Title <br> with /n some
+              text: message,
+              url: window.location.href,
             })
             .then(() => console.log('Successful share'))
             .catch((error) => console.log('Error sharing', error));

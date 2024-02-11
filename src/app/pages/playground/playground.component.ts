@@ -22,25 +22,27 @@ export class PlaygroundComponent implements OnInit {
   playerPath: Array<any> = []
   externalEvents: Array<any> = []
 
-  treeId: string = ''
-  tree: any
+  storyId: string = ''
+  story: any
 
   adventure: any
 
-  @Input() set id(treeId: string) {
-    this.treeId = treeId
+  @Input() set id(storyId: string) {
+    this.storyId = storyId
   }
 
   constructor(private db: DatabaseService) {}
 
   async ngOnInit(): Promise<void> {
-    this.tree = await this.db.getTree(this.treeId)
+    this.story = await this.db.getTree(this.storyId)
 
-    if (!this.tree.tracking) this.prepareGame()
+    console.log(this.story)
+
+    if (!this.story.tracking) this.prepareGame()
   }
 
   async prepareGame() {
-    if (this.tree.tracking) {
+    if (this.story.tracking) {
       this.gotUserInfo = true
       this.gameId = self.crypto.randomUUID()
 
@@ -54,10 +56,11 @@ export class PlaygroundComponent implements OnInit {
   private async generateAdventure() {
     this.adventure = new Marco({
       domPlace: '.adventure',
-      guidebook: this.tree.tree, // ⚠ Guia on es defineixen els nodes
+      guidebook: this.story.tree, // ⚠ Guia on es defineixen els nodes
       config: {
+        title: this.story.name,
         showLockedAnswers: true,
-        view: this.tree.view || 'normal',
+        view: this.story.view || 'normal',
       },
       player: {
         name: this.userName,
@@ -66,13 +69,13 @@ export class PlaygroundComponent implements OnInit {
 
     this.adventure.start()
 
-    if (this.tree.tracking) {
+    if (this.story.tracking) {
       this.startTabChangeDetection()
       this.startBlurWindowDetection()
     }
 
     this.adventure.onEnd = (event: any) => {
-      if (this.tree.tracking) {
+      if (this.story.tracking) {
         const userFinalStats = this.adventure.getAllStats()
         this.saveGame(userFinalStats)
       }
@@ -80,7 +83,7 @@ export class PlaygroundComponent implements OnInit {
       console.log(this.playerPath)
     }
     this.adventure.onSelectAnswer = (answer: any) => {
-      if (this.tree.tracking) {
+      if (this.story.tracking) {
         this.playerPath.push({
           type: 'answer',
           id: answer.id,
@@ -90,7 +93,7 @@ export class PlaygroundComponent implements OnInit {
       }
     }
     this.adventure.onDrawNode = (node: any) => {
-      if (this.tree.tracking) {
+      if (this.story.tracking) {
         this.playerPath.push({
           type: 'node',
           id: node.id,
@@ -110,7 +113,7 @@ export class PlaygroundComponent implements OnInit {
     const saved = await this.db.saveNewGameTo(
       this.gameId,
       this.userName,
-      this.treeId,
+      this.storyId,
       this.playerPath,
       result,
       this.externalEvents
