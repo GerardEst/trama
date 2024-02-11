@@ -190,12 +190,14 @@ export class Marco {
     shares.className = 'shares'
 
     let button = document.createElement('button');
-    button.innerHTML = 'Share';
-    button.onclick = function() {
+    button.innerHTML = 'Share result';
+    button.onclick = function () {
+      console.log('waiting share context')
         if (navigator.share) {
             navigator.share({
-                title: 'I DID AN AMAZING QUIZZ LOOK LOOOK!',
-                text: 'I SAID LOOOOK!',
+              title: `Title <br> with /n some
+                tries`,
+                text: 'Text ending \n with a *jumpline* \n',
                 url: window.location.href,
             })
             .then(() => console.log('Successful share'))

@@ -51,6 +51,12 @@ export const basic_style = (timing:number) => `
   display: none;
 }
 
+.shares{
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
 @keyframes flicker {
   0% {
     background-color: var(--dark-gray);
