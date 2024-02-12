@@ -11,6 +11,7 @@ import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { condition } from 'src/app/interfaces'
+import { FormsModule } from '@angular/forms'
 
 interface answer {
   id: string
@@ -24,7 +25,7 @@ interface position {
 @Component({
   selector: 'polo-node',
   standalone: true,
-  imports: [CommonModule, AnswerComponent, ConditionComponent],
+  imports: [CommonModule, AnswerComponent, ConditionComponent, FormsModule],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
 })
@@ -39,6 +40,8 @@ export class NodeComponent {
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
+
+  customShareChecked: boolean = false
 
   constructor(public storage: StorageService, public elementRef: ElementRef) {}
 

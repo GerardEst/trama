@@ -27,6 +27,20 @@
     </div>
     } @else if(type==='end'){
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <div class="node__shareoptions">
+      <p class="node__shareoptions__title">Share options</p>
+      <label class="node__shareoptions__option">
+        <div class="node__shareoptions__option--row">
+          <p>Custom share text</p>
+          <input type="checkbox" [(ngModel)]="customShareChecked" />
+        </div>
+        <input type="text" [hidden]="!customShareChecked" />
+      </label>
+      <label class="node__shareoptions__option--row">
+        <p>Allow to share all decisions</p>
+        <input type="checkbox" />
+      </label>
+    </div>
     }@else {
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">
