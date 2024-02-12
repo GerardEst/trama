@@ -30,6 +30,7 @@ export interface node{
   conditions?: Array<node_conditions>,
   text: string,
   type: 'content' | 'distributor' | 'end',
+  share?: shareOptions
 }
 
 export interface node_answer{
@@ -58,6 +59,11 @@ export interface answer_requirement{
   id: string,
   type: 'stat' | 'condition',
   amount: number
+}
+
+export interface shareOptions{
+  sharedText?: string
+  sharePath?: boolean
 }
 
 export interface stat{

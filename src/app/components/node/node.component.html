@@ -30,15 +30,16 @@
     <div class="node__shareoptions">
       <p class="node__shareoptions__title">Share options</p>
       <label class="node__shareoptions__option">
-        <div class="node__shareoptions__option--row">
-          <p>Custom share text</p>
-          <input type="checkbox" [(ngModel)]="customShareChecked" />
-        </div>
-        <input type="text" [hidden]="!customShareChecked" />
+        <p>Custom shared text</p>
+        <input
+          (change)="updateSharedText()"
+          [(ngModel)]="shareOptions.sharedText"
+          type="text"
+        />
       </label>
       <label class="node__shareoptions__option--row">
         <p>Allow to share all decisions</p>
-        <input type="checkbox" />
+        <input disabled type="checkbox" />
       </label>
     </div>
     }@else {

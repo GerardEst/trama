@@ -111,7 +111,7 @@ export class Marco {
       this.fadeOutNode(lastNode, this.timings)
     }
 
-    let nodeLayout = this.createDOMNode(node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers, node.type)
+    let nodeLayout = this.createDOMNode(node)
     this.DOMNodes.push(nodeLayout)
     this.addNodeToDOM(nodeLayout)
     this.centerNodeToView(nodeLayout, isTheFirstNode, this.timings)
@@ -160,36 +160,39 @@ export class Marco {
   }
 
   // Create all the node, calls the creation of answers of node too
-  private createDOMNode(id: string, text: string, answers?: Array<node_answer>, type?: 'content' | 'distributor' | 'end') {
-    console.log(type)
+  private createDOMNode(node:node) {
+    node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers, node.type
 
     let DOMNode = document.createElement('div')
     DOMNode.className = 'node'
-    DOMNode.id = id
-    DOMNode.innerHTML = `<div class="node__text"><p>${text}</p></div>`
+    DOMNode.id = node.id
+    DOMNode.innerHTML = `<div class="node__text"><p>${node.text}</p></div>`
 
     let DOMAnswers = document.createElement('div')
     DOMAnswers.className = 'node__answers'
 
-    if (answers) {
-      for (let answer of answers) DOMAnswers.appendChild(this.drawAnswer(answer))
+    if (node.answers) {
+      for (let answer of node.answers) DOMAnswers.appendChild(this.drawAnswer(answer))
       DOMNode.appendChild(DOMAnswers)
     }
 
-    if (type === 'end') {
-      let shares = this.crateDOMShares(text)
+    if (node.type === 'end') {
+      let shares = this.crateDOMShares(node)
       DOMNode.appendChild(shares)
     }
 
     return DOMNode
   }
 
-  private crateDOMShares(finalNodeText:string) {
+  private crateDOMShares(node:node) {
     console.log("Shareable info:", this.guidebook, this.player)
     let shares = document.createElement('div')
     shares.className = 'shares'
 
-    const message = `${this.config.title}\n\n${finalNodeText}\n\n`
+    const message = node.share?.sharedText && node.share.sharedText.length > 0 ?
+      `${this.config.title}\n\n${node.share.sharedText}\n\n` :
+      `${this.config.title}\n\n${node.text}\n\n`
+
 
     let button = document.createElement('button');
     button.innerHTML = 'Share result';

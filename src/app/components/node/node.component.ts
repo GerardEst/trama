@@ -12,6 +12,7 @@ import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { condition } from 'src/app/interfaces'
 import { FormsModule } from '@angular/forms'
+import { shareOptions } from 'src/app/modules/marco/interfaces'
 
 interface answer {
   id: string
@@ -36,12 +37,11 @@ export class NodeComponent {
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
+  @Input() shareOptions: shareOptions = {}
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
-
-  customShareChecked: boolean = false
 
   constructor(public storage: StorageService, public elementRef: ElementRef) {}
 
@@ -49,6 +49,13 @@ export class NodeComponent {
     setTimeout(() => {
       this.textarea?.nativeElement.focus()
     }, 0)
+  }
+
+  updateSharedText() {
+    this.storage.updateNodeShareOptions(
+      this.elementRef.nativeElement.id,
+      this.shareOptions
+    )
   }
 
   addAnswer() {

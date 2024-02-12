@@ -342,6 +342,15 @@ export class StorageService {
     return 1
   }
 
+  updateNodeShareOptions(nodeId: string, sharingOptions: any) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+    node.share = sharingOptions
+
+    this.updateStoredTree(savedTree)
+  }
+
   getAnswersOfNode(nodeId: string) {
     const savedTree = this.getStoredTree()
 
