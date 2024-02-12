@@ -189,10 +189,7 @@ export class Marco {
     let shares = document.createElement('div')
     shares.className = 'shares'
 
-    const message = `
-      ${this.config.title}\n\n
-      ${finalNodeText}\n\n
-    `
+    const message = `${this.config.title}\n\n${finalNodeText}\n\n`
 
     let button = document.createElement('button');
     button.innerHTML = 'Share result';
