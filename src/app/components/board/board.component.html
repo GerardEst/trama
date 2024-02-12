@@ -42,7 +42,7 @@
       [text]="node.text"
       [answers]="node.answers"
       [conditions]="node.conditions"
-      [shareOptions]="node.share"
+      [shareOptions]="node.share || {}"
     >
       <dragHandle cdkDragHandle>
         <p>

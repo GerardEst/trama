@@ -38,8 +38,8 @@ export class NodeComponent {
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
   @Input() shareOptions: shareOptions = {
-    sharedText: undefined,
-    sharePath: undefined,
+    sharedText: '',
+    sharePath: false,
   }
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
