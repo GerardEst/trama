@@ -197,8 +197,8 @@ export class Marco {
       console.log('waiting share context')
         if (navigator.share) {
             navigator.share({
-              // title: `Title <br> with /n some
-              text: message,
+              title: "Title: "+message,
+              text: "Text: "+message,
               url: window.location.href,
             })
             .then(() => console.log('Successful share'))
