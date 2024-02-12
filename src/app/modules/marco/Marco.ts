@@ -185,7 +185,6 @@ export class Marco {
   }
 
   private crateDOMShares(node:node) {
-    console.log("Shareable info:", this.guidebook, this.player)
     let shares = document.createElement('div')
     shares.className = 'shares'
 
@@ -195,7 +194,7 @@ export class Marco {
 
 
     let button = document.createElement('button');
-    button.innerHTML = 'Share result';
+    button.innerHTML = 'Compartir el resultat';
     button.onclick = function () {
       console.log('waiting share context')
         if (navigator.share) {
