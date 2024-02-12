@@ -37,7 +37,10 @@ export class NodeComponent {
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
-  @Input() shareOptions: shareOptions = {}
+  @Input() shareOptions: shareOptions = {
+    sharedText: undefined,
+    sharePath: undefined,
+  }
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
