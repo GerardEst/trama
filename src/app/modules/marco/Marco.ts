@@ -1,6 +1,6 @@
-import { playerHasAnswerRequirements, getJoinRandom } from './utilities'
+import { playerHasAnswerRequirements, getJoinRandom, normalizeLink } from './utilities'
 import { basic_style } from './styles/basic_style'
-import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join, externalEvent } from './interfaces'
+import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join, externalEvent, link } from './interfaces'
 
 export class Marco {
   guidebook: guidebook
@@ -175,6 +175,10 @@ export class Marco {
       for (let answer of node.answers) DOMAnswers.appendChild(this.drawAnswer(answer))
       DOMNode.appendChild(DOMAnswers)
     }
+    if (node.links) {
+      for (let link of node.links) DOMAnswers.appendChild(this.createDOMLink(link))
+      DOMNode.appendChild(DOMAnswers)
+    }
 
     if (node.type === 'end') {
       let shares = this.crateDOMShares(node)
@@ -248,6 +252,16 @@ export class Marco {
     DOMAnswer.innerHTML = `<p>${text}</p>`
 
     return DOMAnswer
+  }
+
+  private createDOMLink(link: link) {
+    const DOMLink = document.createElement('a')
+    DOMLink.className = 'answer'
+    DOMLink.target = '_blank'
+    DOMLink.href = normalizeLink(link.url)
+    DOMLink.textContent = link.name
+
+    return DOMLink
   }
 
   private hideUnavailableAnswer(answer: HTMLElement) {

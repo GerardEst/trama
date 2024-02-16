@@ -36,6 +36,13 @@ export const basic_style = (timing:number) => `
   padding: 0.8rem 1rem;
   border: 2px solid rgb(112 110 107);
   border-radius: 0.4rem;
+  color: black
+}
+.adventure a.answer{
+  background-image: url(/assets/icons/external-link.svg);
+  background-position: right 0.6rem center;
+  background-size: 20px;
+  background-repeat: no-repeat;
 }
 .adventure .answer.answer--selected{
   animation: flicker 700ms;
@@ -54,7 +61,10 @@ export const basic_style = (timing:number) => `
 .shares{
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
+  margin-top: 4rem;
+}
+.shares button{
+  border: 2px solid rgb(112 110 107);
 }
 
 @keyframes flicker {

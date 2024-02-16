@@ -4,6 +4,7 @@ import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
 import { ActiveStoryService } from './active-story.service'
 import { condition } from '../interfaces'
+import { link } from '../modules/marco/interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,15 @@ export class StorageService {
 
     const node = savedTree.nodes.filter((node: any) => node.id === nodeId)
     node[0].text = newText
+
+    this.updateStoredTree(savedTree)
+  }
+
+  updateNodeLinks(nodeId: string, links: link[]) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.filter((node: any) => node.id === nodeId)
+    node[0].links = links
 
     this.updateStoredTree(savedTree)
   }

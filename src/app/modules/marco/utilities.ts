@@ -42,3 +42,10 @@ export function playerHasAnswerRequirements(player:player, requirements:Array<an
   }
   return true
 }
+
+export const normalizeLink = (url: string): string => {
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`
+  }
+  return url
+}

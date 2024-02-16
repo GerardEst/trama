@@ -27,6 +27,27 @@
     </div>
     } @else if(type==='end'){
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <div class="node__linkoptions">
+      <div class="node__linkoptions__header">
+        <p class="node__linkoptions__header__title">External links</p>
+        <button (click)="addExternalLink()">add</button>
+      </div>
+      <label class="node__linkoptions__link">
+        @for (link of links | keyvalue; track $index) {
+        <input
+          (change)="updateLinks()"
+          [(ngModel)]="links[$index].name"
+          type="text"
+          placeholder="Link text"
+        /><input
+          (change)="updateLinks()"
+          [(ngModel)]="links[$index].url"
+          type="text"
+          placeholder="Link URL"
+        />
+        }
+      </label>
+    </div>
     <div class="node__shareoptions">
       <p class="node__shareoptions__title">Share options</p>
       <label class="node__shareoptions__option">

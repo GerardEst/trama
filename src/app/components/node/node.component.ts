@@ -12,7 +12,7 @@ import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { condition } from 'src/app/interfaces'
 import { FormsModule } from '@angular/forms'
-import { shareOptions } from 'src/app/modules/marco/interfaces'
+import { link, shareOptions } from 'src/app/modules/marco/interfaces'
 
 interface answer {
   id: string
@@ -41,6 +41,7 @@ export class NodeComponent {
     sharedText: '',
     sharePath: false,
   }
+  @Input() links: link[] = []
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
@@ -88,6 +89,14 @@ export class NodeComponent {
     })
 
     this.storage.createNodeCondition(this.elementRef.nativeElement.id, newId)
+  }
+
+  addExternalLink() {
+    this.links.push({ name: '', url: '' })
+  }
+
+  updateLinks() {
+    this.storage.updateNodeLinks(this.elementRef.nativeElement.id, this.links)
   }
 
   removeAnswer(id: string) {
