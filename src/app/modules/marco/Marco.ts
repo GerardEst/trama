@@ -55,15 +55,6 @@ export class Marco {
   private distributeNode(node: node) {
     if (node.type === 'distributor') {
 
-      /** Aixo no esta ben fet. Pensem
-       *
-       * Tenim un node amb condicions
-       * Aquestes condicions poden ser de stat o de condicio. Aixo es una merda pero bueno
-       *    En les condicions de stat, hem de mirar aquet stat del player i actuar.
-       *    De seguida que es compleixi algo, pintem node
-       *
-       *
-       */
       console.log('distribute!', node)
       if (!node.conditions) return console.warn('Distributor node with no conditions')
       for (let distributorCondition of node.conditions) {

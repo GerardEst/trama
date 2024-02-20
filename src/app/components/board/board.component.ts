@@ -69,7 +69,12 @@ export class BoardComponent {
         zoomSpeed: 0.065,
       }
     )
-    if (this.tree) this.centerToNode(this.tree.nodes[0])
+    if (this.tree) {
+      const activeNode = this.tree.nodes.find(
+        (node: node) => node.id === localStorage.getItem('polo-activeNode')
+      )
+      this.centerToNode(activeNode || this.tree.nodes[0])
+    }
   }
 
   onRightClick(event: MouseEvent): void {
@@ -82,6 +87,7 @@ export class BoardComponent {
   }
 
   public centerToNode(node: any) {
+    console.log(node)
     // Here we should calculate the correct transform taken into account the zoom level
     // Now it "works" but it's not perfect
     const scale = this.sharedBoardService.boardReference.getTransform().scale
@@ -164,7 +170,6 @@ export class BoardComponent {
         }
       }
     }
-    console.log(this.joins)
   }
 
   willJoin(answerId: string) {
@@ -193,6 +198,10 @@ export class BoardComponent {
   boardClick(event: any) {
     this.contextMenuActive = false
     this.addNode(event, 'content')
+  }
+
+  setActiveNode(nodeId: string) {
+    localStorage.setItem('polo-activeNode', nodeId)
   }
 
   addNode(event: any, type: 'content' | 'distributor' | 'end'): void {

@@ -27,6 +27,7 @@
       cdkDrag
       id="{{ node.id }}"
       [type]="node.type || 'content'"
+      (click)="setActiveNode(node.id)"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"

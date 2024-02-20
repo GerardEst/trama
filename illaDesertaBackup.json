@@ -1,0 +1,1623 @@
+{
+  "name": "Starter",
+  "refs": {
+    "stat_1": { "name": "brave", "type": "stat" },
+    "stat_7": { "name": "smart", "type": "stat" },
+    "stat_8": { "name": "crazy", "type": "stat" },
+    "stat_9": { "name": "boat_wood", "type": "stat" },
+    "stat_10": { "name": "boat_provisions", "type": "stat" },
+    "stat_11": { "name": "boat_leaves", "type": "stat" },
+    "stat_12": { "name": "boat_cords", "type": "stat" },
+    "stat_13": { "name": "boat_rocks", "type": "stat" },
+    "stat_14": { "name": "boat_takes", "type": "stat" },
+    "stat_17": { "name": "dwightApproves", "type": "stat" },
+    "condition_4": { "name": "hasBook", "type": "condition" },
+    "condition_5": { "name": "hasGun", "type": "condition" },
+    "condition_6": { "name": "hasCompany", "type": "condition" },
+    "condition_15": { "name": "dwightIsJudgingYou", "type": "condition" },
+    "condition_16": { "name": "feridaLleu", "type": "condition" },
+    "condition_18": { "name": "choosedBook", "type": "condition" },
+    "condition_19": { "name": "goodBoat", "type": "condition" },
+    "condition_20": { "name": "badBoat", "type": "condition" },
+    "condition_21": { "name": "sosMessage", "type": "condition" }
+  },
+  "nodes": [
+    {
+      "id": "node_0",
+      "top": 4883,
+      "left": 198,
+      "text": "Estàs preparat per sobreviure en una illa deserta?",
+      "answers": [
+        {
+          "id": "answer_0_0",
+          "join": [{ "node": "node_1" }],
+          "text": "Si, moltíssim",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_0_1",
+          "join": [{ "node": "node_7" }],
+          "text": "Bueno, no m'hi he trobat mai, aquestes coses fins que no hi ets no les saps, saps?",
+          "events": []
+        },
+        {
+          "id": "answer_0_2",
+          "join": [{ "node": "node_6" }],
+          "text": "Estic preparat per morir-hi",
+          "events": []
+        }
+      ]
+    },
+    {
+      "id": "node_1",
+      "top": 4792,
+      "left": 540,
+      "text": "Bueno bueno, descobrim-ho",
+      "answers": [
+        {
+          "id": "answer_1_0",
+          "join": [{ "node": "node_2" }],
+          "text": "Endavant"
+        }
+      ]
+    },
+    {
+      "id": "node_2",
+      "top": 5068,
+      "left": 904,
+      "text": "Començem per lo bàsic. D'aquets tres objectes, quin t'emportaries amb tu a la illa deserta?",
+      "answers": [
+        {
+          "id": "answer_2_0",
+          "join": [{ "node": "node_3" }],
+          "text": "Un llibre 🤓",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "condition_4" },
+            { "action": "alterCondition", "amount": 1, "target": "stat_7" },
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_18"
+            }
+          ]
+        },
+        {
+          "id": "answer_2_1",
+          "join": [{ "node": "node_4" }],
+          "text": "Una pistola 🫡",
+          "events": [
+            { "action": "alterCondition", "amount": 1, "target": "condition_5" }
+          ]
+        },
+        {
+          "id": "answer_2_2",
+          "join": [{ "node": "node_5" }],
+          "text": "Companyia ☺️",
+          "events": [
+            { "action": "alterCondition", "amount": 1, "target": "condition_6" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_3",
+      "top": 4946,
+      "left": 1256,
+      "text": "És realment útil posar-se a llegir quan hauries d'estar buscant cocos per no morir de gana, felicitats per l'elecció",
+      "answers": [
+        {
+          "id": "answer_3_0",
+          "join": [{ "node": "node_8" }],
+          "text": "Moltes gracies"
+        }
+      ]
+    },
+    {
+      "id": "node_4",
+      "top": 5195,
+      "left": 1254,
+      "text": "Segurament no la sabràs disparar, però ei, millor això que un llibre suposo.",
+      "answers": [
+        {
+          "id": "answer_4_0",
+          "join": [{ "node": "node_11" }],
+          "text": "Mai se sap"
+        }
+      ]
+    },
+    {
+      "id": "node_5",
+      "top": 5480,
+      "left": 1254,
+      "text": "Dues boques per alimentar? Bé. Segur que saps el que fas.",
+      "answers": [
+        {
+          "id": "answer_5_0",
+          "join": [{ "node": "node_12" }],
+          "text": "Està clar"
+        }
+      ]
+    },
+    {
+      "id": "node_6",
+      "top": 5268,
+      "left": 538,
+      "text": "Va, no siguis així. Descobrim-ho?",
+      "answers": [
+        {
+          "id": "answer_6_0",
+          "join": [{ "node": "node_2" }],
+          "text": "Endavant"
+        }
+      ]
+    },
+    {
+      "id": "node_7",
+      "top": 5029,
+      "left": 538,
+      "text": "Ja... de fet sí. Ho descobrim?",
+      "answers": [
+        {
+          "id": "answer_7_0",
+          "join": [{ "node": "node_2" }],
+          "text": "Endavant"
+        }
+      ]
+    },
+    {
+      "id": "node_8",
+      "top": 4800,
+      "left": 1606,
+      "text": "Per curiositat, en quina d'aquestes situacions faries servir el llibre?",
+      "answers": [
+        {
+          "id": "answer_8_0",
+          "join": [{ "node": "node_9" }],
+          "text": "Si em trobés un tigre cara a cara"
+        },
+        {
+          "id": "answer_8_1",
+          "join": [{ "node": "node_9" }],
+          "text": "Si vulgués pescar per subsistir"
+        },
+        {
+          "id": "answer_8_2",
+          "join": [{ "node": "node_10" }],
+          "text": "Si volgués fer foc per espantar les feres",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_7" },
+            { "action": "alterCondition", "amount": 0, "target": "condition_4" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_9",
+      "top": 4427,
+      "left": 1991,
+      "text": "... tu mateix ho veus no?",
+      "answers": [
+        { "id": "answer_9_0", "join": [{ "node": "node_17" }], "text": "jeje" },
+        {
+          "id": "answer_9_1",
+          "join": [{ "node": "node_17" }],
+          "text": "El què?"
+        }
+      ]
+    },
+    {
+      "id": "node_10",
+      "top": 4733,
+      "left": 1988,
+      "text": "Caram! No està tot perdut",
+      "answers": [
+        {
+          "id": "answer_10_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Soc increible"
+        },
+        {
+          "id": "answer_10_1",
+          "join": [{ "node": "node_17" }],
+          "text": "Sí, el llibre",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        }
+      ]
+    },
+    {
+      "id": "node_11",
+      "top": 5163,
+      "left": 1604,
+      "text": "Has fet servir mai una pistola?",
+      "answers": [
+        { "id": "answer_11_0", "join": [{ "node": "node_13" }], "text": "No" },
+        {
+          "id": "answer_11_1",
+          "join": [{ "node": "node_14" }],
+          "text": "Les escopetes de les fires"
+        },
+        { "id": "answer_11_2", "join": [{ "node": "node_15" }], "text": "Si" }
+      ]
+    },
+    {
+      "id": "node_12",
+      "top": 6042,
+      "left": 1593,
+      "text": "Evidentment no t'emportaries a qui tú volguessis, perquè això és una prova seria, no un simple divertimento. \n\nHas de triar entre aquestes opcions que se't proposen:",
+      "answers": [
+        {
+          "id": "answer_12_0",
+          "join": [{ "node": "node_49" }],
+          "text": "Hermione Granger",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        },
+        {
+          "id": "answer_12_1",
+          "join": [{ "node": "node_53" }],
+          "text": "Indiana Jones",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_12_2",
+          "join": [{ "node": "node_54" }],
+          "text": "Katniss Everdeen",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_12_3",
+          "join": [{ "node": "node_61" }],
+          "text": "Dwight Schrute",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        }
+      ]
+    },
+    {
+      "id": "node_13",
+      "top": 5050,
+      "left": 1986,
+      "text": "I creus que n'aprendràs allà a la illa mateix?",
+      "answers": [
+        {
+          "id": "answer_13_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Això crec, sí",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_13_1",
+          "join": [{ "node": "node_17" }],
+          "text": "La veritat és que no jaja"
+        }
+      ]
+    },
+    {
+      "id": "node_14",
+      "top": 5344,
+      "left": 1983,
+      "text": "S'assembla moltíssim a una pistola real",
+      "answers": [
+        {
+          "id": "answer_14_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Això m'han dit"
+        },
+        {
+          "id": "answer_14_1",
+          "join": [{ "node": "node_17" }],
+          "text": "De veritat?"
+        },
+        {
+          "id": "answer_14_2",
+          "join": [{ "node": "node_17" }],
+          "text": "No té pinta",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        }
+      ]
+    },
+    {
+      "id": "node_15",
+      "top": 5708,
+      "left": 1985,
+      "text": "Vale amic, no et molesto més",
+      "answers": [
+        {
+          "id": "answer_15_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Segueix"
+        },
+        {
+          "id": "answer_15_1",
+          "join": [{ "node": "node_17" }],
+          "text": "(treure una pistola i disparar a l'aire desordenadament)",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        },
+        {
+          "id": "answer_15_2",
+          "join": [{ "node": "node_16" }],
+          "text": "(treure una pistola i apuntar a l'entrevistador)",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        }
+      ]
+    },
+    {
+      "id": "node_16",
+      "top": 6384,
+      "left": 175,
+      "text": "Però què estàs fent? Està carregada? És una broma de les teves, amic meu?",
+      "answers": [
+        {
+          "id": "answer_16_0",
+          "join": [{ "node": "node_18" }],
+          "text": "No som amics, faràs el que et digui"
+        },
+        {
+          "id": "answer_16_1",
+          "join": [{ "node": "node_48" }],
+          "text": "(disparar a l'entrevistador)"
+        }
+      ]
+    },
+    {
+      "id": "node_17",
+      "top": 5075,
+      "left": 2500,
+      "text": "... bé, continuarem amb l'enquesta.\n\nEscull en quin d'aquets escenaris consideres que tens més possibilitats de supervivencia:\n",
+      "answers": [
+        {
+          "id": "answer_17_0",
+          "join": [{ "node": "node_22" }],
+          "text": "Clima ártic ⛄️"
+        },
+        {
+          "id": "answer_17_1",
+          "join": [{ "node": "node_26" }],
+          "text": "Jungla tropical 🌴"
+        },
+        {
+          "id": "answer_17_2",
+          "join": [{ "node": "node_27" }],
+          "text": "Desert 🌵"
+        }
+      ]
+    },
+    {
+      "id": "node_18",
+      "top": 6356,
+      "left": 579,
+      "text": "I tant, amic! Vull dir colega, persona... tu! Vostè. Li serveix que el tracti de vos? Què necessita, oh amo i senyor meu?",
+      "answers": [
+        {
+          "id": "answer_18_0",
+          "join": [{ "node": "node_19" }],
+          "text": "Vull que tornem a començar. no sé si realment m'emportaria una pistola..."
+        },
+        {
+          "id": "answer_18_1",
+          "join": [{ "node": "node_20" }],
+          "text": "Vull que dictaminis que seria capaç de sobreviure en una illa deserta, amb la millor nota!"
+        }
+      ]
+    },
+    {
+      "id": "node_19",
+      "top": 6253,
+      "left": 936,
+      "text": "El que vostè digui, tornarem a l'elecció de l'objecte ara mateix!",
+      "answers": [
+        {
+          "id": "answer_19_0",
+          "join": [{ "node": "node_2" }],
+          "text": "(guardar la pistola)"
+        }
+      ]
+    },
+    {
+      "id": "node_20",
+      "top": 6513,
+      "left": 938,
+      "text": "Ah... si... Em temo que això no serà possible, oh estimat raig de llum i d'esperança... aniria contra del meu jurament hiposocràtic de periodista. Em farien fora del gremi d'enquestadors i em prohibirien l'ús de la pregunta! Com preguntaré a la meva estimada si li ha anat bé el dia?!",
+      "answers": [
+        {
+          "id": "answer_20_0",
+          "join": [{ "node": "node_21" }],
+          "text": "Romansos, el jurament hiposocràtic no existeix. Fés el que et dic, que tinc una pistola per l'amor de Déu."
+        },
+        {
+          "id": "answer_20_1",
+          "join": [{ "node": "node_48" }],
+          "text": "(disparar a l'entrevistador)"
+        },
+        {
+          "id": "answer_20_2",
+          "join": [{ "node": "node_17" }],
+          "text": "Hmm... també tens raó... té mala pinta el jurament aquest que has fet. Ja tens prou pena, oblida el que ha passat, et permeto continuar amb les preguntes.\n(guardes la pistola)"
+        }
+      ]
+    },
+    {
+      "id": "node_21",
+      "top": 6510,
+      "left": 1313,
+      "text": "D'acord! D'acord. Donaré un resultat favorable, molt favorable, però no em mati, estimat sol naixent, oh pluja que mata la sequera, baixell pel naufrag i terra a la vista de mariners perduts, carretera asfaltada després de mil sots, misericordiós ésser de mirada sole...",
+      "answers": [
+        {
+          "id": "answer_21_0",
+          "join": [{ "node": "node_47" }],
+          "text": "Espavila home!"
+        },
+        {
+          "id": "answer_21_1",
+          "join": [{ "node": "node_48" }],
+          "text": "(disparar a l'entrevistador)"
+        }
+      ]
+    },
+    {
+      "id": "node_22",
+      "top": 4638,
+      "left": 2848,
+      "text": "Sobre aquesta elecció tant agosarada... quina de les següents habilitats relacionades amb la supervivencia en climes àrtics se't dona millor?",
+      "answers": [
+        {
+          "id": "answer_22_0",
+          "join": [{ "node": "node_23" }],
+          "text": "Patinatge sobre gel"
+        },
+        {
+          "id": "answer_22_1",
+          "join": [{ "node": "node_24" }],
+          "text": "Guerra de boles de neu",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_17" },
+            { "action": "alterStat", "amount": 1, "target": "stat_1" }
+          ]
+        },
+        {
+          "id": "answer_22_2",
+          "join": [{ "node": "node_25" }],
+          "text": "Construcció de ninots de neu",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_8" },
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_23",
+      "top": 4201,
+      "left": 3205,
+      "text": "Molt bé! Això et donaria números per fugir dels depredadors antàrtics, com les morses o els pingüins.",
+      "answers": [
+        {
+          "id": "answer_23_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Bueno dons quina meravella"
+        }
+      ]
+    },
+    {
+      "id": "node_24",
+      "top": 4450,
+      "left": 3206,
+      "text": "Bravo! Això et donaria números de guanyar en una batalla contra un exèrcit d'inuits. Molt bona elecció.",
+      "answers": [
+        {
+          "id": "answer_24_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Bueno això és fantàstic"
+        }
+      ]
+    },
+    {
+      "id": "node_25",
+      "top": 4696,
+      "left": 3204,
+      "text": "La fabricació de ninots de neu com a asquer per caçar ossos polars s'ha utilitzat des de la primera glaciació. \nSi el ninot de neu té el nas de pastanaga també serveix per caçar gavines polars.\nBona elecció.",
+      "answers": [
+        {
+          "id": "answer_25_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Soc un expert"
+        }
+      ]
+    },
+    {
+      "id": "node_26",
+      "top": 5108,
+      "left": 2857,
+      "text": "No té mala pinta... però com bé saps, les jungles tropicals estan plenes de caníbals. Què faries si te'n trobessis?",
+      "answers": [
+        {
+          "id": "answer_26_0",
+          "join": [{ "node": "node_29" }],
+          "text": "Intentar dialogar",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_26_1",
+          "join": [{ "node": "node_32" }],
+          "text": "Disparar amb la pistola que m'enduria! Bim bim bim!",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ],
+          "requirements": [
+            { "id": "condition_5", "type": "condition", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_26_3",
+          "join": [{ "node": "node_33" }],
+          "text": "Fer-li la trabeta a la companyia que he dit que m'enduria, i correr ",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 0,
+              "target": "condition_6"
+            },
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ],
+          "requirements": [
+            { "id": "condition_6", "type": "condition", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_26_4",
+          "join": [{ "node": "node_34" }],
+          "text": "Deixar-me caçar, no vull que passin gana per culpa meva",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        },
+        {
+          "id": "answer_26_5",
+          "join": [{ "node": "node_35" }],
+          "text": "Posar-me a correr",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_27",
+      "top": 5613,
+      "left": 2854,
+      "text": "Ah... tempestes de sorra, temperatures infernals, cantimplores on sempre hi ha només una goteta... mala pinta company. \n\nSobre la manca d'aigua concretament, què fas si se t'acaba? On la busques?\n",
+      "answers": [
+        {
+          "id": "answer_27_0",
+          "join": [{ "node": "node_37" }],
+          "text": "Ni idea, però al llibre que he dit que m'enduria hi ha tècniques de supervivencia en deserts i un capítol anomenat \"Aigua: què fer si se t'acaba? On la busques?\"",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ],
+          "requirements": [
+            { "id": "condition_18", "type": "condition", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_27_1",
+          "join": [{ "node": "node_40" }],
+          "text": "A dins dels cactus",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ]
+        },
+        {
+          "id": "answer_27_2",
+          "join": [{ "node": "node_41" }],
+          "text": "Mataria un camell i li robaría l'aigua de la gepa",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_8" },
+            { "action": "alterStat", "amount": 1, "target": "stat_17" }
+          ]
+        },
+        {
+          "id": "answer_27_3",
+          "join": [{ "node": "node_28" }],
+          "text": "Aniria cap a un oasis, això em donaria aigua, possiblement menjar i amb sort passaria un grup de beduïns i podria demanar ajuda",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        }
+      ]
+    },
+    {
+      "id": "node_28",
+      "top": 6314,
+      "left": 3177,
+      "text": "Sí, és una opció molt temptadora, però t'arriscaries a anar cap a un miratge...",
+      "answers": [
+        {
+          "id": "answer_28_0",
+          "join": [{ "node": "node_45" }, { "node": "node_46" }],
+          "text": "Me la jugo",
+          "events": [{ "action": "alterStat", "amount": 1 }]
+        },
+        {
+          "id": "answer_28_1",
+          "join": [{ "node": "node_27" }],
+          "text": "Mm.. podem repetir la pregunta dons?"
+        }
+      ]
+    },
+    {
+      "id": "node_29",
+      "top": 4955,
+      "left": 3209,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_29_0",
+          "ref": "stat_7",
+          "join": [{ "node": "node_30" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_29_1",
+          "ref": "stat_7",
+          "join": [{ "node": "node_31" }],
+          "value": "1",
+          "comparator": "lessthan"
+        }
+      ]
+    },
+    {
+      "id": "node_30",
+      "top": 4937,
+      "left": 3564,
+      "text": "Bueno, has demostrat inteligencia en altres respostes, confio que te'n surtiries i no se't menjarien...\n\nContinuem",
+      "type": "content",
+      "answers": [
+        { "id": "answer_30_0", "join": [{ "node": "node_36" }], "text": "Va" }
+      ]
+    },
+    {
+      "id": "node_31",
+      "top": 5115,
+      "left": 3562,
+      "text": "S'ha de ser molt viu per convencer uns caníbals que no parlen el teu idioma de que passin gana perquè el seu plat principal té altres coses a fer...\n\nContinuem",
+      "type": "content",
+      "answers": [
+        { "id": "answer_31_0", "join": [{ "node": "node_36" }], "text": "Va" }
+      ]
+    },
+    {
+      "id": "node_32",
+      "top": 5128,
+      "left": 3203,
+      "text": "Apa! Mira si n'era d'útil la pistola! No és una mala jugada, segurament els caníbals no tindrien res a fer.\n\nVinga, que vas per bon camí, seguim",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_32_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Vinga dispara "
+        }
+      ]
+    },
+    {
+      "id": "node_33",
+      "top": 5225,
+      "left": 3209,
+      "text": "Si? Ets així eh? Deixa que m'ho apunti per un altre test sobre psicopatía.\n\nAnotat, seguim amb l'actual",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_33_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Endavant"
+        }
+      ]
+    },
+    {
+      "id": "node_34",
+      "top": 5336,
+      "left": 3564,
+      "text": "...\n\nIncreïble decisió la veritat. Passem a la següent pregunta",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_34_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Passem-hi"
+        }
+      ]
+    },
+    {
+      "id": "node_35",
+      "top": 5329,
+      "left": 3212,
+      "text": "Si, això és el que fariem tots imagino. No ens assegura res perquè té pinta que uns caníbals selvàtics t'atraparien rapidament, però ei, potser no. Va continuem!",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_35_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Som-hi!"
+        }
+      ]
+    },
+    {
+      "id": "node_36",
+      "top": 4762,
+      "left": 4047,
+      "text": "Estem arribant al final! \n\nEl més important després de sobreviure és marxar d'allà, i per marxar hauràs de construir una embarcació. \n\nEt deixo agafar fins a tres materials, comença a agafar el que vulguis.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_36_0",
+          "join": [{ "node": "node_58" }],
+          "text": "Fusta de palmera",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_9" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        },
+        {
+          "id": "answer_36_1",
+          "join": [{ "node": "node_58" }],
+          "text": "Provisions",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_10" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        },
+        {
+          "id": "answer_36_2",
+          "join": [{ "node": "node_58" }],
+          "text": "Fulles grosses i gruixudes",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_11" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        },
+        {
+          "id": "answer_36_3",
+          "join": [{ "node": "node_58" }],
+          "text": "Plantes dures i llargues com cordes",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_12" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        },
+        {
+          "id": "answer_36_4",
+          "join": [{ "node": "node_58" }],
+          "text": "Roques",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_13" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_37",
+      "top": 5605,
+      "left": 3192,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_37_0",
+          "ref": "condition_4",
+          "join": [{ "node": "node_38" }],
+          "value": 0,
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_37_1",
+          "ref": "condition_4",
+          "join": [{ "node": "node_39" }],
+          "value": "1",
+          "comparator": "equalto"
+        }
+      ]
+    },
+    {
+      "id": "node_38",
+      "top": 5563,
+      "left": 3564,
+      "text": "Increible.\n\nEt recordo que has decidit que faries foc amb el llibre. Espantes les feres però mors de set? O t'hidrates i se't menja un llop? Les decisions de l'explorador d'illes desertes son dures.",
+      "type": "content",
+      "answers": [
+        { "id": "answer_38_0", "join": [{ "node": "node_36" }], "text": "Ups" }
+      ]
+    },
+    {
+      "id": "node_39",
+      "top": 5723,
+      "left": 3565,
+      "text": "Però bueno quina coincidencia tant meravellosa! Tenim un supervivent d'illes desertes en potencia! Minipuntet per tu!",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_39_0",
+          "join": [{ "node": "node_36" }],
+          "text": "(recollir el minipuntet que l'entrevistador t'ha tirat sense cap punteria i casi et treu un ull)"
+        }
+      ]
+    },
+    {
+      "id": "node_40",
+      "top": 5755,
+      "left": 3190,
+      "text": "És una grandíssima opció, diuen. \n\nPerò els cactus solen tenir tot de punxes pel voltant per protegir-se de tarambanes que els hi volen treure l'aigua.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_40_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Merda",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_16"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_41",
+      "top": 5950,
+      "left": 3187,
+      "text": "No calia matar el camell, amb fer un foradet a una gepa i deixar regalimar aigua cap a la teva boca en feies prou, brètol.\nFins i tot, amb una mica de traça, podries haber instalat una aixeta a la gepa i tenir aigua infinita. \n\nPerò no, tu mates el camell.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_41_0",
+          "join": [{ "node": "node_42" }],
+          "text": "No! L'aixeta! Instalo l'aixeta!"
+        },
+        {
+          "id": "answer_41_1",
+          "join": [{ "node": "node_43" }],
+          "text": "Vale! Li faig el foradet i així no el mato"
+        },
+        {
+          "id": "answer_41_2",
+          "join": [{ "node": "node_44" }],
+          "text": "Tonteries, el mato per robar-li l'aigua"
+        }
+      ]
+    },
+    {
+      "id": "node_42",
+      "top": 5918,
+      "left": 3555,
+      "text": "AH SI I D'ON TREUS UNA AIXETA EN UNA ILLA DESERTA???\n\nHahah t'he enxampat, soc increible.\n\nContinuem!",
+      "type": "content",
+      "answers": [
+        { "id": "answer_42_0", "join": [{ "node": "node_36" }], "text": "😒" }
+      ]
+    },
+    {
+      "id": "node_43",
+      "top": 6104,
+      "left": 3554,
+      "text": "I EL CAMELL ES DEIXARÀ FER UN FORADET A LA GEPA EH QUE SI??? \n\nHahah noo, el camell et fotrà una cossa i t'enviarà tres dunes enllà.\n\nVa continuem!",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_43_0",
+          "join": [{ "node": "node_36" }],
+          "text": "😒",
+          "events": []
+        }
+      ]
+    },
+    {
+      "id": "node_44",
+      "top": 6281,
+      "left": 3558,
+      "text": "D'acord, sort amb els beduïns quan se n'assabentin.\n\nSeguim...",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_44_0",
+          "join": [{ "node": "node_36" }],
+          "text": "... vale, espavila porfa"
+        }
+      ]
+    },
+    {
+      "id": "node_45",
+      "top": 6458,
+      "left": 3556,
+      "text": "He fet ràpidament un simulacre en un programa que tinc per calcular les probabilitats de trobar un oasis i m'ha sortit que sí, que et trobaries un oasis. \nFelicitats, dos copets a l'esquena i a seguir amb l'enquesta va.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_45_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Estic a tope"
+        }
+      ]
+    },
+    {
+      "id": "node_46",
+      "top": 6703,
+      "left": 3556,
+      "text": "He fet ràpidament un simulacre en un programa que tinc per calcular les probabilitats de trobar un oasis i m'ha sortit que no, que seria un miratge.\nHo sento, dos copets a l'esquena i a seguir amb l'enquesta va.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_46_0",
+          "join": [{ "node": "node_36" }],
+          "text": "Sempre igual..."
+        }
+      ]
+    },
+    {
+      "id": "node_47",
+      "top": 6881,
+      "left": 1298,
+      "text": "(Et dona una carta firmada per ell mateix on hi diu el següent)\n\nÉs per mi un orgull infinit proclamar davant de Déu i de tota la seva creació que <name> és la persona destinada a sobrepassar qualsevol dificultat que el destí li depari, ja siguin illes desertes, preparacions culinaries, enamorar amors platònics, o... tot, tot! De veritat que <name>  és increible i ho dic amb la mà al cor. Les dues mans al cor! I no estic sota amenaça ni pateixo per la meva vida, que consti, aquestes paraules son sinceres i m'estimo la meva vida, tinc familia, tres fills i cap persona apuntant-me amb una pistola.",
+      "type": "end"
+    },
+    {
+      "id": "node_48",
+      "top": 6954,
+      "left": 862,
+      "text": "(L'entrevistador ha mort)",
+      "type": "end",
+      "share": { "sharedText": "☠️ L'entrevistador ha mort" }
+    },
+    {
+      "id": "node_49",
+      "top": 6067,
+      "left": 1931,
+      "text": "Així que una simple filla de muggles... \n\nÉs broma, la Hermione és guai, però tenir una maga et suposaria un avantatge massa gran, per tant t'obligo a triar només un encanteri que se li permetria fer en la vostra estada a l'illa.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_49_0",
+          "join": [{ "node": "node_52" }],
+          "text": "Wingardium Leviosa",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        },
+        {
+          "id": "answer_49_1",
+          "join": [{ "node": "node_50" }],
+          "text": "Alohomora"
+        },
+        {
+          "id": "answer_49_2",
+          "join": [{ "node": "node_51" }],
+          "text": "Abadakedabra",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        }
+      ]
+    },
+    {
+      "id": "node_50",
+      "top": 6116,
+      "left": 2243,
+      "text": "Alohomora en una illa deserta? Quina tonteria. Potser és la pitjor resposta de tota l'enquesta.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_50_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Bueno..."
+        }
+      ]
+    },
+    {
+      "id": "node_51",
+      "top": 6276,
+      "left": 2233,
+      "text": "No sé si l'Hermione voldria fer un malefici imperdonable la veritat...\n\nPerò és un recurs que teniu escolta, millor això que Alohomora, que clarament era una tonteria.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_51_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Això mateix penso jo"
+        }
+      ]
+    },
+    {
+      "id": "node_52",
+      "top": 6008,
+      "left": 2271,
+      "text": "Pot ser la mar d'útil en moltes situacions. M'agrada.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_52_0",
+          "join": [{ "node": "node_17" }],
+          "text": "M'agrada que t'agradi"
+        }
+      ]
+    },
+    {
+      "id": "node_53",
+      "top": 6415,
+      "left": 1937,
+      "text": "Bueno quina emoció! Quines aventures que passareu oi? Segur que tot fluirà sense problema com a cualsevol de les seves películes.\n\nNo ara en serio, aquest home atrau els problemes, probablement morireu. De quina manera preferiries morir?",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_53_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Esclafat per una roca rodadora en un passadís estret",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_53_1",
+          "join": [{ "node": "node_17" }],
+          "text": "En un pou de serps verinoses"
+        },
+        {
+          "id": "answer_53_2",
+          "join": [{ "node": "node_17" }],
+          "text": "Devorat per uns caníbals",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        }
+      ]
+    },
+    {
+      "id": "node_54",
+      "top": 6791,
+      "left": 1934,
+      "text": "És tota una experta en supervivencia, i si aconsegueixes que s'enamori de tu sembla ser que acabarieu vius. Quina seria la teva estrategia per conquistar-la?",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_54_0",
+          "join": [{ "node": "node_55" }],
+          "text": "Li entregaria un arc fet amb els ossos dels nostres enemics",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_1" }]
+        },
+        {
+          "id": "answer_54_1",
+          "join": [{ "node": "node_56" }],
+          "text": "Aniria per l'illa demostrant el meu costat més noble fins que em ferissin de mort i m'hagués de venir a salvar.",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_7" }]
+        },
+        {
+          "id": "answer_54_2",
+          "join": [{ "node": "node_57" }],
+          "text": "Agafaria confiança poc a poc, la faria riure cada dia i li baixaria cocos de les palmeres"
+        }
+      ]
+    },
+    {
+      "id": "node_55",
+      "top": 6577,
+      "left": 2255,
+      "text": "Però què dius? I com faries un arc amb ossos? La Katiniss t'ho tiraria per la cara i després marxaria a guanyar pel seu compte, animal.\n\nQuina oportunitat perduda...",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_55_0",
+          "join": [{ "node": "node_17" }],
+          "text": "No Katniss, carinyo! Espera...!"
+        }
+      ]
+    },
+    {
+      "id": "node_56",
+      "top": 6823,
+      "left": 2255,
+      "text": "Sorprenent! Segons les dades que tinc, aquesta sembla la manera més efectiva.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_56_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Les dades que tens son Los Juegos del Hambre no?"
+        }
+      ]
+    },
+    {
+      "id": "node_57",
+      "top": 7069,
+      "left": 2254,
+      "text": "En una illa deserta aniries fent riure la gent? No crec que la Katniss et rigués les gràcies, i segurament et tiraria els cocos pel cap.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_57_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Jo..."
+        }
+      ]
+    },
+    {
+      "id": "node_58",
+      "top": 4765,
+      "left": 4392,
+      "text": "Alguna altra cosa?",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_58_0",
+          "join": [{ "node": "node_60" }],
+          "text": "Fusta de palmera",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_14" },
+            { "action": "alterStat", "amount": 1, "target": "stat_9" }
+          ]
+        },
+        {
+          "id": "answer_58_1",
+          "join": [{ "node": "node_60" }],
+          "text": "Provisions",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_14" },
+            { "action": "alterStat", "amount": 1, "target": "stat_10" }
+          ]
+        },
+        {
+          "id": "answer_58_2",
+          "join": [{ "node": "node_60" }],
+          "text": "Fulles grosses i gruixudes",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_14" },
+            { "action": "alterStat", "amount": 1, "target": "stat_11" }
+          ]
+        },
+        {
+          "id": "answer_58_3",
+          "join": [{ "node": "node_60" }],
+          "text": "Plantes dures i llargues com cordes",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_14" },
+            { "action": "alterStat", "amount": 1, "target": "stat_12" }
+          ]
+        },
+        {
+          "id": "answer_58_4",
+          "join": [{ "node": "node_60" }],
+          "text": "Roques",
+          "events": [
+            { "action": "alterStat", "amount": 1, "target": "stat_12" },
+            { "action": "alterStat", "amount": 1, "target": "stat_14" }
+          ]
+        },
+        {
+          "id": "answer_58_5",
+          "join": [{ "node": "node_59" }],
+          "text": "No, ja està"
+        }
+      ]
+    },
+    {
+      "id": "node_59",
+      "top": 5051,
+      "left": 5060,
+      "text": "Dons ja ho tindriem. Unes eleccions interessants... Et llisto aquí sota el que podries construir, tu esculls què vols fabricar finalment.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_59_0",
+          "join": [{ "node": "node_65" }],
+          "text": "Fusta per l'estructura, fulles per vela i plantes fortes per ajuntar-ho tot. Podries fabricar una embarcació meravellosa!",
+          "requirements": [
+            { "id": "stat_9", "type": "stat", "amount": 1 },
+            { "id": "stat_12", "type": "stat", "amount": 1 },
+            { "id": "stat_11", "type": "stat", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_59_2",
+          "join": [{ "node": "node_65" }],
+          "text": "Fusta per l'estructura, plantes fortes per ajuntar-ho tot, i menjar per aguantar uns dies. Té bona pinta.",
+          "requirements": [
+            { "id": "stat_9", "type": "stat", "amount": 1 },
+            { "id": "stat_10", "type": "stat", "amount": 1 },
+            { "id": "stat_12", "type": "stat", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_59_3",
+          "join": [{ "node": "node_63" }],
+          "text": "Amb la roca i la corda podries fer un la mateixa arma que David va fer servir contra Goliat, i tirar-ho contra el vidre d'algun avió que passi per avisar que estàs aquí. Les probabilitats son baixes.",
+          "requirements": [
+            { "id": "stat_13", "type": "stat", "amount": 1 },
+            { "id": "stat_12", "type": "stat", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_59_4",
+          "join": [{ "node": "node_63" }],
+          "text": "Amb la fusta i les plantes pots intentar una embarcació tipus kebab, envoltant la fusta amb les fulles, i resar",
+          "requirements": [
+            { "id": "stat_11", "type": "stat", "amount": 1 },
+            { "id": "stat_9", "type": "stat", "amount": 1 }
+          ]
+        },
+        {
+          "id": "answer_59_5",
+          "join": [{ "node": "node_64" }],
+          "text": "Les roques per si soles poden dibuixar un SOS ben gran a la sorra",
+          "events": [],
+          "requirements": [{ "id": "stat_13", "type": "stat", "amount": 1 }]
+        },
+        {
+          "id": "answer_59_6",
+          "join": [{ "node": "node_63" }],
+          "text": "No fabriques res..."
+        }
+      ]
+    },
+    {
+      "id": "node_60",
+      "top": 4780,
+      "left": 4764,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_60_0",
+          "ref": "stat_14",
+          "join": [{ "node": "node_58" }],
+          "value": "3",
+          "comparator": "lessthan"
+        },
+        {
+          "id": "condition_60_1",
+          "ref": "stat_14",
+          "join": [{ "node": "node_59" }],
+          "value": "3",
+          "comparator": "equalto"
+        }
+      ]
+    },
+    {
+      "id": "node_61",
+      "top": 6292,
+      "left": 2598,
+      "text": "És una elecció... interessant. Podria semblar ridícula, però molts capítols de The Office em farien pensar el contrari. Però.. saps amb quí t'estàs fotent a una illa deserta realment?",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_61_0",
+          "join": [{ "node": "node_62" }],
+          "text": "Amb algú extremadament fidel"
+        },
+        {
+          "id": "answer_61_1",
+          "join": [{ "node": "node_62" }],
+          "text": "Amb un granger boig"
+        },
+        {
+          "id": "answer_61_2",
+          "join": [{ "node": "node_62" }],
+          "text": "Amb algú expert en arts marcials"
+        }
+      ]
+    },
+    {
+      "id": "node_62",
+      "top": 6506,
+      "left": 2910,
+      "text": "Totes eren correctes.\n\nSi li caus bé, ha estat la millor decisió que podies pendre. Si no, ha estat sens dubte la pitjor.\n\nCuriosament, caure-li bé dependria de les teves decisions a la hora de sobreviure en una illa deserta, per tant, alerta amb el que tries!",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_62_0",
+          "join": [{ "node": "node_17" }],
+          "text": "Déu meu",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_15"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_63",
+      "top": 5286,
+      "left": 5485,
+      "text": "No tothom està preparat per construir embarcacions que aguantin la furia de Posseidó, no passa res.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_63_0",
+          "join": [{ "node": "node_68" }],
+          "text": "No sé què m'ha passat",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_64",
+      "top": 5542,
+      "left": 5488,
+      "text": "Una alternativa interessant.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_64_0",
+          "join": [{ "node": "node_66" }],
+          "text": "Pensament lateral, en diem els genis",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_21"
+            }
+          ]
+        },
+        {
+          "id": "answer_64_1",
+          "join": [{ "node": "node_67" }],
+          "text": "No quedava una altra",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_21"
+            }
+          ]
+        },
+        {
+          "id": "answer_64_2",
+          "join": [{ "node": "node_66" }],
+          "text": "Dibuixaría un penis amb les pedres",
+          "events": [{ "action": "alterStat", "amount": 1, "target": "stat_8" }]
+        }
+      ]
+    },
+    {
+      "id": "node_65",
+      "top": 5032,
+      "left": 5483,
+      "text": "T'ha sortit bastant bé la jugada! \n\nJa notes la brisa del mar? El sol creman-te la pell sense cobert on protegir-te enmig de l'oceà? La set, el gust de l'enèsim peix cru i salat?",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_65_0",
+          "join": [{ "node": "node_68" }],
+          "text": "Ahoi!",
+          "events": [
+            {
+              "action": "alterCondition",
+              "amount": 1,
+              "target": "condition_19"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "node_66",
+      "top": 5771,
+      "left": 5888,
+      "text": "Per Déu...\n\nBé, procediré a calcular els resultats.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_66_0",
+          "join": [{ "node": "node_71" }],
+          "text": "(esperar pacientment mentre mires el rellotge impacient)"
+        }
+      ]
+    },
+    {
+      "id": "node_67",
+      "top": 5515,
+      "left": 5887,
+      "text": "Dons t'ha sortit prou bé. Ara procediré a calcular els resultats.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_67_0",
+          "join": [{ "node": "node_71" }],
+          "text": "(esperar pacientment mentre mires el rellotge impacient)"
+        }
+      ]
+    },
+    {
+      "id": "node_68",
+      "top": 5259,
+      "left": 5885,
+      "text": "Ara procediré a calcular els resultats.",
+      "type": "content",
+      "answers": [
+        {
+          "id": "answer_68_0",
+          "join": [{ "node": "node_71" }],
+          "text": "(esperar pacientment mentre mires el rellotge impacient)"
+        }
+      ]
+    },
+    { "id": "node_70", "top": 5012, "left": 7073, "type": "end" },
+    {
+      "id": "node_71",
+      "top": 5568,
+      "left": 6285,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_71_3",
+          "ref": "condition_15",
+          "join": [{ "node": "node_85" }],
+          "value": "1",
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_71_4",
+          "ref": "condition_21",
+          "join": [{ "node": "node_72" }],
+          "value": "1",
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_71_5",
+          "ref": "condition_19",
+          "join": [{ "node": "node_75" }],
+          "value": "1",
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_71_6",
+          "ref": "condition_20",
+          "join": [{ "node": "node_85" }, { "node": "node_80" }],
+          "value": "1",
+          "comparator": "equalto"
+        }
+      ]
+    },
+    {
+      "id": "node_72",
+      "top": 5352,
+      "left": 6704,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_72_0",
+          "ref": "stat_1",
+          "join": [{ "node": "node_70" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_72_1",
+          "ref": "stat_7",
+          "join": [{ "node": "node_73" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_72_2",
+          "ref": "stat_8",
+          "join": [{ "node": "node_74" }],
+          "value": "1",
+          "comparator": "morethan"
+        }
+      ]
+    },
+    { "id": "node_73", "top": 5012, "left": 7372, "type": "end" },
+    { "id": "node_74", "top": 5011, "left": 7671, "type": "end" },
+    {
+      "id": "node_75",
+      "top": 5563,
+      "left": 6700,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_75_0",
+          "ref": "stat_1",
+          "join": [{ "node": "node_79" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_75_2",
+          "ref": "stat_8",
+          "join": [{ "node": "node_78" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_75_3",
+          "ref": "stat_7",
+          "join": [{ "node": "node_77" }],
+          "value": "1",
+          "comparator": "morethan"
+        }
+      ]
+    },
+    { "id": "node_77", "top": 5462, "left": 7357, "type": "end" },
+    { "id": "node_78", "top": 5460, "left": 7652, "type": "end" },
+    { "id": "node_79", "top": 5463, "left": 7065, "type": "end" },
+    {
+      "id": "node_80",
+      "top": 5835,
+      "left": 6703,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_80_0",
+          "ref": "stat_8",
+          "join": [{ "node": "node_81" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_80_1",
+          "ref": "stat_7",
+          "join": [{ "node": "node_82" }],
+          "value": "1",
+          "comparator": "morethan"
+        },
+        {
+          "id": "condition_80_2",
+          "ref": "stat_1",
+          "join": [{ "node": "node_83" }],
+          "value": "1",
+          "comparator": "morethan"
+        }
+      ]
+    },
+    { "id": "node_81", "top": 5871, "left": 7061, "type": "end" },
+    { "id": "node_82", "top": 5866, "left": 7355, "type": "end" },
+    { "id": "node_83", "top": 5858, "left": 7660, "type": "end" },
+    {
+      "id": "node_85",
+      "top": 5203,
+      "left": 6258,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_85_0",
+          "ref": "stat_17",
+          "join": [{ "node": "node_86" }],
+          "value": 0,
+          "comparator": "equalto"
+        }
+      ]
+    },
+    {
+      "id": "node_86",
+      "top": 4941,
+      "left": 6723,
+      "text": "Malauradament en Dwight ha estat valorant les teves decisions, i no et considera un company digne.\n\nDe fet, et trobes en el pitjor escenari: Tu i en Dwight en una illa deserta competint pels recursos. No tens cap oportunitat de sobreviure. O et matarà la gana, o el mateix Dwight en alguna trampa per ossos que hagi muntat.",
+      "type": "end",
+      "share": {
+        "sharedText": "Probabilitats de sobreviure: 0% \\nCausa: Competeix pels recursos amb en Dwight. Extra de perill per la sola presencia de'n Dwight a l'illa."
+      }
+    },
+    {
+      "id": "node_87",
+      "top": 5860,
+      "left": 6285,
+      "type": "distributor",
+      "conditions": [
+        {
+          "id": "condition_87_0",
+          "ref": "condition_21",
+          "join": [{ "node": "node_72" }],
+          "value": "1",
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_87_1",
+          "ref": "condition_20",
+          "join": [{ "node": "node_80" }],
+          "value": "1",
+          "comparator": "equalto"
+        },
+        {
+          "id": "condition_87_2",
+          "ref": "condition_19",
+          "join": [{ "node": "node_75" }],
+          "value": "1",
+          "comparator": "equalto"
+        }
+      ]
+    }
+  ]
+}

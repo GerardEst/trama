@@ -136,21 +136,24 @@ export class StorageService {
 
     // todo -> tot aixo es horrible en molts sentits
     if (isFallbackCondition) {
-      const duplicatedJoin = node['fallbackCondition'].join?.find(
-        (join: any) => {
-          return join.node === nodeId
+      if (!node.fallbackCondition) {
+        node.fallbackCondition = {
+          id: 'condition_' + optionNodeId + '_fallback',
         }
-      )
+      }
+      const duplicatedJoin = node.fallbackCondition.join?.find((join: any) => {
+        return join.node === nodeId
+      })
 
       if (duplicatedJoin) {
         console.warn('Duplicated join. Skip creation')
         return
       }
 
-      if (!node['fallbackCondition'].join) {
-        node['fallbackCondition'].join = []
+      if (!node.fallbackCondition.join) {
+        node.fallbackCondition.join = []
       }
-      node['fallbackCondition'].join.push({ node: nodeId })
+      node.fallbackCondition.join.push({ node: nodeId })
     } else {
       const option = node[optionNodeType + 's']?.filter(
         (option: any) => option.id === optionId
