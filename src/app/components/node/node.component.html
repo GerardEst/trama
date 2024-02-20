@@ -25,6 +25,15 @@
         (onWillJoin)="willJoin($event)"
       ></polo-condition>
     </div>
+    <polo-condition
+      id="{{
+        'condition_' + elementRef.nativeElement.id.split('_')[1] + '_fallback'
+      }}"
+      [nodeId]="elementRef.nativeElement.id"
+      [fallback]="true"
+      (onRemoveCondition)="removeCondition($event)"
+      (onWillJoin)="willJoin($event)"
+    ></polo-condition>
     } @else if(type==='end'){
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div class="node__linkoptions">

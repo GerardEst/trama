@@ -153,7 +153,18 @@ export class BoardComponent {
           }
         }
       }
+      if (node.fallbackCondition) {
+        if (node.fallbackCondition.join) {
+          for (let join of node.fallbackCondition.join) {
+            this.joins.push({
+              origin: node.fallbackCondition.id + '_join',
+              destiny: join.node + '_join',
+            })
+          }
+        }
+      }
     }
+    console.log(this.joins)
   }
 
   willJoin(answerId: string) {

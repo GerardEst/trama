@@ -1,3 +1,6 @@
+@if(fallback===true){
+<p>Fallback</p>
+}@else {
 <button
   class="removeCondition"
   (click)="removeCondition()"
@@ -27,6 +30,7 @@
   type="number"
   value="{{ value }}"
 />
+}
 <div
   (click)="willJoin()"
   id="{{ this.elementRef.nativeElement.id + '_join' }}"

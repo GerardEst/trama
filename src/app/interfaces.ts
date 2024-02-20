@@ -6,6 +6,8 @@ export interface node {
   left: string
   text?: string
   answers?: Array<answer>
+  conditions?: Array<condition>
+  fallbackCondition?: condition
   type: 'content' | 'distributor' | 'end'
 }
 

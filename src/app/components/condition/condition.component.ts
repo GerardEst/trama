@@ -18,6 +18,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
   styleUrl: './condition.component.sass',
 })
 export class ConditionComponent {
+  @Input() fallback: boolean = false
   @Input() nodeId: string = ''
   @Input() selectedRef?: string
   @Input() comparator?: string

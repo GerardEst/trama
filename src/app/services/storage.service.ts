@@ -87,13 +87,11 @@ export class StorageService {
 
     const node = savedTree.nodes.filter((node: any) => node.id === nodeId)
 
-    if (node[0].conditions) {
-      node[0].conditions.push({
-        id: conditionId,
-      })
-    } else {
-      node[0].conditions = [{ id: conditionId }]
-    }
+    if (!node[0].conditions) node[0].conditions = []
+
+    node[0].conditions.push({
+      id: conditionId,
+    })
 
     this.updateStoredTree(savedTree)
   }
@@ -130,30 +128,48 @@ export class StorageService {
 
     const optionNodeType = optionId.split('_')[0]
     const optionNodeId = optionId.split('_')[1]
+    const isFallbackCondition = optionId.split('_')[2] === 'fallback'
     const node = savedTree.nodes.find(
       (node: any) => node.id === `node_${optionNodeId}`
     )
 
-    // todo -> aixo es horrible. Fer servir l'id per això i a sobre afegir-li una s jajaj
-    const option = node[optionNodeType + 's']?.filter(
-      (option: any) => option.id === optionId
-    )
+    // todo -> tot aixo es horrible en molts sentits
+    if (isFallbackCondition) {
+      const duplicatedJoin = node['fallbackCondition'].join?.find(
+        (join: any) => {
+          return join.node === nodeId
+        }
+      )
 
-    const duplicatedJoin = option[0].join?.find((join: any) => {
-      return join.node === nodeId
-    })
+      if (duplicatedJoin) {
+        console.warn('Duplicated join. Skip creation')
+        return
+      }
 
-    if (duplicatedJoin) {
-      console.warn('Duplicated join. Skip creation')
-      return
-    }
-
-    if (option[0].join) {
-      option[0].join.push({ node: nodeId })
+      if (!node['fallbackCondition'].join) {
+        node['fallbackCondition'].join = []
+      }
+      node['fallbackCondition'].join.push({ node: nodeId })
     } else {
-      option[0].join = [{ node: nodeId }]
-    }
+      const option = node[optionNodeType + 's']?.filter(
+        (option: any) => option.id === optionId
+      )
 
+      const duplicatedJoin = option[0].join?.find((join: any) => {
+        return join.node === nodeId
+      })
+
+      if (duplicatedJoin) {
+        console.warn('Duplicated join. Skip creation')
+        return
+      }
+
+      if (option[0].join) {
+        option[0].join.push({ node: nodeId })
+      } else {
+        option[0].join = [{ node: nodeId }]
+      }
+    }
     this.updateStoredTree(savedTree)
   }
 
@@ -175,6 +191,15 @@ export class StorageService {
       type,
       top,
       left,
+    }
+    /** Al crear un node, si es de tipo distributor ia ve amb un default
+     * Aquet default tindrà un id especific, i serà l'ultim a agafarse quan marco
+     * faci check de les condicions
+     */
+    if (type === 'distributor') {
+      newNode.fallbackCondition = {
+        id: `condition_${id.split('_')[1]}_fallback`,
+      }
     }
     savedTree.nodes.push(newNode)
 
