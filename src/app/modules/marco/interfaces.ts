@@ -49,7 +49,6 @@ export interface node_conditions{
   ref: string,
   comparator: string,
   value: string
-  type?: 'condition' | 'stat'
 }
 export interface node_fallbackCondition{
   id: string,

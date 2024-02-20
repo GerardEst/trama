@@ -87,7 +87,6 @@ export class NodeComponent {
       ref: '',
       comparator: '',
       value: '0',
-      type: 'condition',
     })
 
     this.storage.createNodeCondition(this.elementRef.nativeElement.id, newId)

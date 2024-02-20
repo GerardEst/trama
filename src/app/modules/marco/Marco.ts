@@ -54,47 +54,51 @@ export class Marco {
 
   private distributeNode(node: node) {
     if (node.type === 'distributor') {
+
+      /** Aixo no esta ben fet. Pensem
+       *
+       * Tenim un node amb condicions
+       * Aquestes condicions poden ser de stat o de condicio. Aixo es una merda pero bueno
+       *    En les condicions de stat, hem de mirar aquet stat del player i actuar.
+       *    De seguida que es compleixi algo, pintem node
+       *
+       *
+       */
       console.log('distribute!', node)
-      if(!node.conditions) return console.warn('Distributor node with no conditions')
+      if (!node.conditions) return console.warn('Distributor node with no conditions')
       for (let distributorCondition of node.conditions) {
-        console.log("condition:", distributorCondition)
-        const playerStat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
-        console.log('stat', playerStat)
-        if (playerStat) {
-          if (distributorCondition.comparator === 'equalto') {
-            if (parseInt(distributorCondition.value) === playerStat.amount) {
+        const distributorConditionType = distributorCondition.ref.split('_')[0]
+        if (distributorConditionType === 'stat') {
+          // If it's a stat, we find this stat in the player object
+          const playerStat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
+          // If the player doesn't have the stat, the amount is 0
+          const playerStatAmount = playerStat ? playerStat.amount : 0
+          // Then we check the comparator, if it's correct we can go to next node
+          if ((distributorCondition.comparator === 'equalto' && playerStatAmount === parseInt(distributorCondition.value))
+            || (distributorCondition.comparator === 'lessthan' && playerStatAmount < parseInt(distributorCondition.value))
+            || (distributorCondition.comparator === 'morethan' && playerStatAmount > parseInt(distributorCondition.value))) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
               if (destiniyNode) return this.decideNode(destiniyNode)
-            }
-          }
-          if (distributorCondition.comparator === 'lessthan') {
-            if (playerStat.amount < parseInt(distributorCondition.value)) {
-              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) return this.decideNode(destiniyNode)
-            }
-          }
-          if (distributorCondition.comparator === 'morethan') {
-            if (playerStat.amount > parseInt(distributorCondition.value)) {
-              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) return this.decideNode(destiniyNode)
-            }
           }
         }
-
-        const playerCondition = this.player.conditions.find(condition => condition.id === distributorCondition.ref)
-        if (playerCondition) {
-          console.log('condition', playerCondition)
-          if (parseInt(distributorCondition.value) === 1) {
-            const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-            if (destiniyNode) return this.decideNode(destiniyNode)
+        if (distributorConditionType === 'condition') {
+          // If it's a condition, we find this condition in the player object
+          const playerCondition = this.player.conditions.find(condition => condition.id === distributorCondition.ref)
+          // We check the comparator
+          // If the player has the condition and the requirement is 1, we can go to next node
+          // If the player doesn't have the condition and the requirement is 0, we can go to next node too
+          if ((parseInt(distributorCondition.value) === 1 && playerCondition)
+            || (parseInt(distributorCondition.value) === 0 && !playerCondition)) {
+              const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
+              if (destiniyNode) return this.decideNode(destiniyNode)
           }
         }
       }
 
-      // If no condition is met, we use the fallback
-      if (!node.fallbackCondition) return console.warn('Distributor node with no conditions')
+      // If reached this point, no condition was met, we use the fallback condition
+      if (!node.fallbackCondition) return console.warn('Distributor node with no fallback condition')
       if (node.fallbackCondition.join) {
-        console.log("Fallback join")
+        console.log("Using fallback join")
         const destiniyNode = this.findAnswerDestinationNode(node.fallbackCondition.join)
         if (destiniyNode) return this.decideNode(destiniyNode)
       }
