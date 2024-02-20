@@ -57,46 +57,49 @@ export class Marco {
       console.log('distribute!', node)
       if(!node.conditions) return console.warn('Distributor node with no conditions')
       for (let distributorCondition of node.conditions) {
-        const stat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
-        console.log(stat)
-        if (stat) {
+        console.log("condition:", distributorCondition)
+        const playerStat = this.player.stats.find(stat => stat.id === distributorCondition.ref)
+        console.log('stat', playerStat)
+        if (playerStat) {
           if (distributorCondition.comparator === 'equalto') {
-            if (parseInt(distributorCondition.value) === stat.amount) {
+            if (parseInt(distributorCondition.value) === playerStat.amount) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) this.decideNode(destiniyNode)
-              break
+              if (destiniyNode) return this.decideNode(destiniyNode)
             }
           }
           if (distributorCondition.comparator === 'lessthan') {
-            if (stat.amount < parseInt(distributorCondition.value)) {
+            if (playerStat.amount < parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) this.decideNode(destiniyNode)
-              break
+              if (destiniyNode) return this.decideNode(destiniyNode)
             }
           }
           if (distributorCondition.comparator === 'morethan') {
-            if (stat.amount > parseInt(distributorCondition.value)) {
+            if (playerStat.amount > parseInt(distributorCondition.value)) {
               const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-              if (destiniyNode) this.decideNode(destiniyNode)
-              break
+              if (destiniyNode) return this.decideNode(destiniyNode)
             }
           }
         }
-        const condition = this.player.conditions.find(condition => condition.id === distributorCondition.ref)
-        if (condition) {
+
+        const playerCondition = this.player.conditions.find(condition => condition.id === distributorCondition.ref)
+        if (playerCondition) {
+          console.log('condition', playerCondition)
           if (parseInt(distributorCondition.value) === 1) {
             const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-            if (destiniyNode) this.decideNode(destiniyNode)
-            break
-          }
-        } else {
-          if (parseInt(distributorCondition.value) === 0) {
-            const destiniyNode = this.findAnswerDestinationNode(distributorCondition.join)
-            if (destiniyNode) this.decideNode(destiniyNode)
-            break
+            if (destiniyNode) return this.decideNode(destiniyNode)
           }
         }
       }
+
+      // If no condition is met, we use the fallback
+      if (!node.fallbackCondition) return console.warn('Distributor node with no conditions')
+      if (node.fallbackCondition.join) {
+        console.log("Fallback join")
+        const destiniyNode = this.findAnswerDestinationNode(node.fallbackCondition.join)
+        if (destiniyNode) return this.decideNode(destiniyNode)
+      }
+
+      console.warn("No join possible")
       return
     }
   }
@@ -279,7 +282,7 @@ export class Marco {
       }
   }
 
-  private findAnswerDestinationNode(answerJoin: Array<join>) {
+  private findAnswerDestinationNode(answerJoin: any) {
     if (!answerJoin || answerJoin.length === 0) return undefined
 
     const destiny = getJoinRandom(answerJoin)

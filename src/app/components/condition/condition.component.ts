@@ -20,9 +20,9 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class ConditionComponent {
   @Input() fallback: boolean = false
   @Input() nodeId: string = ''
-  @Input() selectedRef?: string
-  @Input() comparator?: string
-  @Input() value?: number = 0
+  @Input() selectedRef: string = ''
+  @Input() comparator: string = ''
+  @Input() value: string = '0'
   @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
@@ -49,7 +49,7 @@ export class ConditionComponent {
       id,
       ref: this.selectedRef,
       comparator: this.comparator,
-      value: this.value,
+      value: this.value.toString(),
     })
   }
 

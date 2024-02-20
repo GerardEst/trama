@@ -8,7 +8,6 @@ import {
   ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { option } from 'src/app/interfaces'
 
 @Component({
   selector: 'polo-selector',
@@ -21,15 +20,15 @@ import { option } from 'src/app/interfaces'
   },
 })
 export class SelectorComponent implements OnInit {
-  @Input() options: Array<option> = []
+  @Input() options: Array<any> = []
   @Input() selected?: string
   @Input() message?: string
   @Output() onNewOption: EventEmitter<any> = new EventEmitter()
   @Output() onSelectOption: EventEmitter<any> = new EventEmitter()
   @ViewChild('search') search?: ElementRef
 
-  searchedOptions: Array<option> = []
-  selectedOption?: option
+  searchedOptions: Array<any> = []
+  selectedOption?: any
   newOption?: string
   optionsOpened: boolean = false
 
@@ -46,7 +45,7 @@ export class SelectorComponent implements OnInit {
     }
   }
 
-  selectOption(option: option) {
+  selectOption(option: any) {
     const previousValue = this.selectedOption
     this.selectedOption = option
     this.onSelectOption.emit({

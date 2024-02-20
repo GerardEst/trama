@@ -24,11 +24,12 @@ export interface guidebook{
 
 export interface node{
   id: string,
-  left: number,
-  top: number,
+  top: string
+  left: string
   answers?: Array<node_answer>,
   conditions?: Array<node_conditions>,
-  text: string,
+  fallbackCondition?: node_fallbackCondition,
+  text?: string,
   type: 'content' | 'distributor' | 'end',
   share?: shareOptions,
   links?: link[]
@@ -44,12 +45,16 @@ export interface node_answer{
 
 export interface node_conditions{
   id: string,
-  join: Array<join>,
+  join?: Array<join>,
   ref: string,
   comparator: string,
   value: string
+  type?: 'condition' | 'stat'
 }
-
+export interface node_fallbackCondition{
+  id: string,
+  join?: Array<join>,
+}
 export interface answer_event{
   id: string,
   action: 'alterStat' | 'alterCondition',

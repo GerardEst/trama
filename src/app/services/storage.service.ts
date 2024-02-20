@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core'
-import { node } from '../interfaces'
 import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
 import { ActiveStoryService } from './active-story.service'
-import { condition } from '../interfaces'
+
+import { node } from '../modules/marco/interfaces'
+import { node_conditions } from '../modules/marco/interfaces'
 import { link } from '../modules/marco/interfaces'
 
 @Injectable({
@@ -47,7 +48,7 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  updateConditionValues(conditionId: string, values: condition) {
+  updateConditionValues(conditionId: string, values: node_conditions) {
     const savedTree = this.getStoredTree()
 
     const conditionNodeId = conditionId.split('_')[1]

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
-import { condition } from 'src/app/interfaces'
+import { node_conditions } from 'src/app/modules/marco/interfaces'
 import { FormsModule } from '@angular/forms'
 import { link, shareOptions } from 'src/app/modules/marco/interfaces'
 
@@ -33,7 +33,7 @@ interface position {
 export class NodeComponent {
   @Input() text: string = ''
   @Input() answers?: Array<answer>
-  @Input() conditions?: Array<condition>
+  @Input() conditions?: Array<node_conditions>
   @Input() position: position = { x: 0, y: 0 }
   @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
@@ -83,9 +83,11 @@ export class NodeComponent {
 
     this.conditions.push({
       id: newId,
+      join: [],
       ref: '',
       comparator: '',
-      value: 0,
+      value: '0',
+      type: 'condition',
     })
 
     this.storage.createNodeCondition(this.elementRef.nativeElement.id, newId)
