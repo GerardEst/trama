@@ -22,6 +22,14 @@
       />
     </label>
     <label>
+      <span>Enable sharing</span>
+      <input
+        (change)="toggleSharing()"
+        type="checkbox"
+        [checked]="sharingEnabled"
+      />
+    </label>
+    <label>
       <span>Book view</span>
       <input
         (change)="toggleBookview()"

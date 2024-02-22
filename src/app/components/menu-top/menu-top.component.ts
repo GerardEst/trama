@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { configuration } from 'src/app/services/database-interfaces'
 
 @Component({
   selector: 'polo-menu-top',
@@ -15,6 +16,7 @@ export class MenuTopComponent {
   options = false
   savingTree = false
   trackingEnabled: boolean = false
+  sharingEnabled: boolean = false
   bookviewEnabled: boolean = false
 
   constructor(
@@ -48,6 +50,14 @@ export class MenuTopComponent {
       this.db.setTrackingOf(this.treeId, this.trackingEnabled)
     }
   }
+
+  toggleSharing() {
+    if (this.treeId) {
+      this.sharingEnabled = !this.sharingEnabled
+      this.db.setSharingOf(this.treeId, this.sharingEnabled)
+    }
+  }
+
   toggleBookview() {
     if (this.treeId) {
       this.bookviewEnabled = !this.bookviewEnabled
@@ -61,8 +71,11 @@ export class MenuTopComponent {
 
   async updateConfiguration() {
     if (this.treeId) {
-      const configuration = await this.db.getConfigurationOf(this.treeId)
+      const configuration: configuration = await this.db.getConfigurationOf(
+        this.treeId
+      )
       this.trackingEnabled = configuration.tracking
+      this.sharingEnabled = configuration.sharing
       this.bookviewEnabled = configuration.view === 'book'
     }
   }

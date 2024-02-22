@@ -178,7 +178,7 @@ export class Marco {
       DOMNode.appendChild(DOMAnswers)
     }
 
-    if (node.type === 'end') {
+    if (node.type === 'end' && this.config.sharing) {
       let shares = this.crateDOMShares(node)
       DOMNode.appendChild(shares)
     }

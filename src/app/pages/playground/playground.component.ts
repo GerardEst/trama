@@ -61,6 +61,7 @@ export class PlaygroundComponent implements OnInit {
         title: this.story.name,
         showLockedAnswers: true,
         view: this.story.view || 'normal',
+        sharing: this.story.sharing,
       },
       player: {
         name: this.userName,

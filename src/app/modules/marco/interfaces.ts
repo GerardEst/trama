@@ -15,7 +15,8 @@ export interface player{
 export interface config{
   title?: string,
   showLockedAnswers?: boolean,
-  view?: string
+  view?: string,
+  sharing?: boolean
 }
 
 export interface guidebook{
