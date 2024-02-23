@@ -18,7 +18,15 @@
       <input
         (change)="toggleTracking()"
         type="checkbox"
-        [checked]="trackingEnabled"
+        [checked]="activeStory.storyConfiguration().tracking"
+      />
+    </label>
+    <label>
+      <span>Ask for name</span>
+      <input
+        (change)="toggleAskName()"
+        type="checkbox"
+        [checked]="activeStory.storyConfiguration().askName"
       />
     </label>
     <label>
@@ -26,15 +34,15 @@
       <input
         (change)="toggleSharing()"
         type="checkbox"
-        [checked]="sharingEnabled"
+        [checked]="activeStory.storyConfiguration().sharing"
       />
     </label>
     <label>
-      <span>Book view</span>
+      <span>Cumulative view</span>
       <input
-        (change)="toggleBookview()"
+        (change)="toggleCumulativeView()"
         type="checkbox"
-        [checked]="bookviewEnabled"
+        [checked]="activeStory.storyConfiguration().cumulativeView"
       />
     </label>
     <button (click)="openStadistics()">See stadistics</button>

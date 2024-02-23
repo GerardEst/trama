@@ -74,12 +74,12 @@ export class DatabaseService {
   async getConfigurationOf(storyId: string) {
     if (this.prod)
       console.log(
-        '%cdb call to get the configuration of a story',
+        '%cdb call to get the configuration of the story ' + storyId,
         'color: #9999ff'
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select('tracking, view, sharing')
+      .select('tracking, cumulativeView, sharing, askName')
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -118,15 +118,30 @@ export class DatabaseService {
     return true
   }
 
-  async setBookviewOf(storyId: string, view: string | null) {
+  async setCumulativeViewOf(storyId: string, cumulativeView: string | null) {
     if (this.prod)
       console.log(
-        '%cdb call to set the view status of a story',
+        '%cdb call to set the CumulativeView status of a story',
         'color: #9999ff'
       )
     const { data, error } = await this.supabase
       .from('stories')
-      .update({ view: view })
+      .update({ cumulativeView: cumulativeView })
+      .eq('id', storyId)
+
+    if (error) return false
+    return true
+  }
+
+  async setAskNameOf(storyId: string, askName: boolean) {
+    if (this.prod)
+      console.log(
+        '%cdb call to set the askName status of a story',
+        'color: #9999ff'
+      )
+    const { data, error } = await this.supabase
+      .from('stories')
+      .update({ askName: askName })
       .eq('id', storyId)
 
     if (error) return false

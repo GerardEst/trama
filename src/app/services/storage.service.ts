@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
 import { ActiveStoryService } from './active-story.service'
-
+import { tree } from '../modules/marco/interfaces'
 import { node } from '../modules/marco/interfaces'
 import { node_conditions } from '../modules/marco/interfaces'
 import { link } from '../modules/marco/interfaces'
@@ -485,7 +485,7 @@ export class StorageService {
     return storedTree
   }
 
-  private updateStoredTree(newTree: Array<any>) {
+  private updateStoredTree(newTree: tree) {
     localStorage.setItem('polo-tree', JSON.stringify(newTree))
     // Slowly moving to activeStory tree?? From now, use both. I will decide
     this.activeStory.entireTree = newTree

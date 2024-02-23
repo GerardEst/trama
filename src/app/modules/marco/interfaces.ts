@@ -12,6 +12,10 @@ export interface player{
   [key: string]: any; // Basicament pot tenir qualsevol cosa que se li vulgui fotre
 }
 
+export interface tree {
+  refs?: Array<{ name: string; type: string }>
+}
+
 export interface config{
   title?: string,
   showLockedAnswers?: boolean,

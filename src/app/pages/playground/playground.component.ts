@@ -38,7 +38,7 @@ export class PlaygroundComponent implements OnInit {
 
     console.log(this.story)
 
-    if (!this.story.tracking) this.prepareGame()
+    if (!this.story.askName) this.prepareGame()
   }
 
   async prepareGame() {
@@ -81,7 +81,6 @@ export class PlaygroundComponent implements OnInit {
         this.saveGame(userFinalStats)
       }
       this.endGame = true
-      console.log(this.playerPath)
     }
     this.adventure.onSelectAnswer = (answer: any) => {
       if (this.story.tracking) {

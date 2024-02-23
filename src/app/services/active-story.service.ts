@@ -1,5 +1,6 @@
-import { Injectable, effect, signal } from '@angular/core'
+import { Injectable, WritableSignal, effect, signal } from '@angular/core'
 import { getNodeIdFromAnswerId } from '../utils/tree-searching'
+import { tree } from '../modules/marco/interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -8,9 +9,12 @@ export class ActiveStoryService {
   /** todo -> Aqui s'ha de posar i gestionar des d'aqui les opcions
    * de la historia activa, com el track i la vista
    */
-  entireTree: any = {}
-  storyName = signal('')
+
+  storyId: WritableSignal<string> = signal('')
+  entireTree: tree = {}
+  storyName: WritableSignal<string> = signal('')
   storyRefs: any = signal([])
+  storyConfiguration: any = signal({})
 
   constructor() {
     effect(() => {
@@ -60,6 +64,8 @@ export class ActiveStoryService {
   }
 
   addRef(refId: any, previousRef?: any) {
+    if (!this.entireTree.refs) return console.error('Error while adding ref')
+
     console.log('previousref ', previousRef)
     console.log('new ref ', refId)
     if (previousRef) this.removeRef(previousRef)

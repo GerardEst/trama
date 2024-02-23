@@ -7,6 +7,7 @@ import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.servi
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
+import { configuration } from 'src/app/services/database-interfaces'
 
 @Component({
   selector: 'polo-dashboard',
@@ -41,6 +42,7 @@ export class DashboardComponent {
 
   async loadTree(treeId: string) {
     const story = await this.db.getTree(treeId)
+
     this.tree = story.tree
     this.id = treeId
 
@@ -49,12 +51,14 @@ export class DashboardComponent {
     localStorage.setItem('polo-name', story.name)
 
     // Set active-story state
+    this.activeStory.storyId.set(this.id)
     this.activeStory.entireTree = this.tree
     this.activeStory.storyName.set(story.name)
     this.activeStory.initTreeRefs(this.tree)
 
+    this.updateConfiguration()
+
     this.board?.centerToNode(this.tree.nodes[0])
-    this.menuTop?.updateConfiguration()
 
     this.errorFider.checkErrors(this.tree)
   }
@@ -73,6 +77,7 @@ export class DashboardComponent {
       this.tree = JSON.parse(localTree)
 
       // Set active-story state
+      this.activeStory.storyId.set(this.id)
       this.activeStory.entireTree = this.tree
       this.activeStory.storyName.set(localTreeName || '')
       this.activeStory.initTreeRefs(this.tree)
@@ -91,6 +96,22 @@ export class DashboardComponent {
       this.id = undefined
 
       sessionStorage.setItem('polo-session', 'true')
+    }
+
+    this.updateConfiguration()
+  }
+
+  async updateConfiguration() {
+    if (this.id) {
+      const configuration: configuration = await this.db.getConfigurationOf(
+        this.id
+      )
+
+      this.activeStory.storyConfiguration().tracking = configuration.tracking
+      this.activeStory.storyConfiguration().sharing = configuration.sharing
+      this.activeStory.storyConfiguration().askName = configuration.askName
+      this.activeStory.storyConfiguration().cumulativeView =
+        configuration.cumulativeView
     }
   }
 }

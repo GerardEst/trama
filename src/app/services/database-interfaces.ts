@@ -1,5 +1,6 @@
 export interface configuration {
   tracking: boolean
   sharing: boolean
-  view: 'book'
+  cumulativeView: boolean
+  askName: boolean
 }
