@@ -14,6 +14,7 @@
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
+        <span class="tag__id">{{ ref.id }}</span>
         <span class="tag__times">{{ ref.times }}</span>
       </div>
       } @for (ref of unusedRefs; track $index) {
@@ -24,6 +25,7 @@
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
+        <p class="tag__id">{{ ref.id }}</p>
         <span class="tag__delete" (click)="deleteRef(ref.id)"></span>
       </div>
       }

@@ -2,7 +2,7 @@
   position: fixed
   bottom: 1rem
   right: 1rem
-  width: 220px
+  width: 270px
   background-color: white
   box-shadow: var(--menu-shadow)
   padding: 0.3rem
@@ -28,6 +28,7 @@
   align-items: center
   gap: 0.6rem
   input
+    max-width: 110px
     background: none
     border: none
     padding: 0.5rem 0
@@ -47,6 +48,8 @@
       background-image: url('/assets/icons/tick.svg')
     &--end
       background-image: url('/assets/icons/cross.svg')
+  &__id
+    color: var(--light-text)
   &__times
     margin-left: auto
   &__delete
