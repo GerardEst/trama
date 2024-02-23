@@ -2,6 +2,6 @@
 <polo-modal-window *ngIf="story?.askName && !gotUserInfo" [locked]="true">
   <form class="playerForm">
     <input type="text" (change)="setUserName($event)" placeholder="Nom" />
-    <button type="submit" (click)="prepareGame()">Començar!</button>
+    <button type="submit" (click)="prepareGame($event)">Començar!</button>
   </form>
 </polo-modal-window>

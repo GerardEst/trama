@@ -18,7 +18,7 @@ export class PlaygroundComponent implements OnInit {
   endGame: boolean = false
 
   gameId?: string
-  userName: string = ''
+  userName: string | null = null
   playerPath: Array<any> = []
   externalEvents: Array<any> = []
 
@@ -41,9 +41,11 @@ export class PlaygroundComponent implements OnInit {
     if (!this.story.askName) this.prepareGame()
   }
 
-  async prepareGame() {
+  async prepareGame(event?: Event) {
+    event?.preventDefault()
+
+    if (this.userName) this.gotUserInfo = true
     if (this.story.tracking) {
-      this.gotUserInfo = true
       this.gameId = self.crypto.randomUUID()
 
       // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
@@ -64,7 +66,7 @@ export class PlaygroundComponent implements OnInit {
         sharing: this.story.sharing,
       },
       player: {
-        name: this.userName,
+        name: this.userName || 'anonymous',
       },
     })
 
@@ -112,7 +114,7 @@ export class PlaygroundComponent implements OnInit {
 
     const saved = await this.db.saveNewGameTo(
       this.gameId,
-      this.userName,
+      this.userName || 'anonymous',
       this.storyId,
       this.playerPath,
       result,
