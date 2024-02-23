@@ -19,7 +19,7 @@ export interface tree {
 export interface config{
   title?: string,
   showLockedAnswers?: boolean,
-  view?: string,
+  cumulativeView?: boolean,
   sharing?: boolean
 }
 

@@ -62,7 +62,7 @@ export class PlaygroundComponent implements OnInit {
       config: {
         title: this.story.name,
         showLockedAnswers: true,
-        view: this.story.view || 'normal',
+        cumulativeView: this.story.cumulativeView,
         sharing: this.story.sharing,
       },
       player: {

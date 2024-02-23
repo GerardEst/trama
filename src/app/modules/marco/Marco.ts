@@ -102,7 +102,7 @@ export class Marco {
   private drawNode(node: node, isTheFirstNode = false) {
     if (!node) return console.warn('Nothing to draw, empty path')
 
-    if (this.config.view === 'book') {
+    if (this.config.cumulativeView) {
       this.blockExistentDOMNodes()
     } else {
       const lastNode = this.DOMNodes.at(-1)
