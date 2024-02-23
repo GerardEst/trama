@@ -158,15 +158,19 @@ export class Marco {
   }
 
   // Create all the node, calls the creation of answers of node too
-  private createDOMNode(node:node) {
-    node.id, node.text ? this.getTextWithFinalParameters(node.text) : '', node.answers, node.type
+  private createDOMNode(node: node) {
 
-    let DOMNode = document.createElement('div')
+    const DOMNode = document.createElement('div')
     DOMNode.className = 'node'
     DOMNode.id = node.id
-    DOMNode.innerHTML = `<div class="node__text"><p>${node.text}</p></div>`
+    const DOMNodeText = document.createElement('div')
+    DOMNodeText.className = "node__text"
+    const DOMText = document.createElement('p')
+    DOMText.textContent = node.text ? this.getTextWithFinalParameters(node.text) : ''
+    DOMNodeText.appendChild(DOMText)
+    DOMNode.appendChild(DOMNodeText)
 
-    let DOMAnswers = document.createElement('div')
+    const DOMAnswers = document.createElement('div')
     DOMAnswers.className = 'node__answers'
 
     if (node.answers) {
@@ -196,7 +200,7 @@ export class Marco {
 
 
     let button = document.createElement('button');
-    button.innerHTML = 'Compartir el resultat';
+    button.textContent = 'Compartir el resultat';
     button.onclick = function () {
       console.log('waiting share context')
         if (navigator.share) {
@@ -236,18 +240,27 @@ export class Marco {
   }
 
   private getTextWithFinalParameters(text: string) {
-    // the text can have <data> that has to be replaced
+    // the text can have # that has to be replaced
     return text.replace(
-      /<([a-zA-Z0-9]+)>/g,
-      (match:string, p1:string) => this.player[p1]
+      /#([a-zA-Z0-9_]+)/g,
+      (match: string, p1: string) => {
+        // if the prop is not in player, we search in stats
+        let value = this.player[p1]
+        if (!value) {
+          value = this.player.stats.find(stat => stat.id === p1)?.amount
+        }
+        return value || '-'
+      }
     )
   }
 
   private createDOMAnswer(id: string, text: string) {
     const DOMAnswer = document.createElement('div')
+    const DOMText = document.createElement('p')
     DOMAnswer.className = 'answer'
     DOMAnswer.id = id
-    DOMAnswer.innerHTML = `<p>${text}</p>`
+    DOMText.textContent = text
+    DOMAnswer.appendChild(DOMText)
 
     return DOMAnswer
   }
