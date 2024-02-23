@@ -227,6 +227,20 @@ export class StorageService {
           }
         }
       }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            condition.join = condition.join.filter(
+              (join: any) => join.node !== nodeId
+            )
+          }
+        }
+      }
+      if (node.fallbackCondition?.join) {
+        node.fallbackCondition.join = node.fallbackCondition.join.filter(
+          (join: any) => join.node !== nodeId
+        )
+      }
     }
 
     this.updateStoredTree(savedTree)

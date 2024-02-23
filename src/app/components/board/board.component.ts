@@ -159,14 +159,12 @@ export class BoardComponent {
           }
         }
       }
-      if (node.fallbackCondition) {
-        if (node.fallbackCondition.join) {
-          for (let join of node.fallbackCondition.join) {
-            this.joins.push({
-              origin: node.fallbackCondition.id + '_join',
-              destiny: join.node + '_join',
-            })
-          }
+      if (node.fallbackCondition?.join) {
+        for (let join of node.fallbackCondition.join) {
+          this.joins.push({
+            origin: node.fallbackCondition.id + '_join',
+            destiny: join.node + '_join',
+          })
         }
       }
     }
@@ -256,17 +254,19 @@ export class BoardComponent {
   }
 
   removeNode(event: any) {
+    console.log('try to remove ', event)
+
     // Remove node from tree
     this.tree.nodes = this.tree.nodes.filter(
       (node: any) => node.id !== event.nodeId
     )
 
-    // Remove joins that go to the node
+    // Remove join lines that go to the node
     this.joins = this.joins.filter(
       (join) => join.destiny !== event.nodeId + '_join'
     )
 
-    // Remove joins that go from the node
+    // Remove join lines that go from the node
     if (event.answers) {
       this.joins = this.joins.filter(
         (join) =>

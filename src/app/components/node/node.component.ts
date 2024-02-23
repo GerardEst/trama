@@ -13,6 +13,7 @@ import { ConditionComponent } from '../condition/condition.component'
 import { node_conditions } from 'src/app/modules/marco/interfaces'
 import { FormsModule } from '@angular/forms'
 import { link, shareOptions } from 'src/app/modules/marco/interfaces'
+import { SharedBoardService } from 'src/app/services/shared-board-service'
 
 interface answer {
   id: string
@@ -47,7 +48,11 @@ export class NodeComponent {
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
 
-  constructor(public storage: StorageService, public elementRef: ElementRef) {}
+  constructor(
+    public storage: StorageService,
+    public elementRef: ElementRef,
+    private board: SharedBoardService
+  ) {}
 
   ngOnInit() {
     setTimeout(() => {
@@ -154,6 +159,8 @@ export class NodeComponent {
   }
 
   onRemoveNode() {
+    this.board.resumeBoardDrag()
+
     const data = {
       nodeId: this.elementRef.nativeElement.id,
       answers: this.answers?.map((answer) => answer.id),
