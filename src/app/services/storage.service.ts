@@ -488,6 +488,31 @@ export class StorageService {
     return refs[refId].name
   }
 
+  // Categories
+  getCategories() {
+    const savedTree = this.getStoredTree()
+
+    return savedTree.categories
+  }
+  createCategory(newCategory: string) {
+    const savedTree = this.getStoredTree()
+
+    if (!savedTree.categories) savedTree.categories = []
+    savedTree.categories.push({ id: newCategory, name: newCategory })
+
+    this.updateStoredTree(savedTree)
+  }
+
+  addCategoryToRef(refId: string, categoryId: string) {
+    const savedTree = this.getStoredTree()
+
+    console.log(refId)
+    console.log(savedTree.refs)
+    savedTree.refs[refId].category = categoryId
+
+    this.updateStoredTree(savedTree)
+  }
+
   private getStoredTree() {
     //@ts-ignore
     const storedTree = JSON.parse(localStorage.getItem('polo-tree'))
