@@ -23,7 +23,7 @@ export class EventComponent implements OnInit {
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
   @Input() id?: string
   @Input() amount?: number
-  @Input() action?: 'alterStat' | 'alterCondition' | 'win' | 'end'
+  @Input() action?: 'alterStat' | 'alterCondition'
   infoData: any = {}
   infoMessage?: string
   @ViewChild('selector') selector?: any
@@ -98,10 +98,6 @@ export class EventComponent implements OnInit {
       ? 'stat'
       : this.action === 'alterCondition'
       ? 'condition'
-      : this.action === 'win'
-      ? 'win'
-      : this.action === 'end'
-      ? 'end'
       : undefined
   }
 

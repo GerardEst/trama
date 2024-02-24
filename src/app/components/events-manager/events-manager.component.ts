@@ -27,7 +27,7 @@ export class EventsManagerComponent {
     }
   }
 
-  createEvent(action: 'alterStat' | 'alterCondition' | 'win' | 'end') {
+  createEvent(action: 'alterStat' | 'alterCondition') {
     this.events.push({
       amount: 1,
       action,
