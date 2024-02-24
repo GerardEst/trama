@@ -1,4 +1,4 @@
-import { Component, Input, effect } from '@angular/core'
+import { Component, effect } from '@angular/core'
 import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { StorageService } from 'src/app/services/storage.service'
@@ -11,7 +11,6 @@ import { StorageService } from 'src/app/services/storage.service'
   styleUrl: './menu-tree-legend.component.sass',
 })
 export class MenuTreeLegendComponent {
-  @Input() treeId?: string
   arrayOfRefs: any = []
   unusedRefs: any = []
 
@@ -86,6 +85,6 @@ export class MenuTreeLegendComponent {
   }
 
   async goToPlayground() {
-    window.open('/playground/' + this.treeId, '_blank')
+    window.open('/playground/' + this.activeStory.storyId(), '_blank')
   }
 }
