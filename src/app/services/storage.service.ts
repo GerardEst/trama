@@ -506,8 +506,6 @@ export class StorageService {
   addCategoryToRef(refId: string, categoryId: string) {
     const savedTree = this.getStoredTree()
 
-    console.log(refId)
-    console.log(savedTree.refs)
     savedTree.refs[refId].category = categoryId
 
     this.updateStoredTree(savedTree)

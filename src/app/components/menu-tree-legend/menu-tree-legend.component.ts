@@ -86,11 +86,6 @@ export class MenuTreeLegendComponent {
     this.storage.updateRefName(refId, event.target.value)
   }
 
-  // create a new category
-  // category names are the ids, cannot be repeated and cant have spaces or strange characters
-  // save categories in an array
-  // the array of categories can be saved to the tree, but we dont need them
-  // in the adventure, its just for the selectors. Anyways, it wont be bad
   newCategory(category: string) {
     this.storage.createCategory(category)
   }

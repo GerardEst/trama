@@ -1,4 +1,4 @@
-import { playerHasAnswerRequirements, getJoinRandom, normalizeLink } from './utilities'
+import { playerHasAnswerRequirements, getJoinRandom, normalizeLink, capitalize } from './utilities'
 import { basic_style } from './styles/basic_style'
 import { initial_parameters, config, guidebook, answer_event, node, node_answer, player, condition, stat, join, externalEvent, link } from './interfaces'
 
@@ -28,6 +28,7 @@ export class Marco {
     this.player = { stats: [], conditions: [], ...options.player }
     this.config = options.config
 
+    console.log("guidebook(story):", this.guidebook)
     this.externalEvents = []
     // move this to config when ready
     this.timings = 1000
@@ -240,8 +241,7 @@ export class Marco {
   }
 
   private getTextWithFinalParameters(text: string) {
-    // the text can have # that has to be replaced
-    return text.replace(
+    const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string) => {
         // if the prop is not in player, we search in stats
@@ -252,6 +252,32 @@ export class Marco {
         return value || '-'
       }
     )
+
+    const withBlockReplacements = withInlineReplacements.replace(
+      /\[([a-zA-Z0-9_]+)\]/g,
+      (match: string, p1: string) => {
+        let refsWithCategory = Object.keys(this.guidebook.refs).filter((key: any) => {
+          return this.guidebook.refs[key].category === p1
+        })
+
+        let string = ' '
+        for (let refWithCategory of refsWithCategory) {
+          const playerStat = this.player.stats.find(stat => stat.id === refWithCategory)
+          if (playerStat) {
+            string = string + '\n' + capitalize(this.guidebook.refs[playerStat.id].name) + ': ' + playerStat.amount
+          }
+        }
+        for (let refWithCategory of refsWithCategory) {
+          const playerCondition = this.player.conditions.find(condition => condition.id === refWithCategory)
+          if (playerCondition) {
+            string = string + '\n' + capitalize(this.guidebook.refs[playerCondition.id].name)
+          }
+        }
+
+        return string
+      })
+
+    return withBlockReplacements
   }
 
   private createDOMAnswer(id: string, text: string) {

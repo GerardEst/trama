@@ -25,6 +25,8 @@ export interface config{
 
 export interface guidebook{
   nodes: Array<node>
+  refs?: any
+  categories?: Array<any>
 }
 
 export interface node{
