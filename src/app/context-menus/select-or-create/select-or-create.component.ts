@@ -7,7 +7,6 @@ import {
   ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { ContextMenusService } from 'src/app/services/context-menus.service'
 
 @Component({
   selector: 'polo-select-or-create',
@@ -15,9 +14,6 @@ import { ContextMenusService } from 'src/app/services/context-menus.service'
   imports: [CommonModule],
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
-  // host: {
-  //   '(document:click)': 'onClickOutside($event)',
-  // },
 })
 export class SelectOrCreateComponent {
   @Input() options: Array<any> = []
@@ -31,9 +27,7 @@ export class SelectOrCreateComponent {
   newOption?: string
   optionsOpened: boolean = false
 
-  constructor() // private elementRef: ElementRef,
-  // private contextMenu: ContextMenusService
-  {}
+  constructor() {}
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -64,10 +58,4 @@ export class SelectOrCreateComponent {
 
     this.newOption = this.searchedOptions[0]?.name != value ? value : undefined
   }
-
-  // onClickOutside(event: MouseEvent): void {
-  //   if (!this.elementRef.nativeElement.contains(event.target)) {
-  //     this.contextMenu.close()
-  //   }
-  // }
 }

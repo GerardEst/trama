@@ -106,8 +106,11 @@ export class MenuTreeLegendComponent {
     window.open('/playground/' + this.activeStory.storyId(), '_blank')
   }
 
-  openSelectorFor(refId: string) {
-    const contextMenu = this.contextMenu.launch(SelectOrCreateComponent)
+  openSelectorFor(clickEvent: Event, refId: string) {
+    const contextMenu = this.contextMenu.launch(
+      SelectOrCreateComponent,
+      clickEvent.target
+    )
 
     contextMenu.setInput('options', this.getCategories())
     contextMenu.setInput('message', 'Select a category or create a new one')

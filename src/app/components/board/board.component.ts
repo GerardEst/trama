@@ -203,7 +203,7 @@ export class BoardComponent {
   }
 
   addNode(event: any, type: 'content' | 'distributor' | 'end'): void {
-    event.stopPropagation()
+    //event.stopPropagation()
 
     if (this.contextMenuActive) {
       this.contextMenuActive = false
