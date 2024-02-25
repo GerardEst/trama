@@ -492,7 +492,7 @@ export class StorageService {
   getCategories() {
     const savedTree = this.getStoredTree()
 
-    return savedTree.categories
+    return savedTree.categories || []
   }
   createCategory(newCategory: string) {
     const savedTree = this.getStoredTree()
@@ -503,7 +503,7 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
-  addCategoryToRef(refId: string, categoryId: string) {
+  setCategoryToRef(refId: string, categoryId: string) {
     const savedTree = this.getStoredTree()
 
     savedTree.refs[refId].category = categoryId

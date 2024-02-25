@@ -1,0 +1,17 @@
+<div class="dropdown">
+  <input
+    #search
+    type="text"
+    (input)="filterOptions($event)"
+    placeholder="Search"
+  />
+  <p class="message">{{ message }}</p>
+  <button (click)="createOption(newOption)" *ngIf="newOption" class="newOption">
+    Create {{ newOption }}
+  </button>
+  <div class="dropdown__options">
+    <li (click)="selectOption(option)" *ngFor="let option of searchedOptions">
+      {{ option.name }}
+    </li>
+  </div>
+</div>

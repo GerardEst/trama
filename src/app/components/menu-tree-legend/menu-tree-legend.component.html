@@ -14,15 +14,7 @@
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
-        <polo-selector
-          [selected]="ref.category"
-          (onNewOption)="newCategory($event)"
-          (onSelectOption)="changeCategory($event, ref.id)"
-          [options]="getCategories() || []"
-          message="Select a category or create a new one"
-          [onTop]="true"
-          [onLeft]="true"
-        ></polo-selector>
+        <button (click)="openSelectorFor(ref.id)">{{ ref.category }}</button>
         <span class="tag__id">{{ ref.id }}</span>
         <span class="tag__times">{{ ref.times }}</span>
       </div>

@@ -3,11 +3,17 @@ import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifi
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { StorageService } from 'src/app/services/storage.service'
 import { SelectorComponent } from '../ui/selector/selector.component'
+import { ContextMenusService } from 'src/app/services/context-menus.service'
+import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [TreeErrorNotifierComponent, SelectorComponent],
+  imports: [
+    TreeErrorNotifierComponent,
+    SelectorComponent,
+    SelectOrCreateComponent,
+  ],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.sass',
 })
@@ -17,7 +23,8 @@ export class MenuTreeLegendComponent {
 
   constructor(
     public activeStory: ActiveStoryService,
-    private storage: StorageService
+    private storage: StorageService,
+    public contextMenu: ContextMenusService
   ) {
     effect(() => {
       this.unusedRefs = []
@@ -86,14 +93,6 @@ export class MenuTreeLegendComponent {
     this.storage.updateRefName(refId, event.target.value)
   }
 
-  newCategory(category: string) {
-    this.storage.createCategory(category)
-  }
-
-  changeCategory(category: any, refId: string) {
-    this.storage.addCategoryToRef(refId, category.value)
-  }
-
   getCategories() {
     return this.storage.getCategories()
   }
@@ -105,5 +104,29 @@ export class MenuTreeLegendComponent {
 
   async goToPlayground() {
     window.open('/playground/' + this.activeStory.storyId(), '_blank')
+  }
+
+  openSelectorFor(refId: string) {
+    const contextMenu = this.contextMenu.launch(SelectOrCreateComponent)
+
+    contextMenu.setInput('options', this.getCategories())
+    contextMenu.setInput('message', 'Select a category or create a new one')
+
+    contextMenu.instance.onSelectOption.subscribe(
+      (event: { value: string; previousValue: string }) => {
+        this.storage.setCategoryToRef(refId, event.value)
+        this.arrayOfRefs.find((ref: any) => ref.id === refId).category =
+          event.value
+
+        this.contextMenu.close()
+      }
+    )
+    contextMenu.instance.onNewOption.subscribe((event: string) => {
+      this.storage.createCategory(event)
+      this.storage.setCategoryToRef(refId, event)
+      this.arrayOfRefs.find((ref: any) => ref.id === refId).category = event
+
+      this.contextMenu.close()
+    })
   }
 }
