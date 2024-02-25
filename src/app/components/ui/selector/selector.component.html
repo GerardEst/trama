@@ -1,5 +1,10 @@
 <button (click)="toggleOptions()">{{ selectedOption?.name }}</button>
-<div class="dropdown" *ngIf="optionsOpened">
+<div
+  class="dropdown"
+  *ngIf="optionsOpened"
+  [class.dropdown--onTop]="onTop"
+  [class.dropdown--onLeft]="onLeft"
+>
   <input
     #search
     type="text"

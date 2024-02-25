@@ -20,6 +20,8 @@ import { CommonModule } from '@angular/common'
   },
 })
 export class SelectorComponent implements OnInit {
+  @Input() onTop: boolean = false
+  @Input() onLeft: boolean = false
   @Input() options: Array<any> = []
   @Input() selected?: string
   @Input() message?: string

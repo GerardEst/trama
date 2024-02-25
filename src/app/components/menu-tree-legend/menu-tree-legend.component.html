@@ -19,7 +19,9 @@
           (onNewOption)="newCategory($event)"
           (onSelectOption)="changeCategory($event, ref.id)"
           [options]="getCategories() || []"
-          message="Select a category or create new one"
+          message="Select a category or create a new one"
+          [onTop]="true"
+          [onLeft]="true"
         ></polo-selector>
         <span class="tag__id">{{ ref.id }}</span>
         <span class="tag__times">{{ ref.times }}</span>
