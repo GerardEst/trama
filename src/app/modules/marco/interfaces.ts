@@ -13,7 +13,7 @@ export interface player{
 }
 
 export interface tree {
-  refs?: Array<{ name: string; type: string }>
+  refs?: Array<{ name: string; type: string, category: string }>
 }
 
 export interface config{

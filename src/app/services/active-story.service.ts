@@ -79,6 +79,7 @@ export class ActiveStoryService {
         answer: refId.answer,
         name: this.entireTree.refs[refId.id].name,
         type: this.entireTree.refs[refId.id].type,
+        category: this.entireTree.refs[refId.id].category,
         on: undefined,
         node: getNodeIdFromAnswerId(refId.answer),
       },
