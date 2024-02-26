@@ -14,7 +14,7 @@
           (change)="updateRefName($event, ref.id)"
           value="{{ ref.name }}"
         />
-        <button (click)="openSelectorFor($event, ref.id)">
+        <button class="tag__category" (click)="openSelectorFor($event, ref.id)">
           {{ ref.category }}
         </button>
         <span class="tag__id">{{ ref.id }}</span>
