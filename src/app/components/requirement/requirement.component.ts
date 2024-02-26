@@ -8,11 +8,13 @@ import {
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
 import { StorageService } from 'src/app/services/storage.service'
+import { ContextMenusService } from 'src/app/services/context-menus.service'
+import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 
 @Component({
   selector: 'polo-requirement',
   standalone: true,
-  imports: [CommonModule, SelectorComponent],
+  imports: [CommonModule, SelectorComponent, SelectOrCreateComponent],
   templateUrl: './requirement.component.html',
   styleUrls: ['./requirement.component.sass'],
 })
@@ -21,15 +23,62 @@ export class RequirementComponent {
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
   @Output() onDelete: EventEmitter<any> = new EventEmitter()
   @Input() id?: string
-  @Input() amount?: number = 3
+  @Input() amount?: number = 1
   @Input() type?: 'stat' | 'condition'
   // REF-1 @Input() alreadyUsedRequirements?: Array<any>
   @ViewChild('selector') selector?: any
+  selectedOptionName?: string
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private contextMenu: ContextMenusService
+  ) {}
 
-  changeElement(options: any) {
-    this.onChangeElement.emit(options)
+  ngOnInit() {
+    this.selectedOptionName = this.id ? this.storage.getRefName(this.id) : ''
+  }
+
+  openSelectorFor(clickEvent: Event, refId: string | undefined) {
+    const contextMenu = this.contextMenu.launch(
+      SelectOrCreateComponent,
+      clickEvent.target
+    )
+
+    contextMenu.setInput('options', this.getFormattedRefsOfTree())
+    contextMenu.setInput('message', `Select a ${this.type} or create new one`)
+    contextMenu.setInput('selectedOption', refId)
+
+    contextMenu.instance.onSelectOption.subscribe(
+      (event: { value: string; previousValue: string }) => {
+        // update the selectedOption of the contextMenu
+        contextMenu.setInput('selectedOption', event.value)
+
+        // update selected name of this
+        this.selectedOptionName = this.storage.getRefName(event.value)
+
+        // send the event for external calculations
+        this.onChangeElement.emit(event)
+
+        this.contextMenu.close()
+      }
+    )
+    contextMenu.instance.onNewOption.subscribe((event: string) => {
+      if (!this.type) {
+        console.warn('No type defined for this requirement')
+        return
+      }
+      const createdRef = this.storage.createNewRef(event, this.type)
+      if (createdRef) {
+        if (this.selector) {
+          this.selector.selectOption({
+            id: createdRef.id,
+            name: createdRef.name,
+          })
+        }
+      }
+
+      this.contextMenu.close()
+    })
   }
 
   changeAmount(event: any) {
@@ -41,22 +90,6 @@ export class RequirementComponent {
       id: this.id,
       value: Number(event.target.checked),
     })
-  }
-
-  newOption(value: string) {
-    if (!this.type) {
-      console.warn('No type defined for this requirement')
-      return
-    }
-    const createdRef = this.storage.createNewRef(value, this.type)
-    if (createdRef) {
-      if (this.selector) {
-        this.selector.selectOption({
-          id: createdRef.id,
-          name: createdRef.name,
-        })
-      }
-    }
   }
 
   removeRequirement() {

@@ -9,11 +9,13 @@ import {
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
 import { StorageService } from 'src/app/services/storage.service'
+import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
+import { ContextMenusService } from 'src/app/services/context-menus.service'
 
 @Component({
   selector: 'polo-event',
   standalone: true,
-  imports: [CommonModule, SelectorComponent],
+  imports: [CommonModule, SelectorComponent, SelectOrCreateComponent],
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.sass'],
 })
@@ -28,7 +30,10 @@ export class EventComponent implements OnInit {
   infoMessage?: string
   @ViewChild('selector') selector?: any
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private contextMenu: ContextMenusService
+  ) {}
 
   ngOnInit() {
     this.infoData = {
@@ -37,11 +42,50 @@ export class EventComponent implements OnInit {
     }
   }
 
-  changeElement(options: any) {
-    this.onChangeElement.emit(options)
+  openSelectorFor(clickEvent: Event, refId: string | undefined) {
+    const contextMenu = this.contextMenu.launch(
+      SelectOrCreateComponent,
+      clickEvent.target
+    )
 
-    // Update the info message
-    this.infoData.value = this.storage.getRefName(options.value)
+    contextMenu.setInput('options', this.getFormattedRefsOfTree())
+    contextMenu.setInput(
+      'message',
+      `Select a ${this.getTypeForEvent()} or create new one`
+    )
+    contextMenu.setInput('selectedOption', refId)
+
+    contextMenu.instance.onSelectOption.subscribe(
+      (event: { value: string; previousValue: string }) => {
+        // update the selected option
+        contextMenu.setInput('selectedOption', event.value)
+
+        // update the info message
+        this.infoData.value = this.storage.getRefName(event.value)
+
+        this.onChangeElement.emit(event)
+
+        this.contextMenu.close()
+      }
+    )
+    contextMenu.instance.onNewOption.subscribe((event: string) => {
+      const type = this.getTypeForEvent()
+      if (!type) {
+        console.warn('No action defined for this event')
+        return
+      }
+      const createdRef = this.storage.createNewRef(event, type)
+      if (createdRef) {
+        if (this.selector) {
+          this.selector.selectOption({
+            id: createdRef.id,
+            name: createdRef.name,
+          })
+        }
+      }
+
+      this.contextMenu.close()
+    })
   }
 
   changeAmount(event: any) {
@@ -58,23 +102,6 @@ export class EventComponent implements OnInit {
     })
     // Update the info message
     this.infoData.amount = event.target.value
-  }
-
-  newOption(value: string) {
-    const type = this.getTypeForEvent()
-    if (!type) {
-      console.warn('No action defined for this event')
-      return
-    }
-    const createdRef = this.storage.createNewRef(value, type)
-    if (createdRef) {
-      if (this.selector) {
-        this.selector.selectOption({
-          id: createdRef.id,
-          name: createdRef.name,
-        })
-      }
-    }
   }
 
   removeEvent() {

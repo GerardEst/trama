@@ -46,9 +46,6 @@ export class RequirementsManagerComponent {
   }
 
   updateRequirementElement(element: any) {
-    /** Here we receive the previous value and the new value
-     * We can update the this.requirements
-     */
     const requirement = this.requirements.find(
       (requirement) => requirement.id === element.previousValue
     )

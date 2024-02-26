@@ -18,12 +18,12 @@ import { CommonModule } from '@angular/common'
 export class SelectOrCreateComponent {
   @Input() options: Array<any> = []
   @Input() message?: string
+  @Input() selectedOption?: string
   @Output() onNewOption: EventEmitter<any> = new EventEmitter()
   @Output() onSelectOption: EventEmitter<any> = new EventEmitter()
   @ViewChild('search') search?: ElementRef
 
   searchedOptions: Array<any> = []
-  selectedOption?: any
   newOption?: string
   optionsOpened: boolean = false
 
@@ -41,7 +41,7 @@ export class SelectOrCreateComponent {
     this.selectedOption = option
     this.onSelectOption.emit({
       value: option.id,
-      previousValue: previousValue?.id,
+      previousValue: previousValue,
     })
   }
 

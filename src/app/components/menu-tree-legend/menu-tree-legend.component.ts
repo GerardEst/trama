@@ -114,6 +114,7 @@ export class MenuTreeLegendComponent {
 
     contextMenu.setInput('options', this.getCategories())
     contextMenu.setInput('message', 'Select a category or create a new one')
+    contextMenu.setInput('selectedOption', refId)
 
     contextMenu.instance.onSelectOption.subscribe(
       (event: { value: string; previousValue: string }) => {

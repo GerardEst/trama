@@ -49,7 +49,7 @@ export class ContextMenusService {
     // delay the calculation of the position until after the component has been rendered
     setTimeout(() => {
       // calculate the position
-      let top = rect.top + 5
+      let top = rect.top
       let left = rect.right + 5
 
       // adjust the position if the context menu goes off the screen
@@ -70,6 +70,7 @@ export class ContextMenusService {
   }
 
   checkClose(clickedElement: any) {
+    if (!this.contextMenuComponentRef) return
     if (
       clickedElement !== this.buttonUsed &&
       !this.contextMenuComponentRef.hostView.rootNodes[0].contains(

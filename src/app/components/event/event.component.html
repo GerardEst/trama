@@ -3,14 +3,9 @@
   <button (click)="removeEvent()"></button>
 </div>
 <div class="data">
-  <polo-selector
-    #selector
-    [selected]="id"
-    (onNewOption)="newOption($event)"
-    (onSelectOption)="changeElement($event)"
-    [options]="getFormattedRefsOfTree() || []"
-    message="Select a {{ getTypeForEvent() }} or create new one"
-  ></polo-selector>
+  <button (click)="openSelectorFor($event, id)">
+    {{ infoData.value }}
+  </button>
   <input
     *ngIf="getTypeForEvent() === 'stat'"
     type="number"

@@ -10,12 +10,7 @@
   [checked]="amount"
   (change)="changeCheckbox($event)"
 />
-<polo-selector
-  #selector
-  [selected]="id"
-  (onNewOption)="newOption($event)"
-  (onSelectOption)="changeElement($event)"
-  [options]="getFormattedRefsOfTree() || []"
-  message="Select a {{ type }} or create new one"
-></polo-selector>
+<button (click)="openSelectorFor($event, id)">
+  {{ selectedOptionName }}
+</button>
 <button (click)="removeRequirement()">D</button>
