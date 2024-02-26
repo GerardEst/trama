@@ -61,11 +61,11 @@
       <p class="node__shareoptions__title">Share options</p>
       <label class="node__shareoptions__option">
         <p>Custom shared text</p>
-        <input
+        <textarea
           (change)="updateSharedText()"
           [(ngModel)]="shareOptions.sharedText"
-          type="text"
-        />
+        >
+        </textarea>
       </label>
       <label class="node__shareoptions__option--row">
         <p>Allow to share all decisions</p>
