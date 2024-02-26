@@ -196,8 +196,8 @@ export class Marco {
     shares.className = 'shares'
 
     const message = node.share?.sharedText && node.share.sharedText.length > 0 ?
-      `${this.config.title}\n\n${node.share.sharedText}\n\n` :
-      `${this.config.title}\n\n${node.text}\n\n`
+      `${this.config.title}\n\n${this.getTextWithFinalParameters(node.share.sharedText)}\n\n` :
+      `${this.config.title}\n\n${this.getTextWithFinalParameters(node.text)}\n\n`
 
 
     let button = document.createElement('button');
@@ -240,7 +240,7 @@ export class Marco {
     }, timing);
   }
 
-  private getTextWithFinalParameters(text: string) {
+  private getTextWithFinalParameters(text: string = '') {
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string) => {
