@@ -76,12 +76,11 @@ export class EventComponent implements OnInit {
       }
       const createdRef = this.storage.createNewRef(event, type)
       if (createdRef) {
-        if (this.selector) {
-          this.selector.selectOption({
-            id: createdRef.id,
-            name: createdRef.name,
-          })
-        }
+        this.infoData.value = this.storage.getRefName(createdRef.id)
+        this.onChangeElement.emit({
+          value: createdRef.id,
+          previousValue: contextMenu.instance.selectedOption,
+        })
       }
 
       this.contextMenu.close()

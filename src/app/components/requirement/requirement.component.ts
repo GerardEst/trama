@@ -26,7 +26,7 @@ export class RequirementComponent {
   @Input() amount?: number = 1
   @Input() type?: 'stat' | 'condition'
   // REF-1 @Input() alreadyUsedRequirements?: Array<any>
-  @ViewChild('selector') selector?: any
+
   selectedOptionName?: string
 
   constructor(
@@ -50,13 +50,8 @@ export class RequirementComponent {
 
     contextMenu.instance.onSelectOption.subscribe(
       (event: { value: string; previousValue: string }) => {
-        // update the selectedOption of the contextMenu
         contextMenu.setInput('selectedOption', event.value)
-
-        // update selected name of this
         this.selectedOptionName = this.storage.getRefName(event.value)
-
-        // send the event for external calculations
         this.onChangeElement.emit(event)
 
         this.contextMenu.close()
@@ -67,14 +62,14 @@ export class RequirementComponent {
         console.warn('No type defined for this requirement')
         return
       }
+
       const createdRef = this.storage.createNewRef(event, this.type)
       if (createdRef) {
-        if (this.selector) {
-          this.selector.selectOption({
-            id: createdRef.id,
-            name: createdRef.name,
-          })
-        }
+        this.selectedOptionName = this.storage.getRefName(createdRef.id)
+        this.onChangeElement.emit({
+          value: createdRef.id,
+          previousValue: contextMenu.instance.selectedOption,
+        })
       }
 
       this.contextMenu.close()
