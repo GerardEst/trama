@@ -42,6 +42,7 @@ export class EventsManagerComponent {
 
     this.storage.saveAnswerEvents(this.answerId, this.events)
     this.activeStory.addRef(
+      'event',
       {
         id: element.value,
         answer: this.answerId,
@@ -68,6 +69,9 @@ export class EventsManagerComponent {
       return event.target !== eventId
     })
     this.storage.deleteEventFromAnswer(this.answerId, eventId)
-    this.activeStory.removeRef({ id: eventId, answer: this.answerId })
+    this.activeStory.removeRef('event', {
+      id: eventId,
+      answer: this.answerId,
+    })
   }
 }

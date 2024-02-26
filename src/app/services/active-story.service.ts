@@ -6,10 +6,6 @@ import { tree } from '../modules/marco/interfaces'
   providedIn: 'root',
 })
 export class ActiveStoryService {
-  /** todo -> Aqui s'ha de posar i gestionar des d'aqui les opcions
-   * de la historia activa, com el track i la vista
-   */
-
   storyId: WritableSignal<string> = signal('')
   entireTree: tree = {}
   storyName: WritableSignal<string> = signal('')
@@ -65,12 +61,10 @@ export class ActiveStoryService {
     this.storyRefs.set(builtRefs)
   }
 
-  addRef(refId: any, previousRef?: any) {
+  addRef(on: 'event' | 'requirement', refId: any, previousRef?: any) {
     if (!this.entireTree.refs) return console.error('Error while adding ref')
 
-    console.log('previousref ', previousRef)
-    console.log('new ref ', refId)
-    if (previousRef) this.removeRef(previousRef)
+    if (previousRef) this.removeRef(on, previousRef)
 
     const withNewRef = [
       ...this.storyRefs(),
@@ -80,22 +74,24 @@ export class ActiveStoryService {
         name: this.entireTree.refs[refId.id].name,
         type: this.entireTree.refs[refId.id].type,
         category: this.entireTree.refs[refId.id].category,
-        on: undefined,
+        on,
         node: getNodeIdFromAnswerId(refId.answer),
       },
     ]
 
     this.storyRefs.set(withNewRef)
-    console.log(this.storyRefs())
   }
 
-  removeRef(refToRemove: any) {
+  removeRef(on: 'event' | 'requirement', refToRemove: any) {
     const withoutRef = this.storyRefs().filter(
       (ref: any) =>
-        !(ref.id === refToRemove.id && ref.answer === refToRemove.answer)
+        !(
+          ref.id === refToRemove.id &&
+          ref.answer === refToRemove.answer &&
+          ref.on === on
+        )
     )
 
     this.storyRefs.set(withoutRef)
-    console.log(this.storyRefs())
   }
 }

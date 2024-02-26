@@ -55,6 +55,7 @@ export class RequirementsManagerComponent {
     this.storage.saveAnswerRequirements(this.answerId, this.requirements)
 
     this.activeStory.addRef(
+      'requirement',
       {
         id: element.value,
         answer: this.answerId,
@@ -84,6 +85,9 @@ export class RequirementsManagerComponent {
     })
 
     this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
-    this.activeStory.removeRef({ id: requirementId, answer: this.answerId })
+    this.activeStory.removeRef('requirement', {
+      id: requirementId,
+      answer: this.answerId,
+    })
   }
 }
