@@ -10,7 +10,7 @@
   [checked]="amount"
   (change)="changeCheckbox($event)"
 />
-<button (click)="openSelectorFor($event, id)">
+<button class="selector" (click)="openSelectorFor($event, id)">
   {{ selectedOptionName }}
 </button>
 <button (click)="removeRequirement()">D</button>
