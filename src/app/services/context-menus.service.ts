@@ -38,9 +38,33 @@ export class ContextMenusService {
     // attachView to ApplicationRef to make it part of change detection cycle
     this.appRef.attachView(this.contextMenuComponentRef.hostView)
 
-    document.body.append(
-      (<EmbeddedViewRef<any>>this.contextMenuComponentRef.hostView).rootNodes[0]
-    )
+    const rect = this.buttonUsed.getBoundingClientRect()
+
+    // position the context menu component beside the buttonUsed
+    const rootNode = (<EmbeddedViewRef<any>>(
+      this.contextMenuComponentRef.hostView
+    )).rootNodes[0]
+    rootNode.style.position = 'absolute'
+
+    // delay the calculation of the position until after the component has been rendered
+    setTimeout(() => {
+      // calculate the position
+      let top = rect.top + 5
+      let left = rect.right + 5
+
+      // adjust the position if the context menu goes off the screen
+      if (top + rootNode.offsetHeight > window.innerHeight) {
+        top = window.innerHeight - rootNode.offsetHeight - 5
+      }
+      if (left + rootNode.offsetWidth > window.innerWidth) {
+        left = rect.left - rootNode.offsetWidth - 5 // move it to the left side of the button
+      }
+
+      rootNode.style.top = `${top}px`
+      rootNode.style.left = `${left}px`
+    })
+
+    document.body.append(rootNode)
 
     return this.contextMenuComponentRef
   }
