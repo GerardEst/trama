@@ -104,9 +104,6 @@ export class PlaygroundComponent implements OnInit {
         })
       }
     }
-    this.adventure.onAlterCondition = (event: any) => {
-      console.log(this.adventure.getAllStats())
-    }
   }
 
   private async saveGame(result: any) {
