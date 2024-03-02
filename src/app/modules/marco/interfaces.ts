@@ -31,8 +31,9 @@ export interface guidebook{
 
 export interface node{
   id: string,
-  top: string
-  left: string
+  top: string,
+  left: string,
+  image?: {path:string},
   answers?: Array<node_answer>,
   conditions?: Array<node_conditions>,
   fallbackCondition?: node_fallbackCondition,

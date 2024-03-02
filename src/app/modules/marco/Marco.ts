@@ -164,6 +164,11 @@ export class Marco {
     const DOMNode = document.createElement('div')
     DOMNode.className = 'node'
     DOMNode.id = node.id
+    if (node.image) {
+      const DOMImage = document.createElement('img')
+      DOMImage.src = 'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/'+node.image?.path
+      DOMNode.appendChild(DOMImage)
+    }
     const DOMNodeText = document.createElement('div')
     DOMNodeText.className = "node__text"
     const DOMText = document.createElement('p')

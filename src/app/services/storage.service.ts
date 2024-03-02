@@ -404,6 +404,25 @@ export class StorageService {
     this.updateStoredTree(savedTree)
   }
 
+  addImageToNode(nodeId: string, imagePath: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+    node.image = {
+      path: imagePath,
+    }
+
+    this.updateStoredTree(savedTree)
+  }
+
+  getImageFromNode(nodeId: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+
+    return node.image
+  }
+
   getAnswersOfNode(nodeId: string) {
     const savedTree = this.getStoredTree()
 

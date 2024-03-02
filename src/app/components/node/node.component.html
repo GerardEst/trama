@@ -4,6 +4,16 @@
     <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
+      <label class="simulateButton options__addImage">
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          title="Delete node"
+          (change)="onAddImage($event)"
+        />
+      </label>
       <button
         title="Delete node"
         class="options__remove"
@@ -72,7 +82,9 @@
         <input disabled type="checkbox" />
       </label>
     </div>
-    }@else {
+    }@else { @if(imagePath){
+    <img width="100%" [src]="imagePath" />
+    }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">
       <polo-answer

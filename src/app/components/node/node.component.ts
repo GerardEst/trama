@@ -14,6 +14,8 @@ import { node_conditions } from 'src/app/modules/marco/interfaces'
 import { FormsModule } from '@angular/forms'
 import { link, shareOptions } from 'src/app/modules/marco/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { DatabaseService } from 'src/app/services/database.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 interface answer {
   id: string
@@ -47,17 +49,34 @@ export class NodeComponent {
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
+  imagePath?: string | undefined
 
   constructor(
     public storage: StorageService,
     public elementRef: ElementRef,
-    private board: SharedBoardService
+    private board: SharedBoardService,
+    private database: DatabaseService,
+    private activeStory: ActiveStoryService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     setTimeout(() => {
       this.textarea?.nativeElement.focus()
     }, 0)
+
+    this.imagePath = await this.getImagePath()
+  }
+
+  async getImagePath() {
+    const image = this.storage.getImageFromNode(
+      this.elementRef.nativeElement.id
+    )
+    if (!image) return
+
+    return (
+      'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+      image.path
+    )
   }
 
   updateSharedText() {
@@ -166,6 +185,31 @@ export class NodeComponent {
       answers: this.answers?.map((answer) => answer.id),
     }
     this.removeNode.emit(data)
+  }
+
+  async onAddImage(event: any) {
+    const {
+      data: { user },
+    } = await this.database.supabase.auth.getUser()
+
+    const image = event.target.files[0]
+    const imagePath = `/${user.id}/${this.activeStory.storyId()}/${
+      this.elementRef.nativeElement.id
+    }`
+
+    console.log(imagePath)
+
+    const { data, error } = await this.database.supabase.storage
+      .from('images')
+      .upload(imagePath, image, {
+        upsert: true,
+      })
+    if (error) {
+      console.log(error)
+    } else {
+      // Handle success
+      this.storage.addImageToNode(this.elementRef.nativeElement.id, imagePath)
+    }
   }
 
   willJoin(answerId: string) {
