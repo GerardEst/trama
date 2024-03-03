@@ -4,6 +4,7 @@
     <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
+      @if(type!=='distributor'){
       <label class="simulateButton options__addImage">
         <input
           type="file"
@@ -14,6 +15,7 @@
           (change)="onAddImage($event)"
         />
       </label>
+      }
       <button
         title="Delete node"
         class="options__remove"
@@ -44,7 +46,9 @@
       (onRemoveCondition)="removeCondition($event)"
       (onWillJoin)="willJoin($event)"
     ></polo-condition>
-    } @else if(type==='end'){
+    } @else if(type==='end'){ @if(imagePath){
+    <img width="100%" [src]="imagePath" />
+    }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div class="node__linkoptions">
       <div class="node__linkoptions__header">
@@ -83,7 +87,14 @@
       </label>
     </div>
     }@else { @if(imagePath){
-    <img width="100%" [src]="imagePath" />
+    <div class="node__image">
+      <img width="100%" [src]="imagePath" />
+      <button
+        title="Delete image"
+        class="node__image__remove"
+        (click)="removeNodeImage()"
+      ></button>
+    </div>
     }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">

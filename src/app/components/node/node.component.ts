@@ -85,7 +85,7 @@ export class NodeComponent {
     } = await this.database.supabase.auth.getUser()
 
     const image = event.target.files[0]
-    const imagePath = `/${user.id}/${this.activeStory.storyId()}/${
+    const imagePath = `${user.id}/${this.activeStory.storyId()}/${
       this.elementRef.nativeElement.id
     }`
 
@@ -103,6 +103,22 @@ export class NodeComponent {
       this.imagePath =
         'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
         imagePath
+    }
+  }
+
+  async removeNodeImage() {
+    const image = this.storage.getImageFromNode(
+      this.elementRef.nativeElement.id
+    )
+
+    const { data, error } = await this.database.supabase.storage
+      .from('images')
+      .remove([image.path])
+    if (error) {
+      console.log(error)
+    } else {
+      this.imagePath = undefined
+      this.storage.removeImageFromNode(this.elementRef.nativeElement.id)
     }
   }
 

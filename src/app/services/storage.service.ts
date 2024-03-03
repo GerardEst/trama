@@ -423,6 +423,15 @@ export class StorageService {
     return node.image
   }
 
+  removeImageFromNode(nodeId: string) {
+    const savedTree = this.getStoredTree()
+
+    const node = savedTree.nodes.find((node: any) => node.id === nodeId)
+    node.image = undefined
+
+    this.updateStoredTree(savedTree)
+  }
+
   getAnswersOfNode(nodeId: string) {
     const savedTree = this.getStoredTree()
 
