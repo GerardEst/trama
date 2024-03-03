@@ -41,6 +41,8 @@ export class DatabaseService {
     return stories[0]
   }
 
+  async removeImage() {}
+
   async createNewTree(story: object) {
     if (this.prod)
       console.log('%cdb call to create a new story', 'color: #9999ff')

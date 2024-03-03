@@ -9,6 +9,7 @@ import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/modules/marco/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { findAnswerInTree } from 'src/app/utils/tree-searching'
+import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({
   selector: 'polo-board',
@@ -40,7 +41,8 @@ export class BoardComponent {
 
   constructor(
     private storage: StorageService,
-    private sharedBoardService: SharedBoardService
+    private sharedBoardService: SharedBoardService,
+    private database: DatabaseService
   ) {}
 
   ngOnInit() {
@@ -253,7 +255,7 @@ export class BoardComponent {
     return newNodeInfo
   }
 
-  removeNode(event: any) {
+  async removeNode(event: any) {
     console.log('try to remove ', event)
 
     // Remove node from tree
@@ -276,6 +278,14 @@ export class BoardComponent {
       )
     }
 
+    // Remove node image from db
+    const image = this.storage.getImageFromNode(event.nodeId)
+    const { data, error } = await this.database.supabase.storage
+      .from('images')
+      .remove([image.path])
+    if (error) console.log(error)
+
+    // remove node from tree
     this.storage.removeNode(event.nodeId, event.answers)
   }
 
