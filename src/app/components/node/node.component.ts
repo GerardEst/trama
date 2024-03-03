@@ -79,6 +79,33 @@ export class NodeComponent {
     )
   }
 
+  async onAddImage(event: any) {
+    const {
+      data: { user },
+    } = await this.database.supabase.auth.getUser()
+
+    const image = event.target.files[0]
+    const imagePath = `/${user.id}/${this.activeStory.storyId()}/${
+      this.elementRef.nativeElement.id
+    }`
+
+    const { data, error } = await this.database.supabase.storage
+      .from('images')
+      .upload(imagePath, image, {
+        upsert: true,
+      })
+    if (error) {
+      console.log(error)
+    } else {
+      // Handle success
+      this.storage.addImageToNode(this.elementRef.nativeElement.id, imagePath)
+
+      this.imagePath =
+        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+        imagePath
+    }
+  }
+
   updateSharedText() {
     this.storage.updateNodeShareOptions(
       this.elementRef.nativeElement.id,
@@ -185,31 +212,6 @@ export class NodeComponent {
       answers: this.answers?.map((answer) => answer.id),
     }
     this.removeNode.emit(data)
-  }
-
-  async onAddImage(event: any) {
-    const {
-      data: { user },
-    } = await this.database.supabase.auth.getUser()
-
-    const image = event.target.files[0]
-    const imagePath = `/${user.id}/${this.activeStory.storyId()}/${
-      this.elementRef.nativeElement.id
-    }`
-
-    console.log(imagePath)
-
-    const { data, error } = await this.database.supabase.storage
-      .from('images')
-      .upload(imagePath, image, {
-        upsert: true,
-      })
-    if (error) {
-      console.log(error)
-    } else {
-      // Handle success
-      this.storage.addImageToNode(this.elementRef.nativeElement.id, imagePath)
-    }
   }
 
   willJoin(answerId: string) {
