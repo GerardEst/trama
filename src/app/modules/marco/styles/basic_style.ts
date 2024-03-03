@@ -12,6 +12,9 @@ export const basic_style = (timing:number) => `
   opacity: 0;
   white-space: pre-wrap
 }
+.adventure .node img{
+  margin-bottom: 2rem
+}
 .adventure .node.node--show{
   opacity: 1;
 }
