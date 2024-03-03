@@ -107,13 +107,20 @@ export class BoardComponent {
     node.style.zIndex = 0
   }
   mouseEnter(event: any) {
-    this.sharedBoardService.boardReference.pause()
     this.focusNode(event.target)
   }
   mouseLeave(event: any) {
-    this.sharedBoardService.boardReference.resume()
     this.blurNode(event.target)
   }
+
+  stopDragging() {
+    this.sharedBoardService.boardReference.pause()
+  }
+
+  resumeDragging() {
+    this.sharedBoardService.boardReference.resume()
+  }
+
   dragStarted(event: any) {
     this.focusNode(event.source.element.nativeElement)
   }

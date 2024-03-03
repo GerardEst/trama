@@ -28,6 +28,8 @@
       id="{{ node.id }}"
       [type]="node.type || 'content'"
       (click)="setActiveNode(node.id)"
+      (mousedown)="stopDragging()"
+      (mouseup)="resumeDragging()"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"
       (onWillJoin)="willJoin($event)"
