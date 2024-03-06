@@ -69,6 +69,7 @@ export class BoardComponent {
           return true
         },
         zoomSpeed: 0.065,
+        zoomDoubleClickSpeed: 1,
       }
     )
     if (this.tree) {
