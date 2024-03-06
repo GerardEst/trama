@@ -288,10 +288,12 @@ export class BoardComponent {
 
     // Remove node image from db
     const image = this.storage.getImageFromNode(event.nodeId)
-    const { data, error } = await this.database.supabase.storage
-      .from('images')
-      .remove([image.path])
-    if (error) console.log(error)
+    if (image) {
+      const { data, error } = await this.database.supabase.storage
+        .from('images')
+        .remove([image.path])
+      if (error) console.log(error)
+    }
 
     // remove node from tree
     this.storage.removeNode(event.nodeId, event.answers)

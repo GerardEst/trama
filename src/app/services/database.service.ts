@@ -219,4 +219,13 @@ export class DatabaseService {
 
     return true
   }
+
+  async deleteStory(storyId: string) {
+    console.log('deleting ' + storyId)
+    const { data, error } = await this.supabase
+      .from('stories')
+      .delete()
+      .eq('id', storyId)
+    if (error) return console.error(error)
+  }
 }

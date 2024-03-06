@@ -21,7 +21,7 @@ export class MenuTopComponent {
   ) {}
 
   async updateStoryName($event: any) {
-    const storyId = localStorage.getItem('polo-id')
+    const storyId = this.activeStory.storyId()
     const newName = $event.target.value.trim()
     if (!storyId || newName.length === 0) return
 
@@ -76,8 +76,11 @@ export class MenuTopComponent {
   }
 
   exportTree() {
-    //@ts-ignore
-    navigator.clipboard.writeText(localStorage.getItem('polo-tree'))
+    navigator.clipboard.writeText(this.activeStory.storyId())
+  }
+
+  deleteTree() {
+    this.db.deleteStory(this.activeStory.storyId())
   }
 
   async saveToDb(): Promise<void> {
