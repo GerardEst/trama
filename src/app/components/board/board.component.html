@@ -1,6 +1,7 @@
 <div
   #board
   class="board"
+  [class.board--grid]="grid"
   (mouseup)="resumeDragging()"
   (contextmenu)="onRightClick($event)"
   (click)="boardClick($event)"

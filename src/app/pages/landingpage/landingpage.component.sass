@@ -1,0 +1,64 @@
+h3
+  font-size: 3rem
+  margin: 0
+p
+  font-size: 1rem
+
+svg
+  position: absolute
+  max-width: 1000px
+  transform: translateX(-50%)
+  left: 50%
+  height: 400px
+
+.button--main
+  padding: 1rem
+  border-radius: 20px
+  background-color: #ffc5ba
+  color: white
+  font-weight: 900
+
+menu
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 0.6rem 50px
+  position: sticky
+  top: 0
+  background-color: #fbfbfb
+  z-index: 2
+  border-bottom: 1px solid var(--medium-gray)
+section
+  max-width: 1000px
+  margin: auto
+  position: relative
+  display: flex
+  padding: 50px
+  gap: 1rem
+  justify-content: space-between
+  & .explanation
+
+  & .extra
+    position: relative
+    &__previewInfo
+      position: absolute
+      top: -20px
+      right: 20px
+      z-index: 1
+    &__seeMore
+      position: absolute
+      bottom: 10px
+      right: 10px
+      z-index: 1
+    &__board
+      border: 5px solid var(--medium-gray)
+      transform: scale(1)
+      overflow: hidden
+      height: 400px
+      width: 500px
+      box-shadow: 0 5px 2.5rem var(--medium-gray)
+      border-radius: 20px
+    &:hover
+      .extra__board
+        transform: scale(1.02)
+        transition: transform 0.2s

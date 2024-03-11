@@ -28,6 +28,7 @@ export class BoardComponent {
   @ViewChild('board') board?: ElementRef
   @Input() tree?: any
   @Input() treeId?: string
+  @Input() grid?: boolean
 
   // context menu
   contextMenuPosition = { x: 0, y: 0 }
