@@ -1,11 +1,24 @@
 <menu>
   <!--img width="100px" src="/assets/images/landing/tap.svg" alt="Logo" /-->
-  <h3>tap</h3>
+  <p class="logo">tap</p>
   <div>
+    <a class="simulateButton" href="/blog">Blog</a>
+    <a class="simulateButton" href="/documentation">Documentation</a>
+    <a class="simulateButton" href="/pricing">Pricing</a>
+  </div>
+  <div class="login">
     <a class="button--main" href="/dashboard">Dashbard</a>
   </div>
 </menu>
-<svg class="backgroundLines" viewBox="0 0 100 100">
+<svg class="line_1" viewBox="0 0 100 100">
+  <path
+    d="M50 0 L50 25 Q50 30 55 30 L80 30 Q85 30 85 35 L85 100"
+    stroke="#efefef"
+    stroke-width="1.5"
+    fill="none"
+  />
+</svg>
+<svg class="line_2" viewBox="0 0 100 100">
   <path
     d="M50 0 L50 25 Q50 30 55 30 L80 30 Q85 30 85 35 L85 100"
     stroke="#efefef"
@@ -14,7 +27,7 @@
   />
 </svg>
 <section>
-  <div class="explanation">
+  <div class="section__intro">
     <h3>Create all kinds of flows</h3>
     <p>
       Create tests, quizzes, surveys, adventure books, interactive stories...
@@ -28,9 +41,10 @@
       Easy to use node editor, no coding required, with powerfull tools to let
       you create without limits
     </p>
-    <button>Check the documentation</button>
+    <button>Check that tools</button>
   </div>
   <div class="extra">
+    <div class="shadow"></div>
     <div class="button--main extra__previewInfo"><p>Try the editor</p></div>
     <div class="extra__board">
       <polo-board [grid]="true" [tree]="exampleTree"></polo-board>
@@ -38,13 +52,16 @@
   </div>
 </section>
 <section>
-  <div class="explanation">
-    <h3>Share</h3>
+  <div class="section__intro">
+    <h3>Play and Share</h3>
     <p>
       Share your tests on social media, embed them on your website, or use them
       as a landing page
     </p>
   </div>
+</section>
+<section class="section--nospace">
+  <div class="screen"></div>
 </section>
 <section>
   <div class="explanation">
