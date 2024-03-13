@@ -1,19 +1,22 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { FlowComponent } from 'src/app/components/flow/flow.component'
 /** Load ✨marco✨ */
 //@ts-ignore
 import { Marco } from '../../modules/marco/Marco'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
+import { node } from 'src/app/modules/marco/interfaces'
+import { PlayService } from './services/play.service'
 
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, ModalWindowComponent],
+  imports: [CommonModule, ModalWindowComponent, FlowComponent],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })
-export class PlaygroundComponent implements OnInit {
+export class PlaygroundComponent {
   gotUserInfo: boolean = false
   endGame: boolean = false
 
@@ -23,36 +26,46 @@ export class PlaygroundComponent implements OnInit {
   externalEvents: Array<any> = []
 
   storyId: string = ''
-  story: any
+  story: any = undefined
+
+  nodes: node[] = []
+  references: any = []
 
   adventure: any
+
+  flow: any = []
 
   @Input() set id(storyId: string) {
     this.storyId = storyId
   }
 
-  constructor(private db: DatabaseService) {}
+  constructor(private db: DatabaseService, private playService: PlayService) {}
 
   async ngOnInit(): Promise<void> {
     this.story = await this.db.getTree(this.storyId)
-
     console.log(this.story)
 
-    if (!this.story.askName) this.prepareGame()
+    // this.nodes = story.tree.nodes
+    // this.references = story.tree.refs
+
+    //if (!this.story.askName) this.prepareGame()
   }
 
   async prepareGame(event?: Event) {
     event?.preventDefault()
 
-    if (this.userName) this.gotUserInfo = true
-    if (this.story.tracking) {
-      this.gameId = self.crypto.randomUUID()
+    this.nodes = this.story.tree.nodes
+    this.references = this.story.tree.refs
 
-      // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
-      this.saveGame({})
-    }
+    // if (this.userName) this.gotUserInfo = true
+    // if (this.story.tracking) {
+    //   this.gameId = self.crypto.randomUUID()
 
-    this.generateAdventure()
+    //   // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
+    //   this.saveGame({})
+    // }
+
+    // this.generateAdventure()
   }
 
   private async generateAdventure() {
@@ -155,6 +168,12 @@ export class PlaygroundComponent implements OnInit {
   }
 
   setUserName(event: any) {
-    this.userName = event.target?.value
+    this.playService.player.set({
+      ...this.playService.player(),
+      name: event.target.value,
+    })
+
+    this.gotUserInfo = true
+    this.prepareGame()
   }
 }

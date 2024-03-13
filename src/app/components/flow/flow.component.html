@@ -1,0 +1,16 @@
+@if(nodes[nodePointer]){
+<div>
+  <p>{{ getTextWithFinalParameters(nodes[nodePointer].text) }}</p>
+  <div class="answers">
+    @for (answer of nodes[nodePointer].answers; track $index) {
+    <button
+      [disabled]="!playerHasAnswerRequirements(player, answer.requirements)"
+      (click)="applyEvents(answer.events)"
+      (click)="nextStep(answer.join)"
+    >
+      {{ getTextWithFinalParameters(answer.text) }}
+    </button>
+    }
+  </div>
+</div>
+}
