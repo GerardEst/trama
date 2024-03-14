@@ -43,12 +43,14 @@ export class NodeComponent {
   @Input() shareOptions: shareOptions = {
     sharedText: '',
   }
+  @Input() image?: string
+
   @Input() links: link[] = []
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
-  imagePath?: string | undefined
+  // imagePath?: string | undefined
 
   constructor(
     public storage: StorageService,
@@ -63,20 +65,20 @@ export class NodeComponent {
       this.textarea?.nativeElement.focus()
     }, 0)
 
-    this.imagePath = await this.getImagePath()
+    //this.imagePath = await this.getImagePath()
   }
 
-  async getImagePath() {
-    const image = this.storage.getImageFromNode(
-      this.elementRef.nativeElement.id
-    )
-    if (!image) return
+  // async getImagePath() {
+  //   const image = this.storage.getImageFromNode(
+  //     this.elementRef.nativeElement.id
+  //   )
+  //   if (!image) return
 
-    return (
-      'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-      image.path
-    )
-  }
+  //   return (
+  //     'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+  //     image.path
+  //   )
+  // }
 
   async onAddImage(event: any) {
     const {
@@ -99,24 +101,18 @@ export class NodeComponent {
       // Handle success
       this.storage.addImageToNode(this.elementRef.nativeElement.id, imagePath)
 
-      this.imagePath =
-        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-        imagePath
+      this.image = imagePath
     }
   }
 
   async removeNodeImage() {
-    const image = this.storage.getImageFromNode(
-      this.elementRef.nativeElement.id
-    )
-
     const { data, error } = await this.database.supabase.storage
       .from('images')
-      .remove([image.path])
+      .remove([this.image])
     if (error) {
       console.log(error)
     } else {
-      this.imagePath = undefined
+      this.image = undefined
       this.storage.removeImageFromNode(this.elementRef.nativeElement.id)
     }
   }

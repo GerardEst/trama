@@ -47,7 +47,7 @@
     <div class="shadow"></div>
     <div class="button--main extra__previewInfo"><p>Try the editor</p></div>
     <div class="extra__board">
-      <polo-board [grid]="true" [tree]="exampleTree"></polo-board>
+      <polo-board [grid]="true" [tree]="exampleTree.tree"></polo-board>
     </div>
   </div>
 </section>
@@ -61,7 +61,9 @@
   </div>
 </section>
 <section class="section--nospace">
-  <div class="screen"></div>
+  <div class="screen">
+    <polo-flow></polo-flow>
+  </div>
 </section>
 <section>
   <div class="explanation">
