@@ -1,10 +1,15 @@
-@if(nodes){
-<polo-flow [refs]="references" [nodes]="nodes"></polo-flow>
-} @if(story?.askName && !gotUserInfo){
-<polo-modal-window [locked]="true">
-  <form class="playerForm">
-    <input type="text" (change)="setUserName($event)" placeholder="Nom" />
-    <button type="submit" (click)="prepareGame($event)">Començar!</button>
-  </form>
-</polo-modal-window>
+@if (gotUserInfo) {
+  <polo-flow
+    (onEndGame)="endGame()"
+    (onDrawNode)="drawNode($event)"
+    (onSelectAnswer)="selectAnswer($event)"
+  ></polo-flow>
+}
+@if (playService.story() && playService.story().askName && !gotUserInfo) {
+  <polo-modal-window [locked]="true">
+    <form class="playerForm">
+      <input type="text" (change)="setUserName($event)" placeholder="Nom" />
+      <button type="submit" (click)="displayGame($event)">Començar!</button>
+    </form>
+  </polo-modal-window>
 }

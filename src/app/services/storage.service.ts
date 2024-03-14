@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core'
 import { findAnswerInTree } from '../utils/tree-searching'
 import { TreeErrorFinderService } from './tree-error-finder.service'
 import { ActiveStoryService } from './active-story.service'
-import { tree } from '../modules/marco/interfaces'
-import { node } from '../modules/marco/interfaces'
-import { node_conditions } from '../modules/marco/interfaces'
-import { link } from '../modules/marco/interfaces'
+import { tree } from '../interfaces'
+import { node } from '../interfaces'
+import { node_conditions } from '../interfaces'
+import { link } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',

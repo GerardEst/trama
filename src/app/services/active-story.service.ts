@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, effect, signal } from '@angular/core'
 import { getNodeIdFromAnswerId } from '../utils/tree-searching'
-import { tree } from '../modules/marco/interfaces'
+import { tree } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',

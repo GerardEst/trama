@@ -10,9 +10,9 @@ import { CommonModule } from '@angular/common'
 import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
-import { node_conditions } from 'src/app/modules/marco/interfaces'
+import { node_conditions } from 'src/app/interfaces'
 import { FormsModule } from '@angular/forms'
-import { link, shareOptions } from 'src/app/modules/marco/interfaces'
+import { link, shareOptions } from 'src/app/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
@@ -42,7 +42,6 @@ export class NodeComponent {
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
   @Input() shareOptions: shareOptions = {
     sharedText: '',
-    sharePath: false,
   }
   @Input() links: link[] = []
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()

@@ -76,7 +76,6 @@ export interface answer_requirement{
 
 export interface shareOptions{
   sharedText?: string
-  sharePath?: boolean
 }
 
 export interface link{

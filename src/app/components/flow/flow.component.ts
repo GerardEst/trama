@@ -1,13 +1,15 @@
-import { Component, Input } from '@angular/core'
+import { Component, Output, EventEmitter } from '@angular/core'
 import {
   answer_requirement,
   join,
-  node,
   answer_event,
   stat,
   condition,
   player,
-} from 'src/app/modules/marco/interfaces'
+  node,
+  node_answer,
+} from 'src/app/interfaces'
+import { PlayService } from 'src/app/pages/playground/services/play.service'
 
 @Component({
   selector: 'polo-flow',
@@ -17,64 +19,156 @@ import {
   styleUrl: './flow.component.sass',
 })
 export class FlowComponent {
-  player: any = { stats: [], conditions: [] }
-  nodePointer: number = 0
-  @Input() nodes: Array<node> = []
-  @Input() refs: Array<any> = []
+  activeNode?: node = undefined
+
+  @Output() onEndGame = new EventEmitter<void>()
+  @Output() onSelectAnswer = new EventEmitter<node_answer>()
+  @Output() onDrawNode = new EventEmitter<node>()
+
+  constructor(public playService: PlayService) {}
+
+  ngOnInit() {
+    this.activeNode = this.playService.nodes()[0]
+  }
 
   nextStep(destinyNode: Array<join>) {
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
-    const nextNode = this.nodes.find(
-      (node) => node.id === randomlyChoosedJoin.node
-    )
+    const nextNode = this.playService
+      .nodes()
+      .find((node: any) => node.id === randomlyChoosedJoin.node)
     if (!nextNode) throw new Error('Node not found')
-    this.nodePointer = this.nodes.indexOf(nextNode)
+    this.activeNode = nextNode
+
+    if (this.activeNode.type === 'end') this.onEndGame.emit()
+    if (this.activeNode.type !== 'distributor')
+      this.registerNode(this.activeNode)
+    if (this.activeNode.type === 'distributor')
+      // If nodePointer points to a distributor, we jump to the next one
+      this.nextStep(this.distributeNode(nextNode))
+  }
+
+  distributeNode(node: node) {
+    if (!node.conditions) {
+      console.error('Distributor node with no conditions')
+      return []
+    }
+    for (let distributorCondition of node.conditions) {
+      const distributorConditionType = distributorCondition.ref.split('_')[0]
+      if (distributorConditionType === 'stat') {
+        // If it's a stat, we find this stat in the player object
+        const playerStat = this.playService
+          .player()
+          .stats.find((stat: any) => stat.id === distributorCondition.ref)
+        // If the player doesn't have the stat, the amount is 0
+        const playerStatAmount = playerStat ? playerStat.amount : 0
+        // Then we check the comparator, if it's correct we can go to next node
+        if (
+          (distributorCondition.comparator === 'equalto' &&
+            playerStatAmount === parseInt(distributorCondition.value)) ||
+          (distributorCondition.comparator === 'lessthan' &&
+            playerStatAmount < parseInt(distributorCondition.value)) ||
+          (distributorCondition.comparator === 'morethan' &&
+            playerStatAmount > parseInt(distributorCondition.value))
+        ) {
+          return distributorCondition.join || []
+        }
+      }
+      if (distributorConditionType === 'condition') {
+        // If it's a condition, we find this condition in the player object
+        const playerCondition = this.playService
+          .player()
+          .conditions.find(
+            (condition: any) => condition.id === distributorCondition.ref
+          )
+        // We check the comparator
+        // If the player has the condition and the requirement is 1, we can go to next node
+        // If the player doesn't have the condition and the requirement is 0, we can go to next node too
+        if (
+          (parseInt(distributorCondition.value) === 1 && playerCondition) ||
+          (parseInt(distributorCondition.value) === 0 && !playerCondition)
+        ) {
+          return distributorCondition.join || []
+        }
+      }
+    }
+
+    // If reached this point, no condition was met, we use the fallback condition
+    if (!node.fallbackCondition) {
+      console.warn('Distributor node with no fallback condition')
+      return []
+    }
+    if (node.fallbackCondition.join) {
+      console.log('Using fallback join')
+      return node.fallbackCondition.join
+    }
+
+    console.warn('No join possible', node)
+    return []
+  }
+
+  openShareContext() {
+    console.log('waiting share context')
+    if (navigator.share) {
+      navigator
+        .share({
+          text: this.activeNode?.share?.sharedText || this.activeNode?.text,
+          url: window.location.href,
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error))
+    } else {
+      console.log('Web Share API is not supported in your browser.')
+    }
   }
 
   getTextWithFinalParameters(text: string = '') {
-    console.log(text)
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string) => {
         // if the prop is not in player, we search in stats
-        let value = this.player[p1]
+        let value = this.playService.player()[p1]
         if (!value) {
-          value = this.player.stats.find((stat: any) => stat.id === p1)?.amount
+          value = this.playService
+            .player()
+            .stats.find((stat: any) => stat.id === p1)?.amount
         }
         return value || '-'
       }
     )
-    console.log(withInlineReplacements)
     const withBlockReplacements = withInlineReplacements.replace(
       /\[([a-zA-Z0-9_]+)\]/g,
       (match: string, p1: string) => {
-        let refsWithCategory = Object.keys(this.refs).filter((key: any) => {
-          return this.refs[key].category === p1
-        })
+        let refsWithCategory = Object.keys(this.playService.refs()).filter(
+          (key: any) => {
+            return this.playService.refs()[key].category === p1
+          }
+        )
 
         let string = ' '
         for (let refWithCategory of refsWithCategory) {
-          const playerStat = this.player.stats.find(
-            (stat: any) => stat.id === refWithCategory
-          )
+          const playerStat = this.playService
+            .player()
+            .stats.find((stat: any) => stat.id === refWithCategory)
           if (playerStat) {
             string =
               string +
               '\n' +
-              this.capitalize(this.refs[playerStat.id].name) +
+              this.capitalize(this.playService.refs()[playerStat.id].name) +
               ': ' +
               playerStat.amount
           }
         }
         for (let refWithCategory of refsWithCategory) {
-          const playerCondition = this.player.conditions.find(
-            (condition: any) => condition.id === refWithCategory
-          )
+          const playerCondition = this.playService
+            .player()
+            .conditions.find(
+              (condition: any) => condition.id === refWithCategory
+            )
           if (playerCondition) {
             string =
               string +
               '\n' +
-              this.capitalize(this.refs[playerCondition.id].name)
+              this.capitalize(this.playService.refs()[playerCondition.id].name)
           }
         }
 
@@ -140,23 +234,23 @@ export class FlowComponent {
       if (event.action === 'alterStat') this.alterStat(event)
       if (event.action === 'alterCondition') this.alterCondition(event)
     })
-    console.log(this.player)
   }
 
   private alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
-    let statIndex = this.player.stats?.findIndex(
-      (element: stat) => element.id === event.target
-    )
-    let stat = this.player.stats?.[statIndex]
+    let statIndex = this.playService
+      .player()
+      .stats?.findIndex((element: stat) => element.id === event.target)
+    let stat = this.playService.player().stats?.[statIndex]
 
     if (stat) {
       stat.amount += amount
-      if (stat.amount <= 0) this.player.stats?.splice(statIndex, 1)
+      if (stat.amount <= 0)
+        this.playService.player().stats?.splice(statIndex, 1)
     } else {
       if (amount <= 0) return
-      this.player.stats?.push({
+      this.playService.player().stats?.push({
         id: event.target,
         amount,
       })
@@ -165,22 +259,40 @@ export class FlowComponent {
 
   private alterCondition(event: answer_event) {
     if (event.amount) {
-      let condition = this.player.conditions?.find(
-        (element: condition) => element.id === event.target
-      )
+      let condition = this.playService
+        .player()
+        .conditions?.find((element: condition) => element.id === event.target)
 
-      if (!condition) this.player.conditions?.push({ id: event.target })
+      if (!condition)
+        this.playService.player().conditions?.push({ id: event.target })
     } else {
-      let condition = this.player.conditions?.findIndex(
-        (condition: condition) => condition.id === event.target
-      )
+      let condition = this.playService
+        .player()
+        .conditions?.findIndex(
+          (condition: condition) => condition.id === event.target
+        )
 
-      if (condition) this.player.conditions?.splice(condition, 1)
+      if (condition) this.playService.player().conditions?.splice(condition, 1)
     }
   }
 
   getRandomJoin(answerJoins: Array<join>) {
     const randomJoinIndex = Math.floor(Math.random() * answerJoins.length)
     return answerJoins[randomJoinIndex]
+  }
+
+  normalizeLink(url: string) {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`
+    }
+    return url
+  }
+
+  registerAnswer(answer: node_answer) {
+    this.onSelectAnswer.emit(answer)
+  }
+
+  registerNode(node: node) {
+    this.onDrawNode.emit(node)
   }
 }
