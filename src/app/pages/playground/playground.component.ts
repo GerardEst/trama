@@ -1,109 +1,63 @@
-import { Component, OnInit, Input } from '@angular/core'
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
-/** Load ✨marco✨ */
-//@ts-ignore
-import { Marco } from '../../modules/marco/Marco'
+import { FlowComponent } from 'src/app/components/flow/flow.component'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
+import { node, node_answer } from 'src/app/interfaces'
+import { PlayService } from './services/play.service'
 
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, ModalWindowComponent],
+  imports: [CommonModule, ModalWindowComponent, FlowComponent],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })
-export class PlaygroundComponent implements OnInit {
-  gotUserInfo: boolean = false
-  endGame: boolean = false
+export class PlaygroundComponent {
+  @Input() storyId: string = ''
 
-  gameId?: string
   userName: string | null = null
   playerPath: Array<any> = []
   externalEvents: Array<any> = []
+  gameId?: string
+  gotUserInfo: boolean = false
 
-  storyId: string = ''
-  story: any
-
-  adventure: any
-
-  @Input() set id(storyId: string) {
-    this.storyId = storyId
-  }
-
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    public playService: PlayService
+  ) {}
 
   async ngOnInit(): Promise<void> {
-    this.story = await this.db.getTree(this.storyId)
+    const story = await this.db.getTree(this.storyId)
+    this.playService.story.set(story)
 
-    console.log(this.story)
-
-    if (!this.story.askName) this.prepareGame()
+    if (!this.playService.story().askName) this.displayGame()
   }
 
-  async prepareGame(event?: Event) {
+  async displayGame(event?: Event) {
     event?.preventDefault()
 
-    if (this.userName) this.gotUserInfo = true
-    if (this.story.tracking) {
-      this.gameId = self.crypto.randomUUID()
+    this.gotUserInfo = true
 
-      // We upload an empty game. In case the user refresh (and uses the same name) it keeps the trace that something happened... 👀
-      this.saveGame({})
-    }
-
-    this.generateAdventure()
-  }
-
-  private async generateAdventure() {
-    this.adventure = new Marco({
-      domPlace: '.adventure',
-      guidebook: this.story.tree, // ⚠ Guia on es defineixen els nodes
-      config: {
-        title: this.story.name,
-        showLockedAnswers: true,
-        cumulativeView: this.story.cumulativeView,
-        sharing: this.story.sharing,
-      },
-      player: {
-        name: this.userName || 'anonymous',
-      },
-    })
-
-    this.adventure.start()
-
-    if (this.story.tracking) {
+    if (this.playService.story().tracking) {
       this.startTabChangeDetection()
       this.startBlurWindowDetection()
     }
 
-    this.adventure.onEnd = (event: any) => {
-      if (this.story.tracking) {
-        const userFinalStats = this.adventure.getAllStats()
-        this.saveGame(userFinalStats)
-      }
-      this.endGame = true
+    if (this.playService.story().tracking) {
+      this.gameId = self.crypto.randomUUID()
+
+      // We upload an empty game
+      // In case the user refresh(and uses the same name) it keeps the trace that something happened... 👀
+      this.saveGame({})
     }
-    this.adventure.onSelectAnswer = (answer: any) => {
-      if (this.story.tracking) {
-        this.playerPath.push({
-          type: 'answer',
-          id: answer.id,
-          text: answer.text,
-          timestamp: Date.now(),
-        })
-      }
-    }
-    this.adventure.onDrawNode = (node: any) => {
-      if (this.story.tracking) {
-        this.playerPath.push({
-          type: 'node',
-          id: node.id,
-          text: node.text,
-          timestamp: Date.now(),
-        })
-      }
-    }
+  }
+
+  public setUserName(event: any) {
+    this.playService.player.set({
+      ...this.playService.player(),
+      name: event.target.value,
+    })
   }
 
   private async saveGame(result: any) {
@@ -111,7 +65,7 @@ export class PlaygroundComponent implements OnInit {
 
     const saved = await this.db.saveNewGameTo(
       this.gameId,
-      this.userName || 'anonymous',
+      this.playService.player().name || 'anonymous',
       this.storyId,
       this.playerPath,
       result,
@@ -121,6 +75,38 @@ export class PlaygroundComponent implements OnInit {
       console.log('Game saved!', saved)
     } else {
       console.error('Error saving game')
+    }
+  }
+
+  endGame() {
+    if (this.playService.story().tracking) {
+      console.log('Saving game')
+      const userFinalStats = this.playService.player()
+      this.saveGame(userFinalStats)
+    }
+  }
+
+  selectAnswer(answer: node_answer) {
+    if (this.playService.story().tracking) {
+      this.playerPath.push({
+        type: 'answer',
+        id: answer.id,
+        text: answer.text,
+        timestamp: Date.now(),
+      })
+      console.log('Selection registered', this.playerPath)
+    }
+  }
+
+  drawNode(node: node) {
+    if (this.playService.story().tracking) {
+      this.playerPath.push({
+        type: 'node',
+        id: node.id,
+        text: node.text,
+        timestamp: Date.now(),
+      })
+      console.log('Node registered', this.playerPath)
     }
   }
 
@@ -152,9 +138,5 @@ export class PlaygroundComponent implements OnInit {
       }
       this.externalEvents.push(externalEvent)
     })
-  }
-
-  setUserName(event: any) {
-    this.userName = event.target?.value
   }
 }

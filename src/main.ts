@@ -16,7 +16,7 @@ import { authGuard } from './app/guards/auth.guard'
 const appRoutes: Routes = [
   { path: '', component: LandingpageComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'playground/:id', component: PlaygroundComponent },
+  { path: 'playground/:storyId', component: PlaygroundComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,
