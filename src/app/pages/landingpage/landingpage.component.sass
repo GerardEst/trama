@@ -16,10 +16,11 @@ svg
   transform: translateX(-50%)
   left: 50%
   &.line_1
-    height: 400px
+    height: 500px
   &.line_2
-    top: 600px
-    height: 400px
+    top: 850px
+    height: 500px
+    transform: translateX(-50%) scaleY(-1)
 
 .button--main
   padding: 1rem
@@ -86,12 +87,54 @@ section
       transform: rotate(0)
       .extra__board
         transform: scale(1.02)
-.screen
-  border: 5px solid var(--medium-gray)
-  transform: scale(1)
-  overflow: hidden
-  height: 500px
-  width: 300px
-  border-radius: 20px
-  transition: transform 0.2s
+.mobile
+  position: relative
   margin: auto
+  transition: transform 0.2s
+  &:hover
+    transform: scale(1.02)
+  &__camera
+    width: 100%
+    height: 70px
+    background-color: var(--medium-gray)
+    border-radius: 20px 20px 0 0
+    position: absolute
+    top: -15px
+    left: 0
+    // &::after
+    //   content: ""
+    //   width: 20px
+    //   height: 20px
+    //   border-radius: 100%
+    //   position: absolute
+    //   left: 50%
+    //   transform: translateX(-50%)
+    //   top: 27px
+    //   background-color: var(--medium-gray)
+    //   z-index: 1
+  &__bar
+    width: 100%
+    height: 70px
+    background-color: var(--medium-gray)
+    border-radius: 0 0 20px 20px
+    position: absolute
+    bottom: -20px
+    left: 0
+  &__screen
+    border: 5px solid var(--medium-gray)
+    overflow: hidden
+    height: 500px
+    width: 300px
+    border-radius: 20px
+    background-color: white
+    isolation: isolate
+  &__buttons
+    position: absolute
+    right: -4px
+    top: 80px
+    &__main, &__volume
+      background-color: var(--medium-gray)
+      width: 4px
+      height: 40px
+      border-radius: 0 2px 2px 0
+      margin-bottom: 5px

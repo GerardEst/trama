@@ -1,44 +1,46 @@
-@if (activeNode) {
-  @if (activeNode.image) {
-    <img
-      [src]="
-        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-        activeNode.image.path
-      "
-    />
-  }
-  <div>
-    <p>
-      {{
-        getTextWithFinalParameters(
-          activeNode.share?.sharedText || activeNode.text
-        )
-      }}
-    </p>
-    <div class="answers">
-      @for (answer of activeNode.answers; track $index) {
-        <button
-          [disabled]="
-            !playerHasAnswerRequirements(
-              playService.player(),
-              answer.requirements
-            )
-          "
-          (click)="registerAnswer(answer)"
-          (click)="applyEvents(answer.events)"
-          (click)="nextStep(answer.join)"
-        >
-          {{ getTextWithFinalParameters(answer.text) }}
-        </button>
-      }
-      @for (link of activeNode.links; track $index) {
-        <a [href]="normalizeLink(link.url)" target="_blank">
-          {{ link.name }}
-        </a>
+<div class="flow">
+  @if (activeNode) {
+    @if (activeNode.image) {
+      <img
+        [src]="
+          'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+          activeNode.image.path
+        "
+      />
+    }
+    <div>
+      <p>
+        {{
+          getTextWithFinalParameters(
+            activeNode.share?.sharedText || activeNode.text
+          )
+        }}
+      </p>
+      <div class="answers">
+        @for (answer of activeNode.answers; track $index) {
+          <button
+            [disabled]="
+              !playerHasAnswerRequirements(
+                playService.player(),
+                answer.requirements
+              )
+            "
+            (click)="registerAnswer(answer)"
+            (click)="applyEvents(answer.events)"
+            (click)="nextStep(answer.join)"
+          >
+            {{ getTextWithFinalParameters(answer.text) }}
+          </button>
+        }
+        @for (link of activeNode.links; track $index) {
+          <a [href]="normalizeLink(link.url)" target="_blank">
+            {{ link.name }}
+          </a>
+        }
+      </div>
+      @if (activeNode.type === 'end') {
+        <button (click)="openShareContext()">Compartir el resultat</button>
       }
     </div>
-    @if (activeNode.type === 'end') {
-      <button (click)="openShareContext()">Compartir el resultat</button>
-    }
-  </div>
-}
+  }
+</div>
