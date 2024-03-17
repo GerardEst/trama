@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core'
+import { Component, Output, EventEmitter, effect } from '@angular/core'
 import {
   answer_requirement,
   join,
@@ -21,11 +21,23 @@ import { PlayService } from 'src/app/pages/playground/services/play.service'
 export class FlowComponent {
   activeNode?: node = undefined
 
+  /** Aixo s'ha d'actualitzar quan es toca algo del localstorage.
+   * Pero el localstorage no avisa.
+   *
+   */
+
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()
 
-  constructor(public playService: PlayService) {}
+  constructor(public playService: PlayService) {
+    effect(() => {
+      if (this.playService.reset()) {
+        console.log('reseting story')
+        this.activeNode = this.playService.nodes()[0]
+      }
+    })
+  }
 
   ngOnInit() {
     this.activeNode = this.playService.nodes()[0]

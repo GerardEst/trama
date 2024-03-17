@@ -12,20 +12,13 @@ import { node } from 'src/app/interfaces'
   providedIn: 'root',
 })
 export class PlayService {
-  /** Quan s'actualitza el localstorage, es fantastic i tal però ara necessito
-   * que s'actualitzi el flow de polo-flow.
-   * Per fer-ho, podria agafar la funcio updateStoredTree de storage.service
-   * Pero tinc la historia a play.service, així que crec que és millor fer-ho
-   * des d'aquí.
-   *
-   * Pero aixo vol dir que quan modifico algo, he de cambiar el play service en contes
-   * de fer-ho directament a storage.service
-   */
   story: WritableSignal<any> = signal(undefined)
   player: WritableSignal<any> = signal({ stats: [], conditions: [] })
 
   nodes: Signal<node[]> = computed(() => this.story()?.tree.nodes)
   refs: Signal<any> = computed(() => this.story()?.tree.refs)
+
+  reset: WritableSignal<boolean> = signal(false)
 
   constructor() {
     effect(() => {
@@ -34,5 +27,16 @@ export class PlayService {
     effect(() => {
       console.log('Story updated', this.story())
     })
+  }
+
+  resetPlay() {
+    // Get the story from localstorage
+    this.story.set({
+      ...this.story,
+      //@ts-ignore
+      tree: JSON.parse(localStorage.getItem('polo-tree')),
+    })
+    this.player.set({ stats: [], conditions: [] })
+    this.reset.set(true)
   }
 }

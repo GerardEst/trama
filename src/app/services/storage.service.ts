@@ -6,6 +6,7 @@ import { tree } from '../interfaces'
 import { node } from '../interfaces'
 import { node_conditions } from '../interfaces'
 import { link } from '../interfaces'
+import { PlayService } from '../pages/playground/services/play.service'
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,8 @@ import { link } from '../interfaces'
 export class StorageService {
   constructor(
     private errorFinder: TreeErrorFinderService,
-    private activeStory: ActiveStoryService
+    private activeStory: ActiveStoryService,
+    private playService: PlayService
   ) {}
 
   updateNodeText(nodeId: string, newText: string) {
@@ -555,6 +557,8 @@ export class StorageService {
     // Slowly moving to activeStory tree?? From now, use both. I will decide
     this.activeStory.entireTree = newTree
     this.errorFinder.checkErrors(newTree)
+
+    this.playService.resetPlay()
   }
   private createNewTree() {
     const newTree = {

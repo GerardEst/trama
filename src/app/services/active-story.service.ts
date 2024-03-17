@@ -2,6 +2,14 @@ import { Injectable, WritableSignal, effect, signal } from '@angular/core'
 import { getNodeIdFromAnswerId } from '../utils/tree-searching'
 import { tree } from '../interfaces'
 
+/** active-story, de moment, serveix per guardar les referencies
+ * perquè era una cosa que no tenia sentit guardar a storage o a la db
+ *
+ * Però més endavant pot ser que serveixi per guardar l'estat del joc completament,
+ * en comptes de fer-ho a storage, ja que tenir tota la historia a localstorage és
+ * una mica absurd i desmesurat
+ */
+
 @Injectable({
   providedIn: 'root',
 })

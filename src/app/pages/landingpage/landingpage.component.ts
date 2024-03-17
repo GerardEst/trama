@@ -72,10 +72,6 @@ export class LandingpageComponent {
 
   ngOnInit() {
     this.playService.story.set(this.exampleTree)
+    localStorage.setItem('polo-tree', JSON.stringify(this.exampleTree))
   }
-
-  // todo -> Pot ser important perque no quedi la historia aquesta guardada si s'entra desde la landing page
-  // ngOnDestroy() {
-  //   this.playService.story.reset()
-  // }
 }
