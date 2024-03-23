@@ -1,84 +1,83 @@
 <menu>
-  <!--img width="100px" src="/assets/images/landing/tap.svg" alt="Logo" /-->
   <p class="logo">tap</p>
-  <div>
-    <a class="simulateButton" href="/blog">Blog</a>
-    <a class="simulateButton" href="/documentation">Documentation</a>
-    <a class="simulateButton" href="/pricing">Pricing</a>
-  </div>
   <div class="login">
-    <a class="button--main" href="/dashboard">Dashbard</a>
+    <polo-accent-button (click)="router.navigate(['/dashboard'])" [fill]="true"
+      >Dashboard</polo-accent-button
+    >
   </div>
 </menu>
-<svg class="line_1" viewBox="0 0 100 100">
+<svg
+  _ngcontent-ng-c3819845452=""
+  viewBox="0 0 100 40"
+  class="line--rightToLeft"
+  style="top: 516px; margin-left: 4px; color: #41759a"
+>
   <path
-    d="M50 0 L50 25 Q50 30 55 30 L80 30 Q85 30 85 35 L85 100"
-    stroke="#efefef"
-    stroke-width="1.2"
+    _ngcontent-ng-c3819845452=""
+    d="M50 0 L50 15 Q50 20 45 20 L20 20 Q15 20 15 25 L15 100"
+    stroke="currentColor"
+    stroke-width="1"
+    fill="none"
+  ></path>
+</svg>
+<svg class="line--rightToLeft" viewBox="0 0 100 40">
+  <path
+    d="M50 0 L50 15 Q50 20 45 20 L20 20 Q15 20 15 25 L15 100"
+    stroke="currentColor"
+    stroke-width="1"
     fill="none"
   />
 </svg>
-<svg class="line_2" viewBox="0 0 100 100">
-  <path
-    d="M50 0 L50 25 Q50 30 55 30 L80 30 Q85 30 85 35 L85 100"
-    stroke="#efefef"
-    stroke-width="1.2"
-    fill="none"
-  />
-</svg>
-<section>
-  <div class="section__intro">
-    <h3>Create all kinds of flows</h3>
-    <p>
-      Create tests, quizzes, surveys, adventure books, interactive stories...
-    </p>
-  </div>
-</section>
-<section>
-  <div class="explanation">
-    <h3>Visual editor</h3>
-    <p>
-      Easy to use node editor, no coding required, with powerfull tools to let
-      you create without limits
-    </p>
-    <button>Check that tools</button>
+<!--div class="background">
+  <div></div>
+  <div></div>
+</div-->
+<section class="section--editor">
+  <div class="text">
+    <h1>
+      The easiest way to create
+      <span class="flowsWordDetail">flows</span>*
+    </h1>
+    <p>✨ Create the flow using nodes and connections (just like here ⏩️)</p>
+    <p>✉️ Send it to your students, friends, or whoever you need to take it</p>
+    <p>💅 Just wait. Go outside, take a walk</p>
+    <p>🧮 Check the results</p>
+    <p>We have some powerful functionalities for you. Check them!</p>
+    <p>* Tests, quizzes, text adventures, exams, questionaries...</p>
+    <div class="actions">
+      <polo-accent-button>Start creating</polo-accent-button>
+      <polo-accent-button [gray]="true">See examples</polo-accent-button>
+    </div>
   </div>
   <div class="extra">
-    <div class="shadow"></div>
-    <div class="button--main extra__previewInfo"><p>Try the editor</p></div>
+    <div class="extra__shadow"></div>
     <div class="extra__board">
-      <polo-board [grid]="true" [tree]="exampleTree.tree"></polo-board>
+      <polo-board
+        [initialZoom]="0.8"
+        [grid]="true"
+        [tree]="exampleTree.tree"
+        [focusElements]="false"
+      ></polo-board>
     </div>
   </div>
 </section>
-<section>
-  <div class="section__intro">
-    <h3>Play and Share</h3>
-    <p>
-      Share your tests on social media, embed them on your website, or use them
-      as a landing page
-    </p>
-  </div>
-</section>
-<section class="section--nospace">
+<section class="section--mobile">
   <div class="mobile">
-    <div class="mobile__camera"></div>
-    <div class="mobile__bar"></div>
+    <div class="mobile__back"></div>
     <div class="mobile__screen">
+      <div class="mobile__screen__camera"></div>
       <polo-flow></polo-flow>
     </div>
-    <div class="mobile__buttons">
-      <div class="mobile__buttons__main"></div>
-      <div class="mobile__buttons__volume"></div>
-    </div>
   </div>
-</section>
-<section>
-  <div class="explanation">
-    <h3>Statistics</h3>
+  <div class="text text--right">
+    <h1>Share and observe</h1>
+    <p>Just send a private or public link and let people take the test.</p>
     <p>
-      Track your tests, see how many people are playing, the most clicked
-      answers, etc
+      Check the results and stadistics of your flow in your personal dashboard.
     </p>
+    <!--div class="actions">
+      <polo-accent-button>Share this flow</polo-accent-button>
+    </div-->
   </div>
 </section>
+<footer></footer>

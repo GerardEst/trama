@@ -16,6 +16,10 @@
   font-weight: 700
 
 :root
+  // --accent: #F9D100
+  --accent: #2e2e2e
+  // --accent-light: #fff3b5
+  --accent-light: #949494
   /** Colors */
   --grid-color: #dddddd
   --light-gray: #fafafa
@@ -47,16 +51,16 @@ html
 body
   margin: 0
   height: 100vh
-  background-color: #fbfbfb
 
 p,h1,h2,h3,h4,h5,a,input,li,textarea,button,label
   margin: 0
   font-family: var(--primary-font-family)
   font-size: 0.8rem
   box-sizing: border-box
-span
-  font-size: 0.8rem
-  font-family: var(--primary-font-family)
+.txt-accent
+  color: var(--accent)
+  background: white
+  border-top: 8px solid white
 input
   padding: 0.3rem 0.5rem
 ul,menu
@@ -67,15 +71,17 @@ li
 h3
   margin-bottom: 0.5rem
   font-size: 0.8rem
-button, .simulateButton
-  color: var(--text)
-  border: 1px solid var(--medium-gray)
-  border-radius: 0.3rem
-  padding: 0.7rem
-  background-color: var(--light-gray)
-  cursor: pointer
-  &:hover
-    background-color: var(--medium-gray)
+// button, .simulateButton
+//   color: var(--text)
+//   border: 1px solid var(--medium-gray)
+//   border-radius: 0.3rem
+//   padding: 0.7rem
+//   background-color: var(--light-gray)
+//   cursor: pointer
+//   &:hover
+//     background-color: var(--medium-gray)
+//   &--noBorder
+//     border: none
 input
   border-radius: 0.3rem
   border: 1px solid var(--dark-gray)

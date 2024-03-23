@@ -1,45 +1,64 @@
-.logo
+:host
+  --transition: cubic-bezier(0.000, 1.000, 0.950, 0.995)
+  display: block
+  background-color: rgb(176 223 255)
+h1
   font-size: 3rem
-  font-weight: 900
-  margin: 0
-h3
-  font-size: 3rem
-  margin-bottom: 2rem
 p
-  font-size: 1rem
+  font-size: 1.3rem
   line-height: 1.8
 a
   text-decoration: none
+  color: black
+.flowsWordDetail
+  text-decoration: underline
+  text-decoration-color: var(--accent)
+  text-underline-offset: 0.2em
 svg
   position: absolute
   max-width: 1000px
   transform: translateX(-50%)
   left: 50%
-  &.line_1
-    height: 500px
-  &.line_2
-    top: 850px
-    height: 500px
-    transform: translateX(-50%) scaleY(-1)
+  width: 100%
+  color: var(--accent)
+  &.line--leftToRight
+    top: 1300px
+  &.line--rightToLeft
+    top: 520px
 
-.button--main
-  padding: 1rem
-  border-radius: 20px
-  background-color: #ffc5ba
-  color: white
-  font-weight: 900
 menu
   display: flex
   gap: 2rem
   align-items: center
-  padding: 0.6rem 50px
-  position: sticky
-  top: 0
-  background-color: #fbfbfb
+  padding: 0 20px
   z-index: 2
-  border-bottom: 1px solid var(--medium-gray)
+  .logo
+    font-size: 2.5rem
+    font-weight: 900
+    margin: 0
   .login
     margin-left: auto
+  .links
+    display: flex
+    gap: 2rem
+    margin-left: 2rem
+.text
+  display: flex
+  flex-direction: column
+  gap: 1.5rem
+  z-index: 1
+  max-width: calc(100% - 560px)
+  &--right
+    max-width: calc(100% - 250px)
+    h1
+      text-wrap: unset
+  h1
+    text-wrap: nowrap
+.actions
+  display: flex
+  gap: 1rem
+  flex-wrap: wrap
+
 section
   max-width: 1000px
   margin: auto
@@ -48,93 +67,76 @@ section
   padding: 100px 50px
   gap: 1rem
   justify-content: space-between
-  .section__intro
-    text-align: center
-    width: 100%
-  &.section--nospace
-    padding: 0 50px
+  &.section--editor
+    height: 500px
+  &.section--mobile
+    .mobile
+      transform-style: preserve-3d
+      perspective: 1000px
+      &:hover
+        .mobile__screen
+          transform: rotateY(0deg) rotateX(0deg)
+        .mobile__back
+          transform: rotateY(0deg) rotateX(0deg)
+      &__screen
+        transform: rotateY(22deg) rotateX(8deg)
+        transition: transform 0.5s var(--transition)
+        border: 5px solid var(--accent)
+        height: 500px
+        width: 280px
+        border-radius: 20px
+        background-color: white
+        isolation: isolate
+        &__camera
+          background-color: var(--accent)
+          height: 15px
+          width: 50px
+          border-radius: 10px
+          margin: auto
+          margin-top: 10px
+      &__back
+        transform: rotateY(22deg) rotateX(8deg) translateZ(-60px)
+        transition: transform 0.5s var(--transition)
+        background-color: #41759a
+        height: 500px
+        width: 280px
+        border-radius: 20px
+        position: absolute
 
   & .extra
-    position: relative
-    transform: rotate(2deg)
-    transition: transform 0.2s
-    .shadow
+    perspective: 800px
+    perspective-origin: right
+    position: absolute
+    right: 50px
+    margin-top: -20px
+    &__shadow
+      transform: rotateY(-10deg) rotateX(5deg) translateZ(-50px)
+      transition: transform 0.5s var(--transition)
       position: absolute
       top: 0
       left: 0
       width: 100%
       height: 100%
-      background-color: var(--dark-gray)
-      top: 15px
-      z-index: 0
-      left: 15px
+      background-color: #41759a
       border-radius: 20px
-    &__previewInfo
-      position: absolute
-      top: -20px
-      right: 20px
-      z-index: 1
     &__board
-      border: 5px solid var(--medium-gray)
-      transform: scale(1)
+      transform: rotateY(-10deg) rotateX(5deg)
+      transition: transform 0.5s var(--transition)
+      border: 5px solid var(--accent)
       overflow: hidden
       height: 400px
-      width: 500px
+      width: 550px
       border-radius: 20px
-      transition: transform 0.2s
       background-color: white
     &:hover
-      transform: rotate(0)
+      .extra__shadow
+        transform: rotate(0)
       .extra__board
-        transform: scale(1.02)
-.mobile
-  position: relative
-  margin: auto
-  transition: transform 0.2s
-  &:hover
-    transform: scale(1.02)
-  &__camera
-    width: 100%
-    height: 70px
-    background-color: var(--medium-gray)
-    border-radius: 20px 20px 0 0
-    position: absolute
-    top: -15px
-    left: 0
-    // &::after
-    //   content: ""
-    //   width: 20px
-    //   height: 20px
-    //   border-radius: 100%
-    //   position: absolute
-    //   left: 50%
-    //   transform: translateX(-50%)
-    //   top: 27px
-    //   background-color: var(--medium-gray)
-    //   z-index: 1
-  &__bar
-    width: 100%
-    height: 70px
-    background-color: var(--medium-gray)
-    border-radius: 0 0 20px 20px
-    position: absolute
-    bottom: -20px
-    left: 0
-  &__screen
-    border: 5px solid var(--medium-gray)
-    overflow: hidden
-    height: 500px
-    width: 300px
-    border-radius: 20px
-    background-color: white
-    isolation: isolate
-  &__buttons
-    position: absolute
-    right: -4px
-    top: 80px
-    &__main, &__volume
-      background-color: var(--medium-gray)
-      width: 4px
-      height: 40px
-      border-radius: 0 2px 2px 0
-      margin-bottom: 5px
+        transform: rotate(0)
+footer
+  background-color: #444444
+  color: white
+  padding: 50px
+  display: flex
+  justify-content: space-between
+  align-items: center

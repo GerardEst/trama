@@ -61,10 +61,11 @@ export class NodeComponent {
   ) {}
 
   async ngOnInit() {
-    setTimeout(() => {
-      this.textarea?.nativeElement.focus()
-    }, 0)
-
+    if (this.board.focusElements) {
+      setTimeout(() => {
+        this.textarea?.nativeElement.focus()
+      }, 0)
+    }
     //this.imagePath = await this.getImagePath()
   }
 

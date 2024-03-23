@@ -35,10 +35,12 @@ export class AnswerComponent {
   ) {}
 
   ngOnInit() {
-    setTimeout(() => {
-      const textarea = this.textarea
-      if (textarea) textarea.nativeElement.focus()
-    }, 0)
+    if (this.sharedBoard.focusElements) {
+      setTimeout(() => {
+        const textarea = this.textarea
+        if (textarea) textarea.nativeElement.focus()
+      }, 0)
+    }
   }
   openOptions() {
     if (!this.optionsContainer) return

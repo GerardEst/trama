@@ -29,6 +29,8 @@ export class BoardComponent {
   @Input() tree?: any
   @Input() treeId?: string
   @Input() grid?: boolean
+  @Input() initialZoom?: number
+  @Input() focusElements: boolean = true
 
   // context menu
   contextMenuPosition = { x: 0, y: 0 }
@@ -47,6 +49,9 @@ export class BoardComponent {
   ) {}
 
   ngOnInit() {
+    // Sets if the board elements should focus on create or not
+    this.sharedBoardService.focusElements = this.focusElements
+
     this.sharedBoardService.updatedJoins.subscribe((joinsData: any) => {
       const answer = findAnswerInTree(joinsData.answerId, this.tree)
       answer[0].join = joinsData.joins
@@ -69,6 +74,7 @@ export class BoardComponent {
           // don't let panzoom handle this event:
           return true
         },
+        initialZoom: this.initialZoom || 1,
         zoomSpeed: 0.065,
         zoomDoubleClickSpeed: 1,
       }

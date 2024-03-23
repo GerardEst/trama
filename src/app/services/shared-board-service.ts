@@ -5,6 +5,7 @@ import { Subject } from 'rxjs'
 export class SharedBoardService {
   public updatedJoins = new Subject()
   boardReference: any
+  focusElements: boolean = true
 
   constructor() {}
 
