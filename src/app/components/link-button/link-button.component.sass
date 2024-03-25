@@ -1,16 +1,18 @@
-button
+:host
+  // Nose perque pero si no no cuadra
+  display: flex
+a
   background: white
   border: 4px solid var(--accent)
   padding: 9px
   text-align: center
   cursor: pointer
+  text-decoration: none
+  color: var(--accent)
   &:hover
     background-color: var(--accent-text)
+    color: white
   &.fill
     background-color: var(--accent)
     color: white
     font-weight: 900
-  &.gray
-    border-color: var(--medium-gray)
-    &:hover
-      background-color: var(--light-gray)

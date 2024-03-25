@@ -2,14 +2,55 @@
   --transition: cubic-bezier(0.000, 1.000, 0.950, 0.995)
   display: block
   background-color: rgb(176 223 255)
+  background: linear-gradient(331deg, rgba(176,223,255,1) 0%, rgba(214,238,255,1) 100%)
+  background-image: url('/assets/images/landing/background.webp'), linear-gradient(270deg, rgb(243, 246, 251) 0%, rgb(223, 233, 255) 100.87%)
+  background-size: cover
+  --accent: rgb(48, 55, 99)
+  --accent-text: rgb(69, 80, 143)
+menu
+  display: flex
+  gap: 2rem
+  align-items: center
+  padding: 10px 20px
+  z-index: 2
+  .logo
+    font-size: 2.5rem
+    font-weight: 900
+    margin: 0
+    color: var(--accent)
+  .login
+    margin-left: auto
+  .links
+    display: flex
+    gap: 2rem
+    margin-left: 2rem
+
 h1
   font-size: 3rem
-p
-  font-size: 1.3rem
-  line-height: 1.8
-a
-  text-decoration: none
-  color: black
+  color: var(--accent)
+p, a
+  font-size: 1.1rem
+  line-height: 1.5
+  color: var(--accent-text)
+.withPointer:after
+  content: '👉🏾'
+  color: var(--accent)
+  margin-left: 0.5rem
+  font-size: 2rem
+  line-height: 0
+  font-weight: 900
+  display: inline-block
+  transform: translateY(3px) translateX(-0.2rem)
+  animation: pointing 5s infinite alternate
+@keyframes pointing
+  0%
+    transform: translateY(3px) translateX(-0.2rem)
+  90%
+    transform: translateY(3px) translateX(-0.2rem)
+  95%
+    transform: translateY(3px) translateX(0.1rem)
+  100%
+    transform: translateY(3px) translateX(-0.2rem)
 .flowsWordDetail
   text-decoration: underline
   text-decoration-color: var(--accent)
@@ -21,27 +62,8 @@ svg
   left: 50%
   width: 100%
   color: var(--accent)
-  &.line--leftToRight
-    top: 1300px
-  &.line--rightToLeft
-    top: 520px
+  top: 438px
 
-menu
-  display: flex
-  gap: 2rem
-  align-items: center
-  padding: 0 20px
-  z-index: 2
-  .logo
-    font-size: 2.5rem
-    font-weight: 900
-    margin: 0
-  .login
-    margin-left: auto
-  .links
-    display: flex
-    gap: 2rem
-    margin-left: 2rem
 .text
   display: flex
   flex-direction: column
@@ -50,15 +72,13 @@ menu
   max-width: calc(100% - 560px)
   &--right
     max-width: calc(100% - 250px)
-    h1
-      text-wrap: unset
-  h1
-    text-wrap: nowrap
 .actions
   display: flex
   gap: 1rem
   flex-wrap: wrap
-
+.tapDetails
+  background: linear-gradient(rgb(28, 28, 74) 7.29%, rgb(109, 111, 184) 31.77%, rgb(244, 247, 255) 100%)
+  max-width: unset
 section
   max-width: 1000px
   margin: auto
@@ -68,18 +88,18 @@ section
   gap: 1rem
   justify-content: space-between
   &.section--editor
-    height: 500px
+    //height: 500px
   &.section--mobile
     .mobile
       transform-style: preserve-3d
       perspective: 1000px
       &:hover
         .mobile__screen
-          transform: rotateY(0deg) rotateX(0deg)
+          transform: rotateY(15deg) rotateX(3deg) translate(-15px, -7px)
         .mobile__back
-          transform: rotateY(0deg) rotateX(0deg)
+          transform: rotateY(15deg) rotateX(3deg) translate(-18px, 0px)
       &__screen
-        transform: rotateY(22deg) rotateX(8deg)
+        transform: rotateY(22deg) rotateX(8deg) translate(-6px, 0px) scale(0.95)
         transition: transform 0.5s var(--transition)
         border: 5px solid var(--accent)
         height: 500px
@@ -95,14 +115,15 @@ section
           margin: auto
           margin-top: 10px
       &__back
-        transform: rotateY(22deg) rotateX(8deg) translateZ(-60px)
+        transform: rotateY(22deg) rotateX(8deg) translate(-6px, 0px) scale(0.95) translateZ(-60px)
         transition: transform 0.5s var(--transition)
         background-color: #41759a
         height: 500px
         width: 280px
         border-radius: 20px
         position: absolute
-
+  &.section--content
+    flex-direction: column
   & .extra
     perspective: 800px
     perspective-origin: right
@@ -110,7 +131,7 @@ section
     right: 50px
     margin-top: -20px
     &__shadow
-      transform: rotateY(-10deg) rotateX(5deg) translateZ(-50px)
+      transform: rotateY(-10deg) rotateX(5deg) translateZ(-50px) translateY(-17px) scale(0.95)
       transition: transform 0.5s var(--transition)
       position: absolute
       top: 0
@@ -120,7 +141,7 @@ section
       background-color: #41759a
       border-radius: 20px
     &__board
-      transform: rotateY(-10deg) rotateX(5deg)
+      transform: rotateY(-10deg) rotateX(5deg) scale(0.95) translateY(-17px)
       transition: transform 0.5s var(--transition)
       border: 5px solid var(--accent)
       overflow: hidden
@@ -130,9 +151,9 @@ section
       background-color: white
     &:hover
       .extra__shadow
-        transform: rotate(0)
+        transform: rotate(0) scale(1) translate(0)
       .extra__board
-        transform: rotate(0)
+        transform: rotate(0) scale(1) translate(0)
 footer
   background-color: #444444
   color: white
