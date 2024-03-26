@@ -4,7 +4,7 @@ import { RequirementComponent } from '../requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 interface requirement {
   id?: string
   name?: string
@@ -15,7 +15,12 @@ interface requirement {
 @Component({
   selector: 'polo-requirements-manager',
   standalone: true,
-  imports: [CommonModule, RequirementComponent, DropdownButtonsComponent],
+  imports: [
+    CommonModule,
+    RequirementComponent,
+    DropdownButtonsComponent,
+    BasicButtonComponent,
+  ],
   templateUrl: './requirements-manager.component.html',
   styleUrls: ['./requirements-manager.component.sass'],
 })

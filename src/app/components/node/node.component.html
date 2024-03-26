@@ -11,16 +11,15 @@
             id="image"
             name="image"
             accept="image/*"
-            title="Delete node"
             (change)="onAddImage($event)"
           />
         </label>
       }
-      <button
+      <polo-basic-button
         title="Delete node"
-        class="options__remove"
+        icon="/assets/icons/trash.svg"
         (click)="onRemoveNode()"
-      ></button>
+      ></polo-basic-button>
     </div>
   </header>
   <main>
@@ -60,7 +59,9 @@
       <div class="node__linkoptions">
         <div class="node__linkoptions__header">
           <p class="node__linkoptions__header__title">External links</p>
-          <button (click)="addExternalLink()">add</button>
+          <polo-basic-button (click)="addExternalLink()" text="add"
+            >add</polo-basic-button
+          >
         </div>
         <label class="node__linkoptions__link">
           @for (link of links | keyvalue; track $index) {
@@ -103,11 +104,12 @@
               image
             "
           />
-          <button
+          <polo-basic-button
+            text="Delete image"
             title="Delete image"
             class="node__image__remove"
             (click)="removeNodeImage()"
-          ></button>
+          ></polo-basic-button>
         </div>
       }
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
@@ -126,9 +128,15 @@
   <footer>
     <p>{{ elementRef.nativeElement.id }}</p>
     @if (type === 'distributor') {
-      <button (click)="addCondition()">Add condition</button>
+      <polo-basic-button
+        (click)="addCondition()"
+        text="Add condition"
+      ></polo-basic-button>
     } @else if (type === 'content') {
-      <button (click)="addAnswer()">Add answer</button>
+      <polo-basic-button
+        (click)="addAnswer()"
+        text="Add answer"
+      ></polo-basic-button>
     }
   </footer>
 </div>

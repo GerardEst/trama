@@ -8,11 +8,11 @@ import {
   ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
+import { BasicButtonComponent } from '../../basic-button/basic-button.component'
 @Component({
   selector: 'polo-selector',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './selector.component.html',
   styleUrls: ['./selector.component.sass'],
   host: {

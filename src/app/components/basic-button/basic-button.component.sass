@@ -1,0 +1,23 @@
+button
+  background: var(--medium-gray)
+  border: none
+  padding: 8px 10px
+  text-align: center
+  cursor: pointer
+  border-radius: 6px
+  img
+    width: 15px
+  &.sizeS
+    padding: 6px
+    img
+      width: 12px
+    &.onlyIcon
+      width: 20px
+  &:hover
+    background-color: var(--dark-gray)
+  &.onlyIcon
+    padding: unset
+    aspect-ratio: 1
+    display: grid
+    width: 30px
+    place-items: center

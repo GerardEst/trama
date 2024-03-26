@@ -1,26 +1,35 @@
 <div [class.fixedMenu]="fixedMenu" class="menu">
   <nav>
     <header>
-      @if(fixedMenu){
-      <button class="closeMenu" (click)="toggleMenu()"></button>
+      @if (fixedMenu) {
+        <polo-basic-button
+          icon="/assets/icons/chevron-left.svg"
+          (click)="toggleMenu()"
+        ></polo-basic-button>
       }
     </header>
-    <button (click)="logout()">Logout</button>
+    <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
     <polo-separator [space]="true"></polo-separator>
     <h2>Your stories</h2>
     <ul>
       @for (story of stories; track $index) {
-      <li
-        (click)="loadTree(story.id)"
-        [class.active]="story.id === activeStoryId"
-      >
-        {{ story.id === activeStoryId ? activeStory.storyName() : story.name }}
-      </li>
+        <li
+          (click)="loadTree(story.id)"
+          [class.active]="story.id === activeStoryId"
+        >
+          {{
+            story.id === activeStoryId ? activeStory.storyName() : story.name
+          }}
+        </li>
       }
       <li (click)="createNewTree()">+ Create a story</li>
     </ul>
   </nav>
-  @if(!fixedMenu){
-  <button class="openMenu" (click)="toggleMenu()"></button>
+  @if (!fixedMenu) {
+    <polo-basic-button
+      class="openMenu"
+      icon="/assets/icons/hamburger-menu.svg"
+      (click)="toggleMenu()"
+    ></polo-basic-button>
   }
 </div>

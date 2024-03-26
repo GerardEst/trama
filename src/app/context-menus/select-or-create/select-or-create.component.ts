@@ -7,11 +7,11 @@ import {
   ElementRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
+import { BasicButtonComponent } from 'src/app/components/basic-button/basic-button.component'
 @Component({
   selector: 'polo-select-or-create',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
 })

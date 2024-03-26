@@ -4,11 +4,17 @@ import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons
 import { StorageService } from 'src/app/services/storage.service'
 import { EventComponent } from '../event/event.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-events-manager',
   standalone: true,
-  imports: [CommonModule, DropdownButtonsComponent, EventComponent],
+  imports: [
+    CommonModule,
+    DropdownButtonsComponent,
+    EventComponent,
+    BasicButtonComponent,
+  ],
   templateUrl: './events-manager.component.html',
   styleUrls: ['./events-manager.component.sass'],
 })

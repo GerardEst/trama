@@ -9,11 +9,12 @@ import {
 } from '@angular/core'
 import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-condition',
   standalone: true,
-  imports: [],
+  imports: [BasicButtonComponent],
   templateUrl: './condition.component.html',
   styleUrl: './condition.component.sass',
 })

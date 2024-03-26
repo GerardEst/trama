@@ -3,55 +3,66 @@
     (change)="updateStoryName($event)"
     value="{{ activeStory.storyName() }}"
   />
-  <button
+  <polo-basic-button
     (click)="saveToDb()"
-    [class.boardActions__save]="!savingTree"
-    [class.boardActions__waiting]="savingTree"
+    [icon]="savingTree ? '/assets/icons/waiting.svg' : '/assets/icons/save.svg'"
+    text="Save"
   >
-    Save
-  </button>
-  <button (click)="toggleOptions()">Options</button>
-  @if(options){
-  <div class="dropdown">
-    <label>
-      <span>Enable tracking</span>
-      <input
-        (change)="toggleTracking()"
-        type="checkbox"
-        [checked]="activeStory.storyConfiguration().tracking"
-      />
-    </label>
-    <label>
-      <span>Ask for name</span>
-      <input
-        (change)="toggleAskName()"
-        type="checkbox"
-        [checked]="activeStory.storyConfiguration().askName"
-      />
-    </label>
-    <label>
-      <span>Enable sharing</span>
-      <input
-        (change)="toggleSharing()"
-        type="checkbox"
-        [checked]="activeStory.storyConfiguration().sharing"
-      />
-    </label>
-    <label>
-      <span>Cumulative view</span>
-      <input
-        (change)="toggleCumulativeView()"
-        type="checkbox"
-        [checked]="activeStory.storyConfiguration().cumulativeView"
-      />
-    </label>
-    <button (click)="openStadistics()">See stadistics</button>
-    <button (click)="exportTree()" class="boardActions__export">
-      Export tree
-    </button>
-    <button (click)="deleteTree()" class="boardActions__delete">
-      Delete tree
-    </button>
-  </div>
+  </polo-basic-button>
+  <polo-basic-button
+    (click)="toggleOptions()"
+    text="Options"
+  ></polo-basic-button>
+  @if (options) {
+    <div class="dropdown">
+      <label>
+        <span>Enable tracking</span>
+        <input
+          (change)="toggleTracking()"
+          type="checkbox"
+          [checked]="activeStory.storyConfiguration().tracking"
+        />
+      </label>
+      <label>
+        <span>Ask for name</span>
+        <input
+          (change)="toggleAskName()"
+          type="checkbox"
+          [checked]="activeStory.storyConfiguration().askName"
+        />
+      </label>
+      <label>
+        <span>Enable sharing</span>
+        <input
+          (change)="toggleSharing()"
+          type="checkbox"
+          [checked]="activeStory.storyConfiguration().sharing"
+        />
+      </label>
+      <label>
+        <span>Cumulative view</span>
+        <input
+          (change)="toggleCumulativeView()"
+          type="checkbox"
+          [checked]="activeStory.storyConfiguration().cumulativeView"
+        />
+      </label>
+      <polo-basic-button
+        (click)="openStadistics()"
+        text="See stadistics"
+      ></polo-basic-button>
+      <polo-basic-button
+        (click)="exportTree()"
+        icon="/assets/icons/export.svg"
+        text="Export tree"
+      >
+      </polo-basic-button>
+      <polo-basic-button
+        (click)="deleteTree()"
+        icon="/assets/icons/trash.svg"
+        text="Delete tree"
+      >
+      </polo-basic-button>
+    </div>
   }
 </div>

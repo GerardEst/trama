@@ -16,6 +16,7 @@ import { link, shareOptions } from 'src/app/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 
 interface answer {
   id: string
@@ -29,7 +30,13 @@ interface position {
 @Component({
   selector: 'polo-node',
   standalone: true,
-  imports: [CommonModule, AnswerComponent, ConditionComponent, FormsModule],
+  imports: [
+    CommonModule,
+    AnswerComponent,
+    ConditionComponent,
+    FormsModule,
+    BasicButtonComponent,
+  ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
 })

@@ -4,16 +4,24 @@ import { DatabaseService } from 'src/app/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
-
+import { BasicButtonComponent } from 'src/app/components/basic-button/basic-button.component'
 @Component({
   selector: 'polo-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SeparatorComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SeparatorComponent,
+    BasicButtonComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],
 })
 export class LoginComponent {
-  constructor(private db: DatabaseService, private router: Router) {}
+  constructor(
+    private db: DatabaseService,
+    private router: Router
+  ) {}
 
   register = false
 

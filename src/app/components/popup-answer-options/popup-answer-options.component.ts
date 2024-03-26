@@ -12,7 +12,7 @@ import { EventsManagerComponent } from '../events-manager/events-manager.compone
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
 import { JoinsManagerComponent } from '../joins-manager/joins-manager.component'
 import { StorageService } from 'src/app/services/storage.service'
-
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 @Component({
   selector: 'polo-popup-answer-options',
   standalone: true,
@@ -22,6 +22,7 @@ import { StorageService } from 'src/app/services/storage.service'
     EventsManagerComponent,
     RequirementsManagerComponent,
     JoinsManagerComponent,
+    BasicButtonComponent,
   ],
   templateUrl: './popup-answer-options.component.html',
   styleUrls: ['./popup-answer-options.component.sass'],
@@ -32,7 +33,10 @@ export class PopupAnswerOptionsComponent implements OnInit {
   @Input() answerId: string = ''
   joins: Array<any> = []
 
-  constructor(public elementRef: ElementRef, private storage: StorageService) {}
+  constructor(
+    public elementRef: ElementRef,
+    private storage: StorageService
+  ) {}
 
   ngOnInit(): void {
     if (this.answerId) {

@@ -1,0 +1,11 @@
+<button
+  title="{{ title }}"
+  [class.onlyIcon]="!text"
+  [class.sizeS]="size === 's'"
+  [disabled]="disabled"
+>
+  @if (icon) {
+    <img [src]="icon" />
+  }
+  {{ text }}
+</button>

@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
+import { BasicButtonComponent } from '../../basic-button/basic-button.component'
 @Component({
   selector: 'polo-dropdown-buttons',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './dropdown-buttons.component.html',
   styleUrls: ['./dropdown-buttons.component.sass'],
 })

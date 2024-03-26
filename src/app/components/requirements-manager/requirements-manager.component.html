@@ -1,6 +1,12 @@
 <polo-dropdown-buttons label="Create new requirement">
-  <button (click)="createRequirement('stat')">Stat</button>
-  <button (click)="createRequirement('condition')">Condition</button>
+  <polo-basic-button
+    (click)="createRequirement('stat')"
+    text="Stat"
+  ></polo-basic-button>
+  <polo-basic-button
+    (click)="createRequirement('condition')"
+    text="Condition"
+  ></polo-basic-button>
 </polo-dropdown-buttons>
 <div class="requirements__list">
   <polo-requirement

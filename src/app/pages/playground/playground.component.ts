@@ -5,11 +5,16 @@ import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 import { node, node_answer } from 'src/app/interfaces'
 import { PlayService } from './services/play.service'
-
+import { BasicButtonComponent } from 'src/app/components/basic-button/basic-button.component'
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, ModalWindowComponent, FlowComponent],
+  imports: [
+    CommonModule,
+    ModalWindowComponent,
+    FlowComponent,
+    BasicButtonComponent,
+  ],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })

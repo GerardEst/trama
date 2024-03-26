@@ -1,81 +1,91 @@
 <div class="loginBox">
   <div class="box">
-    @if(register){
-    <form>
-      <h3>Create an account</h3>
-      <label>
-        <p>User name</p>
-        <input
-          id="register_username"
-          type="text"
-          [formControl]="register_username"
-        />
-      </label>
-      <label>
-        <p>Your email</p>
-        <input id="register_email" type="text" [formControl]="register_email" />
-      </label>
-      <label>
-        <p>New password</p>
-        <input
-          id="register_password"
-          type="password"
-          [formControl]="register_password"
-        />
-      </label>
+    @if (register) {
+      <form>
+        <h3>Create an account</h3>
+        <label>
+          <p>User name</p>
+          <input
+            id="register_username"
+            type="text"
+            [formControl]="register_username"
+          />
+        </label>
+        <label>
+          <p>Your email</p>
+          <input
+            id="register_email"
+            type="text"
+            [formControl]="register_email"
+          />
+        </label>
+        <label>
+          <p>New password</p>
+          <input
+            id="register_password"
+            type="password"
+            [formControl]="register_password"
+          />
+        </label>
 
-      @if(checkMail){
-      <div class="checkMailboxMessage">
-        <p>Please check your mailbox to confirm your email</p>
-      </div>
-      }
+        @if (checkMail) {
+          <div class="checkMailboxMessage">
+            <p>Please check your mailbox to confirm your email</p>
+          </div>
+        }
 
-      <button
-        (click)="
-          signUpNewUser(
-            $event,
-            register_email,
-            register_password,
-            register_username
-          )
-        "
-        [disabled]="false"
-      >
-        Register
-      </button>
-      <polo-separator></polo-separator>
-      <div class="change">
-        <p>Already have an account?</p>
-        <button (click)="goToLogin()">Login</button>
-      </div>
-    </form>
-    }@else {
-    <form>
-      <h3>Log in</h3>
-      <label>
-        <p>Your email</p>
-        <input id="login_email" type="text" [formControl]="login_email" />
-      </label>
-      <label>
-        <p>Your password</p>
-        <input
-          id="login_password"
-          type="password"
-          [formControl]="login_password"
-        />
-      </label>
-      <button
-        (click)="signInWithEmail($event, login_email, login_password)"
-        [disabled]="false"
-      >
-        Login
-      </button>
-      <polo-separator></polo-separator>
-      <div class="change">
-        <p>Don't have an account?</p>
-        <button (click)="goToRegister()">Register</button>
-      </div>
-    </form>
+        <polo-basic-button
+          (click)="
+            signUpNewUser(
+              $event,
+              register_email,
+              register_password,
+              register_username
+            )
+          "
+          [disabled]="false"
+          text="Register"
+        >
+        </polo-basic-button>
+        <polo-separator></polo-separator>
+        <div class="change">
+          <p>Already have an account?</p>
+          <polo-basic-button
+            (click)="goToLogin()"
+            text="Login"
+          ></polo-basic-button>
+        </div>
+      </form>
+    } @else {
+      <form>
+        <h3>Log in</h3>
+        <label>
+          <p>Your email</p>
+          <input id="login_email" type="text" [formControl]="login_email" />
+        </label>
+        <label>
+          <p>Your password</p>
+          <input
+            id="login_password"
+            type="password"
+            [formControl]="login_password"
+          />
+        </label>
+        <polo-basic-button
+          (click)="signInWithEmail($event, login_email, login_password)"
+          [disabled]="false"
+          text="Login"
+        >
+        </polo-basic-button>
+        <polo-separator></polo-separator>
+        <div class="change">
+          <p>Don't have an account?</p>
+          <polo-basic-button
+            (click)="goToRegister()"
+            text="Register"
+          ></polo-basic-button>
+        </div>
+      </form>
     }
   </div>
 </div>

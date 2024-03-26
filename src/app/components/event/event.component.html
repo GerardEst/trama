@@ -1,11 +1,17 @@
 <div class="menu">
   <p>Modify {{ getTypeForEvent() }}</p>
-  <button (click)="removeEvent()"></button>
+  <polo-basic-button
+    size="s"
+    icon="/assets/icons/trash.svg"
+    (click)="removeEvent()"
+  ></polo-basic-button>
 </div>
 <div class="data">
-  <button class="selector" (click)="openSelectorFor($event, id)">
-    {{ infoData.value }}
-  </button>
+  <polo-basic-button
+    class="selector"
+    text="{{ infoData.value }}"
+    (click)="openSelectorFor($event, id)"
+  ></polo-basic-button>
   <input
     *ngIf="getTypeForEvent() === 'stat'"
     type="number"

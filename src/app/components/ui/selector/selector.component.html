@@ -1,4 +1,7 @@
-<button (click)="toggleOptions()">{{ selectedOption?.name }}</button>
+<polo-basic-button
+  (click)="toggleOptions()"
+  text="{{ selectedOption?.name }}"
+></polo-basic-button>
 <div
   class="dropdown"
   *ngIf="optionsOpened"
@@ -12,9 +15,14 @@
     placeholder="Search"
   />
   <p class="message">{{ message }}</p>
-  <button (click)="createOption(newOption)" *ngIf="newOption" class="newOption">
-    Create {{ newOption }}
-  </button>
+  @if (newOption) {
+    <polo-basic-button
+      (click)="createOption(newOption)"
+      text="Create {{ newOption }}"
+    >
+    </polo-basic-button>
+  }
+
   <div class="dropdown__options">
     <li (click)="selectOption(option)" *ngFor="let option of searchedOptions">
       {{ option.name }}

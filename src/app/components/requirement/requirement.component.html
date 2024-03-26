@@ -10,7 +10,9 @@
   [checked]="amount"
   (change)="changeCheckbox($event)"
 />
-<button class="selector" (click)="openSelectorFor($event, id)">
-  {{ selectedOptionName }}
-</button>
-<button (click)="removeRequirement()">D</button>
+<polo-basic-button
+  class="selector"
+  (click)="openSelectorFor($event, id)"
+  text="{{ selectedOptionName }}"
+></polo-basic-button>
+<polo-basic-button (click)="removeRequirement()" text="D"></polo-basic-button>

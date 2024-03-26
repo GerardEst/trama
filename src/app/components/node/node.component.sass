@@ -25,10 +25,6 @@
       display: none
       height: 2rem
       aspect-ratio: 1
-      background-repeat: no-repeat
-      background-size: 1.1rem
-      background-position: center
-      background-image: url("/assets/icons/trash.svg")
     &:hover .node__image__remove
       display: block
   &__answers
@@ -82,7 +78,7 @@
     align-items: center
     p
       color: var(--light-text)
-    button
+    polo-basic-button
       margin-left: auto
 
 :host.highlighted .node
@@ -104,14 +100,12 @@ header
     cursor: pointer
     margin: 0 0.2rem
 
-  &__remove, &__addImage
+  &__addImage
     height: 2rem
     aspect-ratio: 1
     background-repeat: no-repeat
     background-size: 1.1rem
     background-position: center
-  &__remove
-    background-image: url("/assets/icons/trash.svg")
   &__addImage
     cursor: pointer
     background-image: url("/assets/icons/camera.svg")

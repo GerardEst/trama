@@ -1,6 +1,12 @@
 <polo-dropdown-buttons label="Create new event">
-  <button (click)="createEvent('alterStat')">Modify a stat</button>
-  <button (click)="createEvent('alterCondition')">Modify a condition</button>
+  <polo-basic-button
+    (click)="createEvent('alterStat')"
+    text="Modify a stat"
+  ></polo-basic-button>
+  <polo-basic-button
+    (click)="createEvent('alterCondition')"
+    text="Modify a condition"
+  ></polo-basic-button>
 </polo-dropdown-buttons>
 <div class="events__list">
   <polo-event
