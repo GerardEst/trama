@@ -7,7 +7,7 @@ import { BoardFlowsComponent } from '../board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
-import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { SharedBoardService } from 'src/app/components/board/board-utils.service'
 import { findAnswerInTree } from 'src/app/utils/tree-searching'
 import { DatabaseService } from 'src/app/services/database.service'
 

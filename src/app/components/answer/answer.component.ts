@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
-import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { SharedBoardService } from 'src/app/components/board/board-utils.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({

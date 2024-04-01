@@ -40,20 +40,20 @@ export class DashboardComponent {
   async loadTree(treeId: string) {
     const story = await this.db.getTree(treeId)
 
-    this.tree = story.tree
-    this.id = treeId
-
     localStorage.setItem('polo-id', treeId)
 
     // Set active-story state
-    this.activeStory.storyId.set(this.id)
-    this.activeStory.entireTree = this.tree
+    this.activeStory.storyId.set(treeId)
+    this.activeStory.entireTree = story.tree
     this.activeStory.storyName.set(story.name)
-    this.activeStory.initTreeRefs(this.tree)
+    this.activeStory.initTreeRefs(story.tree)
 
     this.updateConfiguration()
 
-    this.board?.centerToNode(this.tree.nodes[0])
+    // Update the board
+    this.tree = story.tree
+    this.id = treeId
+    this.board?.centerToNode(story.tree.nodes[0])
   }
 
   initBoard() {

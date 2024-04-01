@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { SharedBoardService } from 'src/app/components/board/board-utils.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-joins-manager',
