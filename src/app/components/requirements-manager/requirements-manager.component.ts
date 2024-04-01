@@ -4,7 +4,7 @@ import { RequirementComponent } from '../requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 interface requirement {
   id?: string
   name?: string

@@ -2,9 +2,9 @@ import { Component } from '@angular/core'
 import { BoardComponent } from 'src/app/components/board/board.component'
 import { FlowComponent } from 'src/app/components/flow/flow.component'
 import { PlayService } from '../playground/services/play.service'
-import { AccentButtonComponent } from 'src/app/components/accent-button/accent-button.component'
+import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
 import { Router } from '@angular/router'
-import { LinkButtonComponent } from 'src/app/components/link-button/link-button.component'
+import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component'
 
 @Component({
   selector: 'polo-landingpage',

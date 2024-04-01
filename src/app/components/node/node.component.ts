@@ -16,7 +16,7 @@ import { link, shareOptions } from 'src/app/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
 interface answer {
   id: string

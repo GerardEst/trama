@@ -10,7 +10,7 @@ import { SelectorComponent } from '../ui/selector/selector.component'
 import { StorageService } from 'src/app/services/storage.service'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-requirement',
   standalone: true,

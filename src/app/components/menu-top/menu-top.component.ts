@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-menu-top',
   standalone: true,

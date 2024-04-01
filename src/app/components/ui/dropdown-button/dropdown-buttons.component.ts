@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { BasicButtonComponent } from '../../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-dropdown-buttons',
   standalone: true,

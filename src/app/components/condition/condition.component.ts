@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-condition',

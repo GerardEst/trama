@@ -12,7 +12,7 @@ import { EventsManagerComponent } from '../events-manager/events-manager.compone
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
 import { JoinsManagerComponent } from '../joins-manager/joins-manager.component'
 import { StorageService } from 'src/app/services/storage.service'
-import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-popup-answer-options',
   standalone: true,
