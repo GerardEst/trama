@@ -21,11 +21,6 @@ import { PlayService } from 'src/app/pages/playground/services/play.service'
 export class FlowComponent {
   activeNode?: node = undefined
 
-  /** Aixo s'ha d'actualitzar quan es toca algo del localstorage.
-   * Pero el localstorage no avisa.
-   *
-   */
-
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()

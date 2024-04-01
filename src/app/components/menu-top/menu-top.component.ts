@@ -26,7 +26,6 @@ export class MenuTopComponent {
     if (!storyId || newName.length === 0) return
 
     this.activeStory.storyName.set(newName)
-    localStorage.setItem('polo-name', newName)
 
     await this.db.saveNewStoryName(storyId, $event.target.value)
   }

@@ -8,10 +8,6 @@ export class StorageService {
   constructor(private playService: PlayService) {}
 
   private updateStoredTree(newTree: any) {
-    // localStorage.setItem('polo-tree', JSON.stringify(newTree))
-    // Slowly moving to activeStory tree?? From now, use both. I will decide
-    // this.activeStory.entireTree = newTree
-
     this.playService.resetPlay()
   }
   private createNewTree() {

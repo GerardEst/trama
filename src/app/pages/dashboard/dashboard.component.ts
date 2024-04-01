@@ -44,8 +44,6 @@ export class DashboardComponent {
     this.id = treeId
 
     localStorage.setItem('polo-id', treeId)
-    localStorage.setItem('polo-tree', JSON.stringify(this.tree))
-    localStorage.setItem('polo-name', story.name)
 
     // Set active-story state
     this.activeStory.storyId.set(this.id)
@@ -59,38 +57,12 @@ export class DashboardComponent {
   }
 
   initBoard() {
-    const currentSession = sessionStorage.getItem('polo-session')
-    const localTree = localStorage.getItem('polo-tree')
     const localTreeId = localStorage.getItem('polo-id')
-    const localTreeName = localStorage.getItem('polo-name')
 
-    if (currentSession && localTreeId && localTree) {
-      console.log('Tree loaded from local')
-
-      // When there is local data, and we are in the same session, we use local data
-      this.id = localTreeId
-      this.tree = JSON.parse(localTree)
-
-      // Set active-story state
-      this.activeStory.storyId.set(this.id)
-      this.activeStory.entireTree = this.tree
-      this.activeStory.storyName.set(localTreeName || '')
-      this.activeStory.initTreeRefs(this.tree)
-
-      // this.board?.centerToNode(this.tree.nodes[0])
-    } else if (!currentSession && localTreeId) {
-      console.warn('Tree loaded from db')
-
-      // When there is local data, but we are not in the same session, we use the db data to load the local tree
+    if (localTreeId) {
       this.loadTree(localTreeId)
-      sessionStorage.setItem('polo-session', 'true')
     } else {
-      console.warn('Tree not loaded')
-
-      this.tree = undefined
-      this.id = undefined
-
-      sessionStorage.setItem('polo-session', 'true')
+      // TODO -> Create a new tree
     }
 
     this.updateConfiguration()

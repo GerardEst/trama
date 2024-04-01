@@ -60,6 +60,5 @@ export class LandingpageComponent {
 
   ngOnInit() {
     this.playService.story.set(this.exampleTree)
-    localStorage.setItem('polo-tree', JSON.stringify(this.exampleTree))
   }
 }

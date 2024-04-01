@@ -33,8 +33,7 @@ export class PlayService {
     // Get the story from localstorage
     this.story.set({
       ...this.story,
-      //@ts-ignore
-      tree: JSON.parse(localStorage.getItem('polo-tree')),
+      tree: {},
     })
     this.player.set({ stats: [], conditions: [] })
     this.reset.set(true)
