@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
 import { configuration } from './database-interfaces'
 import { ActiveStoryService } from './active-story.service'
+
 @Injectable({
   providedIn: 'root',
 })

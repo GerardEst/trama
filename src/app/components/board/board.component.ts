@@ -303,7 +303,7 @@ export class BoardComponent {
     }
 
     // remove node from tree
-    this.activeStory.removeNode(event.nodeId, event.answers)
+    this.activeStory.removeNode(event.nodeId)
   }
 
   getIDForNewNode() {
