@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
-import { StorageService } from 'src/app/services/storage.service'
-import { EventComponent } from '../event/event.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { EventComponent } from '../event/event.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
 @Component({
@@ -22,14 +21,11 @@ export class EventsManagerComponent {
   events: Array<any> = []
   @Input() answerId: string = ''
 
-  constructor(
-    private storage: StorageService,
-    private activeStory: ActiveStoryService
-  ) {}
+  constructor(private activeStory: ActiveStoryService) {}
 
   ngOnInit() {
     if (this.answerId) {
-      this.events = this.storage.getEventsOfAnswer(this.answerId) || []
+      this.events = this.activeStory.getEventsOfAnswer(this.answerId) || []
     }
   }
 
@@ -46,7 +42,7 @@ export class EventsManagerComponent {
     )
     if (event) event.target = element.value
 
-    this.storage.saveAnswerEvents(this.answerId, this.events)
+    this.activeStory.saveAnswerEvents(this.answerId, this.events)
     this.activeStory.addRef(
       'event',
       {
@@ -67,14 +63,14 @@ export class EventsManagerComponent {
     const event = this.events.find((event) => event.target === eventId)
     if (event) event.amount = amount
 
-    this.storage.saveAnswerEvents(this.answerId, this.events)
+    this.activeStory.saveAnswerEvents(this.answerId, this.events)
   }
 
   deleteEvent(eventId: string) {
     this.events = this.events.filter((event: any) => {
       return event.target !== eventId
     })
-    this.storage.deleteEventFromAnswer(this.answerId, eventId)
+    this.activeStory.deleteEventFromAnswer(this.answerId, eventId)
     this.activeStory.removeRef('event', {
       id: eventId,
       answer: this.answerId,

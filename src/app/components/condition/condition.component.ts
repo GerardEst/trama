@@ -7,7 +7,6 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
-import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
@@ -30,9 +29,8 @@ export class ConditionComponent {
   optionsContainer?: ViewContainerRef
 
   constructor(
-    private storage: StorageService,
-    public elementRef: ElementRef,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    public elementRef: ElementRef
   ) {}
 
   saveCondition(event: any) {
@@ -46,7 +44,7 @@ export class ConditionComponent {
       this.value = event.target.value
     }
 
-    this.storage.updateConditionValues(id, {
+    this.activeStory.updateConditionValues(id, {
       id,
       ref: this.selectedRef,
       comparator: this.comparator,

@@ -8,7 +8,7 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
-import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
@@ -37,13 +37,13 @@ export class EventComponent implements OnInit {
   @ViewChild('selector') selector?: any
 
   constructor(
-    private storage: StorageService,
+    private activeStory: ActiveStoryService,
     private contextMenu: ContextMenusService
   ) {}
 
   ngOnInit() {
     this.infoData = {
-      value: this.id ? this.storage.getRefName(this.id) : '',
+      value: this.id ? this.activeStory.getRefName(this.id) : '',
       amount: this.amount,
     }
   }
@@ -67,7 +67,7 @@ export class EventComponent implements OnInit {
         contextMenu.setInput('selectedOption', event.value)
 
         // update the info message
-        this.infoData.value = this.storage.getRefName(event.value)
+        this.infoData.value = this.activeStory.getRefName(event.value)
 
         this.onChangeElement.emit(event)
 
@@ -80,9 +80,9 @@ export class EventComponent implements OnInit {
         console.warn('No action defined for this event')
         return
       }
-      const createdRef = this.storage.createNewRef(event, type)
+      const createdRef = this.activeStory.createNewRef(event, type)
       if (createdRef) {
-        this.infoData.value = this.storage.getRefName(createdRef.id)
+        this.infoData.value = this.activeStory.getRefName(createdRef.id)
         this.onChangeElement.emit({
           value: createdRef.id,
           previousValue: contextMenu.instance.selectedOption,
@@ -121,7 +121,7 @@ export class EventComponent implements OnInit {
     const type = this.getTypeForEvent()
 
     if (!type) return []
-    return this.storage.getRefsFormatted(type)
+    return this.activeStory.getRefsFormatted(type)
   }
 
   getTypeForEvent() {

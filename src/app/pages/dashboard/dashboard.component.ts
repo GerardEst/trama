@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
 import { DatabaseService } from '../../services/database.service'
-import { TreeErrorFinderService } from 'src/app/services/tree-error-finder.service'
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
@@ -31,13 +30,11 @@ export class DashboardComponent {
 
   constructor(
     private db: DatabaseService,
-    private errorFider: TreeErrorFinderService,
     private activeStory: ActiveStoryService
   ) {}
 
   ngOnInit(): void {
     this.initBoard()
-    this.errorFider.checkErrors(this.tree)
   }
 
   async loadTree(treeId: string) {
@@ -59,8 +56,6 @@ export class DashboardComponent {
     this.updateConfiguration()
 
     this.board?.centerToNode(this.tree.nodes[0])
-
-    this.errorFider.checkErrors(this.tree)
   }
 
   initBoard() {

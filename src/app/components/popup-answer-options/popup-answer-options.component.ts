@@ -11,7 +11,7 @@ import { DividerComponent } from '../ui/divider/divider.component'
 import { EventsManagerComponent } from '../events-manager/events-manager.component'
 import { RequirementsManagerComponent } from '../requirements-manager/requirements-manager.component'
 import { JoinsManagerComponent } from '../joins-manager/joins-manager.component'
-import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
   selector: 'polo-popup-answer-options',
@@ -35,12 +35,12 @@ export class PopupAnswerOptionsComponent implements OnInit {
 
   constructor(
     public elementRef: ElementRef,
-    private storage: StorageService
+    private activeStory: ActiveStoryService
   ) {}
 
   ngOnInit(): void {
     if (this.answerId) {
-      this.joins = this.storage.getJoinsOfAnswer(this.answerId) || []
+      this.joins = this.activeStory.getJoinsOfAnswer(this.answerId) || []
     }
   }
 

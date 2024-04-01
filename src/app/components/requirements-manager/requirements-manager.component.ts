@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RequirementComponent } from '../requirement/requirement.component'
 import { DropdownButtonsComponent } from '../ui/dropdown-button/dropdown-buttons.component'
-import { StorageService } from 'src/app/services/storage.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 interface requirement {
@@ -28,15 +27,12 @@ export class RequirementsManagerComponent {
   requirements: Array<requirement> = []
   @Input() answerId: string = ''
 
-  constructor(
-    private storage: StorageService,
-    private activeStory: ActiveStoryService
-  ) {}
+  constructor(private activeStory: ActiveStoryService) {}
 
   ngOnInit() {
     if (this.answerId) {
       this.requirements =
-        this.storage.getRequirementsOfAnswer(this.answerId) || []
+        this.activeStory.getRequirementsOfAnswer(this.answerId) || []
     }
   }
 
@@ -57,7 +53,7 @@ export class RequirementsManagerComponent {
     if (requirement) requirement.id = element.value
 
     // I have to send the answer id and the new requirement id
-    this.storage.saveAnswerRequirements(this.answerId, this.requirements)
+    this.activeStory.saveAnswerRequirements(this.answerId, this.requirements)
 
     this.activeStory.addRef(
       'requirement',
@@ -81,7 +77,7 @@ export class RequirementsManagerComponent {
     )
     if (requirement) requirement.amount = amount
 
-    this.storage.saveAnswerRequirements(this.answerId, this.requirements)
+    this.activeStory.saveAnswerRequirements(this.answerId, this.requirements)
   }
 
   deleteRequirement(requirementId: string) {
@@ -89,7 +85,7 @@ export class RequirementsManagerComponent {
       return requirement.id !== requirementId
     })
 
-    this.storage.deleteRequirementFromAnswer(this.answerId, requirementId)
+    this.activeStory.deleteRequirementFromAnswer(this.answerId, requirementId)
     this.activeStory.removeRef('requirement', {
       id: requirementId,
       answer: this.answerId,

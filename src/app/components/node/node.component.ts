@@ -7,7 +7,6 @@ import {
   ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { StorageService } from 'src/app/services/storage.service'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { node_conditions } from 'src/app/interfaces'
@@ -60,7 +59,6 @@ export class NodeComponent {
   // imagePath?: string | undefined
 
   constructor(
-    public storage: StorageService,
     public elementRef: ElementRef,
     private board: SharedBoardService,
     private database: DatabaseService,
@@ -77,7 +75,7 @@ export class NodeComponent {
   }
 
   // async getImagePath() {
-  //   const image = this.storage.getImageFromNode(
+  //   const image = this.activeStory.getImageFromNode(
   //     this.elementRef.nativeElement.id
   //   )
   //   if (!image) return
@@ -107,7 +105,10 @@ export class NodeComponent {
       console.log(error)
     } else {
       // Handle success
-      this.storage.addImageToNode(this.elementRef.nativeElement.id, imagePath)
+      this.activeStory.addImageToNode(
+        this.elementRef.nativeElement.id,
+        imagePath
+      )
 
       this.image = imagePath
     }
@@ -121,12 +122,12 @@ export class NodeComponent {
       console.log(error)
     } else {
       this.image = undefined
-      this.storage.removeImageFromNode(this.elementRef.nativeElement.id)
+      this.activeStory.removeImageFromNode(this.elementRef.nativeElement.id)
     }
   }
 
   updateSharedText() {
-    this.storage.updateNodeShareOptions(
+    this.activeStory.updateNodeShareOptions(
       this.elementRef.nativeElement.id,
       this.shareOptions
     )
@@ -141,7 +142,7 @@ export class NodeComponent {
 
     this.answers.push({ id: newId, text: '' })
 
-    this.storage.createNodeAnswer(this.elementRef.nativeElement.id, newId)
+    this.activeStory.createNodeAnswer(this.elementRef.nativeElement.id, newId)
   }
 
   addCondition() {
@@ -159,7 +160,10 @@ export class NodeComponent {
       value: '0',
     })
 
-    this.storage.createNodeCondition(this.elementRef.nativeElement.id, newId)
+    this.activeStory.createNodeCondition(
+      this.elementRef.nativeElement.id,
+      newId
+    )
   }
 
   addExternalLink() {
@@ -167,16 +171,19 @@ export class NodeComponent {
   }
 
   updateLinks() {
-    this.storage.updateNodeLinks(this.elementRef.nativeElement.id, this.links)
+    this.activeStory.updateNodeLinks(
+      this.elementRef.nativeElement.id,
+      this.links
+    )
   }
 
   removeAnswer(id: string) {
-    this.storage.removeAnswer(this.elementRef.nativeElement.id, id)
+    this.activeStory.removeAnswer(this.elementRef.nativeElement.id, id)
     this.answers = this.answers?.filter((answer: any) => answer.id !== id)
   }
 
   removeCondition(id: string) {
-    this.storage.removeCondition(this.elementRef.nativeElement.id, id)
+    this.activeStory.removeCondition(this.elementRef.nativeElement.id, id)
     this.conditions = this.conditions?.filter(
       (condition: any) => condition.id !== id
     )
@@ -186,13 +193,13 @@ export class NodeComponent {
     const id = this.elementRef.nativeElement.id
     const newText = e.target.value
 
-    this.storage.updateNodeText(id, newText)
+    this.activeStory.updateNodeText(id, newText)
   }
 
   getIDForNewAnswer() {
     let answer_ids = []
 
-    const answers = this.storage.getAnswersOfNode(
+    const answers = this.activeStory.getAnswersOfNode(
       this.elementRef.nativeElement.id
     )
 
@@ -208,7 +215,7 @@ export class NodeComponent {
   getIDForNewCondition() {
     let condition_ids = []
 
-    const conditions = this.storage.getConditionsOfNode(
+    const conditions = this.activeStory.getConditionsOfNode(
       this.elementRef.nativeElement.id
     )
 

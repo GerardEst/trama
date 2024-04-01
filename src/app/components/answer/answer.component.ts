@@ -8,9 +8,9 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { StorageService } from 'src/app/services/storage.service'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-answer',
@@ -29,7 +29,7 @@ export class AnswerComponent {
   @ViewChild('textarea') textarea?: ElementRef
 
   constructor(
-    private storage: StorageService,
+    private activeStory: ActiveStoryService,
     public elementRef: ElementRef,
     private sharedBoard: SharedBoardService
   ) {}
@@ -74,7 +74,7 @@ export class AnswerComponent {
     const id = this.elementRef.nativeElement.id
     const text = e.target.value
 
-    this.storage.updateAnswerText(id, text)
+    this.activeStory.updateAnswerText(id, text)
   }
 
   willJoin() {

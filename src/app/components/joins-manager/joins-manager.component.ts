@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 @Component({
@@ -16,14 +16,14 @@ export class JoinsManagerComponent {
   @Output() onRemoveJoin: EventEmitter<any> = new EventEmitter()
 
   constructor(
-    private storage: StorageService,
+    private activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService
   ) {}
 
   unlinkJoin(joinId: string) {
     if (!this.answerId) return
 
-    const updatedJoins = this.storage.removeJoinFromAnswer(
+    const updatedJoins = this.activeStory.removeJoinFromAnswer(
       this.answerId,
       joinId
     )

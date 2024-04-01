@@ -1,7 +1,5 @@
 import { Component, effect } from '@angular/core'
-import { TreeErrorNotifierComponent } from 'src/app/components/tree-error-notifier/tree-error-notifier.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { StorageService } from 'src/app/services/storage.service'
 import { SelectorComponent } from '../ui/selector/selector.component'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
@@ -9,12 +7,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [
-    TreeErrorNotifierComponent,
-    SelectorComponent,
-    SelectOrCreateComponent,
-    BasicButtonComponent,
-  ],
+  imports: [SelectorComponent, SelectOrCreateComponent, BasicButtonComponent],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.sass',
 })
@@ -24,7 +17,6 @@ export class MenuTreeLegendComponent {
 
   constructor(
     public activeStory: ActiveStoryService,
-    private storage: StorageService,
     public contextMenu: ContextMenusService
   ) {
     effect(() => {
@@ -51,7 +43,7 @@ export class MenuTreeLegendComponent {
       this.arrayOfRefs = Object.values(countById)
 
       // Check and list unused refs
-      const allRefs = this.storage.getRefs()
+      const allRefs = this.activeStory.getRefs()
       for (let refId in allRefs) {
         if (!this.arrayOfRefs.find((ref: any) => ref.id === refId)) {
           this.unusedRefs.push({
@@ -91,15 +83,15 @@ export class MenuTreeLegendComponent {
   }
 
   updateRefName(event: any, refId: string) {
-    this.storage.updateRefName(refId, event.target.value)
+    this.activeStory.updateRefName(refId, event.target.value)
   }
 
   getCategories() {
-    return this.storage.getCategories()
+    return this.activeStory.getCategories()
   }
 
   deleteRef(refId: string) {
-    this.storage.deleteRef(refId)
+    this.activeStory.deleteRef(refId)
     this.unusedRefs = this.unusedRefs.filter((ref: any) => ref.id !== refId)
   }
 
@@ -119,7 +111,7 @@ export class MenuTreeLegendComponent {
 
     contextMenu.instance.onSelectOption.subscribe(
       (event: { value: string; previousValue: string }) => {
-        this.storage.setCategoryToRef(refId, event.value)
+        this.activeStory.setCategoryToRef(refId, event.value)
         this.arrayOfRefs.find((ref: any) => ref.id === refId).category =
           event.value
 
@@ -127,8 +119,8 @@ export class MenuTreeLegendComponent {
       }
     )
     contextMenu.instance.onNewOption.subscribe((event: string) => {
-      this.storage.createCategory(event)
-      this.storage.setCategoryToRef(refId, event)
+      this.activeStory.createCategory(event)
+      this.activeStory.setCategoryToRef(refId, event)
       this.arrayOfRefs.find((ref: any) => ref.id === refId).category = event
 
       this.contextMenu.close()

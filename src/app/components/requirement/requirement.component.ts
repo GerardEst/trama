@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../ui/selector/selector.component'
-import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
@@ -35,12 +35,14 @@ export class RequirementComponent {
   selectedOptionName?: string
 
   constructor(
-    private storage: StorageService,
+    private activeStory: ActiveStoryService,
     private contextMenu: ContextMenusService
   ) {}
 
   ngOnInit() {
-    this.selectedOptionName = this.id ? this.storage.getRefName(this.id) : ''
+    this.selectedOptionName = this.id
+      ? this.activeStory.getRefName(this.id)
+      : ''
   }
 
   openSelectorFor(clickEvent: Event, refId: string | undefined) {
@@ -56,7 +58,7 @@ export class RequirementComponent {
     contextMenu.instance.onSelectOption.subscribe(
       (event: { value: string; previousValue: string }) => {
         contextMenu.setInput('selectedOption', event.value)
-        this.selectedOptionName = this.storage.getRefName(event.value)
+        this.selectedOptionName = this.activeStory.getRefName(event.value)
         this.onChangeElement.emit(event)
 
         this.contextMenu.close()
@@ -68,9 +70,9 @@ export class RequirementComponent {
         return
       }
 
-      const createdRef = this.storage.createNewRef(event, this.type)
+      const createdRef = this.activeStory.createNewRef(event, this.type)
       if (createdRef) {
-        this.selectedOptionName = this.storage.getRefName(createdRef.id)
+        this.selectedOptionName = this.activeStory.getRefName(createdRef.id)
         this.onChangeElement.emit({
           value: createdRef.id,
           previousValue: contextMenu.instance.selectedOption,
@@ -113,7 +115,7 @@ export class RequirementComponent {
      * Ames no s'actualitza al moment
      */
 
-    const refs = this.storage.getRefsFormatted(this.type)
+    const refs = this.activeStory.getRefsFormatted(this.type)
 
     // if (!this.alreadyUsedRequirements) return refs
 

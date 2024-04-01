@@ -4,7 +4,7 @@ import { NodeComponent } from '../node/node.component'
 import createPanZoom from 'panzoom'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from '../board-flows/board-flows.component'
-import { StorageService } from 'src/app/services/storage.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
 import { SharedBoardService } from 'src/app/services/shared-board-service'
@@ -43,7 +43,7 @@ export class BoardComponent {
   joins: Array<any> = []
 
   constructor(
-    private storage: StorageService,
+    private activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService,
     private database: DatabaseService
   ) {}
@@ -138,7 +138,7 @@ export class BoardComponent {
 
     event.source.getRootElement().style.transform = `translate3d(${finalTransform.x}px, ${finalTransform.y}px, 0}px)`
 
-    this.storage.updateNodePosition(
+    this.activeStory.updateNodePosition(
       event.source.getRootElement().id,
       finalTransform.x,
       finalTransform.y
@@ -205,7 +205,7 @@ export class BoardComponent {
 
     this.waitingForJoin = false
 
-    this.storage.updateOptionJoin(this.willJoinId, nodeId)
+    this.activeStory.updateOptionJoin(this.willJoinId, nodeId)
   }
 
   dragCheck() {}
@@ -246,7 +246,7 @@ export class BoardComponent {
         destiny: newNodeInfo.id + '_join',
       })
 
-      this.storage.updateOptionJoin(this.willJoinId, newNodeInfo.id)
+      this.activeStory.updateOptionJoin(this.willJoinId, newNodeInfo.id)
 
       this.waitingForJoin = false
     }
@@ -265,7 +265,7 @@ export class BoardComponent {
       left: position.left,
     }
     this.tree.nodes.push(newNodeInfo)
-    this.storage.createNode(newNodeInfo)
+    this.activeStory.createNode(newNodeInfo)
 
     return newNodeInfo
   }
@@ -294,7 +294,7 @@ export class BoardComponent {
     }
 
     // Remove node image from db
-    const image = this.storage.getImageFromNode(event.nodeId)
+    const image = this.activeStory.getImageFromNode(event.nodeId)
     if (image) {
       const { data, error } = await this.database.supabase.storage
         .from('images')
@@ -303,7 +303,7 @@ export class BoardComponent {
     }
 
     // remove node from tree
-    this.storage.removeNode(event.nodeId, event.answers)
+    this.activeStory.removeNode(event.nodeId, event.answers)
   }
 
   getIDForNewNode() {
