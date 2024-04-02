@@ -1,4 +1,11 @@
-import { Injectable, WritableSignal, effect, signal } from '@angular/core'
+import {
+  Injectable,
+  Signal,
+  WritableSignal,
+  computed,
+  effect,
+  signal,
+} from '@angular/core'
 import {
   getNodeIdFromAnswerId,
   findNodeInTree,
@@ -12,8 +19,14 @@ import { tree, link, node_answer, node_conditions, node } from '../interfaces'
 })
 export class ActiveStoryService {
   storyId: WritableSignal<string> = signal('')
-  // TODO -> Assign the correct type -> tree
-  entireTree: any = {}
+  entireTree: WritableSignal<any> = signal({})
+
+  // When tree changes, we need to update the refs
+  connections: Signal<any> = computed(() => {
+    return this.calculateConnections(this.entireTree().nodes)
+  })
+  // Then, with this joins we can calculate the positions of the lines
+
   storyName: WritableSignal<string> = signal('')
   storyRefs: any = signal([])
   storyConfiguration: any = signal({})
@@ -70,7 +83,7 @@ export class ActiveStoryService {
     this.storyRefs.set(builtRefs)
   }
   addRef(on: 'event' | 'requirement', refId: any, previousRef?: any) {
-    if (!this.entireTree.refs) return console.error('Error while adding ref')
+    if (!this.entireTree().refs) return console.error('Error while adding ref')
 
     if (previousRef) this.removeRef(on, previousRef)
 
@@ -79,9 +92,9 @@ export class ActiveStoryService {
       {
         id: refId.id,
         answer: refId.answer,
-        name: this.entireTree.refs[refId.id].name,
-        type: this.entireTree.refs[refId.id].type,
-        category: this.entireTree.refs[refId.id].category,
+        name: this.entireTree().refs[refId.id].name,
+        type: this.entireTree().refs[refId.id].type,
+        category: this.entireTree().refs[refId.id].category,
         on,
         node: getNodeIdFromAnswerId(refId.answer),
       },
@@ -102,15 +115,15 @@ export class ActiveStoryService {
     this.storyRefs.set(withoutRef)
   }
   createNewRef(name: string, type: 'stat' | 'condition') {
-    if (!this.entireTree.refs) {
-      this.entireTree.refs = {}
+    if (!this.entireTree().refs) {
+      this.entireTree().refs = {}
     }
 
     // Check if the name already exists in the refs
-    const duplicatedRef = Object.keys(this.entireTree.refs).find(
+    const duplicatedRef = Object.keys(this.entireTree().refs).find(
       (ref: any) =>
-        this.entireTree.refs[ref].name === name &&
-        this.entireTree.refs[ref].type === type
+        this.entireTree().refs[ref].name === name &&
+        this.entireTree().refs[ref].type === type
     )
 
     if (duplicatedRef) {
@@ -118,22 +131,23 @@ export class ActiveStoryService {
       return
     }
 
-    const newId = type + '_' + generateIDForNewRequirement(this.entireTree.refs)
-    this.entireTree.refs[newId] = { name, type }
+    const newId =
+      type + '_' + generateIDForNewRequirement(this.entireTree().refs)
+    this.entireTree().refs[newId] = { name, type }
 
     return { id: newId, name: name, type }
   }
   updateRefName(refId: string, newName: string) {
-    this.entireTree.refs[refId].name = newName
+    this.entireTree().refs[refId].name = newName
   }
   deleteRef(refId: string) {
-    delete this.entireTree.refs[refId]
+    delete this.entireTree().refs[refId]
   }
   getRefs() {
-    return this.entireTree.refs
+    return this.entireTree().refs
   }
   getRefsFormatted(type: 'stat' | 'condition') {
-    const refs = this.entireTree.refs
+    const refs = this.entireTree().refs
 
     if (!refs) return []
     return Object.keys(refs)
@@ -143,7 +157,7 @@ export class ActiveStoryService {
       })
   }
   getRefName(refId: string) {
-    const refs = this.entireTree.refs
+    const refs = this.entireTree().refs
     return refs[refId].name
   }
 
@@ -161,16 +175,16 @@ export class ActiveStoryService {
         id: `condition_${id.split('_')[1]}_fallback`,
       }
     }
-    this.entireTree.nodes?.push(newNode)
+    this.entireTree().nodes?.push(newNode)
   }
   removeNode(nodeId: string) {
     // Remove node from tree
-    this.entireTree.nodes = this.entireTree.nodes?.filter(
+    this.entireTree().nodes = this.entireTree().nodes?.filter(
       (node: any) => node.id !== nodeId
     )
 
     // Remove node from joins that have it
-    for (let node of this.entireTree.nodes) {
+    for (let node of this.entireTree().nodes) {
       if (node.answers) {
         for (let answer of node.answers) {
           if (answer.join) {
@@ -197,39 +211,39 @@ export class ActiveStoryService {
     }
   }
   updateNodeText(nodeId: string, newText: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.text = newText
   }
   updateNodeLinks(nodeId: string, links: link[]) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.links = links
   }
   updateNodePosition(nodeId: string, left: number, top: number) {
-    let node = findNodeInTree(nodeId, this.entireTree)
+    let node = findNodeInTree(nodeId, this.entireTree())
     node.left = left
     node.top = top
   }
   updateNodeShareOptions(nodeId: string, sharingOptions: any) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     node.share = sharingOptions
   }
   addImageToNode(nodeId: string, imagePath: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     node.image = {
       path: imagePath,
     }
   }
   removeImageFromNode(nodeId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     node.image = undefined
   }
   getImageFromNode(nodeId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     return node.image
   }
   // distributor nodes only
   createNodeCondition(nodeId: string, conditionId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
 
     if (!node.conditions) node.conditions = []
 
@@ -240,7 +254,7 @@ export class ActiveStoryService {
   updateConditionValues(conditionId: string, values: node_conditions) {
     const conditionNodeId = conditionId.split('_')[1]
 
-    const node = findNodeInTree(`node_${conditionNodeId}`, this.entireTree)
+    const node = findNodeInTree(`node_${conditionNodeId}`, this.entireTree())
     const condition = node?.conditions?.find(
       (condition: any) => condition.id === conditionId
     )
@@ -252,7 +266,7 @@ export class ActiveStoryService {
     }
   }
   removeCondition(nodeId: string, conditionId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     const newConditions = node.conditions?.filter(
       (condition: any) => condition.id !== conditionId
     )
@@ -262,11 +276,11 @@ export class ActiveStoryService {
 
   // Answers
   updateAnswerText(answerId: string, newText: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     if (answer) answer[0].text = newText
   }
   createNodeAnswer(nodeId: string, answerId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     if (node.answers) {
       node.answers.push({
         id: answerId,
@@ -276,7 +290,7 @@ export class ActiveStoryService {
     }
   }
   removeAnswer(nodeId: string, answerId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
+    const node = findNodeInTree(nodeId, this.entireTree())
     const newAnswers = node.answers?.filter(
       (answer: any) => answer.id !== answerId
     )
@@ -284,11 +298,11 @@ export class ActiveStoryService {
     node.answers = newAnswers
   }
   saveAnswerEvents(answerId: string, events: any) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     answer[0].events = events
   }
   deleteEventFromAnswer(answerId: string, eventTarget: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     if (answer[0].events) {
       answer[0].events = answer[0].events.filter((event: any) => {
         return event.target !== eventTarget
@@ -296,7 +310,7 @@ export class ActiveStoryService {
     }
   }
   saveAnswerRequirements(answerId: string, requirements: any) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     answer[0].requirements = requirements
   }
   updateRequirementAmount(
@@ -304,7 +318,7 @@ export class ActiveStoryService {
     requirementId: string,
     amount: number
   ) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (answer[0].requirements) {
       const requirement = answer[0].requirements.find(
@@ -314,7 +328,7 @@ export class ActiveStoryService {
     }
   }
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (answer[0].requirements) {
       answer[0].requirements = answer[0].requirements.filter((req: any) => {
@@ -327,7 +341,7 @@ export class ActiveStoryService {
     const optionNodeType = optionId.split('_')[0]
     const optionNodeId = optionId.split('_')[1]
     const isFallbackCondition = optionId.split('_')[2] === 'fallback'
-    const node = findNodeInTree(`node_${optionNodeId}`, this.entireTree)
+    const node = findNodeInTree(`node_${optionNodeId}`, this.entireTree())
 
     // TODO -> tot aixo es horrible en molts sentits
     if (isFallbackCondition) {
@@ -371,7 +385,7 @@ export class ActiveStoryService {
     }
   }
   removeJoinFromAnswer(answerId: string, nodeId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (answer[0].join) {
       answer[0].join = answer[0].join.filter((join: any) => {
@@ -382,28 +396,28 @@ export class ActiveStoryService {
     return answer[0].join
   }
   getEventsOfAnswer(answerId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (!answer[0].events) return []
     return answer[0].events
   }
   getRequirementsOfAnswer(answerId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     return answer[0].requirements
   }
   getJoinsOfAnswer(answerId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
     return answer[0].join
   }
   getDetailedRequirementsOfAnswer(answerId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree)
+    const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (!answer[0].requirements) return []
     const detailedRequirements = answer[0].requirements.map(
       (requirement: any) => {
         return {
           ...requirement,
-          ...this.entireTree.refs[requirement.id],
+          ...this.entireTree().refs[requirement.id],
         }
       }
     )
@@ -413,13 +427,58 @@ export class ActiveStoryService {
 
   // Categories
   createCategory(newCategory: string) {
-    if (!this.entireTree.categories) this.entireTree.categories = []
-    this.entireTree.categories.push({ id: newCategory, name: newCategory })
+    if (!this.entireTree().categories) this.entireTree().categories = []
+    this.entireTree().categories.push({ id: newCategory, name: newCategory })
   }
   setCategoryToRef(refId: string, categoryId: string) {
-    this.entireTree.refs[refId].category = categoryId
+    this.entireTree().refs[refId].category = categoryId
   }
   getCategories() {
-    return this.entireTree.categories || []
+    return this.entireTree().categories || []
+  }
+
+  // Joins
+  calculateConnections(nodes: node[]) {
+    console.log(nodes)
+    const connections: any = []
+    if (!nodes) return connections
+    for (let node of nodes) {
+      if (node.answers) {
+        for (let answer of node.answers) {
+          if (answer.join) {
+            for (let join of answer.join) {
+              // Aqui ara tinc un array d'obj, l'id esta a la prop node
+              connections.push({
+                origin: answer.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            for (let join of condition.join) {
+              connections.push({
+                origin: condition.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
+      if (node.fallbackCondition?.join) {
+        for (let join of node.fallbackCondition.join) {
+          connections.push({
+            origin: node.fallbackCondition.id + '_join',
+            destiny: join.node + '_join',
+          })
+        }
+      }
+    }
+
+    console.log(connections)
+    return connections
   }
 }

@@ -21,10 +21,10 @@
     <li (click)="addNode($event, 'end')">End node</li>
   </div>
 
-  <polo-board-flows [connections]="joins"></polo-board-flows>
-  <ng-container *ngIf="activeStory.entireTree">
+  <polo-board-flows></polo-board-flows>
+  <ng-container *ngIf="activeStory.entireTree()">
     <polo-node
-      *ngFor="let node of activeStory.entireTree.nodes"
+      *ngFor="let node of activeStory.entireTree().nodes"
       #node
       cdkDrag
       id="{{ node.id }}"

@@ -60,7 +60,7 @@ export class DatabaseService {
     if (this.prod)
       console.log('%cdb call to save local story to db', 'color: #9999ff')
 
-    const savedTree = this.activeStory.entireTree
+    const savedTree = this.activeStory.entireTree()
     const storyId = this.activeStory.storyId()
 
     const { data, error } = await this.supabase

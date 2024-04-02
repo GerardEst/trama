@@ -28,10 +28,11 @@ export class JoinsManagerComponent {
       joinId
     )
 
-    this.sharedBoardService.updatedJoins.next({
-      answerId: this.answerId,
-      joins: updatedJoins,
-    })
+    // Instead of update joins, If I remove the join in activeStory, I can update the joins with a computed signal
+    // this.sharedBoardService.updatedJoins.next({
+    //   answerId: this.answerId,
+    //   joins: updatedJoins,
+    // })
 
     this.onRemoveJoin.emit(updatedJoins)
   }

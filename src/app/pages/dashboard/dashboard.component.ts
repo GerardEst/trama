@@ -44,7 +44,7 @@ export class DashboardComponent {
 
     // Set active-story state
     this.activeStory.storyId.set(treeId)
-    this.activeStory.entireTree = story.tree
+    this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
     this.activeStory.initTreeRefs(story.tree)
 

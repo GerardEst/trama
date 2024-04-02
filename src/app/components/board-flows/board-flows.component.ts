@@ -1,6 +1,6 @@
-import { Component, Input, ViewChild, ElementRef } from '@angular/core'
+import { Component, Input, ViewChild, ElementRef, effect } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import * as draw from 'src/app/utils/drawing-utils'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-board-flows',
@@ -10,47 +10,37 @@ import * as draw from 'src/app/utils/drawing-utils'
   styleUrls: ['./board-flows.component.sass'],
 })
 export class BoardFlowsComponent {
-  @Input() connections?: Array<any>
-  calculatedPositions?: Array<any>
-
   @ViewChild('svg') svg?: ElementRef
-  svgContainer?: ElementRef
 
-  ngAfterContentChecked() {
-    this.updateFlowLines()
-  }
+  constructor(public activeStory: ActiveStoryService) {}
 
-  updateFlowLines() {
-    // This is called a lot. Caution.
-    // console.log('updateFlowLines')
-
+  calculatePath(line: any) {
     const svgContainer = this.svg?.nativeElement
+    const mapSize = svgContainer?.getBoundingClientRect()
+    svgContainer.setAttribute(
+      'viewBox',
+      `0 0 ${mapSize.width} ${mapSize.height}`
+    )
 
-    if (svgContainer) {
-      const mapSize = svgContainer?.getBoundingClientRect()
+    const startDivPosition = this.getPositionOfElement(line.origin)
+    const endDivPosition = this.getPositionOfElement(line.destiny)
 
-      svgContainer.setAttribute(
-        'viewBox',
-        `0 0 ${mapSize.width} ${mapSize.height}`
-      )
+    if (startDivPosition && endDivPosition) {
+      const pcurvature = 30
+      const ncurvature = -30
+      const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
+        startDivPosition?.left + pcurvature
+      },${startDivPosition?.top} ${
+        endDivPosition?.left + ncurvature
+      },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
 
-      this.calculatedPositions = this.connections?.map((connection: any) => {
-        const startDivPosition = this.getPositionOf(connection.origin)
-        const endDivPosition = this.getPositionOf(connection.destiny)
-
-        // Els control points haurien de ser la posicio + una mica
-        if (startDivPosition && endDivPosition) {
-          return {
-            start: startDivPosition,
-            end: endDivPosition,
-          }
-        }
-        return undefined
-      })
+      return path
     }
+
+    return undefined
   }
 
-  getPositionOf(element: string) {
+  getPositionOfElement(element: string) {
     const childElement = document.getElementById(element)
     const parentRect = this.svg?.nativeElement.getBoundingClientRect()
     const childRect = childElement?.getBoundingClientRect()
@@ -65,17 +55,5 @@ export class BoardFlowsComponent {
       return relativePosition
     }
     return undefined
-  }
-
-  getPath(line: any) {
-    const pcurvature = 30
-    const ncurvature = -30
-    const path = `M${line?.start?.left},${line?.start?.top} C${
-      line?.start?.left + pcurvature
-    },${line?.start?.top} ${line?.end?.left + ncurvature},${line?.end?.top} ${
-      line?.end?.left
-    },${line?.end?.top}`
-
-    return path
   }
 }

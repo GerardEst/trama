@@ -1,3 +1,5 @@
+import { node } from '../interfaces'
+
 export function findNodeInTree(nodeId: string, tree: any) {
   return tree.nodes.find((node: any) => node.id === nodeId)
 }
@@ -16,6 +18,16 @@ export function getNodeIdFromAnswerId(answerId: string) {
 }
 
 // ID Generators
+
+export function generateIDForNewNode(nodes: node[] | undefined) {
+  const node_ids = []
+  if (!nodes) return `node_${0}`
+
+  for (let node of nodes) node_ids.push(parseInt(node.id.split('_')[1]))
+  const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
+
+  return `node_${great_id + 1}`
+}
 
 export function generateIDForNewAnswer(
   nodeId: string,

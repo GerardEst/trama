@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core'
+import { Component, ElementRef, Input, ViewChild, effect } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
 import createPanZoom from 'panzoom'
@@ -8,8 +8,8 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
 import { SharedBoardService } from 'src/app/components/board/board-utils.service'
-import { findAnswerInTree } from 'src/app/utils/tree-searching'
 import { DatabaseService } from 'src/app/services/database.service'
+import { generateIDForNewNode } from 'src/app/utils/tree-searching'
 
 @Component({
   selector: 'polo-board',
@@ -45,25 +45,25 @@ export class BoardComponent {
     public activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService,
     private database: DatabaseService
-  ) {}
+  ) {
+    effect(() => {
+      if (this.activeStory.entireTree()) {
+        console.log('activeStory.entireTree() changed')
+        if (!this.activeStory.entireTree().nodes) return
+      }
 
-  ngOnInit() {
-    // Sets if the board elements should focus on create or not
-    this.sharedBoardService.focusElements = this.focusElements
-
-    this.sharedBoardService.updatedJoins.subscribe((joinsData: any) => {
-      const answer = findAnswerInTree(
-        joinsData.answerId,
-        this.activeStory.entireTree
-      )
-      answer[0].join = joinsData.joins
-      this.calculateJoins(this.activeStory.entireTree.nodes)
+      const activeNode = this.activeStory
+        .entireTree()
+        .nodes.find(
+          (node: node) => node.id === localStorage.getItem('polo-activeNode')
+        )
+      this.centerToNode(activeNode || this.activeStory.entireTree().nodes[0])
     })
   }
 
-  ngOnChanges() {
-    if (this.activeStory.entireTree)
-      this.calculateJoins(this.activeStory.entireTree.nodes)
+  ngOnInit() {
+    // Sets if the board elements should focus on create or not (for the landing page)
+    this.sharedBoardService.focusElements = this.focusElements
   }
 
   ngAfterViewInit(): void {
@@ -82,11 +82,6 @@ export class BoardComponent {
         zoomDoubleClickSpeed: 1,
       }
     )
-
-    const activeNode = this.activeStory.entireTree.nodes.find(
-      (node: node) => node.id === localStorage.getItem('polo-activeNode')
-    )
-    this.centerToNode(activeNode || this.activeStory.entireTree.nodes[0])
   }
 
   onRightClick(event: MouseEvent): void {
@@ -144,48 +139,6 @@ export class BoardComponent {
       finalTransform.x,
       finalTransform.y
     )
-  }
-
-  calculateJoins(nodes: Array<any>) {
-    /** TODO -> Replantejar això. No té sentit calcular absolutament totes les linies cada vegada que es mou algo
-     * Mes endavant segurament donarà problemes de rendiment
-     */
-    this.joins = []
-    for (let node of nodes) {
-      if (node.answers) {
-        for (let answer of node.answers) {
-          if (answer.join) {
-            for (let join of answer.join) {
-              // Aqui ara tinc un array d'obj, l'id esta a la prop node
-              this.joins.push({
-                origin: answer.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.conditions) {
-        for (let condition of node.conditions) {
-          if (condition.join) {
-            for (let join of condition.join) {
-              this.joins.push({
-                origin: condition.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.fallbackCondition?.join) {
-        for (let join of node.fallbackCondition.join) {
-          this.joins.push({
-            origin: node.fallbackCondition.id + '_join',
-            destiny: join.node + '_join',
-          })
-        }
-      }
-    }
   }
 
   willJoin(answerId: string) {
@@ -257,7 +210,7 @@ export class BoardComponent {
     type: 'content' | 'distributor' | 'end'
   ) {
     const newNodeInfo: node = {
-      id: this.generateIDForNewNode(),
+      id: generateIDForNewNode(this.activeStory.entireTree().nodes),
       type,
       top: position.top,
       left: position.left,
@@ -295,17 +248,5 @@ export class BoardComponent {
 
     // remove node from tree
     this.activeStory.removeNode(event.nodeId)
-  }
-
-  // TODO -> Maybe put this and the one in node.component.ts in a shared service
-  generateIDForNewNode() {
-    const node_ids = []
-    if (!this.activeStory.entireTree.nodes) return `node_${0}`
-
-    for (let node of this.activeStory.entireTree.nodes)
-      node_ids.push(node.id.split('_')[1])
-    const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
-
-    return `node_${great_id + 1}`
   }
 }

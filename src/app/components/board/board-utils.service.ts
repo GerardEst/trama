@@ -3,7 +3,8 @@ import { Subject } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class SharedBoardService {
-  public updatedJoins = new Subject()
+  // Instead of using a subject with rxjs, maybe I can use the signal
+  // public updatedJoins = new Subject()
   boardReference: any
   focusElements: boolean = true
 
