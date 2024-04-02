@@ -241,14 +241,16 @@ export class ActiveStoryService {
     const conditionNodeId = conditionId.split('_')[1]
 
     const node = findNodeInTree(`node_${conditionNodeId}`, this.entireTree)
-    const conditions = node?.conditions?.filter(
+    const condition = node?.conditions?.find(
       (condition: any) => condition.id === conditionId
     )
 
-    if (conditions) {
-      conditions[0].ref = values.ref
-      conditions[0].comparator = values.comparator
-      conditions[0].value = values.value
+    console.log(condition)
+
+    if (condition) {
+      condition.ref = values.ref
+      condition.comparator = values.comparator
+      condition.value = values.value
     }
   }
   removeCondition(nodeId: string, conditionId: string) {

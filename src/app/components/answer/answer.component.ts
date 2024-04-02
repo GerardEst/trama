@@ -20,7 +20,8 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
   styleUrls: ['./answer.component.sass'],
 })
 export class AnswerComponent {
-  @Input() nodeId: string = ''
+  id: string = ''
+
   @Input() text: string = ''
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
@@ -35,6 +36,7 @@ export class AnswerComponent {
   ) {}
 
   ngOnInit() {
+    this.id = this.elementRef.nativeElement.id
     if (this.sharedBoard.focusElements) {
       setTimeout(() => {
         const textarea = this.textarea
@@ -49,7 +51,7 @@ export class AnswerComponent {
     const ref = this.optionsContainer.createComponent(
       PopupAnswerOptionsComponent
     )
-    ref.instance.answerId = this.elementRef.nativeElement.id
+    ref.instance.answerId = this.id
 
     // Manage subscriptions to talk with answer component, because this is a dinamically created component
     const subscriptions: Array<any> = []
@@ -71,19 +73,15 @@ export class AnswerComponent {
   }
 
   saveAnswerText(e: any) {
-    const id = this.elementRef.nativeElement.id
     const text = e.target.value
-
-    this.activeStory.updateAnswerText(id, text)
+    this.activeStory.updateAnswerText(this.id, text)
   }
 
   willJoin() {
-    this.onWillJoin.emit(this.elementRef.nativeElement.id)
+    this.onWillJoin.emit(this.id)
   }
 
   removeAnswer() {
-    const id = this.elementRef.nativeElement.id
-
-    this.onRemoveAnswer.emit(id)
+    this.onRemoveAnswer.emit(this.id)
   }
 }

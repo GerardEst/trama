@@ -18,11 +18,14 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
   styleUrl: './condition.component.sass',
 })
 export class ConditionComponent {
+  id: string = ''
+
+  // Inputs to start with
   @Input() fallback: boolean = false
-  @Input() nodeId: string = ''
   @Input() selectedRef: string = ''
   @Input() comparator: string = ''
-  @Input() value: string = '0'
+  @Input() value: number = 0
+
   @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
@@ -33,9 +36,10 @@ export class ConditionComponent {
     public elementRef: ElementRef
   ) {}
 
+  ngOnInit() {
+    this.id = this.elementRef.nativeElement.id
+  }
   saveCondition(event: any) {
-    const id = this.elementRef.nativeElement.id
-
     if (event.target.id === 'ref') {
       this.selectedRef = event.target.selectedOptions[0].id
     } else if (event.target.id === 'comparator') {
@@ -44,21 +48,19 @@ export class ConditionComponent {
       this.value = event.target.value
     }
 
-    this.activeStory.updateConditionValues(id, {
-      id,
+    this.activeStory.updateConditionValues(this.id, {
+      id: this.id,
       ref: this.selectedRef,
       comparator: this.comparator,
-      value: this.value.toString(),
+      value: this.value,
     })
   }
 
   willJoin() {
-    this.onWillJoin.emit(this.elementRef.nativeElement.id)
+    this.onWillJoin.emit(this.id)
   }
 
   removeCondition() {
-    const id = this.elementRef.nativeElement.id
-
-    this.onRemoveCondition.emit(id)
+    this.onRemoveCondition.emit(this.id)
   }
 }

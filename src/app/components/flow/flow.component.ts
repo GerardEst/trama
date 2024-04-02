@@ -71,11 +71,11 @@ export class FlowComponent {
         // Then we check the comparator, if it's correct we can go to next node
         if (
           (distributorCondition.comparator === 'equalto' &&
-            playerStatAmount === parseInt(distributorCondition.value)) ||
+            playerStatAmount === distributorCondition.value) ||
           (distributorCondition.comparator === 'lessthan' &&
-            playerStatAmount < parseInt(distributorCondition.value)) ||
+            playerStatAmount < distributorCondition.value) ||
           (distributorCondition.comparator === 'morethan' &&
-            playerStatAmount > parseInt(distributorCondition.value))
+            playerStatAmount > distributorCondition.value)
         ) {
           return distributorCondition.join || []
         }
@@ -91,8 +91,8 @@ export class FlowComponent {
         // If the player has the condition and the requirement is 1, we can go to next node
         // If the player doesn't have the condition and the requirement is 0, we can go to next node too
         if (
-          (parseInt(distributorCondition.value) === 1 && playerCondition) ||
-          (parseInt(distributorCondition.value) === 0 && !playerCondition)
+          (distributorCondition.value === 1 && playerCondition) ||
+          (distributorCondition.value === 0 && !playerCondition)
         ) {
           return distributorCondition.join || []
         }

@@ -57,7 +57,7 @@ export interface node_conditions {
   join?: Array<join>
   ref: string
   comparator: string
-  value: string
+  value: number
 }
 export interface node_fallbackCondition {
   id: string

@@ -28,7 +28,6 @@
         <polo-condition
           *ngFor="let condition of conditions"
           id="{{ condition.id }}"
-          [nodeId]="elementRef.nativeElement.id"
           [selectedRef]="condition.ref"
           [comparator]="condition.comparator"
           [value]="condition.value"
@@ -40,7 +39,6 @@
         id="{{
           'condition_' + elementRef.nativeElement.id.split('_')[1] + '_fallback'
         }}"
-        [nodeId]="elementRef.nativeElement.id"
         [fallback]="true"
         (onRemoveCondition)="removeCondition($event)"
         (onWillJoin)="willJoin($event)"
@@ -117,7 +115,6 @@
         <polo-answer
           *ngFor="let answer of answers"
           id="{{ answer.id }}"
-          [nodeId]="elementRef.nativeElement.id"
           [text]="answer.text"
           (onRemoveAnswer)="removeAnswer($event)"
           (onWillJoin)="willJoin($event)"
