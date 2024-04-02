@@ -3,7 +3,7 @@ import {
   getNodeIdFromAnswerId,
   findNodeInTree,
   findAnswerInTree,
-  getNewIdForRequirement,
+  generateIDForNewRequirement,
 } from '../utils/tree-searching'
 import { tree, link, node_answer, node_conditions, node } from '../interfaces'
 
@@ -118,7 +118,7 @@ export class ActiveStoryService {
       return
     }
 
-    const newId = type + '_' + getNewIdForRequirement(this.entireTree.refs)
+    const newId = type + '_' + generateIDForNewRequirement(this.entireTree.refs)
     this.entireTree.refs[newId] = { name, type }
 
     return { id: newId, name: name, type }
@@ -206,8 +206,8 @@ export class ActiveStoryService {
   }
   updateNodePosition(nodeId: string, left: number, top: number) {
     let node = findNodeInTree(nodeId, this.entireTree)
-    node[0].left = left
-    node[0].top = top
+    node.left = left
+    node.top = top
   }
   updateNodeShareOptions(nodeId: string, sharingOptions: any) {
     const node = findNodeInTree(nodeId, this.entireTree)
@@ -227,17 +227,13 @@ export class ActiveStoryService {
     const node = findNodeInTree(nodeId, this.entireTree)
     return node.image
   }
-  getAnswersOfNode(nodeId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
-    return node.answers
-  }
   // distributor nodes only
   createNodeCondition(nodeId: string, conditionId: string) {
     const node = findNodeInTree(nodeId, this.entireTree)
 
-    if (!node[0].conditions) node[0].conditions = []
+    if (!node.conditions) node.conditions = []
 
-    node[0].conditions.push({
+    node.conditions.push({
       id: conditionId,
     })
   }
@@ -263,10 +259,6 @@ export class ActiveStoryService {
 
     node.conditions = newConditions
   }
-  getConditionsOfNode(nodeId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree)
-    return node.conditions
-  }
 
   // Answers
   updateAnswerText(answerId: string, newText: string) {
@@ -275,13 +267,12 @@ export class ActiveStoryService {
   }
   createNodeAnswer(nodeId: string, answerId: string) {
     const node = findNodeInTree(nodeId, this.entireTree)
-
-    if (node && node[0].answers) {
-      node[0].answers.push({
+    if (node.answers) {
+      node.answers.push({
         id: answerId,
       })
-    } else if (node) {
-      node[0].answers = [{ id: answerId }]
+    } else {
+      node.answers = [{ id: answerId }]
     }
   }
   removeAnswer(nodeId: string, answerId: string) {

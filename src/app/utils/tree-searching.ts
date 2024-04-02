@@ -12,11 +12,41 @@ export function findAnswerInTree(answerId: string, tree: any) {
 
 export function getNodeIdFromAnswerId(answerId: string) {
   const nodeNumber = answerId.split('_')[1]
-
   return 'node_' + nodeNumber
 }
 
-export function getNewIdForRequirement(refs?: any) {
+// ID Generators
+
+export function generateIDForNewAnswer(
+  nodeId: string,
+  currentAnswers: any[] | undefined
+) {
+  let answer_ids = []
+  if (!currentAnswers) return `answer_${nodeId.split('_')[1]}_0`
+
+  for (let answer of currentAnswers)
+    answer_ids.push(parseInt(answer.id.split('_')[2]))
+  const great_id = Math.max(...answer_ids) > 0 ? Math.max(...answer_ids) : 0
+
+  return `answer_${nodeId.split('_')[1]}_${great_id + 1}`
+}
+
+export function generateIDForNewCondition(
+  nodeId: string,
+  currentConditions: any[] | undefined
+) {
+  let condition_ids = []
+  if (!currentConditions) return `condition_${nodeId.split('_')[1]}_0`
+
+  for (let condition of currentConditions)
+    condition_ids.push(parseInt(condition.id.split('_')[2]))
+  const great_id =
+    Math.max(...condition_ids) > 0 ? Math.max(...condition_ids) : 0
+
+  return `condition_${nodeId.split('_')[1]}_${great_id + 1}`
+}
+
+export function generateIDForNewRequirement(refs?: any) {
   if (!refs || Object.keys(refs).length === 0) return 0
 
   if (refs) {

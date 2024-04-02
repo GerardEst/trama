@@ -220,8 +220,6 @@ export class BoardComponent {
   }
 
   addNode(event: any, type: 'content' | 'distributor' | 'end'): void {
-    //event.stopPropagation()
-
     if (this.contextMenuActive) {
       this.contextMenuActive = false
       this.createNode(
@@ -252,32 +250,24 @@ export class BoardComponent {
     }
   }
 
+  // CLEAN
   createNode(
     position: { top: string; left: string },
     type: 'content' | 'distributor' | 'end'
   ) {
-    console.log('new ' + type + ' node')
-
     const newNodeInfo: node = {
-      id: 'node_' + this.getIDForNewNode(),
+      id: this.generateIDForNewNode(),
       type,
       top: position.top,
       left: position.left,
     }
-    this.tree.nodes.push(newNodeInfo)
     this.activeStory.createNode(newNodeInfo)
 
     return newNodeInfo
   }
 
+  // CLEAN
   async removeNode(event: any) {
-    console.log('try to remove ', event)
-
-    // Remove node from tree
-    this.tree.nodes = this.tree.nodes.filter(
-      (node: any) => node.id !== event.nodeId
-    )
-
     // Remove join lines that go to the node
     this.joins = this.joins.filter(
       (join) => join.destiny !== event.nodeId + '_join'
@@ -306,14 +296,14 @@ export class BoardComponent {
     this.activeStory.removeNode(event.nodeId)
   }
 
-  getIDForNewNode() {
+  // TODO -> Maybe put this and the one in node.component.ts in a shared service
+  generateIDForNewNode() {
     const node_ids = []
-
-    if (!this.tree.nodes) return 0
+    if (!this.tree.nodes) return `node_${0}`
 
     for (let node of this.tree.nodes) node_ids.push(node.id.split('_')[1])
     const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
 
-    return great_id + 1
+    return `node_${great_id + 1}`
   }
 }

@@ -30,7 +30,7 @@ export class DashboardComponent {
 
   constructor(
     private db: DatabaseService,
-    private activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +51,6 @@ export class DashboardComponent {
     this.updateConfiguration()
 
     // Update the board
-    this.tree = story.tree
     this.id = treeId
     this.board?.centerToNode(story.tree.nodes[0])
   }
