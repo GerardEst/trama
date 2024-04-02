@@ -26,8 +26,7 @@ import { DatabaseService } from 'src/app/services/database.service'
 })
 export class BoardComponent {
   @ViewChild('board') board?: ElementRef
-  @Input() tree?: any
-  @Input() treeId?: string
+
   @Input() grid?: boolean
   @Input() initialZoom?: number
   @Input() focusElements: boolean = true
@@ -43,7 +42,7 @@ export class BoardComponent {
   joins: Array<any> = []
 
   constructor(
-    private activeStory: ActiveStoryService,
+    public activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService,
     private database: DatabaseService
   ) {}
@@ -53,14 +52,18 @@ export class BoardComponent {
     this.sharedBoardService.focusElements = this.focusElements
 
     this.sharedBoardService.updatedJoins.subscribe((joinsData: any) => {
-      const answer = findAnswerInTree(joinsData.answerId, this.tree)
+      const answer = findAnswerInTree(
+        joinsData.answerId,
+        this.activeStory.entireTree
+      )
       answer[0].join = joinsData.joins
-      this.calculateJoins(this.tree.nodes)
+      this.calculateJoins(this.activeStory.entireTree.nodes)
     })
   }
 
   ngOnChanges() {
-    if (this.tree) this.calculateJoins(this.tree?.nodes)
+    if (this.activeStory.entireTree)
+      this.calculateJoins(this.activeStory.entireTree.nodes)
   }
 
   ngAfterViewInit(): void {
@@ -79,12 +82,11 @@ export class BoardComponent {
         zoomDoubleClickSpeed: 1,
       }
     )
-    if (this.tree) {
-      const activeNode = this.tree.nodes.find(
-        (node: node) => node.id === localStorage.getItem('polo-activeNode')
-      )
-      this.centerToNode(activeNode || this.tree.nodes[0])
-    }
+
+    const activeNode = this.activeStory.entireTree.nodes.find(
+      (node: node) => node.id === localStorage.getItem('polo-activeNode')
+    )
+    this.centerToNode(activeNode || this.activeStory.entireTree.nodes[0])
   }
 
   onRightClick(event: MouseEvent): void {
@@ -97,7 +99,6 @@ export class BoardComponent {
   }
 
   public centerToNode(node: any) {
-    console.log(node)
     // Here we should calculate the correct transform taken into account the zoom level
     // Now it "works" but it's not perfect
     const scale = this.sharedBoardService.boardReference.getTransform().scale
@@ -299,9 +300,10 @@ export class BoardComponent {
   // TODO -> Maybe put this and the one in node.component.ts in a shared service
   generateIDForNewNode() {
     const node_ids = []
-    if (!this.tree.nodes) return `node_${0}`
+    if (!this.activeStory.entireTree.nodes) return `node_${0}`
 
-    for (let node of this.tree.nodes) node_ids.push(node.id.split('_')[1])
+    for (let node of this.activeStory.entireTree.nodes)
+      node_ids.push(node.id.split('_')[1])
     const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
 
     return `node_${great_id + 1}`

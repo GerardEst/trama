@@ -24,7 +24,7 @@ import { configuration } from 'src/app/services/database-interfaces'
 export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('menuTop') menuTop?: MenuTopComponent
-  tree?: any
+
   id?: string
   savingTree: boolean = false
 

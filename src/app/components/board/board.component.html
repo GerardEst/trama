@@ -22,9 +22,9 @@
   </div>
 
   <polo-board-flows [connections]="joins"></polo-board-flows>
-  <ng-container *ngIf="tree">
+  <ng-container *ngIf="activeStory.entireTree">
     <polo-node
-      *ngFor="let node of tree.nodes"
+      *ngFor="let node of activeStory.entireTree.nodes"
       #node
       cdkDrag
       id="{{ node.id }}"

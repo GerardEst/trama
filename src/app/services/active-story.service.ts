@@ -245,8 +245,6 @@ export class ActiveStoryService {
       (condition: any) => condition.id === conditionId
     )
 
-    console.log(condition)
-
     if (condition) {
       condition.ref = values.ref
       condition.comparator = values.comparator
