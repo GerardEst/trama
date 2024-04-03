@@ -5,12 +5,13 @@
   preserveAspectRatio="none"
   viewBox="0 0 0 0"
 >
-  <path
-    *ngFor="let line of activeStory.connections()"
-    [attr.d]="calculatePath(line)"
-    stroke-width="1"
-    stroke="#cccccc"
-    style="pointer-events: none"
-    fill="transparent"
-  ></path>
+  @for (line of paths(); track $index) {
+    <path
+      [attr.d]="line"
+      stroke-width="1"
+      stroke="#cccccc"
+      style="pointer-events: none"
+      fill="transparent"
+    ></path>
+  }
 </svg>

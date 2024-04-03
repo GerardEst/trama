@@ -31,7 +31,7 @@ export class DatabaseService {
     return stories
   }
 
-  async getTree(storyId: string) {
+  async getStory(storyId: string) {
     if (this.prod)
       console.log('%cdb call to get everything about a story', 'color: #9999ff')
     let { data: stories, error } = await this.supabase
@@ -86,7 +86,6 @@ export class DatabaseService {
 
     if (error) return console.error(error)
 
-    console.log(data[0])
     return data[0]
   }
 

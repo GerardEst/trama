@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  Signal,
-  WritableSignal,
-  computed,
-  effect,
-  signal,
-} from '@angular/core'
+import { Injectable, WritableSignal, effect, signal } from '@angular/core'
 import {
   getNodeIdFromAnswerId,
   findNodeInTree,
@@ -20,12 +13,6 @@ import { tree, link, node_answer, node_conditions, node } from '../interfaces'
 export class ActiveStoryService {
   storyId: WritableSignal<string> = signal('')
   entireTree: WritableSignal<any> = signal({})
-
-  // When tree changes, we need to update the refs
-  connections: Signal<any> = computed(() => {
-    return this.calculateConnections(this.entireTree().nodes)
-  })
-  // Then, with this joins we can calculate the positions of the lines
 
   storyName: WritableSignal<string> = signal('')
   storyRefs: any = signal([])
@@ -209,6 +196,8 @@ export class ActiveStoryService {
         )
       }
     }
+
+    this.activateTreeChangeEffects()
   }
   updateNodeText(nodeId: string, newText: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -222,6 +211,8 @@ export class ActiveStoryService {
     let node = findNodeInTree(nodeId, this.entireTree())
     node.left = left
     node.top = top
+
+    this.activateTreeChangeEffects()
   }
   updateNodeShareOptions(nodeId: string, sharingOptions: any) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -383,6 +374,8 @@ export class ActiveStoryService {
         option[0].join = [{ node: nodeId }]
       }
     }
+
+    this.activateTreeChangeEffects()
   }
   removeJoinFromAnswer(answerId: string, nodeId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
@@ -392,6 +385,8 @@ export class ActiveStoryService {
         return join.node !== nodeId
       })
     }
+
+    this.activateTreeChangeEffects()
 
     return answer[0].join
   }
@@ -437,48 +432,7 @@ export class ActiveStoryService {
     return this.entireTree().categories || []
   }
 
-  // Joins
-  calculateConnections(nodes: node[]) {
-    console.log(nodes)
-    const connections: any = []
-    if (!nodes) return connections
-    for (let node of nodes) {
-      if (node.answers) {
-        for (let answer of node.answers) {
-          if (answer.join) {
-            for (let join of answer.join) {
-              // Aqui ara tinc un array d'obj, l'id esta a la prop node
-              connections.push({
-                origin: answer.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.conditions) {
-        for (let condition of node.conditions) {
-          if (condition.join) {
-            for (let join of condition.join) {
-              connections.push({
-                origin: condition.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.fallbackCondition?.join) {
-        for (let join of node.fallbackCondition.join) {
-          connections.push({
-            origin: node.fallbackCondition.id + '_join',
-            destiny: join.node + '_join',
-          })
-        }
-      }
-    }
-
-    console.log(connections)
-    return connections
+  public activateTreeChangeEffects() {
+    if (this.entireTree) this.entireTree.set({ ...this.entireTree() })
   }
 }

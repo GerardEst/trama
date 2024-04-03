@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../../components/board/board.component'
 import { MenuComponent } from '../../components/menu/menu.component'
@@ -7,6 +7,7 @@ import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
 import { configuration } from 'src/app/services/database-interfaces'
+import { findNodeInTree } from 'src/app/utils/tree-searching'
 
 @Component({
   selector: 'polo-dashboard',
@@ -37,47 +38,61 @@ export class DashboardComponent {
     this.initBoard()
   }
 
-  async loadTree(treeId: string) {
-    const story = await this.db.getTree(treeId)
+  initBoard() {
+    // If there is some tree reference in localstorage, load that one
+    const localStoryId = localStorage.getItem('polo-id')
 
-    localStorage.setItem('polo-id', treeId)
+    if (localStoryId) {
+      this.loadStory(localStoryId)
+    } else {
+      // TODO -> Create a new tree, show some instructions, example tree...
+    }
+  }
 
-    // Set active-story state
-    this.activeStory.storyId.set(treeId)
+  async loadStory(storyId: string) {
+    const story = await this.db.getStory(storyId)
+
+    localStorage.setItem('polo-id', storyId)
+
+    // Set active-story states
+    this.activeStory.storyId.set(storyId)
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
     this.activeStory.initTreeRefs(story.tree)
 
-    this.updateConfiguration()
+    // TODO -> when loading another tree, it goes to the active node of previous tree
+    this.setInitialBoardPosition()
 
-    // Update the board
-    this.id = treeId
-    this.board?.centerToNode(story.tree.nodes[0])
+    // TODO ->
+    // Amb aquest timeout es veu el salt
+    // Comença mal pintat, quan es detecta automaticament fa una cosa rara, pero si m'espero a que tot estigui pintat, bé.
+    // També, si arrastrem abans que s'acabi de pintar l'arbre sencer o acabi de fer el que hagi de fer, el drag no repinta les linies
+    setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
+
+    this.loadConfigurationForStory(storyId)
   }
 
-  initBoard() {
-    const localTreeId = localStorage.getItem('polo-id')
-
-    if (localTreeId) {
-      this.loadTree(localTreeId)
-    } else {
-      // TODO -> Create a new tree
-    }
-
-    this.updateConfiguration()
-  }
-
-  async updateConfiguration() {
-    if (this.id) {
-      const configuration: configuration = await this.db.getConfigurationOf(
-        this.id
+  setInitialBoardPosition() {
+    const activeNodeId = localStorage.getItem('polo-activeNode')
+    if (activeNodeId) {
+      const activeNode = findNodeInTree(
+        activeNodeId,
+        this.activeStory.entireTree()
       )
-
-      this.activeStory.storyConfiguration().tracking = configuration.tracking
-      this.activeStory.storyConfiguration().sharing = configuration.sharing
-      this.activeStory.storyConfiguration().askName = configuration.askName
-      this.activeStory.storyConfiguration().cumulativeView =
-        configuration.cumulativeView
+      this.board?.centerToNode(activeNode)
+    } else {
+      this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
     }
+  }
+
+  async loadConfigurationForStory(storyId: string) {
+    const configuration: configuration =
+      await this.db.getConfigurationOf(storyId)
+
+    this.activeStory.storyConfiguration().tracking = configuration.tracking
+    this.activeStory.storyConfiguration().sharing = configuration.sharing
+    this.activeStory.storyConfiguration().askName = configuration.askName
+    this.activeStory.storyConfiguration().cumulativeView =
+      configuration.cumulativeView
   }
 }

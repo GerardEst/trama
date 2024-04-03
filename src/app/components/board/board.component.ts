@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild, effect } from '@angular/core'
+import { Component, ElementRef, Input, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
 import createPanZoom from 'panzoom'
@@ -41,25 +41,13 @@ export class BoardComponent {
   willJoinId?: string
   joins: Array<any> = []
 
+  throttled: any
+
   constructor(
     public activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService,
     private database: DatabaseService
-  ) {
-    effect(() => {
-      if (this.activeStory.entireTree()) {
-        console.log('activeStory.entireTree() changed')
-        if (!this.activeStory.entireTree().nodes) return
-      }
-
-      const activeNode = this.activeStory
-        .entireTree()
-        .nodes.find(
-          (node: node) => node.id === localStorage.getItem('polo-activeNode')
-        )
-      this.centerToNode(activeNode || this.activeStory.entireTree().nodes[0])
-    })
-  }
+  ) {}
 
   ngOnInit() {
     // Sets if the board elements should focus on create or not (for the landing page)
@@ -128,6 +116,7 @@ export class BoardComponent {
   dragStarted(event: any) {
     this.focusNode(event.source.element.nativeElement)
   }
+
   dragReleased(event: any) {
     const currentTransform = event.source.getRootElement().style.transform
     const finalTransform = combineTransforms(currentTransform)
@@ -162,7 +151,16 @@ export class BoardComponent {
     this.activeStory.updateOptionJoin(this.willJoinId, nodeId)
   }
 
-  dragCheck() {}
+  // Simple throttling to prevent call treeChanges too many times when dragging
+  timer: any = null
+  dragCheck() {
+    if (!this.timer) {
+      this.timer = setTimeout(() => {
+        this.activeStory.activateTreeChangeEffects()
+        this.timer = null
+      }, 10)
+    }
+  }
 
   boardClick(event: any) {
     this.contextMenuActive = false
@@ -204,7 +202,6 @@ export class BoardComponent {
     }
   }
 
-  // CLEAN
   createNode(
     position: { top: string; left: string },
     type: 'content' | 'distributor' | 'end'
@@ -220,7 +217,6 @@ export class BoardComponent {
     return newNodeInfo
   }
 
-  // CLEAN
   async removeNode(event: any) {
     // Remove join lines that go to the node
     this.joins = this.joins.filter(

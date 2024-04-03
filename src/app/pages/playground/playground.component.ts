@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FlowComponent } from 'src/app/components/flow/flow.component'
 import { DatabaseService } from 'src/app/services/database.service'
@@ -33,7 +33,7 @@ export class PlaygroundComponent {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const story = await this.db.getTree(this.storyId)
+    const story = await this.db.getStory(this.storyId)
     this.playService.story.set(story)
 
     if (!this.playService.story().askName) this.displayGame()

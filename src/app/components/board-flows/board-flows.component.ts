@@ -1,6 +1,13 @@
-import { Component, Input, ViewChild, ElementRef, effect } from '@angular/core'
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  Signal,
+  computed,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { node } from 'src/app/interfaces'
 
 @Component({
   selector: 'polo-board-flows',
@@ -12,9 +19,63 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class BoardFlowsComponent {
   @ViewChild('svg') svg?: ElementRef
 
+  connections: Signal<any> = computed(() => {
+    if (this.activeStory.entireTree().nodes) {
+      return this.calculateConnections(this.activeStory.entireTree().nodes)
+    }
+  })
+  paths: Signal<any> = computed(() => {
+    if (this.connections() && this.connections().length > 0) {
+      return this.calculatePaths(this.connections())
+    }
+  })
+
   constructor(public activeStory: ActiveStoryService) {}
 
-  calculatePath(line: any) {
+  // Builds all the connections. This means: origin -> destiny object
+  calculateConnections(nodes: node[]) {
+    const connections: any = []
+    if (!nodes) return connections
+    for (let node of nodes) {
+      if (node.answers) {
+        for (let answer of node.answers) {
+          if (answer.join) {
+            for (let join of answer.join) {
+              connections.push({
+                origin: answer.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            for (let join of condition.join) {
+              connections.push({
+                origin: condition.id + '_join',
+                destiny: join.node + '_join',
+              })
+            }
+          }
+        }
+      }
+      if (node.fallbackCondition?.join) {
+        for (let join of node.fallbackCondition.join) {
+          connections.push({
+            origin: node.fallbackCondition.id + '_join',
+            destiny: join.node + '_join',
+          })
+        }
+      }
+    }
+
+    return connections
+  }
+
+  // Builds all the pats. This means: the svg path of every connection
+  calculatePaths(connections: any) {
     const svgContainer = this.svg?.nativeElement
     const mapSize = svgContainer?.getBoundingClientRect()
     svgContainer.setAttribute(
@@ -22,22 +83,24 @@ export class BoardFlowsComponent {
       `0 0 ${mapSize.width} ${mapSize.height}`
     )
 
-    const startDivPosition = this.getPositionOfElement(line.origin)
-    const endDivPosition = this.getPositionOfElement(line.destiny)
+    const paths: any = []
+    for (let connection of connections) {
+      const startDivPosition = this.getPositionOfElement(connection.origin)
+      const endDivPosition = this.getPositionOfElement(connection.destiny)
 
-    if (startDivPosition && endDivPosition) {
-      const pcurvature = 30
-      const ncurvature = -30
-      const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
-        startDivPosition?.left + pcurvature
-      },${startDivPosition?.top} ${
-        endDivPosition?.left + ncurvature
-      },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
+      if (startDivPosition && endDivPosition) {
+        const pcurvature = 30
+        const ncurvature = -30
+        const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
+          startDivPosition?.left + pcurvature
+        },${startDivPosition?.top} ${
+          endDivPosition?.left + ncurvature
+        },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
 
-      return path
+        paths.push(path)
+      }
     }
-
-    return undefined
+    return paths
   }
 
   getPositionOfElement(element: string) {
