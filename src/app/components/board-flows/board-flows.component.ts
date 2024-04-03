@@ -18,64 +18,34 @@ import { node } from 'src/app/interfaces'
 })
 export class BoardFlowsComponent {
   @ViewChild('svg') svg?: ElementRef
-
-  connections: Signal<any> = computed(() => {
-    if (this.activeStory.entireTree().nodes) {
-      return this.calculateConnections(this.activeStory.entireTree().nodes)
-    }
-  })
+  flowOptions: any = {
+    pcurvature: 30,
+    ncurvature: -30,
+  }
   paths: Signal<any> = computed(() => {
-    if (this.connections() && this.connections().length > 0) {
-      return this.calculatePaths(this.connections())
+    console.time('calculatePaths')
+    if (this.activeStory.entireTree().nodes) {
+      return this.calculatePaths(this.activeStory.entireTree().nodes)
     }
   })
 
   constructor(public activeStory: ActiveStoryService) {}
 
-  // Builds all the connections. This means: origin -> destiny object
-  calculateConnections(nodes: node[]) {
-    const connections: any = []
-    if (!nodes) return connections
-    for (let node of nodes) {
-      if (node.answers) {
-        for (let answer of node.answers) {
-          if (answer.join) {
-            for (let join of answer.join) {
-              connections.push({
-                origin: answer.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.conditions) {
-        for (let condition of node.conditions) {
-          if (condition.join) {
-            for (let join of condition.join) {
-              connections.push({
-                origin: condition.id + '_join',
-                destiny: join.node + '_join',
-              })
-            }
-          }
-        }
-      }
-      if (node.fallbackCondition?.join) {
-        for (let join of node.fallbackCondition.join) {
-          connections.push({
-            origin: node.fallbackCondition.id + '_join',
-            destiny: join.node + '_join',
-          })
-        }
-      }
-    }
+  getPath(initialElement: string, finalElement: string) {
+    const startDivPosition = this.getPositionOfElement(initialElement)
+    const endDivPosition = this.getPositionOfElement(finalElement)
 
-    return connections
+    const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
+      startDivPosition?.left + this.flowOptions.pcurvature
+    },${startDivPosition?.top} ${
+      endDivPosition?.left + this.flowOptions.ncurvature
+    },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
+
+    return path
   }
 
-  // Builds all the pats. This means: the svg path of every connection
-  calculatePaths(connections: any) {
+  // Builds all the paths needed
+  calculatePaths(nodes: node[]) {
     const svgContainer = this.svg?.nativeElement
     const mapSize = svgContainer?.getBoundingClientRect()
     svgContainer.setAttribute(
@@ -84,22 +54,37 @@ export class BoardFlowsComponent {
     )
 
     const paths: any = []
-    for (let connection of connections) {
-      const startDivPosition = this.getPositionOfElement(connection.origin)
-      const endDivPosition = this.getPositionOfElement(connection.destiny)
+    if (!nodes) return paths
 
-      if (startDivPosition && endDivPosition) {
-        const pcurvature = 30
-        const ncurvature = -30
-        const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
-          startDivPosition?.left + pcurvature
-        },${startDivPosition?.top} ${
-          endDivPosition?.left + ncurvature
-        },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
-
-        paths.push(path)
+    for (let node of nodes) {
+      if (node.answers) {
+        for (let answer of node.answers) {
+          if (answer.join) {
+            for (let join of answer.join) {
+              paths.push(this.getPath(answer.id + '_join', join.node + '_join'))
+            }
+          }
+        }
+      }
+      if (node.conditions) {
+        for (let condition of node.conditions) {
+          if (condition.join) {
+            for (let join of condition.join) {
+              paths.push(
+                this.getPath(condition.id + '_join', join.node + '_join')
+              )
+            }
+          }
+        }
+      }
+      if (node.fallbackCondition?.join) {
+        for (let join of node.fallbackCondition.join) {
+          this.getPath(node.fallbackCondition.id + '_join', join.node + '_join')
+        }
       }
     }
+
+    console.timeEnd('calculatePaths')
     return paths
   }
 
@@ -117,6 +102,6 @@ export class BoardFlowsComponent {
       }
       return relativePosition
     }
-    return undefined
+    return { top: 0, left: 0 }
   }
 }
