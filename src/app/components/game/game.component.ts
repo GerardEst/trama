@@ -27,7 +27,6 @@ export class GameComponent {
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()
 
-  // TODO -> Change component name "flow" for something less related to the paths. Game?
   constructor(
     public playerService: PlayerService,
     public activeStory: ActiveStoryService
