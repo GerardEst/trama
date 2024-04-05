@@ -28,9 +28,6 @@ export class FlowComponent {
   @Output() onDrawNode = new EventEmitter<node>()
 
   // TODO -> Change component name "flow" for something less related to the paths. Game?
-  // TODO -> Timers make console slow. Remove some consolelogs too
-  // TODO -> Going to dashboard from landing there is an error and nothing is loaded in dashboard.
-  //         Going back from dashboard to landing page launches an error too
   constructor(
     public playService: PlayService,
     public activeStory: ActiveStoryService
