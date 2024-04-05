@@ -39,6 +39,9 @@ export class DatabaseService {
       .select('*')
       .eq('id', storyId)
 
+    if (error || !stories[0]) {
+      return this.getNewestStory()
+    }
     return stories[0]
   }
   async getNewestStory() {
