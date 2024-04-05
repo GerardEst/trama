@@ -38,7 +38,6 @@ export class MenuComponent implements OnInit {
       {
         name: 'My new tree',
         tree: {
-          name: 'Starter',
           nodes: [
             {
               id: 'node_0',

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { createClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
 import { configuration } from './database-interfaces'
-import { ActiveStoryService } from './active-story.service'
+import { tree } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class DatabaseService {
   public supabase: any
   prod = !environment.production
 
-  constructor(private activeStory: ActiveStoryService) {
+  constructor() {
     this.supabase = createClient(
       'https://lsemostpqoguehpsbzgu.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZW1vc3RwcW9ndWVocHNiemd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTE2OTkwNTUsImV4cCI6MTk2NzI3NTA1NX0.NTzZHJPUeppG7TTVvOibWIdRr4zf-v-1RR_iWY5MdLM'
@@ -56,18 +56,24 @@ export class DatabaseService {
     return data
   }
 
-  async saveLocalToDB() {
+  async saveTreeToDB(treeId: string, treeContent: tree) {
     if (this.prod)
       console.log('%cdb call to save local story to db', 'color: #9999ff')
 
-    const savedTree = this.activeStory.entireTree()
-    const storyId = this.activeStory.storyId()
+    const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
+    const kiloBytes = size / 1024
+    console.log(
+      '%caprox size of tree being saved: ' + kiloBytes + 'kb',
+      'color: #9999ff'
+    )
+    console.time('savingTree')
 
     const { data, error } = await this.supabase
       .from('stories')
-      .update({ tree: savedTree })
-      .eq('id', storyId)
+      .update({ tree: treeContent })
+      .eq('id', treeId)
 
+    console.timeEnd('savingTree')
     if (error) return false
 
     return true

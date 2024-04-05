@@ -82,16 +82,16 @@ export class MenuTopComponent {
     this.db.deleteStory(this.activeStory.storyId())
   }
 
-  async saveToDb(): Promise<void> {
-    return new Promise<void>((resolve) => {
-      this.savingTree = true
-      this.db.saveLocalToDB().then((resp) => {
-        console.log('Saved?', resp)
-        setTimeout(() => {
-          this.savingTree = false
-          resolve() // Resolve the promise when saving is complete
-        }, 200)
-      })
-    })
-  }
+  // async saveToDb(): Promise<void> {
+  //   return new Promise<void>((resolve) => {
+  //     this.savingTree = true
+  //     this.db.saveTreeToDB(this.storyId(), this.entireTree()).then((resp) => {
+  //       console.log('Saved?', resp)
+  //       setTimeout(() => {
+  //         this.savingTree = false
+  //         resolve() // Resolve the promise when saving is complete
+  //       }, 200)
+  //     })
+  //   })
+  // }
 }

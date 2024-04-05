@@ -5,7 +5,8 @@ import {
   findAnswerInTree,
   generateIDForNewRequirement,
 } from '../utils/tree-searching'
-import { tree, link, node_answer, node_conditions, node } from '../interfaces'
+import { link, node_conditions, node } from '../interfaces'
+import { DatabaseService } from './database.service'
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class ActiveStoryService {
   storyRefs: any = signal([])
   storyConfiguration: any = signal({})
 
-  constructor() {
+  constructor(private db: DatabaseService) {
     effect(() => {
       const pageTitle = document.querySelector('title')
       if (pageTitle) pageTitle.innerHTML = this.storyName()
@@ -162,6 +163,7 @@ export class ActiveStoryService {
         id: `condition_${id.split('_')[1]}_fallback`,
       }
     }
+
     this.entireTree().nodes?.push(newNode)
   }
   removeNode(nodeId: string) {
@@ -198,14 +200,23 @@ export class ActiveStoryService {
     }
 
     this.activateTreeChangeEffects()
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   updateNodeText(nodeId: string, newText: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.text = newText
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   updateNodeLinks(nodeId: string, links: link[]) {
     const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.links = links
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   updateNodePosition(nodeId: string, left: number, top: number) {
     let node = findNodeInTree(nodeId, this.entireTree())
@@ -217,17 +228,28 @@ export class ActiveStoryService {
   updateNodeShareOptions(nodeId: string, sharingOptions: any) {
     const node = findNodeInTree(nodeId, this.entireTree())
     node.share = sharingOptions
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   addImageToNode(nodeId: string, imagePath: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     node.image = {
       path: imagePath,
     }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   removeImageFromNode(nodeId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     node.image = undefined
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
+
+  // TODO -> Es necessari això?
   getImageFromNode(nodeId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     return node.image
@@ -255,6 +277,9 @@ export class ActiveStoryService {
       condition.comparator = values.comparator
       condition.value = values.value
     }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   removeCondition(nodeId: string, conditionId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -263,12 +288,18 @@ export class ActiveStoryService {
     )
 
     node.conditions = newConditions
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
 
   // Answers
   updateAnswerText(answerId: string, newText: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
     if (answer) answer[0].text = newText
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   createNodeAnswer(nodeId: string, answerId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -287,10 +318,16 @@ export class ActiveStoryService {
     )
 
     node.answers = newAnswers
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   saveAnswerEvents(answerId: string, events: any) {
     const answer = findAnswerInTree(answerId, this.entireTree())
     answer[0].events = events
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   deleteEventFromAnswer(answerId: string, eventTarget: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
@@ -299,10 +336,16 @@ export class ActiveStoryService {
         return event.target !== eventTarget
       })
     }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   saveAnswerRequirements(answerId: string, requirements: any) {
     const answer = findAnswerInTree(answerId, this.entireTree())
     answer[0].requirements = requirements
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   updateRequirementAmount(
     answerId: string,
@@ -317,6 +360,9 @@ export class ActiveStoryService {
       )
       requirement.amount = amount
     }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
@@ -326,6 +372,9 @@ export class ActiveStoryService {
         return req.id !== requirementId
       })
     }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   // TODO -> No entenc el join, i té un mal nom
   updateOptionJoin(optionId: string, nodeId: string) {
@@ -376,6 +425,9 @@ export class ActiveStoryService {
     }
 
     this.activateTreeChangeEffects()
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   removeJoinFromAnswer(answerId: string, nodeId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
@@ -388,8 +440,12 @@ export class ActiveStoryService {
 
     this.activateTreeChangeEffects()
 
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+
     return answer[0].join
   }
+  // TODO -> Son necessaris tots aquets gets?
   getEventsOfAnswer(answerId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
@@ -432,6 +488,7 @@ export class ActiveStoryService {
     return this.entireTree().categories || []
   }
 
+  // Utility to launch all the signal effect listeners
   public activateTreeChangeEffects() {
     if (this.entireTree) this.entireTree.set({ ...this.entireTree() })
   }
