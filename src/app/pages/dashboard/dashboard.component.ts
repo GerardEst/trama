@@ -35,40 +35,39 @@ export class DashboardComponent {
   ) {}
 
   ngOnInit(): void {
-    this.initBoard()
-  }
-
-  initBoard() {
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
+    this.initBoard(localStoryId)
+  }
 
-    if (localStoryId) {
-      this.loadStory(localStoryId)
+  async initBoard(storyId: string | null) {
+    if (storyId) {
+      const story = await this.db.getStory(storyId)
+      this.loadStory(story)
     } else {
-      // TODO -> Create a new tree, show some instructions, example tree...
+      const story = await this.db.getNewestStory()
+      this.loadStory(story)
     }
   }
 
-  async loadStory(storyId: string) {
-    const story = await this.db.getStory(storyId)
-
-    localStorage.setItem('polo-id', storyId)
+  loadStory(story: any) {
+    localStorage.setItem('polo-id', story.id)
 
     // Set active-story states
-    this.activeStory.storyId.set(storyId)
+    this.activeStory.storyId.set(story.id)
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
     this.activeStory.initTreeRefs(story.tree)
 
-    this.setInitialBoardPositionFor(storyId)
+    this.setInitialBoardPositionFor(story.id)
 
-    // TODO ->
-    // Amb aquest timeout es veu el salt
-    // Comença mal pintat, quan es detecta automaticament fa una cosa rara, pero si m'espero a que tot estigui pintat, bé.
+    // TODO -> Comença mal pintat
+    // Quan es detecta automaticament fa una cosa rara, pero si m'espero a que tot estigui pintat, bé.
     // També, si arrastrem abans que s'acabi de pintar l'arbre sencer o acabi de fer el que hagi de fer, el drag no repinta les linies
+    // Amb aquest timeout es veu el salt
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
 
-    this.loadConfigurationForStory(storyId)
+    this.loadConfigurationForStory(story.id)
   }
 
   setInitialBoardPositionFor(storyId: string) {

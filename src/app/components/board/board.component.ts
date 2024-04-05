@@ -148,7 +148,7 @@ export class BoardComponent {
 
     this.waitingForJoin = false
 
-    this.activeStory.updateOptionJoin(this.willJoinId, nodeId)
+    this.activeStory.updateJoinOfOption(this.willJoinId, nodeId)
   }
 
   // Simple throttling to prevent call treeChanges too many times when dragging
@@ -202,7 +202,7 @@ export class BoardComponent {
         destiny: newNodeInfo.id + '_join',
       })
 
-      this.activeStory.updateOptionJoin(this.willJoinId, newNodeInfo.id)
+      this.activeStory.updateJoinOfOption(this.willJoinId, newNodeInfo.id)
 
       this.waitingForJoin = false
     }

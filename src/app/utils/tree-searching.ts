@@ -8,8 +8,7 @@ export function findAnswerInTree(answerId: string, tree: any) {
   const answerNodeId = answerId.split('_')[1]
   const node = findNodeInTree(`node_${answerNodeId}`, tree)
 
-  // TODO -> Make it find, not filter. Update active-story to use the returned directly, not the first element
-  return node.answers?.filter((answer: any) => answer.id === answerId)
+  return node.answers?.find((answer: any) => answer.id === answerId)
 }
 
 export function getNodeIdFromAnswerId(answerId: string) {

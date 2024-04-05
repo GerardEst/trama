@@ -249,7 +249,7 @@ export class ActiveStoryService {
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
 
-  // TODO -> Es necessari això?
+  // TODO -> Are all this get really necessary since the use of signals for the tree?
   getImageFromNode(nodeId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     return node.image
@@ -296,7 +296,7 @@ export class ActiveStoryService {
   // Answers
   updateAnswerText(answerId: string, newText: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    if (answer) answer[0].text = newText
+    if (answer) answer.text = newText
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
@@ -324,15 +324,15 @@ export class ActiveStoryService {
   }
   saveAnswerEvents(answerId: string, events: any) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    answer[0].events = events
+    answer.events = events
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   deleteEventFromAnswer(answerId: string, eventTarget: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    if (answer[0].events) {
-      answer[0].events = answer[0].events.filter((event: any) => {
+    if (answer.events) {
+      answer.events = answer.events.filter((event: any) => {
         return event.target !== eventTarget
       })
     }
@@ -342,7 +342,7 @@ export class ActiveStoryService {
   }
   saveAnswerRequirements(answerId: string, requirements: any) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    answer[0].requirements = requirements
+    answer.requirements = requirements
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
@@ -354,8 +354,8 @@ export class ActiveStoryService {
   ) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
-    if (answer[0].requirements) {
-      const requirement = answer[0].requirements.find(
+    if (answer.requirements) {
+      const requirement = answer.requirements.find(
         (req: any) => req.id === requirementId
       )
       requirement.amount = amount
@@ -367,8 +367,8 @@ export class ActiveStoryService {
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
-    if (answer[0].requirements) {
-      answer[0].requirements = answer[0].requirements.filter((req: any) => {
+    if (answer.requirements) {
+      answer.requirements = answer.requirements.filter((req: any) => {
         return req.id !== requirementId
       })
     }
@@ -376,8 +376,9 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
-  // TODO -> No entenc el join, i té un mal nom
-  updateOptionJoin(optionId: string, nodeId: string) {
+
+  // Sometimes I refer to Option instead of Answer because I added the distributor nodes, which don't have answers but somethings. I wanted to call everything: Option
+  updateJoinOfOption(optionId: string, nodeId: string) {
     const optionNodeType = optionId.split('_')[0]
     const optionNodeId = optionId.split('_')[1]
     const isFallbackCondition = optionId.split('_')[2] === 'fallback'
@@ -432,8 +433,8 @@ export class ActiveStoryService {
   removeJoinFromAnswer(answerId: string, nodeId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
-    if (answer[0].join) {
-      answer[0].join = answer[0].join.filter((join: any) => {
+    if (answer.join) {
+      answer.join = answer.join.filter((join: any) => {
         return join.node !== nodeId
       })
     }
@@ -443,35 +444,33 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
 
-    return answer[0].join
+    return answer.join
   }
-  // TODO -> Son necessaris tots aquets gets?
+  // TODO -> Are all this gets really necessary since the use of signals for the tree?
   getEventsOfAnswer(answerId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
-    if (!answer[0].events) return []
-    return answer[0].events
+    if (!answer.events) return []
+    return answer.events
   }
   getRequirementsOfAnswer(answerId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    return answer[0].requirements
+    return answer.requirements
   }
   getJoinsOfAnswer(answerId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
-    return answer[0].join
+    return answer.join
   }
   getDetailedRequirementsOfAnswer(answerId: string) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
-    if (!answer[0].requirements) return []
-    const detailedRequirements = answer[0].requirements.map(
-      (requirement: any) => {
-        return {
-          ...requirement,
-          ...this.entireTree().refs[requirement.id],
-        }
+    if (!answer.requirements) return []
+    const detailedRequirements = answer.requirements.map((requirement: any) => {
+      return {
+        ...requirement,
+        ...this.entireTree().refs[requirement.id],
       }
-    )
+    })
 
     return detailedRequirements
   }

@@ -41,6 +41,21 @@ export class DatabaseService {
 
     return stories[0]
   }
+  async getNewestStory() {
+    // Gets the most recently updated story, and the newest if there are multiple
+    if (this.prod)
+      console.log(
+        '%cdb call to get everyting about THE NEWEST a story',
+        'color: #9999ff'
+      )
+    let { data: stories, error } = await this.supabase
+      .from('stories')
+      .select('*')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+
+    return stories[0]
+  }
 
   async removeImage() {}
 
