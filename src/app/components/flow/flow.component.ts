@@ -10,6 +10,7 @@ import {
   node_answer,
 } from 'src/app/interfaces'
 import { PlayService } from 'src/app/pages/playground/services/play.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
   selector: 'polo-flow',
@@ -20,36 +21,41 @@ import { PlayService } from 'src/app/pages/playground/services/play.service'
 })
 export class FlowComponent {
   activeNode?: node = undefined
+  initialized: boolean = false
 
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()
 
-  constructor(public playService: PlayService) {
+  // TODO -> Change component name "flow" for something less related to the paths. Game?
+  // TODO -> Timers make console slow. Remove some consolelogs too
+  // TODO -> Going to dashboard from landing there is an error and nothing is loaded in dashboard.
+  //         Going back from dashboard to landing page launches an error too
+  constructor(
+    public playService: PlayService,
+    public activeStory: ActiveStoryService
+  ) {
     effect(() => {
-      if (this.playService.reset()) {
-        console.log('reseting story')
-        this.activeNode = this.playService.nodes()[0]
+      if (!this.initialized && this.activeStory) {
+        console.log('activeStory initialized')
+        this.activeNode = this.activeStory.entireTree().nodes[0]
+        this.initialized = true
       }
     })
   }
 
-  ngOnInit() {
-    this.activeNode = this.playService.nodes()[0]
-  }
-
   nextStep(destinyNode: Array<join>) {
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
-    const nextNode = this.playService
-      .nodes()
-      .find((node: any) => node.id === randomlyChoosedJoin.node)
+    const nextNode = this.activeStory
+      .entireTree()
+      .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
     if (!nextNode) throw new Error('Node not found')
     this.activeNode = nextNode
 
-    if (this.activeNode.type === 'end') this.onEndGame.emit()
-    if (this.activeNode.type !== 'distributor')
+    if (this.activeNode && this.activeNode.type === 'end') this.onEndGame.emit()
+    if (this.activeNode && this.activeNode.type !== 'distributor')
       this.registerNode(this.activeNode)
-    if (this.activeNode.type === 'distributor')
+    if (this.activeNode && this.activeNode.type === 'distributor')
       // If nodePointer points to a distributor, we jump to the next one
       this.nextStep(this.distributeNode(nextNode))
   }
@@ -145,9 +151,9 @@ export class FlowComponent {
     const withBlockReplacements = withInlineReplacements.replace(
       /\[([a-zA-Z0-9_]+)\]/g,
       (match: string, p1: string) => {
-        let refsWithCategory = Object.keys(this.playService.refs()).filter(
+        let refsWithCategory = Object.keys(this.activeStory.storyRefs()).filter(
           (key: any) => {
-            return this.playService.refs()[key].category === p1
+            return this.activeStory.storyRefs()[key].category === p1
           }
         )
 
@@ -160,7 +166,9 @@ export class FlowComponent {
             string =
               string +
               '\n' +
-              this.capitalize(this.playService.refs()[playerStat.id].name) +
+              this.capitalize(
+                this.activeStory.storyRefs()[playerStat.id].name
+              ) +
               ': ' +
               playerStat.amount
           }
@@ -175,7 +183,9 @@ export class FlowComponent {
             string =
               string +
               '\n' +
-              this.capitalize(this.playService.refs()[playerCondition.id].name)
+              this.capitalize(
+                this.activeStory.storyRefs()[playerCondition.id].name
+              )
           }
         }
 

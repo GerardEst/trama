@@ -5,7 +5,11 @@
     (onSelectAnswer)="selectAnswer($event)"
   ></polo-flow>
 }
-@if (playService.story() && playService.story().askName && !gotUserInfo) {
+@if (
+  activeStory.entireTree() &&
+  activeStory.storyConfiguration().askName &&
+  !gotUserInfo
+) {
   <polo-modal-window [locked]="true">
     <form class="playerForm">
       <input type="text" (change)="setUserName($event)" placeholder="Nom" />

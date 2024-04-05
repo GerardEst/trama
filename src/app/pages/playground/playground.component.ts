@@ -4,8 +4,11 @@ import { FlowComponent } from 'src/app/components/flow/flow.component'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 import { node, node_answer } from 'src/app/interfaces'
+import { configuration } from 'src/app/services/database-interfaces'
 import { PlayService } from './services/play.service'
+import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+
 @Component({
   selector: 'polo-playground',
   standalone: true,
@@ -29,14 +32,27 @@ export class PlaygroundComponent {
 
   constructor(
     private db: DatabaseService,
-    public playService: PlayService
+    public playService: PlayService,
+    public activeStory: ActiveStoryService
   ) {}
+  // In playService we have everything about the player, the counters, etc
+  // In activeStory we have everything about the story, the options, tree, refs, etc
 
   async ngOnInit(): Promise<void> {
+    // Get the story and configuration to save it to activeStory and use activeStory from now on
     const story = await this.db.getStory(this.storyId)
-    this.playService.story.set(story)
+    const configuration: configuration = await this.db.getConfigurationOf(
+      story.id
+    )
+    this.activeStory.storyId.set(story.id)
+    this.activeStory.entireTree.set(story.tree)
+    this.activeStory.storyName.set(story.name)
 
-    if (!this.playService.story().askName) this.displayGame()
+    this.activeStory.storyConfiguration().tracking = configuration.tracking
+    this.activeStory.storyConfiguration().sharing = configuration.sharing
+    this.activeStory.storyConfiguration().askName = configuration.askName
+
+    if (!this.activeStory.storyConfiguration().askName) this.displayGame()
   }
 
   async displayGame(event?: Event) {
@@ -44,12 +60,10 @@ export class PlaygroundComponent {
 
     this.gotUserInfo = true
 
-    if (this.playService.story().tracking) {
+    if (this.activeStory.storyConfiguration().tracking) {
       this.startTabChangeDetection()
       this.startBlurWindowDetection()
-    }
 
-    if (this.playService.story().tracking) {
       this.gameId = self.crypto.randomUUID()
 
       // We upload an empty game
@@ -84,7 +98,7 @@ export class PlaygroundComponent {
   }
 
   endGame() {
-    if (this.playService.story().tracking) {
+    if (this.activeStory.storyConfiguration().tracking) {
       console.log('Saving game')
       const userFinalStats = this.playService.player()
       this.saveGame(userFinalStats)
@@ -92,7 +106,7 @@ export class PlaygroundComponent {
   }
 
   selectAnswer(answer: node_answer) {
-    if (this.playService.story().tracking) {
+    if (this.activeStory.storyConfiguration().tracking) {
       this.playerPath.push({
         type: 'answer',
         id: answer.id,
@@ -104,7 +118,7 @@ export class PlaygroundComponent {
   }
 
   drawNode(node: node) {
-    if (this.playService.story().tracking) {
+    if (this.activeStory.storyConfiguration().tracking) {
       this.playerPath.push({
         type: 'node',
         id: node.id,

@@ -57,8 +57,8 @@ export class DashboardComponent {
     this.activeStory.storyId.set(story.id)
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
-    this.activeStory.initTreeRefs(story.tree)
 
+    this.activeStory.initTreeRefs(story.tree)
     this.setInitialBoardPositionFor(story.id)
 
     // TODO -> Comença mal pintat
