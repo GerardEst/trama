@@ -29,7 +29,7 @@
       cdkDrag
       id="{{ node.id }}"
       [type]="node.type || 'content'"
-      (click)="setActiveNode(node.id)"
+      (click)="setActiveNode(node.id, activeStory.storyId())"
       (mousedown)="stopDragging()"
       (mouseenter)="mouseEnter($event)"
       (mouseleave)="mouseLeave($event)"

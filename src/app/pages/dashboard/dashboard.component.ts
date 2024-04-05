@@ -60,8 +60,7 @@ export class DashboardComponent {
     this.activeStory.storyName.set(story.name)
     this.activeStory.initTreeRefs(story.tree)
 
-    // TODO -> when loading another tree, it goes to the active node of previous tree
-    this.setInitialBoardPosition()
+    this.setInitialBoardPositionFor(storyId)
 
     // TODO ->
     // Amb aquest timeout es veu el salt
@@ -72,8 +71,9 @@ export class DashboardComponent {
     this.loadConfigurationForStory(storyId)
   }
 
-  setInitialBoardPosition() {
-    const activeNodeId = localStorage.getItem('polo-activeNode')
+  setInitialBoardPositionFor(storyId: string) {
+    const activeNodes = localStorage.getItem('polo-activeNodes')
+    const activeNodeId = activeNodes && JSON.parse(activeNodes)[storyId]
     if (activeNodeId) {
       const activeNode = findNodeInTree(
         activeNodeId,

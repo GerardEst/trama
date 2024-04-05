@@ -167,8 +167,14 @@ export class BoardComponent {
     this.addNode(event, 'content')
   }
 
-  setActiveNode(nodeId: string) {
-    localStorage.setItem('polo-activeNode', nodeId)
+  setActiveNode(nodeId: string, storyId: string) {
+    const storedActiveNodes = localStorage.getItem('polo-activeNodes')
+    const activeNodes =
+      (storedActiveNodes && JSON.parse(storedActiveNodes)) || {}
+
+    activeNodes[storyId] = nodeId
+
+    localStorage.setItem('polo-activeNodes', JSON.stringify(activeNodes))
   }
 
   addNode(event: any, type: 'content' | 'distributor' | 'end'): void {

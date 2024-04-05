@@ -58,9 +58,6 @@ export class MenuTreeLegendComponent {
   }
 
   focusNodesWith(refId: string) {
-    // todo -> si els nodes estiguessin en una signal, podria
-    // reflexar els canvis tranquilament?
-    // I no és reactiu, seguuur que es pot fer millor
     const refs = this.activeStory
       .storyRefs()
       .filter((ref: any) => ref.id === refId)
@@ -70,9 +67,6 @@ export class MenuTreeLegendComponent {
     }
   }
   blurNodesWith(refId: string) {
-    // todo -> si els nodes estiguessin en una signal, podria
-    // reflexar els canvis tranquilament?
-    // I no és reactiu, seguuur que es pot fer millor
     const refs = this.activeStory
       .storyRefs()
       .filter((ref: any) => ref.id === refId)
