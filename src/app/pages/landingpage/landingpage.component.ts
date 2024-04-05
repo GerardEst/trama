@@ -1,6 +1,6 @@
 import { AfterRenderPhase, Component, ViewChild } from '@angular/core'
 import { BoardComponent } from 'src/app/components/board/board.component'
-import { FlowComponent } from 'src/app/components/flow/flow.component'
+import { GameComponent } from 'src/app/components/game/game.component'
 import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
 import { Router } from '@angular/router'
 import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component'
@@ -11,7 +11,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
   standalone: true,
   imports: [
     BoardComponent,
-    FlowComponent,
+    GameComponent,
     AccentButtonComponent,
     LinkButtonComponent,
   ],

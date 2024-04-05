@@ -1,9 +1,9 @@
 @if (gotUserInfo) {
-  <polo-flow
+  <polo-game
     (onEndGame)="endGame()"
     (onDrawNode)="drawNode($event)"
     (onSelectAnswer)="selectAnswer($event)"
-  ></polo-flow>
+  ></polo-game>
 }
 @if (
   activeStory.entireTree() &&

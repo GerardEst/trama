@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FlowComponent } from 'src/app/components/flow/flow.component'
+import { GameComponent } from 'src/app/components/game/game.component'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 import { node, node_answer } from 'src/app/interfaces'
@@ -15,7 +15,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
   imports: [
     CommonModule,
     ModalWindowComponent,
-    FlowComponent,
+    GameComponent,
     BasicButtonComponent,
   ],
   templateUrl: './playground.component.html',

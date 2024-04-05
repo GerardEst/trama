@@ -13,13 +13,13 @@ import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
-  selector: 'polo-flow',
+  selector: 'polo-game',
   standalone: true,
   imports: [],
-  templateUrl: './flow.component.html',
-  styleUrl: './flow.component.sass',
+  templateUrl: './game.component.html',
+  styleUrl: './game.component.sass',
 })
-export class FlowComponent {
+export class GameComponent {
   activeNode?: node = undefined
   initialized: boolean = false
 
