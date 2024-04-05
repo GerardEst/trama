@@ -89,6 +89,9 @@ export class ActiveStoryService {
     ]
 
     this.storyRefs.set(withNewRef)
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   removeRef(on: 'event' | 'requirement', refToRemove: any) {
     const withoutRef = this.storyRefs().filter(
@@ -101,6 +104,9 @@ export class ActiveStoryService {
     )
 
     this.storyRefs.set(withoutRef)
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   createNewRef(name: string, type: 'stat' | 'condition') {
     if (!this.entireTree().refs) {
@@ -127,9 +133,15 @@ export class ActiveStoryService {
   }
   updateRefName(refId: string, newName: string) {
     this.entireTree().refs[refId].name = newName
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   deleteRef(refId: string) {
     delete this.entireTree().refs[refId]
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   getRefs() {
     return this.entireTree().refs
@@ -482,6 +494,9 @@ export class ActiveStoryService {
   }
   setCategoryToRef(refId: string, categoryId: string) {
     this.entireTree().refs[refId].category = categoryId
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   getCategories() {
     return this.entireTree().categories || []
