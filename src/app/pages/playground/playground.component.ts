@@ -5,7 +5,7 @@ import { DatabaseService } from 'src/app/services/database.service'
 import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 import { node, node_answer } from 'src/app/interfaces'
 import { configuration } from 'src/app/services/database-interfaces'
-import { PlayService } from './services/play.service'
+import { PlayerService } from './services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
@@ -32,10 +32,10 @@ export class PlaygroundComponent {
 
   constructor(
     private db: DatabaseService,
-    public playService: PlayService,
+    public playerService: PlayerService,
     public activeStory: ActiveStoryService
   ) {}
-  // In playService we have everything about the player, the counters, etc
+  // In playerService we have everything about the player, the counters, etc
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
   async ngOnInit(): Promise<void> {
@@ -73,8 +73,8 @@ export class PlaygroundComponent {
   }
 
   public setUserName(event: any) {
-    this.playService.player.set({
-      ...this.playService.player(),
+    this.playerService.player.set({
+      ...this.playerService.player(),
       name: event.target.value,
     })
   }
@@ -84,7 +84,7 @@ export class PlaygroundComponent {
 
     const saved = await this.db.saveNewGameTo(
       this.gameId,
-      this.playService.player().name || 'anonymous',
+      this.playerService.player().name || 'anonymous',
       this.storyId,
       this.playerPath,
       result,
@@ -100,7 +100,7 @@ export class PlaygroundComponent {
   endGame() {
     if (this.activeStory.storyConfiguration().tracking) {
       console.log('Saving game')
-      const userFinalStats = this.playService.player()
+      const userFinalStats = this.playerService.player()
       this.saveGame(userFinalStats)
     }
   }

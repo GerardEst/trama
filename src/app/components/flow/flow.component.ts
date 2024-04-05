@@ -9,7 +9,7 @@ import {
   node,
   node_answer,
 } from 'src/app/interfaces'
-import { PlayService } from 'src/app/pages/playground/services/play.service'
+import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
@@ -29,7 +29,7 @@ export class FlowComponent {
 
   // TODO -> Change component name "flow" for something less related to the paths. Game?
   constructor(
-    public playService: PlayService,
+    public playerService: PlayerService,
     public activeStory: ActiveStoryService
   ) {
     effect(() => {
@@ -66,7 +66,7 @@ export class FlowComponent {
       const distributorConditionType = distributorCondition.ref.split('_')[0]
       if (distributorConditionType === 'stat') {
         // If it's a stat, we find this stat in the player object
-        const playerStat = this.playService
+        const playerStat = this.playerService
           .player()
           .stats.find((stat: any) => stat.id === distributorCondition.ref)
         // If the player doesn't have the stat, the amount is 0
@@ -85,7 +85,7 @@ export class FlowComponent {
       }
       if (distributorConditionType === 'condition') {
         // If it's a condition, we find this condition in the player object
-        const playerCondition = this.playService
+        const playerCondition = this.playerService
           .player()
           .conditions.find(
             (condition: any) => condition.id === distributorCondition.ref
@@ -136,9 +136,9 @@ export class FlowComponent {
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string) => {
         // if the prop is not in player, we search in stats
-        let value = this.playService.player()[p1]
+        let value = this.playerService.player()[p1]
         if (!value) {
-          value = this.playService
+          value = this.playerService
             .player()
             .stats.find((stat: any) => stat.id === p1)?.amount
         }
@@ -156,7 +156,7 @@ export class FlowComponent {
 
         let string = ' '
         for (let refWithCategory of refsWithCategory) {
-          const playerStat = this.playService
+          const playerStat = this.playerService
             .player()
             .stats.find((stat: any) => stat.id === refWithCategory)
           if (playerStat) {
@@ -171,7 +171,7 @@ export class FlowComponent {
           }
         }
         for (let refWithCategory of refsWithCategory) {
-          const playerCondition = this.playService
+          const playerCondition = this.playerService
             .player()
             .conditions.find(
               (condition: any) => condition.id === refWithCategory
@@ -253,18 +253,18 @@ export class FlowComponent {
   private alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
-    let statIndex = this.playService
+    let statIndex = this.playerService
       .player()
       .stats?.findIndex((element: stat) => element.id === event.target)
-    let stat = this.playService.player().stats?.[statIndex]
+    let stat = this.playerService.player().stats?.[statIndex]
 
     if (stat) {
       stat.amount += amount
       if (stat.amount <= 0)
-        this.playService.player().stats?.splice(statIndex, 1)
+        this.playerService.player().stats?.splice(statIndex, 1)
     } else {
       if (amount <= 0) return
-      this.playService.player().stats?.push({
+      this.playerService.player().stats?.push({
         id: event.target,
         amount,
       })
@@ -273,20 +273,21 @@ export class FlowComponent {
 
   private alterCondition(event: answer_event) {
     if (event.amount) {
-      let condition = this.playService
+      let condition = this.playerService
         .player()
         .conditions?.find((element: condition) => element.id === event.target)
 
       if (!condition)
-        this.playService.player().conditions?.push({ id: event.target })
+        this.playerService.player().conditions?.push({ id: event.target })
     } else {
-      let condition = this.playService
+      let condition = this.playerService
         .player()
         .conditions?.findIndex(
           (condition: condition) => condition.id === event.target
         )
 
-      if (condition) this.playService.player().conditions?.splice(condition, 1)
+      if (condition)
+        this.playerService.player().conditions?.splice(condition, 1)
     }
   }
 

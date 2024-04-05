@@ -4,8 +4,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 @Injectable({
   providedIn: 'root',
 })
-// TODO -> Change play service to player
-export class PlayService {
+export class PlayerService {
   player: WritableSignal<any> = signal({ stats: [], conditions: [] })
 
   constructor(public activeStory: ActiveStoryService) {
