@@ -57,7 +57,14 @@ export class LandingpageComponent {
     private activeStory: ActiveStoryService,
     public router: Router,
     public db: DatabaseService
-  ) {}
+  ) {
+    // Check if user comes from external loggin and redirect to dashboard
+    const comesFromOAuth = localStorage.getItem('oauth')
+    localStorage.removeItem('oauth')
+    if (comesFromOAuth) {
+      this.router.navigate(['dashboard'])
+    }
+  }
 
   ngAfterViewInit() {
     // Initializes the example tree

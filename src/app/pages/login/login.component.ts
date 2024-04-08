@@ -62,8 +62,8 @@ export class LoginComponent {
   async signInWithGoogle() {
     this.db.supabase.auth.signInWithOAuth({
       provider: 'google',
-      redirectTo: 'https://polo-rust.vercel.app/dashboard',
     })
+    localStorage.setItem('oauth', '1')
   }
 
   async signInWithEmail(
