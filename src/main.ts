@@ -14,16 +14,18 @@ import { LoginComponent } from './app/pages/login/login.component'
 import { authGuard } from './app/guards/auth.guard'
 
 const appRoutes: Routes = [
-  { path: '', component: LandingpageComponent },
+  { path: '', title: 'Textandplay', component: LandingpageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'playground/:storyId', component: PlaygroundComponent },
   {
     path: 'dashboard',
+    title: 'Dashboard',
     component: DashboardComponent,
     canActivate: [authGuard],
   },
   {
     path: 'stadistics/:id',
+    title: 'Stadistics',
     component: StadisticsComponent,
     canActivate: [authGuard],
   },

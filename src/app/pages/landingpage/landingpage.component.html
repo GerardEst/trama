@@ -6,12 +6,14 @@
     <a href="#pricing">Pricing (I'm joking, it's free)</a-->
   </div>
   <div class="login">
-    <polo-accent-button (click)="router.navigate(['/dashboard'])" [fill]="true"
-      >Dashboard</polo-accent-button
+    <polo-accent-button
+      (click)="router.navigate(['/dashboard'])"
+      [fill]="true"
+      >{{ db.user ? 'Dashboard' : 'Login' }}</polo-accent-button
     >
   </div>
 </menu>
-<svg viewBox="0 0 100 40">
+<!--svg viewBox="0 0 100 40">
   <path
     _ngcontent-ng-c3819845452=""
     d="M70.5 0 L70.5 15 Q70.5 20 65.5 20 L20.5 20 Q13.5 20 13.5 25 L13.5 100"
@@ -25,7 +27,7 @@
     stroke-width="1"
     fill="none"
   />
-</svg>
+</svg-->
 <section class="section--editor">
   <div class="text">
     <h1>

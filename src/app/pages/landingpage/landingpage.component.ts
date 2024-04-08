@@ -2,9 +2,10 @@ import { AfterRenderPhase, Component, ViewChild } from '@angular/core'
 import { BoardComponent } from 'src/app/components/board/board.component'
 import { GameComponent } from 'src/app/components/game/game.component'
 import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
-import { Router } from '@angular/router'
+import { Data, Router } from '@angular/router'
 import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({
   selector: 'polo-landingpage',
@@ -27,7 +28,7 @@ export class LandingpageComponent {
       {
         id: 'node_0',
         top: 4996,
-        left: 503,
+        left: 2503,
         answers: [
           {
             id: 'answer_0_0',
@@ -41,7 +42,7 @@ export class LandingpageComponent {
         id: 'node_1',
         type: 'content',
         top: 4994,
-        left: 828,
+        left: 2828,
         text: 'You could, for example, ask a question here',
         answers: [
           { id: 'answer_1_0', text: 'And multiple answers' },
@@ -54,13 +55,14 @@ export class LandingpageComponent {
 
   constructor(
     private activeStory: ActiveStoryService,
-    public router: Router
+    public router: Router,
+    public db: DatabaseService
   ) {}
 
   ngAfterViewInit() {
     // Initializes the example tree
     // TODO -> Flows are not initializing
     this.activeStory.entireTree.set(this.exampleTree)
-    this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
+    this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
   }
 }
