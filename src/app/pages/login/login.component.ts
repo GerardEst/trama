@@ -60,10 +60,10 @@ export class LoginComponent {
   }
 
   async signInWithGoogle() {
+    localStorage.setItem('oauth', '1')
     this.db.supabase.auth.signInWithOAuth({
       provider: 'google',
     })
-    localStorage.setItem('oauth', '1')
   }
 
   async signInWithEmail(
