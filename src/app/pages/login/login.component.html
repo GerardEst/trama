@@ -1,12 +1,12 @@
 <div class="loginBox">
   <div class="box">
     @if (register) {
+      <h3>Create an account</h3>
+      <polo-basic-button
+        (click)="signInWithGoogle()"
+        text="Google"
+      ></polo-basic-button>
       <form>
-        <h3>Create an account</h3>
-        <polo-basic-button
-          (click)="(signInWithGoogle)"
-          text="Google"
-        ></polo-basic-button>
         <label>
           <p>User name</p>
           <input
@@ -61,12 +61,12 @@
         </div>
       </form>
     } @else {
+      <h3>Log in</h3>
+      <polo-basic-button
+        (click)="signInWithGoogle()"
+        text="Google"
+      ></polo-basic-button>
       <form>
-        <h3>Log in</h3>
-        <polo-basic-button
-          (click)="(signInWithGoogle)"
-          text="Google"
-        ></polo-basic-button>
         <label>
           <p>Your email</p>
           <input id="login_email" type="text" [formControl]="login_email" />
