@@ -26,7 +26,7 @@ export class MenuComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.stories = await this.db.getAllTrees()
+    this.stories = await this.db.getAllTreesForUser()
   }
 
   loadTree(treeId: number) {

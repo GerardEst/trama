@@ -59,6 +59,12 @@ export class LoginComponent {
     this.checkMail = true
   }
 
+  async signInWithGoogle() {
+    this.db.supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
+  }
+
   async signInWithEmail(
     event: Event,
     email: FormControl,

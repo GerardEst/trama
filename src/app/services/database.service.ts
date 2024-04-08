@@ -9,6 +9,8 @@ import { tree } from '../interfaces'
 })
 export class DatabaseService {
   public supabase: any
+  user: any = null
+
   prod = !environment.production
 
   constructor() {
@@ -16,17 +18,27 @@ export class DatabaseService {
       'https://lsemostpqoguehpsbzgu.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZW1vc3RwcW9ndWVocHNiemd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTE2OTkwNTUsImV4cCI6MTk2NzI3NTA1NX0.NTzZHJPUeppG7TTVvOibWIdRr4zf-v-1RR_iWY5MdLM'
     )
+    this.getUser()
   }
 
-  async getAllTrees() {
+  async getUser() {
+    const fetchUser = await this.supabase.auth.getUser()
+    this.user = fetchUser.data.user
+  }
+
+  async getAllTreesForUser() {
     if (this.prod)
       console.log(
-        '%cdb call to get all the stories id and name',
+        '%cdb call to get all the stories id and name for the active user',
         'color: #9999ff'
       )
+
+    if (!this.user) return console.warn('No active user')
+
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('id,name')
+      .eq('profile_id', this.user.id)
 
     return stories
   }
