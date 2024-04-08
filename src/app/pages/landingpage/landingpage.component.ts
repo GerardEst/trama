@@ -59,12 +59,12 @@ export class LandingpageComponent {
     public db: DatabaseService
   ) {
     // Check if user comes from external loggin and redirect to dashboard
-    const comesFromOAuth = localStorage.getItem('oauth')
-    localStorage.removeItem('oauth')
-    if (comesFromOAuth) {
-      console.log(comesFromOAuth)
-      this.router.navigate(['/dashboard'])
-    }
+    // const comesFromOAuth = localStorage.getItem('oauth')
+    // localStorage.removeItem('oauth')
+    // if (comesFromOAuth) {
+    //   console.log(comesFromOAuth)
+    //   this.router.navigate(['/dashboard'])
+    // }
   }
 
   ngAfterViewInit() {
