@@ -72,6 +72,7 @@ export class LandingpageComponent {
   redirectUserIfComesFromOauth() {
     const comesFromOAuth = localStorage.getItem('oauth')
     if (comesFromOAuth) {
+      console.log(comesFromOAuth)
       localStorage.removeItem('oauth')
       this.router.navigate(['/dashboard'])
     }
