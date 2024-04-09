@@ -60,19 +60,20 @@ export class LandingpageComponent {
   ) {}
 
   ngAfterViewInit() {
-    // Check if user comes from external loggin and redirect to dashboard
-    const comesFromOAuth = localStorage.getItem('oauth')
-    console.log(comesFromOAuth)
-    if (comesFromOAuth) {
-      console.log(comesFromOAuth)
-      this.router.navigate(['/dashboard'])
-    }
-    console.log('mes coses')
-    //localStorage.removeItem('oauth')
+    this.redirectUserIfComesFromOauth()
 
+    console.log('carrega tot aixo tambe?')
     // Initializes the example tree
     // TODO -> Flows are not initializing
     this.activeStory.entireTree.set(this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
+  }
+
+  redirectUserIfComesFromOauth() {
+    const comesFromOAuth = localStorage.getItem('oauth')
+    if (comesFromOAuth) {
+      localStorage.removeItem('oauth')
+      this.router.navigate(['/dashboard'])
+    }
   }
 }
