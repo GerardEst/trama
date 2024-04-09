@@ -45,11 +45,15 @@ export class DatabaseService {
 
   async getStory(storyId: string) {
     if (this.prod)
-      console.log('%cdb call to get everything about a story', 'color: #9999ff')
+      console.log(
+        '%cdb call to get everything about a story of the user',
+        'color: #9999ff'
+      )
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .eq('id', storyId)
+      .eq('profile_id', this.user.id)
 
     if (error || !stories[0]) {
       return this.getNewestStory()
@@ -60,7 +64,7 @@ export class DatabaseService {
     // Gets the most recently updated story, and the newest if there are multiple
     if (this.prod)
       console.log(
-        '%cdb call to get everyting about THE NEWEST a story',
+        '%cdb call to get everyting about THE NEWEST story of the user',
         'color: #9999ff'
       )
     let { data: stories, error } = await this.supabase
@@ -68,7 +72,12 @@ export class DatabaseService {
       .select('*')
       .order('updated_at', { ascending: false })
       .limit(1)
+      .eq('profile_id', this.user.id)
 
+    if (error) {
+      console.warn('User has no stories apparently')
+      return false
+    }
     return stories[0]
   }
 

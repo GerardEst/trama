@@ -65,6 +65,8 @@ export class MenuComponent implements OnInit {
   logout() {
     this.db.supabase.auth.signOut()
     this.router.navigate(['/login'])
+    localStorage.removeItem('polo-id')
+    localStorage.removeItem('polo-activeNodes')
   }
 
   toggleMenu() {

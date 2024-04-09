@@ -82,6 +82,7 @@ export class BoardComponent {
   }
 
   public centerToNode(node: any) {
+    if (!node) return
     // Here we should calculate the correct transform taken into account the zoom level
     // Now it "works" but it's not perfect
     const scale = this.sharedBoardService.boardReference.getTransform().scale

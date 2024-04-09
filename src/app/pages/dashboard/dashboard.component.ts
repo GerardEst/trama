@@ -43,10 +43,10 @@ export class DashboardComponent {
   async initBoard(storyId: string | null) {
     if (storyId) {
       const story = await this.db.getStory(storyId)
-      this.loadStory(story)
+      if (story) this.loadStory(story)
     } else {
       const story = await this.db.getNewestStory()
-      this.loadStory(story)
+      if (story) this.loadStory(story)
     }
   }
 
