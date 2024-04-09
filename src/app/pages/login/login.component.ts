@@ -23,6 +23,11 @@ export class LoginComponent {
     private router: Router
   ) {}
 
+  ngAfterViewInit() {
+    // Remove indicator that user is coming from oauth login
+    localStorage.removeItem('oauth')
+  }
+
   register = false
 
   login_email = new FormControl('', [Validators.required, Validators.email])
