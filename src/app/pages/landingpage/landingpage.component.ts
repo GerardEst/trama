@@ -63,6 +63,7 @@ export class LandingpageComponent {
     // Check if user comes from external loggin and redirect to dashboard
     const comesFromOAuth = localStorage.getItem('oauth')
     if (comesFromOAuth) {
+      console.log('Navigate to dashboard!!!')
       this.router.navigate(['/dashboard'])
     }
     // Initializes the example tree
