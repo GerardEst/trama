@@ -38,6 +38,9 @@ export class DashboardComponent {
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)
+
+    // Remove indicator that user is coming from oauth login
+    localStorage.removeItem('oauth')
   }
 
   async initBoard(storyId: string | null) {
