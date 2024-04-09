@@ -62,14 +62,11 @@ export class LandingpageComponent {
   ngAfterViewInit() {
     // Check if user comes from external loggin and redirect to dashboard
     const comesFromOAuth = localStorage.getItem('oauth')
-    console.log(comesFromOAuth)
+    localStorage.removeItem('oauth')
     if (comesFromOAuth) {
       console.log(comesFromOAuth)
       this.router.navigate(['/dashboard'])
     }
-    localStorage.removeItem('oauth')
-    console.log('mes coses')
-
     // Initializes the example tree
     // TODO -> Flows are not initializing
     this.activeStory.entireTree.set(this.exampleTree)
