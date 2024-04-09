@@ -59,7 +59,7 @@ export class RequirementComponent {
     )
     contextMenu.instance.onNewOption.subscribe((event: string) => {
       if (!this.type) {
-        console.warn('No type defined for this requirement')
+        console.log('No type defined for this requirement')
         return
       }
 
@@ -93,7 +93,7 @@ export class RequirementComponent {
 
   getFormattedRefsOfTree() {
     if (!this.type) {
-      console.warn('No type defined for this requirement')
+      console.log('No type defined for this requirement')
       return
     }
 

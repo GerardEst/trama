@@ -33,7 +33,7 @@ export class DatabaseService {
         'color: #9999ff'
       )
 
-    if (!this.user) return console.warn('No active user')
+    if (!this.user) return console.error('No active user')
 
     let { data: stories, error } = await this.supabase
       .from('stories')
@@ -75,7 +75,7 @@ export class DatabaseService {
       .eq('profile_id', this.user.id)
 
     if (error) {
-      console.warn('User has no stories apparently')
+      console.log('User has no stories apparently')
       return false
     }
     return stories[0]

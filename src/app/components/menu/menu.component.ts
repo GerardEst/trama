@@ -51,7 +51,7 @@ export class MenuComponent implements OnInit {
 
     const newTree = await this.db.createNewTree(newTreeData)
     if (!newTree) {
-      console.warn("Can't create new tree")
+      console.error("Can't create new tree")
       return
     }
 

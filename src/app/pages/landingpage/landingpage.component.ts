@@ -60,6 +60,7 @@ export class LandingpageComponent {
   ) {}
 
   ngAfterViewInit() {
+    console.log('________LANDING PAGE__________')
     // Check if user comes from external loggin and redirect to dashboard
     const comesFromOAuth = localStorage.getItem('oauth')
     if (comesFromOAuth) {

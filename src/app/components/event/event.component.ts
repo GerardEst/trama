@@ -77,7 +77,7 @@ export class EventComponent implements OnInit {
     contextMenu.instance.onNewOption.subscribe((event: string) => {
       const type = this.getTypeForEvent()
       if (!type) {
-        console.warn('No action defined for this event')
+        console.log('No action defined for this event')
         return
       }
       const createdRef = this.activeStory.createNewRef(event, type)
@@ -115,7 +115,7 @@ export class EventComponent implements OnInit {
 
   getFormattedRefsOfTree() {
     if (!this.action) {
-      console.warn('No action defined for this event')
+      console.log('No action defined for this event')
       return
     }
     const type = this.getTypeForEvent()

@@ -25,7 +25,7 @@ export class StadisticsComponent implements OnInit {
 
   async getStadistics() {
     if (!this.treeId) {
-      console.warn('No tree selected')
+      console.error('No tree selected')
       return
     }
 

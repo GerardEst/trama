@@ -132,7 +132,7 @@ export class BoardComponent {
   }
 
   willJoin(answerId: string) {
-    console.warn(answerId + ' will join')
+    console.log(answerId + ' will join')
     // Aqui es la primera i unica vegada que cambiem waitingForJoin
     setTimeout(() => {
       this.waitingForJoin = true

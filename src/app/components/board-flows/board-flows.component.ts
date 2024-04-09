@@ -47,7 +47,8 @@ export class BoardFlowsComponent {
   // Builds all the paths needed
   calculatePaths(nodes: node[]) {
     const svgContainer = this.svg?.nativeElement
-    if (!svgContainer) return console.warn('svgContainer still not present')
+    if (!svgContainer)
+      return console.log('svgContainer still not present. Skipping.')
     const mapSize = svgContainer?.getBoundingClientRect()
     svgContainer.setAttribute(
       'viewBox',

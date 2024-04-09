@@ -121,7 +121,7 @@ export class ActiveStoryService {
     )
 
     if (duplicatedRef) {
-      console.warn('Duplicated ref. Skip creation')
+      console.log('Duplicated ref. Skip creation')
       return
     }
 
@@ -408,7 +408,7 @@ export class ActiveStoryService {
       })
 
       if (duplicatedJoin) {
-        console.warn('Duplicated join. Skip creation')
+        console.log('Duplicated join. Skip creation')
         return
       }
 
@@ -426,7 +426,7 @@ export class ActiveStoryService {
       })
 
       if (duplicatedJoin) {
-        console.warn('Duplicated join. Skip creation')
+        console.log('Duplicated join. Skip creation')
         return
       }
 

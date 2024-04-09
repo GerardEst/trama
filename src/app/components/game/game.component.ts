@@ -103,7 +103,7 @@ export class GameComponent {
 
     // If reached this point, no condition was met, we use the fallback condition
     if (!node.fallbackCondition) {
-      console.warn('Distributor node with no fallback condition')
+      console.log('Distributor node with no fallback condition')
       return []
     }
     if (node.fallbackCondition.join) {
@@ -111,7 +111,7 @@ export class GameComponent {
       return node.fallbackCondition.join
     }
 
-    console.warn('No join possible', node)
+    console.log('No join possible', node)
     return []
   }
 
