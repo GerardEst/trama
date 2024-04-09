@@ -60,7 +60,12 @@ export class LandingpageComponent {
   ) {}
 
   ngAfterViewInit() {
-    this.redirectUserIfComesFromOauth()
+    const comesFromOAuth = localStorage.getItem('oauth')
+    if (comesFromOAuth) {
+      console.log(comesFromOAuth)
+      localStorage.removeItem('oauth')
+      this.router.navigate(['/dashboard'])
+    }
 
     console.log('carrega tot aixo tambe?')
     // Initializes the example tree
@@ -69,12 +74,5 @@ export class LandingpageComponent {
     this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
   }
 
-  redirectUserIfComesFromOauth() {
-    const comesFromOAuth = localStorage.getItem('oauth')
-    if (comesFromOAuth) {
-      console.log(comesFromOAuth)
-      localStorage.removeItem('oauth')
-      this.router.navigate(['/dashboard'])
-    }
-  }
+  redirectUserIfComesFromOauth() {}
 }
