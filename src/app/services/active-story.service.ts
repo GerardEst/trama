@@ -16,8 +16,8 @@ export class ActiveStoryService {
   entireTree: WritableSignal<any> = signal({})
 
   storyName: WritableSignal<string> = signal('')
-  storyRefs: any = signal([])
-  storyConfiguration: any = signal({})
+  storyRefs: WritableSignal<any> = signal([])
+  storyConfiguration: WritableSignal<any> = signal({})
 
   constructor(private db: DatabaseService) {
     effect(() => {
@@ -26,6 +26,13 @@ export class ActiveStoryService {
     })
   }
 
+  reset() {
+    this.storyId.set('')
+    this.entireTree.set({})
+    this.storyName.set('')
+    this.storyRefs.set([])
+    this.storyConfiguration.set({})
+  }
   // REFS
   // The refs are built from the tree, so we need to build them first.
   // We add and remove refs on the active story. We don't need this on the tree.

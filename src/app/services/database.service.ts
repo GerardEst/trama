@@ -18,12 +18,15 @@ export class DatabaseService {
       'https://lsemostpqoguehpsbzgu.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZW1vc3RwcW9ndWVocHNiemd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTE2OTkwNTUsImV4cCI6MTk2NzI3NTA1NX0.NTzZHJPUeppG7TTVvOibWIdRr4zf-v-1RR_iWY5MdLM'
     )
-    this.getUser()
   }
 
   async getUser() {
-    const fetchUser = await this.supabase.auth.getUser()
-    this.user = fetchUser.data.user
+    // Fetch the user only one time
+    if (!this.user) {
+      const fetchUser = await this.supabase.auth.getUser()
+      this.user = fetchUser.data.user
+    }
+    return this.user
   }
 
   async getAllTreesForUser() {
@@ -33,12 +36,11 @@ export class DatabaseService {
         'color: #9999ff'
       )
 
-    if (!this.user) return console.error('No active user')
-
+    const user = await this.getUser()
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('id,name')
-      .eq('profile_id', this.user.id)
+      .eq('profile_id', user.id)
 
     return stories
   }
@@ -64,17 +66,20 @@ export class DatabaseService {
         '%cdb call to get everyting about THE NEWEST story of the user',
         'color: #9999ff'
       )
+    const user = await this.getUser()
+
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .order('updated_at', { ascending: false })
       .limit(1)
-      .eq('profile_id', this.user.id)
+      .eq('profile_id', user.id)
 
-    if (error) {
-      console.log('User has no stories apparently')
+    if (stories.length === 0) {
+      console.log('User has no stories')
       return false
     }
+    console.log('The newest story is ', stories)
     return stories[0]
   }
 

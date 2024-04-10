@@ -24,8 +24,8 @@ export class LoginComponent {
   ) {}
 
   ngAfterViewInit() {
-    // Remove indicator that user is coming from oauth login
-    localStorage.removeItem('oauth')
+    // // Remove indicator that user is coming from oauth login
+    // localStorage.removeItem('oauth')
   }
 
   register = false

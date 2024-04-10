@@ -40,7 +40,7 @@ export class DashboardComponent {
     this.initBoard(localStoryId)
 
     // Remove indicator that user is coming from oauth login
-    localStorage.removeItem('oauth')
+    // localStorage.removeItem('oauth')
   }
 
   async initBoard(storyId: string | null) {
