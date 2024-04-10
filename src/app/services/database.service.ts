@@ -45,15 +45,12 @@ export class DatabaseService {
 
   async getStory(storyId: string) {
     if (this.prod)
-      console.log(
-        '%cdb call to get everything about a story of the user',
-        'color: #9999ff'
-      )
+      console.log('%cdb call to get everything about a story', 'color: #9999ff')
+    // Can't limit to stories of a user because the stories are PUBLIC and can be fetched by everyone to play them
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .eq('id', storyId)
-      .eq('profile_id', this.user.id)
 
     if (error || !stories[0]) {
       return this.getNewestStory()
