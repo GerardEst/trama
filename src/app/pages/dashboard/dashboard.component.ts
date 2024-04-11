@@ -8,6 +8,8 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
 import { configuration } from 'src/app/services/database-interfaces'
 import { findNodeInTree } from 'src/app/utils/tree-searching'
+import * as Cronitor from '@cronitorio/cronitor-rum'
+Cronitor.track('DashboardView')
 
 @Component({
   selector: 'polo-dashboard',

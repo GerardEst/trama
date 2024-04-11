@@ -6,6 +6,8 @@ import { Data, Router } from '@angular/router'
 import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
+import * as Cronitor from '@cronitorio/cronitor-rum'
+Cronitor.track('Pageview')
 
 @Component({
   selector: 'polo-landingpage',
