@@ -32,22 +32,32 @@ export class LandingpageComponent {
         answers: [
           {
             id: 'answer_0_0',
-            text: 'This will point to the next node',
+            text: 'This answer is connected to another node',
             join: [{ node: 'node_1' }],
           },
+          {
+            id: 'answer_0_1',
+            text: 'To create another node, just do a right click where you want',
+          },
         ],
-        text: 'Modify this example to fit your needs',
+        text: 'You can play with this example!',
       },
       {
         id: 'node_1',
         type: 'content',
         top: 4994,
         left: 2828,
-        text: 'You could, for example, ask a question here',
+        text: 'You can add answers and create different kinds of nodes to connect them and build the flow',
         answers: [
-          { id: 'answer_1_0', text: 'And multiple answers' },
-          { id: 'answer_1_1', text: 'Like this one' },
-          { id: 'answer_1_2', text: 'Or this other' },
+          {
+            id: 'answer_1_0',
+            text: 'You can connect this answer to another node',
+          },
+          { id: 'answer_1_1', text: 'Or to the same node' },
+          {
+            id: 'answer_1_2',
+            text: 'Or join two nodes! It will be the fate who decides',
+          },
         ],
       },
     ],
