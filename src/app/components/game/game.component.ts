@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, effect } from '@angular/core'
+import { Component, Output, EventEmitter, effect, Input } from '@angular/core'
 import {
   answer_requirement,
   join,
@@ -20,6 +20,8 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
   styleUrl: './game.component.sass',
 })
 export class GameComponent {
+  @Input() customStyles?: string
+
   activeNode?: node = undefined
   initialized: boolean = false
 

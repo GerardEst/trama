@@ -7,7 +7,8 @@ import { node, node_answer } from 'src/app/interfaces'
 import { configuration } from 'src/app/services/database-interfaces'
 import { PlayerService } from './services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
+import * as Cronitor from '@cronitorio/cronitor-rum'
 
 @Component({
   selector: 'polo-playground',
@@ -16,7 +17,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
     CommonModule,
     ModalWindowComponent,
     GameComponent,
-    BasicButtonComponent,
+    AccentButtonComponent,
   ],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
@@ -29,6 +30,7 @@ export class PlaygroundComponent {
   externalEvents: Array<any> = []
   gameId?: string
   gotUserInfo: boolean = false
+  customStyles?: string
 
   constructor(
     private db: DatabaseService,
@@ -39,6 +41,8 @@ export class PlaygroundComponent {
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
   async ngOnInit(): Promise<void> {
+    Cronitor.track('SomeoneStartedAGame')
+
     // Get the story and configuration to save it to activeStory and use activeStory from now on
     const story = await this.db.getStory(this.storyId)
     const configuration: configuration = await this.db.getConfigurationOf(
@@ -51,6 +55,9 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().askName = configuration.askName
+
+    //this.customStyles = configuration.customStyles
+    this.customStyles = configuration.customStyles || 'catalanus'
 
     if (!this.activeStory.storyConfiguration().askName) this.displayGame()
   }
@@ -98,6 +105,7 @@ export class PlaygroundComponent {
   }
 
   endGame() {
+    Cronitor.track('SomeoneEndedAGame')
     if (this.activeStory.storyConfiguration().tracking) {
       console.log('Saving game')
       const userFinalStats = this.playerService.player()

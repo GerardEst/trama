@@ -1,23 +1,27 @@
-@if (gotUserInfo) {
-  <polo-game
-    (onEndGame)="endGame()"
-    (onDrawNode)="drawNode($event)"
-    (onSelectAnswer)="selectAnswer($event)"
-  ></polo-game>
-}
-@if (
-  activeStory.entireTree() &&
-  activeStory.storyConfiguration().askName &&
-  !gotUserInfo
-) {
-  <polo-modal-window [locked]="true">
-    <form class="playerForm">
-      <input type="text" (change)="setUserName($event)" placeholder="Nom" />
-      <polo-basic-button
-        type="submit"
-        (click)="displayGame($event)"
-        text="Començar!"
-      ></polo-basic-button>
-    </form>
-  </polo-modal-window>
-}
+<div class="playground" [class]="customStyles || 'default'">
+  @if (gotUserInfo) {
+    <polo-game
+      [customStyles]="customStyles"
+      (onEndGame)="endGame()"
+      (onDrawNode)="drawNode($event)"
+      (onSelectAnswer)="selectAnswer($event)"
+    ></polo-game>
+  }
+  @if (
+    activeStory.entireTree() &&
+    activeStory.storyConfiguration().askName &&
+    !gotUserInfo
+  ) {
+    <polo-modal-window [locked]="true">
+      <form class="playerForm">
+        <input type="text" (change)="setUserName($event)" placeholder="Nom" />
+        <polo-accent-button
+          [fill]="true"
+          type="submit"
+          (click)="displayGame($event)"
+          >Començar!</polo-accent-button
+        >
+      </form>
+    </polo-modal-window>
+  }
+</div>

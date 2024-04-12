@@ -9,7 +9,6 @@ import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/men
 import { configuration } from 'src/app/services/database-interfaces'
 import { findNodeInTree } from 'src/app/utils/tree-searching'
 import * as Cronitor from '@cronitorio/cronitor-rum'
-Cronitor.track('DashboardView')
 
 @Component({
   selector: 'polo-dashboard',
@@ -37,6 +36,7 @@ export class DashboardComponent {
   ) {}
 
   ngOnInit(): void {
+    Cronitor.track('DashboardView')
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)

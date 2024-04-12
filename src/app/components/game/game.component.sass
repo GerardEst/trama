@@ -1,3 +1,5 @@
+// TODO -> Acabar de moure coses a accent i deixar el default lo més simple però elegant possible,
+// de manera que en general només s'hagin d'afegir coses i no treure a les customitzacions
 .game
   max-width: 400px
   margin: auto
@@ -19,20 +21,7 @@
       width: 100%
       background-color: white
       cursor: pointer
-      padding: 0.5rem
-      &::before
-        content: ""
-        display: block
-        width: 100%
-        height: calc(100% + 4px)
-        position: absolute
-        top: -1px
-        left: -2px
-        border: 2px solid var(--accent-text)
-        border-radius: 10px
-        z-index: -1
-        background-color: var(--accent-text)
-
+      padding: 0.7rem
       &:hover
         background-color: var(--accent)
         font-weight: 900
@@ -44,3 +33,38 @@
         border-color: gray
         background-color: gray
         opacity: 0.2
+
+//
+// Accent Customization
+//
+.accent
+  button
+    &::before
+      content: ""
+      display: block
+      width: 100%
+      height: calc(100% + 4px)
+      position: absolute
+      top: -1px
+      left: -2px
+      border: 2px solid var(--accent-text)
+      border-radius: 10px
+      z-index: -1
+      background-color: var(--accent-text)
+//
+// Catalanus Customization
+//
+.catalanus
+  p
+    font-family: 'Baskerville'
+  .answers
+    button
+      border: none
+      border-left: 3px solid #EB5D57
+      text-align: left
+      border-radius: 0
+      &:hover
+        background-color: #EB5D5744
+        color: black
+    button[disabled]
+      display: none

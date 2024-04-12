@@ -7,7 +7,6 @@ import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-butt
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
-Cronitor.track('Pageview')
 
 @Component({
   selector: 'polo-landingpage',
@@ -72,6 +71,7 @@ export class LandingpageComponent {
   ) {}
 
   ngAfterViewInit() {
+    Cronitor.track('LandingpageView')
     // console.log('________LANDING PAGE__________')
     // // Check if user comes from external loggin and redirect to dashboard
     // const comesFromOAuth = localStorage.getItem('oauth')

@@ -41,6 +41,6 @@ bootstrapApplication(AppComponent, {
 
 // Load the Cronitor tracker once in your app
 Cronitor.load('1f9fd1f09a4375fd53191b6a385e06f9', {
-  debug: false, // <-- You can enable this to see logs in the console
-  trackMode: 'history', // <-- You can change this to 'off' to track events manually
+  debug: true, // <-- You can enable this to see logs in the console
+  trackMode: 'off', // <-- You can change this to 'off' to track events manually
 })
