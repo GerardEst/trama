@@ -1,15 +1,17 @@
-// TODO -> Acabar de moure coses a accent i deixar el default lo més simple però elegant possible,
-// de manera que en general només s'hagin d'afegir coses i no treure a les customitzacions
 .game
+  overscroll-behavior: contain
   max-width: 600px
   margin: auto
   display: flex
   flex-direction: column
-  padding: 2rem
+  padding: 1rem 2rem
   p
     font-size: 1rem
     line-height: 1.8rem
-    margin-bottom: 1.8rem
+  .nodetitle
+    font-weight: bold
+  .nodetext
+    margin-bottom: 2rem
   .answers
     display: flex
     flex-direction: column
@@ -17,21 +19,12 @@
     button
       position: relative
       border: none
-      border-radius: 8px
       width: 100%
-      background-color: white
       cursor: pointer
       padding: 0.7rem
-      &:hover
-        background-color: var(--accent)
-        font-weight: 900
-        color: white
-
     button[disabled]
       pointer-events: none
       &::before
-        border-color: gray
-        background-color: gray
         opacity: 0.2
 
 //
@@ -59,19 +52,21 @@
     font-family: 'Baskerville'
     font-size: 1.2rem
     line-height: 2.2rem
+  .nodetitle
+    font-family: 'LibreBaskerville'
+    font-size: 0.9rem
   .answers
     button
-      border: none
-      border-left: 3px solid #EB5D57
-      background: rgb(235 93 87 / 11%)
+      border-radius: 6px
+      border: 2px solid rgba(235, 93, 87, 0.1333333333)
+      background: rgba(235, 93, 87, 0.05)
       text-align: left
-      border-radius: 0
       font-family: "Baskerville"
       font-size: 1rem
       line-height: 1.6rem
       padding: 0.7rem 1.1rem
-      &:hover
-        background-color: #EB5D5744
-        color: black
+      outline-offset: -7px
+      box-shadow: 0px 2px rgba(235, 93, 87, 0.1333333333)
+
     button[disabled]
       display: none

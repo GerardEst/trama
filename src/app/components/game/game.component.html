@@ -1,4 +1,6 @@
 <div class="game" [class]="customStyles">
+  <!--p class="nodetitle">Pregunta #001</p-->
+
   @if (activeNode) {
     @if (activeNode.image) {
       <img
@@ -9,7 +11,7 @@
       />
     }
     <div>
-      <p>
+      <p class="nodetext">
         {{
           getTextWithFinalParameters(
             activeNode.share?.sharedText || activeNode.text

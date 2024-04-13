@@ -3,6 +3,10 @@
   src: url("../../../assets/fonts/Baskervville-Regular.ttf")
   font-weight: 400
 @font-face
+  font-family: "Baskerville"
+  src: url("../../../assets/fonts/Baskerville-BT-Bold.ttf")
+  font-weight: 700
+@font-face
   font-family: "LibreBaskerville"
   src: url("../../../assets/fonts/LibreBaskerville-Regular.ttf")
   font-weight: 400
@@ -12,8 +16,21 @@
   font-weight: 700
 
 .playground
-  height: 100vh
+  min-height: 100vh
   box-sizing: border-box
+  min-height: 100vh
+  box-sizing: border-box
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  .storytitle
+    text-align: center
+    font-size: 1rem
+    padding: 1rem
+  .storyfooter
+    text-align: center
+    font-size: 1rem
+    padding: 1rem
 
 .default
   .playerForm
@@ -26,3 +43,10 @@
 //
 .catalanus
   border: 5px solid #EB5D57
+  .storytitle
+    font-family: LibreBaskerville
+    font-weight: bold
+    font-size: 1.1rem
+  .storyfooter
+    font-family: 'Baskerville'
+    color: red

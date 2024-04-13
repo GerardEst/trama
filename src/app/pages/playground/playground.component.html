@@ -1,4 +1,5 @@
 <div class="playground" [class]="customStyles || 'default'">
+  <p class="storytitle">Quina caca ets?</p>
   @if (gotUserInfo) {
     <polo-game
       [customStyles]="customStyles"
@@ -7,6 +8,7 @@
       (onSelectAnswer)="selectAnswer($event)"
     ></polo-game>
   }
+  <p class="storyfooter">catalanus</p>
   @if (
     activeStory.entireTree() &&
     activeStory.storyConfiguration().askName &&
