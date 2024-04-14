@@ -22,7 +22,6 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class GameComponent {
   @Input() customStyles?: string
 
-  // Test per tenir un array dels steps i no que es vagin cambiant amb activenode
   nodes: any = []
 
   //activeNode?: node = undefined

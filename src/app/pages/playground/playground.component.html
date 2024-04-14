@@ -1,5 +1,5 @@
 <div class="playground" [class]="customStyles || 'default'">
-  <p class="storytitle">Quina caca ets?</p>
+  <p class="storytitle">{{ activeStory.storyName() }}</p>
   @if (gotUserInfo) {
     <polo-game
       [customStyles]="customStyles"
