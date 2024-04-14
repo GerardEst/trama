@@ -36,9 +36,9 @@ export class ActiveStoryService {
   // REFS
   // The refs are built from the tree, so we need to build them first.
   // We add and remove refs on the active story. We don't need this on the tree.
-  initTreeRefs(tree: any) {
+  initTreeRefs() {
     const builtRefs: any = []
-    for (let node of tree.nodes) {
+    for (let node of this.entireTree().nodes) {
       if (node.answers) {
         for (let answer of node.answers) {
           if (answer.requirements) {
@@ -46,9 +46,9 @@ export class ActiveStoryService {
               if (requirement.id) {
                 builtRefs.push({
                   id: requirement.id,
-                  name: tree.refs[requirement.id].name,
-                  type: tree.refs[requirement.id].type,
-                  category: tree.refs[requirement.id].category,
+                  name: this.entireTree().refs[requirement.id].name,
+                  type: this.entireTree().refs[requirement.id].type,
+                  category: this.entireTree().refs[requirement.id].category,
                   node: node.id,
                   answer: answer.id,
                   on: 'requirement',
@@ -61,9 +61,9 @@ export class ActiveStoryService {
               if (event.target) {
                 builtRefs.push({
                   id: event.target,
-                  name: tree.refs[event.target].name,
-                  type: tree.refs[event.target].type,
-                  category: tree.refs[event.target].category,
+                  name: this.entireTree().refs[event.target].name,
+                  type: this.entireTree().refs[event.target].type,
+                  category: this.entireTree().refs[event.target].category,
                   node: node.id,
                   answer: answer.id,
                   on: 'event',

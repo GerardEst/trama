@@ -39,7 +39,9 @@ export class GameComponent {
     effect(() => {
       if (!this.initialized && this.activeStory) {
         console.log('activeStory initialized')
-        const firstNode = this.activeStory.entireTree().nodes[0]
+        const firstNode = structuredClone(
+          this.activeStory.entireTree().nodes[0]
+        )
         this.nodes.push(firstNode)
         // Animations
         setTimeout(() => (firstNode.enabling = true))
@@ -52,9 +54,11 @@ export class GameComponent {
     navigator.vibrate(200)
 
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
-    const nextNode = this.activeStory
-      .entireTree()
-      .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
+    const nextNode = structuredClone(
+      this.activeStory
+        .entireTree()
+        .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
+    )
     if (!nextNode) throw new Error('Node not found')
 
     // Animations
@@ -168,23 +172,25 @@ export class GameComponent {
     const withBlockReplacements = withInlineReplacements.replace(
       /\[([a-zA-Z0-9_]+)\]/g,
       (match: string, p1: string) => {
-        let refsWithCategory = Object.keys(this.activeStory.storyRefs()).filter(
-          (key: any) => {
-            return this.activeStory.storyRefs()[key].category === p1
-          }
-        )
+        let refsWithCategory: any = Object.values(
+          this.activeStory.storyRefs()
+        ).filter((val: any) => {
+          return val.category === p1
+        })
 
         let string = ' '
         for (let refWithCategory of refsWithCategory) {
           const playerStat = this.playerService
             .player()
-            .stats.find((stat: any) => stat.id === refWithCategory)
+            .stats.find((stat: any) => stat.id === refWithCategory.id)
           if (playerStat) {
             string =
               string +
               '\n' +
               this.capitalize(
-                this.activeStory.storyRefs()[playerStat.id].name
+                this.activeStory
+                  .storyRefs()
+                  .find((ref: any) => ref.id === playerStat.id).name
               ) +
               ': ' +
               playerStat.amount
@@ -194,14 +200,16 @@ export class GameComponent {
           const playerCondition = this.playerService
             .player()
             .conditions.find(
-              (condition: any) => condition.id === refWithCategory
+              (condition: any) => condition.id === refWithCategory.id
             )
           if (playerCondition) {
             string =
               string +
               '\n' +
               this.capitalize(
-                this.activeStory.storyRefs()[playerCondition.id].name
+                this.activeStory
+                  .storyRefs()
+                  .find((ref: any) => ref.id === playerCondition.id).name
               )
           }
         }

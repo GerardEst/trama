@@ -59,6 +59,9 @@ export class PlaygroundComponent {
     //this.customStyles = configuration.customStyles
     this.customStyles = configuration.customStyles || 'catalanus'
 
+    // We have to manually init the refs by now
+    this.activeStory.initTreeRefs()
+
     if (!this.activeStory.storyConfiguration().askName) this.displayGame()
   }
 

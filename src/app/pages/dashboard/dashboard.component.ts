@@ -63,7 +63,9 @@ export class DashboardComponent {
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
 
-    this.activeStory.initTreeRefs(story.tree)
+    // We have to manually init the refs for the legend by now
+    this.activeStory.initTreeRefs()
+
     this.setInitialBoardPositionFor(story.id)
 
     // TODO -> Comença mal pintat
