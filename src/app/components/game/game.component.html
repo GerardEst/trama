@@ -10,11 +10,7 @@
     }
     <div>
       <p class="nodetext">
-        {{
-          getTextWithFinalParameters(
-            activeNode.share?.sharedText || activeNode.text
-          )
-        }}
+        {{ getTextWithFinalParameters(activeNode.text) }}
       </p>
       <div class="answers">
         @for (answer of activeNode.answers; track $index) {
@@ -39,7 +35,9 @@
         }
       </div>
       @if (activeNode.type === 'end') {
-        <button (click)="openShareContext()">Compartir el resultat</button>
+        <button class="sharebutton" (click)="openShareContext()">
+          Compartir el resultat
+        </button>
       }
     </div>
   }
