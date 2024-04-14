@@ -38,12 +38,12 @@
             {{ link.name }}
           </a>
         }
+        @if (node.type === 'end') {
+          <button class="sharebutton" (click)="openShareContext()">
+            Xuleja de merda
+          </button>
+        }
       </div>
-      @if (node.type === 'end') {
-        <button class="sharebutton" (click)="openShareContext()">
-          Compartir el resultat
-        </button>
-      }
     </div>
   }
 </div>
