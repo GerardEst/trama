@@ -22,7 +22,10 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class GameComponent {
   @Input() customStyles?: string
 
-  activeNode?: node = undefined
+  // Test per tenir un array dels steps i no que es vagin cambiant amb activenode
+  nodes: any = []
+
+  //activeNode?: node = undefined
   initialized: boolean = false
 
   @Output() onEndGame = new EventEmitter<void>()
@@ -36,7 +39,10 @@ export class GameComponent {
     effect(() => {
       if (!this.initialized && this.activeStory) {
         console.log('activeStory initialized')
-        this.activeNode = this.activeStory.entireTree().nodes[0]
+        const firstNode = this.activeStory.entireTree().nodes[0]
+        this.nodes.push(firstNode)
+        // Animations
+        setTimeout(() => (firstNode.enabling = true))
         this.initialized = true
       }
     })
@@ -51,13 +57,21 @@ export class GameComponent {
       .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
     if (!nextNode) throw new Error('Node not found')
 
+    // Animations
     setTimeout(() => {
-      this.activeNode = nextNode
-      if (this.activeNode && this.activeNode.type === 'end')
-        this.onEndGame.emit()
-      if (this.activeNode && this.activeNode.type !== 'distributor')
-        this.registerNode(this.activeNode)
-      if (this.activeNode && this.activeNode.type === 'distributor')
+      this.nodes.at(-1).disabled = true
+    }, 500)
+    setTimeout(() => {
+      this.nodes.at(-1).hidden = true
+      this.nodes.push(nextNode)
+      setTimeout(() => {
+        nextNode.enabling = true
+      }, 10)
+
+      if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
+      if (nextNode && nextNode.type !== 'distributor')
+        this.registerNode(nextNode)
+      if (nextNode && nextNode.type === 'distributor')
         // If nodePointer points to a distributor, we jump to the next one
         this.nextStep(this.distributeNode(nextNode))
     }, 1000)
@@ -127,7 +141,7 @@ export class GameComponent {
     if (navigator.share) {
       navigator
         .share({
-          text: this.activeNode?.share?.sharedText || this.activeNode?.text,
+          text: this.nodes.at(-1)?.share?.sharedText || this.nodes.at(-1)?.text,
           url: window.location.href,
         })
         .then(() => console.log('Successful share'))

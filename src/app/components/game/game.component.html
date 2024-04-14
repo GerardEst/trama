@@ -1,19 +1,24 @@
 <div class="game" [class]="customStyles">
-  @if (activeNode) {
-    @if (activeNode.image) {
-      <img
-        [src]="
-          'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-          activeNode.image.path
-        "
-      />
-    }
-    <div>
+  @for (node of nodes; track $index) {
+    <div
+      class="node"
+      [class.disabled]="node.disabled"
+      [class.hidden]="node.hidden"
+      [class.enabling]="node.enabling"
+    >
+      @if (node.image) {
+        <img
+          [src]="
+            'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+            node.image.path
+          "
+        />
+      }
       <p class="nodetext">
-        {{ getTextWithFinalParameters(activeNode.text) }}
+        {{ getTextWithFinalParameters(node.text) }}
       </p>
       <div class="answers">
-        @for (answer of activeNode.answers; track $index) {
+        @for (answer of node.answers; track $index) {
           <button
             [disabled]="
               !playerHasAnswerRequirements(
@@ -28,13 +33,13 @@
             {{ getTextWithFinalParameters(answer.text) }}
           </button>
         }
-        @for (link of activeNode.links; track $index) {
+        @for (link of node.links; track $index) {
           <a [href]="normalizeLink(link.url)" target="_blank">
             {{ link.name }}
           </a>
         }
       </div>
-      @if (activeNode.type === 'end') {
+      @if (node.type === 'end') {
         <button class="sharebutton" (click)="openShareContext()">
           Compartir el resultat
         </button>
