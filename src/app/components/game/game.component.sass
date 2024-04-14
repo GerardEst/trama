@@ -6,18 +6,21 @@
   flex-direction: column
   padding: 2rem
   gap: 2rem
+  img
+    width: 100%
+    margin-bottom: 2rem
   .node
     opacity: 0
     transform: translateY(-10px)
     &.enabling
       opacity: 1
       transform: translateY(0)
-      transition: 500ms
+      transition: 500ms ease-in
     &.disabled
       transform: translateY(10px)
       opacity: 0
       pointer-events: none
-      transition: 500ms
+      transition: 500ms ease-out
     &.hidden
       display: none
     p
