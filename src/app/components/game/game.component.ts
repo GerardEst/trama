@@ -43,19 +43,24 @@ export class GameComponent {
   }
 
   nextStep(destinyNode: Array<join>) {
+    navigator.vibrate(200)
+
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
     const nextNode = this.activeStory
       .entireTree()
       .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
     if (!nextNode) throw new Error('Node not found')
-    this.activeNode = nextNode
 
-    if (this.activeNode && this.activeNode.type === 'end') this.onEndGame.emit()
-    if (this.activeNode && this.activeNode.type !== 'distributor')
-      this.registerNode(this.activeNode)
-    if (this.activeNode && this.activeNode.type === 'distributor')
-      // If nodePointer points to a distributor, we jump to the next one
-      this.nextStep(this.distributeNode(nextNode))
+    setTimeout(() => {
+      this.activeNode = nextNode
+      if (this.activeNode && this.activeNode.type === 'end')
+        this.onEndGame.emit()
+      if (this.activeNode && this.activeNode.type !== 'distributor')
+        this.registerNode(this.activeNode)
+      if (this.activeNode && this.activeNode.type === 'distributor')
+        // If nodePointer points to a distributor, we jump to the next one
+        this.nextStep(this.distributeNode(nextNode))
+    }, 1000)
   }
 
   distributeNode(node: node) {
