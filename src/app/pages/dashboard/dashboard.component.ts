@@ -47,7 +47,7 @@ export class DashboardComponent {
 
   async initBoard(storyId: string | null) {
     if (storyId) {
-      const story = await this.db.getStory(storyId)
+      const story = await this.db.getStoryWithID(storyId)
       if (story) this.loadStory(story)
     } else {
       const story = await this.db.getNewestStory()

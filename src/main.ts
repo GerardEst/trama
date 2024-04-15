@@ -17,7 +17,6 @@ import * as Cronitor from '@cronitorio/cronitor-rum'
 const appRoutes: Routes = [
   { path: '', title: 'Textandplay', component: LandingpageComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'playground/:storyId', component: PlaygroundComponent },
   {
     path: 'dashboard',
     title: 'Dashboard',
@@ -30,6 +29,9 @@ const appRoutes: Routes = [
     component: StadisticsComponent,
     canActivate: [authGuard],
   },
+  { path: 'private/:storyId', component: PlaygroundComponent },
+  // This must be the last item on the router
+  { path: ':customId', component: PlaygroundComponent },
 ]
 
 bootstrapApplication(AppComponent, {

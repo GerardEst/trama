@@ -90,7 +90,7 @@ export class MenuTreeLegendComponent {
   }
 
   async goToPlayground() {
-    window.open('/playground/' + this.activeStory.storyId(), '_blank')
+    window.open('/private/' + this.activeStory.storyId(), '_blank')
   }
 
   openSelectorFor(clickEvent: Event, refId: string) {

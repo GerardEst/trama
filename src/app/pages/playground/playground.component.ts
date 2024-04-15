@@ -23,7 +23,10 @@ import * as Cronitor from '@cronitorio/cronitor-rum'
   styleUrls: ['./playground.component.sass'],
 })
 export class PlaygroundComponent {
+  // Complex id, used for private stories
   @Input() storyId: string = ''
+  // Easy and customizable id, used for public stories
+  @Input() customId: string = ''
 
   userName: string | null = null
   playerPath: Array<any> = []
@@ -40,14 +43,25 @@ export class PlaygroundComponent {
   // In playerService we have everything about the player, the counters, etc
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
+  async getStoryByCorrectID() {
+    let story, configuration
+    if (this.storyId) {
+      // Get the story and configuration to save it to activeStory and use activeStory from now on
+      story = await this.db.getStoryWithID(this.storyId)
+      configuration: configuration = await this.db.getConfigurationOf(story.id)
+    } else if (this.customId) {
+      story = await this.db.getStoryWithCustomID(this.customId)
+      configuration: configuration = await this.db.getConfigurationOf(story.id)
+    }
+
+    return { story, configuration }
+  }
+
   async ngOnInit(): Promise<void> {
     Cronitor.track('SomeoneStartedAGame')
 
-    // Get the story and configuration to save it to activeStory and use activeStory from now on
-    const story = await this.db.getStory(this.storyId)
-    const configuration: configuration = await this.db.getConfigurationOf(
-      story.id
-    )
+    const { story, configuration } = await this.getStoryByCorrectID()
+
     this.activeStory.storyId.set(story.id)
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
