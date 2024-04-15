@@ -50,8 +50,6 @@ export class GameComponent {
   }
 
   nextStep(destinyNode: Array<join>) {
-    navigator.vibrate(200)
-
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
     const nextNode = structuredClone(
       this.activeStory
