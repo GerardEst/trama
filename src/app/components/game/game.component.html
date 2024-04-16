@@ -26,6 +26,7 @@
                 answer.requirements
               )
             "
+            (click)="markAsSelected($event)"
             (click)="registerAnswer(answer)"
             (click)="applyEvents(answer.events)"
             (click)="nextStep(answer.join)"

@@ -49,6 +49,10 @@ export class GameComponent {
     })
   }
 
+  markAsSelected(event: any) {
+    event.target.classList.add('selected')
+  }
+
   nextStep(destinyNode: Array<join>) {
     const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
     const nextNode = structuredClone(
