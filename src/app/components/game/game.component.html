@@ -20,6 +20,8 @@
       <div class="answers">
         @for (answer of node.answers; track $index) {
           <button
+            [attr.data-order]="$index"
+            [class.unique]="!node.answers[1]"
             [disabled]="
               !playerHasAnswerRequirements(
                 playerService.player(),
