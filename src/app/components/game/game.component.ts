@@ -11,6 +11,7 @@ import {
 } from 'src/app/interfaces'
 import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import * as Cronitor from '@cronitorio/cronitor-rum'
 
 @Component({
   selector: 'polo-game',
@@ -149,11 +150,19 @@ export class GameComponent {
           text: this.nodes.at(-1)?.share?.sharedText || this.nodes.at(-1)?.text,
           url: window.location.href,
         })
-        .then(() => console.log('Successful share'))
+        .then(() => {
+          Cronitor.track('SomeoneHasShared')
+          console.log('Successful share')
+        })
         .catch((error) => console.log('Error sharing', error))
     } else {
       console.log('Web Share API is not supported in your browser.')
     }
+  }
+
+  registerLink(link: string) {
+    Cronitor.track('SomeoneWentToAFinalLink')
+    window.open(this.normalizeLink(link), '_blank')
   }
 
   getTextWithFinalParameters(text: string = '') {

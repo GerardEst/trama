@@ -37,9 +37,9 @@
           </button>
         }
         @for (link of node.links; track $index) {
-          <a [href]="normalizeLink(link.url)" target="_blank">
+          <button (click)="registerLink(link.url)">
             {{ link.name }}
-          </a>
+          </button>
         }
         @if (node.type === 'end') {
           <button class="sharebutton" (click)="openShareContext()">
