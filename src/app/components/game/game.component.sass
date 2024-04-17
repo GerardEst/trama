@@ -36,10 +36,13 @@
     button, a
       color: black
       position: relative
-      border: none
+
       width: 100%
       cursor: pointer
       padding: 0.7rem
+      border: 2px solid whitesmoke
+      background: whitesmoke
+      border-radius: 10px
       -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
       -webkit-tap-highlight-color: transparent
       -webkit-user-select: none
@@ -47,6 +50,10 @@
       -moz-user-select: none
       -ms-user-select: none
       user-select: none
+      transition: 200ms
+    button.selected
+      border: 2px solid #404040
+      background: #cbcbcb
     button[disabled]
       pointer-events: none
       &::before

@@ -6,16 +6,27 @@
   background-image: url('/assets/images/landing/background.webp'), linear-gradient(270deg, rgb(243, 246, 251) 0%, rgb(223, 233, 255) 100.87%)
   background-size: cover
 menu
+  position: fixed
+  width: calc(100% - 20px)
+  box-sizing: border-box
+  transform: translate(-50%)
+  border-radius: 10px
+  left: 50%
+  top: 10px
   display: flex
   gap: 2rem
   align-items: center
   padding: 10px 20px
-  z-index: 2
+  background: #ffffffdd
+  z-index: 1
+  backdrop-filter: blur(15px)
   .logo
     font-size: 2.5rem
     font-weight: 900
     margin: 0
     color: var(--accent)
+    sup
+      font-size: 0.8rem
   .login
     margin-left: auto
   .links
@@ -67,9 +78,6 @@ svg
   flex-direction: column
   gap: 1.5rem
   z-index: 1
-  max-width: calc(100% - 560px)
-  &--right
-    max-width: calc(100% - 250px)
 .actions
   display: flex
   gap: 1rem
@@ -79,10 +87,13 @@ svg
   max-width: unset
 section
   max-width: 1000px
-  margin: auto
   position: relative
   display: flex
-  padding: 100px 50px
+  padding: 100px
+  box-sizing: border-box
+  margin: 10px
+  left: 50%
+  transform: translate(calc(-50% - 10px))
   gap: 1rem
   justify-content: space-between
   &.section--editor
@@ -124,8 +135,6 @@ section
   &.section--content
     flex-direction: column
   & .extra
-    // perspective: 800px
-    // perspective-origin: right
     position: absolute
     overflow: hidden
     width: 100%
@@ -133,27 +142,6 @@ section
     left: 0
     top: 0
     border-radius: 20px
-    // right: 50px
-    // margin-top: -20px
-    // &__shadow
-    //   transform: rotateY(-10deg) rotateX(5deg) translateZ(-50px) translateY(-17px) scale(0.95)
-    //   transition: transform 0.5s var(--transition)
-    //   position: absolute
-    //   top: 0
-    //   left: 0
-    //   width: 100%
-    //   height: 100%
-    //   background-color: #41759a
-    //   border-radius: 20px
-    &__board
-      // transform: rotateY(-10deg) rotateX(5deg) scale(0.95) translateY(-17px)
-      // transition: transform 0.5s var(--transition)
-      // border: 5px solid var(--accent)
-      // overflow: hidden
-      // height: 400px
-      // width: 550px
-      // border-radius: 20px
-      // background-color: white
     &:hover
       .extra__shadow
         transform: rotate(0) scale(1) translate(0)

@@ -1,5 +1,5 @@
 <menu>
-  <p class="logo">tap</p>
+  <p class="logo">tap<sup>(beta)</sup></p>
   <div class="links">
     <!--a href="#features">Features</a>
     <a href="#examples">Examples</a>
@@ -13,62 +13,56 @@
     >
   </div>
 </menu>
-<!--svg viewBox="0 0 100 40">
-  <path
-    _ngcontent-ng-c3819845452=""
-    d="M70.5 0 L70.5 15 Q70.5 20 65.5 20 L20.5 20 Q13.5 20 13.5 25 L13.5 100"
-    stroke="#41759a"
-    stroke-width="1"
-    fill="none"
-  ></path>
-  <path
-    d="M70 0 L70 15 Q70 20 65 20 L20 20 Q13 20 13 25 L13 100"
-    stroke="currentColor"
-    stroke-width="1"
-    fill="none"
-  />
-</svg-->
-<section class="section--editor">
+<section
+  style="
+    padding: 0;
+    height: 100vh;
+    align-items: center;
+    margin: 0 30px;
+    transform: translate(calc(-50% - 30px));
+  "
+>
   <div class="text">
     <h1>
-      tap is the easiest way to create
+      The easiest way to create<br />
+      and share
       <span class="flowsWordDetail">flows</span>
     </h1>
     <p>
-      <b>- Wait. What do you mean by flow?</b>
+      <b>- Wait. What do you mean by "flows"?</b>
       <br />Everything that takes user choices to go through a path:
       <b
         >tests, questionnaries, text adventures, interactive lessons, engagement
         play for brands...</b
       >
     </p>
-    <p>
+    <!--p>
       <b>- This is too easy, I need more complexity</b>
       <br />You may add complexity (only if you need it). Properties,
       conditions, distributor nodes, text interpolations, random destinations...
-    </p>
+    </p-->
     <div class="actions">
-      <polo-accent-button [fill]="true" (click)="router.navigate(['dashboard'])"
+      <!--polo-accent-button [fill]="true" (click)="router.navigate(['dashboard'])"
         >Start creating</polo-accent-button
-      >
-      <!--polo-link-button [fill]="false" href="#examples"
-        >See examples
-      </polo-link-button-->
-    </div>
-  </div>
-  <div class="extra">
-    <div class="extra__shadow"></div>
-    <div class="extra__board">
-      <polo-board
-        #board
-        [initialZoom]="0.8"
-        [grid]="true"
-        [focusElements]="false"
-      ></polo-board>
+      -->
     </div>
   </div>
 </section>
-<section class="section--mobile">
+<section
+  class="section--editor"
+  style="height: 600px; margin-top: -111px; padding: 34px"
+>
+  <h1 style="z-index: 2; position: absolute">Try the editor</h1>
+  <div class="extra">
+    <polo-board
+      #board
+      [initialZoom]="0.8"
+      [grid]="true"
+      [focusElements]="false"
+    ></polo-board>
+  </div>
+</section>
+<section style="justify-content: center; margin: 0" class="section--mobile">
   <div class="mobile">
     <div class="mobile__back"></div>
     <div class="mobile__screen">
@@ -76,7 +70,7 @@
       <polo-game></polo-game>
     </div>
   </div>
-  <div class="text text--right" style="padding-top: 30px">
+  <!--div class="text text--right" style="padding-top: 30px">
     <h1>Easy for your users too</h1>
     <p><b>1.</b> Send them the link or embed it in you website</p>
     <p>
@@ -88,7 +82,7 @@
       do while you wait for things
     </p>
     <p><b>4.</b> You get the results in your <b>dashboard</b></p>
-  </div>
+  </div-->
 </section>
 <!--div class="tapDetails">
   <section class="section--content" id="features">
