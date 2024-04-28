@@ -81,7 +81,12 @@ export class BoardFlowsComponent {
       }
       if (node.fallbackCondition?.join) {
         for (let join of node.fallbackCondition.join) {
-          this.getPath(node.fallbackCondition.id + '_join', join.node + '_join')
+          paths.push(
+            this.getPath(
+              node.fallbackCondition.id + '_join',
+              join.node + '_join'
+            )
+          )
         }
       }
     }

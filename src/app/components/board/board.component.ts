@@ -150,6 +150,8 @@ export class BoardComponent {
     this.waitingForJoin = false
 
     this.activeStory.updateJoinOfOption(this.willJoinId, nodeId)
+
+    console.log('current tree:', this.activeStory.entireTree())
   }
 
   // Simple throttling to prevent call treeChanges too many times when dragging
