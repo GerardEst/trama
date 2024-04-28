@@ -6,7 +6,6 @@ import { DatabaseService } from '../../services/database.service'
 import { MenuTopComponent } from 'src/app/components/menu-top/menu-top.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
-import { configuration } from 'src/app/services/database-interfaces'
 import { findNodeInTree } from 'src/app/utils/tree-searching'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 
@@ -92,13 +91,10 @@ export class DashboardComponent {
   }
 
   async loadConfigurationForStory(storyId: string) {
-    const configuration: configuration =
-      await this.db.getConfigurationOf(storyId)
+    const configuration: any = await this.db.getConfigurationOf(storyId)
 
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().askName = configuration.askName
-    this.activeStory.storyConfiguration().cumulativeView =
-      configuration.cumulativeView
   }
 }

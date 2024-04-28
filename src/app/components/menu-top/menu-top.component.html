@@ -33,14 +33,6 @@
           [checked]="activeStory.storyConfiguration().sharing"
         />
       </label>
-      <label>
-        <span>Cumulative view</span>
-        <input
-          (change)="toggleCumulativeView()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().cumulativeView"
-        />
-      </label>
       <polo-basic-button
         (click)="openStadistics()"
         text="See stadistics"

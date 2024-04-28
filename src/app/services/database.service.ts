@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core'
 import { createClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
-import { configuration } from './database-interfaces'
 import { tree } from '../interfaces'
 
 @Injectable({
@@ -148,7 +147,7 @@ export class DatabaseService {
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select('tracking, cumulativeView, sharing, askName')
+      .select('tracking, sharing, askName')
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -180,21 +179,6 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('stories')
       .update({ sharing: sharing })
-      .eq('id', storyId)
-
-    if (error) return false
-    return true
-  }
-
-  async setCumulativeViewOf(storyId: string, cumulativeView: string | null) {
-    if (this.prod)
-      console.log(
-        '%cdb call to set the CumulativeView status of a story',
-        'color: #9999ff'
-      )
-    const { data, error } = await this.supabase
-      .from('stories')
-      .update({ cumulativeView: cumulativeView })
       .eq('id', storyId)
 
     if (error) return false

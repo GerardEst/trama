@@ -20,7 +20,6 @@ export interface tree {
 export interface config {
   title?: string
   showLockedAnswers?: boolean
-  cumulativeView?: boolean
   sharing?: boolean
 }
 

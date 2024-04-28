@@ -52,15 +52,6 @@ export class MenuTopComponent {
     )
   }
 
-  toggleCumulativeView() {
-    this.activeStory.storyConfiguration().cumulativeView =
-      !this.activeStory.storyConfiguration().cumulativeView
-    this.db.setCumulativeViewOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().cumulativeView
-    )
-  }
-
   toggleAskName() {
     this.activeStory.storyConfiguration().askName =
       !this.activeStory.storyConfiguration().askName
