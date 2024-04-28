@@ -176,18 +176,17 @@ export class ActiveStoryService {
     )
 
     duplicatedNode.id = newId
-    duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
-      const newAnswerId = answer.id.replace(
-        /_[0-9]_/,
-        `_${newId.split('_')[1]}_`
-      )
-      answer.id = newAnswerId
-      return answer
-    })
-    duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
-      delete answer.join
-      return answer
-    })
+    if (duplicatedNode.answers) {
+      duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
+        const newAnswerId = answer.id.replace(
+          /_[0-9]_/,
+          `_${newId.split('_')[1]}_`
+        )
+        answer.id = newAnswerId
+        delete answer.join
+        return answer
+      })
+    }
     duplicatedNode.left = duplicatedNode.left + 290
 
     // TODO -> Take the new node to front and put it 10px to the left and to the top
@@ -302,7 +301,9 @@ export class ActiveStoryService {
 
   // TODO -> Are all this get really necessary since the use of signals for the tree?
   getImageFromNode(nodeId: string) {
+    console.log(nodeId)
     const node = findNodeInTree(nodeId, this.entireTree())
+    console.log(node)
     return node.image
   }
   // distributor nodes only
