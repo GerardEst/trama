@@ -87,14 +87,18 @@
         <label class="node__shareoptions__option">
           <p>Custom shared text</p>
           <textarea
-            (change)="updateSharedText()"
+            (change)="updateShareOptions()"
             [(ngModel)]="shareOptions.sharedText"
           >
           </textarea>
         </label>
-        <label class="node__shareoptions__option--row">
-          <p>Allow to share all decisions</p>
-          <input disabled type="checkbox" />
+        <label class="node__shareoptions__option">
+          <p>Custom share button text</p>
+          <input
+            type="text"
+            (change)="updateShareOptions()"
+            [(ngModel)]="shareOptions.shareButtonText"
+          />
         </label>
       </div>
     } @else {

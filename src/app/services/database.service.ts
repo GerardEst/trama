@@ -123,20 +123,18 @@ export class DatabaseService {
     if (this.prod)
       console.log('%cdb call to save local story to db', 'color: #9999ff')
 
-    const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
-    const kiloBytes = size / 1024
-    console.log(
-      '%caprox size of tree being saved: ' + kiloBytes + 'kb',
-      'color: #9999ff'
-    )
-    console.time('savingTree')
+    // const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
+    // const kiloBytes = size / 1024
+    // console.log(
+    //   '%caprox size of tree being saved: ' + kiloBytes + 'kb',
+    //   'color: #9999ff'
+    // )
 
     const { data, error } = await this.supabase
       .from('stories')
       .update({ tree: treeContent })
       .eq('id', treeId)
 
-    console.timeEnd('savingTree')
     if (error) return false
 
     return true

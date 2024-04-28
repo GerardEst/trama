@@ -77,6 +77,7 @@ export interface answer_requirement {
 
 export interface shareOptions {
   sharedText?: string
+  shareButtonText?: string
 }
 
 export interface link {

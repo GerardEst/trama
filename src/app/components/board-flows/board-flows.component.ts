@@ -53,7 +53,6 @@ export class BoardFlowsComponent {
       'viewBox',
       `0 0 ${mapSize.width} ${mapSize.height}`
     )
-    console.log('svgContainer', svgContainer)
 
     const paths: any = []
     if (!nodes) return paths
@@ -91,7 +90,6 @@ export class BoardFlowsComponent {
       }
     }
 
-    console.timeEnd('calculatePaths')
     return paths
   }
 

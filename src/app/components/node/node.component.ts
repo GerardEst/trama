@@ -54,6 +54,7 @@ export class NodeComponent {
   @Input() links: link[] = []
   @Input() shareOptions: shareOptions = {
     sharedText: '',
+    shareButtonText: '',
   }
 
   // Functionality of the node
@@ -113,7 +114,7 @@ export class NodeComponent {
     }
   }
 
-  updateSharedText() {
+  updateShareOptions() {
     this.activeStory.updateNodeShareOptions(this.id, this.shareOptions)
   }
 
