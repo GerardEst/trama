@@ -23,7 +23,6 @@ export class BoardFlowsComponent {
     ncurvature: -30,
   }
   paths: Signal<any> = computed(() => {
-    console.time('calculatePaths')
     if (this.activeStory.entireTree().nodes) {
       return this.calculatePaths(this.activeStory.entireTree().nodes)
     }
@@ -54,6 +53,7 @@ export class BoardFlowsComponent {
       'viewBox',
       `0 0 ${mapSize.width} ${mapSize.height}`
     )
+    console.log('svgContainer', svgContainer)
 
     const paths: any = []
     if (!nodes) return paths

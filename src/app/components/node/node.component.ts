@@ -62,6 +62,7 @@ export class NodeComponent {
 
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
+  @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
   @ViewChild('textarea') textarea?: ElementRef
 
@@ -147,6 +148,12 @@ export class NodeComponent {
     const id = this.id
     const newText = e.target.value
     this.activeStory.updateNodeText(id, newText)
+  }
+
+  onDuplicateNode() {
+    console.log('Duplicate')
+
+    this.duplicateNode.emit(this.id)
   }
 
   onRemoveNode() {

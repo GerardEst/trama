@@ -224,6 +224,13 @@ export class BoardComponent {
     return newNodeInfo
   }
 
+  async duplicateNode(event: any) {
+    const idForNewNode = generateIDForNewNode(
+      this.activeStory.entireTree().nodes
+    )
+    this.activeStory.duplicateNode(event, idForNewNode)
+  }
+
   async removeNode(event: any) {
     // Remove join lines that go to the node
     this.joins = this.joins.filter(

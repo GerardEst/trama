@@ -170,6 +170,35 @@ export class ActiveStoryService {
 
   // TREE updates
   // Nodes
+  duplicateNode(id: string, newId: string) {
+    let duplicatedNode = structuredClone(
+      this.entireTree().nodes.find((node: any) => node.id === id)
+    )
+
+    duplicatedNode.id = newId
+    duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
+      const newAnswerId = answer.id.replace(
+        /_[0-9]_/,
+        `_${newId.split('_')[1]}_`
+      )
+      answer.id = newAnswerId
+      return answer
+    })
+    duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
+      delete answer.join
+      return answer
+    })
+    duplicatedNode.left = duplicatedNode.left + 290
+
+    // TODO -> Take the new node to front and put it 10px to the left and to the top
+
+    // Add the new node to the entireTree object. This will add it to the board
+    this.entireTree().nodes.push(duplicatedNode)
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+
   createNode({ id, top, left, type }: any) {
     const newNode: node = {
       id,
@@ -184,6 +213,9 @@ export class ActiveStoryService {
     }
 
     this.entireTree().nodes?.push(newNode)
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   removeNode(nodeId: string) {
     // Remove node from tree

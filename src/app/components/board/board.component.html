@@ -23,41 +23,43 @@
 
   <polo-board-flows></polo-board-flows>
   <ng-container *ngIf="activeStory.entireTree()">
-    <polo-node
-      *ngFor="let node of activeStory.entireTree().nodes"
-      #node
-      cdkDrag
-      id="{{ node.id }}"
-      [type]="node.type || 'content'"
-      (click)="setActiveNode(node.id, activeStory.storyId())"
-      (mousedown)="stopDragging()"
-      (mouseenter)="mouseEnter($event)"
-      (mouseleave)="mouseLeave($event)"
-      (onWillJoin)="willJoin($event)"
-      (haveJoined)="haveJoined($event)"
-      (removeNode)="removeNode($event)"
-      [waitingForJoin]="waitingForJoin"
-      (cdkDragStarted)="dragStarted($event)"
-      (cdkDragReleased)="dragReleased($event)"
-      (cdkDragMoved)="dragCheck()"
-      [style.transform]="
-        'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'
-      "
-      [text]="node.text"
-      [answers]="node.answers"
-      [conditions]="node.conditions"
-      [shareOptions]="node.share || {}"
-      [image]="node.image?.path"
-      [links]="node.links || []"
-    >
-      <dragHandle cdkDragHandle>
-        <p>
-          <span style="text-transform: capitalize">{{
-            node.type || 'content'
-          }}</span>
-          node
-        </p>
-      </dragHandle>
-    </polo-node>
+    @for (node of activeStory.entireTree().nodes; track $index) {
+      <polo-node
+        #node
+        cdkDrag
+        id="{{ node.id }}"
+        [type]="node.type || 'content'"
+        (click)="setActiveNode(node.id, activeStory.storyId())"
+        (mousedown)="stopDragging()"
+        (mouseenter)="mouseEnter($event)"
+        (mouseleave)="mouseLeave($event)"
+        (onWillJoin)="willJoin($event)"
+        (haveJoined)="haveJoined($event)"
+        (duplicateNode)="duplicateNode($event)"
+        (removeNode)="removeNode($event)"
+        [waitingForJoin]="waitingForJoin"
+        (cdkDragStarted)="dragStarted($event)"
+        (cdkDragReleased)="dragReleased($event)"
+        (cdkDragMoved)="dragCheck()"
+        [style.transform]="
+          'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'
+        "
+        [text]="node.text"
+        [answers]="node.answers"
+        [conditions]="node.conditions"
+        [shareOptions]="node.share || {}"
+        [image]="node.image?.path"
+        [links]="node.links || []"
+      >
+        <dragHandle cdkDragHandle>
+          <p>
+            <span style="text-transform: capitalize">{{
+              node.type || 'content'
+            }}</span>
+            node
+          </p>
+        </dragHandle>
+      </polo-node>
+    }
   </ng-container>
 </div>

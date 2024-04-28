@@ -19,10 +19,10 @@
     height: 100vh;
     align-items: center;
     margin: 0 30px;
-    transform: translate(calc(-50% - 30px));
+    display: flex;
   "
 >
-  <div class="text">
+  <div class="text" style="flex: 1">
     <h1>
       The easiest way to create<br />
       and share
@@ -47,43 +47,53 @@
       -->
     </div>
   </div>
+  <section
+    style="
+      margin: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem;
+    "
+    class="section--mobile"
+  >
+    <div class="mobile">
+      <div class="mobile__back"></div>
+      <div class="mobile__screen">
+        <div class="mobile__screen__camera"></div>
+        <polo-game></polo-game>
+      </div>
+    </div>
+  </section>
 </section>
-<section
-  class="section--editor"
-  style="height: 600px; margin-top: -111px; padding: 34px"
+<div
+  class="showroom"
+  style="display: flex; gap: 4rem; padding: 1rem; height: 100vh"
 >
-  <h1 style="z-index: 2; position: absolute">Try the editor</h1>
-  <div class="extra">
+  <section
+    class="section--editor"
+    style="
+      position: relative;
+      height: 600px;
+      overflow: hidden;
+      border-radius: 20px;
+      flex: 2;
+    "
+  >
+    <h1 style="z-index: 2; position: absolute; top: 20px; left: 20px">
+      Editor preview
+    </h1>
+
     <polo-board
       #board
       [initialZoom]="0.8"
       [grid]="true"
       [focusElements]="false"
     ></polo-board>
-  </div>
-</section>
-<section style="justify-content: center; margin: 0" class="section--mobile">
-  <div class="mobile">
-    <div class="mobile__back"></div>
-    <div class="mobile__screen">
-      <div class="mobile__screen__camera"></div>
-      <polo-game></polo-game>
-    </div>
-  </div>
-  <!--div class="text text--right" style="padding-top: 30px">
-    <h1>Easy for your users too</h1>
-    <p><b>1.</b> Send them the link or embed it in you website</p>
-    <p>
-      <b>2.</b> They <b>just open it and play the test</b>, no extra steps
-      needed
-    </p>
-    <p>
-      <b>3.</b> You wait patiently taking a bath or doing a nap or whatever you
-      do while you wait for things
-    </p>
-    <p><b>4.</b> You get the results in your <b>dashboard</b></p>
-  </div-->
-</section>
+  </section>
+</div>
 <!--div class="tapDetails">
   <section class="section--content" id="features">
     <h1 style="color: white">Features</h1>
