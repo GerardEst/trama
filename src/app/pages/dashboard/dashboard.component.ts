@@ -93,6 +93,7 @@ export class DashboardComponent {
   async loadConfigurationForStory(storyId: string) {
     const configuration: any = await this.db.getConfigurationOf(storyId)
 
+    this.activeStory.storyConfiguration().customId = configuration.custom_id
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().askName = configuration.askName

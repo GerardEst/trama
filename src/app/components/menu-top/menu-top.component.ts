@@ -14,6 +14,8 @@ export class MenuTopComponent {
   options = false
   savingTree = false
 
+  takenCustomId = false
+
   constructor(
     private db: DatabaseService,
     private router: Router,
@@ -50,6 +52,15 @@ export class MenuTopComponent {
       this.activeStory.storyId(),
       this.activeStory.storyConfiguration().sharing
     )
+  }
+
+  async updateCustomId(event: any) {
+    this.activeStory.storyConfiguration().customId = event.target.value
+    const couldUpdate = await this.db.updateCustomIdOf(
+      this.activeStory.storyId(),
+      this.activeStory.storyConfiguration().customId
+    )
+    this.takenCustomId = !couldUpdate
   }
 
   toggleAskName() {

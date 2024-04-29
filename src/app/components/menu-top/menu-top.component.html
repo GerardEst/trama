@@ -9,30 +9,46 @@
   ></polo-basic-button>
   @if (options) {
     <div class="dropdown">
-      <label>
-        <span>Enable tracking</span>
-        <input
-          (change)="toggleTracking()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().tracking"
-        />
-      </label>
-      <label>
-        <span>Ask for name</span>
-        <input
-          (change)="toggleAskName()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().askName"
-        />
-      </label>
-      <label>
-        <span>Enable sharing</span>
-        <input
-          (change)="toggleSharing()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().sharing"
-        />
-      </label>
+      <div class="dropdown__section">
+        <label>
+          <span>Enable tracking</span>
+          <input
+            (change)="toggleTracking()"
+            type="checkbox"
+            [checked]="activeStory.storyConfiguration().tracking"
+          />
+        </label>
+        <label>
+          <span>Ask for name</span>
+          <input
+            (change)="toggleAskName()"
+            type="checkbox"
+            [checked]="activeStory.storyConfiguration().askName"
+          />
+        </label>
+        <label>
+          <span>Enable sharing</span>
+          <input
+            (change)="toggleSharing()"
+            type="checkbox"
+            [checked]="activeStory.storyConfiguration().sharing"
+          />
+        </label>
+      </div>
+      <div class="dropdown__section">
+        <label class="label--column">
+          <span>Custom ID</span>
+          <input
+            [class.alert]="takenCustomId"
+            (change)="updateCustomId($event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().customId"
+          />
+          @if (takenCustomId) {
+            <p>ID already taken</p>
+          }
+        </label>
+      </div>
       <polo-basic-button
         (click)="openStadistics()"
         text="See stadistics"

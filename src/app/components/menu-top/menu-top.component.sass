@@ -8,6 +8,8 @@
   input
     border: none
     font-weight: 600
+    &.alert
+      outline: 1px solid #fd8181
     &:hover, &:focus
       background-image: url("/assets/icons/edit.svg")
       background-repeat: no-repeat
@@ -28,7 +30,13 @@
     box-shadow: var(--menu-shadow)
     padding: 1rem
     border-radius: 5px
+    &__section
+      margin-bottom: 0.5rem
+    input
+      border: 1px solid var(--medium-gray)
     label
       display: flex
       flex-direction: row
       justify-content: space-between
+      &.label--column
+        flex-direction: column
