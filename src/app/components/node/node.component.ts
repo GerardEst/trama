@@ -44,7 +44,7 @@ import {
  * are detected and node is updated
  */
 export class NodeComponent {
-  id: string = ''
+  @Input() nodeId: string = ''
 
   // Content of the node
   @Input() text: string = ''
@@ -75,7 +75,8 @@ export class NodeComponent {
   ) {}
 
   async ngOnInit() {
-    this.id = this.elementRef.nativeElement.id
+    //this.id = this.elementRef.nativeElement.id
+    console.log('node id: ', this.nodeId)
     if (this.board.focusElements) {
       setTimeout(() => {
         this.textarea?.nativeElement.focus()
@@ -89,7 +90,7 @@ export class NodeComponent {
     } = await this.database.supabase.auth.getUser()
 
     const image = event.target.files[0]
-    const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.id}`
+    const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.nodeId}`
 
     const { data, error } = await this.database.supabase.storage
       .from('images')
@@ -99,7 +100,7 @@ export class NodeComponent {
     if (error) {
       console.log(error)
     } else {
-      this.activeStory.addImageToNode(this.id, imagePath)
+      this.activeStory.addImageToNode(this.nodeId, imagePath)
     }
   }
 
@@ -110,22 +111,22 @@ export class NodeComponent {
     if (error) {
       console.log(error)
     } else {
-      this.activeStory.removeImageFromNode(this.id)
+      this.activeStory.removeImageFromNode(this.nodeId)
     }
   }
 
   updateShareOptions() {
-    this.activeStory.updateNodeShareOptions(this.id, this.shareOptions)
+    this.activeStory.updateNodeShareOptions(this.nodeId, this.shareOptions)
   }
 
   addAnswer() {
-    const newId = generateIDForNewAnswer(this.id, this.answers)
-    this.activeStory.createNodeAnswer(this.id, newId)
+    const newId = generateIDForNewAnswer(this.nodeId, this.answers)
+    this.activeStory.createNodeAnswer(this.nodeId, newId)
   }
 
   addCondition() {
-    const newId = generateIDForNewCondition(this.id, this.conditions)
-    this.activeStory.createNodeCondition(this.id, newId)
+    const newId = generateIDForNewCondition(this.nodeId, this.conditions)
+    this.activeStory.createNodeCondition(this.nodeId, newId)
   }
 
   // Need to do this way because empty links are not saved
@@ -134,37 +135,38 @@ export class NodeComponent {
   }
 
   updateLinks() {
-    this.activeStory.updateNodeLinks(this.id, this.links)
+    this.activeStory.updateNodeLinks(this.nodeId, this.links)
   }
 
   removeAnswer(id: string) {
-    this.activeStory.removeAnswer(this.id, id)
+    this.activeStory.removeAnswer(this.nodeId, id)
   }
 
   removeCondition(id: string) {
-    this.activeStory.removeCondition(this.id, id)
+    this.activeStory.removeCondition(this.nodeId, id)
   }
 
   saveNodeText(e: any) {
-    const id = this.id
     const newText = e.target.value
-    this.activeStory.updateNodeText(id, newText)
+    this.activeStory.updateNodeText(this.nodeId, newText)
   }
 
   onDuplicateNode() {
     console.log('Duplicate')
 
-    this.duplicateNode.emit(this.id)
+    this.duplicateNode.emit(this.nodeId)
   }
 
   onRemoveNode() {
-    this.board.resumeBoardDrag()
+    console.log('remove node: ', this.nodeId)
 
     const data = {
-      nodeId: this.id,
+      nodeId: this.nodeId,
       answers: this.answers?.map((answer) => answer.id),
     }
     this.removeNode.emit(data)
+
+    this.board.resumeBoardDrag()
   }
 
   willJoin(answerId: string) {
@@ -172,6 +174,6 @@ export class NodeComponent {
   }
 
   join() {
-    this.haveJoined.emit(this.id)
+    this.haveJoined.emit(this.nodeId)
   }
 }

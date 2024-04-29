@@ -1,7 +1,7 @@
 <div class="node" [class.waitingForJoin]="waitingForJoin">
   <div class="waitingForJoin" *ngIf="waitingForJoin" (click)="join()"></div>
   <header>
-    <span id="{{ elementRef.nativeElement.id + '_join' }}"></span>
+    <span id="{{ nodeId + '_join' }}"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
       @if (type !== 'distributor') {
@@ -41,9 +41,7 @@
         ></polo-condition>
       </div>
       <polo-condition
-        id="{{
-          'condition_' + elementRef.nativeElement.id.split('_')[1] + '_fallback'
-        }}"
+        id="{{ 'condition_' + nodeId.split('_')[1] + '_fallback' }}"
         [fallback]="true"
         (onRemoveCondition)="removeCondition($event)"
         (onWillJoin)="willJoin($event)"
@@ -132,7 +130,7 @@
     }
   </main>
   <footer>
-    <p>{{ elementRef.nativeElement.id }}</p>
+    <p>{{ nodeId }}</p>
     @if (type === 'distributor') {
       <polo-basic-button
         (click)="addCondition()"

@@ -301,9 +301,8 @@ export class ActiveStoryService {
 
   // TODO -> Are all this get really necessary since the use of signals for the tree?
   getImageFromNode(nodeId: string) {
-    console.log(nodeId)
     const node = findNodeInTree(nodeId, this.entireTree())
-    console.log(node)
+
     return node.image
   }
   // distributor nodes only

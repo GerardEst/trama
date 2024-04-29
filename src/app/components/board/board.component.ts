@@ -234,6 +234,8 @@ export class BoardComponent {
   }
 
   async removeNode(event: any) {
+    console.log('Try to remove node ', event)
+
     // Remove join lines that go to the node
     this.joins = this.joins.filter(
       (join) => join.destiny !== event.nodeId + '_join'
