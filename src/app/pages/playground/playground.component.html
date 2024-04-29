@@ -8,12 +8,20 @@
       (onSelectAnswer)="selectAnswer($event)"
     ></polo-game>
   }
-  <a
-    href="https://www.instagram.com/catalanus__?igsh=MXA4NDU4MTcxcTFlMQ=="
-    target="_blank"
-    class="storyfooter"
-    >catalanus</a
-  >
+  @if (activeStory.storyConfiguration().footer) {
+    @if (activeStory.storyConfiguration().footer.link) {
+      <a
+        href="{{ activeStory.storyConfiguration().footer.link }}"
+        target="_blank"
+        class="storyfooter"
+        >{{ activeStory.storyConfiguration().footer.text }}</a
+      >
+    } @else {
+      <p class="storyfooter">
+        {{ activeStory.storyConfiguration().footer.text }}
+      </p>
+    }
+  }
   @if (
     activeStory.entireTree() &&
     activeStory.storyConfiguration().askName &&

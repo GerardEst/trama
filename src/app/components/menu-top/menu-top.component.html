@@ -49,6 +49,25 @@
           }
         </label>
       </div>
+      <div class="dropdown__section">
+        <p>Footer</p>
+        <label class="label--column">
+          <span>Footer text</span>
+          <input
+            (change)="updateFooter('text', $event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().footer.text || ''"
+          />
+        </label>
+        <label class="label--column">
+          <span>Footer link</span>
+          <input
+            (change)="updateFooter('link', $event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().footer.link || ''"
+          />
+        </label>
+      </div>
       <polo-basic-button
         (click)="openStadistics()"
         text="See stadistics"

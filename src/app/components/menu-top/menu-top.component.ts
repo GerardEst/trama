@@ -3,6 +3,8 @@ import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { normalizeLink } from 'src/app/utils/links'
+
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
@@ -61,6 +63,18 @@ export class MenuTopComponent {
       this.activeStory.storyConfiguration().customId
     )
     this.takenCustomId = !couldUpdate
+  }
+
+  updateFooter(option: 'text' | 'link', event: any) {
+    let newValue = event.target.value
+    if (option === 'link') {
+      newValue = normalizeLink(newValue)
+    }
+    this.activeStory.storyConfiguration().footer[option] = newValue
+    this.db.updateFooterOf(
+      this.activeStory.storyId(),
+      this.activeStory.storyConfiguration().footer
+    )
   }
 
   toggleAskName() {

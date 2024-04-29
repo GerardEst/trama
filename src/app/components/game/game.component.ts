@@ -12,6 +12,7 @@ import {
 import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { normalizeLink } from 'src/app/utils/links'
 
 @Component({
   selector: 'polo-game',
@@ -162,7 +163,7 @@ export class GameComponent {
 
   registerLink(link: string) {
     Cronitor.track('SomeoneWentToAFinalLink')
-    window.open(this.normalizeLink(link), '_blank')
+    window.open(normalizeLink(link), '_blank')
   }
 
   getTextWithFinalParameters(text: string = '') {
@@ -332,13 +333,6 @@ export class GameComponent {
   getRandomJoin(answerJoins: Array<join>) {
     const randomJoinIndex = Math.floor(Math.random() * answerJoins.length)
     return answerJoins[randomJoinIndex]
-  }
-
-  normalizeLink(url: string) {
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      return `https://${url}`
-    }
-    return url
   }
 
   registerAnswer(answer: node_answer) {

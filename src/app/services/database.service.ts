@@ -147,7 +147,7 @@ export class DatabaseService {
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select('custom_id, tracking, sharing, askName')
+      .select('custom_id, tracking, sharing, askName, footer')
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -191,6 +191,27 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('stories')
       .update({ custom_id: customId })
+      .eq('id', storyId)
+
+    if (error) return false
+    return true
+  }
+
+  async updateFooterOf(
+    storyId: string,
+    footer: {
+      text: string
+      link: string
+    }
+  ) {
+    if (this.prod)
+      console.log(
+        '%cdb call to set the footer options of a story',
+        'color: #9999ff'
+      )
+    const { data, error } = await this.supabase
+      .from('stories')
+      .update({ footer: footer })
       .eq('id', storyId)
 
     if (error) return false

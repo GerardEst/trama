@@ -68,6 +68,7 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().askName = configuration.askName
+    this.activeStory.storyConfiguration().footer = configuration.footer
 
     //this.customStyles = configuration.customStyles
     this.customStyles = configuration.customStyles || 'catalanus'
