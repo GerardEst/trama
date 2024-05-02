@@ -140,6 +140,7 @@ export class NodeComponent {
 
   removeAnswer(id: string) {
     this.activeStory.removeAnswer(this.nodeId, id)
+    // TODO - Redibujar joins
   }
 
   removeCondition(id: string) {
@@ -152,14 +153,10 @@ export class NodeComponent {
   }
 
   onDuplicateNode() {
-    console.log('Duplicate')
-
     this.duplicateNode.emit(this.nodeId)
   }
 
   onRemoveNode() {
-    console.log('remove node: ', this.nodeId)
-
     const data = {
       nodeId: this.nodeId,
       answers: this.answers?.map((answer) => answer.id),

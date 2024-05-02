@@ -120,7 +120,7 @@ export class DatabaseService {
 
   async saveTreeToDB(treeId: string, treeContent: tree) {
     if (this.prod)
-      console.log('%cdb call to save local story to db', 'color: #9999ff')
+      console.log('%cdb call to save story to db', 'color: #9999ff')
 
     // const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
     // const kiloBytes = size / 1024

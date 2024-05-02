@@ -46,6 +46,7 @@ export class MenuComponent implements OnInit {
             },
           ],
         },
+        profile_id: this.db.user.id,
       },
     ]
 
