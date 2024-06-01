@@ -30,6 +30,7 @@ export class BoardComponent {
   @Input() grid?: boolean
   @Input() initialZoom?: number
   @Input() focusElements: boolean = true
+  @Input() zoomable: boolean = true
 
   // context menu
   contextMenuPosition = { x: 0, y: 0 }
@@ -64,6 +65,12 @@ export class BoardComponent {
         filterKey: function (/* e, dx, dy, dz */) {
           // don't let panzoom handle this event:
           return true
+        },
+        beforeWheel: (e) => {
+          if (this.zoomable) return
+          // allow wheel-zoom only if altKey is down. Otherwise - ignore
+          var shouldIgnore = !e.altKey
+          return shouldIgnore
         },
         initialZoom: this.initialZoom || 1,
         zoomSpeed: 0.065,
