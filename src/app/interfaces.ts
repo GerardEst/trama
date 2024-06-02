@@ -98,3 +98,27 @@ export interface externalEvent {
   name: 'leaveTab' | 'goBackToTab' | 'blurWindow' | 'focusWindow'
   time: number
 }
+
+// Results and Stadistics
+export interface external_event {
+  name: 'goBackToTab' | 'focusWindow' | 'blurWindow' | 'leave tab'
+  time: 1708971350724
+}
+export interface path {
+  id: string
+  text: string
+  timestamp: number
+  type: 'node' | 'answer'
+}
+export interface result {
+  conditions: condition[]
+  name: string
+  stats: stat[]
+}
+export interface game {
+  created_at: string
+  external_events: external_event[]
+  path: path[]
+  result: result
+  user_name: string
+}

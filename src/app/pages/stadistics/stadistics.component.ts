@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from '../../services/database.service'
+import { StadisticsService } from 'src/app/services/stadistics.service'
 
 @Component({
   selector: 'polo-stadistics',
@@ -17,7 +18,10 @@ export class StadisticsComponent implements OnInit {
     this.treeId = treeId
   }
 
-  constructor(private db: DatabaseService) {}
+  constructor(
+    private db: DatabaseService,
+    private stadistics: StadisticsService
+  ) {}
 
   ngOnInit() {
     this.getStadistics()
@@ -30,7 +34,7 @@ export class StadisticsComponent implements OnInit {
     }
 
     this.refs = await this.db.getRefsOfTree(this.treeId)
-    this.plays = await this.db.getStadisticsOfTree(this.treeId)
+    this.plays = await this.stadistics.getGamesOf(this.treeId)
   }
 
   getRefName(id: number) {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
-import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
+import { StadisticsService } from 'src/app/services/stadistics.service'
 
 @Component({
   selector: 'polo-stadistics-layer',
@@ -14,12 +14,12 @@ export class StadisticsLayerComponent {
   games?: any
 
   constructor(
-    private db: DatabaseService,
-    private story: ActiveStoryService
+    private story: ActiveStoryService,
+    private stadistics: StadisticsService
   ) {}
 
   async ngOnInit() {
-    this.games = await this.db.getStadisticsOfTree(this.story.storyId(), true)
+    this.games = await this.stadistics.getGamesOf(this.story.storyId())
 
     console.log(this.games)
   }
