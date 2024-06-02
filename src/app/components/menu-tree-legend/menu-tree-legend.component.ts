@@ -4,16 +4,24 @@ import { SelectorComponent } from '../ui/selector/selector.component'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.component'
+
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [SelectorComponent, SelectOrCreateComponent, BasicButtonComponent],
+  imports: [
+    SelectorComponent,
+    SelectOrCreateComponent,
+    BasicButtonComponent,
+    StadisticsLayerComponent,
+  ],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.sass',
 })
 export class MenuTreeLegendComponent {
   arrayOfRefs: any = []
   unusedRefs: any = []
+  mode: 'H' | 'S' = 'H'
 
   constructor(
     public activeStory: ActiveStoryService,

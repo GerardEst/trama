@@ -1,43 +1,55 @@
 <div class="legend">
   <div class="legend__content">
-    <p class="legend__content__title">Legend</p>
-    <div class="legend__content__refs">
-      @for (ref of arrayOfRefs; track $index) {
-        <div
-          class="tag"
-          (mouseover)="focusNodesWith(ref.id)"
-          (mouseleave)="blurNodesWith(ref.id)"
-        >
-          <span class="tag__type tag__type--{{ ref.type }}"></span>
-          <input
-            type="text"
-            (change)="updateRefName($event, ref.id)"
-            value="{{ ref.name }}"
-          />
-          <polo-basic-button
-            class="tag__category"
-            [class.tag__category--empty]="!ref.category"
-            (click)="openSelectorFor($event, ref.id)"
-            text="{{ ref.category || 'Select category' }}"
-          >
-          </polo-basic-button>
-          <span class="tag__id">{{ ref.id }}</span>
-          <span class="tag__times">{{ ref.times }}</span>
-        </div>
-      }
-      @for (ref of unusedRefs; track $index) {
-        <div class="tag">
-          <span class="tag__type tag__type--{{ ref.type }}"></span>
-          <input
-            type="text"
-            (change)="updateRefName($event, ref.id)"
-            value="{{ ref.name }}"
-          />
-          <p class="tag__id">{{ ref.id }}</p>
-          <span class="tag__delete" (click)="deleteRef(ref.id)"></span>
-        </div>
-      }
+    <div class="legend__content__title">
+      <p>Legend</p>
+      <div class="legend__content__title__buttons">
+        <polo-basic-button (click)="mode = 'H'">H</polo-basic-button>
+        <polo-basic-button (click)="mode = 'S'">S</polo-basic-button>
+      </div>
     </div>
+    @if (mode === 'H') {
+      <div class="legend__content__refs">
+        @for (ref of arrayOfRefs; track $index) {
+          <div
+            class="tag"
+            (mouseover)="focusNodesWith(ref.id)"
+            (mouseleave)="blurNodesWith(ref.id)"
+          >
+            <span class="tag__type tag__type--{{ ref.type }}"></span>
+            <input
+              type="text"
+              (change)="updateRefName($event, ref.id)"
+              value="{{ ref.name }}"
+            />
+            <polo-basic-button
+              class="tag__category"
+              [class.tag__category--empty]="!ref.category"
+              (click)="openSelectorFor($event, ref.id)"
+              text="{{ ref.category || 'Select category' }}"
+            >
+            </polo-basic-button>
+            <span class="tag__id">{{ ref.id }}</span>
+            <span class="tag__times">{{ ref.times }}</span>
+          </div>
+        }
+        @for (ref of unusedRefs; track $index) {
+          <div class="tag">
+            <span class="tag__type tag__type--{{ ref.type }}"></span>
+            <input
+              type="text"
+              (change)="updateRefName($event, ref.id)"
+              value="{{ ref.name }}"
+            />
+            <p class="tag__id">{{ ref.id }}</p>
+            <span class="tag__delete" (click)="deleteRef(ref.id)"></span>
+          </div>
+        }
+      </div>
+    } @else if (mode === 'S') {
+      <div class="legend__content__stadistics">
+        <polo-stadistics-layer></polo-stadistics-layer>
+      </div>
+    }
   </div>
   <div class="legend__header">
     <!--polo-tree-error-notifier></polo-tree-error-notifier-->

@@ -245,15 +245,18 @@ export class DatabaseService {
     return true
   }
 
-  async getStadisticsOfTree(storyId: string) {
+  async getStadisticsOfTree(storyId: string, withPath: boolean = false) {
     if (this.prod)
       console.log(
         '%cdb call to get the stadistics of a story',
         'color: #9999ff'
       )
+
     const { data, error } = await this.supabase
       .from('games')
-      .select('created_at, result, user_name')
+      .select(
+        `created_at, result, user_name ${withPath && ', path, external_events'}`
+      )
       .eq('story', storyId)
 
     if (error) return false
