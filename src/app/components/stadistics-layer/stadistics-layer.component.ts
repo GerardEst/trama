@@ -26,6 +26,14 @@ export class StadisticsLayerComponent {
 
   toggleGame(game: any) {
     console.log(game)
+    for (let step of game.path) {
+      if (step.type === 'node') {
+        document.querySelector('#' + step.id)?.classList.add('highlighted')
+      }
+      if (step.type === 'answer') {
+        document.querySelector('#' + step.id)?.classList.add('highlighted')
+      }
+    }
   }
 
   showGameData(game: any) {
