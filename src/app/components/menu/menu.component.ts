@@ -5,6 +5,7 @@ import { Router } from '@angular/router'
 import { SeparatorComponent } from '../ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { StadisticsService } from 'src/app/services/stadistics.service'
 
 @Component({
   selector: 'polo-menu',
@@ -22,6 +23,7 @@ export class MenuComponent implements OnInit {
   constructor(
     private db: DatabaseService,
     private router: Router,
+    private stadistics: StadisticsService,
     public activeStory: ActiveStoryService
   ) {}
 
@@ -67,6 +69,7 @@ export class MenuComponent implements OnInit {
     this.db.supabase.auth.signOut()
     this.db.user = null
     this.activeStory.reset()
+    this.stadistics.clean()
     localStorage.removeItem('polo-id')
     localStorage.removeItem('polo-activeNodes')
 

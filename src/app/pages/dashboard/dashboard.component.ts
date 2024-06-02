@@ -8,6 +8,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { MenuTreeLegendComponent } from 'src/app/components/menu-tree-legend/menu-tree-legend.component'
 import { findNodeInTree } from 'src/app/utils/tree-searching'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { StadisticsService } from 'src/app/services/stadistics.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -31,7 +32,8 @@ export class DashboardComponent {
 
   constructor(
     private db: DatabaseService,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    private stadistics: StadisticsService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +63,8 @@ export class DashboardComponent {
     this.activeStory.storyId.set(story.id)
     this.activeStory.entireTree.set(story.tree)
     this.activeStory.storyName.set(story.name)
+
+    this.stadistics.clean()
 
     // We have to manually init the refs for the legend by now
     this.activeStory.initTreeRefs()

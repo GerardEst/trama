@@ -14,4 +14,8 @@ export class StadisticsService {
 
     return this.games
   }
+
+  clean() {
+    this.games = null
+  }
 }
