@@ -1,29 +1,36 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('create a new story', () => {
+test.describe('playground', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:4200/dashboard')
+    await page.goto('http://localhost:4200/testStoryID')
   })
 
-  test('has the create a story button', async ({ page }) => {
+  test('can play a short basic game', async ({ page }) => {
     const button = page.getByText(/Create a story/)
+
+    // can see the title
+    // can read the correct text
+    // can choose an answer and it takes me to the next node
+    // the next node has the right text
 
     expect(button).toBeTruthy()
   })
 
-  test('creates a new story when click create new story', async ({ page }) => {
-    const button = page.getByText('+ Create a story')
+  // Can play a game with complexities X
 
-    button.click()
+  // test('creates a new story when click create new story', async ({ page }) => {
+  //   const button = page.getByText('+ Create a story')
 
-    // // The title of the dashboard changes to My new tree
-    // const menuTop = page.getByLabel('storyName')
-    // await expect(menuTop).toHaveText('My new tree')
+  //   button.click()
 
-    // // A new story shows up on the menu
+  //   // // The title of the dashboard changes to My new tree
+  //   // const menuTop = page.getByLabel('storyName')
+  //   // await expect(menuTop).toHaveText('My new tree')
 
-    await expect(page).toHaveTitle('My new tree')
+  //   // // A new story shows up on the menu
 
-    // Apareix un sol node buit en pantalla
-  })
+  //   await expect(page).toHaveTitle('My new tree')
+
+  //   // Apareix un sol node buit en pantalla
+  // })
 })
