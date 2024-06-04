@@ -22,7 +22,10 @@
           }}
         </li>
       }
-      <li (click)="createNewTree()">+ Create a story</li>
+      <polo-basic-button
+        text="+ Create a story"
+        (click)="createNewTree()"
+      ></polo-basic-button>
     </ul>
   </nav>
   @if (!fixedMenu) {
