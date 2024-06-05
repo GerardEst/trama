@@ -41,7 +41,7 @@
             {{ link.name }}
           </button>
         }
-        @if (node.type === 'end') {
+        @if (node.type === 'end' && activeStory.storyConfiguration().sharing) {
           <button class="sharebutton" (click)="openShareContext()">
             {{ node.share.shareButtonText }}
           </button>

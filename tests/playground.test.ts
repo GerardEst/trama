@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test'
 
 test.describe('basic story', () => {
   test.beforeEach(async ({ page }) => {
-    //test.setTimeout(60000)
     await page.goto(
       'http://localhost:4200/a1e23f34-ce24-4cba-a38b-07a24a17bb14'
     )
@@ -84,5 +83,26 @@ test.describe('basic story', () => {
       'src',
       'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/6a519598-5b4e-4d44-9902-b33be8370e9c/a1e23f34-ce24-4cba-a38b-07a24a17bb14/node_1'
     )
+  })
+
+  test('it uses the configurations correctly for this story', async ({
+    page,
+  }) => {
+    const answer1 = page.getByText('answer 1')
+    await answer1.waitFor()
+    await answer1.click()
+
+    const answer = page.getByText('step 2 answer')
+    await answer.waitFor()
+    await answer.click()
+
+    const finalNode = page.getByText('end')
+    await finalNode.waitFor()
+
+    // Does not show the share button
+    const share = page.locator('.sharebutton')
+    expect(share).not.toBeInViewport()
+
+    // Does not ask for a name
   })
 })
