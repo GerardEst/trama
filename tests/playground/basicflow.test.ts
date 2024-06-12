@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('basic story', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'http://localhost:4200/a1e23f34-ce24-4cba-a38b-07a24a17bb14'
+      'http://localhost:4200/private/a1e23f34-ce24-4cba-a38b-07a24a17bb14'
     )
   })
 

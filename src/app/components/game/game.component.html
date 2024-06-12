@@ -17,36 +17,40 @@
       <p class="nodetext">
         {{ getTextWithFinalParameters(node.text) }}
       </p>
-      <div class="answers">
-        @for (answer of node.answers; track $index) {
-          <button
-            [attr.data-order]="$index"
-            [class.unique]="!node.answers[1]"
-            [disabled]="
-              !playerHasAnswerRequirements(
-                playerService.player(),
-                answer.requirements
-              )
-            "
-            (click)="markAsSelected($event)"
-            (click)="registerAnswer(answer)"
-            (click)="applyEvents(answer.events)"
-            (click)="nextStep(answer.join)"
-          >
-            {{ getTextWithFinalParameters(answer.text) }}
-          </button>
-        }
-        @for (link of node.links; track $index) {
-          <button (click)="registerLink(link.url)">
-            {{ link.name }}
-          </button>
-        }
-        @if (node.type === 'end' && activeStory.storyConfiguration().sharing) {
-          <button class="sharebutton" (click)="openShareContext()">
-            {{ node.share.shareButtonText }}
-          </button>
-        }
-      </div>
+      @if (node.answers) {
+        <div class="answers">
+          @for (answer of node.answers; track $index) {
+            <button
+              [attr.data-order]="$index"
+              [class.unique]="!node.answers[1]"
+              [disabled]="
+                !playerHasAnswerRequirements(
+                  playerService.player(),
+                  answer.requirements
+                )
+              "
+              (click)="markAsSelected($event)"
+              (click)="registerAnswer(answer)"
+              (click)="applyEvents(answer.events)"
+              (click)="nextStep(answer.join)"
+            >
+              {{ getTextWithFinalParameters(answer.text) }}
+            </button>
+          }
+          @for (link of node.links; track $index) {
+            <button (click)="registerLink(link.url)">
+              {{ link.name }}
+            </button>
+          }
+          @if (
+            node.type === 'end' && activeStory.storyConfiguration().sharing
+          ) {
+            <button class="sharebutton" (click)="openShareContext()">
+              {{ node.share.shareButtonText }}
+            </button>
+          }
+        </div>
+      }
     </div>
   }
 </div>

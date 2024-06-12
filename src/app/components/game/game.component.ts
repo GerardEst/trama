@@ -25,8 +25,6 @@ export class GameComponent {
   @Input() customStyles?: string
 
   nodes: any = []
-
-  //activeNode?: node = undefined
   initialized: boolean = false
 
   @Output() onEndGame = new EventEmitter<void>()
@@ -44,8 +42,7 @@ export class GameComponent {
           this.activeStory.entireTree().nodes[0]
         )
         this.nodes.push(firstNode)
-        // Animations
-        setTimeout(() => (firstNode.enabling = true))
+        if (firstNode.join) this.nextStep(firstNode.join)
         this.initialized = true
       }
     })
@@ -56,31 +53,23 @@ export class GameComponent {
   }
 
   nextStep(destinyNode: Array<join>) {
-    const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
-    const nextNode = structuredClone(
-      this.activeStory
-        .entireTree()
-        .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
-    )
-    if (!nextNode) throw new Error('Node not found')
+    setTimeout(() => {
+      const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
+      const nextNode = structuredClone(
+        this.activeStory
+          .entireTree()
+          .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
+      )
+      if (!nextNode) throw new Error('Node not found')
 
-    // Animations
-    setTimeout(() => {
-      this.nodes.at(-1).disabled = true
-    }, 500)
-    setTimeout(() => {
-      this.nodes.at(-1).hidden = true
       this.nodes.push(nextNode)
-      setTimeout(() => {
-        nextNode.enabling = true
-      }, 10)
-
+      if (nextNode && nextNode.join) this.nextStep(nextNode.join)
       if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
       if (nextNode && nextNode.type !== 'distributor')
         this.registerNode(nextNode)
-      if (nextNode && nextNode.type === 'distributor')
-        // If nodePointer points to a distributor, we jump to the next one
+      if (nextNode && nextNode.type === 'distributor') {
         this.nextStep(this.distributeNode(nextNode))
+      }
     }, 1000)
   }
 

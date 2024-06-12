@@ -224,6 +224,10 @@ export class ActiveStoryService {
 
     // Remove node from joins that have it
     for (let node of this.entireTree().nodes) {
+      if (node.join) {
+        node.join = node.join.filter((join: any) => join.node !== nodeId)
+      }
+
       if (node.answers) {
         for (let answer of node.answers) {
           if (answer.join) {
