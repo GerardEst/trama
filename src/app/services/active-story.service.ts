@@ -428,11 +428,10 @@ export class ActiveStoryService {
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
 
-  // Sometimes I refer to Option instead of Answer because I added the distributor nodes, which don't have answers but somethings. I wanted to call everything: Option
-  updateJoinOfOption(optionId: string, nodeId: string) {
-    const optionNodeType = optionId.split('_')[0]
-    const optionNodeId = optionId.split('_')[1]
-    const isFallbackCondition = optionId.split('_')[2] === 'fallback'
+  updateJoinOfOption(willJoinId: string, destinyNodeId: string) {
+    const optionNodeType = willJoinId.split('_')[0]
+    const optionNodeId = willJoinId.split('_')[1]
+    const isFallbackCondition = willJoinId.split('_')[2] === 'fallback'
     const node = findNodeInTree(`node_${optionNodeId}`, this.entireTree())
 
     // TODO -> tot aixo es horrible en molts sentits
@@ -443,7 +442,7 @@ export class ActiveStoryService {
         }
       }
       const duplicatedJoin = node.fallbackCondition.join?.find((join: any) => {
-        return join.node === nodeId
+        return join.node === destinyNodeId
       })
 
       if (duplicatedJoin) {
@@ -454,14 +453,21 @@ export class ActiveStoryService {
       if (!node.fallbackCondition.join) {
         node.fallbackCondition.join = []
       }
-      node.fallbackCondition.join.push({ node: nodeId })
+      node.fallbackCondition.join.push({ node: destinyNodeId })
+    } else if (optionNodeType === 'node') {
+      const willJoinNode = findNodeInTree(willJoinId, this.entireTree())
+      if (willJoinNode.join) {
+        willJoinNode.join.push({ node: destinyNodeId })
+      } else {
+        willJoinNode.join = [{ node: destinyNodeId }]
+      }
     } else {
       const option = node[optionNodeType + 's']?.filter(
-        (option: any) => option.id === optionId
+        (option: any) => option.id === willJoinId
       )
 
       const duplicatedJoin = option[0].join?.find((join: any) => {
-        return join.node === nodeId
+        return join.node === destinyNodeId
       })
 
       if (duplicatedJoin) {
@@ -470,9 +476,9 @@ export class ActiveStoryService {
       }
 
       if (option[0].join) {
-        option[0].join.push({ node: nodeId })
+        option[0].join.push({ node: destinyNodeId })
       } else {
-        option[0].join = [{ node: nodeId }]
+        option[0].join = [{ node: destinyNodeId }]
       }
     }
 

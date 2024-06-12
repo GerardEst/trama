@@ -101,6 +101,7 @@ test.describe('basic story', () => {
 
     // Does not show the share button
     const share = page.locator('.sharebutton')
+    await share.waitFor()
     expect(share).not.toBeInViewport()
 
     // Does not ask for a name

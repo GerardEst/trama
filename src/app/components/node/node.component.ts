@@ -75,8 +75,6 @@ export class NodeComponent {
   ) {}
 
   async ngOnInit() {
-    //this.id = this.elementRef.nativeElement.id
-    console.log('node id: ', this.nodeId)
     if (this.board.focusElements) {
       setTimeout(() => {
         this.textarea?.nativeElement.focus()

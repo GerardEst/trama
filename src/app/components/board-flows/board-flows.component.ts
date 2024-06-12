@@ -58,11 +58,18 @@ export class BoardFlowsComponent {
     if (!nodes) return paths
 
     for (let node of nodes) {
+      if (node.join) {
+        for (let join of node.join) {
+          paths.push(this.getPath(node.id + '_join', join.node + '_joiner'))
+        }
+      }
       if (node.answers) {
         for (let answer of node.answers) {
           if (answer.join) {
             for (let join of answer.join) {
-              paths.push(this.getPath(answer.id + '_join', join.node + '_join'))
+              paths.push(
+                this.getPath(answer.id + '_join', join.node + '_joiner')
+              )
             }
           }
         }
@@ -72,7 +79,7 @@ export class BoardFlowsComponent {
           if (condition.join) {
             for (let join of condition.join) {
               paths.push(
-                this.getPath(condition.id + '_join', join.node + '_join')
+                this.getPath(condition.id + '_join', join.node + '_joiner')
               )
             }
           }
@@ -83,7 +90,7 @@ export class BoardFlowsComponent {
           paths.push(
             this.getPath(
               node.fallbackCondition.id + '_join',
-              join.node + '_join'
+              join.node + '_joiner'
             )
           )
         }

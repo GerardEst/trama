@@ -33,6 +33,7 @@ export interface node {
   id: string
   top: string
   left: string
+  join?: Array<join>
   image?: { path: string }
   answers?: Array<node_answer>
   conditions?: Array<node_conditions>

@@ -1,7 +1,7 @@
 <div class="node" [class.waitingForJoin]="waitingForJoin">
   <div class="waitingForJoin" *ngIf="waitingForJoin" (click)="join()"></div>
   <header>
-    <span id="{{ nodeId + '_join' }}"></span>
+    <span id="{{ nodeId + '_joiner' }}"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
       @if (type !== 'distributor') {
@@ -116,6 +116,13 @@
             (click)="removeNodeImage()"
           ></polo-basic-button>
         </div>
+      }
+      @if (!answers || answers.length === 0) {
+        <div
+          (click)="willJoin(nodeId)"
+          id="{{ nodeId + '_join' }}"
+          class="union_point"
+        ></div>
       }
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
       <div *ngIf="answers && answers.length > 0" class="node__answers">
