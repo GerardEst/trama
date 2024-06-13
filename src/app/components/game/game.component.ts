@@ -53,6 +53,7 @@ export class GameComponent {
   }
 
   nextStep(destinyNode: Array<join>) {
+    this.disableLastNode()
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
       const nextNode = structuredClone(
@@ -71,6 +72,10 @@ export class GameComponent {
         this.nextStep(this.distributeNode(nextNode))
       }
     }, 1000)
+  }
+
+  disableLastNode() {
+    this.nodes.at(-1).disabled = true
   }
 
   distributeNode(node: node) {

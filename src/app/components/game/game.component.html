@@ -1,5 +1,5 @@
 <div class="game" [class]="customStyles">
-  @for (node of nodes; track $index) {
+  @for (node of nodes; track node.id) {
     <div
       class="node"
       [class.disabled]="node.disabled"
@@ -24,6 +24,7 @@
               [attr.data-order]="$index"
               [class.unique]="!node.answers[1]"
               [disabled]="
+                !node.disabled &&
                 !playerHasAnswerRequirements(
                   playerService.player(),
                   answer.requirements
