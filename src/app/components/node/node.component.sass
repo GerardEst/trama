@@ -15,6 +15,19 @@
   border-radius: 0.5rem
   box-sizing: border-box
   padding: 0 0.3rem
+  .joiner
+    width: 1.5rem
+    height: 1rem
+    background-color: white
+    border: 1px solid var(--dark-gray)
+    border-radius: 0.6rem
+    align-self: center
+    cursor: pointer
+    position: absolute
+    left: -15px
+    z-index: -1
+    &--answers
+      left: -20px
   &__image
     position: relative
     &__remove
@@ -28,6 +41,7 @@
     &:hover .node__image__remove
       display: block
   &__answers
+    position: relative
     display: flex
     flex-direction: column
     gap: 0.5rem
