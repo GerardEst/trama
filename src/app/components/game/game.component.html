@@ -23,13 +23,6 @@
             <button
               [attr.data-order]="$index"
               [class.unique]="!node.answers[1]"
-              [disabled]="
-                !node.disabled &&
-                !playerHasAnswerRequirements(
-                  playerService.player(),
-                  answer.requirements
-                )
-              "
               (click)="markAsSelected($event)"
               (click)="registerAnswer(answer)"
               (click)="applyEvents(answer.events)"

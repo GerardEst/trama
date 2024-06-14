@@ -52,16 +52,24 @@ export class GameComponent {
     event.target.classList.add('selected')
   }
 
-  nextStep(destinyNode: Array<join>) {
+  nextStep(destinyNodes: Array<join>) {
     this.disableLastNode()
     setTimeout(() => {
-      const randomlyChoosedJoin = this.getRandomJoin(destinyNode)
+      const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
       const nextNode = structuredClone(
         this.activeStory
           .entireTree()
           .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
       )
       if (!nextNode) throw new Error('Node not found')
+
+      // Remove banned answers before painting
+      nextNode.answers = nextNode.answers.filter((answer: node_answer) =>
+        this.playerHasAnswerRequirements(
+          this.playerService.player(),
+          answer.requirements
+        )
+      )
 
       this.nodes.push(nextNode)
       if (nextNode && nextNode.join) this.nextStep(nextNode.join)
