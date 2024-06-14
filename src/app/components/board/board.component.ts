@@ -269,5 +269,15 @@ export class BoardComponent {
 
     // remove node from tree
     this.activeStory.removeNode(event.nodeId)
+
+    // change active node from localstorage
+    const currentActiveNodes = localStorage.getItem('polo-activeNodes')
+    if (currentActiveNodes) {
+      const currentActiveNode =
+        JSON.parse(currentActiveNodes)[this.activeStory.storyId()]
+      if (currentActiveNode === event.nodeId) {
+        this.setActiveNode('node_0', this.activeStory.storyId())
+      }
+    }
   }
 }
