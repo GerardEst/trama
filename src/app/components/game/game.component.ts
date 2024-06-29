@@ -1,4 +1,12 @@
-import { Component, Output, EventEmitter, effect, Input } from '@angular/core'
+import {
+  Component,
+  Output,
+  EventEmitter,
+  effect,
+  Input,
+  ViewChild,
+  ElementRef,
+} from '@angular/core'
 import {
   answer_requirement,
   join,
@@ -22,6 +30,7 @@ import { normalizeLink } from 'src/app/utils/links'
   styleUrl: './game.component.sass',
 })
 export class GameComponent {
+  @ViewChild('game') DOMgame!: ElementRef
   @Input() customStyles?: string
 
   nodes: any = []
@@ -56,6 +65,8 @@ export class GameComponent {
     this.disableLastNode()
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
+
+      // Make a clone to prevent buttons in old answers to change when there are new conditions met
       const nextNode = structuredClone(
         this.activeStory
           .entireTree()
@@ -82,7 +93,18 @@ export class GameComponent {
       if (nextNode && nextNode.type === 'distributor') {
         this.nextStep(this.distributeNode(nextNode))
       }
+
+      this.scrollToBottom()
     }, 1000)
+  }
+
+  scrollToBottom() {
+    setTimeout(() => {
+      this.DOMgame.nativeElement.scrollTo({
+        top: this.DOMgame.nativeElement.scrollHeight,
+        behavior: 'smooth',
+      })
+    })
   }
 
   disableLastNode() {
