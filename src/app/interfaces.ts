@@ -94,6 +94,7 @@ export interface condition {
 }
 export interface join {
   node: string
+  toAnswer?: boolean
 }
 export interface externalEvent {
   name: 'leaveTab' | 'goBackToTab' | 'blurWindow' | 'focusWindow'

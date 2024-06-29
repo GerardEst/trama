@@ -168,7 +168,7 @@ export class NodeComponent {
     this.onWillJoin.emit(answerId)
   }
 
-  join() {
-    this.haveJoined.emit(this.nodeId)
+  join(type: 'answers' | 'node' = 'node') {
+    this.haveJoined.emit({ id: this.nodeId, type })
   }
 }

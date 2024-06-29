@@ -1,5 +1,9 @@
 <div class="node" [class.waitingForJoin]="waitingForJoin">
-  <div class="waitingForJoin" *ngIf="waitingForJoin" (click)="join()"></div>
+  <div
+    class="waitingForJoin"
+    *ngIf="waitingForJoin"
+    (click)="join('node')"
+  ></div>
   <header>
     <span id="{{ nodeId + '_joiner' }}" class="joiner"></span>
     <ng-content select="dragHandle"> </ng-content>
@@ -127,8 +131,9 @@
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
       <div *ngIf="answers && answers.length > 0" class="node__answers">
         <span
-          id="{{ nodeId + '_answersjoiner' }}"
+          id="{{ nodeId + '_joiner--answers' }}"
           class="joiner joiner--answers"
+          (click)="join('answers')"
         ></span>
         <polo-answer
           *ngFor="let answer of answers"

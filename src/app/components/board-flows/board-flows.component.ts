@@ -34,6 +34,11 @@ export class BoardFlowsComponent {
     const startDivPosition = this.getPositionOfElement(initialElement)
     const endDivPosition = this.getPositionOfElement(finalElement)
 
+    if (!startDivPosition || !endDivPosition) {
+      console.warn('Cannot get the path of unexistent element')
+      return
+    }
+
     const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
       startDivPosition?.left + this.flowOptions.pcurvature
     },${startDivPosition?.top} ${
@@ -60,7 +65,12 @@ export class BoardFlowsComponent {
     for (let node of nodes) {
       if (node.join) {
         for (let join of node.join) {
-          paths.push(this.getPath(node.id + '_join', join.node + '_joiner'))
+          paths.push(
+            this.getPath(
+              node.id + '_join',
+              join.node + `_joiner${join.toAnswer ? '--answers' : ''}`
+            )
+          )
         }
       }
       if (node.answers) {
@@ -68,7 +78,10 @@ export class BoardFlowsComponent {
           if (answer.join) {
             for (let join of answer.join) {
               paths.push(
-                this.getPath(answer.id + '_join', join.node + '_joiner')
+                this.getPath(
+                  answer.id + '_join',
+                  join.node + `_joiner${join.toAnswer ? '--answers' : ''}`
+                )
               )
             }
           }
@@ -79,7 +92,10 @@ export class BoardFlowsComponent {
           if (condition.join) {
             for (let join of condition.join) {
               paths.push(
-                this.getPath(condition.id + '_join', join.node + '_joiner')
+                this.getPath(
+                  condition.id + '_join',
+                  join.node + `_joiner${join.toAnswer ? '--answers' : ''}`
+                )
               )
             }
           }
@@ -90,7 +106,7 @@ export class BoardFlowsComponent {
           paths.push(
             this.getPath(
               node.fallbackCondition.id + '_join',
-              join.node + '_joiner'
+              join.node + `_joiner${join.toAnswer ? '--answers' : ''}`
             )
           )
         }
@@ -114,6 +130,6 @@ export class BoardFlowsComponent {
       }
       return relativePosition
     }
-    return { top: 0, left: 0 }
+    return null
   }
 }

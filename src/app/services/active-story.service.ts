@@ -432,10 +432,14 @@ export class ActiveStoryService {
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
 
-  updateJoinOfOption(willJoinId: string, destinyNodeId: string) {
-    const optionNodeType = willJoinId.split('_')[0]
-    const optionNodeId = willJoinId.split('_')[1]
-    const isFallbackCondition = willJoinId.split('_')[2] === 'fallback'
+  updateJoinOfOption(
+    originId: string,
+    destinyNodeId: string,
+    toAnswer = false
+  ) {
+    const optionNodeType = originId.split('_')[0]
+    const optionNodeId = originId.split('_')[1]
+    const isFallbackCondition = originId.split('_')[2] === 'fallback'
     const node = findNodeInTree(`node_${optionNodeId}`, this.entireTree())
 
     // TODO -> tot aixo es horrible en molts sentits
@@ -457,17 +461,17 @@ export class ActiveStoryService {
       if (!node.fallbackCondition.join) {
         node.fallbackCondition.join = []
       }
-      node.fallbackCondition.join.push({ node: destinyNodeId })
+      node.fallbackCondition.join.push({ node: destinyNodeId, toAnswer })
     } else if (optionNodeType === 'node') {
-      const willJoinNode = findNodeInTree(willJoinId, this.entireTree())
+      const willJoinNode = findNodeInTree(originId, this.entireTree())
       if (willJoinNode.join) {
-        willJoinNode.join.push({ node: destinyNodeId })
+        willJoinNode.join.push({ node: destinyNodeId, toAnswer })
       } else {
-        willJoinNode.join = [{ node: destinyNodeId }]
+        willJoinNode.join = [{ node: destinyNodeId, toAnswer }]
       }
     } else {
       const option = node[optionNodeType + 's']?.filter(
-        (option: any) => option.id === willJoinId
+        (option: any) => option.id === originId
       )
 
       const duplicatedJoin = option[0].join?.find((join: any) => {
@@ -480,9 +484,9 @@ export class ActiveStoryService {
       }
 
       if (option[0].join) {
-        option[0].join.push({ node: destinyNodeId })
+        option[0].join.push({ node: destinyNodeId, toAnswer })
       } else {
-        option[0].join = [{ node: destinyNodeId }]
+        option[0].join = [{ node: destinyNodeId, toAnswer }]
       }
     }
 

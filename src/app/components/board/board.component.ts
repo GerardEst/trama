@@ -40,7 +40,6 @@ export class BoardComponent {
   // Joins
   waitingForJoin: boolean = false
   willJoinId?: string
-  joins: Array<any> = []
 
   throttled: any
 
@@ -146,17 +145,16 @@ export class BoardComponent {
     }, 0)
     this.willJoinId = answerId
   }
-  haveJoined(nodeId: string) {
+  haveJoined({ id: nodeId, type }: { id: string; type: 'answers' | 'node' }) {
     if (!this.willJoinId) return
-
-    this.joins.push({
-      origin: this.willJoinId + '_join',
-      destiny: nodeId + '_join',
-    })
 
     this.waitingForJoin = false
 
-    this.activeStory.updateJoinOfOption(this.willJoinId, nodeId)
+    this.activeStory.updateJoinOfOption(
+      this.willJoinId,
+      nodeId,
+      type === 'answers'
+    )
 
     console.log('current tree:', this.activeStory.entireTree())
   }
@@ -207,11 +205,6 @@ export class BoardComponent {
         type
       )
 
-      this.joins.push({
-        origin: this.willJoinId + '_join',
-        destiny: newNodeInfo.id + '_join',
-      })
-
       this.activeStory.updateJoinOfOption(this.willJoinId, newNodeInfo.id)
 
       this.waitingForJoin = false
@@ -242,21 +235,6 @@ export class BoardComponent {
 
   async removeNode(event: any) {
     console.log('Try to remove node ', event)
-
-    // Remove join lines that go to the node
-    this.joins = this.joins.filter(
-      (join) => join.destiny !== event.nodeId + '_join'
-    )
-
-    // Remove join lines that go from the node
-    if (event.answers) {
-      this.joins = this.joins.filter(
-        (join) =>
-          !event.answers
-            .map((answer: any) => answer + '_join')
-            .includes(join.origin)
-      )
-    }
 
     // Remove node image from db
     const image = this.activeStory.getImageFromNode(event.nodeId)
