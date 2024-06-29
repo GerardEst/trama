@@ -63,6 +63,9 @@ export class GameComponent {
       )
       if (!nextNode) throw new Error('Node not found')
 
+      // Add toAnswer to do correct paintings
+      nextNode.toAnswer = randomlyChoosedJoin.toAnswer
+
       // Remove banned answers before painting
       nextNode.answers = nextNode.answers.filter((answer: node_answer) =>
         this.playerHasAnswerRequirements(

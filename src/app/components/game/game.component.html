@@ -14,9 +14,11 @@
           "
         />
       }
-      <p class="nodetext">
-        {{ getTextWithFinalParameters(node.text) }}
-      </p>
+      @if (!node.toAnswer) {
+        <p class="nodetext">
+          {{ getTextWithFinalParameters(node.text) }}
+        </p>
+      }
       @if (node.answers) {
         <div class="answers">
           @for (answer of node.answers; track $index) {
