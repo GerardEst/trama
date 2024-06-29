@@ -35,7 +35,10 @@ export class BoardFlowsComponent {
     const endDivPosition = this.getPositionOfElement(finalElement)
 
     if (!startDivPosition || !endDivPosition) {
-      console.warn('Cannot get the path of unexistent element')
+      console.warn('Cannot get the path of unexistent element', {
+        initialElement,
+        finalElement,
+      })
       return
     }
 
