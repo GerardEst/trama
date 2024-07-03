@@ -68,25 +68,11 @@
     </div>
   </section>
 </section>
-<div
-  class="showroom"
-  style="display: flex; gap: 4rem; padding: 1rem; height: 100vh"
->
-  <section
-    class="section--editor"
-    style="
-      position: relative;
-      height: 600px;
-      overflow: hidden;
-      border-radius: 20px;
-      flex: 2;
-      background-color: white;
-    "
-  >
-    <h1 style="z-index: 2; position: absolute; top: 20px; left: 20px">
-      Editor preview
-    </h1>
-
+<div class="showroom">
+  <section class="section--editor">
+    <div class="section--editor__title">
+      <h1>Editor preview</h1>
+    </div>
     <polo-board
       #board
       [initialZoom]="0.8"

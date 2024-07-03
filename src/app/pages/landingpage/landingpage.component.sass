@@ -18,7 +18,7 @@ menu
   align-items: center
   padding: 10px 20px
   background: #ffffffcc
-  z-index: 1
+  z-index: 3
   backdrop-filter: blur(15px)
   .logo
     font-size: 2.5rem
@@ -68,7 +68,8 @@ svg
   max-width: unset
 
 .showroom
-  display: flex
+  padding: 1rem
+
 section
   &.section--mobile
     .mobile
@@ -106,6 +107,19 @@ section
         position: absolute
   &.section--content
     flex-direction: column
+  &.section--editor
+    position: relative
+    height: calc(100vh - 100px)
+    overflow: hidden
+    border-radius: 20px
+    flex: 2
+    background-color: white
+    .section--editor__title
+      z-index: 2
+      position: absolute
+      top: 0
+      left: 0
+      padding: 20px
 footer
   background-color: #444444
   color: white
