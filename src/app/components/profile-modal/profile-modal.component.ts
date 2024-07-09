@@ -25,7 +25,7 @@ export class ProfileModalComponent {
     // Aqui hauria d'enviar directament al link de stripe amb el mail que s'hagi fet servir posat,
     // i si es completa el pago, afegir a la db que aquet usuari es de pago
     window.open(
-      'https://buy.stripe.com/9AQ4gBeW88Qgb3G002?prefilled_email=' +
+      'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
         this.db.user.email
     )
   }
