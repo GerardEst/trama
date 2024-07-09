@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "ts-coverage": "typescript-coverage-report",
-    "deploy-edge": "supabase functions deploy create-subscription --project-ref lsemostpqoguehpsbzgu"
+    "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref lsemostpqoguehpsbzgu"
   },
   "private": true,
   "dependencies": {

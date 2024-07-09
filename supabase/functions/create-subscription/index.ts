@@ -4,19 +4,41 @@ import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 Deno.serve(async (req) => {
-  // Aqui hauria de rebre l'email, i després amb aixo pos fer un update de supabase
+  // TODO - Aqui hauria de rebre l'email, i després amb aixo pos fer un update de supabase
   // pero estic rebent com a maxim el clientid de strapi
 
-  // Ames, no està retornant res de la db, és un escandol.
+  // TODO - Ames, no està retornant res de la db, és un escandol.
   // Potser les credencials no estan ben posades a l'env
+
+  // Tot això corre als servidors de supabase, per tant ja té allà les credencials aquestes
+  // Authorization no sé d'on surt ni què fa
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
     )
 
-    const { data, error } = await supabase.from('profiles').select('*')
+    // Testejar en local ES FACIL
+    // pero no hi ha la taula entonses k ago
+    // https://supabase.com/docs/guides/functions/deploy
+
+    // const { data, error } = await supabase
+    //   .from('profiles')
+    //   .update({ full_name: 'true' })
+    //   .eq('user_name', 'Gerard') // De moment em cambio a mi a saco
+    //   .select()
+
+    // El select funciona perfecte, pero l'update no. Els RLS son super permisius per tots dos
+    // Limitar a supabase_admin fa que no funcioni. Nose com s'hauria de fer perquè es pugués fer
+    // desde funcions
+    const { data, error } = await supabase.from('profiles').select()
+
+    console.log(data)
 
     if (error) {
       throw error
