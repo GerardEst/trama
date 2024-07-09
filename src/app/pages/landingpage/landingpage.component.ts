@@ -266,4 +266,8 @@ export class LandingpageComponent {
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
+
+  navigateToUrl() {
+    window.open('https://buy.stripe.com/fZe4gB4hu5E4dbO8wx')
+  }
 }

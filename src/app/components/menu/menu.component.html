@@ -2,13 +2,16 @@
   <nav>
     <header>
       @if (fixedMenu) {
+        <polo-profile username="Gerard" userplan="Free"></polo-profile>
         <polo-basic-button
           icon="/assets/icons/chevron-left.svg"
           (click)="toggleMenu()"
         ></polo-basic-button>
       }
     </header>
-    <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
+    @if (!fixedMenu) {
+      <polo-profile username="Gerard" userplan="Free"></polo-profile>
+    }
     <polo-separator [space]="true"></polo-separator>
     <h2>Your stories</h2>
     <ul>

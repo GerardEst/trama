@@ -1,0 +1,20 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <g id="SVGRepo_iconCarrier">
+    <defs>
+      <style>
+        .a {
+          fill: none;
+          stroke: #000;
+          stroke-linecap: round;
+          stroke-width: 1.5px;
+          stroke-linejoin: round
+        }
+      </style>
+    </defs>
+    <path class="a" d="m3 21.016.79-2.872c1.306-4.752 4.758-7.16 8.21-7.16" />
+    <circle cx="12" cy="5.984" r="5"
+      style="stroke-linejoin:bevel;fill:none;stroke:#000;stroke-linecap:round;stroke-width:1.5px" />
+    <circle class="a" cx="17" cy="18" r="5" />
+    <path class="a" d="M17 17.34v3.171M17 15.596v-.085" />
+  </g>
+</svg>

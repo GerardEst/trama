@@ -1,21 +1,26 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { ModalService } from 'src/app/services/modal.service'
+import { BasicButtonComponent } from '../basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-modal-window',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './modal-window.component.html',
   styleUrls: ['./modal-window.component.sass'],
 })
 export class ModalWindowComponent {
-  @Output() onClose: EventEmitter<any> = new EventEmitter()
-  @Input() title?: string
+  @Input() name?: string
+  @Input() mode?: 'centered' | 'side' = 'centered'
+  @Input() hide?: boolean = false
   @Input() locked?: boolean = false
 
-  closeModal() {
+  constructor(private modalService: ModalService) {}
+
+  close() {
     if (this.locked) return
 
-    this.onClose.emit()
+    this.modalService.close()
   }
 }

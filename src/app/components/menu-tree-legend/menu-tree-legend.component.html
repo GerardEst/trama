@@ -3,8 +3,14 @@
     <div class="legend__content__title">
       <p>Legend</p>
       <div class="legend__content__title__buttons">
-        <polo-basic-button (click)="mode = 'H'">H</polo-basic-button>
-        <polo-basic-button (click)="mode = 'S'">S</polo-basic-button>
+        <polo-basic-button (click)="mode = 'H'" icon="/assets/icons/tag.svg"
+          >H</polo-basic-button
+        >
+        <polo-basic-button
+          (click)="mode = 'S'"
+          icon="/assets/icons/user-info.svg"
+          >S</polo-basic-button
+        >
       </div>
     </div>
     @if (mode === 'H') {
@@ -25,7 +31,7 @@
               class="tag__category"
               [class.tag__category--empty]="!ref.category"
               (click)="openSelectorFor($event, ref.id)"
-              text="{{ ref.category || 'Select category' }}"
+              text="{{ ref.category || 'Add category' }}"
             >
             </polo-basic-button>
             <span class="tag__id">{{ ref.id }}</span>

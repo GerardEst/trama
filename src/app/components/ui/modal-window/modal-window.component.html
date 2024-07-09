@@ -1,4 +1,20 @@
-<div class="overlay"></div>
+<div class="modal__background"></div>
 <div class="modal">
-  <ng-content></ng-content>
+  <div class="modal__header">
+    <ng-content select="[modal-header]"></ng-content>
+    @if (name) {
+      <p class="txt-semibold txt-size-l">{{ name }}</p>
+    }
+    <polo-basic-button
+      (click)="close()"
+      class="close-modal-button"
+      icon="/assets/icons/cross.svg"
+    ></polo-basic-button>
+  </div>
+  <div class="modal__body">
+    <ng-content select="[modal-content]"></ng-content>
+  </div>
+  <div class="modal__options">
+    <ng-content select="[modal-options]"></ng-content>
+  </div>
 </div>

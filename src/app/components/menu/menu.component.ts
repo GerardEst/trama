@@ -6,11 +6,17 @@ import { SeparatorComponent } from '../ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { StadisticsService } from 'src/app/services/stadistics.service'
+import { ProfileComponent } from '../profile/profile.component'
 
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule, SeparatorComponent, BasicButtonComponent],
+  imports: [
+    CommonModule,
+    SeparatorComponent,
+    BasicButtonComponent,
+    ProfileComponent,
+  ],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })
@@ -63,17 +69,6 @@ export class MenuComponent implements OnInit {
       name: newTree[0].name,
     })
     this.loadTree(newTree[0].id)
-  }
-
-  logout() {
-    this.db.supabase.auth.signOut()
-    this.db.user = null
-    this.activeStory.reset()
-    this.stadistics.clean()
-    localStorage.removeItem('polo-id')
-    localStorage.removeItem('polo-activeNodes')
-
-    this.router.navigate(['/login'])
   }
 
   toggleMenu() {

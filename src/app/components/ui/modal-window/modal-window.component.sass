@@ -1,19 +1,59 @@
-.overlay
-  position: fixed
-  top: 0
-  left: 0
+.modal__background
+  position: absolute
   width: 100%
   height: 100%
-  background-color: rgba(0,0,0,0.5)
-  z-index: 1
+  top: 0
+  left: 0
+  z-index: 10
+  background-color: #00000088
+
+:host([mode='side']) .modal__background
+  display: none
+
+:host([hide='true'])
+  display: none
+
 .modal
-  position: fixed
-  top: 50%
+  overflow-y: auto
+  position: absolute
   left: 50%
+  top: 50%
   transform: translate(-50%, -50%)
-  background-color: #fff
-  max-width: 400px
+  min-width: 600px
+  max-width: calc(100% - 50px)
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5)
+  background-color: white
+  z-index: 11
   border-radius: 10px
-  box-shadow: var(--menu-shadow)
-  padding: 20px
-  z-index: 1
+  display: flex
+  max-height: calc(100% - 50px)
+  flex-direction: column
+  padding: 1.5rem
+  gap: 1.5rem
+  box-sizing: border-box
+
+:host([mode='side']) .modal
+  left: unset
+  right: 0
+  transform: unset
+  height: 100%
+  top: 0
+  max-height: 100%
+  border-radius: 10px 0 0 10px
+  width: 700px
+
+.modal__header
+  display: flex
+  .close-modal-button
+    cursor: pointer
+    align-self: flex-start
+    margin-left: auto
+
+.modal__body
+  max-height: calc(100% - 30px)
+  display: flex
+  flex-direction: column
+.modal__options
+  display: flex
+  gap: 0.5rem
+  justify-content: flex-end
