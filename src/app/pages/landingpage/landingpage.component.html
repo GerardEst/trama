@@ -14,7 +14,7 @@
   </div>
 </menu>
 <section
-class="content"
+  class="content"
   style="
     padding: 0;
     height: 100vh;
@@ -103,39 +103,44 @@ class="content"
     </p>
   </section>
 </div-->
-<section id="pricing" style="
-    margin: 60px 30px">
-    <h1>Pricing</h1>
-    <div class="pricingBoxes">
-      <div class="pricingBox">
-        <div class="priceContainer">
-          <h2>Hobby</h2>
-          <p>Free</p>
-        </div>
-        <ul class="priceFeatures">
-          <li>Create up to 10 stories</li>
-          <li>Unlimited nodes</li>
-          <li>Unlimited images</li>
-          <li>Custom join probabilities</li>
-          <li>Events and requirements</li>
-          <li>Text interpolations</li>
-          <li>Basic customization options</li>
-        </ul>
-        <polo-accent-button (click)="router.navigate(['/dashboard'])" [fill]="true">Use free</polo-accent-button>
+<section id="pricing" style="margin: 60px 30px">
+  <h1>Pricing</h1>
+  <div class="pricingBoxes">
+    <div class="pricingBox">
+      <div class="priceContainer">
+        <h2>Hobby</h2>
+        <p>Free</p>
       </div>
-      <div class="pricingBox">
-        <div class="priceContainer">
-          <h2>Pro</h2>
-          <p>6€/month</p>
-        </div>
-        <ul class="priceFeatures">
-          <li>Unlimited stories</li>
-          <li>Tracking and statistics</li>
-          <li>Advanced customization options</li>
-          <li>Export story option</li>
-        </ul>
-        <polo-accent-button (click)="navigateToUrl()" [fill]="true">Use pro</polo-accent-button>
-      </div>
+      <ul class="priceFeatures">
+        <li>Create up to 10 stories</li>
+        <li>Unlimited nodes</li>
+        <li>Unlimited images</li>
+        <li>Custom join probabilities</li>
+        <li>Events and requirements</li>
+        <li>Text interpolations</li>
+        <li>Basic customization options</li>
+      </ul>
+      <polo-accent-button
+        (click)="router.navigate(['/dashboard'])"
+        [fill]="true"
+        >Use free</polo-accent-button
+      >
     </div>
+    <div class="pricingBox">
+      <div class="priceContainer">
+        <h2>Pro</h2>
+        <p>5.95€/month</p>
+      </div>
+      <ul class="priceFeatures">
+        <li>Unlimited stories</li>
+        <li>Tracking and statistics</li>
+        <li>Advanced customization options</li>
+        <li>Export story option</li>
+      </ul>
+      <polo-accent-button (click)="navigateToPayment()" [fill]="true"
+        >Use pro</polo-accent-button
+      >
+    </div>
+  </div>
 </section>
 <footer></footer>

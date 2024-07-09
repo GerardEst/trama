@@ -28,8 +28,6 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private db: DatabaseService,
-    private router: Router,
-    private stadistics: StadisticsService,
     public activeStory: ActiveStoryService
   ) {}
 

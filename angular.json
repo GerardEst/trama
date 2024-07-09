@@ -23,7 +23,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.png", "src/assets"],
+            "assets": ["src/favicon.png", "src/assets", "src/.well-known"],
             "styles": ["src/styles.sass"]
           },
           "configurations": {
@@ -83,7 +83,7 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.png", "src/assets"],
+            "assets": ["src/favicon.png", "src/assets", "src/.well-known"],
             "styles": ["src/styles.sass"],
             "scripts": []
           }

@@ -267,7 +267,7 @@ export class LandingpageComponent {
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
 
-  navigateToUrl() {
-    window.open('https://buy.stripe.com/fZe4gB4hu5E4dbO8wx')
+  navigateToPayment() {
+    window.open('https://buy.stripe.com/9AQ4gBeW88Qgb3G002')
   }
 }

@@ -21,6 +21,15 @@ export class ProfileModalComponent {
     private router: Router
   ) {}
 
+  upgradePlan() {
+    // Aqui hauria d'enviar directament al link de stripe amb el mail que s'hagi fet servir posat,
+    // i si es completa el pago, afegir a la db que aquet usuari es de pago
+    window.open(
+      'https://buy.stripe.com/9AQ4gBeW88Qgb3G002?prefilled_email=' +
+        this.db.user.email
+    )
+  }
+
   logout() {
     this.db.supabase.auth.signOut()
     this.db.user = null
