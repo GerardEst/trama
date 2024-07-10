@@ -1,7 +1,7 @@
 <div class="loginBox">
   <div class="box">
     @if (register) {
-      <!--h3>Create an account</h3>
+      <h3>Create an account</h3>
       <polo-basic-button
         (click)="signInWithGoogle()"
         text="Google"
@@ -59,13 +59,13 @@
             text="Login"
           ></polo-basic-button>
         </div>
-      </form-->
+      </form>
     } @else {
       <h3>Log in</h3>
-      <!--polo-basic-button
+      <polo-basic-button
         (click)="signInWithGoogle()"
         text="Google"
-      ></polo-basic-button-->
+      ></polo-basic-button>
       <form>
         <label>
           <p>Your email</p>
@@ -85,14 +85,14 @@
           text="Login"
         >
         </polo-basic-button>
-        <!--polo-separator></polo-separator>
+        <polo-separator></polo-separator>
         <div class="change">
           <p>Don't have an account?</p>
           <polo-basic-button
             (click)="goToRegister()"
             text="Register"
           ></polo-basic-button>
-        </div-->
+        </div>
       </form>
     }
   </div>

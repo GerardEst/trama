@@ -1,18 +1,18 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
-
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
+// import Stripe from 'npm:stripe'
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
+  // This is needed to use the Fetch API rather than relying on the Node http
+  // package.
+  httpClient: Stripe.createFetchHttpClient(),
+})
 
 Deno.serve(async (req) => {
-  // TODO - Aqui hauria de rebre l'email, i després amb aixo pos fer un update de supabase
-  // pero estic rebent com a maxim el clientid de strapi
-
-  // TODO - Ames, no està retornant res de la db, és un escandol.
-  // Potser les credencials no estan ben posades a l'env
-
-  // Tot això corre als servidors de supabase, per tant ja té allà les credencials aquestes
-  // Authorization no sé d'on surt ni què fa
   try {
+    const stripeInfo = await req.json()
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -23,27 +23,22 @@ Deno.serve(async (req) => {
       }
     )
 
-    // Testejar en local ES FACIL
-    // pero no hi ha la taula entonses k ago
-    // https://supabase.com/docs/guides/functions/deploy
+    const customerId = stripeInfo.data.object.customer
+    const customer = await stripe.customers.retrieve(customerId)
 
-    // const { data, error } = await supabase
-    //   .from('profiles')
-    //   .update({ full_name: 'true' })
-    //   .eq('user_name', 'Gerard') // De moment em cambio a mi a saco
-    //   .select()
-
-    // El select funciona perfecte, pero l'update no. Els RLS son super permisius per tots dos
-    // Limitar a supabase_admin fa que no funcioni. Nose com s'hauria de fer perquè es pugués fer
-    // desde funcions
-    const { data, error } = await supabase.from('profiles').select()
-
-    console.log(data)
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ subscription: true })
+      .eq('email', customer.email)
+      .select()
 
     if (error) {
       throw error
     }
 
+    // TODO - Crec que no caldria passarli tot lo que hem retornat.
+    // Pude puc treure tot el select directament i ja està.
+    // A la response no sé què passar o si cal posar algo apart del 200
     return new Response(JSON.stringify({ data }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
