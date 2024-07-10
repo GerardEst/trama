@@ -2,7 +2,7 @@
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
-// import Stripe from 'npm:stripe'
+// TODO - provar amb "import Stripe from 'npm:stripe'"
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   // This is needed to use the Fetch API rather than relying on the Node http

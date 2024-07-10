@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -18,6 +18,9 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
   styleUrls: ['./login.component.sass'],
 })
 export class LoginComponent {
+  @Input() mode?: string
+  @Input() plan?: string
+
   constructor(
     private db: DatabaseService,
     private router: Router
@@ -26,6 +29,10 @@ export class LoginComponent {
   ngAfterViewInit() {
     // // Remove indicator that user is coming from oauth login
     // localStorage.removeItem('oauth')
+  }
+
+  ngOnInit() {
+    this.register = this.mode === 'register'
   }
 
   register = false
@@ -37,6 +44,11 @@ export class LoginComponent {
   register_username = new FormControl('', Validators.required)
   checkMail: boolean = false
 
+  /** Entenc que despres de fer el signup hauriem de dirigir al pagament en cas de plan pro
+   * Lo del missatge de mail no apareixeria, vindria després un cop obert el dashboard avisar allà
+   * En cas de registre amb google, google redirigeix a dashboard després de registrar-se, però
+   * en aquet cas hauria de redirigir a pagar
+   */
   async signUpNewUser(
     event: Event,
     email: FormControl,
@@ -60,6 +72,12 @@ export class LoginComponent {
 
     if (registered_error) return console.error(registered_error)
     console.log('user registered', registered_data)
+
+    if (this.mode === 'pro') {
+      window.open(
+        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' + email
+      )
+    }
 
     this.checkMail = true
   }

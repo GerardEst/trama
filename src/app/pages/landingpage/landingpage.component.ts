@@ -267,7 +267,9 @@ export class LandingpageComponent {
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
 
-  navigateToPayment() {
-    window.open('https://buy.stripe.com/9AQ4gBeW88Qgb3G002')
+  navigateToRegister() {
+    this.router.navigate(['login'], {
+      queryParams: { mode: 'register', plan: 'pro' },
+    })
   }
 }
