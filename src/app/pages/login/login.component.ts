@@ -69,7 +69,8 @@ export class LoginComponent {
 
     if (this.plan === 'pro') {
       window.open(
-        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' + email
+        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
+          email.value
       )
     }
 
