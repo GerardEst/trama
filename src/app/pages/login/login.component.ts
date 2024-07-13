@@ -31,12 +31,6 @@ export class LoginComponent {
     // localStorage.removeItem('oauth')
   }
 
-  ngOnInit() {
-    this.register = this.mode === 'register'
-  }
-
-  register = false
-
   login_email = new FormControl('', [Validators.required, Validators.email])
   login_password = new FormControl('', Validators.required)
   register_email = new FormControl('', [Validators.required, Validators.email])
@@ -73,7 +67,7 @@ export class LoginComponent {
     if (registered_error) return console.error(registered_error)
     console.log('user registered', registered_data)
 
-    if (this.mode === 'pro') {
+    if (this.plan === 'pro') {
       window.open(
         'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' + email
       )
@@ -104,13 +98,19 @@ export class LoginComponent {
 
     if (error) return console.error(error)
 
-    this.router.navigate(['/dashboard'])
+    if (this.plan === 'pro') {
+      window.open(
+        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' + email
+      )
+    } else {
+      this.router.navigate(['/dashboard'])
+    }
   }
 
   goToRegister() {
-    this.register = true
+    this.mode = 'register'
   }
   goToLogin() {
-    this.register = false
+    this.mode = 'login'
   }
 }

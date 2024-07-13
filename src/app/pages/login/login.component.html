@@ -1,6 +1,6 @@
 <div class="loginBox">
   <div class="box">
-    @if (register) {
+    @if (mode === 'register') {
       <h3>Create an account</h3>
       <polo-basic-button
         (click)="signInWithGoogle()"
