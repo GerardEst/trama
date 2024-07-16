@@ -15,7 +15,7 @@ import { Router } from '@angular/router'
 })
 export class ProfileModalComponent {
   constructor(
-    private db: DatabaseService,
+    public db: DatabaseService,
     private activeStory: ActiveStoryService,
     private stadistics: StadisticsService,
     private router: Router
@@ -24,13 +24,13 @@ export class ProfileModalComponent {
   upgradePlan() {
     window.open(
       'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
-        this.db.user.email
+        this.db.user().email
     )
   }
 
   logout() {
     this.db.supabase.auth.signOut()
-    this.db.user = null
+    this.db.user.set(null)
     this.activeStory.reset()
     this.stadistics.clean()
     localStorage.removeItem('polo-id')

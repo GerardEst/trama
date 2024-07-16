@@ -9,7 +9,7 @@
     <polo-accent-button
       (click)="router.navigate(['/dashboard'])"
       [fill]="true"
-      >{{ db.user ? 'Dashboard' : 'Login' }}</polo-accent-button
+      >{{ db.user() ? 'Dashboard' : 'Login' }}</polo-accent-button
     >
   </div>
 </menu>

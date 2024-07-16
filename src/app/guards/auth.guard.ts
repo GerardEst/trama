@@ -6,16 +6,12 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const db = inject(DatabaseService)
   const router = inject(Router)
 
-  const {
-    data: { user },
-  } = await db.supabase.auth.getUser()
-
-  console.log('user authorized')
+  const user = await db.getUser()
 
   if (!user) {
     router.navigate(['/login'])
     return false
   }
 
-  return user
+  return !!user
 }

@@ -38,11 +38,9 @@ export class LoginComponent {
   register_username = new FormControl('', Validators.required)
   checkMail: boolean = false
 
-  /** Entenc que despres de fer el signup hauriem de dirigir al pagament en cas de plan pro
-   * Lo del missatge de mail no apareixeria, vindria després un cop obert el dashboard avisar allà
-   * En cas de registre amb google, google redirigeix a dashboard després de registrar-se, però
-   * en aquet cas hauria de redirigir a pagar
-   */
+  // TODO - En cas de registre amb google, google redirigeix a dashboard després de registrar-se, però
+  // en aquet cas hauria de redirigir a pagar
+
   async signUpNewUser(
     event: Event,
     email: FormControl,

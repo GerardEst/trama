@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, WritableSignal, signal } from '@angular/core'
 import { createClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
 import { tree } from '../interfaces'
@@ -8,7 +8,7 @@ import { tree } from '../interfaces'
 })
 export class DatabaseService {
   public supabase: any
-  user: any = null
+  user: WritableSignal<any> = signal(null)
 
   prod = !environment.production
 
@@ -20,26 +20,40 @@ export class DatabaseService {
   }
 
   async getUser() {
-    // Fetch the user only one time
-    if (!this.user) {
-      const fetchUser = await this.supabase.auth.getUser()
-      this.user = fetchUser.data.user
-    }
+    const fetchUser = await this.supabase.auth.getUser()
+    const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
+
+    this.user.set({ ...fetchUser.data.user, profile: profileInfo })
+
     return this.user
   }
 
-  async getAllTreesForUser() {
+  async getUserProfile(userId: string) {
+    if (this.prod)
+      console.log(
+        '%cdb call to get the profile of the active user',
+        'color: #9999ff'
+      )
+
+    let { data: userProfile, error } = await this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+
+    return userProfile[0]
+  }
+
+  async getAllTreesForUser(userId: string) {
     if (this.prod)
       console.log(
         '%cdb call to get all the stories id and name for the active user',
         'color: #9999ff'
       )
 
-    const user = await this.getUser()
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('id,name')
-      .eq('profile_id', user.id)
+      .eq('profile_id', userId)
 
     return stories
   }
@@ -87,14 +101,13 @@ export class DatabaseService {
         '%cdb call to get everyting about THE NEWEST story of the user',
         'color: #9999ff'
       )
-    const user = await this.getUser()
 
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .order('updated_at', { ascending: false })
       .limit(1)
-      .eq('profile_id', user.id)
+      .eq('profile_id', this.user().id)
 
     if (stories.length === 0) {
       console.log('User has no stories')

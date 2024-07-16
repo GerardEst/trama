@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
+import { Component, Output, EventEmitter, Input, effect } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
@@ -20,7 +20,7 @@ import { ProfileComponent } from '../profile/profile.component'
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
   fixedMenu: boolean = true
   stories?: Array<any>
   @Input() activeStoryId?: string
@@ -29,10 +29,14 @@ export class MenuComponent implements OnInit {
   constructor(
     private db: DatabaseService,
     public activeStory: ActiveStoryService
-  ) {}
+  ) {
+    effect(() => {
+      this.getTrees(this.db.user().id)
+    })
+  }
 
-  async ngOnInit(): Promise<void> {
-    this.stories = await this.db.getAllTreesForUser()
+  async getTrees(userId: string) {
+    this.stories = await this.db.getAllTreesForUser(userId)
   }
 
   loadTree(treeId: number) {
@@ -52,7 +56,7 @@ export class MenuComponent implements OnInit {
             },
           ],
         },
-        profile_id: this.db.user.id,
+        profile_id: this.db.user().id,
       },
     ]
 

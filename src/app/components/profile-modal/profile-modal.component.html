@@ -1,10 +1,19 @@
 <polo-modal-window>
   <ng-container modal-content>
     <p>coses</p>
-    <polo-basic-button
-      (click)="upgradePlan()"
-      text="Upgrade plan"
-    ></polo-basic-button>
+    <p>Your plan</p>
+    <p>{{ db.user().profile.subscription ? 'Pro' : 'Free' }}</p>
+    @if (db.user().profile.subscription) {
+      <polo-basic-button
+        (click)="upgradePlan()"
+        text="Upgrade plan"
+      ></polo-basic-button>
+    } @else {
+      <polo-basic-button
+        (click)="upgradePlan()"
+        text="Upgrade plan"
+      ></polo-basic-button>
+    }
     <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
   </ng-container>
 </polo-modal-window>
