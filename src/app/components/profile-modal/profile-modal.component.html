@@ -1,12 +1,11 @@
 <polo-modal-window>
   <ng-container modal-content>
-    <p>coses</p>
     <p>Your plan</p>
     <p>{{ db.user().profile.subscription ? 'Pro' : 'Free' }}</p>
     @if (db.user().profile.subscription) {
       <polo-basic-button
-        (click)="upgradePlan()"
-        text="Upgrade plan"
+        (click)="cancelPlan()"
+        text="Cancel plan"
       ></polo-basic-button>
     } @else {
       <polo-basic-button

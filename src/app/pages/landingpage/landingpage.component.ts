@@ -245,6 +245,9 @@ export class LandingpageComponent {
     ],
   }
 
+  checkedLoggedUser: boolean = false
+  loggedUser: boolean = false
+
   constructor(
     private activeStory: ActiveStoryService,
     public router: Router,
@@ -261,10 +264,19 @@ export class LandingpageComponent {
     //   console.log('Navigate to dashboard!!!')
     //   this.router.navigate(['/dashboard'])
     // }
+
+    this.checkLoggedUser()
     // Initializes the example tree
     this.activeStory.entireTree.set(this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
+  }
+
+  async checkLoggedUser() {
+    const loggedUser = await this.db.supabase.auth.getUser()
+
+    this.loggedUser = !!loggedUser.data.user.id
+    this.checkedLoggedUser = true
   }
 
   navigateToRegister() {

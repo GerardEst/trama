@@ -28,6 +28,8 @@ export class ProfileModalComponent {
     )
   }
 
+  cancelPlan() {}
+
   logout() {
     this.db.supabase.auth.signOut()
     this.db.user.set(null)

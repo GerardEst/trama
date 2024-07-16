@@ -6,11 +6,13 @@
     <a href="#pricing">Pricing (I'm joking, it's free)</a-->
   </div>
   <div class="login">
-    <polo-accent-button
-      (click)="router.navigate(['/dashboard'])"
-      [fill]="true"
-      >{{ db.user() ? 'Dashboard' : 'Login' }}</polo-accent-button
-    >
+    @if (checkedLoggedUser) {
+      <polo-accent-button
+        (click)="router.navigate(['/dashboard'])"
+        [fill]="true"
+        >{{ loggedUser ? 'Dashboard' : 'Login' }}</polo-accent-button
+      >
+    }
   </div>
 </menu>
 <section
