@@ -20,12 +20,14 @@ export class DatabaseService {
   }
 
   async getUser() {
-    const fetchUser = await this.supabase.auth.getUser()
-    const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
-
-    this.user.set({ ...fetchUser.data.user, profile: profileInfo })
-
-    return this.user
+    try {
+      const fetchUser = await this.supabase.auth.getUser()
+      const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
+      this.user.set({ ...fetchUser.data.user, profile: profileInfo })
+      return this.user
+    } catch {
+      return false
+    }
   }
 
   async getUserProfile(userId: string) {

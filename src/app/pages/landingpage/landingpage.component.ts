@@ -275,13 +275,15 @@ export class LandingpageComponent {
   async checkLoggedUser() {
     const loggedUser = await this.db.supabase.auth.getUser()
 
-    this.loggedUser = !!loggedUser.data.user.id
+    this.loggedUser = !!loggedUser?.data?.user?.id
     this.checkedLoggedUser = true
   }
 
-  navigateToRegister() {
-    this.router.navigate(['login'], {
-      queryParams: { mode: 'register', plan: 'pro' },
-    })
+  usePro() {
+    this.loggedUser
+      ? this.router.navigate(['dashboard'])
+      : this.router.navigate(['login'], {
+          queryParams: { mode: 'register', plan: 'pro' },
+        })
   }
 }
