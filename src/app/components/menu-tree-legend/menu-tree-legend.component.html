@@ -6,11 +6,13 @@
         <polo-basic-button (click)="mode = 'H'" icon="/assets/icons/tag.svg"
           >H</polo-basic-button
         >
-        <polo-basic-button
-          (click)="mode = 'S'"
-          icon="/assets/icons/user-info.svg"
-          >S</polo-basic-button
-        >
+        @if (db.user().profile.subscription) {
+          <polo-basic-button
+            (click)="mode = 'S'"
+            icon="/assets/icons/user-info.svg"
+            >S</polo-basic-button
+          >
+        }
       </div>
     </div>
     @if (mode === 'H') {

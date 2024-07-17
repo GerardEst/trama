@@ -11,14 +11,21 @@
   @if (options) {
     <div class="dropdown">
       <div class="dropdown__section">
-        <label>
-          <span>Enable tracking</span>
-          <input
-            (change)="toggleTracking()"
-            type="checkbox"
-            [checked]="activeStory.storyConfiguration().tracking"
-          />
-        </label>
+        @if (db.user().profile.subscription) {
+          <label>
+            <span>Enable tracking</span>
+            <input
+              (change)="toggleTracking()"
+              type="checkbox"
+              [checked]="activeStory.storyConfiguration().tracking"
+            />
+          </label>
+        } @else {
+          <label>
+            <span>🚫 Enable tracking</span>
+            <input type="checkbox" />
+          </label>
+        }
         <label>
           <span>Ask for name</span>
           <input
@@ -69,16 +76,28 @@
           />
         </label>
       </div>
-      <polo-basic-button
-        (click)="openStadistics()"
-        text="See stadistics"
-      ></polo-basic-button>
-      <polo-basic-button
-        (click)="exportTree()"
-        icon="/assets/icons/export.svg"
-        text="Export tree"
-      >
-      </polo-basic-button>
+      @if (db.user().profile.subscription) {
+        <polo-basic-button
+          (click)="openStadistics()"
+          text="See stadistics"
+        ></polo-basic-button>
+      } @else {
+        <polo-basic-button text="🚫 See stadistics"></polo-basic-button>
+      }
+      @if (db.user().profile.subscription) {
+        <polo-basic-button
+          (click)="exportTree()"
+          icon="/assets/icons/export.svg"
+          text="Export tree"
+        >
+        </polo-basic-button>
+      } @else {
+        <polo-basic-button
+          icon="/assets/icons/export.svg"
+          text="🚫 Export tree"
+        >
+        </polo-basic-button>
+      }
       <polo-basic-button
         (click)="deleteTree()"
         icon="/assets/icons/trash.svg"

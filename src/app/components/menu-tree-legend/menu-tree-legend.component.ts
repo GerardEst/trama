@@ -5,6 +5,7 @@ import { ContextMenusService } from 'src/app/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/select-or-create.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.component'
+import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -24,6 +25,7 @@ export class MenuTreeLegendComponent {
   mode: 'H' | 'S' = 'H'
 
   constructor(
+    public db: DatabaseService,
     public activeStory: ActiveStoryService,
     public contextMenu: ContextMenusService
   ) {

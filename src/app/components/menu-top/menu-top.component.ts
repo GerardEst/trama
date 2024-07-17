@@ -19,7 +19,7 @@ export class MenuTopComponent {
   takenCustomId = false
 
   constructor(
-    private db: DatabaseService,
+    public db: DatabaseService,
     private router: Router,
     public activeStory: ActiveStoryService
   ) {}
@@ -39,6 +39,8 @@ export class MenuTopComponent {
   }
 
   toggleTracking() {
+    if (!this.db.user().profile.subscription) return
+
     this.activeStory.storyConfiguration().tracking =
       !this.activeStory.storyConfiguration().tracking
     this.db.setTrackingOf(
