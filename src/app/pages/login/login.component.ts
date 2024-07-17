@@ -55,7 +55,6 @@ export class LoginComponent {
         email: email.value,
         password: password.value,
         options: {
-          emailRedirectTo: 'https://polo-rust.vercel.app/dashboard',
           data: {
             user_name: username.value,
           },
@@ -79,6 +78,12 @@ export class LoginComponent {
     localStorage.setItem('oauth', '1')
     this.db.supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo:
+          this.plan === 'pro'
+            ? 'https://buy.stripe.com/fZe8wR01e3vW1t6bIM'
+            : 'https://textandplay.com/dashboard',
+      },
     })
   }
 
