@@ -21,7 +21,6 @@ import { ProfileComponent } from '../profile/profile.component'
 export class MenuComponent {
   fixedMenu: boolean = true
   stories?: Array<any>
-  @Input() activeStoryId?: string
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
 
   constructor(
