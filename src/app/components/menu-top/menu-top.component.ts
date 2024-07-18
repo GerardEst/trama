@@ -29,9 +29,9 @@ export class MenuTopComponent {
     const newName = $event.target.value.trim()
     if (!storyId || newName.length === 0) return
 
-    this.activeStory.storyName.set(newName)
-
     await this.db.saveNewStoryName(storyId, $event.target.value)
+
+    this.activeStory.storyName.set(newName)
   }
 
   toggleOptions() {

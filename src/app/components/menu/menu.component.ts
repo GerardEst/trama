@@ -1,11 +1,9 @@
 import { Component, Output, EventEmitter, Input, effect } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/services/database.service'
-import { Router } from '@angular/router'
 import { SeparatorComponent } from '../ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
-import { StadisticsService } from 'src/app/services/stadistics.service'
 import { ProfileComponent } from '../profile/profile.component'
 
 @Component({
@@ -31,6 +29,7 @@ export class MenuComponent {
     public activeStory: ActiveStoryService
   ) {
     effect(() => {
+      this.activeStory.storyName()
       this.getTrees(this.db.user().id)
     })
   }
