@@ -100,6 +100,7 @@ export class GameComponent {
 
   scrollToBottom() {
     setTimeout(() => {
+      //TODO - sha de fer scroll del pare, .playground, no del game
       this.DOMgame.nativeElement.scrollTo({
         top: this.DOMgame.nativeElement.scrollHeight,
         behavior: 'smooth',
