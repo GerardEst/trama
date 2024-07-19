@@ -78,7 +78,7 @@ export class GameComponent {
       nextNode.toAnswer = randomlyChoosedJoin.toAnswer
 
       // Remove banned answers before painting
-      nextNode.answers = nextNode.answers.filter((answer: node_answer) =>
+      nextNode.answers = nextNode.answers?.filter((answer: node_answer) =>
         this.playerHasAnswerRequirements(
           this.playerService.player(),
           answer.requirements
