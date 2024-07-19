@@ -5,7 +5,11 @@
     (click)="join('node')"
   ></div>
   <header>
-    <span id="{{ nodeId + '_joiner' }}" class="joiner"></span>
+    <span
+      id="{{ nodeId + '_joiner' }}"
+      (click)="join('node')"
+      class="joiner"
+    ></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
       @if (type !== 'distributor') {
