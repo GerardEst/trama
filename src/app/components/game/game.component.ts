@@ -21,6 +21,7 @@ import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { normalizeLink } from 'src/app/utils/links'
+import { trigger, state, style, transition, animate } from '@angular/animations'
 
 @Component({
   selector: 'polo-game',
@@ -28,6 +29,14 @@ import { normalizeLink } from 'src/app/utils/links'
   imports: [],
   templateUrl: './game.component.html',
   styleUrl: './game.component.sass',
+  animations: [
+    trigger('insertNode', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
@@ -100,7 +109,6 @@ export class GameComponent {
 
   scrollToBottom() {
     setTimeout(() => {
-      //TODO - sha de fer scroll del pare, .playground, no del game
       this.DOMgame.nativeElement.scrollTo({
         top: this.DOMgame.nativeElement.scrollHeight,
         behavior: 'smooth',
