@@ -15,12 +15,14 @@
   src: url("../../../assets/fonts/LibreBaskerville-Bold.ttf")
   font-weight: 700
 
+:host
+  display: block
+  height: 100%
+
 .playground
-  min-height: 100vh
-  box-sizing: border-box
-  min-height: 100dvh
-  box-sizing: border-box
   display: flex
+  height: 100dvh
+  box-sizing: border-box
   flex-direction: column
   .storytitle
     text-align: center
@@ -32,6 +34,8 @@
     padding: 1rem
     margin-top: auto
     text-decoration: none
+  polo-game
+    overflow: hidden
 
 .default
   .playerForm
