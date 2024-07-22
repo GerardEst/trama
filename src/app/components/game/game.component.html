@@ -2,6 +2,7 @@
   <div class="game" [class]="customStyles">
     @for (node of nodes; track node.id) {
       <div
+        #node
         @insertNode
         class="node"
         [class.disabled]="node.disabled"

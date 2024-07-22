@@ -5,7 +5,9 @@ import {
   effect,
   Input,
   ViewChild,
+  ViewChildren,
   ElementRef,
+  QueryList,
 } from '@angular/core'
 import {
   answer_requirement,
@@ -40,6 +42,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
+  @ViewChildren('node') DOMnodes!: QueryList<ElementRef>
   @Input() customStyles?: string
 
   nodes: any = []
@@ -103,14 +106,15 @@ export class GameComponent {
         this.nextStep(this.distributeNode(nextNode))
       }
 
-      this.scrollToBottom()
+      this.scrollToNewNode()
     }, 1000)
   }
 
-  scrollToBottom() {
+  scrollToNewNode() {
+    console.log(this.DOMnodes.last)
     setTimeout(() => {
       this.DOMgame.nativeElement.scrollTo({
-        top: this.DOMgame.nativeElement.scrollHeight,
+        top: this.DOMnodes.last.nativeElement.offsetTop - 70,
         behavior: 'smooth',
       })
     })
