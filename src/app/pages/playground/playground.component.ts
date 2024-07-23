@@ -71,7 +71,7 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().footer = configuration.footer
 
     //this.customStyles = configuration.customStyles
-    this.customStyles = configuration.customStyles || 'catalanus'
+    this.customStyles = configuration.customStyles || 'modern'
 
     // We have to manually init the refs by now
     this.activeStory.initTreeRefs()
