@@ -11,45 +11,48 @@
       >
         @if (node.image) {
           <img
+            class="node__image"
             [src]="
               'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
               node.image.path
             "
           />
         }
-        @if (!node.toAnswer) {
-          <p class="nodetext">
-            {{ getTextWithFinalParameters(node.text) }}
-          </p>
-        }
-        @if (node.answers) {
-          <div class="answers">
-            @for (answer of node.answers; track $index) {
-              <button
-                [attr.data-order]="$index"
-                [class.unique]="!node.answers[1]"
-                (click)="markAsSelected($event)"
-                (click)="registerAnswer(answer)"
-                (click)="applyEvents(answer.events)"
-                (click)="nextStep(answer.join)"
-              >
-                {{ getTextWithFinalParameters(answer.text) }}
-              </button>
-            }
-            @for (link of node.links; track $index) {
-              <button (click)="registerLink(link.url)">
-                {{ link.name }}
-              </button>
-            }
-            @if (
-              node.type === 'end' && activeStory.storyConfiguration().sharing
-            ) {
-              <button class="sharebutton" (click)="openShareContext()">
-                {{ node.share.shareButtonText }}
-              </button>
-            }
-          </div>
-        }
+        <div class="node__text">
+          @if (!node.toAnswer) {
+            <p class="nodetext">
+              {{ getTextWithFinalParameters(node.text) }}
+            </p>
+          }
+          @if (node.answers) {
+            <div class="answers">
+              @for (answer of node.answers; track $index) {
+                <button
+                  [attr.data-order]="$index"
+                  [class.unique]="!node.answers[1]"
+                  (click)="markAsSelected($event)"
+                  (click)="registerAnswer(answer)"
+                  (click)="applyEvents(answer.events)"
+                  (click)="nextStep(answer.join)"
+                >
+                  {{ getTextWithFinalParameters(answer.text) }}
+                </button>
+              }
+              @for (link of node.links; track $index) {
+                <button (click)="registerLink(link.url)">
+                  {{ link.name }}
+                </button>
+              }
+              @if (
+                node.type === 'end' && activeStory.storyConfiguration().sharing
+              ) {
+                <button class="sharebutton" (click)="openShareContext()">
+                  {{ node.share.shareButtonText }}
+                </button>
+              }
+            </div>
+          }
+        </div>
       </div>
     }
   </div>
