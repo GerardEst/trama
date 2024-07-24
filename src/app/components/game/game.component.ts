@@ -111,7 +111,6 @@ export class GameComponent {
   }
 
   scrollToNewNode() {
-    console.log(this.DOMnodes.last)
     setTimeout(() => {
       this.DOMgame.nativeElement.scrollTo({
         top: this.DOMnodes.last.nativeElement.offsetTop - 70,

@@ -38,19 +38,21 @@
                   {{ getTextWithFinalParameters(answer.text) }}
                 </button>
               }
-              @for (link of node.links; track $index) {
-                <button (click)="registerLink(link.url)">
-                  {{ link.name }}
-                </button>
-              }
-              @if (
-                node.type === 'end' && activeStory.storyConfiguration().sharing
-              ) {
-                <button class="sharebutton" (click)="openShareContext()">
-                  {{ node.share.shareButtonText }}
-                </button>
-              }
             </div>
+          }
+          @for (link of node.links; track $index) {
+            <button (click)="registerLink(link.url)">
+              {{ link.name }}
+              <img src="/assets/icons/open-external.svg" />
+            </button>
+          }
+          @if (
+            node.type === 'end' && activeStory.storyConfiguration().sharing
+          ) {
+            <button class="sharebutton" (click)="openShareContext()">
+              {{ node.share?.shareButtonText || 'Share this story' }}
+              <img src="/assets/icons/share.svg" />
+            </button>
           }
         </div>
       </div>

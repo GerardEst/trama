@@ -19,6 +19,9 @@
     gap: 1rem
     &__text
       padding: 0 2rem
+      gap: 2rem
+      display: flex
+      flex-direction: column
     &.disabled
       pointer-events: none
     p
@@ -34,6 +37,9 @@
       color: black
       position: relative
 
+      display: flex
+      justify-content: space-between
+
       width: 100%
       cursor: pointer
       padding: 0.7rem
@@ -47,6 +53,9 @@
       -moz-user-select: none
       -ms-user-select: none
       user-select: none
+      img
+        width: 20px
+        margin: unset
     button:hover
       background: #cbcbcb
     button.selected
@@ -81,6 +90,7 @@
     button.selected
       animation: 0.4s selected
       animation-fill-mode: forwards
+      border: 1.5px solid rgb(61, 55, 54)
     // button[disabled]
     //   display: none
     button:hover
