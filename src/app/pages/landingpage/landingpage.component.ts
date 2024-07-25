@@ -47,7 +47,7 @@ export class LandingpageComponent {
           {
             id: 'answer_0_0',
             join: [{ node: 'node_1', toAnswer: false }],
-            text: 'Me too, and my house is better',
+            text: 'Me too, and my hogwarts house is better',
           },
           {
             id: 'answer_0_1',
