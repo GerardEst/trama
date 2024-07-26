@@ -1,61 +1,156 @@
 <div #game class="gameContainer">
   <div class="game" [class]="customStyles">
-    @for (node of nodes; track node.id) {
-      <div
-        #node
-        @insertNode
-        class="node"
-        [class.disabled]="node.disabled"
-        [class.hidden]="node.hidden"
-        [class.enabling]="node.enabling"
-      >
-        @if (node.image) {
-          <img
-            class="node__image"
-            [src]="
-              'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-              node.image.path
-            "
-          />
-        }
-        <div class="node__text">
-          @if (!node.toAnswer) {
-            <p class="nodetext">
-              {{ getTextWithFinalParameters(node.text) }}
-            </p>
+    @if (mode === 'cumulative') {
+      @for (inactiveNode of inactiveNodes; track inactiveNode.id) {
+        <div @insertInactiveNode class="node" [class.disabled]="true">
+          @if (inactiveNode.image) {
+            <img
+              class="node__image"
+              [src]="
+                'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+                inactiveNode.image.path
+              "
+            />
           }
-          @if (node.answers) {
-            <div class="answers">
-              @for (answer of node.answers; track $index) {
-                <button
-                  [attr.data-order]="$index"
-                  [class.unique]="!node.answers[1]"
-                  (click)="markAsSelected($event)"
-                  (click)="registerAnswer(answer)"
-                  (click)="applyEvents(answer.events)"
-                  (click)="nextStep(answer.join)"
-                >
-                  {{ getTextWithFinalParameters(answer.text) }}
-                </button>
-              }
-            </div>
-          }
-          @for (link of node.links; track $index) {
-            <button (click)="registerLink(link.url)">
-              {{ link.name }}
-              <img src="/assets/icons/open-external.svg" />
-            </button>
-          }
-          @if (
-            node.type === 'end' && activeStory.storyConfiguration().sharing
-          ) {
-            <button class="sharebutton" (click)="openShareContext()">
-              {{ node.share?.shareButtonText || 'Share this story' }}
-              <img src="/assets/icons/share.svg" />
-            </button>
-          }
+          <div class="node__text">
+            @if (!inactiveNode.toAnswer) {
+              <p class="nodetext">
+                {{ inactiveNode.text }}
+              </p>
+            }
+            @if (inactiveNode.answers) {
+              <div class="answers">
+                @for (answer of inactiveNode.answers; track $index) {
+                  <button
+                    [attr.data-order]="$index"
+                    [class.unique]="!inactiveNode.answers[1]"
+                  >
+                    {{ answer.text }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
         </div>
-      </div>
+      }
+    }
+    @if (activeNode) {
+      @if (mode === 'single') {
+        <div
+          #node
+          @insertNode
+          @removeNode
+          class="node"
+          [class.disabled]="activeNode.disabled"
+          [class.hidden]="activeNode.hidden"
+          [class.enabling]="activeNode.enabling"
+        >
+          @if (activeNode.image) {
+            <img
+              class="node__image"
+              [src]="
+                'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+                activeNode.image.path
+              "
+            />
+          }
+          <div class="node__text">
+            @if (!activeNode.toAnswer) {
+              <p class="nodetext">
+                {{ getTextWithFinalParameters(activeNode.text) }}
+              </p>
+            }
+            @if (activeNode.answers) {
+              <div class="answers">
+                @for (answer of activeNode.answers; track $index) {
+                  <button
+                    [attr.data-order]="$index"
+                    [class.unique]="!activeNode.answers[1]"
+                    (click)="markAsSelected($event)"
+                    (click)="registerAnswer(answer)"
+                    (click)="applyEvents(answer.events)"
+                    (click)="nextStep(answer.join)"
+                  >
+                    {{ getTextWithFinalParameters(answer.text) }}
+                  </button>
+                }
+              </div>
+            }
+            @for (link of activeNode.links; track $index) {
+              <button (click)="registerLink(link.url)">
+                {{ link.name }}
+                <img src="/assets/icons/open-external.svg" />
+              </button>
+            }
+            @if (
+              activeNode.type === 'end' &&
+              activeStory.storyConfiguration().sharing
+            ) {
+              <button class="sharebutton" (click)="openShareContext()">
+                {{ activeNode.share?.shareButtonText || 'Share this story' }}
+                <img src="/assets/icons/share.svg" />
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <div
+          #node
+          @insertNode
+          class="node"
+          [class.disabled]="activeNode.disabled"
+          [class.hidden]="activeNode.hidden"
+          [class.enabling]="activeNode.enabling"
+        >
+          @if (activeNode.image) {
+            <img
+              class="node__image"
+              [src]="
+                'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+                activeNode.image.path
+              "
+            />
+          }
+          <div class="node__text">
+            @if (!activeNode.toAnswer) {
+              <p class="nodetext">
+                {{ getTextWithFinalParameters(activeNode.text) }}
+              </p>
+            }
+            @if (activeNode.answers) {
+              <div class="answers">
+                @for (answer of activeNode.answers; track $index) {
+                  <button
+                    [attr.data-order]="$index"
+                    [class.unique]="!activeNode.answers[1]"
+                    (click)="markAsSelected($event)"
+                    (click)="registerAnswer(answer)"
+                    (click)="applyEvents(answer.events)"
+                    (click)="nextStep(answer.join)"
+                  >
+                    {{ getTextWithFinalParameters(answer.text) }}
+                  </button>
+                }
+              </div>
+            }
+            @for (link of activeNode.links; track $index) {
+              <button (click)="registerLink(link.url)">
+                {{ link.name }}
+                <img src="/assets/icons/open-external.svg" />
+              </button>
+            }
+            @if (
+              activeNode.type === 'end' &&
+              activeStory.storyConfiguration().sharing
+            ) {
+              <button class="sharebutton" (click)="openShareContext()">
+                {{ activeNode.share?.shareButtonText || 'Share this story' }}
+                <img src="/assets/icons/share.svg" />
+              </button>
+            }
+          </div>
+        </div>
+      }
     }
   </div>
 </div>

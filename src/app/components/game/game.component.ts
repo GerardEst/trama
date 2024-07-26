@@ -23,7 +23,16 @@ import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { normalizeLink } from 'src/app/utils/links'
-import { trigger, state, style, transition, animate } from '@angular/animations'
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+  group,
+  stagger,
+  query,
+} from '@angular/animations'
 
 @Component({
   selector: 'polo-game',
@@ -38,14 +47,30 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
         animate('500ms', style({ opacity: 1 })),
       ]),
     ]),
+    trigger('removeNode', [
+      transition(':leave', [
+        style({ opacity: 1 }),
+        animate('200ms', style({ opacity: 0 })),
+      ]),
+    ]),
+    trigger('insertInactiveNode', [
+      transition(':enter', [
+        style({ opacity: 1 }),
+        animate('500ms', style({ opacity: 0.5 })),
+      ]),
+    ]),
   ],
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
-  @ViewChildren('node') DOMnodes!: QueryList<ElementRef>
+  @ViewChild('node') DOMnode!: ElementRef
   @Input() customStyles?: string
+  @Input() mode: 'cumulative' | 'single' = 'single'
+  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
-  nodes: any = []
+  activeNode?: any
+  inactiveNodes: any = []
+
   initialized: boolean = false
 
   @Output() onEndGame = new EventEmitter<void>()
@@ -62,7 +87,8 @@ export class GameComponent {
         const firstNode = structuredClone(
           this.activeStory.entireTree().nodes[0]
         )
-        this.nodes.push(firstNode)
+
+        this.activeNode = firstNode
         if (firstNode.join) this.nextStep(firstNode.join)
         this.initialized = true
       }
@@ -74,7 +100,7 @@ export class GameComponent {
   }
 
   nextStep(destinyNodes: Array<join>) {
-    this.disableLastNode()
+    // this.disableLastNode()
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
 
@@ -97,7 +123,16 @@ export class GameComponent {
         )
       )
 
-      this.nodes.push(nextNode)
+      // Handle node change
+      if (this.mode === 'cumulative') {
+        this.inactiveNodes.push(this.activeNode)
+      }
+      this.activeNode = null
+      setTimeout(() => {
+        this.activeNode = nextNode
+        this.scrollToNewNode()
+      }, 500)
+
       if (nextNode && nextNode.join) this.nextStep(nextNode.join)
       if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
       if (nextNode && nextNode.type !== 'distributor')
@@ -105,23 +140,22 @@ export class GameComponent {
       if (nextNode && nextNode.type === 'distributor') {
         this.nextStep(this.distributeNode(nextNode))
       }
-
-      this.scrollToNewNode()
-    }, 1000)
+    }, 700)
   }
 
   scrollToNewNode() {
     setTimeout(() => {
+      console.log(this.DOMnode)
       this.DOMgame.nativeElement.scrollTo({
-        top: this.DOMnodes.last.nativeElement.offsetTop - 70,
+        top: this.DOMnode.nativeElement.offsetTop - 70,
         behavior: 'smooth',
       })
     })
   }
 
-  disableLastNode() {
-    this.nodes.at(-1).disabled = true
-  }
+  // disableLastNode() {
+  //   this.nodes.at(-1).disabled = true
+  // }
 
   distributeNode(node: node) {
     if (!node.conditions) {
@@ -187,7 +221,7 @@ export class GameComponent {
     if (navigator.share) {
       navigator
         .share({
-          text: this.nodes.at(-1)?.share?.sharedText || this.nodes.at(-1)?.text,
+          text: this.activeNode?.share?.sharedText || this.activeNode?.text,
           url: window.location.href,
         })
         .then(() => {
