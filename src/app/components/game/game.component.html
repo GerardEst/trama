@@ -1,5 +1,9 @@
 <div #game class="gameContainer">
-  <div class="game" [class]="customStyles">
+  <div
+    class="game"
+    [class]="customStyles"
+    [class.game--cumulative]="mode === 'cumulative'"
+  >
     @if (mode === 'cumulative') {
       @for (inactiveNode of inactiveNodes; track inactiveNode.id) {
         <polo-game-node
@@ -8,26 +12,28 @@
         ></polo-game-node>
       }
     }
-    @if (activeNode) {
-      @if (mode === 'single') {
-        <polo-game-node
-          #node
-          @insertNode
-          @removeNode
-          [data]="activeNode"
-          (onSelectAnswer)="selectAnswer($event)"
-          (onShare)="openShareContext($event)"
-          (onGoToLink)="registerLink($event)"
-        ></polo-game-node>
-      } @else {
-        <polo-game-node
-          #node
-          @insertNode
-          [data]="activeNode"
-          (onSelectAnswer)="selectAnswer($event)"
-          (onShare)="openShareContext($event)"
-          (onGoToLink)="registerLink($event)"
-        ></polo-game-node>
+    @if (activeNodes) {
+      @for (activeNode of activeNodes; track activeNode.id) {
+        @if (mode === 'single') {
+          <polo-game-node
+            #node
+            @insertNode
+            @removeNode
+            [data]="activeNode"
+            (onSelectAnswer)="selectAnswer($event)"
+            (onShare)="openShareContext($event)"
+            (onGoToLink)="registerLink($event)"
+          ></polo-game-node>
+        } @else {
+          <polo-game-node
+            #node
+            @insertNode
+            [data]="activeNode"
+            (onSelectAnswer)="selectAnswer($event)"
+            (onShare)="openShareContext($event)"
+            (onGoToLink)="registerLink($event)"
+          ></polo-game-node>
+        }
       }
     }
   </div>

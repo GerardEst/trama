@@ -5,9 +5,7 @@ import {
   effect,
   Input,
   ViewChild,
-  ViewChildren,
   ElementRef,
-  QueryList,
 } from '@angular/core'
 import {
   answer_requirement,
@@ -64,13 +62,12 @@ import { GameNodeComponent } from './components/game-node/game-node.component'
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
-  // @ViewChild('node') DOMnode!: ElementRef
   @ViewChild('node') DOMnode?: GameNodeComponent
   @Input() customStyles?: string
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
   @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
-  activeNode?: any
+  activeNodes?: any = []
   inactiveNodes: any = []
 
   initialized: boolean = false
@@ -90,7 +87,7 @@ export class GameComponent {
           this.activeStory.entireTree().nodes[0]
         )
 
-        this.activeNode = firstNode
+        this.activeNodes = [this.interpolateNodeTexts(firstNode)]
         if (firstNode.join) this.nextStep(firstNode.join)
         this.initialized = true
       }
@@ -103,17 +100,19 @@ export class GameComponent {
     this.registerAnswer(answer)
   }
 
-  nextStep(destinyNodes: Array<join>) {
+  nextStep(destinyNodes: Array<join>, addToActiveNodes: boolean = false) {
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
 
-      // Make a clone to prevent buttons in old answers to change when there are new conditions met
-      const nextNode = structuredClone(
+      let nextNode = structuredClone(
         this.activeStory
           .entireTree()
           .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
       )
       if (!nextNode) throw new Error('Node not found')
+
+      // Transform the texts to interpolated with stats
+      nextNode = this.interpolateNodeTexts(nextNode)
 
       // Add toAnswer to do correct paintings
       nextNode.toAnswer = randomlyChoosedJoin.toAnswer
@@ -127,23 +126,109 @@ export class GameComponent {
       )
 
       // Handle node change
-      if (this.mode === 'cumulative') {
-        this.inactiveNodes.push(this.activeNode)
+      if (this.mode === 'cumulative' && !addToActiveNodes) {
+        this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
       }
-      this.activeNode = null
+
+      if (!addToActiveNodes) this.activeNodes = []
       setTimeout(() => {
-        this.activeNode = nextNode
-        this.scrollToNewNode()
+        this.activeNodes.push(nextNode)
+
+        // It scrolls only on the first activeNode added
+        if (this.activeNodes.length === 1) this.scrollToNewNode()
       }, 500)
 
-      if (nextNode && nextNode.join) this.nextStep(nextNode.join)
+      if (nextNode && nextNode.join) {
+        this.nextStep(nextNode.join, true)
+      }
       if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
       if (nextNode && nextNode.type !== 'distributor')
         this.registerNode(nextNode)
       if (nextNode && nextNode.type === 'distributor') {
-        this.nextStep(this.distributeNode(nextNode))
+        this.nextStep(this.distributeNode(nextNode), true)
       }
     }, 700)
+  }
+
+  interpolateNodeTexts(node: node) {
+    const interpolateAnswers = node.answers?.map((answer) => {
+      return { ...answer, text: this.getTextWithFinalParameters(answer.text) }
+    })
+    return {
+      ...node,
+      answers: interpolateAnswers || [],
+      text: this.getTextWithFinalParameters(node.text),
+    }
+  }
+
+  getTextWithFinalParameters(text: string = '') {
+    const withInlineReplacements = text.replace(
+      /#([a-zA-Z0-9_]+)/g,
+      (match: string, p1: string) => {
+        // if the prop is not in player, we search in stats
+        let value = this.playerService.player()[p1]
+        if (!value) {
+          value = this.playerService
+            .player()
+            .stats.find((stat: any) => stat.id === p1)?.amount
+        }
+        return value || '-'
+      }
+    )
+    const withBlockReplacements = withInlineReplacements.replace(
+      /\[([a-zA-Z0-9_]+)\]/g,
+      (match: string, p1: string) => {
+        let refsWithCategory: any = Object.values(
+          this.activeStory.storyRefs()
+        ).filter((val: any) => {
+          return val.category === p1
+        })
+
+        let string = ' '
+        for (let refWithCategory of refsWithCategory) {
+          const playerStat = this.playerService
+            .player()
+            .stats.find((stat: any) => stat.id === refWithCategory.id)
+          if (playerStat) {
+            string =
+              string +
+              '\n' +
+              this.capitalize(
+                this.activeStory
+                  .storyRefs()
+                  .find((ref: any) => ref.id === playerStat.id).name
+              ) +
+              ': ' +
+              playerStat.amount
+          }
+        }
+        for (let refWithCategory of refsWithCategory) {
+          const playerCondition = this.playerService
+            .player()
+            .conditions.find(
+              (condition: any) => condition.id === refWithCategory.id
+            )
+          if (playerCondition) {
+            string =
+              string +
+              '\n' +
+              this.capitalize(
+                this.activeStory
+                  .storyRefs()
+                  .find((ref: any) => ref.id === playerCondition.id).name
+              )
+          }
+        }
+
+        return string
+      }
+    )
+
+    return withBlockReplacements
+  }
+
+  capitalize(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
   scrollToNewNode() {
@@ -152,7 +237,7 @@ export class GameComponent {
       const nativeElement = this.DOMnode.getNativeElement()
 
       this.DOMgame.nativeElement.scrollTo({
-        top: nativeElement.offsetTop - 70,
+        top: nativeElement.offsetTop - 50,
         behavior: 'smooth',
       })
     })

@@ -44,6 +44,8 @@ export class ActiveStoryService {
           if (answer.requirements) {
             for (let requirement of answer.requirements) {
               if (requirement.id) {
+                if (builtRefs.some((ref: any) => ref.id === requirement.id))
+                  continue
                 builtRefs.push({
                   id: requirement.id,
                   name: this.entireTree().refs[requirement.id].name,
@@ -59,6 +61,8 @@ export class ActiveStoryService {
           if (answer.events) {
             for (let event of answer.events) {
               if (event.target) {
+                if (builtRefs.some((ref: any) => ref.id === event.target))
+                  continue
                 builtRefs.push({
                   id: event.target,
                   name: this.entireTree().refs[event.target].name,

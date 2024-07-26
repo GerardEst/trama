@@ -9,19 +9,19 @@
     />
   }
   <div class="node__text">
-    @if (!data.toAnswer) {
+    @if (data.text && !data.toAnswer) {
       <p class="nodetext">
-        {{ getTextWithFinalParameters(data.text) }}
+        {{ data.text }}
       </p>
     }
-    @if (data.answers) {
+    @if (data.answers && data.answers.length > 0) {
       <div class="answers">
         @for (answer of data.answers; track $index) {
           <button
             (click)="!disabled && markAsSelected($event)"
             (click)="!disabled && onSelectAnswer.emit(answer)"
           >
-            {{ getTextWithFinalParameters(answer.text) }}
+            {{ answer.text }}
           </button>
         }
       </div>
