@@ -1,0 +1,45 @@
+<div #node class="node" [class.disabled]="disabled">
+  @if (data.image) {
+    <img
+      class="node__image"
+      [src]="
+        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+        data.image.path
+      "
+    />
+  }
+  <div class="node__text">
+    @if (!data.toAnswer) {
+      <p class="nodetext">
+        {{ getTextWithFinalParameters(data.text) }}
+      </p>
+    }
+    @if (data.answers) {
+      <div class="answers">
+        @for (answer of data.answers; track $index) {
+          <button
+            (click)="!disabled && markAsSelected($event)"
+            (click)="!disabled && onSelectAnswer.emit(answer)"
+          >
+            {{ getTextWithFinalParameters(answer.text) }}
+          </button>
+        }
+      </div>
+    }
+    @for (link of data.links; track $index) {
+      <button (click)="onGoToLink.emit(link.url)">
+        {{ link.name }}
+        <img src="/assets/icons/open-external.svg" />
+      </button>
+    }
+    @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
+      <button
+        class="sharebutton"
+        (click)="onShare.emit(data.share.sharedText || data.text)"
+      >
+        {{ data.share?.shareButtonText || 'Share this story' }}
+        <img src="/assets/icons/share.svg" />
+      </button>
+    }
+  </div>
+</div>
