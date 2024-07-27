@@ -8,20 +8,26 @@
       (onSelectAnswer)="selectAnswer($event)"
     ></polo-game>
   }
-  @if (activeStory.storyConfiguration().footer) {
-    @if (activeStory.storyConfiguration().footer.link) {
-      <a
-        href="{{ activeStory.storyConfiguration().footer.link }}"
-        target="_blank"
-        class="storyfooter"
-        >{{ activeStory.storyConfiguration().footer.text }}</a
-      >
-    } @else {
-      <p class="storyfooter">
-        {{ activeStory.storyConfiguration().footer.text }}
-      </p>
+  <div class="storyfooter">
+    <span></span>
+    @if (activeStory.storyConfiguration().footer.text) {
+      @if (activeStory.storyConfiguration().footer.link) {
+        <a
+          href="{{ activeStory.storyConfiguration().footer.link }}"
+          target="_blank"
+          >{{ activeStory.storyConfiguration().footer.text }}</a
+        >
+      } @else {
+        <p>
+          {{ activeStory.storyConfiguration().footer.text }}
+        </p>
+      }
     }
-  }
+    <p>
+      Created with
+      <a target="_blank" href="https://textandplay.com">Textandplay</a>
+    </p>
+  </div>
   @if (
     activeStory.entireTree() &&
     activeStory.storyConfiguration().askName &&
