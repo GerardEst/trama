@@ -20,6 +20,7 @@
             @insertNode
             @removeNode
             [data]="activeNode"
+            [writeSpeed]="writeSpeed"
             (onSelectAnswer)="selectAnswer($event)"
             (onShare)="openShareContext($event)"
             (onGoToLink)="registerLink($event)"
@@ -28,6 +29,7 @@
           <polo-game-node
             #node
             @insertNode
+            [writeSpeed]="writeSpeed"
             [data]="activeNode"
             (onSelectAnswer)="selectAnswer($event)"
             (onShare)="openShareContext($event)"

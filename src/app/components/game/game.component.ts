@@ -21,16 +21,7 @@ import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { normalizeLink } from 'src/app/utils/links'
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-  group,
-  stagger,
-  query,
-} from '@angular/animations'
+import { trigger, style, transition, animate } from '@angular/animations'
 import { GameNodeComponent } from './components/game-node/game-node.component'
 
 @Component({

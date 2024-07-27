@@ -10,36 +10,46 @@
   }
   <div class="node__text">
     @if (data.text && !data.toAnswer) {
-      <p class="nodetext">
-        {{ data.text }}
+      <p #textContainer class="nodetext">
+        {{ writeSpeed === 'immediate' ? data.text : '' }}
       </p>
     }
-    @if (data.answers && data.answers.length > 0) {
-      <div class="answers">
-        @for (answer of data.answers; track $index) {
-          <button
-            (click)="!disabled && markAsSelected($event)"
-            (click)="!disabled && onSelectAnswer.emit(answer)"
-          >
-            {{ answer.text }}
-          </button>
-        }
-      </div>
+    @if (data.answers && data.answers.length > 0 && showAnswers) {
+      @if (disabled) {
+        <div class="answers">
+          @for (answer of data.answers; track $index) {
+            <button>{{ answer.text }}</button>
+          }
+        </div>
+      } @else {
+        <div @showAnswers class="answers">
+          @for (answer of data.answers; track $index) {
+            <button
+              (click)="!disabled && markAsSelected($event)"
+              (click)="!disabled && onSelectAnswer.emit(answer)"
+            >
+              {{ answer.text }}
+            </button>
+          }
+        </div>
+      }
     }
-    @for (link of data.links; track $index) {
-      <button (click)="onGoToLink.emit(link.url)">
-        {{ link.name }}
-        <img src="/assets/icons/open-external.svg" />
-      </button>
-    }
-    @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
-      <button
-        class="sharebutton"
-        (click)="onShare.emit(data.share.sharedText || data.text)"
-      >
-        {{ data.share?.shareButtonText || 'Share this story' }}
-        <img src="/assets/icons/share.svg" />
-      </button>
+    @if (showAnswers) {
+      @for (link of data.links; track $index) {
+        <button (click)="onGoToLink.emit(link.url)">
+          {{ link.name }}
+          <img src="/assets/icons/open-external.svg" />
+        </button>
+      }
+      @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
+        <button
+          class="sharebutton"
+          (click)="onShare.emit(data.share.sharedText || data.text)"
+        >
+          {{ data.share?.shareButtonText || 'Share this story' }}
+          <img src="/assets/icons/share.svg" />
+        </button>
+      }
     }
   </div>
 </div>
