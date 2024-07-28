@@ -74,7 +74,7 @@ export class DatabaseService {
       .eq('custom_id', customId)
 
     if (error || !stories[0]) {
-      return this.getNewestStory()
+      return false
     }
     return stories[0]
   }
@@ -92,7 +92,7 @@ export class DatabaseService {
       .eq('id', storyId)
 
     if (error || !stories[0]) {
-      return this.getNewestStory()
+      return false
     }
     return stories[0]
   }

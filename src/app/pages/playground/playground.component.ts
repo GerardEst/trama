@@ -8,6 +8,7 @@ import { PlayerService } from './services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'polo-playground',
@@ -37,7 +38,8 @@ export class PlaygroundComponent {
   constructor(
     private db: DatabaseService,
     public playerService: PlayerService,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    private router: Router
   ) {}
   // In playerService we have everything about the player, the counters, etc
   // In activeStory we have everything about the story, the options, tree, refs, etc
@@ -60,6 +62,11 @@ export class PlaygroundComponent {
     Cronitor.track('SomeoneStartedAGame')
 
     const { story, configuration } = await this.getStoryByCorrectID()
+
+    if (!story) {
+      this.router.navigate(['/'])
+      return
+    }
 
     this.activeStory.storyId.set(story.id)
     this.activeStory.entireTree.set(story.tree)

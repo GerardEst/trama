@@ -10,7 +10,7 @@
   }
   <div class="storyfooter">
     <span></span>
-    @if (activeStory.storyConfiguration().footer.text) {
+    @if (activeStory.storyConfiguration().footer?.text) {
       @if (activeStory.storyConfiguration().footer.link) {
         <a
           href="{{ activeStory.storyConfiguration().footer.link }}"
