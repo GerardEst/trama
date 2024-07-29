@@ -40,7 +40,7 @@ export class BoardComponent {
   // Joins
   waitingForJoin: boolean = false
   willJoinId?: string
-
+  isDrawingJoin?: boolean = false
   throttled: any
 
   constructor(
@@ -76,6 +76,43 @@ export class BoardComponent {
         zoomDoubleClickSpeed: 1,
       }
     )
+  }
+
+  startDraggingTest(event: any) {
+    /** quan comença el drag hem de veure si esta fentse
+     * dins dun joiner
+     * si es fa en un joiner, deixem de fer el drag de l'espai
+     * i fem lo de pintar la linia
+     * i a partir d'aqui si deixem anar fem lo de pintar
+     * el node com si fessin clic
+     */
+
+    const join = event.target.classList.contains('union_point')
+    console.log(join)
+    const answerId =
+      event.target.closest('polo-answer')?.id ||
+      event.target.closest('polo-node')?.id
+
+    console.log(answerId)
+    if (join) {
+      this.isDrawingJoin = true
+      this.willJoin(answerId)
+    }
+    console.log('dragging?', event)
+  }
+
+  stopDraggingTest(event: any) {
+    if (this.isDrawingJoin) {
+      console.log(event)
+      this.addNode(event, 'content')
+    }
+
+    // Resume dragging
+    this.sharedBoardService.boardReference.resume()
+  }
+
+  moving(event: any) {
+    console.log('moving')
   }
 
   onRightClick(event: MouseEvent): void {
@@ -116,10 +153,6 @@ export class BoardComponent {
     this.sharedBoardService.boardReference.pause()
   }
 
-  resumeDragging() {
-    this.sharedBoardService.boardReference.resume()
-  }
-
   dragStarted(event: any) {
     this.focusNode(event.source.element.nativeElement)
   }
@@ -139,7 +172,6 @@ export class BoardComponent {
 
   willJoin(answerId: string) {
     console.log(answerId + ' will join')
-    // Aqui es la primera i unica vegada que cambiem waitingForJoin
     setTimeout(() => {
       this.waitingForJoin = true
     }, 0)
