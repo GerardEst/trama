@@ -43,6 +43,10 @@ export class BoardComponent {
   isDrawingJoin?: boolean = false
   throttled: any
 
+  // For the drags
+  isMouseDown: boolean = false
+  isDragging: boolean = false
+
   constructor(
     public activeStory: ActiveStoryService,
     private sharedBoardService: SharedBoardService,
@@ -78,30 +82,36 @@ export class BoardComponent {
     )
   }
 
-  startDraggingTest(event: any) {
-    /** quan comença el drag hem de veure si esta fentse
-     * dins dun joiner
-     * si es fa en un joiner, deixem de fer el drag de l'espai
-     * i fem lo de pintar la linia
-     * i a partir d'aqui si deixem anar fem lo de pintar
-     * el node com si fessin clic
-     */
+  // Coses utils pel drag de crear un nou join
+  checkDragStart(event: any) {
+    this.isMouseDown = true
+    console.log('Start drag?')
 
+    // Mirem si ha començat dins un joiner
     const join = event.target.classList.contains('union_point')
-    console.log(join)
     const answerId =
       event.target.closest('polo-answer')?.id ||
       event.target.closest('polo-node')?.id
 
-    console.log(answerId)
     if (join) {
       this.isDrawingJoin = true
       this.willJoin(answerId)
     }
-    console.log('dragging?', event)
   }
 
-  stopDraggingTest(event: any) {
+  checkDrag(event: any) {
+    if (this.isMouseDown) {
+      this.isDragging = true
+      console.log('Dragging')
+    }
+  }
+
+  checkDragStop(event: any) {
+    this.isMouseDown = false
+    this.isDragging = false
+    console.log('Stop dragging (if we were dragging)')
+
+    //
     if (this.isDrawingJoin) {
       console.log(event)
       this.addNode(event, 'content')
@@ -109,10 +119,6 @@ export class BoardComponent {
 
     // Resume dragging
     this.sharedBoardService.boardReference.resume()
-  }
-
-  moving(event: any) {
-    console.log('moving')
   }
 
   onRightClick(event: MouseEvent): void {

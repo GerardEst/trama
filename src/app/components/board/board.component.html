@@ -4,9 +4,9 @@
   [class.board--grid]="grid"
   (contextmenu)="onRightClick($event)"
   (click)="boardClick($event)"
-  (mousedown)="startDraggingTest($event)"
-  (mousemove)="moving($event)"
-  (mouseup)="stopDraggingTest($event)"
+  (mousedown)="checkDragStart($event)"
+  (mousemove)="checkDrag($event)"
+  (mouseup)="checkDragStop($event)"
 >
   <div
     #contextMenu
