@@ -21,15 +21,24 @@
     padding: 0;
     height: 100vh;
     align-items: center;
-    margin: 0 30px;
+    margin: 0 90px;
     display: flex;
   "
 >
   <div class="text" style="flex: 1">
-    <h1>
-      Create fun interactive stories and tests, share them, engage users and
+    <h1>Create interactive stories and tests</h1>
+    <h2 style="font-size: 1.5rem; font-weight: 400; line-height: 2.5rem">
+      Share them easily, engage your users and track their answers and paths to
       gain valuable insights
-    </h1>
+    </h2>
+    <div style="display: flex; gap: 1rem; align-items: center">
+      <polo-accent-button
+        (click)="router.navigate(['/dashboard'])"
+        [fill]="true"
+        >Log in</polo-accent-button
+      >
+      <p (click)="openExampleSource()">Check the source of this example</p>
+    </div>
   </div>
   <section
     style="
@@ -52,10 +61,24 @@
     </div>
   </section>
 </section>
-<div class="showroom">
-  <section class="section--editor">
+<div class="editorModal" [class.active]="showEditor">
+  <div class="editor">
     <div class="section--editor__title">
-      <h1>Editor preview</h1>
+      <div>
+        <h2>Editor preview</h2>
+        <polo-basic-button
+          (click)="closeExampleSource()"
+          text="Close"
+        ></polo-basic-button>
+      </div>
+      <p>
+        This is a preview of the Textandplay editor. Here you can see the
+        example of the home, the nodes and joins on them, and you can play with
+        it.
+      </p>
+      <p>Move around dragging the board</p>
+      <p>Zoom with the wheel + option / ctrl</p>
+      <p>Right click to create nodes</p>
     </div>
     <polo-board
       #board
@@ -64,40 +87,84 @@
       [focusElements]="false"
       [zoomable]="false"
     ></polo-board>
-  </section>
+  </div>
 </div>
-<!--div class="tapDetails">
-  <section class="section--content" id="features">
-    <h1 style="color: white">Features</h1>
-    <div>
-      <p>Multiple paths and multiple endings</p>
-      <p>Properties and conditions</p>
-      <p>Distributor nodes</p>
-      <p>Share options</p>
-      <p>Privacy options</p>
-      <p>Text interpolation</p>
-      <p>Random destinations</p>
+<section id="build" style="padding: 60px 30px">
+  <h1>Your building tools</h1>
+  <div class="cardList">
+    <div class="featureCard">
+      <img class="featureCard__image" src="assets/images/landing/nodes.png" />
+      <div class="featureCard__text">
+        <h3>Nodes!</h3>
+        <p>
+          Join nodes to create the flows and see your story paths, texts,
+          choices, all in your sight.
+        </p>
+      </div>
     </div>
-  </section>
-  <section class="section--content" id="examples">
-    <h1>Examples</h1>
-    <p>
-      For teachers -> Create your exams in a breeze, register points and
-      mistakes, and get a resume with all the assessments and puntuations.
-    </p>
-    <p>Also: Look out for cheaters. Discover the most painful question</p>
-    <p>
-      For writers -> Create text adventures, with infinite paths and endings.
-      Use properties and conditions to make the story more interactive
-    </p>
-    <p>
-      For fun -> Create funny quizes, questionaries, and more. Share it with
-      your friends and have a good time
-    </p>
-  </section>
-</div-->
-<section id="features" style="margin: 60px 30px"></section>
-<section id="pricing" style="margin: 60px 30px">
+    <div class="featureCard">
+      <img
+        class="featureCard__image"
+        src="assets/images/landing/customize.png"
+      />
+      <div class="featureCard__text">
+        <h3>Customized paths</h3>
+        <p>
+          Adapt to user choices with <a href="#">events</a>,
+          <a href="#">stats</a> and <a href="#">requirements</a>. Give them some
+          stat and use it to show or hide choices, or to point to a node.
+          <br />
+          For example, when user clicks on the choice "Take the sword", you can
+          register an event to add a sword to the user. Later, in a node where
+          the sword could be useful, show the answer "Use the sword" only if the
+          user has it.
+        </p>
+      </div>
+    </div>
+    <div class="featureCard">
+      <img
+        class="featureCard__image"
+        src="assets/images/landing/interpolations.png"
+      />
+      <div class="featureCard__text">
+        <h3>Text interpolations</h3>
+        <p>
+          Add user info in the middle of the story.
+          <br />
+          For example, if your story has points of some type (like an exam), you
+          could show this points in a node using hashtags: "You have
+          #amountOfPoints points!"
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="share" style="padding: 100px 30px">
+  <div class="share__content">
+    <img
+      class="share__content__example"
+      src="assets/images/landing/mobile.png"
+    />
+    <div class="share__content__text">
+      <h1>Share easily</h1>
+      <p>Share everywhere, with just a link</p>
+      <ul>
+        <li>Use the ending path that you want: textandplay.com/yourown</li>
+        <li>Share the link or embed it on your site!</li>
+        <li>Allow users to share the story with a Share button at the end</li>
+        <li>
+          Enable tracking to see how many users played, which were their
+          choices, and more
+        </li>
+        <li>
+          Choose between some styles and functionalities to make the experience
+          unique
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section id="pricing" class="pricingSection" style="padding: 60px 30px">
   <h1>Pricing</h1>
   <div class="pricingBoxes">
     <div class="pricingBox">
@@ -109,9 +176,7 @@
         <li>Create up to 10 stories</li>
         <li>Unlimited nodes</li>
         <li>Unlimited images</li>
-        <li>Custom join probabilities</li>
         <li>Events and requirements</li>
-        <li>Text interpolations</li>
         <li>Basic customization options</li>
       </ul>
       <polo-accent-button
@@ -122,11 +187,28 @@
     </div>
     <div class="pricingBox">
       <div class="priceContainer">
-        <h2>Pro</h2>
-        <p>5.95€/month</p>
+        <h2>Creator</h2>
+        <p>2.95€/month</p>
       </div>
       <ul class="priceFeatures">
         <li>Unlimited stories</li>
+        <li>No ads</li>
+        <li>Custom join probabilities</li>
+        <li>Text interpolations</li>
+        <li>Distributor nodes</li>
+      </ul>
+      <polo-accent-button
+        (click)="router.navigate(['/dashboard'])"
+        [fill]="true"
+        >Use free</polo-accent-button
+      >
+    </div>
+    <div class="pricingBox">
+      <div class="priceContainer">
+        <h2>Pro</h2>
+        <p>29.95€/month</p>
+      </div>
+      <ul class="priceFeatures">
         <li>Tracking and statistics</li>
       </ul>
       <polo-accent-button (click)="usePro()" [fill]="true"

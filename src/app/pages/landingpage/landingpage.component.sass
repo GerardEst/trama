@@ -37,7 +37,7 @@ menu
 h1
   font-size: 3rem
   color: var(--accent)
-h2
+h2, h3
   font-size: 2rem
   color: var(--accent)
 p, a, li
@@ -113,19 +113,11 @@ section
         position: absolute
   &.section--content
     flex-direction: column
-  &.section--editor
-    position: relative
-    height: calc(100vh - 100px)
-    overflow: hidden
-    border-radius: 20px
-    flex: 2
-    background-color: white
-    .section--editor__title
-      z-index: 2
-      position: absolute
-      top: 0
-      left: 0
-      padding: 20px
+
+.pricingSection
+  background-color: var(--accent)
+  h1
+    color: white
 .pricingBoxes
   display: flex
   justify-content: center
@@ -151,9 +143,62 @@ section
       margin-top: auto
       margin-left: auto
 footer
-  background-color: #444444
+  background-color: var(--accent)
   color: white
   padding: 50px
   display: flex
   justify-content: space-between
   align-items: center
+
+.editorModal
+  display: none
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 3
+  &.active
+    display: block
+.editor
+  position: relative
+  height: calc(100vh - 100px)
+  overflow: hidden
+  border-radius: 20px
+  background-color: white
+  margin: auto
+  width: calc(100% - 20px)
+  top: 90px
+  .section--editor__title
+    width: 300px
+    color: white
+    z-index: 2
+    position: absolute
+    top: 0
+    left: 0
+    padding: 20px
+    height: 100%
+    background-color: var(--accent)
+    backdrop-filter: blur(10px)
+    h2,p
+      color: white
+.cardList
+  display: flex
+  flex-direction: column
+  gap: 1rem
+  margin-top: 2rem
+.featureCard
+  display: flex
+  border-radius: 20px
+  overflow: hidden
+  background: rgba(255, 255, 255, 0.3)
+  &__image
+    width: 300px
+  &__text
+    padding: 2rem
+.share
+  &__content
+    display: grid
+    grid-template-columns: 1fr 1fr
+    &__example
+      width: 200px

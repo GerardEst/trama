@@ -7,6 +7,7 @@ import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-butt
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { BasicButtonComponent } from '../../components/ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-landingpage',
@@ -16,6 +17,7 @@ import * as Cronitor from '@cronitorio/cronitor-rum'
     GameComponent,
     AccentButtonComponent,
     LinkButtonComponent,
+    BasicButtonComponent,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
@@ -1085,6 +1087,7 @@ export class LandingpageComponent {
 
   checkedLoggedUser: boolean = false
   loggedUser: boolean = false
+  showEditor: boolean = false
 
   constructor(
     private activeStory: ActiveStoryService,
@@ -1108,6 +1111,13 @@ export class LandingpageComponent {
     this.activeStory.entireTree.set(this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
+  }
+
+  openExampleSource() {
+    this.showEditor = true
+  }
+  closeExampleSource() {
+    this.showEditor = false
   }
 
   async checkLoggedUser() {
