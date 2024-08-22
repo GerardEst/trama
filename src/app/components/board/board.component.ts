@@ -42,6 +42,7 @@ export class BoardComponent {
   willJoinId?: string
   isDrawingJoin?: boolean = false
   throttled: any
+  hoveringNode?: any
 
   // For the drags
   isMouseDown: boolean = false
@@ -87,6 +88,10 @@ export class BoardComponent {
     this.isMouseDown = true
     console.log('Start drag?')
 
+    // Crec que aqui en el cas dels distributors no esta pillant bé
+    // lo que sigui que ha de pillar.
+    /** El will join hauria de ser el condition o fallback */
+
     // Mirem si ha començat dins un joiner
     const join = event.target.classList.contains('union_point')
     const answerId =
@@ -111,10 +116,14 @@ export class BoardComponent {
     this.isDragging = false
     console.log('Stop dragging (if we were dragging)')
 
-    //
     if (this.isDrawingJoin) {
-      console.log(event)
-      this.addNode(event, 'content')
+      if (this.hoveringNode) {
+        // TODO - Cambiar a type 'answer' si estem fent hover sobre la part d'answers o sobre el botonet d'answers
+        this.haveJoined({ id: this.hoveringNode.id, type: 'node' })
+      } else {
+        this.addNode(event, 'content')
+      }
+      this.isDrawingJoin = false
     }
 
     // Resume dragging
@@ -150,9 +159,14 @@ export class BoardComponent {
   }
   mouseEnter(event: any) {
     this.focusNode(event.target)
+
+    // Si estem fent drag, el mouseEnter i leave ens han de servir per anar sabent on està el ratolí
+    this.hoveringNode = event.target
   }
   mouseLeave(event: any) {
     this.blurNode(event.target)
+
+    this.hoveringNode = undefined
   }
 
   stopDragging() {
@@ -184,9 +198,13 @@ export class BoardComponent {
     this.willJoinId = answerId
   }
   haveJoined({ id: nodeId, type }: { id: string; type: 'answers' | 'node' }) {
+    console.log(this.willJoinId)
     if (!this.willJoinId) return
 
     this.waitingForJoin = false
+
+    console.log('willJoinId:', this.willJoinId)
+    console.log('nodeId:', nodeId)
 
     this.activeStory.updateJoinOfOption(
       this.willJoinId,
@@ -208,10 +226,12 @@ export class BoardComponent {
     }
   }
 
-  boardClick(event: any) {
-    this.contextMenuActive = false
-    this.addNode(event, 'content')
-  }
+  // boardClick(event: any) {
+  //   this.contextMenuActive = false
+
+  //   console.log('board click!')
+  //   this.addNode(event, 'content')
+  // }
 
   setActiveNode(nodeId: string, storyId: string) {
     const storedActiveNodes = localStorage.getItem('polo-activeNodes')
