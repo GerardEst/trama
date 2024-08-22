@@ -27,7 +27,6 @@ export class ConditionComponent {
   @Input() value: number = 0
 
   @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
-  @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
 
@@ -54,10 +53,6 @@ export class ConditionComponent {
       comparator: this.comparator,
       value: this.value,
     })
-  }
-
-  willJoin() {
-    this.onWillJoin.emit(this.id)
   }
 
   removeCondition() {

@@ -83,18 +83,13 @@ export class BoardComponent {
     )
   }
 
-  // Coses utils pel drag de crear un nou join
   checkDragStart(event: any) {
     this.isMouseDown = true
-    console.log('Start drag?')
-
-    // Crec que aqui en el cas dels distributors no esta pillant bé
-    // lo que sigui que ha de pillar.
-    /** El will join hauria de ser el condition o fallback */
 
     // Mirem si ha començat dins un joiner
     const join = event.target.classList.contains('union_point')
     const answerId =
+      event.target.closest('polo-condition')?.id ||
       event.target.closest('polo-answer')?.id ||
       event.target.closest('polo-node')?.id
 
@@ -198,13 +193,9 @@ export class BoardComponent {
     this.willJoinId = answerId
   }
   haveJoined({ id: nodeId, type }: { id: string; type: 'answers' | 'node' }) {
-    console.log(this.willJoinId)
     if (!this.willJoinId) return
 
     this.waitingForJoin = false
-
-    console.log('willJoinId:', this.willJoinId)
-    console.log('nodeId:', nodeId)
 
     this.activeStory.updateJoinOfOption(
       this.willJoinId,
@@ -225,13 +216,6 @@ export class BoardComponent {
       }, 10)
     }
   }
-
-  // boardClick(event: any) {
-  //   this.contextMenuActive = false
-
-  //   console.log('board click!')
-  //   this.addNode(event, 'content')
-  // }
 
   setActiveNode(nodeId: string, storyId: string) {
     const storedActiveNodes = localStorage.getItem('polo-activeNodes')

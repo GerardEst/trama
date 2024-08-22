@@ -24,7 +24,6 @@ export class AnswerComponent {
 
   @Input() text: string = ''
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
-  @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
   @ViewChild('textarea') textarea?: ElementRef
@@ -75,10 +74,6 @@ export class AnswerComponent {
   saveAnswerText(e: any) {
     const text = e.target.value
     this.activeStory.updateAnswerText(this.id, text)
-  }
-
-  willJoin() {
-    this.onWillJoin.emit(this.id)
   }
 
   removeAnswer() {

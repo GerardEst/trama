@@ -164,10 +164,6 @@ export class NodeComponent {
     this.board.resumeBoardDrag()
   }
 
-  willJoin(answerId: string) {
-    this.onWillJoin.emit(answerId)
-  }
-
   join(type: 'answers' | 'node' = 'node') {
     this.haveJoined.emit({ id: this.nodeId, type })
   }
