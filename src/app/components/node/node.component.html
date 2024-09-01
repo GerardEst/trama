@@ -1,9 +1,4 @@
 <div class="node" [class.waitingForJoin]="waitingForJoin">
-  <div
-    class="waitingForJoin"
-    *ngIf="waitingForJoin"
-    (click)="join('node')"
-  ></div>
   <header>
     <span
       id="{{ nodeId + '_joiner' }}"

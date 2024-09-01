@@ -22,7 +22,10 @@
     <li (click)="addNode($event, 'end')">End node</li>
   </div>
 
-  <polo-board-flows></polo-board-flows>
+  <polo-board-flows
+    [drawingFrom]="dragStartedOn"
+    [drawingTo]="dragMouseOn"
+  ></polo-board-flows>
   @if (activeStory.entireTree()) {
     <ng-container>
       @for (node of activeStory.entireTree().nodes; track node.id) {

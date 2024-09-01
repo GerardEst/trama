@@ -4,10 +4,16 @@ import {
   ElementRef,
   Signal,
   computed,
+  Input,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { node } from 'src/app/interfaces'
+
+interface mousePosition {
+  left: number
+  top: number
+}
 
 @Component({
   selector: 'polo-board-flows',
@@ -17,6 +23,9 @@ import { node } from 'src/app/interfaces'
   styleUrls: ['./board-flows.component.sass'],
 })
 export class BoardFlowsComponent {
+  @Input() drawingFrom?: any
+  @Input() drawingTo?: any
+
   @ViewChild('svg') svg?: ElementRef
   flowOptions: any = {
     pcurvature: 30,
@@ -30,7 +39,28 @@ export class BoardFlowsComponent {
 
   constructor(public activeStory: ActiveStoryService) {}
 
-  getPath(initialElement: string, finalElement: string) {
+  getDrawingPath(
+    initialElement: string,
+    finalPosition: HTMLElement | mousePosition
+  ) {
+    if (!finalPosition) return
+
+    if (finalPosition instanceof HTMLElement) {
+      return this.getPath(initialElement, finalPosition)
+    }
+
+    const startDivPosition = this.getPositionOfElement(initialElement)
+
+    const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
+      startDivPosition?.left + this.flowOptions.pcurvature
+    },${startDivPosition?.top} ${
+      finalPosition?.left + this.flowOptions.ncurvature
+    },${finalPosition?.top} ${finalPosition?.left},${finalPosition?.top}`
+
+    return path
+  }
+
+  getPath(initialElement: string, finalElement: string | HTMLElement) {
     const startDivPosition = this.getPositionOfElement(initialElement)
     const endDivPosition = this.getPositionOfElement(finalElement)
 
@@ -53,6 +83,7 @@ export class BoardFlowsComponent {
 
   // Builds all the paths needed
   calculatePaths(nodes: node[]) {
+    console.warn('Calculating paths')
     const svgContainer = this.svg?.nativeElement
     if (!svgContainer)
       return console.log('svgContainer still not present. Skipping.')
@@ -119,8 +150,9 @@ export class BoardFlowsComponent {
     return paths
   }
 
-  getPositionOfElement(element: string) {
-    const childElement = document.getElementById(element)
+  getPositionOfElement(element: string | HTMLElement) {
+    const childElement =
+      typeof element === 'string' ? document.getElementById(element) : element
     const parentRect = this.svg?.nativeElement.getBoundingClientRect()
     const childRect = childElement?.getBoundingClientRect()
 

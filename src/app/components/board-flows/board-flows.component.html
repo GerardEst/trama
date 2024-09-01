@@ -5,6 +5,16 @@
   preserveAspectRatio="none"
   viewBox="0 0 0 0"
 >
+  @if (drawingFrom) {
+    <path
+      [attr.d]="getDrawingPath(drawingFrom, drawingTo)"
+      stroke-dasharray="4"
+      stroke-width="1"
+      stroke="#cccccc"
+      style="pointer-events: none"
+      fill="transparent"
+    ></path>
+  }
   @for (line of paths(); track $index) {
     <path
       [attr.d]="line"

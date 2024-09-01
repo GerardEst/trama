@@ -47,6 +47,8 @@ export class BoardComponent {
   // For the drags
   isMouseDown: boolean = false
   isDragging: boolean = false
+  dragStartedOn?: any
+  dragMouseOn?: any
 
   constructor(
     public activeStory: ActiveStoryService,
@@ -96,31 +98,48 @@ export class BoardComponent {
     if (join) {
       this.isDrawingJoin = true
       this.willJoin(answerId)
+      this.dragStartedOn = event.target
     }
   }
 
   checkDrag(event: any) {
-    if (this.isMouseDown) {
+    if (this.isMouseDown && this.willJoinId) {
       this.isDragging = true
-      console.log('Dragging')
+
+      const hoverOnNodePart =
+        event.target.closest('.node__answers') || event.target.closest('.node')
+      const joinerOnPart = hoverOnNodePart?.querySelector('.joiner')
+
+      this.dragMouseOn = joinerOnPart || {
+        left: event.offsetX,
+        top: event.offsetY,
+      }
     }
   }
 
   checkDragStop(event: any) {
     this.isMouseDown = false
     this.isDragging = false
+    this.dragStartedOn = undefined
+
     console.log('Stop dragging (if we were dragging)')
 
     if (this.isDrawingJoin) {
       if (this.hoveringNode) {
-        // TODO - Cambiar a type 'answer' si estem fent hover sobre la part d'answers o sobre el botonet d'answers
-        this.haveJoined({ id: this.hoveringNode.id, type: 'node' })
+        this.haveJoined({
+          id: this.hoveringNode.id,
+          type: this.dragMouseOn.classList.contains('joiner--answers')
+            ? 'answers'
+            : 'node',
+        })
       } else {
         this.addNode(event, 'content')
       }
+      this.willJoinId = undefined
       this.isDrawingJoin = false
     }
 
+    this.dragMouseOn = undefined
     // Resume dragging
     this.sharedBoardService.boardReference.resume()
   }
