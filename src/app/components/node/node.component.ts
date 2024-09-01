@@ -58,7 +58,6 @@ export class NodeComponent {
   }
 
   // Functionality of the node
-  @Input() waitingForJoin: boolean = false
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
 
   @Output() onWillJoin: EventEmitter<any> = new EventEmitter()

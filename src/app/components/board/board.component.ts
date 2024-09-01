@@ -38,7 +38,6 @@ export class BoardComponent {
   @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
 
   // Joins
-  waitingForJoin: boolean = false
   willJoinId?: string
   isDrawingJoin?: boolean = false
   throttled: any
@@ -206,15 +205,11 @@ export class BoardComponent {
 
   willJoin(answerId: string) {
     console.log(answerId + ' will join')
-    setTimeout(() => {
-      this.waitingForJoin = true
-    }, 0)
+
     this.willJoinId = answerId
   }
   haveJoined({ id: nodeId, type }: { id: string; type: 'answers' | 'node' }) {
     if (!this.willJoinId) return
-
-    this.waitingForJoin = false
 
     this.activeStory.updateJoinOfOption(
       this.willJoinId,
@@ -260,15 +255,13 @@ export class BoardComponent {
       return
     }
 
-    if (this.waitingForJoin && this.willJoinId) {
+    if (this.willJoinId) {
       const newNodeInfo = this.createNode(
         { top: event.offsetY, left: event.offsetX },
         type
       )
 
       this.activeStory.updateJoinOfOption(this.willJoinId, newNodeInfo.id)
-
-      this.waitingForJoin = false
     }
   }
 
