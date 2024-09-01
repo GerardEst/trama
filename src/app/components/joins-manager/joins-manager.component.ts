@@ -1,8 +1,8 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { SharedBoardService } from 'src/app/components/board/board-utils.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+
 @Component({
   selector: 'polo-joins-manager',
   standalone: true,
@@ -15,10 +15,7 @@ export class JoinsManagerComponent {
   @Input() joins: Array<any> = []
   @Output() onRemoveJoin: EventEmitter<any> = new EventEmitter()
 
-  constructor(
-    private activeStory: ActiveStoryService,
-    private sharedBoardService: SharedBoardService
-  ) {}
+  constructor(private activeStory: ActiveStoryService) {}
 
   unlinkJoin(joinId: string) {
     if (!this.answerId) return
@@ -27,12 +24,6 @@ export class JoinsManagerComponent {
       this.answerId,
       joinId
     )
-
-    // Instead of update joins, If I remove the join in activeStory, I can update the joins with a computed signal
-    // this.sharedBoardService.updatedJoins.next({
-    //   answerId: this.answerId,
-    //   joins: updatedJoins,
-    // })
 
     this.onRemoveJoin.emit(updatedJoins)
   }

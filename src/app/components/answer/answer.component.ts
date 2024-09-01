@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
-import { SharedBoardService } from 'src/app/components/board/board-utils.service'
+import { PanzoomService } from 'src/app/services/panzoom.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 
 @Component({
@@ -31,12 +31,12 @@ export class AnswerComponent {
   constructor(
     private activeStory: ActiveStoryService,
     public elementRef: ElementRef,
-    private sharedBoard: SharedBoardService
+    private panzoom: PanzoomService
   ) {}
 
   ngOnInit() {
     this.id = this.elementRef.nativeElement.id
-    if (this.sharedBoard.focusElements) {
+    if (this.panzoom.focusElements) {
       setTimeout(() => {
         const textarea = this.textarea
         if (textarea) textarea.nativeElement.focus()
@@ -56,11 +56,11 @@ export class AnswerComponent {
     const subscriptions: Array<any> = []
     subscriptions.push(
       ref.instance.onRemoveAnswer.subscribe(() => {
-        this.sharedBoard.resumeBoardDrag()
+        this.panzoom.resumeDrag()
         this.removeAnswer()
       }),
       ref.instance.onClosePopup.subscribe(() => {
-        this.sharedBoard.resumeBoardDrag()
+        this.panzoom.resumeDrag()
         ref.destroy()
         for (let subscription of subscriptions) {
           // I checked that if we don't unsubscribe, the subscription status closed is false even when I close the popup.

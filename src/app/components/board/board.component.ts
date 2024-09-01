@@ -1,13 +1,12 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
-import createPanZoom from 'panzoom'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from '../board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { combineTransforms } from 'src/app/utils/operations'
 import { node } from 'src/app/interfaces'
-import { SharedBoardService } from 'src/app/components/board/board-utils.service'
+import { PanzoomService } from 'src/app/services/panzoom.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { generateIDForNewNode } from 'src/app/utils/tree-searching'
 
@@ -25,12 +24,14 @@ import { generateIDForNewNode } from 'src/app/utils/tree-searching'
   styleUrls: ['./board.component.sass'],
 })
 export class BoardComponent {
-  @ViewChild('board') board?: ElementRef
+  @ViewChild('board') boardElement?: ElementRef
 
   @Input() grid?: boolean
   @Input() initialZoom?: number
   @Input() focusElements: boolean = true
   @Input() zoomable: boolean = true
+
+  nodeDragThrottle: any = null
 
   // Context menu
   contextMenuPosition = { x: 0, y: 0 }
@@ -45,38 +46,21 @@ export class BoardComponent {
   dragMouseOn?: any
 
   constructor(
+    public panzoom: PanzoomService,
     public activeStory: ActiveStoryService,
-    private sharedBoardService: SharedBoardService,
     private database: DatabaseService
   ) {}
 
   ngOnInit() {
     // Sets if the board elements should focus on create or not (for the landing page)
-    this.sharedBoardService.focusElements = this.focusElements
+    this.panzoom.focusElements = this.focusElements
   }
 
   ngAfterViewInit(): void {
-    //https://github.com/anvaka/panzoom
-    this.sharedBoardService.boardReference = createPanZoom(
-      this.board?.nativeElement,
-      {
-        maxZoom: 1,
-        minZoom: 0.4,
-        filterKey: function (/* e, dx, dy, dz */) {
-          // don't let panzoom handle this event:
-          return true
-        },
-        beforeWheel: (e) => {
-          if (this.zoomable) return
-          // allow wheel-zoom only if altKey is down. Otherwise - ignore
-          var shouldIgnore = !e.altKey
-          return shouldIgnore
-        },
-        initialZoom: this.initialZoom || 1,
-        zoomSpeed: 0.065,
-        zoomDoubleClickSpeed: 1,
-      }
-    )
+    this.panzoom.createPanzoomBoard(this.boardElement?.nativeElement, {
+      initialZoom: this.initialZoom,
+      zoomable: this.zoomable,
+    })
   }
 
   onRightClick(event: MouseEvent): void {
@@ -90,13 +74,8 @@ export class BoardComponent {
 
   public centerToNode(node: any) {
     if (!node) return
-    // TODO - Here we should calculate the correct transform taken into account the zoom level. Now it "works" but it's not perfect
-    const scale = this.sharedBoardService.boardReference.getTransform().scale
 
-    const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
-    const finalY = (-node.top + window.innerHeight / 2 - 200) * scale
-
-    this.sharedBoardService.boardReference.moveTo(finalX, finalY)
+    this.panzoom.centerToNode(node)
   }
 
   checkDragStart(event: any) {
@@ -158,29 +137,19 @@ export class BoardComponent {
     this.dragMouseOn = undefined
 
     // Resume board dragging
-    this.sharedBoardService.boardReference.resume()
+    this.panzoom.resumeDrag()
   }
 
-  focusNode(node: any) {
-    node.style.zIndex = 1
+  focusNode(event: any) {
+    if (event.target) event.target.style.zIndex = 1
   }
-  blurNode(node: any) {
-    node.style.zIndex = 0
+  blurNode(event: any) {
+    if (event.target) event.target.style.zIndex = 0
   }
-  mouseEnter(event: any) {
-    this.focusNode(event.target)
-  }
-  mouseLeave(event: any) {
-    this.blurNode(event.target)
-  }
-  stopDragging() {
-    this.sharedBoardService.boardReference.pause()
-  }
-  dragStarted(event: any) {
+  nodeDragStarted(event: any) {
     this.focusNode(event.source.element.nativeElement)
   }
-
-  dragReleased(event: any) {
+  nodeDragReleased(event: any) {
     const currentTransform = event.source.getRootElement().style.transform
     const finalTransform = combineTransforms(currentTransform)
 
@@ -192,14 +161,11 @@ export class BoardComponent {
       finalTransform.y
     )
   }
-
-  // Simple throttling to prevent call treeChanges too many times when dragging
-  timer: any = null
-  dragCheck() {
-    if (!this.timer) {
-      this.timer = setTimeout(() => {
+  nodeDragCheck() {
+    if (!this.nodeDragThrottle) {
+      this.nodeDragThrottle = setTimeout(() => {
         this.activeStory.activateTreeChangeEffects()
-        this.timer = null
+        this.nodeDragThrottle = null
       }, 10)
     }
   }

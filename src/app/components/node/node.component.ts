@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common'
 import { AnswerComponent } from '../answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { FormsModule } from '@angular/forms'
-import { SharedBoardService } from 'src/app/components/board/board-utils.service'
+import { PanzoomService } from 'src/app/services/panzoom.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
@@ -57,23 +57,21 @@ export class NodeComponent {
     shareButtonText: '',
   }
 
-  // Functionality of the node
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
-
-  @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
+
   @ViewChild('textarea') textarea?: ElementRef
 
   constructor(
     public elementRef: ElementRef,
-    private board: SharedBoardService,
+    private panzoom: PanzoomService,
     private database: DatabaseService,
     private activeStory: ActiveStoryService
   ) {}
 
   async ngOnInit() {
-    if (this.board.focusElements) {
+    if (this.panzoom.focusElements) {
       setTimeout(() => {
         this.textarea?.nativeElement.focus()
       }, 0)
@@ -159,6 +157,6 @@ export class NodeComponent {
     }
     this.removeNode.emit(data)
 
-    this.board.resumeBoardDrag()
+    this.panzoom.resumeDrag()
   }
 }
