@@ -60,7 +60,6 @@ export class NodeComponent {
   // Functionality of the node
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
 
-  @Output() onWillJoin: EventEmitter<any> = new EventEmitter()
   @Output() haveJoined: EventEmitter<any> = new EventEmitter()
   @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
@@ -161,9 +160,5 @@ export class NodeComponent {
     this.removeNode.emit(data)
 
     this.board.resumeBoardDrag()
-  }
-
-  join(type: 'answers' | 'node' = 'node') {
-    this.haveJoined.emit({ id: this.nodeId, type })
   }
 }

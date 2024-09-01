@@ -1,10 +1,6 @@
 <div class="node">
   <header>
-    <span
-      id="{{ nodeId + '_joiner' }}"
-      (click)="join('node')"
-      class="joiner"
-    ></span>
+    <span id="{{ nodeId + '_joiner' }}" class="joiner"></span>
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
       @if (type !== 'distributor') {
@@ -126,7 +122,6 @@
         <span
           id="{{ nodeId + '_joiner--answers' }}"
           class="joiner joiner--answers"
-          (click)="join('answers')"
         ></span>
         <polo-answer
           *ngFor="let answer of answers"

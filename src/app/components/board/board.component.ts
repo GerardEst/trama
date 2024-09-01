@@ -38,10 +38,8 @@ export class BoardComponent {
   @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
 
   // Joins
-  willJoinId?: string
   isDrawingJoin?: boolean = false
   throttled: any
-  hoveringNode?: any
 
   // For the drags
   isMouseDown: boolean = false
@@ -84,6 +82,27 @@ export class BoardComponent {
     )
   }
 
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault()
+
+    this.contextMenuPosition.x = event.offsetX
+    this.contextMenuPosition.y = event.offsetY
+
+    this.contextMenuActive = true
+  }
+
+  public centerToNode(node: any) {
+    if (!node) return
+    // TODO - Here we should calculate the correct transform taken into account the zoom level
+    // Now it "works" but it's not perfect
+    const scale = this.sharedBoardService.boardReference.getTransform().scale
+
+    const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
+    const finalY = (-node.top + window.innerHeight / 2 - 200) * scale
+
+    this.sharedBoardService.boardReference.moveTo(finalX, finalY)
+  }
+
   checkDragStart(event: any) {
     this.isMouseDown = true
 
@@ -96,19 +115,20 @@ export class BoardComponent {
 
     if (join) {
       this.isDrawingJoin = true
-      this.willJoin(answerId)
       this.dragStartedOn = event.target
     }
   }
 
   checkDrag(event: any) {
-    if (this.isMouseDown && this.willJoinId) {
+    if (this.isMouseDown && this.dragStartedOn) {
       this.isDragging = true
 
+      // Mira si estem passant per sobre un node o les seves answers
       const hoverOnNodePart =
         event.target.closest('.node__answers') || event.target.closest('.node')
       const joinerOnPart = hoverOnNodePart?.querySelector('.joiner')
 
+      // Si no estem sobre la part d'un node, passem la posició del ratolí
       this.dragMouseOn = joinerOnPart || {
         left: event.offsetX,
         top: event.offsetY,
@@ -118,50 +138,39 @@ export class BoardComponent {
 
   checkDragStop(event: any) {
     this.isMouseDown = false
+    // TODO - isMouseDown i isDragging tots dos calen??
     this.isDragging = false
-    this.dragStartedOn = undefined
 
     console.log('Stop dragging (if we were dragging)')
 
     if (this.isDrawingJoin) {
-      if (this.hoveringNode) {
-        this.haveJoined({
-          id: this.hoveringNode.id,
-          type: this.dragMouseOn.classList.contains('joiner--answers')
-            ? 'answers'
-            : 'node',
-        })
+      if (this.dragMouseOn instanceof HTMLElement) {
+        const nodeId = this.dragMouseOn.closest('polo-node')?.id
+        if (!nodeId) return
+
+        const originId =
+          this.dragStartedOn.closest('polo-answer')?.id ||
+          this.dragStartedOn.closest('polo-condition')?.id ||
+          this.dragStartedOn.closest('polo-node')?.id
+
+        // TODO - potser aquet dragStartedOn id no és el que necessita updateJoinOfOption
+        this.activeStory.updateJoinOfOption(
+          originId,
+          nodeId,
+          this.dragMouseOn.classList.contains('joiner--answers')
+        )
+        console.log('current tree:', this.activeStory.entireTree())
       } else {
         this.addNode(event, 'content')
       }
-      this.willJoinId = undefined
       this.isDrawingJoin = false
     }
 
+    this.dragStartedOn = undefined
     this.dragMouseOn = undefined
-    // Resume dragging
+
+    // Resume board dragging
     this.sharedBoardService.boardReference.resume()
-  }
-
-  onRightClick(event: MouseEvent): void {
-    event.preventDefault()
-
-    this.contextMenuPosition.x = event.offsetX
-    this.contextMenuPosition.y = event.offsetY
-
-    this.contextMenuActive = true
-  }
-
-  public centerToNode(node: any) {
-    if (!node) return
-    // Here we should calculate the correct transform taken into account the zoom level
-    // Now it "works" but it's not perfect
-    const scale = this.sharedBoardService.boardReference.getTransform().scale
-
-    const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
-    const finalY = (-node.top + window.innerHeight / 2 - 200) * scale
-
-    this.sharedBoardService.boardReference.moveTo(finalX, finalY)
   }
 
   focusNode(node: any) {
@@ -172,20 +181,13 @@ export class BoardComponent {
   }
   mouseEnter(event: any) {
     this.focusNode(event.target)
-
-    // Si estem fent drag, el mouseEnter i leave ens han de servir per anar sabent on està el ratolí
-    this.hoveringNode = event.target
   }
   mouseLeave(event: any) {
     this.blurNode(event.target)
-
-    this.hoveringNode = undefined
   }
-
   stopDragging() {
     this.sharedBoardService.boardReference.pause()
   }
-
   dragStarted(event: any) {
     this.focusNode(event.source.element.nativeElement)
   }
@@ -201,23 +203,6 @@ export class BoardComponent {
       finalTransform.x,
       finalTransform.y
     )
-  }
-
-  willJoin(answerId: string) {
-    console.log(answerId + ' will join')
-
-    this.willJoinId = answerId
-  }
-  haveJoined({ id: nodeId, type }: { id: string; type: 'answers' | 'node' }) {
-    if (!this.willJoinId) return
-
-    this.activeStory.updateJoinOfOption(
-      this.willJoinId,
-      nodeId,
-      type === 'answers'
-    )
-
-    console.log('current tree:', this.activeStory.entireTree())
   }
 
   // Simple throttling to prevent call treeChanges too many times when dragging
@@ -255,13 +240,18 @@ export class BoardComponent {
       return
     }
 
-    if (this.willJoinId) {
+    if (this.dragStartedOn) {
       const newNodeInfo = this.createNode(
         { top: event.offsetY, left: event.offsetX },
         type
       )
 
-      this.activeStory.updateJoinOfOption(this.willJoinId, newNodeInfo.id)
+      const originId =
+        this.dragStartedOn.closest('polo-answer')?.id ||
+        this.dragStartedOn.closest('polo-condition')?.id ||
+        this.dragStartedOn.closest('polo-node')?.id
+
+      this.activeStory.updateJoinOfOption(originId, newNodeInfo.id)
     }
   }
 
