@@ -32,18 +32,15 @@ export class BoardComponent {
   @Input() focusElements: boolean = true
   @Input() zoomable: boolean = true
 
-  // context menu
+  // Context menu
   contextMenuPosition = { x: 0, y: 0 }
   contextMenuActive = false
   @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
 
-  // Joins
+  // Drags to join
+  isMouseDown: boolean = false
   isDrawingJoin?: boolean = false
   throttled: any
-
-  // For the drags
-  isMouseDown: boolean = false
-  isDragging: boolean = false
   dragStartedOn?: any
   dragMouseOn?: any
 
@@ -93,8 +90,7 @@ export class BoardComponent {
 
   public centerToNode(node: any) {
     if (!node) return
-    // TODO - Here we should calculate the correct transform taken into account the zoom level
-    // Now it "works" but it's not perfect
+    // TODO - Here we should calculate the correct transform taken into account the zoom level. Now it "works" but it's not perfect
     const scale = this.sharedBoardService.boardReference.getTransform().scale
 
     const finalX = (-node.left + window.innerWidth / 2 - 100) * scale
@@ -108,10 +104,6 @@ export class BoardComponent {
 
     // Mirem si ha començat dins un joiner
     const join = event.target.classList.contains('union_point')
-    const answerId =
-      event.target.closest('polo-condition')?.id ||
-      event.target.closest('polo-answer')?.id ||
-      event.target.closest('polo-node')?.id
 
     if (join) {
       this.isDrawingJoin = true
@@ -121,8 +113,6 @@ export class BoardComponent {
 
   checkDrag(event: any) {
     if (this.isMouseDown && this.dragStartedOn) {
-      this.isDragging = true
-
       // Mira si estem passant per sobre un node o les seves answers
       const hoverOnNodePart =
         event.target.closest('.node__answers') || event.target.closest('.node')
@@ -138,8 +128,6 @@ export class BoardComponent {
 
   checkDragStop(event: any) {
     this.isMouseDown = false
-    // TODO - isMouseDown i isDragging tots dos calen??
-    this.isDragging = false
 
     console.log('Stop dragging (if we were dragging)')
 

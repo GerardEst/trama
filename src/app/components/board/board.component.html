@@ -1,7 +1,7 @@
 <div
   #board
   class="board"
-  [class.isDragging]="isDragging"
+  [class.isJoining]="isDrawingJoin"
   [class.board--grid]="grid"
   (contextmenu)="onRightClick($event)"
   (mousedown)="checkDragStart($event)"
