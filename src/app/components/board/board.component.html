@@ -3,7 +3,6 @@
   class="board"
   [class.isJoining]="isDrawingJoin"
   [class.board--grid]="grid"
-  (contextmenu)="onRightClick($event)"
   (mousedown)="checkDragStart($event)"
   (mousemove)="checkDrag($event)"
   (mouseup)="checkDragStop($event)"

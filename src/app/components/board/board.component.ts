@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core'
+import { Component, ElementRef, Input, ViewChild,HostListener } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
@@ -45,6 +45,23 @@ export class BoardComponent {
   dragStartedOn?: any
   dragMouseOn?: any
 
+  @HostListener('window:keydown.escape', ['$event'])
+  handleEscape(event: KeyboardEvent) {
+    if (this.isDrawingJoin) {
+      this.cancelDragging()
+    }
+  }
+
+  @HostListener('window:contextmenu', ['$event'])
+  handleRightClick(event: MouseEvent) {
+    event.preventDefault(); // Prevent the default context menu from appearing
+    if (this.isDrawingJoin) {
+      this.cancelDragging()
+    } else {
+      this.openContextMenu(event)
+    }
+  }
+  
   constructor(
     public panzoom: PanzoomService,
     public activeStory: ActiveStoryService,
@@ -63,13 +80,17 @@ export class BoardComponent {
     })
   }
 
-  onRightClick(event: MouseEvent): void {
+  openContextMenu(event: MouseEvent): void {
     event.preventDefault()
 
     this.contextMenuPosition.x = event.offsetX
     this.contextMenuPosition.y = event.offsetY
 
     this.contextMenuActive = true
+    console.log("asdasd")
+    if (this.isDrawingJoin) {
+      console.log("close")
+    }
   }
 
   public centerToNode(node: any) {
@@ -106,6 +127,9 @@ export class BoardComponent {
   }
 
   checkDragStop(event: any) {
+    // Ignore if it's not the left mouse button
+    if (event.button !== 0) return
+
     this.isMouseDown = false
 
     console.log('Stop dragging (if we were dragging)')
@@ -138,6 +162,13 @@ export class BoardComponent {
 
     // Resume board dragging
     this.panzoom.resumeDrag()
+  }
+  cancelDragging() {
+    console.log('Stop dragging (if we were dragging)')
+
+    this.dragStartedOn = undefined
+    this.dragMouseOn = undefined
+    this.isDrawingJoin = false
   }
 
   focusNode(event: any) {
