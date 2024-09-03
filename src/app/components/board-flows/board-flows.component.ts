@@ -137,20 +137,17 @@ export class BoardFlowsComponent {
     return paths
   }
 
-  // Revised getPositionOfElement function to use convertToSvgCoordinates
   getPositionOfElement(element: any) {
     const childElement =
       typeof element === 'string' ? document.getElementById(element) : element
     if (!childElement || !this.svg) return null
 
-    const childRect = childElement.getBoundingClientRect() // Get the bounding rect of the element
+    const childRect = childElement.getBoundingClientRect()
 
-    // Calculate the center of the child element in screen coordinates
     const centerX = childRect.left + childRect.width / 2
     const centerY = childRect.top + childRect.height / 2
 
-    // Convert screen coordinates to SVG coordinates
-    const svgPosition = this.getSvgPoint(
+    const svgPosition = this.convertScreenCoordinatesToSVGCoordinates(
       this.svg.nativeElement,
       centerX,
       centerY
@@ -162,29 +159,15 @@ export class BoardFlowsComponent {
     }
   }
 
-  getSvgPoint(svgElement: any, x: any, y: any) {
-    // Create an SVG point for coordinates
+  convertScreenCoordinatesToSVGCoordinates(svgElement: any, x: any, y: any) {
     const point = svgElement.createSVGPoint()
     point.x = x
     point.y = y
+
     // Convert to SVG space using the current transformation matrix
     const transformedPoint = point.matrixTransform(
       svgElement.getScreenCTM().inverse()
     )
-    return transformedPoint
-  }
-
-  convertToSvgCoordinates(svgElement: any, point: any) {
-    const svgPoint = svgElement.createSVGPoint() // Create an SVGPoint object
-    svgPoint.x = point.left // Set the x coordinate
-    svgPoint.y = point.top // Set the y coordinate
-
-    // Apply the transformation matrix from screen to SVG coordinates
-    const transformedPoint = svgPoint.matrixTransform(
-      svgElement.getScreenCTM().inverse()
-    )
-
-    console.log(transformedPoint)
 
     return transformedPoint
   }
