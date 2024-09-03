@@ -1,4 +1,10 @@
-import { Component, ElementRef, Input, ViewChild,HostListener } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+  HostListener,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from '../node/node.component'
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
@@ -48,20 +54,20 @@ export class BoardComponent {
   @HostListener('window:keydown.escape', ['$event'])
   handleEscape(event: KeyboardEvent) {
     if (this.isDrawingJoin) {
-      this.cancelDragging()
+      this.stopDragging()
     }
   }
 
   @HostListener('window:contextmenu', ['$event'])
   handleRightClick(event: MouseEvent) {
-    event.preventDefault(); // Prevent the default context menu from appearing
+    event.preventDefault() // Prevent the default context menu from appearing
     if (this.isDrawingJoin) {
-      this.cancelDragging()
+      this.stopDragging()
     } else {
       this.openContextMenu(event)
     }
   }
-  
+
   constructor(
     public panzoom: PanzoomService,
     public activeStory: ActiveStoryService,
@@ -87,10 +93,6 @@ export class BoardComponent {
     this.contextMenuPosition.y = event.offsetY
 
     this.contextMenuActive = true
-    console.log("asdasd")
-    if (this.isDrawingJoin) {
-      console.log("close")
-    }
   }
 
   public centerToNode(node: any) {
@@ -132,9 +134,9 @@ export class BoardComponent {
 
     this.isMouseDown = false
 
-    console.log('Stop dragging (if we were dragging)')
+    const isNotInTheSamePlaceItStarted = event.target !== this.dragStartedOn
 
-    if (this.isDrawingJoin) {
+    if (this.isDrawingJoin && isNotInTheSamePlaceItStarted) {
       if (this.dragMouseOn instanceof HTMLElement) {
         const nodeId = this.dragMouseOn.closest('polo-node')?.id
         if (!nodeId) return
@@ -144,7 +146,6 @@ export class BoardComponent {
           this.dragStartedOn.closest('polo-condition')?.id ||
           this.dragStartedOn.closest('polo-node')?.id
 
-        // TODO - potser aquet dragStartedOn id no és el que necessita updateJoinOfOption
         this.activeStory.updateJoinOfOption(
           originId,
           nodeId,
@@ -154,18 +155,14 @@ export class BoardComponent {
       } else {
         this.addNode(event, 'content')
       }
-      this.isDrawingJoin = false
     }
 
-    this.dragStartedOn = undefined
-    this.dragMouseOn = undefined
+    this.stopDragging()
 
-    // Resume board dragging
     this.panzoom.resumeDrag()
   }
-  cancelDragging() {
-    console.log('Stop dragging (if we were dragging)')
 
+  stopDragging() {
     this.dragStartedOn = undefined
     this.dragMouseOn = undefined
     this.isDrawingJoin = false
