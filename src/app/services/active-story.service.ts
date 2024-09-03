@@ -468,6 +468,16 @@ export class ActiveStoryService {
       node.fallbackCondition.join.push({ node: destinyNodeId, toAnswer })
     } else if (optionNodeType === 'node') {
       const willJoinNode = findNodeInTree(originId, this.entireTree())
+
+      const duplicatedJoin = willJoinNode.join?.find((join: any) => {
+        return join.node === destinyNodeId && join.toAnswer === toAnswer
+      })
+
+      if (duplicatedJoin) {
+        console.log('Duplicated join. Skip creation')
+        return
+      }
+
       if (willJoinNode.join) {
         willJoinNode.join.push({ node: destinyNodeId, toAnswer })
       } else {
@@ -479,7 +489,7 @@ export class ActiveStoryService {
       )
 
       const duplicatedJoin = option[0].join?.find((join: any) => {
-        return join.node === destinyNodeId
+        return join.node === destinyNodeId && join.toAnswer === toAnswer
       })
 
       if (duplicatedJoin) {
