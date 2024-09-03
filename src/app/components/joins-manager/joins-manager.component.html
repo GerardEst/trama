@@ -1,7 +1,7 @@
 <div class="join" *ngFor="let join of joins">
-  <p>{{ join.node }}</p>
+  <p>{{ join.node }} {{ join.toAnswer ? 'answers' : '' }}</p>
   <polo-basic-button
-    (click)="unlinkJoin(join.node)"
+    (click)="unlinkJoin(join.node, join.toAnswer)"
     text="Unlink"
   ></polo-basic-button>
 </div>

@@ -86,13 +86,17 @@ export class BoardComponent {
     })
   }
 
-  openContextMenu(event: MouseEvent): void {
+  openContextMenu(event: MouseEvent) {
     event.preventDefault()
 
     this.contextMenuPosition.x = event.offsetX
     this.contextMenuPosition.y = event.offsetY
 
     this.contextMenuActive = true
+  }
+
+  closeContextMenu() {
+    this.contextMenuActive = false
   }
 
   public centerToNode(node: any) {

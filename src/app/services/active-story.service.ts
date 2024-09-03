@@ -509,19 +509,20 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
-  removeJoinFromAnswer(answerId: string, nodeId: string) {
+  removeJoinFromAnswer(answerId: string, nodeId: string, toAnswer: boolean) {
     const answer = findAnswerInTree(answerId, this.entireTree())
 
     if (answer.join) {
       answer.join = answer.join.filter((join: any) => {
-        return join.node !== nodeId
+        return !(join.node === nodeId && join.toAnswer === toAnswer)
       })
     }
 
     this.activateTreeChangeEffects()
 
     // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    const saved = this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    if (!saved) return false
 
     return answer.join
   }

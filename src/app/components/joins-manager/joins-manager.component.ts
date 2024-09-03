@@ -17,12 +17,13 @@ export class JoinsManagerComponent {
 
   constructor(private activeStory: ActiveStoryService) {}
 
-  unlinkJoin(joinId: string) {
+  unlinkJoin(joinId: string, toAnswer: boolean) {
     if (!this.answerId) return
 
     const updatedJoins = this.activeStory.removeJoinFromAnswer(
       this.answerId,
-      joinId
+      joinId,
+      toAnswer
     )
 
     this.onRemoveJoin.emit(updatedJoins)

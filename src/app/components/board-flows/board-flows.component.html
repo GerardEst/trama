@@ -1,4 +1,21 @@
-<svg #svg width="100%" height="100%" preserveAspectRatio="none">
+@if (showContextMenuCursor) {
+  <div #openContextCursor class="openContextCursor"></div>
+}
+<div
+  #joinContextMenu
+  [class.hideContextMenu]="!showJoinContextMenu"
+  class="joinContextMenu"
+>
+  <button (click)="deleteJoin()">Delete join</button>
+</div>
+
+<svg
+  #svg
+  width="100%"
+  height="100%"
+  preserveAspectRatio="none"
+  [class.hideCursor]="showContextMenuCursor"
+>
   @if (drawingFrom) {
     <path
       [attr.d]="getDrawingPath(drawingFrom, drawingTo)"
@@ -9,13 +26,28 @@
       fill="transparent"
     ></path>
   }
-  @for (line of paths(); track $index) {
-    <path
-      [attr.d]="line"
-      stroke-width="1"
-      stroke="#cccccc"
-      style="pointer-events: none"
-      fill="transparent"
-    ></path>
+  @for (path of paths(); track path.id) {
+    <g
+      class="pathGroup"
+      (mouseenter)="changeCursorStyle(true)"
+      (mouseleave)="changeCursorStyle(false)"
+      (mousemove)="setCursorAndContextMenuPosition($event)"
+      (click)="
+        openJoinContext($event, path.origin, path.destiny, path.toAnswer)
+      "
+    >
+      <path
+        [attr.d]="path.svgPath"
+        stroke-width="20"
+        stroke="transparent"
+        fill="transparent"
+      ></path>
+      <path
+        [attr.d]="path.svgPath"
+        stroke-width="1"
+        stroke="#cccccc"
+        fill="transparent"
+      ></path>
+    </g>
   }
 </svg>
