@@ -121,10 +121,7 @@ export class BoardComponent {
       const joinerOnPart = hoverOnNodePart?.querySelector('.joiner')
 
       // Si no estem sobre la part d'un node, passem la posició del ratolí
-      this.dragMouseOn = joinerOnPart || {
-        left: event.offsetX,
-        top: event.offsetY,
-      }
+      this.dragMouseOn = joinerOnPart || event
     }
   }
 

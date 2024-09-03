@@ -31,7 +31,6 @@ export class PanzoomService {
       zoomSpeed: 0.065,
       zoomDoubleClickSpeed: 1,
     })
-    console.log(this.boardReference)
   }
 
   resumeDrag() {

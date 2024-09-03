@@ -10,11 +10,6 @@ import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { node } from 'src/app/interfaces'
 
-interface mousePosition {
-  left: number
-  top: number
-}
-
 @Component({
   selector: 'polo-board-flows',
   standalone: true,
@@ -41,7 +36,7 @@ export class BoardFlowsComponent {
 
   getDrawingPath(
     initialElement: string,
-    finalPosition: HTMLElement | mousePosition
+    finalPosition: HTMLElement | MouseEvent
   ) {
     if (!finalPosition) return
 
@@ -54,8 +49,8 @@ export class BoardFlowsComponent {
     const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
       startDivPosition?.left + this.flowOptions.pcurvature
     },${startDivPosition?.top} ${
-      finalPosition?.left + this.flowOptions.ncurvature
-    },${finalPosition?.top} ${finalPosition?.left},${finalPosition?.top}`
+      finalPosition?.offsetX + this.flowOptions.ncurvature
+    },${finalPosition?.offsetY} ${finalPosition?.offsetX},${finalPosition?.offsetY}`
 
     return path
   }
@@ -65,18 +60,18 @@ export class BoardFlowsComponent {
     const endDivPosition = this.getPositionOfElement(finalElement)
 
     if (!startDivPosition || !endDivPosition) {
-      console.warn('Cannot get the path of unexistent element', {
+      console.warn('Cannot get the path of non-existent element', {
         initialElement,
         finalElement,
       })
       return
     }
 
-    const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
-      startDivPosition?.left + this.flowOptions.pcurvature
-    },${startDivPosition?.top} ${
-      endDivPosition?.left + this.flowOptions.ncurvature
-    },${endDivPosition?.top} ${endDivPosition?.left},${endDivPosition?.top}`
+    const path = `M${startDivPosition.left},${startDivPosition.top} C${
+      startDivPosition.left + this.flowOptions.pcurvature
+    },${startDivPosition.top} ${
+      endDivPosition.left + this.flowOptions.ncurvature
+    },${endDivPosition.top} ${endDivPosition.left},${endDivPosition.top}`
 
     return path
   }
@@ -84,14 +79,6 @@ export class BoardFlowsComponent {
   // Builds all the paths needed
   calculatePaths(nodes: node[]) {
     console.warn('Calculating paths')
-    const svgContainer = this.svg?.nativeElement
-    if (!svgContainer)
-      return console.log('svgContainer still not present. Skipping.')
-    const mapSize = svgContainer?.getBoundingClientRect()
-    svgContainer.setAttribute(
-      'viewBox',
-      `0 0 ${mapSize.width} ${mapSize.height}`
-    )
 
     const paths: any = []
     if (!nodes) return paths
@@ -150,21 +137,55 @@ export class BoardFlowsComponent {
     return paths
   }
 
-  getPositionOfElement(element: string | HTMLElement) {
+  // Revised getPositionOfElement function to use convertToSvgCoordinates
+  getPositionOfElement(element: any) {
     const childElement =
       typeof element === 'string' ? document.getElementById(element) : element
-    const parentRect = this.svg?.nativeElement.getBoundingClientRect()
-    const childRect = childElement?.getBoundingClientRect()
+    if (!childElement || !this.svg) return null
 
-    if (childRect) {
-      const lineX = childRect.left + (childRect.right - childRect.left) / 2
-      const lineY = childRect.top + (childRect.bottom - childRect.top) / 2
-      const relativePosition = {
-        top: lineY - parentRect.top,
-        left: lineX - parentRect.left,
-      }
-      return relativePosition
+    const childRect = childElement.getBoundingClientRect() // Get the bounding rect of the element
+
+    // Calculate the center of the child element in screen coordinates
+    const centerX = childRect.left + childRect.width / 2
+    const centerY = childRect.top + childRect.height / 2
+
+    // Convert screen coordinates to SVG coordinates
+    const svgPosition = this.getSvgPoint(
+      this.svg.nativeElement,
+      centerX,
+      centerY
+    )
+
+    return {
+      left: svgPosition.x,
+      top: svgPosition.y,
     }
-    return null
+  }
+
+  getSvgPoint(svgElement: any, x: any, y: any) {
+    // Create an SVG point for coordinates
+    const point = svgElement.createSVGPoint()
+    point.x = x
+    point.y = y
+    // Convert to SVG space using the current transformation matrix
+    const transformedPoint = point.matrixTransform(
+      svgElement.getScreenCTM().inverse()
+    )
+    return transformedPoint
+  }
+
+  convertToSvgCoordinates(svgElement: any, point: any) {
+    const svgPoint = svgElement.createSVGPoint() // Create an SVGPoint object
+    svgPoint.x = point.left // Set the x coordinate
+    svgPoint.y = point.top // Set the y coordinate
+
+    // Apply the transformation matrix from screen to SVG coordinates
+    const transformedPoint = svgPoint.matrixTransform(
+      svgElement.getScreenCTM().inverse()
+    )
+
+    console.log(transformedPoint)
+
+    return transformedPoint
   }
 }
