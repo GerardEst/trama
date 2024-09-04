@@ -1,5 +1,5 @@
 <menu>
-  <p class="logo">tap<sup>(beta)</sup></p>
+  <p class="logo">textandplay <sup>(beta)</sup></p>
   <div class="links">
     <!--a href="#features">Features</a>
     <a href="#examples">Examples</a>
@@ -36,9 +36,9 @@
       <polo-accent-button
         (click)="router.navigate(['/dashboard'])"
         [fill]="true"
-        >Log in</polo-accent-button
+        >Start create! (It's free)</polo-accent-button
       >
-      <p (click)="openExampleSource()">Check the source of this example</p>
+      <polo-accent-button  [fill]="false" (click)="openExampleSource()">Modify this example</polo-accent-button>
     </div>
   </div>
   <section
@@ -62,34 +62,78 @@
     </div>
   </section>
 </section>
-<div class="editorModal" [class.active]="showEditor">
-  <div class="editor">
-    <div class="section--editor__title">
-      <div>
-        <h2>Editor preview</h2>
-        <polo-basic-button
-          (click)="closeExampleSource()"
-          text="Close"
-        ></polo-basic-button>
-      </div>
-      <p>
-        This is a preview of the Textandplay editor. Here you can see the
-        example of the home, the nodes and joins on them, and you can play with
-        it.
-      </p>
-      <p>Move around dragging the board</p>
-      <p>Zoom with the wheel + option / ctrl</p>
-      <p>Right click to create nodes</p>
+@if(showEditor){
+  <div class="editorModal">
+    <div class="editor">
+      <polo-board
+        #board
+        [initialZoom]="0.8"
+        [grid]="true"
+        [focusElements]="false"
+        [zoomable]="false"
+      ></polo-board>
     </div>
-    <polo-board
-      #board
-      [initialZoom]="0.8"
-      [grid]="true"
-      [focusElements]="false"
-      [zoomable]="false"
-    ></polo-board>
   </div>
-</div>
+}
+
+<section style="position: relative;
+    width: 100%;
+    background-color: white;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    background-position: 44px 44px;
+    background-size: 40px 40px;
+    background-image: radial-gradient(rgb(205 210 255) 2%, transparent 9%)">
+  <div style="width: 90%;
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    border-radius: 100% 100% 0 0;
+    background-color: #ffffff;
+    filter: blur(70px);"></div>
+  <div
+    style="
+      padding: 80px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      width: 100%;
+      max-width: 1000px;
+      z-index: 1;
+    ">
+    <div class="card">
+      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
+      <div class="card__text">
+        <h3>Great flow control</h3>
+        <p>With our flow control features, you can lead your users to specific points depending on their previuos actions</p>
+      </div>
+    </div>
+    <div class="card">
+      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
+      <div class="card__text">
+      <h3>Build & share in a breeze</h3>
+      <p>Login, write and join some nodes, and share the link to let people take the test. No extra steps, as easy as possible</p>
+      </div>
+    </div>
+    <div class="card">
+      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
+      <div class="card__text">
+        <h3>Know your users</h3>
+        <span class="card__payment">Paid feature</span>
+        <p>Analyze the results deeply, from how many users choose a specific answer, to all the paths users have followed, and much more</p>
+      </div>
+    </div>
+    <div class="card">
+      <img class="card__image" src="/assets/images/landing/sell_unleash_creativity.webp" />
+      <div class="card__text">
+        <h3>Unleash your creativity</h3>
+        <p>Use our powerful nodes to create whatever you want, from a simple test to a large and epic text adventure!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="build" style="padding: 60px 30px">
   <h1>Your building tools</h1>
   <div class="cardList">
@@ -140,31 +184,7 @@
     </div>
   </div>
 </section>
-<section id="share" style="padding: 100px 30px">
-  <div class="share__content">
-    <img
-      class="share__content__example"
-      src="assets/images/landing/mobile.png"
-    />
-    <div class="share__content__text">
-      <h1>Share easily</h1>
-      <p>Share everywhere, with just a link</p>
-      <ul>
-        <li>Use the ending path that you want: textandplay.com/yourown</li>
-        <li>Share the link or embed it on your site!</li>
-        <li>Allow users to share the story with a Share button at the end</li>
-        <li>
-          Enable tracking to see how many users played, which were their
-          choices, and more
-        </li>
-        <li>
-          Choose between some styles and functionalities to make the experience
-          unique
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+
 <section id="pricing" class="pricingSection" style="padding: 60px 30px">
   <h1>Pricing</h1>
   <div class="pricingBoxes">
@@ -174,11 +194,14 @@
         <p>Free</p>
       </div>
       <ul class="priceFeatures">
-        <li>Create up to 10 stories</li>
+        <li>Unlimited stories</li>
         <li>Unlimited nodes</li>
         <li>Unlimited images</li>
-        <li>Events and requirements</li>
-        <li>Basic customization options</li>
+        <li>All types of nodes</li>
+        <li>Full flow control</li>
+        <li>Text interpolations</li>
+        <li>Customization options</li>
+        <li>Custom join probabilities</li>
       </ul>
       <polo-accent-button
         (click)="router.navigate(['/dashboard'])"
@@ -192,11 +215,7 @@
         <p>2.95€/month</p>
       </div>
       <ul class="priceFeatures">
-        <li>Unlimited stories</li>
         <li>No ads</li>
-        <li>Custom join probabilities</li>
-        <li>Text interpolations</li>
-        <li>Distributor nodes</li>
       </ul>
       <polo-accent-button
         (click)="router.navigate(['/dashboard'])"

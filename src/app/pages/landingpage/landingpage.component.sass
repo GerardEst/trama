@@ -8,6 +8,7 @@
   display: flex
   flex-direction: column
   align-items: center
+
 menu
   position: fixed
   width: calc(100% - 20px)
@@ -40,13 +41,21 @@ menu
 h1
   font-size: 3rem
   color: var(--accent)
-h2, h3
+  color: dimgray
+h2
   font-size: 2rem
   color: var(--accent)
+  color: dimgray
+h3
+  font-size: 1.3rem
+  color: var(--accent)
+  color: dimgray
+  line-height: 1.5
 p, a, li
   font-size: 1.1rem
   line-height: 1.5
   color: var(--accent-text)
+  color: dimgray
 
 .flowsWordDetail
   text-decoration: underline
@@ -160,18 +169,17 @@ footer
     font-size: 0.8rem
 
 .editorModal
-  display: none
   position: fixed
   top: 0
   left: 0
-  width: 100%
-  height: 100%
+  width: calc(100% - 100px)
+  height: calc(100% - 300px)
   z-index: 3
   &.active
     display: block
 .editor
   position: relative
-  height: calc(100vh - 100px)
+  height: calc(100vh - 300px)
   overflow: hidden
   border-radius: 20px
   background-color: white
@@ -211,3 +219,41 @@ footer
     grid-template-columns: 1fr 1fr
     &__example
       width: 200px
+.adventure
+  width: 100%
+  height: 100%
+  background-color: white
+
+.sell
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+
+.card
+  display: flex
+  flex-direction: column
+  align-items: center
+  &__image
+    width: 60%
+  &__text
+    position: relative
+    flex: 1
+    //background-color: #f1f1f1
+    border: 1px solid gray
+    border-radius: 15px
+    padding: 2.5rem
+    //background: rgb(251,238,164)
+    //background: linear-gradient(331deg, rgba(251,238,164,1) 0%, rgba(254,0,0,1) 100%)
+    //box-shadow: var(--shadow-elevation-medium)
+    //border: 2px solid black
+  &__payment
+    position: absolute
+    top: 0
+    right: 0
+    background-color: #ffe86e
+    display: flex
+    align-items: center
+    padding: 0.6rem 1rem
+    border-radius: 5px
+    font-family: monospace
+    transform: rotate(13deg) translate(27px, -8px)
+    box-shadow: 0px 0px 0px 4px #fff9d9
