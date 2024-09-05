@@ -1,247 +1,144 @@
 <menu>
   <p class="logo">textandplay <sup>(beta)</sup></p>
-  <div class="links">
-    <!--a href="#features">Features</a>
-    <a href="#examples">Examples</a>
-    <a href="#pricing">Pricing (I'm joking, it's free)</a-->
-  </div>
   <div class="login">
     @if (checkedLoggedUser) {
-      <polo-accent-button
-        (click)="router.navigate(['/dashboard'])"
-        [fill]="true"
-        >{{ loggedUser ? 'Dashboard' : 'Login' }}</polo-accent-button
-      >
+      <polo-landing-button
+        behaviour="link"
+        destiny="/dashboard"
+        text="{{ loggedUser ? 'Dashboard' : 'Login' }}"
+      ></polo-landing-button>
     }
   </div>
 </menu>
-<section
-  class="content"
-  style="
-    padding: 0;
-    height: 100vh;
-    align-items: center;
-    margin: 0 90px;
-    display: flex;
-    max-width: 1000px;
-  "
->
-  <div class="text" style="flex: 1">
-    <h1>Create interactive stories and tests</h1>
-    <h2 style="font-size: 1.5rem; font-weight: 400; line-height: 2.5rem">
-      Textandplay allows you to easily create interactive stories and tests,
-      share them and get insights of the user choices
-    </h2>
-    <div style="display: flex; gap: 1rem; align-items: center">
-      <polo-accent-button
-        (click)="router.navigate(['/dashboard'])"
-        [fill]="true"
-        >Start create! (It's free)</polo-accent-button
-      >
-      <polo-accent-button  [fill]="false" (click)="openExampleSource()">Modify this example</polo-accent-button>
-    </div>
-  </div>
-  <section
-    style="
-      margin: 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      padding: 1rem;
-    "
-    class="section--mobile"
-  >
-    <div class="mobile">
-      <div class="mobile__back"></div>
-      <div class="mobile__screen">
-        <div class="mobile__screen__camera"></div>
-        <polo-game customStyles="modern" mode="single"></polo-game>
-      </div>
-    </div>
-  </section>
-</section>
-@if(showEditor){
-  <div class="editorModal">
-    <div class="editor">
-      <polo-board
-        #board
-        [initialZoom]="0.8"
-        [grid]="true"
-        [focusElements]="false"
-        [zoomable]="false"
-      ></polo-board>
-    </div>
-  </div>
-}
-
-<section style="position: relative;
-    width: 100%;
-    background-color: white;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    background-position: 44px 44px;
-    background-size: 40px 40px;
-    background-image: radial-gradient(rgb(205 210 255) 2%, transparent 9%)">
-  <div style="width: 90%;
-    width: 100%;
-    position: absolute;
-    height: 100%;
-    border-radius: 100% 100% 0 0;
-    background-color: #ffffff;
-    filter: blur(70px);"></div>
-  <div
-    style="
-      padding: 80px 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
-      width: 100%;
-      max-width: 1000px;
-      z-index: 1;
-    ">
-    <div class="card">
-      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
-      <div class="card__text">
-        <h3>Great flow control</h3>
-        <p>With our flow control features, you can lead your users to specific points depending on their previuos actions</p>
-      </div>
-    </div>
-    <div class="card">
-      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
-      <div class="card__text">
-      <h3>Build & share in a breeze</h3>
-      <p>Login, write and join some nodes, and share the link to let people take the test. No extra steps, as easy as possible</p>
-      </div>
-    </div>
-    <div class="card">
-      <img class="card__image" src="/assets/images/landing/sell_flow_control.webp" />
-      <div class="card__text">
-        <h3>Know your users</h3>
-        <span class="card__payment">Paid feature</span>
-        <p>Analyze the results deeply, from how many users choose a specific answer, to all the paths users have followed, and much more</p>
-      </div>
-    </div>
-    <div class="card">
-      <img class="card__image" src="/assets/images/landing/sell_unleash_creativity.webp" />
-      <div class="card__text">
-        <h3>Unleash your creativity</h3>
-        <p>Use our powerful nodes to create whatever you want, from a simple test to a large and epic text adventure!</p>
-      </div>
-    </div>
+<section>
+  <h1>Create interactive stories and tests</h1>
+  <h2>
+    Textandplay allows you to easily create interactive stories and tests, share
+    them and get insights of the user choices
+  </h2>
+  <div>
+    <polo-landing-button
+      destiny="/dashboard"
+      text="Start create! (It's free 😉)"
+    ></polo-landing-button>
+    <polo-landing-button (click)="openExampleSource()"
+      >Modify this example</polo-landing-button
+    >
   </div>
 </section>
 
-<section id="build" style="padding: 60px 30px">
-  <h1>Your building tools</h1>
-  <div class="cardList">
-    <div class="featureCard">
-      <img class="featureCard__image" src="assets/images/landing/nodes.png" />
-      <div class="featureCard__text">
-        <h3>Nodes!</h3>
-        <p>
-          Join nodes to create the flows and see your story paths, texts,
-          choices, all in your sight.
-        </p>
-      </div>
-    </div>
-    <div class="featureCard">
-      <img
-        class="featureCard__image"
-        src="assets/images/landing/customize.png"
-      />
-      <div class="featureCard__text">
-        <h3>Customized paths</h3>
-        <p>
-          Adapt to user choices with <a href="#">events</a>,
-          <a href="#">stats</a> and <a href="#">requirements</a>. Give them some
-          stat and use it to show or hide choices, or to point to a node.
-          <br />
-          For example, when user clicks on the choice "Take the sword", you can
-          register an event to add a sword to the user. Later, in a node where
-          the sword could be useful, show the answer "Use the sword" only if the
-          user has it.
-        </p>
-      </div>
-    </div>
-    <div class="featureCard">
-      <img
-        class="featureCard__image"
-        src="assets/images/landing/interpolations.png"
-      />
-      <div class="featureCard__text">
-        <h3>Text interpolations</h3>
-        <p>
-          Add user info in the middle of the story.
-          <br />
-          For example, if your story has points of some type (like an exam), you
-          could show this points in a node using hashtags: "You have
-          #amountOfPoints points!"
-        </p>
-      </div>
-    </div>
+<section class="section--mobile">
+  <polo-board
+    #board
+    [initialZoom]="0.9"
+    [grid]="true"
+    [focusElements]="false"
+    [zoomable]="false"
+  ></polo-board>
+  <polo-landing-mobile></polo-landing-mobile>
+</section>
+
+<section class="section--advantages">
+  <div class="advantages__effect"></div>
+  <div class="section__centeredContent advantages__list">
+    <polo-landing-card
+      image="/assets/images/landing/advantages_flow_control.webp"
+      title="Great flow control"
+    >
+      <p>
+        With our flow control features, you can lead your users to specific
+        points depending on their previuos actions
+      </p>
+    </polo-landing-card>
+    <polo-landing-card
+      image="/assets/images/landing/advantages_flow_control.webp"
+      title="Build & share in a breeze"
+    >
+      <p>
+        Login, write and join some nodes, and share the link to let people take
+        the test. No extra steps, as easy as possible
+      </p>
+    </polo-landing-card>
+    <polo-landing-card
+      image="/assets/images/landing/advantages_flow_control.webp"
+      title="Know your users"
+    >
+      <span class="card__payment">Paid feature</span>
+      <p>
+        Analyze the results deeply, from how many users choose a specific
+        answer, to all the paths users have followed, and much more
+      </p>
+    </polo-landing-card>
+    <polo-landing-card
+      image="/assets/images/landing/advantages_unleash_creativity.webp"
+      title="Unleash your creativity"
+    >
+      <p>
+        Use our powerful nodes to create whatever you want, from a simple test
+        to a large and epic text adventure!
+      </p>
+    </polo-landing-card>
   </div>
 </section>
 
-<section id="pricing" class="pricingSection" style="padding: 60px 30px">
-  <h1>Pricing</h1>
-  <div class="pricingBoxes">
-    <div class="pricingBox">
-      <div class="priceContainer">
-        <h2>Hobby</h2>
-        <p>Free</p>
+<section class="section--pricing">
+  <div class="section__centeredContent">
+    <h1 class="txt-white">Pricing</h1>
+    <div class="pricing">
+      <div class="pricing__plan">
+        <div class="pricing__plan__header">
+          <h2>Hobby</h2>
+          <p>Free</p>
+        </div>
+        <ul class="pricing__plan__features">
+          <li>Unlimited stories</li>
+          <li>Unlimited nodes</li>
+          <li>Unlimited images</li>
+          <li>All types of nodes</li>
+          <li>Full flow control</li>
+          <li>Text interpolations</li>
+          <li>Customization options</li>
+          <li>Custom join probabilities</li>
+        </ul>
+        <polo-landing-button
+          destiny="/dashboard"
+          behaviour="link"
+          text="Use free"
+        ></polo-landing-button>
       </div>
-      <ul class="priceFeatures">
-        <li>Unlimited stories</li>
-        <li>Unlimited nodes</li>
-        <li>Unlimited images</li>
-        <li>All types of nodes</li>
-        <li>Full flow control</li>
-        <li>Text interpolations</li>
-        <li>Customization options</li>
-        <li>Custom join probabilities</li>
-      </ul>
-      <polo-accent-button
-        (click)="router.navigate(['/dashboard'])"
-        [fill]="true"
-        >Use free</polo-accent-button
-      >
-    </div>
-    <div class="pricingBox">
-      <div class="priceContainer">
-        <h2>Creator</h2>
-        <p>2.95€/month</p>
+      <div class="pricing__plan">
+        <div class="pricing__plan__header">
+          <h2>Creator</h2>
+          <p>2.95€/month</p>
+        </div>
+        <ul class="pricing__plan__features">
+          <li>No ads</li>
+        </ul>
+        <polo-landing-button
+          destiny="/dashboard"
+          behaviour="link"
+          text="Use creator"
+        ></polo-landing-button>
       </div>
-      <ul class="priceFeatures">
-        <li>No ads</li>
-      </ul>
-      <polo-accent-button
-        (click)="router.navigate(['/dashboard'])"
-        [fill]="true"
-        >Use creator</polo-accent-button
-      >
-    </div>
-    <div class="pricingBox">
-      <div class="priceContainer">
-        <h2>Pro</h2>
-        <p>29.95€/month</p>
+      <div class="pricing__plan">
+        <div class="pricing__plan__header">
+          <h2>Pro</h2>
+          <p>29.95€/month</p>
+        </div>
+        <ul class="pricing__plan__features">
+          <li>Tracking and statistics</li>
+        </ul>
+        <polo-landing-button
+          (click)="usePro()"
+          behaviour="link"
+          text="Use pro"
+        ></polo-landing-button>
       </div>
-      <ul class="priceFeatures">
-        <li>Tracking and statistics</li>
-      </ul>
-      <polo-accent-button (click)="usePro()" [fill]="true"
-        >Use pro</polo-accent-button
-      >
     </div>
   </div>
 </section>
 <footer>
-  <h2>Textandplay</h2>
-  <h3>
-    Textandplay allows you to easily create interactive stories and tests, share
-    them and get insights of the user choices
-  </h3>
-  <p>Copyright© 2024 textandplay.com - All Rights Reserved</p>
+  <p class="txt-s txt-white">
+    Copyright© 2024 textandplay.com - All Rights Reserved
+  </p>
 </footer>

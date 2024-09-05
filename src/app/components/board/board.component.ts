@@ -51,14 +51,14 @@ export class BoardComponent {
   dragStartedOn?: any
   dragMouseOn?: any
 
-  @HostListener('window:keydown.escape', ['$event'])
+  @HostListener('keydown.escape', ['$event'])
   handleEscape(event: KeyboardEvent) {
     if (this.isDrawingJoin) {
       this.stopDragging()
     }
   }
 
-  @HostListener('window:contextmenu', ['$event'])
+  @HostListener('contextmenu', ['$event'])
   handleRightClick(event: MouseEvent) {
     event.preventDefault() // Prevent the default context menu from appearing
     if (this.isDrawingJoin) {

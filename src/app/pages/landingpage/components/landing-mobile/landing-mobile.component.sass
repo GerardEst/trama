@@ -1,0 +1,36 @@
+.mobile
+  transform-style: preserve-3d
+  perspective: 1000px
+  &:hover
+    .mobile__screen
+      transform: rotateY(-15deg) rotateX(3deg) translate(-15px, -7px)
+    .mobile__back
+      transform: rotateY(-15deg) rotateX(3deg) translateZ(-10px)
+  &__screen
+    transform: rotateY(-22deg) rotateX(8deg) translate(-6px, 0px) scale(0.95)
+    transition: transform 0.5s var(--transition)
+    border: 5px solid var(--accent)
+    height: 500px
+    width: 280px
+    border-radius: 20px
+    background-color: white
+    isolation: isolate
+    overflow: auto
+    &__camera
+      background-color: var(--accent)
+      height: 15px
+      width: 50px
+      border-radius: 10px
+      margin-top: 10px
+      position: absolute
+      left: 50%
+      transform: translate(-50%)
+      z-index: 1
+  &__back
+    transform: rotateY(-22deg) rotateX(8deg) translate(-6px, 0px) scale(0.97) translateZ(-70px)
+    transition: transform 0.5s var(--transition)
+    background-color: #41759a
+    height: 500px
+    width: 280px
+    border-radius: 20px
+    position: absolute
