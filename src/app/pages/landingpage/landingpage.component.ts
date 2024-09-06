@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core'
 import { BoardComponent } from 'src/app/components/board/board.component'
 import { Router } from '@angular/router'
-import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
@@ -15,7 +14,6 @@ import { LandingMobileComponent } from './components/landing-mobile/landing-mobi
   standalone: true,
   imports: [
     BoardComponent,
-    LinkButtonComponent,
     LandingMobileComponent,
     LandingButtonComponent,
     LandingCardComponent,

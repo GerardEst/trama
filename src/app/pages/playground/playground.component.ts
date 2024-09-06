@@ -6,9 +6,9 @@ import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-w
 import { node, node_answer } from 'src/app/interfaces'
 import { PlayerService } from './services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import { AccentButtonComponent } from 'src/app/components/ui/accent-button/accent-button.component'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { Router } from '@angular/router'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-playground',
@@ -17,7 +17,7 @@ import { Router } from '@angular/router'
     CommonModule,
     ModalWindowComponent,
     GameComponent,
-    AccentButtonComponent,
+    BasicButtonComponent,
   ],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],

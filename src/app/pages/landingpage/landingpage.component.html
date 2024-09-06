@@ -7,7 +7,8 @@
     }
   </div>
 </menu>
-<section class="section--intro">
+<section class="section--intro pattern-background">
+  <div class="background-cover"></div>
   <div class="intro section--centeredContent">
     <h1 class="txt-baskerville txt-centered">Create interactive stories and tests</h1>
     <h2 class="txt-ralewayItalic txt-centered">
@@ -19,57 +20,49 @@
   </div>
 </section>
 
-<section class="section--mobile">
+<section class="section--mobile pattern-background">
   <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
   <polo-landing-mobile></polo-landing-mobile>
 </section>
 
 <section class="section--advantages">
-  <div class="background-cover"></div>
-  <div class="section--centeredContent section--relativeMarginSpace advantages__list">
-    <polo-landing-card image="/assets/images/landing/advantages_flow_control.webp" title="Great flow control">
-      <p>
-        With our flow control features, you can lead your users to specific
-        points depending on their previuos actions
-      </p>
-    </polo-landing-card>
-    <polo-landing-card image="/assets/images/landing/advantages_breeze.webp" title="Build & share in a breeze">
-      <p>
-        Login, write and join some nodes, and share the link to let people take
-        the test. No extra steps, as easy as possible
-      </p>
-    </polo-landing-card>
-    <polo-landing-card image="/assets/images/landing/advantages_unleash_creativity.webp"
-      title="Unleash your creativity">
-      <p>
-        Use our powerful nodes to create whatever you want, from a simple test
-        to a large and epic text adventure!
-      </p>
-    </polo-landing-card>
-    <polo-landing-card image="/assets/images/landing/advantages_analyze.webp" title="Know your users">
-      <span class="paidFeatureTag">Paid feature</span>
-      <p>
-        Analyze the results deeply, from how many users choose a specific
-        answer, to all the paths users have followed, and much more
-      </p>
-    </polo-landing-card>
+  <div class="advantages section--centeredContent">
+    <h2 class="advantages__title txt-baskerville">Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
+      textandplay</h2>
+    <div class="advantages__list">
+      <polo-landing-card image="/assets/images/landing/advantages_flow_control.webp" title="Great flow control">
+        <p>
+          With our flow control features, you can lead your users to specific
+          points depending on their previuos actions
+        </p>
+      </polo-landing-card>
+      <polo-landing-card image="/assets/images/landing/advantages_breeze.webp" title="Build & share in a breeze">
+        <p>
+          Login, write and join some nodes, and share the link to let people take
+          the test. No extra steps, as easy as possible
+        </p>
+      </polo-landing-card>
+      <polo-landing-card image="/assets/images/landing/advantages_unleash_creativity.webp"
+        title="Unleash your creativity">
+        <p>
+          Use our powerful nodes to create whatever you want, from a simple test
+          to a large and epic text adventure!
+        </p>
+      </polo-landing-card>
+      <polo-landing-card image="/assets/images/landing/advantages_analyze.webp" title="Know your users">
+        <span class="paidFeatureTag">Paid feature</span>
+        <p>
+          Analyze the results deeply, from how many users choose a specific
+          answer, to all the paths users have followed, and much more
+        </p>
+      </polo-landing-card>
 
-  </div>
-</section>
-<section class="section--roadmap">
-  <div class="section--centeredContent">
-    <h1>The future ahead</h1>
-    <li>🔜 Images in the answers</li>
-    <li>🔜 Better analytics for pro users</li>
-    <li>🔜 Multiple joins with probabilities</li>
-    <li>➰See all nodes listed and editable</li>
-    <li>➰Prevent repeating nodes in multiple joins</li>
-    <li>➰Customization options</li>
+    </div>
   </div>
 </section>
 <section class="section--pricing">
   <div class="section--centeredContent">
-    <h1 class="txt-white">Pricing</h1>
+    <h2 class="txt-white txt-baskerville">Pricing</h2>
     <div class="pricing">
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -109,6 +102,44 @@
         <polo-landing-button (click)="usePro()" behaviour="link" text="Use pro"></polo-landing-button>
       </div>
     </div>
+  </div>
+</section>
+<section class="section--roadmap">
+  <div class="section--centeredContent textimageContent">
+    <div class="roadmap">
+      <h2 class="txt-baskerville">The future ahead</h2>
+      <p>We are just starting. Check out what's next in our roadmap:</p>
+      <div class="roadmap__list">
+        <details>
+          <summary>&nbsp;Images in the answers</summary>
+          <p>Add the possibility to have images also in the answers, to select between some images instead of text, for
+            example.</p>
+        </details>
+        <details>
+          <summary>&nbsp;Better analytics for pro users</summary>
+          <p>More clear data from your user activity, easy to digest and understand</p>
+        </details>
+        <details>
+          <summary>&nbsp;See all nodes listed and editable</summary>
+          <p>We want a place where you can see all your nodes in a list format, and you can rapidly edit from there</p>
+        </details>
+        <details>
+          <summary>&nbsp;Customization options</summary>
+          <p>It would be good to have some customization options to let you choose the colors, typography, etc</p>
+        </details>
+        <details>
+          <summary>&nbsp;Multiple joins with probabilities</summary>
+          <p>As of now, you can join to multiple nodes from the same node, giving a probability of 50% to each
+            one.<br><br>
+            We want to add a custom percentage selector so you can give 20% changes to one node and 80% to the other,
+            for example<br><br>
+            <span class="txt-s">This is not very necessary, but it adds a lot of freedom, which is what moves us
+              😬</span>
+          </p>
+        </details>
+      </div>
+    </div>
+    <img width="100%" src="/assets/images/landing/advantages_unleash_creativity.webp" />
   </div>
 </section>
 <footer>

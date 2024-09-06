@@ -16,18 +16,17 @@
   font-weight: 700
 
 :root
-  --accent: rgb(48, 55, 99)
-  --accent-text: rgb(69, 80, 143)
   /** Colors */
+  --text-color: rgb(58, 58, 58)
+
   --grid-color: #dddddd
   --light-gray: #fafafa
   --medium-gray: #efefef
   --dark-gray: #cccccc
-  --text: rgb(55, 53, 47)
   --light-text: #a8a8a8
   --success: #86d47f
   /* Font family */
-  --primary-font-family: "Spartan", serif
+  --dashboard-font: "Spartan", serif
 
   /* Text sizes */
   --small-text: 0.7rem
@@ -51,11 +50,16 @@ body
   height: 100vh
   overscroll-behavior: contain
 
-p,h1,h2,h3,h4,h5,a,input,li,textarea,button,label
+p,h1,h2,h3,h4,h5,a,input,li,textarea,button,label,details,summary
   margin: 0
-  font-family: var(--primary-font-family)
+  font-family: var(--dashboard-font)
+  color: var(--text-color)
   font-size: 1rem
   box-sizing: border-box
+details
+  p
+    margin-top: 1rem
+
 input
   padding: 0.3rem 0.5rem
 ul,menu
