@@ -1,88 +1,74 @@
 <menu>
-  <p class="logo">textandplay <sup>(beta)</sup></p>
+  <p class="logo">Text & Play <sup> (beta)</sup></p>
   <div class="login">
     @if (checkedLoggedUser) {
-      <polo-landing-button
-        behaviour="link"
-        destiny="/dashboard"
-        text="{{ loggedUser ? 'Dashboard' : 'Login' }}"
-      ></polo-landing-button>
+    <polo-landing-button behaviour="link" destiny="/dashboard"
+      text="{{ loggedUser ? 'Dashboard' : 'Login' }}"></polo-landing-button>
     }
   </div>
 </menu>
-<section>
-  <h1>Create interactive stories and tests</h1>
-  <h2>
-    Textandplay allows you to easily create interactive stories and tests, share
-    them and get insights of the user choices
-  </h2>
-  <div>
-    <polo-landing-button
-      destiny="/dashboard"
-      text="Start create! (It's free 😉)"
-    ></polo-landing-button>
-    <polo-landing-button (click)="openExampleSource()"
-      >Modify this example</polo-landing-button
-    >
+<section class="section--intro">
+  <div class="intro section--centeredContent">
+    <h1 class="txt-baskerville txt-centered">Create interactive stories and tests</h1>
+    <h2 class="txt-ralewayItalic txt-centered">
+      Textandplay allows you to easily create interactive stories and tests,
+      share them and analyze the results
+    </h2>
+    <polo-landing-button destiny="/dashboard" behaviour="link"
+      text="Start creating! (It's free 😉)"></polo-landing-button>
   </div>
 </section>
 
 <section class="section--mobile">
-  <polo-board
-    #board
-    [initialZoom]="0.9"
-    [grid]="true"
-    [focusElements]="false"
-    [zoomable]="false"
-  ></polo-board>
+  <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
   <polo-landing-mobile></polo-landing-mobile>
 </section>
 
 <section class="section--advantages">
-  <div class="advantages__effect"></div>
-  <div class="section__centeredContent advantages__list">
-    <polo-landing-card
-      image="/assets/images/landing/advantages_flow_control.webp"
-      title="Great flow control"
-    >
+  <div class="background-cover"></div>
+  <div class="section--centeredContent section--relativeMarginSpace advantages__list">
+    <polo-landing-card image="/assets/images/landing/advantages_flow_control.webp" title="Great flow control">
       <p>
         With our flow control features, you can lead your users to specific
         points depending on their previuos actions
       </p>
     </polo-landing-card>
-    <polo-landing-card
-      image="/assets/images/landing/advantages_flow_control.webp"
-      title="Build & share in a breeze"
-    >
+    <polo-landing-card image="/assets/images/landing/advantages_breeze.webp" title="Build & share in a breeze">
       <p>
         Login, write and join some nodes, and share the link to let people take
         the test. No extra steps, as easy as possible
       </p>
     </polo-landing-card>
-    <polo-landing-card
-      image="/assets/images/landing/advantages_flow_control.webp"
-      title="Know your users"
-    >
-      <span class="card__payment">Paid feature</span>
-      <p>
-        Analyze the results deeply, from how many users choose a specific
-        answer, to all the paths users have followed, and much more
-      </p>
-    </polo-landing-card>
-    <polo-landing-card
-      image="/assets/images/landing/advantages_unleash_creativity.webp"
-      title="Unleash your creativity"
-    >
+    <polo-landing-card image="/assets/images/landing/advantages_unleash_creativity.webp"
+      title="Unleash your creativity">
       <p>
         Use our powerful nodes to create whatever you want, from a simple test
         to a large and epic text adventure!
       </p>
     </polo-landing-card>
+    <polo-landing-card image="/assets/images/landing/advantages_analyze.webp" title="Know your users">
+      <span class="paidFeatureTag">Paid feature</span>
+      <p>
+        Analyze the results deeply, from how many users choose a specific
+        answer, to all the paths users have followed, and much more
+      </p>
+    </polo-landing-card>
+
   </div>
 </section>
-
+<section class="section--roadmap">
+  <div class="section--centeredContent">
+    <h1>The future ahead</h1>
+    <li>🔜 Images in the answers</li>
+    <li>🔜 Better analytics for pro users</li>
+    <li>🔜 Multiple joins with probabilities</li>
+    <li>➰See all nodes listed and editable</li>
+    <li>➰Prevent repeating nodes in multiple joins</li>
+    <li>➰Customization options</li>
+  </div>
+</section>
 <section class="section--pricing">
-  <div class="section__centeredContent">
+  <div class="section--centeredContent">
     <h1 class="txt-white">Pricing</h1>
     <div class="pricing">
       <div class="pricing__plan">
@@ -100,11 +86,7 @@
           <li>Customization options</li>
           <li>Custom join probabilities</li>
         </ul>
-        <polo-landing-button
-          destiny="/dashboard"
-          behaviour="link"
-          text="Use free"
-        ></polo-landing-button>
+        <polo-landing-button destiny="/dashboard" behaviour="link" text="Use free"></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -114,11 +96,7 @@
         <ul class="pricing__plan__features">
           <li>No ads</li>
         </ul>
-        <polo-landing-button
-          destiny="/dashboard"
-          behaviour="link"
-          text="Use creator"
-        ></polo-landing-button>
+        <polo-landing-button destiny="/dashboard" behaviour="link" text="Use creator"></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -128,11 +106,7 @@
         <ul class="pricing__plan__features">
           <li>Tracking and statistics</li>
         </ul>
-        <polo-landing-button
-          (click)="usePro()"
-          behaviour="link"
-          text="Use pro"
-        ></polo-landing-button>
+        <polo-landing-button (click)="usePro()" behaviour="link" text="Use pro"></polo-landing-button>
       </div>
     </div>
   </div>

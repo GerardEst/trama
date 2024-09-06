@@ -355,19 +355,12 @@ export class LandingpageComponent {
     // }
 
     this.checkLoggedUser()
+
     // Initializes the example tree
     this.activeStory.entireTree.set(this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
-
-  openExampleSource() {
-    this.showEditor = true
-  }
-  closeExampleSource() {
-    this.showEditor = false
-  }
-
   async checkLoggedUser() {
     const loggedUser = await this.db.supabase.auth.getUser()
 

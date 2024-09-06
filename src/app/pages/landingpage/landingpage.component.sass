@@ -1,8 +1,35 @@
+
+@font-face
+  font-family: "Baskerville"
+  src: url("../../../assets/fonts/Baskervville-Regular.ttf")
+  font-weight: 400
+@font-face
+  font-family: "Baskerville"
+  src: url("../../../assets/fonts/Baskerville-BT-Bold.ttf")
+  font-weight: 700
+@font-face
+  font-family: "LibreBaskerville"
+  src: url("../../../assets/fonts/LibreBaskerville-Regular.ttf")
+  font-weight: 400
+@font-face
+  font-family: "LibreBaskerville"
+  src: url("../../../assets/fonts/LibreBaskerville-Bold.ttf")
+  font-weight: 700
+@font-face
+  font-family: "RalewayItalic"
+  src: url("../../../assets/fonts/Raleway-Italic-VariableFont_wght.ttf")
+@font-face
+  font-family: "Raleway"
+  src: url("../../../assets/fonts/Raleway-VariableFont_wght.ttf")
+
 :host
   --transition: cubic-bezier(0.000, 1.000, 0.950, 0.995)
-  background-color: rgb(176 223 255)
-  background: linear-gradient(331deg, rgba(176,223,255,1) 0%, rgba(214,238,255,1) 100%)
-  background-image: url('/assets/images/landing/background.webp'), linear-gradient(270deg, rgb(243, 246, 251) 0%, rgb(223, 233, 255) 100.87%)
+
+  --text-color: rgb(58, 58, 58)
+  --background-gray: rgb(230, 230, 230)
+  background-color: rgb(243 243 243)
+  background: linear-gradient(310deg, var(--background-gray) 0%, rgb(243, 243, 243) 101.87%)
+  background-image: linear-gradient(310deg, var(--background-gray) 0%, rgb(243, 243, 243) 101.87%)
   background-size: cover
 
   display: flex
@@ -25,66 +52,93 @@ menu
   z-index: 3
   backdrop-filter: blur(15px)
   .logo
-    font-size: 2.5rem
+    font-size: 2rem
     font-weight: 900
     margin: 0
-    color: var(--accent)
+    font-family: 'LibreBaskerville'
     sup
-      font-size: 0.8rem
+      font-size: 1rem
   .login
     margin-left: auto
 
 h1
   font-size: 3rem
-  color: dimgray
+  color: var(--text-color)
 h2
   font-size: 2rem
-  color: dimgray
-h3
-  font-size: 1.3rem
-  color: dimgray
-  line-height: 1.5
+  color: var(--text-color)
+  font-weight: 200
+
 p, a, li
-  font-size: 1.1rem
+  font-size: 1.3rem
   line-height: 1.5
-  color: dimgray
-.txt-white
-  color: white
-.txt-s
-  font-size: 0.8rem
+  color: var(--text-color)
+  font-family: 'Raleway'
+  font-weight: 200
 
 section
   width: 100%
-  & .section__centeredContent
+  box-sizing: border-box
+  & .section--centeredContent
     width: 100%
-    max-width: 1000px
+    max-width: 1200px
     margin: auto
+    padding: 0 60px
+    box-sizing: border-box
+  & .section--relativeMarginSpace
+    margin: 10vw 0
+  &.section--intro
+    padding-bottom: 100px
+    padding-top: 250px
   &.section--mobile
     display: flex
     align-items: center
     justify-content: space-around
-    padding: 60px 0
+    padding: 60px
+    padding-bottom: 100px
+    flex-wrap: wrap
+    gap: 110px
   &.section--advantages
     position: relative
-    background-color: white
-    box-sizing: border-box
     display: flex
     justify-content: center
+    background: white
+    border-radius: 100px 100px 0 0
     background-position: 44px 44px
-    background-size: 40px 40px
-    background-image: radial-gradient(rgb(205 210 255) 2%, transparent 9%)
+    background-size: 20px 20px
+    background-image: radial-gradient(var(--background-gray) 9%, transparent 1%)
+    & .background-cover
+      position: absolute
+      width: 100%
+      height: calc(100% - 80px)
+      background: white
+      opacity: 0.9
+      filter: blur(40px)
+      bottom: 0
+  &.section--roadmap
+    padding: 60px 0
   &.section--pricing
     display: flex
     flex-direction: column
-    background-color: var(--accent)
     padding: 60px 0
-    box-sizing: border-box
+
+.intro
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 1rem
+  polo-landing-button
+    margin-top: 1rem
 
 polo-board
-  width: 600px
+  width: 500px
   height: 500px
   overflow: hidden
   border-radius: 20px
+  flex-grow: 1
+  border: 1px dashed var(--text-color)
+polo-landing-mobile
+  padding-right: 5vw
 
 .advantages__effect
   position: absolute
@@ -96,7 +150,7 @@ polo-board
 .advantages__list
   padding: 80px 0
   display: grid
-  grid-template-columns: repeat(3, 1fr)
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
   gap: 3rem
   width: 100%
   max-width: 1000px
@@ -129,6 +183,18 @@ footer
   width: 100%
   padding: 20px
   box-sizing: border-box
-  background-color: var(--accent)
   justify-content: center
   align-items: center
+
+.paidFeatureTag
+  position: absolute
+  top: 0
+  right: 0
+  background-color: #ffe86e
+  display: flex
+  align-items: center
+  padding: 0.6rem 1rem
+  border-radius: 5px
+  font-family: monospace
+  transform: rotate(13deg) translate(27px, -8px)
+  box-shadow: 0px 0px 0px 4px #fff9d9
