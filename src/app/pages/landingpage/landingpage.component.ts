@@ -37,7 +37,7 @@ export class LandingpageComponent {
         top: 4502,
         join: [],
         left: 743,
-        text: 'Create with the easiest tools, as easy as joining nodes and as complex as you want it to be.',
+        text: 'Interact with your users with the easiest tools, as easy as joining nodes and as complex as you want it to be.',
         answers: [
           {
             id: 'answer_0_1',
@@ -216,12 +216,6 @@ export class LandingpageComponent {
       {
         id: 'node_7',
         top: 4627,
-        join: [
-          {
-            node: 'node_8',
-            toAnswer: false,
-          },
-        ],
         left: 2839,
         text: 'Ok, you have got #stat_0 victory points!\n\nTwo things happened here! The most obbious is that we counted the points adding events to the right answers.\n\nBut we also told you your points inside this same text: #stat_0. (This is done by doing hashtag plus the stat you want to show. Easy as always)\n\nNow we will use a special kind of node which we call "Distributor" to congratulate you if you did well, and to cheer you up if you have 1 or 0 points.',
         type: 'content',
