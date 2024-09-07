@@ -66,38 +66,44 @@
     <div class="pricing">
       <div class="pricing__plan">
         <div class="pricing__plan__header">
-          <h2>Hobby</h2>
-          <p>Free</p>
+          <h2 class="txt-baskerville txt-2">Hobby</h2>
+          <p class="txt-ralewayItalic">Free</p>
         </div>
         <ul class="pricing__plan__features">
-          <li>Unlimited stories</li>
-          <li>Unlimited nodes</li>
-          <li>Unlimited images</li>
-          <li>All types of nodes</li>
-          <li>Full flow control</li>
-          <li>Text interpolations</li>
-          <li>Customization options</li>
-          <li>Custom join probabilities</li>
+          <li>✅ Unlimited stories</li>
+          <li>✅ Unlimited nodes</li>
+          <li>✅ All types of nodes</li>
+          <li>✅ Full flow control</li>
+          <li>✅ Text interpolations</li>
+          <li>✅ Basic customization options</li>
+          <li>⚠️ Limited images</li>
+          <li>⚠️ Small, unintrusive ads on stories</li>
         </ul>
         <polo-landing-button destiny="/dashboard" behaviour="link" text="Use free"></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
-          <h2>Creator</h2>
-          <p>2.95€/month</p>
+          <h2 class="txt-baskerville txt-2">Creator</h2>
+          <p class="txt-ralewayItalic">3.95€/month</p>
         </div>
         <ul class="pricing__plan__features">
-          <li>No ads</li>
+          <li class="txt-gray">Everything from hobby plan</li>
+          <li>✅ No ads</li>
+          <li>✅ Unlimited images</li>
+          <li>✅ Vote and propose new features</li>
+          <li>🥹 Help keep the project going</li>
         </ul>
         <polo-landing-button destiny="/dashboard" behaviour="link" text="Use creator"></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
-          <h2>Pro</h2>
-          <p>29.95€/month</p>
+          <h2 class="txt-baskerville txt-2">Pro</h2>
+          <p class="txt-ralewayItalic">39.95€/month</p>
         </div>
         <ul class="pricing__plan__features">
-          <li>Tracking and statistics</li>
+          <li class="txt-gray">Everything from other plans</li>
+          <li>❇️ Tracking and statistics</li>
+          <li>❇️ Priority support</li>
         </ul>
         <polo-landing-button (click)="usePro()" behaviour="link" text="Use pro"></polo-landing-button>
       </div>

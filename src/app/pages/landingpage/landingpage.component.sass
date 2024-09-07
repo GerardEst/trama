@@ -100,8 +100,8 @@ section
   & .section--relativeMarginSpace
     margin: 10vw 0
   &.section--intro
-    padding-bottom: 100px
-    padding-top: 250px
+    padding-bottom: 70px
+    padding-top: 200px
   &.section--mobile
     display: flex
     align-items: center
@@ -120,10 +120,12 @@ section
     padding: 60px 0
     background: white
   &.section--pricing
-    background: var(--text-color)
     display: flex
     flex-direction: column
     padding: 60px 0
+    background: var(--text-color)
+    background-size: 5px 5px
+    background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 11%)
 .textimageContent
   display: grid
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
@@ -187,26 +189,30 @@ polo-landing-mobile
 
 
 .pricing
-  display: flex
-  justify-content: center
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
   gap: 1rem
-  padding: 3rem 1rem
+  padding: 3rem 0
   &__plan
     flex: 1
-    max-width: 400px
     background-color: white
     border-radius: 15px
-    padding: 1rem
+    padding: 2rem 3rem
     display: flex
     flex-direction: column
-    gap: 1rem
+    gap: 2rem
+    &:nth-child(2)
+      box-shadow: 0 0 20px inset var(--success)
     &__header
       display: flex
       justify-content: space-between
     &__features
       display: flex
+      flex-grow: 1
       flex-direction: column
       gap: 0.5rem
+    polo-landing-button
+      align-self: flex-end
 
 footer
   display: flex
