@@ -1,7 +1,9 @@
-<div class="mobile">
+<div class="mobile" [class.topSpacing]="topSpacing">
   <div class="mobile__back"></div>
   <div class="mobile__screen">
+    @if(camera){
     <div class="mobile__screen__camera"></div>
-    <polo-game customStyles="modern" mode="single"></polo-game>
+    }
+    <ng-content></ng-content>
   </div>
 </div>

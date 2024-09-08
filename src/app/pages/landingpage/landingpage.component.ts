@@ -4,6 +4,7 @@ import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { GameComponent } from 'src/app/components/game/game.component'
 
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
 import { LandingButtonComponent } from './components/button/landing-button.component'
@@ -17,6 +18,7 @@ import { LandingMobileComponent } from './components/landing-mobile/landing-mobi
     LandingMobileComponent,
     LandingButtonComponent,
     LandingCardComponent,
+    GameComponent,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',

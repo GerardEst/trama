@@ -1,11 +1,13 @@
-import { Component } from '@angular/core'
-import { GameComponent } from 'src/app/components/game/game.component'
+import { Component, Input } from '@angular/core'
 
 @Component({
   selector: 'polo-landing-mobile',
   standalone: true,
-  imports: [GameComponent],
+  imports: [],
   templateUrl: './landing-mobile.component.html',
   styleUrl: './landing-mobile.component.sass',
 })
-export class LandingMobileComponent {}
+export class LandingMobileComponent {
+  @Input() topSpacing?: boolean
+  @Input() camera?: boolean
+}

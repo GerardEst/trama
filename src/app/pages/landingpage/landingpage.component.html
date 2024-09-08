@@ -22,7 +22,8 @@
 
 <section class="section--mobile pattern-background">
   <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
-  <polo-landing-mobile></polo-landing-mobile>
+  <polo-landing-mobile [camera]="true" [topSpacing]="true"><polo-game customStyles="modern"
+      mode="single"></polo-game></polo-landing-mobile>
 </section>
 
 <section class="section--advantages">
@@ -88,7 +89,9 @@
       </div>
     </div>
     <div class="usecases__examples">
-      <iframe src="https://www.textandplay.com/private/60cc66cc-2d8e-48d7-8e57-e5ef8605c2fa"></iframe>
+      <polo-landing-mobile>
+        <iframe src="https://www.textandplay.com/private/60cc66cc-2d8e-48d7-8e57-e5ef8605c2fa"></iframe>
+      </polo-landing-mobile>
     </div>
   </div>
 </section>
