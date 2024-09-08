@@ -10,6 +10,8 @@ import { LandingCardComponent } from './components/landing-card/landing-card.com
 import { LandingButtonComponent } from './components/button/landing-button.component'
 import { LandingMobileComponent } from './components/landing-mobile/landing-mobile.component'
 
+import { trigger, style, animate, transition } from '@angular/animations'
+
 @Component({
   selector: 'polo-landingpage',
   standalone: true,
@@ -22,6 +24,18 @@ import { LandingMobileComponent } from './components/landing-mobile/landing-mobi
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
+  animations: [
+    trigger('showUseCase', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms 500ms', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        style({ opacity: 1 }),
+        animate('200ms 0ms', style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class LandingpageComponent {
   @ViewChild('board') board?: BoardComponent
@@ -330,6 +344,7 @@ export class LandingpageComponent {
   checkedLoggedUser: boolean = false
   loggedUser: boolean = false
   showEditor: boolean = false
+  activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
 
   constructor(
     private activeStory: ActiveStoryService,
@@ -355,6 +370,11 @@ export class LandingpageComponent {
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
+
+  selectUseCase(useCase: 'brands' | 'schools' | 'creatives') {
+    this.activeUseCase = useCase
+  }
+
   async checkLoggedUser() {
     const loggedUser = await this.db.supabase.auth.getUser()
 

@@ -219,8 +219,8 @@ polo-landing-mobile
       flex-direction: column
       align-items: flex-start
       gap: 0.5rem
-      border: 1px solid transparent
-      border-radius: 10px
+      cursor: pointer
+      transition: padding-left 0.5s, border-left 0.2s
       h3
         font-size: 1.5rem
       p
@@ -228,6 +228,9 @@ polo-landing-mobile
         font-family: 'RalewayItalic'
       polo-landing-button
         margin-top: 2rem
+      &.active
+        border-left: 2px solid var(--text-color)
+        padding-left: 10px
   &__examples
     width: 300px
     margin: auto
@@ -240,7 +243,10 @@ polo-landing-mobile
     display: flex
     flex-direction: column
     gap: 0.5rem
-
+.roadmap__image
+  width: 300px
+  justify-self: center
+  align-self: center
 .pricing
   display: grid
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))
@@ -254,12 +260,12 @@ polo-landing-mobile
     display: flex
     flex-direction: column
     gap: 2rem
-    &:nth-child(1)
-      box-shadow: 0 0 20px inset var(--text-color)
+    // &:nth-child(1)
+    //   box-shadow: 0 0 20px inset var(--text-color)
     &:nth-child(2)
       box-shadow: 0 0 20px inset var(--success)
-    &:nth-child(3)
-      box-shadow: 0 0 20px inset var(--gold)
+    // &:nth-child(3)
+    //   box-shadow: 0 0 20px inset var(--gold)
     &__header
       display: flex
       justify-content: space-between
@@ -275,6 +281,8 @@ polo-landing-mobile
         & img
           width: 20px
           margin-top: 2px
+        & span
+          width: 20px
     polo-landing-button
           align-self: flex-end
 
