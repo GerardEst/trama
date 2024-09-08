@@ -78,7 +78,6 @@ p, a, li, details,summary
   line-height: 1.5
   font-weight: 200
 
-
 details
   padding: 0.5rem 1rem
   border: 1px solid var(--background-gray)
@@ -114,6 +113,12 @@ section
     padding-bottom: 130px
     flex-wrap: wrap
     gap: 110px
+    img
+      position: absolute
+      right: 374px
+      width: 160px
+      top: 67px
+      z-index: 1
   &.section--advantages
     position: relative
     background: white
@@ -134,7 +139,8 @@ section
     padding: 60px 0
     background: var(--text-color)
     background-size: 5px 5px
-    background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 11%)
+    //background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 11%)
+    background-image: radial-gradient(rgb(89 89 89) 5%, transparent 11%)
 .textImageContent
   display: grid
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
@@ -148,7 +154,7 @@ section
   position: relative
   z-index: 1
   polo-landing-button
-    margin-top: 1rem
+  margin-top: 1rem
 
 polo-board
   width: 500px
@@ -161,7 +167,7 @@ polo-board
   &:hover
     border-style: solid
 polo-landing-mobile
-  padding-right: 5vw
+    padding-right: 5vw
 
 .advantages
   display: flex
@@ -248,8 +254,12 @@ polo-landing-mobile
     display: flex
     flex-direction: column
     gap: 2rem
+    &:nth-child(1)
+      box-shadow: 0 0 20px inset var(--text-color)
     &:nth-child(2)
       box-shadow: 0 0 20px inset var(--success)
+    &:nth-child(3)
+      box-shadow: 0 0 20px inset var(--gold)
     &__header
       display: flex
       justify-content: space-between
@@ -258,8 +268,15 @@ polo-landing-mobile
       flex-grow: 1
       flex-direction: column
       gap: 0.5rem
+      & li
+        display: flex
+        align-items: flex-start
+        gap: 0.5rem
+        & img
+          width: 20px
+          margin-top: 2px
     polo-landing-button
-      align-self: flex-end
+          align-self: flex-end
 
 footer
   display: flex
