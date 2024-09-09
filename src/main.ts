@@ -15,17 +15,17 @@ import { authGuard } from './app/guards/auth.guard'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 
 const appRoutes: Routes = [
-  { path: '', title: 'Textandplay', component: LandingpageComponent },
+  { path: '', data: { title: 'Text&play' }, component: LandingpageComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',
-    title: 'Dashboard',
+    data: { title: 'Dashboard' },
     component: DashboardComponent,
     canActivate: [authGuard],
   },
   {
     path: 'stadistics/:id',
-    title: 'Stadistics',
+    data: { title: 'Statistics' },
     component: StadisticsComponent,
     canActivate: [authGuard],
   },
