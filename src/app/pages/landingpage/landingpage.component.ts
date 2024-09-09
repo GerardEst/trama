@@ -5,7 +5,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { GameComponent } from 'src/app/components/game/game.component'
-import { Title } from '@angular/platform-browser'
+import { Title, Meta } from '@angular/platform-browser'
 
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
 import { LandingButtonComponent } from './components/button/landing-button.component'
@@ -350,13 +350,22 @@ export class LandingpageComponent {
   constructor(
     private activeStory: ActiveStoryService,
     private titleService: Title,
+    private meta: Meta,
     public router: Router,
     public db: DatabaseService
   ) {}
 
   ngOnInit() {
     this.titleService.setTitle('Text & Play')
+    this.meta.addTags([
+      {
+        name: 'description',
+        content:
+          'Easily create interactive stories and tests, share them and analyze the results',
+      },
+    ])
   }
+
   ngAfterViewInit() {
     Cronitor.track('LandingpageView')
     // console.log('________LANDING PAGE__________')
