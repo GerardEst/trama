@@ -183,7 +183,7 @@ export class ActiveStoryService {
     if (duplicatedNode.answers) {
       duplicatedNode.answers = duplicatedNode.answers.map((answer: any) => {
         const newAnswerId = answer.id.replace(
-          /_[0-9]_/,
+          /_[0-9]+_/,
           `_${newId.split('_')[1]}_`
         )
         answer.id = newAnswerId
@@ -191,9 +191,20 @@ export class ActiveStoryService {
         return answer
       })
     }
+    if (duplicatedNode.conditions) {
+      duplicatedNode.conditions = duplicatedNode.conditions.map(
+        (condition: any) => {
+          const newConditionId = condition.id.replace(
+            /_[0-9]+_/,
+            `_${newId.split('_')[1]}_`
+          )
+          condition.id = newConditionId
+          delete condition.join
+          return condition
+        }
+      )
+    }
     duplicatedNode.left = duplicatedNode.left + 290
-
-    // TODO -> Take the new node to front and put it 10px to the left and to the top
 
     // Add the new node to the entireTree object. This will add it to the board
     this.entireTree().nodes.push(duplicatedNode)
