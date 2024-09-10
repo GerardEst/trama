@@ -30,6 +30,10 @@ export class ProfileModalComponent {
 
   cancelPlan() {
     console.log('try to cancel subscription for user ', this.db.user())
+    const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
+    if (!jwtToken) {
+      return console.error('No present JWT. Cant cancel plan.')
+    }
 
     fetch(
       'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription',
@@ -37,7 +41,7 @@ export class ProfileModalComponent {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+          Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
         body: JSON.stringify({
           subscription_id: this.db.user().profile.subscription_id,
