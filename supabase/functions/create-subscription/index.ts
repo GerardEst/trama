@@ -37,7 +37,6 @@ Deno.serve(async (req) => {
         subscription_status: subscription.status, // active, trialing, canceled, etc
         customer_id: customerId,
         plan: 'creator',
-        subscription: true, // TODO -> Use the status. Keep the existing logic to mark as subscribed})
       })
       .eq('email', customer.email)
       .select()

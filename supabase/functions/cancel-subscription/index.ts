@@ -40,7 +40,6 @@ Deno.serve(async (req) => {
       .update({
         subscription_id: null, // Optionally remove the subscription ID
         subscription_status: 'canceled', // Update status to canceled
-        subscription: false, // Set subscription to false
       })
       .eq('subscription_id', subscription_id) // Find the user by subscription ID
 

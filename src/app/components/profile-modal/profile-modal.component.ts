@@ -31,16 +31,19 @@ export class ProfileModalComponent {
   cancelPlan() {
     console.log('try to cancel subscription for user ', this.db.user())
 
-    fetch('supabase edge function link', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Authorization: `Bearer ${userAuthToken}`, // Pass the user's auth token if needed
-      },
-      body: JSON.stringify({
-        subscription_id: this.db.user().profile.subscription_id,
-      }),
-    })
+    fetch(
+      'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Authorization: `Bearer ${userAuthToken}`, // Pass the user's auth token if needed
+        },
+        body: JSON.stringify({
+          subscription_id: this.db.user().profile.subscription_id,
+        }),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.message === 'Subscription canceled successfully') {
