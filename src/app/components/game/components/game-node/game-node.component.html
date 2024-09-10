@@ -29,18 +29,20 @@
     }
     }
     @if (showAnswers) {
-    @for (link of data.links; track $index) {
-    <button (click)="onGoToLink.emit(link.url)">
-      {{ link.name }}
-      <img src="/assets/icons/open-external.svg" alt="Open external icon" />
-    </button>
-    }
-    @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
-    <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || data.text)">
-      {{ data.share?.shareButtonText || 'Share this story' }}
-      <img src="/assets/icons/share.svg" alt="Share icon" />
-    </button>
-    }
+    <div class="endNodeExtras">
+      @for (link of data.links; track $index) {
+      <button (click)="onGoToLink.emit(link.url)">
+        {{ link.name }}
+        <img src="/assets/icons/open-external.svg" alt="Open external icon" />
+      </button>
+      }
+      @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
+      <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || data.text)">
+        {{ data.share?.shareButtonText || 'Share this story' }}
+        <img src="/assets/icons/share.svg" alt="Share icon" />
+      </button>
+      }
+    </div>
     }
   </div>
 </div>
