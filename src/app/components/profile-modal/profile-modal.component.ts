@@ -37,7 +37,7 @@ export class ProfileModalComponent {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${userAuthToken}`, // Pass the user's auth token if needed
+          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         },
         body: JSON.stringify({
           subscription_id: this.db.user().profile.subscription_id,
