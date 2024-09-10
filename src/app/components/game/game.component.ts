@@ -95,6 +95,8 @@ export class GameComponent {
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
 
+      console.log(this.activeStory.entireTree())
+
       let nextNode = structuredClone(
         this.activeStory
           .entireTree()
@@ -267,12 +269,13 @@ export class GameComponent {
           .conditions.find(
             (condition: any) => condition.id === distributorCondition.ref
           )
+
         // We check the comparator
         // If the player has the condition and the requirement is 1, we can go to next node
         // If the player doesn't have the condition and the requirement is 0, we can go to next node too
         if (
-          (distributorCondition.value === 1 && playerCondition) ||
-          (distributorCondition.value === 0 && !playerCondition)
+          (distributorCondition.value == 1 && playerCondition) ||
+          (distributorCondition.value == 0 && !playerCondition)
         ) {
           return distributorCondition.join || []
         }
@@ -289,7 +292,7 @@ export class GameComponent {
       return node.fallbackCondition.join
     }
 
-    console.log('No join possible', node)
+    console.warn('No join possible', node)
     return []
   }
 
