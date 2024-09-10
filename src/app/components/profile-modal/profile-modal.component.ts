@@ -28,7 +28,29 @@ export class ProfileModalComponent {
     )
   }
 
-  cancelPlan() {}
+  cancelPlan() {
+    console.log('try to cancel subscription for user ', this.db.user())
+
+    fetch('supabase edge function link', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${userAuthToken}`, // Pass the user's auth token if needed
+      },
+      body: JSON.stringify({
+        subscription_id: this.db.user().profile.subscription_id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === 'Subscription canceled successfully') {
+          alert('Your subscription has been canceled.')
+          // Optionally update the UI to reflect the cancellation
+        } else {
+          alert('Failed to cancel subscription')
+        }
+      })
+  }
 
   logout() {
     this.db.supabase.auth.signOut()

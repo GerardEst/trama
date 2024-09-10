@@ -39,7 +39,7 @@ export class MenuTopComponent {
   }
 
   toggleTracking() {
-    if (!this.db.user().profile.subscription) return
+    if (this.db.user().profile.subscription_status !== 'active') return
 
     this.activeStory.storyConfiguration().tracking =
       !this.activeStory.storyConfiguration().tracking

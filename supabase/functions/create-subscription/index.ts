@@ -23,12 +23,22 @@ Deno.serve(async (req) => {
       }
     )
 
-    const customerId = stripeInfo.data.object.customer
+    const subscription = stripeInfo.data.object
+    const customerId = subscription.customer
+
     const customer = await stripe.customers.retrieve(customerId)
+
+    console.log(customer)
 
     const { data, error } = await supabase
       .from('profiles')
-      .update({ subscription: true })
+      .update({
+        subscription_id: subscription.id,
+        subscription_status: subscription.status, // active, trialing, canceled, etc
+        customer_id: customerId,
+        plan: 'creator',
+        subscription: true, // TODO -> Use the status. Keep the existing logic to mark as subscribed})
+      })
       .eq('email', customer.email)
       .select()
 

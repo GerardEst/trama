@@ -1,109 +1,66 @@
 <div class="menu">
-  <input
-    aria-label="storyName"
-    (change)="updateStoryName($event)"
-    value="{{ activeStory.storyName() }}"
-  />
-  <polo-basic-button
-    (click)="toggleOptions()"
-    text="Options"
-  ></polo-basic-button>
+  <input aria-label="storyName" (change)="updateStoryName($event)" value="{{ activeStory.storyName() }}" />
+  <polo-basic-button (click)="toggleOptions()" text="Options"></polo-basic-button>
   @if (options) {
-    <div class="dropdown">
-      <div class="dropdown__section">
-        @if (db.user().profile.subscription) {
-          <label>
-            <span>Enable tracking</span>
-            <input
-              (change)="toggleTracking()"
-              type="checkbox"
-              [checked]="activeStory.storyConfiguration().tracking"
-            />
-          </label>
-        } @else {
-          <label>
-            <span>🚫 Enable tracking</span>
-            <input type="checkbox" />
-          </label>
-        }
-        <label>
-          <span>Ask for name</span>
-          <input
-            (change)="toggleAskName()"
-            type="checkbox"
-            [checked]="activeStory.storyConfiguration().askName"
-          />
-        </label>
-        <label>
-          <span>Enable sharing</span>
-          <input
-            (change)="toggleSharing()"
-            type="checkbox"
-            [checked]="activeStory.storyConfiguration().sharing"
-          />
-        </label>
-      </div>
-      <div class="dropdown__section">
-        <label class="label--column">
-          <span>Custom ID</span>
-          <input
-            [class.alert]="takenCustomId"
-            (change)="updateCustomId($event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().customId"
-          />
-          @if (takenCustomId) {
-            <p>ID already taken</p>
-          }
-        </label>
-      </div>
-      <div class="dropdown__section">
-        <p>Footer</p>
-        <label class="label--column">
-          <span>Footer text</span>
-          <input
-            (change)="updateFooter('text', $event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().footer.text || ''"
-          />
-        </label>
-        <label class="label--column">
-          <span>Footer link</span>
-          <input
-            (change)="updateFooter('link', $event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().footer.link || ''"
-          />
-        </label>
-      </div>
-      @if (db.user().profile.subscription) {
-        <polo-basic-button
-          (click)="openStadistics()"
-          text="See stadistics"
-        ></polo-basic-button>
+  <div class="dropdown">
+    <div class="dropdown__section">
+      @if (db.user().profile.subscription_status==='active') {
+      <label>
+        <span>Enable tracking</span>
+        <input (change)="toggleTracking()" type="checkbox" [checked]="activeStory.storyConfiguration().tracking" />
+      </label>
       } @else {
-        <polo-basic-button text="🚫 See stadistics"></polo-basic-button>
+      <label>
+        <span>🚫 Enable tracking</span>
+        <input type="checkbox" />
+      </label>
       }
-      @if (db.user().profile.subscription) {
-        <polo-basic-button
-          (click)="exportTree()"
-          icon="/assets/icons/export.svg"
-          text="Export tree"
-        >
-        </polo-basic-button>
-      } @else {
-        <polo-basic-button
-          icon="/assets/icons/export.svg"
-          text="🚫 Export tree"
-        >
-        </polo-basic-button>
-      }
-      <polo-basic-button
-        (click)="deleteTree()"
-        icon="/assets/icons/trash.svg"
-        text="Delete tree"
-      >
-      </polo-basic-button>
+      <label>
+        <span>Ask for name</span>
+        <input (change)="toggleAskName()" type="checkbox" [checked]="activeStory.storyConfiguration().askName" />
+      </label>
+      <label>
+        <span>Enable sharing</span>
+        <input (change)="toggleSharing()" type="checkbox" [checked]="activeStory.storyConfiguration().sharing" />
+      </label>
     </div>
+    <div class="dropdown__section">
+      <label class="label--column">
+        <span>Custom ID</span>
+        <input [class.alert]="takenCustomId" (change)="updateCustomId($event)" type="text"
+          [value]="activeStory.storyConfiguration().customId" />
+        @if (takenCustomId) {
+        <p>ID already taken</p>
+        }
+      </label>
+    </div>
+    <div class="dropdown__section">
+      <p>Footer</p>
+      <label class="label--column">
+        <span>Footer text</span>
+        <input (change)="updateFooter('text', $event)" type="text"
+          [value]="activeStory.storyConfiguration().footer.text || ''" />
+      </label>
+      <label class="label--column">
+        <span>Footer link</span>
+        <input (change)="updateFooter('link', $event)" type="text"
+          [value]="activeStory.storyConfiguration().footer.link || ''" />
+      </label>
+    </div>
+    @if (db.user().profile.subscription_status==='active') {
+    <polo-basic-button (click)="openStadistics()" text="See stadistics"></polo-basic-button>
+    } @else {
+    <polo-basic-button text="🚫 See stadistics"></polo-basic-button>
+    }
+    @if (db.user().profile.subscription_status==='active') {
+    <polo-basic-button (click)="exportTree()" icon="/assets/icons/export.svg" text="Export tree">
+    </polo-basic-button>
+    } @else {
+    <polo-basic-button icon="/assets/icons/export.svg" text="🚫 Export tree">
+    </polo-basic-button>
+    }
+    <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg" text="Delete tree">
+    </polo-basic-button>
+  </div>
   }
 </div>
