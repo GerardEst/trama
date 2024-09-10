@@ -368,14 +368,6 @@ export class LandingpageComponent {
 
   ngAfterViewInit() {
     Cronitor.track('LandingpageView')
-    // console.log('________LANDING PAGE__________')
-    // // Check if user comes from external loggin and redirect to dashboard
-    // const comesFromOAuth = localStorage.getItem('oauth')
-    // console.log('user:', this.db.user)
-    // if (comesFromOAuth && this.db.user) {
-    //   console.log('Navigate to dashboard!!!')
-    //   this.router.navigate(['/dashboard'])
-    // }
 
     this.checkLoggedUser()
 
