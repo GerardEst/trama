@@ -28,8 +28,6 @@ Deno.serve(async (req) => {
 
     const customer = await stripe.customers.retrieve(customerId)
 
-    console.log(customer)
-
     const { data, error } = await supabase
       .from('profiles')
       .update({

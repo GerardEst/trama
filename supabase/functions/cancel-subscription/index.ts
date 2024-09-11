@@ -49,7 +49,6 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase
       .from('profiles')
       .update({
-        subscription_id: null, // Optionally remove the subscription ID
         subscription_status: 'canceled', // Update status to canceled
       })
       .eq('subscription_id', subscription_id) // Find the user by subscription ID
