@@ -2,7 +2,6 @@
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
-// TODO - provar amb "import Stripe from 'npm:stripe'"
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   // This is needed to use the Fetch API rather than relying on the Node http
@@ -12,7 +11,9 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
 
 Deno.serve(async (req) => {
   try {
+    // La edge function a supabase rep tota la info per part del webhook de stripe a la req
     const stripeInfo = await req.json()
+    // Creem un client de supabase, es a dir la instancia que fem servir per fer queries a la db etc
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -23,18 +24,20 @@ Deno.serve(async (req) => {
       }
     )
 
+    // Agafem el que ens interessa de l'objecte rebut
     const subscription = stripeInfo.data.object
     const customerId = subscription.customer
-
+    // Necessitem agafar tota la info del customer (apart de l'id que ja tenim) per obtenir el mail
     const customer = await stripe.customers.retrieve(customerId)
 
+    // Fem la query a supabase, guardant info de la suscripció per tenir-ho a ma i no estar fent calls a stripe
     const { data, error } = await supabase
       .from('profiles')
       .update({
         subscription_id: subscription.id,
-        subscription_status: subscription.status, // active, trialing, canceled, etc
+        subscription_status: subscription.status,
         customer_id: customerId,
-        plan: 'creator',
+        plan: subscription.plan.nickname,
       })
       .eq('email', customer.email)
       .select()
@@ -43,26 +46,16 @@ Deno.serve(async (req) => {
       throw error
     }
 
-    // TODO - Crec que no caldria passarli tot lo que hem retornat.
-    // Pude puc treure tot el select directament i ja està.
-    // A la response no sé què passar o si cal posar algo apart del 200
-    return new Response(JSON.stringify({ data }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    })
+    // Retornem la resposta adient
+    return new Response(
+      JSON.stringify({ message: 'Subscription created successfully', data }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    )
   } catch (err) {
+    // En cas d'error retornem l'error
     return new Response(String(err?.message ?? err), { status: 500 })
   }
 })
-
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/create-subscription' \
-    --header 'Authorization: Bearer ' \
-    --header 'Content-Type: application/json' \
-    --data '{"name":"Functions"}'
-
-*/

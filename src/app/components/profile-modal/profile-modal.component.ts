@@ -29,7 +29,6 @@ export class ProfileModalComponent {
   }
 
   cancelPlan() {
-    console.log('try to cancel subscription for user ', this.db.user())
     const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
     if (!jwtToken) {
       return console.error('No present JWT. Cant cancel plan.')
@@ -47,16 +46,13 @@ export class ProfileModalComponent {
           subscription_id: this.db.user().profile.subscription_id,
         }),
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.message === 'Subscription canceled successfully') {
-          alert('Your subscription has been canceled.')
-          // Optionally update the UI to reflect the cancellation
-        } else {
-          alert('Failed to cancel subscription')
-        }
-      })
+    ).then((response) => {
+      if (response.status === 200) {
+        alert('Your subscription has been canceled.')
+      } else {
+        alert('Failed to cancel subscription')
+      }
+    })
   }
 
   logout() {

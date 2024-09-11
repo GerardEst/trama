@@ -1,4 +1,3 @@
-// Setup type definitions for built-in Supabase Runtime APIs
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
@@ -8,6 +7,8 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
 })
 
 Deno.serve(async (req) => {
+  // Les altres funcions s'estan invocant desde stripe, aquesta desde textandplay
+  // Per tant aquesta necessita una mica de CORS (no sé perquè, suposo que supabase ja permet per defecte stripe)
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
@@ -20,7 +21,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Parse the request body
     const { subscription_id } = await req.json()
 
     if (!subscription_id) {
@@ -37,28 +37,30 @@ Deno.serve(async (req) => {
       }
     )
 
-    // Cancel the subscription in Stripe
+    // Cancela la suscripció. Hi ha també el delete, però és millor fer cancel
     const subscription = await stripe.subscriptions.cancel(subscription_id)
 
-    // Check if subscription was successfully canceled
     if (subscription.status !== 'canceled') {
       return new Response('Failed to cancel subscription', { status: 500 })
     }
 
-    // Update user's profile in Supabase to reflect the canceled subscription
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({
-        subscription_status: 'canceled', // Update status to canceled
-      })
-      .eq('subscription_id', subscription_id) // Find the user by subscription ID
+    // Reflexem els canvis? Ja ho farà l'altra call no?
+    // const { data, error } = await supabase
+    //   .from('profiles')
+    //   .update({
+    //     subscription_status: 'canceled', // Update status to canceled
+    //   })
+    //   .eq('subscription_id', subscription_id) // Find the user by subscription ID
 
-    if (error) {
-      throw error
-    }
+    // if (error) {
+    //   throw error
+    // }
 
     return new Response(
-      JSON.stringify({ message: 'Subscription canceled successfully', data }),
+      JSON.stringify({
+        message: 'Subscription canceled successfully',
+        data: subscription,
+      }),
       {
         headers: {
           'Content-Type': 'application/json',
