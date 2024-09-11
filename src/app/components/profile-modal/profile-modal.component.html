@@ -2,10 +2,14 @@
   <ng-container modal-content>
     <p>Your plan</p>
     <p>{{ db.user().profile.subscription_status==='active' ? 'Pro' : 'Free' }}</p>
+    @if(db.user().profile.subscription_status==='incomplete'){
+    <p>You need to complete the payment. If the payment has been completed, refresh the page</p>
+    }@else {
     @if (db.user().profile.subscription_status==='active') {
-    <polo-basic-button (click)="cancelPlan()" text="Cancel plan"></polo-basic-button>
+    <polo-basic-button (click)="cancelPlan()" text="{{cancelButtonText}}"></polo-basic-button>
     } @else {
     <polo-basic-button (click)="upgradePlan()" text="Upgrade plan"></polo-basic-button>
+    }
     }
     <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
   </ng-container>

@@ -14,6 +14,8 @@ import { Router } from '@angular/router'
   styleUrl: './profile-modal.component.sass',
 })
 export class ProfileModalComponent {
+  cancelButtonText = 'Cancel plan'
+
   constructor(
     public db: DatabaseService,
     private activeStory: ActiveStoryService,
@@ -34,6 +36,7 @@ export class ProfileModalComponent {
       return console.error('No present JWT. Cant cancel plan.')
     }
 
+    this.cancelButtonText = 'Unsubscribing'
     fetch(
       'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription',
       {
@@ -48,7 +51,7 @@ export class ProfileModalComponent {
       }
     ).then((response) => {
       if (response.status === 200) {
-        alert('Your subscription has been canceled.')
+        this.db.user().profile.subscription_status = 'canceled'
       } else {
         alert('Failed to cancel subscription')
       }
