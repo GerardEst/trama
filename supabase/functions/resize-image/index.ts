@@ -1,6 +1,16 @@
 import { Image } from 'https://deno.land/x/imagescript/mod.ts'
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+      status: 204,
+    })
+  }
   try {
     const { file } = req.body
     console.log({ file })

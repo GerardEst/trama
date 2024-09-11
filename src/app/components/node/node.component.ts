@@ -99,7 +99,7 @@ export class NodeComponent {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
-        body: image,
+        body: JSON.stringify(image),
       }
     ).then((response) => {
       if (response.status === 200) {
