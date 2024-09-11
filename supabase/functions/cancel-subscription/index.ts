@@ -44,18 +44,6 @@ Deno.serve(async (req) => {
       return new Response('Failed to cancel subscription', { status: 500 })
     }
 
-    // Reflexem els canvis? Ja ho farà l'altra call no?
-    // const { data, error } = await supabase
-    //   .from('profiles')
-    //   .update({
-    //     subscription_status: 'canceled', // Update status to canceled
-    //   })
-    //   .eq('subscription_id', subscription_id) // Find the user by subscription ID
-
-    // if (error) {
-    //   throw error
-    // }
-
     return new Response(
       JSON.stringify({
         message: 'Subscription canceled successfully',
