@@ -50,29 +50,3 @@ Deno.serve(async (req) => {
     })
   }
 })
-
-// const sharp = require('sharp')
-// const { createClient } = require('@supabase/supabase-js')
-
-// const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-// exports.handler = async (event) => {
-//   const { file } = event.body
-
-//   // Resize and crop the image
-//   const resizedImage = await sharp(file)
-//     .resize(300, 300)
-//     .crop(sharp.gravity.center)
-//     .toBuffer()
-
-//   // Upload the cropped and resized image to Supabase Storage
-//   const { data, error } = await supabase.storage
-//     .from('your-bucket')
-//     .upload('path/to/image.jpg', resizedImage)
-
-//   if (error) {
-//     return { statusCode: 500, body: JSON.stringify({ error }) }
-//   }
-
-//   return { statusCode: 200, body: JSON.stringify({ data }) }
-// }
