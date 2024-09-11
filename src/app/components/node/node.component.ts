@@ -86,16 +86,39 @@ export class NodeComponent {
     const image = event.target.files[0]
     const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.nodeId}`
 
-    const { data, error } = await this.database.supabase.storage
-      .from('images')
-      .upload(imagePath, image, {
-        upsert: true,
-      })
-    if (error) {
-      console.log(error)
-    } else {
-      this.activeStory.addImageToNode(this.nodeId, imagePath)
+    const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
+    if (!jwtToken) {
+      return console.error('No present JWT. Cant cancel plan.')
     }
+
+    fetch(
+      'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/resize-image',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
+        },
+        body: image,
+      }
+    ).then((response) => {
+      if (response.status === 200) {
+        console.log('IMAGE CROPPED', response)
+      } else {
+        alert('Failed to crop image')
+      }
+    })
+
+    // const { data, error } = await this.database.supabase.storage
+    //   .from('images')
+    //   .upload(imagePath, image, {
+    //     upsert: true,
+    //   })
+    // if (error) {
+    //   console.log(error)
+    // } else {
+    //   this.activeStory.addImageToNode(this.nodeId, imagePath)
+    // }
   }
 
   async removeNodeImage() {
