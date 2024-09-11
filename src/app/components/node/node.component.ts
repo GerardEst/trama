@@ -99,7 +99,7 @@ export class NodeComponent {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
-        body: image,
+        body: { image },
       }
     ).then((response) => {
       if (response.status === 200) {

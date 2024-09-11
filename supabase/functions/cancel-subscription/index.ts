@@ -27,17 +27,6 @@ Deno.serve(async (req) => {
       return new Response('Subscription ID is required', { status: 400 })
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    )
-
-    // Cancela la suscripció. Hi ha també el delete, però és millor fer cancel
     const subscription = await stripe.subscriptions.cancel(subscription_id)
 
     if (subscription.status !== 'canceled') {
@@ -60,6 +49,14 @@ Deno.serve(async (req) => {
       }
     )
   } catch (err) {
-    return new Response(String(err?.message ?? err), { status: 500 })
+    return new Response(String(err?.message ?? err), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+      status: 500,
+    })
   }
 })

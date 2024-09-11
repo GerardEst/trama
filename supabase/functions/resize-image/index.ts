@@ -29,16 +29,25 @@ Deno.serve(async (req) => {
       }),
       {
         headers: {
-          'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': 'https://www.textandplay.com',
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Content-Type': 'application/json',
         },
         status: 200,
       }
     )
   } catch (err) {
-    return new Response(String(err?.message ?? err), { status: 500 })
+    console.log({ err })
+    return new Response(String(err?.message ?? err), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+      status: 500,
+    })
   }
 })
 
