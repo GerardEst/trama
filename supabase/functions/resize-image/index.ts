@@ -12,6 +12,7 @@ Deno.serve(async (req) => {
     })
   }
   try {
+    console.log({ req })
     const { file } = req.body
     console.log({ file })
 
@@ -20,7 +21,6 @@ Deno.serve(async (req) => {
 
     const resized = image.resize(300, 300)
     console.log({ resized })
-    //await Deno.writeFile('output.png', await resized.encode())
 
     return new Response(
       JSON.stringify({

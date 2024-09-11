@@ -96,10 +96,10 @@ export class NodeComponent {
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
-        body: JSON.stringify(image),
+        body: image,
       }
     ).then((response) => {
       if (response.status === 200) {
