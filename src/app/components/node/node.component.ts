@@ -83,8 +83,9 @@ export class NodeComponent {
       data: { user },
     } = await this.database.supabase.auth.getUser()
 
-    const image = event.target.files[0]
     const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.nodeId}`
+    const formData = new FormData()
+    formData.append('file', event.target.files[0])
 
     const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
     if (!jwtToken) {
@@ -96,10 +97,9 @@ export class NodeComponent {
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
-        body: { image },
+        body: formData,
       }
     ).then((response) => {
       if (response.status === 200) {
