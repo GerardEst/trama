@@ -85,7 +85,7 @@ export class NodeComponent {
 
     const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.nodeId}`
     const formData = new FormData()
-    formData.append('file', event.target.files[0])
+    formData.append('image', event.target.files[0])
 
     const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
     if (!jwtToken) {

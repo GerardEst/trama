@@ -13,7 +13,13 @@ Deno.serve(async (req) => {
   }
   try {
     console.log({ req })
-    const { file } = req.body
+    const formData = await req.formData
+    const file = formData.get('image')
+
+    if (!file) {
+      throw new Error('No file uploaded')
+    }
+
     console.log({ file })
 
     const image = await Image.decode(file)
