@@ -1,4 +1,3 @@
-//import { Image } from 'https://deno.land/x/imagescript/mod.ts'
 import {
   ImageMagick,
   IMagickImage,
@@ -28,7 +27,7 @@ Deno.serve(async (req) => {
       throw new Error('No file uploaded')
     }
 
-    // ImageMagic
+    // ImageMagic processment
     await initialize()
 
     const resizedImage = await ImageMagick.read(
@@ -37,23 +36,11 @@ Deno.serve(async (req) => {
         img.resize(200, 100)
         img.blur(20, 6)
 
-        console.log('work')
-        console.log(img)
-
-        return img
-
-        // await img.write(MagickFormat.Jpeg, (data: Uint8Array) =>
-        //   Deno.writeFile('image-blur.jpg', data)
-        // )
+        return await img.write(MagickFormat.Jpeg, (data: Uint8Array) => data)
       }
     )
 
-    // Imagescript
-    // const image = await Image.decode(buffer)
-    // console.log({ image })
-
-    // const resized = image.resize(300, 300)
-    // console.log({ resized })
+    console.log({ resizedImage })
 
     return new Response(
       JSON.stringify({
