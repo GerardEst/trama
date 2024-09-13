@@ -109,10 +109,11 @@ export class NodeComponent {
           const { data, error } = await this.database.supabase.storage
             .from('images')
             .upload(imagePath, resp, {
+              contentType: 'image/webp',
               upsert: true,
             })
           if (error) {
-            console.log(error)
+            console.log('error uploading:', error)
           } else {
             this.activeStory.addImageToNode(this.nodeId, imagePath)
           }
