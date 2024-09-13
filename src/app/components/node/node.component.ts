@@ -106,22 +106,21 @@ export class NodeComponent {
         console.log('IMAGE CROPPED', response)
         response.json().then((resp) => {
           console.log(resp)
+          const { data, error } = await this.database.supabase.storage
+            .from('images')
+            .upload(imagePath, resp, {
+              upsert: true,
+            })
+          if (error) {
+            console.log(error)
+          } else {
+            this.activeStory.addImageToNode(this.nodeId, imagePath)
+          }
         })
       } else {
         alert('Failed to crop image')
       }
     })
-
-    // const { data, error } = await this.database.supabase.storage
-    //   .from('images')
-    //   .upload(imagePath, image, {
-    //     upsert: true,
-    //   })
-    // if (error) {
-    //   console.log(error)
-    // } else {
-    //   this.activeStory.addImageToNode(this.nodeId, imagePath)
-    // }
   }
 
   async removeNodeImage() {

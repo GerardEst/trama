@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
         img.resize(200, 100)
         img.blur(20, 6)
 
-        return await img.write(MagickFormat.Jpeg, (data: Uint8Array) => data)
+        return await img.write(MagickFormat.Webp, (data: Uint8Array) => data)
       }
     )
 
