@@ -37,9 +37,10 @@ Deno.serve(async (req) => {
         img.resize(200, 100)
         img.blur(20, 6)
 
+        console.log('work')
         console.log(img)
-        console.log(img.write(MagickFormat.Jpeg))
-        return img.write(MagickFormat.Jpeg)
+
+        return img
 
         // await img.write(MagickFormat.Jpeg, (data: Uint8Array) =>
         //   Deno.writeFile('image-blur.jpg', data)
@@ -57,7 +58,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         message: 'Image cropped successfully',
-        data: resized,
+        data: resizedImage,
       }),
       {
         headers: {
