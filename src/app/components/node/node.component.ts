@@ -94,12 +94,8 @@ export class NodeComponent {
 
     fetch(
       'https://kpxqjqny2xn6tz5xnf2fqe2u4a0ryvky.lambda-url.eu-west-2.on.aws/',
-      //'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/resize-image',
       {
         method: 'POST',
-        headers: {
-          //Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
-        },
         body: formData,
       }
     ).then((response) => {

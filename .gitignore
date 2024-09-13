@@ -12,7 +12,7 @@ npm-debug.log
 yarn-error.log
 
 # AWS
-/aws/node_modules
+/aws/resize-image/node_modules
 
 # IDEs and editors
 .idea/

@@ -1,3 +1,11 @@
+/**
+ * UNUSED
+ *
+ * Using the aws function because it gives more compute time
+ * Leaving it here in case I want to go back (maybe for excessive costs on aws)
+ *
+ */
+
 import {
   ImageMagick,
   IMagickImage,
