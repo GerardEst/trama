@@ -23,6 +23,8 @@ Deno.serve(async (req) => {
     const imageArrayBuffer = await image.arrayBuffer()
     const imageBuffer = new Uint8Array(imageArrayBuffer)
 
+    const log = {}
+
     if (!image) {
       throw new Error('No file uploaded')
     }
@@ -33,14 +35,31 @@ Deno.serve(async (req) => {
     const resizedImage = await ImageMagick.read(
       imageBuffer,
       async (img: IMagickImage) => {
-        img.resize(200, 100)
-        img.blur(20, 6)
+        log.originalSize = `${img.width}x${img.height}`
+        log.originalWeight = imageBuffer.length / 1000 + 'KB'
 
-        return await img.write(MagickFormat.Webp, (data: Uint8Array) => data)
+        img.resize(600, 600)
+
+        log.finalSize = `${img.width}x${img.height}`
+
+        // Strip metadata to reduce file size
+        img.strip()
+
+        return await img.write(
+          MagickFormat.Webp,
+          (data: Uint8Array) => {
+            log.finalWeight = data.length / 1000 + 'KB'
+            return data
+          },
+          {
+            quality: 75,
+            effort: 6, // WebP compression effort (0-6)
+          }
+        )
       }
     )
 
-    console.log({ resizedImage })
+    console.log(log)
 
     return new Response(resizedImage, {
       headers: {
