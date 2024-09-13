@@ -104,6 +104,8 @@ export class NodeComponent {
     ).then((response) => {
       if (response.status === 200) {
         console.log('IMAGE CROPPED', response)
+        const responseBody = response.json()
+        console.log(responseBody)
       } else {
         alert('Failed to crop image')
       }
