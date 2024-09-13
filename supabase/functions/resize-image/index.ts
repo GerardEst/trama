@@ -42,21 +42,15 @@ Deno.serve(async (req) => {
 
     console.log({ resizedImage })
 
-    return new Response(
-      JSON.stringify({
-        message: 'Image cropped successfully',
-        data: resizedImage,
-      }),
-      {
-        headers: {
-          'Access-Control-Allow-Origin': 'https://www.textandplay.com',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          'Content-Type': 'application/json',
-        },
-        status: 200,
-      }
-    )
+    return new Response(resizedImage, {
+      headers: {
+        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Content-Type': 'image/webp',
+      },
+      status: 200,
+    })
   } catch (err) {
     console.log({ err })
     return new Response(String(err?.message ?? err), {

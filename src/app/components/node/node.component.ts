@@ -104,11 +104,12 @@ export class NodeComponent {
     ).then((response) => {
       if (response.status === 200) {
         console.log('IMAGE CROPPED', response)
-        response.json().then(async (resp) => {
-          console.log(resp.data)
+        response.blob().then(async (blob) => {
+          console.log(blob)
+
           const { data, error } = await this.database.supabase.storage
             .from('images')
-            .upload(imagePath, resp.data, {
+            .upload(imagePath, blob, {
               contentType: 'image/webp',
               upsert: true,
             })
