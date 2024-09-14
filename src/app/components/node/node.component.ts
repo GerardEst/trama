@@ -14,6 +14,7 @@ import { PanzoomService } from 'src/app/services/panzoom.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { ImageComponent } from 'src/app/components/ui/image/image.component'
 import {
   link,
   shareOptions,
@@ -24,6 +25,9 @@ import {
   generateIDForNewAnswer,
   generateIDForNewCondition,
 } from 'src/app/utils/tree-searching'
+import { ApisService } from 'src/app/services/apis.service'
+import { StorageService } from 'src/app/services/storage.service'
+
 @Component({
   selector: 'polo-node',
   standalone: true,
@@ -33,6 +37,7 @@ import {
     ConditionComponent,
     FormsModule,
     BasicButtonComponent,
+    ImageComponent,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
@@ -57,17 +62,23 @@ export class NodeComponent {
     shareButtonText: '',
   }
 
+  loading: boolean = false
+  loadingMessage?: string
+
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
 
   @ViewChild('textarea') textarea?: ElementRef
+  @ViewChild('imageInput') imageInput?: ElementRef
 
   constructor(
     public elementRef: ElementRef,
     private panzoom: PanzoomService,
     private database: DatabaseService,
-    private activeStory: ActiveStoryService
+    private activeStory: ActiveStoryService,
+    private apis: ApisService,
+    private storage: StorageService
   ) {}
 
   async ngOnInit() {
@@ -83,43 +94,39 @@ export class NodeComponent {
       data: { user },
     } = await this.database.supabase.auth.getUser()
 
-    const imagePath = `${user.id}/${this.activeStory.storyId()}/${this.nodeId}`
-    const formData = new FormData()
-    formData.append('image', event.target.files[0])
+    const randomStr = Math.random().toString(36).substring(2, 10)
+    const imagePath = `${user.id}/${this.activeStory.storyId()}/${
+      this.nodeId
+    }-${randomStr}`
 
-    const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
-    if (!jwtToken) {
-      return console.error('No present JWT. Cant cancel plan.')
+    this.loading = true
+    this.loadingMessage = 'Optimizing image'
+
+    const optimizedImageBlob = await this.apis.getOptimizedImage(
+      event.target.files[0]
+    )
+    if (!optimizedImageBlob) {
+      console.log('Error obtaining optimized image')
+      this.loadingMessage =
+        'The image is too big\nTry again with a smaller image.'
+      this.imageInput?.nativeElement.reset()
+      return
     }
 
-    fetch(
-      'https://kpxqjqny2xn6tz5xnf2fqe2u4a0ryvky.lambda-url.eu-west-2.on.aws/',
-      {
-        method: 'POST',
-        body: formData,
-      }
-    ).then((response) => {
-      if (response.status === 200) {
-        console.log('IMAGE CROPPED', response)
-        response.blob().then(async (blob) => {
-          console.log(blob)
+    const uploadedImage = await this.storage.uploadImage(
+      imagePath,
+      optimizedImageBlob
+    )
 
-          const { data, error } = await this.database.supabase.storage
-            .from('images')
-            .upload(imagePath, blob, {
-              contentType: 'image/webp',
-              upsert: true,
-            })
-          if (error) {
-            console.log('error uploading:', error)
-          } else {
-            this.activeStory.addImageToNode(this.nodeId, imagePath)
-          }
-        })
-      } else {
-        alert('Failed to crop image')
-      }
-    })
+    if (uploadedImage) {
+      this.activeStory.addImageToNode(this.nodeId, imagePath)
+    } else {
+      console.log('Not possible to upload image')
+      this.loadingMessage = 'Error uploading the image'
+    }
+
+    this.loadingMessage = undefined
+    this.loading = false
   }
 
   async removeNodeImage() {

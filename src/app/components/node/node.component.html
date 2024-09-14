@@ -4,9 +4,11 @@
     <ng-content select="dragHandle"> </ng-content>
     <div class="options">
       @if (type !== 'distributor') {
-      <label class="simulateButton options__addImage">
-        <input type="file" id="image" name="image" accept="image/*" (change)="onAddImage($event)" />
-      </label>
+      <form #imageInput>
+        <label class="simulateButton options__addImage">
+          <input type="file" id="image" name="image" accept="image/*" (change)="onAddImage($event)" />
+        </label>
+      </form>
       }
       <polo-basic-button title="Duplicate node" icon="/assets/icons/duplicate.svg"
         (click)="onDuplicateNode()"></polo-basic-button>
@@ -25,14 +27,8 @@
       (onRemoveCondition)="removeCondition($event)"></polo-condition>
     } @else if (type === 'end') {
     @if (image) {
-    <div class="node__image">
-      <img width="100%" [src]="
-              'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-              image
-            " />
-      <polo-basic-button text="Delete image" title="Delete image" class="node__image__remove"
-        (click)="removeNodeImage()"></polo-basic-button>
-    </div>
+    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
+      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
     }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div class="node__linkoptions">
@@ -61,14 +57,8 @@
     </div>
     } @else {
     @if (image) {
-    <div class="node__image">
-      <img width="100%" [src]="
-              'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-              image
-            " />
-      <polo-basic-button text="Delete image" title="Delete image" class="node__image__remove"
-        (click)="removeNodeImage()"></polo-basic-button>
-    </div>
+    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
+      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
     }
     @if (!answers || answers.length === 0) {
     <div id="{{ nodeId + '_join' }}" class="union_point"></div>

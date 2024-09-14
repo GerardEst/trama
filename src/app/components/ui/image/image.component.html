@@ -1,0 +1,13 @@
+<div class="image">
+  @if(loading){
+  <img width="30px" src="/assets/icons/loading.svg" />
+  }
+  @if(loadingMessage){
+  <p class="txt-white">{{loadingMessage}}</p>
+  }@else {
+  <img width="100%"
+    [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + storageRoute" />
+  <polo-basic-button class="image__remove" text="Delete image" title="Delete image"
+    (click)="onRemoveImage.emit()"></polo-basic-button>
+  }
+</div>

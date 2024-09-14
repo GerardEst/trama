@@ -1,3 +1,5 @@
+/** To upload this function, zip it and upload in AWS Lambda -> resize-image function */
+
 const sharp = require('sharp')
 const Busboy = require('busboy')
 

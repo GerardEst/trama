@@ -1,0 +1,16 @@
+.image
+  border-radius: 10px
+  background: var(--text-color)
+  position: relative
+  display: flex
+  align-items: center
+  justify-content: center
+  min-height: 150px
+  &__remove
+    position: absolute
+    bottom: 10px
+    right: 5px
+    z-index: 1
+    display: none
+  &:hover .image__remove
+    display: block
