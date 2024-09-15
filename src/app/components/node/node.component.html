@@ -12,8 +12,10 @@
       }
       <polo-basic-button title="Duplicate node" icon="/assets/icons/duplicate.svg"
         (click)="onDuplicateNode()"></polo-basic-button>
+      @if(nodeId !== 'node_0'){
       <polo-basic-button title="Delete node" icon="/assets/icons/trash.svg"
         (click)="onRemoveNode()"></polo-basic-button>
+      }
     </div>
   </header>
   <main>

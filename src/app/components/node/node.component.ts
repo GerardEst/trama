@@ -183,6 +183,10 @@ export class NodeComponent {
   }
 
   onRemoveNode() {
+    if (this.nodeId === 'node_0') {
+      alert('cannot delete node_0')
+      return
+    }
     const data = {
       nodeId: this.nodeId,
       answers: this.answers?.map((answer) => answer.id),
