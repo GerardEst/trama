@@ -77,6 +77,8 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().tapLink = configuration.tapLink
     this.activeStory.storyConfiguration().askName = configuration.askName
     this.activeStory.storyConfiguration().footer = configuration.footer
+    this.activeStory.storyConfiguration().cumulativeMode =
+      configuration.cumulativeMode
 
     //this.customStyles = configuration.customStyles
     this.customStyles = configuration.customStyles || 'modern'

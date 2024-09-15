@@ -103,5 +103,7 @@ export class DashboardComponent {
     this.activeStory.storyConfiguration().tapLink = configuration.tapLink
     this.activeStory.storyConfiguration().askName = configuration.askName
     this.activeStory.storyConfiguration().footer = configuration.footer
+    this.activeStory.storyConfiguration().cumulativeMode =
+      configuration.cumulativeMode
   }
 }

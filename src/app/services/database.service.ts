@@ -163,7 +163,9 @@ export class DatabaseService {
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select('custom_id, tracking, sharing, tapLink, askName, footer')
+      .select(
+        'custom_id, tracking, sharing, tapLink, cumulativeMode, askName, footer'
+      )
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -210,6 +212,21 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('stories')
       .update({ sharing: sharing })
+      .eq('id', storyId)
+
+    if (error) return false
+    return true
+  }
+
+  async setCumulativeModeOf(storyId: string, cumulativeMode: boolean) {
+    if (this.prod)
+      console.log(
+        '%cdb call to toggle cumulative mode of a story',
+        'color: #9999ff'
+      )
+    const { data, error } = await this.supabase
+      .from('stories')
+      .update({ cumulativeMode: cumulativeMode })
       .eq('id', storyId)
 
     if (error) return false

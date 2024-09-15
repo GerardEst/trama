@@ -58,6 +58,15 @@ export class MenuTopComponent {
     )
   }
 
+  toggleCumulativeMode() {
+    this.activeStory.storyConfiguration().cumulativeMode =
+      !this.activeStory.storyConfiguration().cumulativeMode
+    this.db.setCumulativeModeOf(
+      this.activeStory.storyId(),
+      this.activeStory.storyConfiguration().cumulativeMode
+    )
+  }
+
   toggleTextandplayLink() {
     this.activeStory.storyConfiguration().tapLink =
       !this.activeStory.storyConfiguration().tapLink

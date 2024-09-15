@@ -28,6 +28,11 @@
       </label>
       }
       <label>
+        <span>Cumulative mode</span>
+        <input type="checkbox" (change)="toggleCumulativeMode()"
+          [checked]="activeStory.storyConfiguration().cumulativeMode" />
+      </label>
+      <label>
         <span>Ask for name</span>
         <input (change)="toggleAskName()" type="checkbox" [checked]="activeStory.storyConfiguration().askName" />
       </label>
