@@ -58,6 +58,15 @@ export class MenuTopComponent {
     )
   }
 
+  toggleTextandplayLink() {
+    this.activeStory.storyConfiguration().tapLink =
+      !this.activeStory.storyConfiguration().tapLink
+    this.db.setTapLinkOf(
+      this.activeStory.storyId(),
+      this.activeStory.storyConfiguration().tapLink
+    )
+  }
+
   async updateCustomId(event: any) {
     this.activeStory.storyConfiguration().customId = event.target.value
     const couldUpdate = await this.db.updateCustomIdOf(

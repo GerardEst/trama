@@ -16,10 +16,12 @@
     </p>
     }
     }
+    @if(activeStory.storyConfiguration().tapLink){
     <p>
       Created with
       <a target="_blank" href="https://textandplay.com">Textandplay</a>
     </p>
+    }
   </div>
   @if (
   activeStory.entireTree() &&

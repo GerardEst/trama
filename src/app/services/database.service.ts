@@ -163,7 +163,7 @@ export class DatabaseService {
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select('custom_id, tracking, sharing, askName, footer')
+      .select('custom_id, tracking, sharing, tapLink, askName, footer')
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -180,6 +180,21 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('stories')
       .update({ tracking: tracking })
+      .eq('id', storyId)
+
+    if (error) return false
+    return true
+  }
+
+  async setTapLinkOf(storyId: string, tapLink: boolean) {
+    if (this.prod)
+      console.log(
+        '%cdb call to hide the textandplay link from the story',
+        'color: #9999ff'
+      )
+    const { data, error } = await this.supabase
+      .from('stories')
+      .update({ tapLink: tapLink })
       .eq('id', storyId)
 
     if (error) return false

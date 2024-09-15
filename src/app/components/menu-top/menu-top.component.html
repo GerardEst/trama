@@ -15,6 +15,18 @@
         <input type="checkbox" />
       </label>
       }
+      @if (db.user().profile.subscription_status==='active') {
+      <label>
+        <span>Hide textandplay link</span>
+        <input (change)="toggleTextandplayLink()" type="checkbox"
+          [checked]="activeStory.storyConfiguration().tapLink" />
+      </label>
+      } @else {
+      <label>
+        <span>🚫 Hide textandplay link</span>
+        <input type="checkbox" />
+      </label>
+      }
       <label>
         <span>Ask for name</span>
         <input (change)="toggleAskName()" type="checkbox" [checked]="activeStory.storyConfiguration().askName" />
