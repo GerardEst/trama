@@ -28,7 +28,7 @@
     <polo-condition id="{{ 'condition_' + nodeId.split('_')[1] + '_fallback' }}" [fallback]="true"
       (onRemoveCondition)="removeCondition($event)"></polo-condition>
     } @else if (type === 'end') {
-    @if (image) {
+    @if (image || loading) {
     <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
       [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
     }
@@ -63,7 +63,7 @@
       }
     </div>
     } @else {
-    @if (image) {
+    @if (image || loading) {
     <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
       [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
     }
