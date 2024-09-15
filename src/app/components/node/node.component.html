@@ -44,16 +44,21 @@
       </label>
     </div>
     <div class="node__shareoptions">
-      <p class="node__shareoptions__title">Share options</p>
+      <label class="node__shareoptions__toggle">
+        <p class="node__shareoptions__toggle__title">Share customizations</p>
+        <input [(ngModel)]="openedShareOptions" type="checkbox" />
+      </label>
+      @if(openedShareOptions){
       <label class="node__shareoptions__option">
         <p>Custom shared text</p>
         <textarea (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
-          </textarea>
+            </textarea>
       </label>
       <label class="node__shareoptions__option">
         <p>Custom share button text</p>
         <input type="text" (change)="updateShareOptions()" [(ngModel)]="shareOptions.shareButtonText" />
       </label>
+      }
     </div>
     } @else {
     @if (image) {

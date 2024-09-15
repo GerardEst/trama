@@ -5,7 +5,7 @@ import {
   findAnswerInTree,
   generateIDForNewRequirement,
 } from '../utils/tree-searching'
-import { link, node_conditions, node } from '../interfaces'
+import { link, node_conditions, node, shareOptions } from '../interfaces'
 import { DatabaseService } from './database.service'
 
 @Injectable({
@@ -294,8 +294,8 @@ export class ActiveStoryService {
 
     this.activateTreeChangeEffects()
   }
-  updateNodeShareOptions(nodeId: string, sharingOptions: any) {
-    const node = findNodeInTree(nodeId, this.entireTree())
+  updateNodeShareOptions(nodeId: string, sharingOptions: shareOptions) {
+    const node: node = findNodeInTree(nodeId, this.entireTree())
     node.share = sharingOptions
 
     // Saving to DB

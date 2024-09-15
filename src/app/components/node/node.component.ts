@@ -62,6 +62,7 @@ export class NodeComponent {
     shareButtonText: '',
   }
 
+  openedShareOptions: boolean = false
   loading: boolean = false
   loadingMessage?: string
 

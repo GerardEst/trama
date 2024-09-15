@@ -34,8 +34,11 @@
     display: flex
     flex-direction: column
     gap: 1rem
-    &__title
-      font-weight: 700
+    &__toggle
+      display: flex
+      justify-content: space-between
+      &__title
+        font-weight: 700
     &__option
       &--row
         display: flex
@@ -52,6 +55,8 @@
       justify-content: space-between
       &__title
         font-weight: 700
+    &__link
+      flex-direction: column
 
   main
     display: flex
