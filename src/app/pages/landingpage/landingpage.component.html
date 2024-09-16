@@ -99,11 +99,11 @@
         }
         @if(activeUseCase==='schools'){
         <iframe title="School flow example" @showUseCase
-          src="https://www.textandplay.com/private/60cc66cc-2d8e-48d7-8e57-e5ef8605c2fa"></iframe>
+          src="https://textandplay.com/private/22ccbd9e-4933-499d-ad8b-adfffa45ee78"></iframe>
         }
         @if(activeUseCase==='creatives'){
         <iframe title="Creative flow example" @showUseCase
-          src="https://www.textandplay.com/private/60cc66cc-2d8e-48d7-8e57-e5ef8605c2fa"></iframe>
+          src="https://textandplay.com/private/337b5201-40eb-4732-b29a-8c09663ef8b5"></iframe>
         }
       </polo-landing-mobile>
     </div>
@@ -112,6 +112,7 @@
 <section class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
+    <input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!
     <div class="pricing">
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -134,7 +135,11 @@
       <div class="pricing__plan">
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Creator</h2>
-          <p class="txt-ralewayItalic">3.95€/month</p>
+          @if(payYearly){
+          <p class="txt-ralewayItalic"><span class="txt-linethrough">71,4€</span> 36€/year</p>
+          }@else {
+          <p class="txt-ralewayItalic">5.95€/month</p>
+          }
         </div>
         <ul class="pricing__plan__features">
           <li class="txt-gray">Everything from hobby plan</li>
@@ -149,16 +154,21 @@
       <div class="pricing__plan">
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Pro</h2>
-          <p class="txt-ralewayItalic">39.95€/month</p>
+          <p class="txt-ralewayItalic"></p>
         </div>
         <ul class="pricing__plan__features">
           <li class="txt-gray">Everything from other plans</li>
           <li><img src="/assets/images/drawn_icons/star_2.webp" alt="Star icon" /> Tracking and statistics</li>
           <li><img src="/assets/images/drawn_icons/star_2.webp" alt="Star icon" /> Priority support</li>
+          <li><img src="/assets/images/drawn_icons/star_2.webp" alt="Star icon" /> Access to creative writting service
+          </li>
         </ul>
-        <polo-landing-button (click)="usePro()" behaviour="link" text="Use pro"></polo-landing-button>
+        <polo-landing-button [inactive]="true" (click)="usePro()" behaviour="link"
+          text="In progress"></polo-landing-button>
       </div>
     </div>
+    <p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
+    </p>
   </div>
 </section>
 <section class="section--roadmap">

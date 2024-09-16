@@ -12,6 +12,7 @@ export class LandingButtonComponent {
   @Input() behaviour: 'link' | 'button' = 'button'
   @Input() destiny?: string
   @Input() text?: string
+  @Input() inactive: boolean = false
 
   constructor(public router: Router) {}
 }

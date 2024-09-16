@@ -6,6 +6,7 @@ import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 import { GameComponent } from 'src/app/components/game/game.component'
 import { Title, Meta } from '@angular/platform-browser'
+import { FormsModule } from '@angular/forms'
 
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
 import { LandingButtonComponent } from './components/button/landing-button.component'
@@ -22,6 +23,7 @@ import { trigger, style, animate, transition } from '@angular/animations'
     LandingButtonComponent,
     LandingCardComponent,
     GameComponent,
+    FormsModule,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
@@ -346,6 +348,7 @@ export class LandingpageComponent {
   loggedUser: boolean = false
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
+  payYearly: boolean = false
 
   constructor(
     private activeStory: ActiveStoryService,
@@ -389,6 +392,8 @@ export class LandingpageComponent {
   }
 
   usePro() {
+    // Inactivated for now
+    return
     this.loggedUser
       ? this.router.navigate(['dashboard'])
       : this.router.navigate(['login'], {
