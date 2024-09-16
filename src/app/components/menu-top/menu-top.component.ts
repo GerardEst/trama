@@ -97,15 +97,6 @@ export class MenuTopComponent {
     )
   }
 
-  toggleAskName() {
-    this.activeStory.storyConfiguration().askName =
-      !this.activeStory.storyConfiguration().askName
-    this.db.setAskNameOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().askName
-    )
-  }
-
   async openStadistics() {
     this.router.navigate(['/stadistics', this.activeStory.storyId()])
   }

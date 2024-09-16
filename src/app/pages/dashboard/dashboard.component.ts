@@ -101,7 +101,6 @@ export class DashboardComponent {
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().tapLink = configuration.tapLink
-    this.activeStory.storyConfiguration().askName = configuration.askName
     this.activeStory.storyConfiguration().footer = configuration.footer
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode

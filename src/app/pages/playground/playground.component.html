@@ -1,10 +1,8 @@
 <div class="playground" [class]="customStyles || 'default'">
   <div class="storytitle">{{ activeStory.storyName() }}</div>
-  @if (gotUserInfo) {
   <polo-game [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
     [customStyles]="customStyles" (onEndGame)="endGame()" (onDrawNode)="drawNode($event)"
     (onSelectAnswer)="selectAnswer($event)"></polo-game>
-  }
   <div class="storyfooter">
     <span></span>
     @if (activeStory.storyConfiguration().footer?.text) {
@@ -24,16 +22,4 @@
     </p>
     }
   </div>
-  @if (
-  activeStory.entireTree() &&
-  activeStory.storyConfiguration().askName &&
-  !gotUserInfo
-  ) {
-  <polo-modal-window [locked]="true">
-    <form class="playerForm">
-      <input type="text" (change)="setUserName($event)" placeholder="Nom" />
-      <polo-basic-button type="submit" (click)="displayGame($event)">Començar!</polo-basic-button>
-    </form>
-  </polo-modal-window>
-  }
 </div>

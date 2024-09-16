@@ -32,7 +32,6 @@ export class PlaygroundComponent {
   playerPath: Array<any> = []
   externalEvents: Array<any> = []
   gameId?: string
-  gotUserInfo: boolean = false
   customStyles?: string
 
   constructor(
@@ -75,7 +74,6 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().tracking = configuration.tracking
     this.activeStory.storyConfiguration().sharing = configuration.sharing
     this.activeStory.storyConfiguration().tapLink = configuration.tapLink
-    this.activeStory.storyConfiguration().askName = configuration.askName
     this.activeStory.storyConfiguration().footer = configuration.footer
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode
@@ -86,13 +84,11 @@ export class PlaygroundComponent {
     // We have to manually init the refs by now
     this.activeStory.initTreeRefs()
 
-    if (!this.activeStory.storyConfiguration().askName) this.displayGame()
+    this.displayGame()
   }
 
   async displayGame(event?: Event) {
     event?.preventDefault()
-
-    this.gotUserInfo = true
 
     if (this.activeStory.storyConfiguration().tracking) {
       this.startTabChangeDetection()

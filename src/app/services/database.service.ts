@@ -163,9 +163,7 @@ export class DatabaseService {
       )
     let { data, error } = await this.supabase
       .from('stories')
-      .select(
-        'custom_id, tracking, sharing, tapLink, cumulativeMode, askName, footer'
-      )
+      .select('custom_id, tracking, sharing, tapLink, cumulativeMode, footer')
       .eq('id', storyId)
 
     if (error) return console.error(error)
@@ -260,21 +258,6 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('stories')
       .update({ footer: footer })
-      .eq('id', storyId)
-
-    if (error) return false
-    return true
-  }
-
-  async setAskNameOf(storyId: string, askName: boolean) {
-    if (this.prod)
-      console.log(
-        '%cdb call to set the askName status of a story',
-        'color: #9999ff'
-      )
-    const { data, error } = await this.supabase
-      .from('stories')
-      .update({ askName: askName })
       .eq('id', storyId)
 
     if (error) return false
