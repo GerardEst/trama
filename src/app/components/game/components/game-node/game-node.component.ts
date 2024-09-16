@@ -5,6 +5,7 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  HostListener,
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { trigger, style, transition, animate } from '@angular/animations'
@@ -34,11 +35,20 @@ export class GameNodeComponent {
   @Output() onGoToLink: EventEmitter<any> = new EventEmitter()
   @Output() onShare: EventEmitter<any> = new EventEmitter()
 
+  @HostListener('window:click', ['$event'])
+  onWindowClick(event: MouseEvent) {
+    if (this.writting) {
+      this.writeSpeed = 'immediate'
+    }
+  }
+
   // Writting options
   speeds: any = {
+    immediate: 1,
     fast: 10,
     slow: 50,
   }
+  writting: boolean = false
   showAnswers: boolean = false
   writterCounter: number = 0
 
@@ -58,6 +68,8 @@ export class GameNodeComponent {
   }
 
   writeText() {
+    this.writting = true
+
     if (this.writterCounter < this.data.text.length) {
       this.textContainer.nativeElement.innerHTML += this.data.text.charAt(
         this.writterCounter
@@ -65,6 +77,8 @@ export class GameNodeComponent {
       this.writterCounter++
       setTimeout(() => this.writeText(), this.speeds[this.writeSpeed])
     } else {
+      this.writting = false
+
       setTimeout(() => (this.showAnswers = true), 350)
     }
   }
