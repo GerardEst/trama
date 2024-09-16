@@ -103,22 +103,39 @@ section
   & .section--relativeMarginSpace
     margin: 10vw 0
   &.section--intro
-    padding-bottom: 70px
-    padding-top: 200px
+    padding-bottom: 90px
+    padding-top: 220px
   &.section--mobile
     display: flex
-    align-items: center
-    justify-content: space-around
+    flex-direction: column
     padding: 60px
     padding-bottom: 130px
-    flex-wrap: wrap
-    gap: 110px
-    img
-      position: absolute
-      right: 374px
-      width: 160px
-      top: 67px
-      z-index: 1
+    .mobile__playground
+      display: flex
+      align-items: center
+      justify-content: space-around
+      flex-wrap: wrap
+      gap: 110px
+      polo-board
+        position: relative
+      polo-board::after
+        content:"This is a simplified preview of the Textandplay dashboard"
+        position: absolute
+        bottom: 10px
+        right: 10px
+        font-family: 'RalewayItalic'
+        color: var(--light-text)
+      img
+        position: absolute
+        right: 398px
+        width: 100px
+        top: 267px
+        z-index: 1
+    .mobile__text
+      display: flex
+      &__editor
+        padding: 1rem
+        background: rgba(255, 255, 255, 0.9)
   &.section--advantages
     position: relative
     background: white
@@ -178,12 +195,13 @@ polo-landing-mobile
     text-align: center
     span
       position: relative
-      text-decoration: underline
-      text-underline-offset: 5px
+      background: url(/assets/images/landing/we_detail.webp) no-repeat bottom -2px center / 25px
+      height: 55px
+      display: inline-block
       sub
         position: absolute
-        bottom: 0
-        transform: translateY(18px) translateX(-15px) rotate(7deg)
+        bottom: 18px
+        transform: translateY(18px) translateX(-16px) rotate(7deg)
         width: 100px
         opacity: 0.6
   &__list
@@ -264,6 +282,7 @@ polo-landing-mobile
     //   box-shadow: 0 0 20px inset var(--text-color)
     &:nth-child(2)
       box-shadow: 0 0 20px inset var(--success)
+      outline: 3px solid var(--success)
     // &:nth-child(3)
     //   box-shadow: 0 0 20px inset var(--gold)
     &__header

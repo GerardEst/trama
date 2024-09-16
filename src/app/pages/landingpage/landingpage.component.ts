@@ -66,7 +66,7 @@ export class LandingpageComponent {
                 toAnswer: false,
               },
             ],
-            text: 'Click me! I will take you to the next node\n\n(As you can see in the board on your left)',
+            text: 'Click me! I will take you to the next node',
           },
         ],
       },

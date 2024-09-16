@@ -1,5 +1,5 @@
 <menu>
-  <p class="logo">Text & Play <sup> (beta)</sup></p>
+  <p class="logo">Text & Play</p>
   <div class="login">
     @if (checkedLoggedUser) {
     <polo-landing-button behaviour="link" destiny="/dashboard"
@@ -21,10 +21,20 @@
 </section>
 
 <section class="section--mobile pattern-background">
-  <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
-  <!--img src="assets/images/landing/arrow.webp" /-->
-  <polo-landing-mobile [camera]="true" [topSpacing]="true"><polo-game customStyles="modern"
-      mode="single"></polo-game></polo-landing-mobile>
+  <div class="mobile__playground">
+    <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
+    <img src="assets/images/landing/arrow.webp" />
+    <polo-landing-mobile [camera]="true" [topSpacing]="true"><polo-game customStyles="modern"
+        mode="single"></polo-game></polo-landing-mobile>
+  </div>
+  <!--div class="mobile__text">
+    <div class="mobile__text__editor">
+      <h3 class="txt-baskerville txt-l">The node editor</h3>
+      <p class="txt-baskerville">This nodes will be translated to the user experience you see in your right</p>
+    </div>
+    <div class="mobile__text__result">
+    </div>
+  </div-->
 </section>
 
 <section class="section--advantages">
@@ -58,7 +68,7 @@
         </p>
       </polo-landing-card>
       <polo-landing-card image="/assets/images/landing/advantages_analyze.webp" title="Know your users">
-        <span class="paidFeatureTag">Paid feature</span>
+        <span class="paidFeatureTag">Pro feature</span>
         <p>
           Analyze the results deeply, from how many users choose a specific
           answer, to all the paths users have followed, and much more
@@ -167,8 +177,8 @@
           text="In progress"></polo-landing-button>
       </div>
     </div>
-    <p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
-    </p>
+    <!--p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
+    </p-->
   </div>
 </section>
 <section class="section--roadmap">
