@@ -62,7 +62,7 @@
       </label>
       }
     </div>
-    } @else {
+    } @else if(type==='content'){
     @if (image || loading) {
     <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
       [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
@@ -76,6 +76,13 @@
       <polo-answer *ngFor="let answer of answers" id="{{ answer.id }}" [text]="answer.text"
         (onRemoveAnswer)="removeAnswer($event)"></polo-answer>
     </div>
+    }@else if(type==='text'){
+    TEXT NODE
+    @if (image || loading) {
+    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
+      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
+    }
+    <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     }
   </main>
   <footer>

@@ -380,6 +380,8 @@ export class ActiveStoryService {
     } else {
       node.answers = [{ id: answerId }]
     }
+
+    delete node.join
   }
   removeAnswer(nodeId: string, answerId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -388,6 +390,8 @@ export class ActiveStoryService {
     )
 
     node.answers = newAnswers
+
+    if (node.answers.length === 0) delete node.answers
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
