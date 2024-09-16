@@ -39,7 +39,7 @@ export interface node {
   conditions?: Array<node_conditions>
   fallbackCondition?: node_fallbackCondition
   text?: string
-  type: 'content' | 'distributor' | 'end'
+  type: 'text' | 'content' | 'distributor' | 'end'
   share?: shareOptions
   links?: link[]
 }

@@ -209,7 +209,7 @@ export class BoardComponent {
     localStorage.setItem('polo-activeNodes', JSON.stringify(activeNodes))
   }
 
-  addNode(event: any, type: 'content' | 'distributor' | 'end'): void {
+  addNode(event: any, type: 'text' | 'content' | 'distributor' | 'end'): void {
     if (this.contextMenuActive) {
       this.contextMenuActive = false
       this.createNode(
@@ -240,7 +240,7 @@ export class BoardComponent {
 
   createNode(
     position: { top: string; left: string },
-    type: 'content' | 'distributor' | 'end'
+    type: 'text' | 'content' | 'distributor' | 'end'
   ) {
     const newNodeInfo: node = {
       id: generateIDForNewNode(this.activeStory.entireTree().nodes),
