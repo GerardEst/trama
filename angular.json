@@ -27,7 +27,8 @@
               "src/favicon.png",
               "src/assets",
               "src/.well-known",
-              "src/robots.txt"
+              "src/robots.txt",
+              "src/ads.txt"
             ],
             "styles": ["src/styles.sass"]
           },
