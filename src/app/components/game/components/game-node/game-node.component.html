@@ -29,6 +29,10 @@
     }
     }
     @if (showAnswers) {
+    @if(data.type==='text'){
+    <input type="text" name="userText" [(ngModel)]="userText" />
+    <button (click)="continue(userText)">Continue</button>
+    }
     <div class="endNodeExtras">
       @for (link of data.links; track $index) {
       <button (click)="onGoToLink.emit(link.url)">

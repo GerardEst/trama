@@ -77,11 +77,11 @@
         (onRemoveAnswer)="removeAnswer($event)"></polo-answer>
     </div>
     }@else if(type==='text'){
-    TEXT NODE
     @if (image || loading) {
     <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
       [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
     }
+    <div id="{{ nodeId + '_join' }}" class="union_point"></div>
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     }
   </main>

@@ -22,6 +22,7 @@
             [data]="activeNode"
             [writeSpeed]="writeSpeed"
             (onSelectAnswer)="selectAnswer($event)"
+            (onContinue)="continueFlow($event)"
             (onShare)="openShareContext($event)"
             (onGoToLink)="registerLink($event)"
           ></polo-game-node>
@@ -32,6 +33,7 @@
             [writeSpeed]="writeSpeed"
             [data]="activeNode"
             (onSelectAnswer)="selectAnswer($event)"
+            (onContinue)="continueFlow($event)"
             (onShare)="openShareContext($event)"
             (onGoToLink)="registerLink($event)"
           ></polo-game-node>

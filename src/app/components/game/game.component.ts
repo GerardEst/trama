@@ -91,6 +91,11 @@ export class GameComponent {
     this.registerAnswer(answer)
   }
 
+  continueFlow(continueInfo: any) {
+    this.alterProperty(continueInfo.property, continueInfo.value)
+    this.nextStep(continueInfo.join)
+  }
+
   nextStep(destinyNodes: Array<join>, addToActiveNodes: boolean = false) {
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
@@ -131,7 +136,8 @@ export class GameComponent {
         if (this.activeNodes.length === 1) this.scrollToNewNode()
       }, 500)
 
-      if (nextNode && nextNode.join) {
+      if (nextNode && nextNode.join && nextNode.type !== 'text') {
+        // If node is text, we have to stop till the user wants to continue
         this.nextStep(nextNode.join, true)
       }
       if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
@@ -369,6 +375,15 @@ export class GameComponent {
       if (event.action === 'alterStat') this.alterStat(event)
       if (event.action === 'alterCondition') this.alterCondition(event)
     })
+  }
+
+  private alterProperty(property: string, value: string) {
+    const player = this.playerService.player()
+    if (!player.properties) {
+      player.properties = {}
+    }
+
+    player.properties[property] = value
   }
 
   private alterStat(event: answer_event) {

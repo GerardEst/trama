@@ -9,11 +9,12 @@ import {
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { trigger, style, transition, animate } from '@angular/animations'
+import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'polo-game-node',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './game-node.component.html',
   styleUrl: './game-node.component.sass',
   animations: [
@@ -32,6 +33,7 @@ export class GameNodeComponent {
   @Input() disabled: boolean = false
   @Input() writeSpeed: 'immediate' | 'slow' | 'fast' = 'immediate'
   @Output() onSelectAnswer: EventEmitter<any> = new EventEmitter()
+  @Output() onContinue: EventEmitter<any> = new EventEmitter()
   @Output() onGoToLink: EventEmitter<any> = new EventEmitter()
   @Output() onShare: EventEmitter<any> = new EventEmitter()
 
@@ -41,6 +43,9 @@ export class GameNodeComponent {
       this.writeSpeed = 'immediate'
     }
   }
+
+  // Text nodes
+  userText: string = ''
 
   // Writting options
   speeds: any = {
@@ -58,6 +63,17 @@ export class GameNodeComponent {
     this.writeSpeed = this.disabled ? 'immediate' : this.writeSpeed
     this.showAnswers = this.writeSpeed === 'immediate'
   }
+
+  // Text node
+  continue(textInput: string) {
+    this.onContinue.emit({
+      property: 'test',
+      value: textInput,
+      join: this.data.join,
+    })
+  }
+
+  // Others
 
   getNativeElement(): HTMLElement {
     return this.node?.nativeElement

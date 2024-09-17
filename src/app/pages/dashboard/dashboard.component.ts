@@ -41,9 +41,6 @@ export class DashboardComponent {
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)
-
-    // Remove indicator that user is coming from oauth login
-    // localStorage.removeItem('oauth')
   }
 
   async initBoard(storyId: string | null) {
@@ -65,16 +62,9 @@ export class DashboardComponent {
     this.activeStory.storyName.set(story.name)
 
     this.stadistics.clean()
-
-    // We have to manually init the refs for the legend by now
     this.activeStory.initTreeRefs()
-
     this.setInitialBoardPositionFor(story.id)
 
-    // TODO -> Comença mal pintat
-    // Quan es detecta automaticament fa una cosa rara, pero si m'espero a que tot estigui pintat, bé.
-    // També, si arrastrem abans que s'acabi de pintar l'arbre sencer o acabi de fer el que hagi de fer, el drag no repinta les linies
-    // Amb aquest timeout es veu el salt
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
 
     this.loadConfigurationForStory(story.id)
