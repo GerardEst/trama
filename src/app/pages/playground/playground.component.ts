@@ -40,7 +40,6 @@ export class PlaygroundComponent {
     public activeStory: ActiveStoryService,
     private router: Router
   ) {}
-  // In playerService we have everything about the player, the counters, etc
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
   async getStoryByCorrectID() {
@@ -97,27 +96,24 @@ export class PlaygroundComponent {
       this.gameId = self.crypto.randomUUID()
 
       // We upload an empty game
-      // In case the user refresh(and uses the same name) it keeps the trace that something happened... 👀
-      this.saveGame({})
+      // In case the user refresh(and uses the same id) it keeps the trace that something happened... 👀
+      this.saveGame()
     }
   }
 
-  public setUserName(event: any) {
-    this.playerService.player.set({
-      ...this.playerService.player(),
-      name: event.target.value,
-    })
-  }
-
-  private async saveGame(result: any) {
+  private async saveGame() {
     if (!this.gameId) return console.error('Cannot save adventure')
 
     const saved = await this.db.saveNewGameTo(
       this.gameId,
-      this.playerService.player().name || 'anonymous',
+      this.playerService.playerProperties()['id'] || 'anonymous',
       this.storyId,
       this.playerPath,
-      result,
+      {
+        properties: this.playerService.playerProperties(),
+        stats: this.playerService.playerStats(),
+        conditions: this.playerService.playerConditions(),
+      },
       this.externalEvents
     )
     if (saved) {
@@ -130,9 +126,7 @@ export class PlaygroundComponent {
   endGame() {
     Cronitor.track('SomeoneEndedAGame')
     if (this.activeStory.storyConfiguration().tracking) {
-      console.log('Saving game')
-      const userFinalStats = this.playerService.player()
-      this.saveGame(userFinalStats)
+      this.saveGame()
     }
   }
 

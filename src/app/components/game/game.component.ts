@@ -13,7 +13,7 @@ import {
   answer_event,
   stat,
   condition,
-  player,
+  property,
   node,
   node_answer,
 } from 'src/app/interfaces'
@@ -61,8 +61,6 @@ export class GameComponent {
   activeNodes?: any = []
   inactiveNodes: any = []
 
-  initialized: boolean = false
-
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()
@@ -72,7 +70,8 @@ export class GameComponent {
     public activeStory: ActiveStoryService
   ) {
     effect(() => {
-      if (!this.initialized && this.activeStory) {
+      // This starts the story when we receive the info from the back
+      if (this.activeStory.entireTree().nodes) {
         console.log('activeStory initialized')
         const firstNode = structuredClone(
           this.activeStory.entireTree().nodes[0]
@@ -80,7 +79,6 @@ export class GameComponent {
 
         this.activeNodes = [this.interpolateNodeTexts(firstNode)]
         if (firstNode.join) this.nextStep(firstNode.join)
-        this.initialized = true
       }
     })
   }
@@ -100,8 +98,6 @@ export class GameComponent {
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
 
-      console.log(this.activeStory.entireTree())
-
       let nextNode = structuredClone(
         this.activeStory
           .entireTree()
@@ -118,7 +114,9 @@ export class GameComponent {
       // Remove banned answers before painting
       nextNode.answers = nextNode.answers?.filter((answer: node_answer) =>
         this.playerHasAnswerRequirements(
-          this.playerService.player(),
+          this.playerService.playerProperties(),
+          this.playerService.playerStats(),
+          this.playerService.playerConditions(),
           answer.requirements
         )
       )
@@ -165,11 +163,12 @@ export class GameComponent {
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string) => {
         // if the prop is not in player, we search in stats
-        let value = this.playerService.player()[p1]
+        let value = this.playerService.playerProperties()[p1]
         if (!value) {
-          value = this.playerService
-            .player()
-            .stats.find((stat: any) => stat.id === p1)?.amount
+          let stat = this.playerService
+            .playerStats()
+            .find((stat: any) => stat.id === p1)
+          value = stat?.amount.toString() || '0'
         }
         return value || '-'
       }
@@ -186,8 +185,8 @@ export class GameComponent {
         let string = ' '
         for (let refWithCategory of refsWithCategory) {
           const playerStat = this.playerService
-            .player()
-            .stats.find((stat: any) => stat.id === refWithCategory.id)
+            .playerStats()
+            .find((stat: any) => stat.id === refWithCategory.id)
           if (playerStat) {
             string =
               string +
@@ -203,10 +202,8 @@ export class GameComponent {
         }
         for (let refWithCategory of refsWithCategory) {
           const playerCondition = this.playerService
-            .player()
-            .conditions.find(
-              (condition: any) => condition.id === refWithCategory.id
-            )
+            .playerConditions()
+            .find((condition: any) => condition.id === refWithCategory.id)
           if (playerCondition) {
             string =
               string +
@@ -252,8 +249,8 @@ export class GameComponent {
       if (distributorConditionType === 'stat') {
         // If it's a stat, we find this stat in the player object
         const playerStat = this.playerService
-          .player()
-          .stats.find((stat: any) => stat.id === distributorCondition.ref)
+          .playerStats()
+          .find((stat: any) => stat.id === distributorCondition.ref)
         // If the player doesn't have the stat, the amount is 0
         const playerStatAmount = playerStat ? playerStat.amount : 0
         // Then we check the comparator, if it's correct we can go to next node
@@ -271,10 +268,8 @@ export class GameComponent {
       if (distributorConditionType === 'condition') {
         // If it's a condition, we find this condition in the player object
         const playerCondition = this.playerService
-          .player()
-          .conditions.find(
-            (condition: any) => condition.id === distributorCondition.ref
-          )
+          .playerConditions()
+          .find((condition: any) => condition.id === distributorCondition.ref)
 
         // We check the comparator
         // If the player has the condition and the requirement is 1, we can go to next node
@@ -325,7 +320,9 @@ export class GameComponent {
   }
 
   playerHasAnswerRequirements(
-    player: player,
+    playerProperties: property,
+    playerStats: Array<stat>,
+    playerConditions: Array<condition>,
     requirements: Array<answer_requirement>
   ) {
     if (!requirements) return true
@@ -334,14 +331,14 @@ export class GameComponent {
     for (let requirement of requirements) {
       let requirement_amount = requirement.amount
       if (requirement.type === 'stat') {
-        if (player.stats.length === 0) return false
+        if (playerStats.length === 0) return false
 
-        const playerHasSomeRequiredStats = player.stats.some(
+        const playerHasSomeRequiredStats = playerStats.some(
           (stat: stat) => stat.id === requirement.id
         )
         if (!playerHasSomeRequiredStats) return false
 
-        const someUnsatisfiedStat = player.stats.some(
+        const someUnsatisfiedStat = playerStats.some(
           (stat: stat) => stat.amount < requirement_amount
         )
         if (someUnsatisfiedStat) return false
@@ -351,16 +348,16 @@ export class GameComponent {
         const conditionIsRequired = requirement_amount === 1
 
         // If condition should be checked but player doesn't have any conditions
-        if (conditionIsRequired && player.conditions.length === 0) return false
+        if (conditionIsRequired && playerConditions.length === 0) return false
 
         // If condition should be checked but player doesn't have this condition
-        const playerHasSomeRequiredConditions = player.conditions.some(
+        const playerHasSomeRequiredConditions = playerConditions.some(
           (condition: condition) => condition.id === requirement.id
         )
         if (conditionIsRequired && !playerHasSomeRequiredConditions)
           return false
 
-        for (let condition of player.conditions) {
+        for (let condition of playerConditions) {
           // If player has the condition, but it should not be checked
           if (condition.id === requirement.id && !conditionIsRequired)
             return false
@@ -378,29 +375,29 @@ export class GameComponent {
   }
 
   private alterProperty(property: string, value: string) {
-    const player = this.playerService.player()
-    if (!player.properties) {
-      player.properties = {}
-    }
+    this.playerService.playerProperties.set({
+      ...this.playerService.playerProperties(),
+      [property]: value,
+    })
 
-    player.properties[property] = value
+    console.log(this.playerService.playerProperties())
   }
 
   private alterStat(event: answer_event) {
     const amount = parseInt(event.amount)
 
     let statIndex = this.playerService
-      .player()
-      .stats?.findIndex((element: stat) => element.id === event.target)
-    let stat = this.playerService.player().stats?.[statIndex]
+      .playerStats()
+      .findIndex((element: stat) => element.id === event.target)
+    let stat = this.playerService.playerStats()[statIndex]
 
     if (stat) {
       stat.amount += amount
       if (stat.amount <= 0)
-        this.playerService.player().stats?.splice(statIndex, 1)
+        this.playerService.playerStats().splice(statIndex, 1)
     } else {
       if (amount <= 0) return
-      this.playerService.player().stats?.push({
+      this.playerService.playerStats().push({
         id: event.target,
         amount,
       })
@@ -410,20 +407,17 @@ export class GameComponent {
   private alterCondition(event: answer_event) {
     if (event.amount) {
       let condition = this.playerService
-        .player()
-        .conditions?.find((element: condition) => element.id === event.target)
+        .playerConditions()
+        .find((element: condition) => element.id === event.target)
 
       if (!condition)
-        this.playerService.player().conditions?.push({ id: event.target })
+        this.playerService.playerConditions().push({ id: event.target })
     } else {
       let condition = this.playerService
-        .player()
-        .conditions?.findIndex(
-          (condition: condition) => condition.id === event.target
-        )
+        .playerConditions()
+        .findIndex((condition: condition) => condition.id === event.target)
 
-      if (condition)
-        this.playerService.player().conditions?.splice(condition, 1)
+      if (condition) this.playerService.playerConditions().splice(condition, 1)
     }
   }
 

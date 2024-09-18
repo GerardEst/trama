@@ -1,17 +1,3 @@
-export interface initial_parameters {
-  guidebook: any
-  domPlace: string
-  player: Partial<player>
-  config: config
-}
-
-export interface player {
-  name?: string
-  stats: Array<stat>
-  conditions: Array<condition>
-  [key: string]: any // Basicament pot tenir qualsevol cosa que se li vulgui fotre
-}
-
 export interface tree {
   refs?: Array<{ name: string; type: string; category: string }>
   nodes?: Array<node>
@@ -83,6 +69,10 @@ export interface shareOptions {
 export interface link {
   name: string
   url: string
+}
+
+export interface property {
+  [key: string]: string // Basicament pot tenir qualsevol cosa que se li vulgui fotre
 }
 
 export interface stat {

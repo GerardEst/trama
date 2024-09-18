@@ -1,15 +1,13 @@
 import { Injectable, WritableSignal, effect, signal } from '@angular/core'
-import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { condition, property, stat } from 'src/app/interfaces'
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayerService {
-  player: WritableSignal<any> = signal({ stats: [], conditions: [] })
+  playerProperties: WritableSignal<property> = signal({})
+  playerStats: WritableSignal<stat[]> = signal([])
+  playerConditions: WritableSignal<condition[]> = signal([])
 
-  constructor(public activeStory: ActiveStoryService) {
-    effect(() => {
-      console.log('Player updated', this.player())
-    })
-  }
+  constructor() {}
 }
