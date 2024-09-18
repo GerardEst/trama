@@ -28,6 +28,7 @@ export interface node {
   type: 'text' | 'content' | 'distributor' | 'end'
   share?: shareOptions
   links?: link[]
+  userTextOptions?: node_userTextOptions
 }
 
 export interface node_answer {
@@ -44,6 +45,10 @@ export interface node_conditions {
   ref: string
   comparator: string
   value: number
+}
+export interface node_userTextOptions {
+  property: string
+  placeholder?: string
 }
 export interface node_fallbackCondition {
   id: string

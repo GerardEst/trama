@@ -30,7 +30,7 @@
     }
     @if (showAnswers) {
     @if(data.type==='text'){
-    <input type="text" name="userText" [(ngModel)]="userText" />
+    <input type="text" name="userText" placeholder="{{data.userTextOptions.placeholder}}" [(ngModel)]="userText" />
     <button (click)="continue(userText)">Continue</button>
     }
     <div class="endNodeExtras">

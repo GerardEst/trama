@@ -225,6 +225,12 @@ export class ActiveStoryService {
         id: `condition_${id.split('_')[1]}_fallback`,
       }
     }
+    if (type === 'text') {
+      newNode.userTextOptions = {
+        placeholder: '',
+        property: '',
+      }
+    }
 
     this.entireTree().nodes?.push(newNode)
 
@@ -276,6 +282,20 @@ export class ActiveStoryService {
   updateNodeText(nodeId: string, newText: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.text = newText
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+  updateNodeProperty(nodeId: string, newProperty: string) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node) node.userTextOptions.property = newProperty
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+  updateNodePlaceholder(nodeId: string, newPlaceholder: string) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node) node.userTextOptions.placeholder = newPlaceholder
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())

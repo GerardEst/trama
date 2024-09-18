@@ -379,8 +379,6 @@ export class GameComponent {
       ...this.playerService.playerProperties(),
       [property]: value,
     })
-
-    console.log(this.playerService.playerProperties())
   }
 
   private alterStat(event: answer_event) {

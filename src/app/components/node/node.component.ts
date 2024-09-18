@@ -20,6 +20,7 @@ import {
   shareOptions,
   node_answer,
   node_conditions,
+  node_userTextOptions,
 } from 'src/app/interfaces'
 import {
   generateIDForNewAnswer,
@@ -51,16 +52,21 @@ import { StorageService } from 'src/app/services/storage.service'
 export class NodeComponent {
   @Input() nodeId: string = ''
 
-  // Content of the node
+  // Common
   @Input() text: string = ''
-  @Input() answers?: Array<node_answer>
-  @Input() conditions?: Array<node_conditions>
   @Input() image?: string
+  // Answer nodes
+  @Input() answers?: Array<node_answer>
+  // Distributor nodes
+  @Input() conditions?: Array<node_conditions>
+  // End nodes
   @Input() links: link[] = []
   @Input() shareOptions: shareOptions = {
     sharedText: '',
     shareButtonText: '',
   }
+  // Text nodes
+  @Input() userTextOptions?: node_userTextOptions
 
   openedShareOptions: boolean = false
   loading: boolean = false
@@ -176,6 +182,16 @@ export class NodeComponent {
   saveNodeText(e: any) {
     const newText = e.target.value
     this.activeStory.updateNodeText(this.nodeId, newText)
+  }
+
+  saveProperty(event: any) {
+    const newProperty = event.target.value
+    this.activeStory.updateNodeProperty(this.nodeId, newProperty)
+  }
+
+  savePlaceholder(event: any) {
+    const newPlaceholder = event.target.value
+    this.activeStory.updateNodePlaceholder(this.nodeId, newPlaceholder)
   }
 
   onDuplicateNode() {

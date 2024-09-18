@@ -83,6 +83,8 @@
     }
     <div id="{{ nodeId + '_join' }}" class="union_point"></div>
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+    <input type="text" (change)="saveProperty($event)" name="property" value="{{userTextOptions?.property}}" />
+    <input type="text" (change)="savePlaceholder($event)" name="placeholder" value="{{userTextOptions?.placeholder}}" />
     }
   </main>
   <footer>

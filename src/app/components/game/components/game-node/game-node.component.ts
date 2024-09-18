@@ -67,7 +67,7 @@ export class GameNodeComponent {
   // Text node
   continue(textInput: string) {
     this.onContinue.emit({
-      property: 'test',
+      property: this.data.userTextOptions.property,
       value: textInput,
       join: this.data.join,
     })
