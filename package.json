@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "tests-e2e-dashboard": "npx playwright test --project=dashboard --grep @setup",
+    "tests-e2e-dashboard": "npx playwright test --project=dashboard",
     "tests-e2e-playground": "npx playwright test --project=playground",
     "ts-coverage": "typescript-coverage-report",
     "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref lsemostpqoguehpsbzgu"

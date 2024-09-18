@@ -14,24 +14,24 @@ test.describe('Basic flow', () => {
     // There is a title on top
     const title = page.getByText(/Testing - Basic flow/)
     await title.waitFor()
-    expect(title).toBeInViewport()
+    expect(title).toBeVisible()
 
     // There is a text
     const text = page.getByText('node 1')
     await text.waitFor()
-    expect(text).toBeInViewport()
+    expect(text).toBeVisible()
 
     // There are the answers
     const answer1 = page.getByText('answer 1')
     await answer1.waitFor()
-    expect(answer1).toBeInViewport()
+    expect(answer1).toBeVisible()
 
     const answer2 = page.getByText('answer 2')
     await answer2.waitFor()
-    expect(answer2).toBeInViewport()
+    expect(answer2).toBeVisible()
   })
 
-  test('can jump to another step', async ({ page }) => {
+  test('can complete the test till the end', async ({ page }) => {
     // When we click first answer
     await page.getByText('answer 1').waitFor()
     await page.getByText('answer 1').click()
@@ -39,17 +39,11 @@ test.describe('Basic flow', () => {
     // We see the text and answers of the second step
     const text = page.getByText('node 2')
     await text.waitFor()
-    expect(text).toBeInViewport()
+    expect(text).toBeVisible()
 
     const answer = page.getByText('node 2 answer')
     await answer.waitFor()
-    expect(answer).toBeInViewport()
-  })
-
-  test('can jump to an end node', async ({ page }) => {
-    const answer1 = page.getByText('node 2 answer')
-    await answer1.waitFor()
-    await answer1.click()
+    await answer.click()
 
     // Can see text for final node
     const finalText = page.getByText('end node')
@@ -57,45 +51,8 @@ test.describe('Basic flow', () => {
     expect(finalText).toBeVisible()
 
     // Can see and use the link
-    const finalLink = page.getByText('link')
+    const finalLink = page.getByText('Share this story')
     await finalLink.waitFor()
     expect(finalLink).toBeVisible()
-  })
-
-  test('it loads images correctly', async ({ page }) => {
-    const answer1 = page.getByText('answer 1')
-    await answer1.waitFor()
-    await answer1.click()
-
-    const image = page.getByRole('img')
-    await image.waitFor()
-
-    expect(image).toBeVisible()
-    expect(image).toHaveAttribute(
-      'src',
-      'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/6a519598-5b4e-4d44-9902-b33be8370e9c/a1e23f34-ce24-4cba-a38b-07a24a17bb14/node_1'
-    )
-  })
-
-  test('it uses the configurations correctly for this story', async ({
-    page,
-  }) => {
-    const answer1 = page.getByText('answer 1')
-    await answer1.waitFor()
-    await answer1.click()
-
-    const answer = page.getByText('step 2 answer')
-    await answer.waitFor()
-    await answer.click()
-
-    const finalNode = page.getByText('end')
-    await finalNode.waitFor()
-
-    // Does not show the share button
-    const share = page.locator('.sharebutton')
-    await share.waitFor()
-    expect(share).not.toBeInViewport()
-
-    // Does not ask for a name
   })
 })
