@@ -80,6 +80,10 @@ export class GameNodeComponent {
   }
 
   ngAfterViewInit() {
+    if (!this.textContainer) {
+      setTimeout(() => (this.showAnswers = true), 350)
+      return
+    }
     if (this.writeSpeed !== 'immediate') this.writeText()
   }
 

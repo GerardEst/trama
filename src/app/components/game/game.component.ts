@@ -78,7 +78,8 @@ export class GameComponent {
         )
 
         this.activeNodes = [this.interpolateNodeTexts(firstNode)]
-        if (firstNode.join) this.nextStep(firstNode.join)
+        if (firstNode.join && firstNode.type !== 'text')
+          this.nextStep(firstNode.join, true)
       }
     })
   }

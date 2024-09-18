@@ -33,6 +33,7 @@
     <input type="text" name="userText" placeholder="{{data.userTextOptions.placeholder}}" [(ngModel)]="userText" />
     <button (click)="continue(userText)">Continue</button>
     }
+    @if(data.type==='end'){
     <div class="endNodeExtras">
       @for (link of data.links; track $index) {
       <button (click)="onGoToLink.emit(link.url)">
@@ -47,6 +48,7 @@
       </button>
       }
     </div>
+    }
     }
   </div>
 </div>
