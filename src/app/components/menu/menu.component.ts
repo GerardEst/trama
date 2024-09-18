@@ -46,13 +46,7 @@ export class MenuComponent {
       {
         name: 'My new tree',
         tree: {
-          nodes: [
-            {
-              id: 'node_0',
-              left: 500,
-              top: 5000,
-            },
-          ],
+          nodes: [],
         },
         profile_id: this.db.user().id,
       },
