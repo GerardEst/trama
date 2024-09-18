@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { FlowComponent } from './game.component'
+import { GameComponent } from './game.component'
 
-describe('FlowComponent', () => {
-  let component: FlowComponent
-  let fixture: ComponentFixture<FlowComponent>
+describe('GameComponent', () => {
+  let component: GameComponent
+  let fixture: ComponentFixture<GameComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FlowComponent],
+      imports: [GameComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(FlowComponent)
+    fixture = TestBed.createComponent(GameComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })

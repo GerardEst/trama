@@ -1,23 +1,23 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('basic story', () => {
+test.describe('Basic flow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'http://localhost:4200/private/a1e23f34-ce24-4cba-a38b-07a24a17bb14'
+      'http://localhost:4200/private/1f1176f2-4320-4dff-b71f-905378bfb0c0'
     )
   })
 
   test('can see the first question', async ({ page }) => {
     // Title is on the tab
-    await expect(page).toHaveTitle('TEST - Basic flow')
+    await expect(page).toHaveTitle('Testing - Basic flow')
 
     // There is a title on top
-    const title = page.getByText(/TEST - Basic flow/)
+    const title = page.getByText(/Testing - Basic flow/)
     await title.waitFor()
     expect(title).toBeInViewport()
 
     // There is a text
-    const text = page.getByText('initial text')
+    const text = page.getByText('node 1')
     await text.waitFor()
     expect(text).toBeInViewport()
 
@@ -37,26 +37,22 @@ test.describe('basic story', () => {
     await page.getByText('answer 1').click()
 
     // We see the text and answers of the second step
-    const text = page.getByText('answer 1 text')
+    const text = page.getByText('node 2')
     await text.waitFor()
     expect(text).toBeInViewport()
 
-    const answer = page.getByText('step 2 answer')
+    const answer = page.getByText('node 2 answer')
     await answer.waitFor()
     expect(answer).toBeInViewport()
   })
 
   test('can jump to an end node', async ({ page }) => {
-    const answer1 = page.getByText('answer 1')
+    const answer1 = page.getByText('node 2 answer')
     await answer1.waitFor()
     await answer1.click()
 
-    const answer = page.getByText('step 2 answer')
-    await answer.waitFor()
-    await answer.click()
-
     // Can see text for final node
-    const finalText = page.getByText('end')
+    const finalText = page.getByText('end node')
     await finalText.waitFor()
     expect(finalText).toBeVisible()
 
@@ -64,10 +60,6 @@ test.describe('basic story', () => {
     const finalLink = page.getByText('link')
     await finalLink.waitFor()
     expect(finalLink).toBeVisible()
-
-    // Can see share default button
-    // const shareButton = page.getByText('share')
-    // expect(shareButton).toBeVisible()
   })
 
   test('it loads images correctly', async ({ page }) => {

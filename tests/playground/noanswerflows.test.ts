@@ -1,40 +1,33 @@
 import { test, expect } from '@playwright/test'
 
-test.describe.only('no-answer flow', () => {
+test.describe.only('Flow of no-answers nodes', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'http://localhost:4200/private/deab6603-cb1b-4060-85f6-36188d7b99d2'
+      'http://localhost:4200/private/c420ec0b-a8ff-4479-b9a9-9f0997e3eb4a'
     )
   })
 
   test('can start and see the first step of the flow', async ({ page }) => {
-    // Title is on the tab
-    await expect(page).toHaveTitle('TEST - no answer')
+    await expect(page).toHaveTitle('Testing - No answer node')
 
-    const title = page.getByText(/TEST - no answer/)
+    const title = page.getByText(/Testing - No answer node/)
     await title.waitFor()
     expect(title).toBeInViewport()
 
-    const firstStep = page.getByText('Node with no answers')
+    const firstStep = page.getByText('node 1')
     await firstStep.waitFor()
     expect(firstStep).toBeVisible()
   })
 
-  test('loads the second step of the flow without any interaction', async ({
-    page,
-  }) => {
-    const secondStep = page.getByText('Answer following the node')
+  test('loads the second step without answers', async ({ page }) => {
+    const secondStep = page.getByText('node 2')
     await secondStep.waitFor()
     expect(secondStep).toBeVisible()
   })
 
-  test('loads last step followed by answers', async ({ page }) => {
-    const lastStep = page.getByText('final no-answer flow destination')
+  test('loads final node', async ({ page }) => {
+    const lastStep = page.getByText('end node')
     await lastStep.waitFor()
     expect(lastStep).toBeVisible()
-
-    const answer = page.getByText('final answers')
-    await answer.waitFor()
-    expect(answer).toBeVisible()
   })
 })
