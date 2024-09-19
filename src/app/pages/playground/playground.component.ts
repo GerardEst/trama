@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, Renderer2 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { GameComponent } from 'src/app/components/game/game.component'
 import { DatabaseService } from 'src/app/services/database.service'
@@ -38,9 +38,26 @@ export class PlaygroundComponent {
     private db: DatabaseService,
     public playerService: PlayerService,
     public activeStory: ActiveStoryService,
-    private router: Router
+    private router: Router,
+    private renderer: Renderer2
   ) {}
   // In activeStory we have everything about the story, the options, tree, refs, etc
+
+  ngAfterViewInit() {
+    // Dynamically create a script tag
+    const script = this.renderer.createElement('script')
+    script.type = 'text/javascript'
+    script.text = `
+      console.log('run ads');
+      aclib.runBanner({
+        zoneId: '8750310',
+      });
+    `
+
+    // Append the script to the desired element
+    const element = document.querySelector('.heeeelloooo')
+    this.renderer.appendChild(element, script)
+  }
 
   async getStoryByCorrectID() {
     let story, configuration
