@@ -1,5 +1,5 @@
 <menu>
-  <p class="logo">Text & Play</p>
+  <p class="logo">Text & Play <sup> beta</sup></p>
   <div class="login">
     @if (checkedLoggedUser) {
     <polo-landing-button behaviour="link" destiny="/dashboard"
@@ -122,7 +122,7 @@
 <section class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
-    <input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!
+    <!--input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!-->
     <div class="pricing">
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -148,7 +148,7 @@
           @if(payYearly){
           <p class="txt-ralewayItalic"><span class="txt-linethrough">71,4€</span> 36€/year</p>
           }@else {
-          <p class="txt-ralewayItalic">5.95€/month</p>
+          <!--p class="txt-ralewayItalic">5.95€/month</p-->
           }
         </div>
         <ul class="pricing__plan__features">
@@ -159,7 +159,7 @@
           <li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li>
           <li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>
         </ul>
-        <polo-landing-button destiny="/dashboard" behaviour="link" text="Use creator"></polo-landing-button>
+        <polo-landing-button [inactive]="true" destiny="/dashboard" behaviour="link" text="In progress"></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
@@ -181,7 +181,7 @@
     </p-->
   </div>
 </section>
-<section class="section--roadmap">
+<!--section class="section--roadmap">
   <div class="section--centeredContent textImageContent">
     <div class="roadmap">
       <h2 class="txt-baskerville">The future ahead</h2>
@@ -219,7 +219,7 @@
     <img class="roadmap__image" width="100%" src="/assets/images/landing/futureAhead.webp"
       alt="Puppet looking through a telescope" />
   </div>
-</section>
+</section-->
 <footer>
   <p class="txt-n txt-white">
     Copyright© 2024 textandplay.com - All Rights Reserved
