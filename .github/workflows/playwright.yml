@@ -2,6 +2,8 @@ name: Playwright Tests
 on:
   #push:
   #  branches: [main]
+  #  Per algun motiu falla l'auth dels tests, però en local no. Els envs estan bé. Sembla que no troba l'input de mail, però hi és
+  #  És molt possible que tingui a veure amb el setup i l'.auth/user.json
   pull_request:
     branches: [main]
 jobs:
