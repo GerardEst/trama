@@ -37,6 +37,8 @@ export default defineConfig({
       name: 'dashboard',
       use: {
         ...devices['Desktop Chrome'],
+        ...devices['Desktop Firefox'],
+        ...devices['Desktop Safari'],
         // Use prepared auth state.
         storageState: 'playwright/.auth/user.json',
       },
@@ -46,6 +48,8 @@ export default defineConfig({
       name: 'playground',
       use: {
         ...devices['Desktop Chrome'],
+        ...devices['Desktop Firefox'],
+        ...devices['Desktop Safari'],
       },
     },
 
