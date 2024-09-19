@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Basic flow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'http://localhost:4200/private/1f1176f2-4320-4dff-b71f-905378bfb0c0'
-    )
+    await page.goto('/private/1f1176f2-4320-4dff-b71f-905378bfb0c0')
   })
 
   test('can see the first question', async ({ page }) => {

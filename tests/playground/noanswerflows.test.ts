@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Flow of no-answers nodes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'http://localhost:4200/private/c420ec0b-a8ff-4479-b9a9-9f0997e3eb4a'
-    )
+    await page.goto('/private/c420ec0b-a8ff-4479-b9a9-9f0997e3eb4a')
   })
 
   test('can start and see all the steps till the end without interaction', async ({

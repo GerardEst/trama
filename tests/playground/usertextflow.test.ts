@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Flow of story with user text inputs', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'http://localhost:4200/private/b7638cea-c62c-4de1-a19e-25d6c5ad2c75'
-    )
+    await page.goto('/private/b7638cea-c62c-4de1-a19e-25d6c5ad2c75')
   })
 
   test('can see "node 1" text but not "node 2" text', async ({ page }) => {
