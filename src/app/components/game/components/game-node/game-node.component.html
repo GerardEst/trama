@@ -30,8 +30,25 @@
     }
     @if (showAnswers) {
     @if(data.type==='text'){
-    <input type="text" name="userText" placeholder="{{data.userTextOptions.placeholder}}" [(ngModel)]="userText" />
-    <button (click)="continue(userText)">Continue</button>
+    <div class="textInput">
+      <input
+        type="text"
+        name="userText"
+        placeholder="{{data.userTextOptions.placeholder}}"
+        [formControl]="userText" />
+      <button
+        aria-label="Continue"
+        [disabled]="userText.invalid"
+        (click)="continue($event)"></button>
+    </div>
+    @if(userText.invalid && (userText.dirty || userText.touched)){
+      @if(userText.errors?.['required']){
+        <p>Please fill in the input</p>
+      }
+      @if(userText.errors?.['maxlength']){
+        <p>This cannot be more than 100 characters long</p>
+      }
+    }
     }
     @if(data.type==='end'){
     <div class="endNodeExtras">

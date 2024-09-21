@@ -9,12 +9,12 @@ import {
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { trigger, style, transition, animate } from '@angular/animations'
-import { FormsModule } from '@angular/forms'
+import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms'
 
 @Component({
   selector: 'polo-game-node',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './game-node.component.html',
   styleUrl: './game-node.component.sass',
   animations: [
@@ -45,7 +45,10 @@ export class GameNodeComponent {
   }
 
   // Text nodes
-  userText: string = ''
+  userText = new FormControl('', [
+    Validators.required,
+    Validators.maxLength(100)
+  ]);
 
   // Writting options
   speeds: any = {
@@ -65,10 +68,12 @@ export class GameNodeComponent {
   }
 
   // Text node
-  continue(textInput: string) {
+  continue(event: Event) {
+    if(!this.userText.valid) return
+    this.markAsSelected(event)
     this.onContinue.emit({
       property: this.data.userTextOptions.property,
-      value: textInput,
+      value: this.userText.value,
       join: this.data.join,
     })
   }

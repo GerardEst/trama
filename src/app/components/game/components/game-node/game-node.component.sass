@@ -11,6 +11,19 @@
     padding: 0 2rem
     display: flex
     flex-direction: column
+    .textInput
+      display: flex
+      gap: 0.5rem
+      input
+        flex: 1
+        height: 3.5rem
+        border-radius: 6px
+        border: 1.5px solid rgb(99, 95, 94)
+        input:active
+          border: 1.5px solid rgb(61, 55, 54)
+      button
+        width: 40px
+        background: var(--button-background-color) no-repeat url("/assets/icons/play.svg") center/15px
     p
       font-family: 'Baskerville'
       font-size: 1.2rem
@@ -46,7 +59,7 @@
 
       border-radius: 6px
       border: 1.5px solid rgb(61, 55, 54)
-      background: #fffa94
+      background: var(--button-background-color)
       color: rgb(61, 55, 54)
       font-weight: 600
       text-align: left

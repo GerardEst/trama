@@ -48,14 +48,13 @@ export class PlaygroundComponent {
     const script = this.renderer.createElement('script')
     script.type = 'text/javascript'
     script.text = `
-      console.log('run ads');
       aclib.runBanner({
         zoneId: '8750310',
       });
     `
 
     // Append the script to the desired element
-    const element = document.querySelector('.heeeelloooo')
+    const element = document.querySelector('.ads')
     this.renderer.appendChild(element, script)
   }
 
