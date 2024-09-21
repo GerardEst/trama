@@ -1,8 +1,11 @@
 <div class="playground" [class]="customStyles">
   <div class="storytitle">{{ activeStory.storyName() }}</div>
-  <polo-game [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
-    [customStyles]="customStyles" (onEndGame)="endGame()" (onDrawNode)="drawNode($event)"
-    (onSelectAnswer)="selectAnswer($event)"></polo-game>
+  <polo-game
+    [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
+    (onEndGame)="endGame()"
+    (onDrawNode)="drawNode($event)"
+    (onSelectAnswer)="selectAnswer($event)">
+  </polo-game>
   <div class="storyfooter">
     <span></span>
     @if (activeStory.storyConfiguration().footer?.text) {

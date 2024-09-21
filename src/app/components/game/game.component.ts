@@ -98,6 +98,7 @@ export class GameComponent {
   nextStep(destinyNodes: Array<join>, addToActiveNodes: boolean = false) {
     setTimeout(() => {
       const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
+      if(!randomlyChoosedJoin) return
 
       let nextNode = structuredClone(
         this.activeStory
@@ -162,16 +163,21 @@ export class GameComponent {
   getTextWithFinalParameters(text: string = '') {
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
-      (match: string, p1: string) => {
-        // if the prop is not in player, we search in stats
-        let value = this.playerService.playerProperties()[p1]
-        if (!value) {
-          let stat = this.playerService
-            .playerStats()
-            .find((stat: any) => stat.id === p1)
-          value = stat?.amount.toString() || '0'
-        }
-        return value || '-'
+      (match: string, p1: string):any => {
+        let property = this.playerService.playerProperties()[p1]
+        if(property) return property
+
+        let condition = this.playerService
+          .playerConditions()
+          .find((condition: any) => condition.id === p1)
+        if(condition) return true
+
+        let stat = this.playerService
+          .playerStats()
+          .find((stat: any) => stat.id === p1)
+        if(stat) return stat.amount.toString()
+
+        return '-'
       }
     )
     const withBlockReplacements = withInlineReplacements.replace(
