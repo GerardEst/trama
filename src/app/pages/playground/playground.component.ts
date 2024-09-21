@@ -93,8 +93,8 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode
 
-    //this.customStyles = configuration.customStyles
-    this.customStyles = configuration.customStyles || 'modern'
+
+    this.customStyles = configuration.customStyles || 'default'
 
     // We have to manually init the refs by now
     this.activeStory.initTreeRefs()

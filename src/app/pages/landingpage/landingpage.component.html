@@ -28,8 +28,9 @@
   <div class="mobile__playground">
     <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
     <img src="assets/images/landing/arrow.webp" />
-    <polo-landing-mobile [camera]="true" [topSpacing]="true"><polo-game customStyles="modern"
-        mode="single"></polo-game></polo-landing-mobile>
+    <polo-landing-mobile [camera]="true" [topSpacing]="true">
+      <polo-game mode="single"></polo-game>
+    </polo-landing-mobile>
   </div>
   <!--div class="mobile__text">
     <div class="mobile__text__editor">

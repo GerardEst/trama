@@ -24,11 +24,12 @@
   height: 100dvh
   box-sizing: border-box
   flex-direction: column
+  border: 5px solid var(--border-color)
   .storytitle
     font-family: Spartan
     font-weight: 900
     text-align: center
-    font-size: 1rem
+    font-size: 1.1rem
     padding: 1.5rem
   .storyfooter
     display: grid
@@ -39,31 +40,27 @@
     padding: 1rem
     margin-top: auto
     text-decoration: none
+    font-family: var(--storyfooter-font)
   polo-game
     overflow: hidden
   .ads
     align-self: center
     max-width: 728px
 
-//
-// Test Customization
-//
-.modern
-  border: 5px solid #fffa94
-  .storytitle
-    font-size: 1.1rem
-  .storyfooter
-    font-family: 'Baskerville'
+/** Playground customizations */
 
-//
-// Catalanus Customization
-//
-.catalanus
-  border: 5px solid #EB5D57
-  .storytitle
-    font-family: LibreBaskerville
-    font-weight: bold
-    font-size: 1.1rem
-  .storyfooter
-    font-family: 'Baskerville'
-    color: red
+.playground.vibrant
+  --button-background-color: #fffa94
+  --button-background-selected: #3d3736
+  --text-and-borders: var(--button-background-selected)
+  --border-color: var(--button-background-color)
+  --storytitle-font: 'LibreBaskerville'
+  --storyfooter-font: 'Baskerville'
+
+.playground.catalanus
+  --button-background-color: #EB5D57
+  --button-background-selected: #3d3736
+  --text-and-borders: var(--button-background-selected)
+  --border-color: var(--button-background-color)
+  --storyfooter-font: 'Baskerville'
+  --storyfooter-color: red

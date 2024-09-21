@@ -1,4 +1,4 @@
-<div class="playground" [class]="customStyles || 'default'">
+<div class="playground" [class]="customStyles">
   <div class="storytitle">{{ activeStory.storyName() }}</div>
   <polo-game [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
     [customStyles]="customStyles" (onEndGame)="endGame()" (onDrawNode)="drawNode($event)"

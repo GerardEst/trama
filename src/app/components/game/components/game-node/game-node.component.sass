@@ -14,13 +14,14 @@
     .textInput
       display: flex
       gap: 0.5rem
+      margin-top: 1rem
       input
         flex: 1
         height: 3.5rem
         border-radius: 6px
-        border: 1.5px solid rgb(99, 95, 94)
+        border: var(--buttons-border-width) solid var(--text-and-borders)
         input:active
-          border: 1.5px solid rgb(61, 55, 54)
+          outline: var(--text-and-borders)
       button
         width: 40px
         background: var(--button-background-color) no-repeat url("/assets/icons/play.svg") center/15px
@@ -58,9 +59,9 @@
       user-select: none
 
       border-radius: 6px
-      border: 1.5px solid rgb(61, 55, 54)
+      border: var(--buttons-border-width) solid var(--text-and-borders)
       background: var(--button-background-color)
-      color: rgb(61, 55, 54)
+      color: var(--text-and-borders)
       font-weight: 600
       text-align: left
       font-family: "Spartan"
@@ -71,26 +72,26 @@
         width: 20px
         margin: unset
     button:hover
-      background: #fffa94
+      background: var(--button-background-color)
     button.selected
       animation: 0.4s selected
       animation-fill-mode: forwards
-      border: 1.5px solid rgb(61, 55, 54)
+      border: var(--buttons-border-width) solid var(--button-background-selected)
 
 @keyframes selected
   from
     scale: 1
-    background: #fffa94
-    color: rgb(61, 55, 54)
-  40%
-    scale: 0.98
-    background: #fffa94
-    color: rgb(61, 55, 54)
-  80%
-    scale: 1.03
-    background: rgb(61, 55, 54)
-    color: #fffa94
+    background: var(--button-background-color)
+    color: var(--button-background-selected)
+  30%
+    scale: 0.99
+    background: var(--button-background-color)
+    color: var(--button-background-selected)
+  60%
+    scale: 1.02
+    background: var(--button-background-selected)
+    color: var(--button-background-color)
   to
     scale: 1
-    background: rgb(61, 55, 54)
-    color: #fffa94
+    background: var(--button-background-selected)
+    color: var(--button-background-color)
