@@ -19,7 +19,7 @@
       <label>
         <span>Hide textandplay link</span>
         <input (change)="toggleTextandplayLink()" type="checkbox"
-          [checked]="activeStory.storyConfiguration().tapLink" />
+          [checked]="!activeStory.storyConfiguration().tapLink" />
       </label>
       } @else {
       <label>

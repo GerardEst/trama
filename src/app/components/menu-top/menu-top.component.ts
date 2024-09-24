@@ -75,7 +75,7 @@ export class MenuTopComponent {
       !this.activeStory.storyConfiguration().tapLink
     this.db.setTapLinkOf(
       this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().tapLink
+      !this.activeStory.storyConfiguration().tapLink
     )
   }
 

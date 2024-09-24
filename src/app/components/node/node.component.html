@@ -85,11 +85,12 @@
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <label>
       <p>Property</p>
-      <input type="text" (change)="saveProperty($event)" name="property" />
+      <input type="text" (change)="saveProperty($event)" name="property" value="{{userTextOptions?.property}}" />
     </label>
     <label>
       <p>Placeholder</p>
-      <input type="text" (change)="savePlaceholder($event)" name="placeholder" />
+      <input type="text" (change)="savePlaceholder($event)" name="placeholder"
+        value="{{userTextOptions?.placeholder}}" />
     </label>
     }
   </main>
