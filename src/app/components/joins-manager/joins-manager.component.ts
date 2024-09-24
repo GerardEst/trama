@@ -20,7 +20,7 @@ export class JoinsManagerComponent {
   unlinkJoin(joinId: string, toAnswer: boolean) {
     if (!this.answerId) return
 
-    const updatedJoins = this.activeStory.removeJoinFromAnswer(
+    const updatedJoins = this.activeStory.removeJoin(
       this.answerId,
       joinId,
       toAnswer

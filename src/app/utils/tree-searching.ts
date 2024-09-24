@@ -11,6 +11,16 @@ export function findAnswerInTree(answerId: string, tree: any) {
   return node.answers?.find((answer: any) => answer.id === answerId)
 }
 
+export function findConditionsInTree(conditionId: string, tree: any) {
+  const conditionNodeId = conditionId.split('_')[1]
+  const node = findNodeInTree(`node_${conditionNodeId}`, tree)
+
+  return (
+    node.conditions?.find((condition: any) => condition.id === conditionId) ||
+    node.fallbackCondition
+  )
+}
+
 export function getNodeIdFromAnswerId(answerId: string) {
   const nodeNumber = answerId.split('_')[1]
   return 'node_' + nodeNumber

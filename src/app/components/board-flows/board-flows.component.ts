@@ -75,7 +75,7 @@ export class BoardFlowsComponent {
   }
 
   deleteJoin() {
-    const removed = this.activeStory.removeJoinFromAnswer(
+    const removed = this.activeStory.removeJoin(
       this.joinContextMenuInfo.origin,
       this.joinContextMenuInfo.destiny,
       this.joinContextMenuInfo.toAnswer
@@ -103,7 +103,9 @@ export class BoardFlowsComponent {
       startDivPosition?.left + this.flowOptions.pcurvature
     },${startDivPosition?.top} ${
       finalPosition?.offsetX + this.flowOptions.ncurvature
-    },${finalPosition?.offsetY} ${finalPosition?.offsetX},${finalPosition?.offsetY}`
+    },${finalPosition?.offsetY} ${finalPosition?.offsetX},${
+      finalPosition?.offsetY
+    }`
 
     return path
   }

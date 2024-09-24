@@ -3,6 +3,7 @@ import {
   getNodeIdFromAnswerId,
   findNodeInTree,
   findAnswerInTree,
+  findConditionsInTree,
   generateIDForNewRequirement,
 } from '../utils/tree-searching'
 import { link, node_conditions, node, shareOptions } from '../interfaces'
@@ -544,12 +545,15 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
-  removeJoinFromAnswer(answerId: string, nodeId: string, toAnswer: boolean) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
+  removeJoin(originId: string, destinyId: string, toAnswer: boolean) {
+    const origin =
+      findNodeInTree(originId, this.entireTree()) ||
+      findAnswerInTree(originId, this.entireTree()) ||
+      findConditionsInTree(originId, this.entireTree())
 
-    if (answer.join) {
-      answer.join = answer.join.filter((join: any) => {
-        return !(join.node === nodeId && join.toAnswer === toAnswer)
+    if (origin.join) {
+      origin.join = origin.join.filter((join: any) => {
+        return !(join.node === destinyId && join.toAnswer === toAnswer)
       })
     }
 
@@ -559,7 +563,7 @@ export class ActiveStoryService {
     const saved = this.db.saveTreeToDB(this.storyId(), this.entireTree())
     if (!saved) return false
 
-    return answer.join
+    return origin.join
   }
   // TODO -> Are all this gets really necessary since the use of signals for the tree?
   getEventsOfAnswer(answerId: string) {
