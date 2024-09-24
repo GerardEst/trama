@@ -88,7 +88,7 @@ section
       align-items: center
       justify-content: space-around
       flex-wrap: wrap
-      gap: 110px
+      gap: 20px
       polo-board
         position: relative
       polo-board::after
@@ -99,11 +99,7 @@ section
         font-family: 'RalewayItalic'
         color: var(--light-text)
       img
-        position: absolute
-        right: 398px
         width: 100px
-        top: 267px
-        z-index: 1
     .mobile__text
       display: flex
       &__editor
@@ -299,3 +295,12 @@ footer
   font-family: monospace
   transform: rotate(13deg) translate(27px, -8px)
   box-shadow: 0px 0px 0px 4px #fff9d9
+
+@media screen and (max-width: 1098px)
+  polo-board
+    width: 100%
+  section.section--mobile .mobile__playground
+    flex-direction: column
+    gap: 50px
+    & img
+      transform: rotate(90deg)
