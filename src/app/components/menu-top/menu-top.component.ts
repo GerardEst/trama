@@ -4,11 +4,13 @@ import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { normalizeLink } from 'src/app/utils/links'
+import { AlertService } from 'src/app/services/alert.service'
+import { DeleteStoryComponent } from '../alerts/delete-story/delete-story.component'
 
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, DeleteStoryComponent],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.sass',
 })
@@ -21,7 +23,8 @@ export class MenuTopComponent {
   constructor(
     public db: DatabaseService,
     private router: Router,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    private alertService: AlertService
   ) {}
 
   async updateStoryName($event: any) {
@@ -105,7 +108,15 @@ export class MenuTopComponent {
     navigator.clipboard.writeText(this.activeStory.storyId())
   }
 
-  deleteTree() {
-    this.db.deleteStory(this.activeStory.storyId())
+  async deleteTree() {
+    const result = await this.alertService.launch(DeleteStoryComponent)
+
+    if (result) {
+      // User confirmed deletion
+      await this.db.deleteStory(this.activeStory.storyId())
+      // Optionally, navigate to a different page or update UI
+      window.location.reload()
+    }
+    // If result is false, do nothing (user cancelled)
   }
 }

@@ -44,6 +44,8 @@ export class PlaygroundComponent {
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
   ngAfterViewInit() {
+    // TODO -> Si la historia la ha creat algú que en aquets moments està suscrit, no posa anuncis
+
     // Dynamically create a script tag
     const script = this.renderer.createElement('script')
     script.type = 'text/javascript'
@@ -92,7 +94,6 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().footer = configuration.footer
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode
-
 
     this.customStyles = configuration.customStyles || 'default'
 

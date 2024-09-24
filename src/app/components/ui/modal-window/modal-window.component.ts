@@ -12,15 +12,10 @@ import { BasicButtonComponent } from '../basic-button/basic-button.component'
 })
 export class ModalWindowComponent {
   @Input() name?: string
-  @Input() mode?: 'centered' | 'side' = 'centered'
-  @Input() hide?: boolean = false
-  @Input() locked?: boolean = false
 
   constructor(private modalService: ModalService) {}
 
   close() {
-    if (this.locked) return
-
     this.modalService.close()
   }
 }
