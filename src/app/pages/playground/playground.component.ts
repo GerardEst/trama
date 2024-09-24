@@ -43,9 +43,14 @@ export class PlaygroundComponent {
   ) {}
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
-  ngAfterViewInit() {
-    // TODO -> Si la historia la ha creat algú que en aquets moments està suscrit, no posa anuncis
+  async ngAfterViewInit() {
+    const creatorSubscribed = await this.db.getSubscriptionOfCreatorOfStory(
+      this.storyId
+    )
+    if (!creatorSubscribed) this.appendAds()
+  }
 
+  appendAds() {
     // Dynamically create a script tag
     const script = this.renderer.createElement('script')
     script.type = 'text/javascript'

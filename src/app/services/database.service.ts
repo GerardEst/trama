@@ -46,6 +46,23 @@ export class DatabaseService {
     return userProfile[0]
   }
 
+  async getSubscriptionOfCreatorOfStory(storyId: string) {
+    if (this.prod)
+      console.log(
+        '%cdb call to get the subscription status of the creator of a story',
+        'color: #9999ff'
+      )
+
+    let { data: subscription, error } = await this.supabase
+      .from('stories')
+      .select('profiles(subscription_status)')
+      .eq('id', storyId)
+
+    if (error) return false
+
+    return !!subscription[0].profiles.subscription_status
+  }
+
   async getAllTreesForUser(userId: string) {
     if (this.prod)
       console.log(
