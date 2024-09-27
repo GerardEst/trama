@@ -2,16 +2,12 @@ import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
-  httpClient: Stripe.createFetchHttpClient(),
-})
-
 Deno.serve(async (req) => {
   try {
     const stripeInfo = await req.json()
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },

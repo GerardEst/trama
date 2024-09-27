@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     // Creem un client de supabase, es a dir la instancia que fem servir per fer queries a la db etc
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },
