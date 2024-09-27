@@ -43,28 +43,6 @@ export class PlaygroundComponent {
   ) {}
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
-  async ngAfterViewInit() {
-    const creatorSubscribed = await this.db.getSubscriptionOfCreatorOfStory(
-      this.storyId
-    )
-    if (!creatorSubscribed) this.appendAds()
-  }
-
-  appendAds() {
-    // Dynamically create a script tag
-    const script = this.renderer.createElement('script')
-    script.type = 'text/javascript'
-    script.text = `
-      aclib.runBanner({
-        zoneId: '8750310',
-      });
-    `
-
-    // Append the script to the desired element
-    const element = document.querySelector('.ads')
-    this.renderer.appendChild(element, script)
-  }
-
   async getStoryByCorrectID() {
     let story, configuration
     if (this.storyId) {
