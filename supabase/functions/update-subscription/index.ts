@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
     const stripeInfo = await req.json()
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('ADMIN_SUPABASE_SECRET') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },

@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     // Creem un client de supabase, es a dir la instancia que fem servir per fer queries a la db etc
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('ADMIN_SUPABASE_SECRET') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },
@@ -30,6 +30,7 @@ Deno.serve(async (req) => {
     // Necessitem agafar tota la info del customer (apart de l'id que ja tenim) per obtenir el mail
     const customer = await stripe.customers.retrieve(customerId)
 
+    console.log({customer})
     // Fem la query a supabase, guardant info de la suscripció per tenir-ho a ma i no estar fent calls a stripe
     const { data, error } = await supabase
       .from('profiles')
