@@ -49,13 +49,18 @@ export class ProfileModalComponent {
           subscription_id: this.db.user().profile.subscription_id,
         }),
       }
-    ).then((response) => {
-      if (response.status === 200) {
-        this.db.user().profile.subscription_status = 'canceled'
-      } else {
+    )
+      .then((response) => {
+        if (response.status === 200) {
+          this.db.user().profile.subscription_status = 'canceled'
+        } else {
+          alert('Failed to cancel subscription')
+        }
+      })
+      .catch((error) => {
+        console.error(error)
         alert('Failed to cancel subscription')
-      }
-    })
+      })
   }
 
   logout() {
