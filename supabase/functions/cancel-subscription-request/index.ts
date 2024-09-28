@@ -34,45 +34,38 @@ Deno.serve(async (req) => {
   // Extract the JWT token from the Authorization header
   const authHeader = req.headers.get('Authorization')
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('Invalid token')
     return new Response('No valid token provided', { status: 401 })
   }
-  const token = authHeader.split(' ')[1]
 
   try {
-    // Verify the JWT token and get the user details
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token)
-    if (error || !user) {
-      return new Response('Invalid token', { status: 401 })
+    const { subscription_id, customer_id } = await req.json()
+
+    if (!customer_id) {
+      console.error('No customer ID provided')
+      return new Response('Missing parameter', { status: 400 })
     }
 
-    const { subscription_id, customerId } = await req.json()
-
     if (!subscription_id) {
-      return new Response('Subscription ID is required', { status: 400 })
+      console.error('No subscription ID provided')
+      return new Response('Missing parameter', { status: 400 })
     }
 
     // Fetch the subscription details
     const subscription = await stripe.subscriptions.retrieve(subscription_id)
-    const customer = await stripe.customers.retrieve(customerId)
 
-    console.log({ customer })
-    console.log({ user })
-    console.log({ subscription })
-    console.log(subscription.customer, user.email)
-
-    // Check if the subscription belongs to the authenticated user
-    if (subscription.customer !== user.email) {
-      console.log('Not authorized user')
+    // Check if the subscription belongs to the customer
+    if (subscription.customer !== customer_id) {
+      console.error('Unauthorized user')
       return new Response('Not authorized', { status: 403 })
     }
 
     const cancelledSubscription = await stripe.subscriptions.cancel(
       subscription_id
     )
+
     if (cancelledSubscription.status !== 'canceled') {
+      console.error('Status not canceled')
       return new Response('Failed to cancel subscription', { status: 500 })
     }
 
