@@ -47,6 +47,7 @@ export class ProfileModalComponent {
         },
         body: JSON.stringify({
           subscription_id: this.db.user().profile.subscription_id,
+          customerId: this.db.user().profile.customer_id,
         }),
       }
     )

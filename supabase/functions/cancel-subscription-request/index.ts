@@ -48,8 +48,7 @@ Deno.serve(async (req) => {
       return new Response('Invalid token', { status: 401 })
     }
 
-    console.log(user)
-    const { subscription_id } = await req.json()
+    const { subscription_id, customerId } = await req.json()
 
     if (!subscription_id) {
       return new Response('Subscription ID is required', { status: 400 })
@@ -57,9 +56,16 @@ Deno.serve(async (req) => {
 
     // Fetch the subscription details
     const subscription = await stripe.subscriptions.retrieve(subscription_id)
+    const customer = await stripe.customers.retrieve(customerId)
+
+    console.log({ customer })
+    console.log({ user })
+    console.log({ subscription })
+    console.log(subscription.customer, user.email)
 
     // Check if the subscription belongs to the authenticated user
     if (subscription.customer !== user.email) {
+      console.log('Not authorized user')
       return new Response('Not authorized', { status: 403 })
     }
 
