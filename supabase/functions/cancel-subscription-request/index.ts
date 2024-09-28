@@ -8,7 +8,7 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
   {
     auth: {
       autoRefreshToken: false,
@@ -58,11 +58,10 @@ Deno.serve(async (req) => {
       return new Response('No subscription found', { status: 404 })
     }
 
-    console.log(data)
+    const subscriptionId = data[0].subscription_id
     const cancelledSubscription = await stripe.subscriptions.cancel(
-      data[0].subscription_id
+      subscriptionId
     )
-
     if (cancelledSubscription.status !== 'canceled') {
       return new Response('Failed to cancel subscription', { status: 500 })
     }
