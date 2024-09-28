@@ -34,38 +34,36 @@ Deno.serve(async (req) => {
   // Extract the JWT token from the Authorization header
   const authHeader = req.headers.get('Authorization')
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.error('Invalid token')
     return new Response('No valid token provided', { status: 401 })
   }
+  const token = authHeader.split(' ')[1]
 
   try {
-    const { subscription_id, customer_id } = await req.json()
-
-    if (!customer_id) {
-      console.error('No customer ID provided')
-      return new Response('Missing parameter', { status: 400 })
+    // Verify the JWT token and get the user details
+    const {
+      data: { user },
+      validationError,
+    } = await supabase.auth.getUser(token)
+    if (validationError || !user) {
+      return new Response('Invalid token', { status: 401 })
     }
 
-    if (!subscription_id) {
-      console.error('No subscription ID provided')
-      return new Response('Missing parameter', { status: 400 })
+    // Fetch the subscription details from supabase
+    const { data, queryError } = await supabase
+      .from('profiles')
+      .select('subscription_id')
+      .eq('email', user.email)
+
+    if (queryError) {
+      return new Response('No subscription found', { status: 404 })
     }
 
-    // Fetch the subscription details
-    const subscription = await stripe.subscriptions.retrieve(subscription_id)
-
-    // Check if the subscription belongs to the customer
-    if (subscription.customer !== customer_id) {
-      console.error('Unauthorized user')
-      return new Response('Not authorized', { status: 403 })
-    }
-
+    console.log(data)
     const cancelledSubscription = await stripe.subscriptions.cancel(
-      subscription_id
+      data[0].subscription_id
     )
 
     if (cancelledSubscription.status !== 'canceled') {
-      console.error('Status not canceled')
       return new Response('Failed to cancel subscription', { status: 500 })
     }
 

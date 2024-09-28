@@ -45,10 +45,6 @@ export class ProfileModalComponent {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
         },
-        body: JSON.stringify({
-          subscription_id: this.db.user().profile.subscription_id,
-          customer_id: this.db.user().profile.customer_id,
-        }),
       }
     )
       .then((response) => {
