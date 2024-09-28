@@ -48,6 +48,7 @@ Deno.serve(async (req) => {
       return new Response('Invalid token', { status: 401 })
     }
 
+    console.log(user)
     const { subscription_id } = await req.json()
 
     if (!subscription_id) {
