@@ -38,7 +38,7 @@ export class ProfileModalComponent {
 
     this.cancelButtonText = 'Unsubscribing'
     fetch(
-      'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription',
+      'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription-request',
       {
         method: 'POST',
         headers: {
