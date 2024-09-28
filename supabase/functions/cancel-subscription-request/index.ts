@@ -6,6 +6,17 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   httpClient: Stripe.createFetchHttpClient(),
 })
 
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
+)
+
 Deno.serve(async (req) => {
   // Les altres funcions s'estan invocant desde stripe, aquesta desde textandplay
   // Per tant aquesta necessita una mica de CORS (no sé perquè, suposo que supabase ja permet per defecte stripe)
@@ -20,23 +31,47 @@ Deno.serve(async (req) => {
     })
   }
 
+  // Extract the JWT token from the Authorization header
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response('No valid token provided', { status: 401 })
+  }
+  const token = authHeader.split(' ')[1]
+
   try {
+    // Verify the JWT token and get the user details
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token)
+    if (error || !user) {
+      return new Response('Invalid token', { status: 401 })
+    }
+
     const { subscription_id } = await req.json()
 
     if (!subscription_id) {
       return new Response('Subscription ID is required', { status: 400 })
     }
 
-    const subscription = await stripe.subscriptions.cancel(subscription_id)
+    // Fetch the subscription details
+    const subscription = await stripe.subscriptions.retrieve(subscription_id)
 
-    if (subscription.status !== 'canceled') {
+    // Check if the subscription belongs to the authenticated user
+    if (subscription.customer !== user.email) {
+      return new Response('Not authorized', { status: 403 })
+    }
+
+    const cancelledSubscription = await stripe.subscriptions.cancel(
+      subscription_id
+    )
+    if (cancelledSubscription.status !== 'canceled') {
       return new Response('Failed to cancel subscription', { status: 500 })
     }
 
     return new Response(
       JSON.stringify({
         message: 'Subscription canceled successfully',
-        data: subscription,
       }),
       {
         headers: {
