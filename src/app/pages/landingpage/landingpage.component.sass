@@ -14,6 +14,13 @@ iframe
   border: none
   width: 100%
   height: 100%
+.logo
+    font-size: 2rem
+    font-weight: 900
+    margin: 0
+    font-family: 'LibreBaskerville'
+    sup
+      font-size: 1rem
 menu
   position: fixed
   width: calc(100% - 20px)
@@ -29,13 +36,6 @@ menu
   background: #ffffffcc
   z-index: 3
   backdrop-filter: blur(15px)
-  .logo
-    font-size: 2rem
-    font-weight: 900
-    margin: 0
-    font-family: 'LibreBaskerville'
-    sup
-      font-size: 1rem
   .login
     margin-left: auto
 
@@ -275,13 +275,24 @@ polo-landing-mobile
           align-self: flex-end
 
 footer
-  display: flex
   width: 100%
-  padding: 20px
   box-sizing: border-box
-  justify-content: center
-  align-items: center
+  position: relative
   background: var(--text-color)
+  .footer--centeredContent
+    max-width: 1200px
+    margin: auto
+    display: flex
+    width: 100%
+    padding: 20px
+    box-sizing: border-box
+    justify-content: space-between
+    align-items: flex-end
+    padding-bottom: 50px
+    a
+      text-decoration: none
+      padding-bottom: 1px
+      border-bottom: 1px dotted white
 
 .paidFeatureTag
   position: absolute
