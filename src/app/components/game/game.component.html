@@ -24,6 +24,7 @@
             (onContinue)="continueFlow($event)"
             (onShare)="openShareContext($event)"
             (onGoToLink)="registerLink($event)"
+            (typingComplete)="onNodeTypingComplete()"
           ></polo-game-node>
         } @else {
           <polo-game-node
@@ -35,6 +36,7 @@
             (onContinue)="continueFlow($event)"
             (onShare)="openShareContext($event)"
             (onGoToLink)="registerLink($event)"
+            (typingComplete)="onNodeTypingComplete()"
           ></polo-game-node>
         }
       }

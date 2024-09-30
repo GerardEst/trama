@@ -149,6 +149,10 @@ export class GameComponent {
     }, 700)
   }
 
+  onNodeTypingComplete(){
+    console.log('typing complete')
+  }
+
   interpolateNodeTexts(node: node) {
     const interpolateAnswers = node.answers?.map((answer) => {
       return { ...answer, text: this.getTextWithFinalParameters(answer.text) }

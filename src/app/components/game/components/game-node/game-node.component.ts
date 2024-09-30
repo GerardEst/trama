@@ -36,6 +36,7 @@ export class GameNodeComponent {
   @Output() onContinue: EventEmitter<any> = new EventEmitter()
   @Output() onGoToLink: EventEmitter<any> = new EventEmitter()
   @Output() onShare: EventEmitter<any> = new EventEmitter()
+  @Output() typingComplete: EventEmitter<void> = new EventEmitter()
 
   @HostListener('window:click', ['$event'])
   onWindowClick(event: MouseEvent) {
@@ -47,8 +48,8 @@ export class GameNodeComponent {
   // Text nodes
   userText = new FormControl('', [
     Validators.required,
-    Validators.maxLength(100)
-  ]);
+    Validators.maxLength(100),
+  ])
 
   // Writting options
   speeds: any = {
@@ -69,7 +70,7 @@ export class GameNodeComponent {
 
   // Text node
   continue(event: Event) {
-    if(!this.userText.valid) return
+    if (!this.userText.valid) return
     this.markAsSelected(event)
     this.onContinue.emit({
       property: this.data.userTextOptions.property,
@@ -103,8 +104,10 @@ export class GameNodeComponent {
       setTimeout(() => this.writeText(), this.speeds[this.writeSpeed])
     } else {
       this.writting = false
-
-      setTimeout(() => (this.showAnswers = true), 350)
+      setTimeout(() => {
+        this.showAnswers = true
+        this.typingComplete.emit()
+      }, 350)
     }
   }
 
