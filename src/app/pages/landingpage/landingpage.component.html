@@ -2,8 +2,11 @@
   <p class="logo">Text & Play <sup> beta</sup></p>
   <div class="login">
     @if (checkedLoggedUser) {
-    <polo-landing-button behaviour="link" destiny="/dashboard"
-      text="{{ loggedUser ? 'Dashboard' : 'Login' }}"></polo-landing-button>
+    <polo-landing-button
+      behaviour="link"
+      destiny="/dashboard"
+      text="{{ loggedUser ? 'Dashboard' : 'Login' }}"
+    ></polo-landing-button>
     }
   </div>
 </menu>
@@ -12,27 +15,41 @@
   <div class="intro section--centeredContent">
     <!--h1>Write interactive text content that reacts to user inputs</h1-->
     <!-- Interact with users with simple, fresh and engaging ways-->
-    <h1>Engage your audience with interactive content that <span>react to their actions</span></h1>
+    <h1>
+      Engage your audience with interactive content that
+      <span>react to their actions</span>
+    </h1>
     <h2>
-      From simple formularies and quizzes to intricate story-driven experiences. Textandplay provides the simplest
-      tools to <strong>create, distribute and analyse results</strong> of interactive text content
+      From simple formularies and quizzes to intricate story-driven experiences.
+      Textandplay provides the simplest tools to
+      <strong>create, distribute and analyse results</strong> of interactive
+      text content
     </h2>
     <!--div>
       <li>Intuitive node-based platform for creating dynamic interactive tests and narratives</li>
       <li>Build complex, branching, reactive scenarios with ease</li>
       <li>Share with one click and track user decisions</li>
     </div-->
-    <polo-landing-button destiny="/dashboard" behaviour="link"
-      text="Start creating! (It's free 😉)"></polo-landing-button>
+    <polo-landing-button
+      destiny="/dashboard"
+      behaviour="link"
+      text="Start creating! (It's free 😉)"
+    ></polo-landing-button>
   </div>
 </section>
 
 <section class="section--mobile pattern-background">
   <div class="mobile__playground">
-    <polo-board #board [initialZoom]="0.9" [grid]="true" [focusElements]="false" [zoomable]="false"></polo-board>
+    <polo-board
+      #board
+      [initialZoom]="0.9"
+      [grid]="true"
+      [focusElements]="false"
+      [zoomable]="false"
+    ></polo-board>
     <img src="assets/images/landing/arrow.webp" />
     <polo-landing-mobile [camera]="true" [topSpacing]="true">
-      <polo-game mode="single"></polo-game>
+      <polo-game mode="cumulative"></polo-game>
     </polo-landing-mobile>
   </div>
   <!--div class="mobile__text">
@@ -49,38 +66,66 @@
     <div class="usecases__list">
       <h2 class="usecases__title txt-baskerville">Who is this for?</h2>
       <div class="linepoints"></div>
-      <div class="usecases__list__item" [class.active]="activeUseCase === 'brands'" (click)="selectUseCase('brands')">
+      <div
+        class="usecases__list__item"
+        [class.active]="activeUseCase === 'brands'"
+        (click)="selectUseCase('brands')"
+      >
         <h3 class="txt-baskerville txt-l">Brands</h3>
-        <p>Engage your users with custom tests that lead them to your products/services</p>
+        <p>
+          Engage your users with custom tests that lead them to your
+          products/services
+        </p>
       </div>
-      <div class="usecases__list__item" [class.active]="activeUseCase === 'schools'" (click)="selectUseCase('schools')">
+      <div
+        class="usecases__list__item"
+        [class.active]="activeUseCase === 'schools'"
+        (click)="selectUseCase('schools')"
+      >
         <h3 class="txt-baskerville txt-l">Schools</h3>
-        <p>Gamify your classes and exams, evaluate <br>automatically</p>
+        <p>Gamify your classes and exams, evaluate <br />automatically</p>
       </div>
-      <div class="usecases__list__item" [class.active]="activeUseCase === 'creatives'"
-        (click)="selectUseCase('creatives')">
+      <div
+        class="usecases__list__item"
+        [class.active]="activeUseCase === 'creatives'"
+        (click)="selectUseCase('creatives')"
+      >
         <h3 class="txt-baskerville txt-l">Creative minds</h3>
-        <p>Have fun creating questionnaries or text adventures and sharing with whoever you want!</p>
+        <p>
+          Have fun creating questionnaries or text adventures and sharing with
+          whoever you want!
+        </p>
       </div>
       <div class="usecases__list__item">
         <h3 class="txt-baskerville txt-l">You!</h3>
         <p>We did all this for you to enjoy</p>
-        <polo-landing-button text="Start creating!" destiny="/dashboard" behaviour="link"></polo-landing-button>
+        <polo-landing-button
+          text="Start creating!"
+          destiny="/dashboard"
+          behaviour="link"
+        ></polo-landing-button>
       </div>
     </div>
     <div class="usecases__examples">
       <polo-landing-mobile>
         @if(activeUseCase==='brands'){
-        <iframe title="Brand flow example" @showUseCase
-          src="https://textandplay.com/private/0f4aad97-efb5-4d76-ae79-04a80f82db6b"></iframe>
-        }
-        @if(activeUseCase==='schools'){
-        <iframe title="School flow example" @showUseCase
-          src="https://textandplay.com/private/9640ad64-e9ef-4ef7-a12a-5378ee443163"></iframe>
-        }
-        @if(activeUseCase==='creatives'){
-        <iframe title="Creative flow example" @showUseCase
-          src="https://textandplay.com/private/337b5201-40eb-4732-b29a-8c09663ef8b5"></iframe>
+        <iframe
+          title="Brand flow example"
+          @showUseCase
+          src="https://textandplay.com/private/0f4aad97-efb5-4d76-ae79-04a80f82db6b"
+        ></iframe>
+        } @if(activeUseCase==='schools'){
+        <iframe
+          title="School flow example"
+          @showUseCase
+          src="https://textandplay.com/private/9640ad64-e9ef-4ef7-a12a-5378ee443163"
+        ></iframe>
+        } @if(activeUseCase==='creatives'){
+        <iframe
+          title="Creative flow example"
+          @showUseCase
+          src="https://textandplay.com/private/337b5201-40eb-4732-b29a-8c09663ef8b5"
+        ></iframe>
         }
       </polo-landing-mobile>
     </div>
@@ -88,40 +133,59 @@
 </section>
 <section class="section--advantages">
   <div class="advantages section--centeredContent">
-    <h2 class="advantages__title txt-baskerville">Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
-      textandplay</h2>
+    <h2 class="advantages__title txt-baskerville">
+      Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
+      textandplay
+    </h2>
     <div class="advantages__list">
-      <polo-landing-card image="/assets/images/landing/advantages_flow_control.webp" title="Dynamic flow control">
+      <polo-landing-card
+        image="/assets/images/landing/advantages_flow_control.webp"
+        title="Dynamic flow control"
+      >
         <p>
-          Guide users through personalized paths based on their choices and actions
+          Guide users through personalized paths based on their choices and
+          actions
           <!--With our flow control features, you can lead your users to specific
           points depending on their previuos actions-->
         </p>
       </polo-landing-card>
-      <polo-landing-card image="/assets/images/landing/advantages_breeze.webp" title="Build & distribute in a breeze">
+      <polo-landing-card
+        image="/assets/images/landing/advantages_breeze.webp"
+        title="Build & distribute in a breeze"
+      >
         <p>
-          Build, test, and distribute your creations in minutes, without extra steps, as simple as possible
+          Build, test, and distribute your creations in minutes, without extra
+          steps, as simple as possible
           <!--Login, write and join some nodes, and share the link to let people take
           the test. No extra steps, as easy as possible-->
         </p>
       </polo-landing-card>
-      <polo-landing-card image="/assets/images/landing/advantages_unleash_creativity.webp"
-        title="Unleash your creativity">
+      <polo-landing-card
+        image="/assets/images/landing/advantages_unleash_creativity.webp"
+        title="Unleash your creativity"
+      >
         <p>
-          Craft anything from quick quizzes to epic interactive adventures with our versatile node system
+          Craft anything from quick quizzes to epic interactive adventures with
+          our versatile node system
           <!--Use our powerful nodes to create whatever you want, from a simple test
           to a large and epic text adventure!-->
         </p>
       </polo-landing-card>
-      <polo-landing-card image="/assets/images/landing/advantages_integrate_everywhere.webp"
-        title="Integrate everywhere, reach everyone">
+      <polo-landing-card
+        image="/assets/images/landing/advantages_integrate_everywhere.webp"
+        title="Integrate everywhere, reach everyone"
+      >
         <span class="paidFeatureTag">Pro feature</span>
         <p>
-          Embed your scenarios anywhere with simple iframes, expanding your reach across platforms
+          Embed your scenarios anywhere with simple iframes, expanding your
+          reach across platforms
           <!--You can use your flows easily inside your website with iframes-->
         </p>
       </polo-landing-card>
-      <polo-landing-card image="/assets/images/landing/advantages_analyze.webp" title="Know your users">
+      <polo-landing-card
+        image="/assets/images/landing/advantages_analyze.webp"
+        title="Know your users"
+      >
         <span class="paidFeatureTag">Pro feature</span>
         <p>
           Gain valuable data on user choices, paths, and engagement
@@ -142,62 +206,158 @@
           <h2 class="txt-baskerville txt-2">Hobby</h2>
           <p class="txt-ralewayItalic">Free</p>
         </div>
-        <p>Try our node-based creation tool, test your ideas, share them and check if textandplay could work for you</p>
+        <p>
+          Try our node-based creation tool, test your ideas, share them and
+          check if textandplay could work for you
+        </p>
         <ul class="pricing__plan__features">
-          <li><img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" /> All types of nodes</li>
-          <li><img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" /> Full flow control</li>
-          <li><img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" /> Text interpolations</li>
-          <li><img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" /> Basic customization options</li>
-          <li><img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" /> Up to 3 stories</li>
-          <li><img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" /> Limited images</li>
-          <li><img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" /> Textandplay brand in the
-            stories</li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_3.webp"
+              alt="Success icon"
+            />
+            All types of nodes
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_3.webp"
+              alt="Success icon"
+            />
+            Full flow control
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_3.webp"
+              alt="Success icon"
+            />
+            Text interpolations
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_3.webp"
+              alt="Success icon"
+            />
+            Basic customization options
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/warning_2.webp"
+              alt="Warning icon"
+            />
+            Up to 3 stories
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/warning_2.webp"
+              alt="Warning icon"
+            />
+            Limited images
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/warning_2.webp"
+              alt="Warning icon"
+            />
+            Textandplay brand in the stories
+          </li>
         </ul>
-        <polo-landing-button destiny="/dashboard" behaviour="link" text="Use free"></polo-landing-button>
+        <polo-landing-button
+          destiny="/dashboard"
+          behaviour="link"
+          text="Use free"
+        ></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Creator</h2>
           @if(payYearly){
-          <p class="txt-ralewayItalic"><span class="txt-linethrough">71,4€</span> 36€/year</p>
+          <p class="txt-ralewayItalic">
+            <span class="txt-linethrough">71,4€</span> 36€/year
+          </p>
           }@else {
           <!--p class="txt-ralewayItalic">5.95€/month</p-->
           }
         </div>
-        <p>Perfect for small businesses and creatives to engage their audiences and bring more traffic to their websites
-          and projects</p>
+        <p>
+          Perfect for small businesses and creatives to engage their audiences
+          and bring more traffic to their websites and projects
+        </p>
         <ul class="pricing__plan__features">
           <li class="txt-gray">Everything from hobby plan</li>
-          <li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Unlimited stories</li>
-          <li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Unlimited images</li>
-          <li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Customize brand in the stories
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_4.webp"
+              alt="Success icon"
+            />
+            Unlimited stories
           </li>
-          <li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Share options and external links
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_4.webp"
+              alt="Success icon"
+            />
+            Unlimited images
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_4.webp"
+              alt="Success icon"
+            />
+            Customize brand in the stories
+          </li>
+          <li>
+            <img
+              src="/assets/images/drawn_icons/tick_4.webp"
+              alt="Success icon"
+            />
+            Share options and external links
           </li>
           <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
           <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
         </ul>
-        <polo-landing-button [inactive]="true" destiny="/dashboard" behaviour="link"
-          text="In progress"></polo-landing-button>
+        <polo-landing-button
+          [inactive]="true"
+          destiny="/dashboard"
+          behaviour="link"
+          text="In progress"
+        ></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Pro</h2>
           <p class="txt-ralewayItalic"></p>
         </div>
-        <p>Powerful features to gain insights about your audince, track their actions in your stories, and reach more
-          people</p>
+        <p>
+          Powerful features to gain insights about your audince, track their
+          actions in your stories, and reach more people
+        </p>
         <ul class="pricing__plan__features">
           <li class="txt-gray">Everything from other plans</li>
-          <li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Analytics of your stories</li>
-          <li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Tracking of users actions</li>
-          <li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Embed stories on your website</li>
-          <li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Priority support</li>
+          <li>
+            <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+            Analytics of your stories
+          </li>
+          <li>
+            <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+            Tracking of users actions
+          </li>
+          <li>
+            <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+            Embed stories on your website
+          </li>
+          <li>
+            <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+            Priority support
+          </li>
           <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
         </ul>
-        <polo-landing-button [inactive]="true" (click)="usePro()" behaviour="link"
-          text="In progress"></polo-landing-button>
+        <polo-landing-button
+          [inactive]="true"
+          (click)="usePro()"
+          behaviour="link"
+          text="In progress"
+        ></polo-landing-button>
       </div>
     </div>
     <!--p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
@@ -247,13 +407,13 @@
   <div class="footer--centeredContent">
     <div>
       <p class="logo txt-white">Text & Play</p>
-      <p class="txt-n txt-white">
-        © textandplay.com - All Rights Reserved
-      </p>
+      <p class="txt-n txt-white">© textandplay.com - All Rights Reserved</p>
     </div>
     <div>
-      <p class=" txt-white txt-weight-bold">Contact</p>
-      <a href="mailto:hello@textandplay.com" class="txt-white">hello&#64;textandplay.com</a>
+      <p class="txt-white txt-weight-bold">Contact</p>
+      <a href="mailto:hello@textandplay.com" class="txt-white"
+        >hello&#64;textandplay.com</a
+      >
     </div>
   </div>
 </footer>

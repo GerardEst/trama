@@ -59,7 +59,11 @@ export class GameComponent {
   @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
   activeNodes?: any = []
+  nodesToWrite: any = []
+  isWrittingNodes: boolean = false
   inactiveNodes: any = []
+
+  private TIME_BETWEEN_NODES = 700
 
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
@@ -85,9 +89,9 @@ export class GameComponent {
   }
 
   selectAnswer(answer: node_answer) {
-    this.nextStep(answer.join)
     this.applyEvents(answer.events)
     this.registerAnswer(answer)
+    this.nextStep(answer.join)
   }
 
   continueFlow(continueInfo: any) {
@@ -95,62 +99,83 @@ export class GameComponent {
     this.nextStep(continueInfo.join)
   }
 
-  nextStep(destinyNodes: Array<join>, addToActiveNodes: boolean = false) {
+  // Each step can contain multiple nodes
+  nextStep(possibleJoins: Array<join>, addToCurrentStep: boolean = false) {
+    const randomlyChoosedJoin = this.getRandomJoin(possibleJoins)
+    const activeNode = this.buildNextNodeFromJoin(randomlyChoosedJoin)
+    const isDistributor = activeNode.type === 'distributor'
+    const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
+
+    if (isDistributor) this.nextStep(this.distributeNode(activeNode), true)
+
     setTimeout(() => {
-      const randomlyChoosedJoin = this.getRandomJoin(destinyNodes)
-      if(!randomlyChoosedJoin) return
+      if (isNonInteractableNode) this.nextStep(activeNode.join, true)
 
-      let nextNode = structuredClone(
-        this.activeStory
-          .entireTree()
-          .nodes.find((node: any) => node.id === randomlyChoosedJoin.node)
-      )
-      if (!nextNode) throw new Error('Node not found')
-
-      // Transform the texts to interpolated with stats
-      nextNode = this.interpolateNodeTexts(nextNode)
-
-      // Add toAnswer to do correct paintings
-      nextNode.toAnswer = randomlyChoosedJoin.toAnswer
-
-      // Remove banned answers before painting
-      nextNode.answers = nextNode.answers?.filter((answer: node_answer) =>
-        this.playerHasAnswerRequirements(
-          this.playerService.playerProperties(),
-          this.playerService.playerStats(),
-          this.playerService.playerConditions(),
-          answer.requirements
-        )
-      )
-
-      // Handle node change
-      if (this.mode === 'cumulative' && !addToActiveNodes) {
+      if (!addToCurrentStep) {
+        // Add activeNodes (previous step nodes) to inactiveNodes
         this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
+        // Clean activeNodes
+        this.activeNodes = []
       }
 
-      if (!addToActiveNodes) this.activeNodes = []
-      setTimeout(() => {
-        this.activeNodes.push(nextNode)
+      this.nodesToWrite.push(activeNode)
 
-        // It scrolls only on the first activeNode added
-        if (this.activeNodes.length === 1) this.scrollToNewNode()
-      }, 500)
-
-      if (nextNode && nextNode.join && nextNode.type !== 'text') {
-        // If node is text, we have to stop till the user wants to continue
-        this.nextStep(nextNode.join, true)
+      if (!this.isWrittingNodes) {
+        this.processNextNode()
       }
-      if (nextNode && nextNode.type === 'end') this.onEndGame.emit()
-      if (nextNode && nextNode.type !== 'distributor')
-        this.registerNode(nextNode)
-      if (nextNode && nextNode.type === 'distributor') {
-        this.nextStep(this.distributeNode(nextNode), true)
-      }
-    }, 700)
+    }, this.TIME_BETWEEN_NODES)
   }
 
-  onNodeTypingComplete(){
-    console.log('typing complete')
+  onNodeTypingComplete() {
+    this.processNextNode()
+  }
+
+  processNextNode() {
+    if (this.nodesToWrite.length === 0) {
+      this.isWrittingNodes = false
+      return
+    }
+    this.isWrittingNodes = true
+
+    const node = this.nodesToWrite.shift()
+    this.activeNodes.push(node)
+
+    if (this.activeNodes.length === 1) this.scrollToNewNode()
+
+    this.registerNodeEvents(node)
+  }
+
+  buildNextNodeFromJoin(originJoin: join) {
+    // Fem una copia del node al que fem join
+    let nextNode = structuredClone(
+      this.activeStory
+        .entireTree()
+        .nodes.find((node: any) => node.id === originJoin.node)
+    )
+    if (!nextNode) throw new Error('Next node not found')
+
+    // Li afegim el valor de toAnswer, que farem servir per saltar-nos o no el text quan el pintem
+    nextNode.jumpToAnswers = originJoin.toAnswer
+
+    // Substituim tots els textos per els finals amb interpolacions
+    nextNode = this.interpolateNodeTexts(nextNode)
+
+    // Afegim un valor random per obligar el track del @for a repintar encara que repetim node
+    nextNode.key = Date.now() + Math.random()
+
+    // Treiem totes les respostes que no pot triar l'usuari per falta de requirements
+    nextNode.answers &&= nextNode.answers?.filter((answer: node_answer) =>
+      this.playerHasAnswerRequirements(
+        this.playerService.playerProperties(),
+        this.playerService.playerStats(),
+        this.playerService.playerConditions(),
+        answer.requirements
+      )
+    )
+
+    console.log('node ready to paint!', nextNode)
+
+    return nextNode
   }
 
   interpolateNodeTexts(node: node) {
@@ -167,19 +192,19 @@ export class GameComponent {
   getTextWithFinalParameters(text: string = '') {
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
-      (match: string, p1: string):any => {
+      (match: string, p1: string): any => {
         let property = this.playerService.playerProperties()[p1]
-        if(property) return property
+        if (property) return property
 
         let condition = this.playerService
           .playerConditions()
           .find((condition: any) => condition.id === p1)
-        if(condition) return true
+        if (condition) return true
 
         let stat = this.playerService
           .playerStats()
           .find((stat: any) => stat.id === p1)
-        if(stat) return stat.amount.toString()
+        if (stat) return stat.amount.toString()
 
         return '-'
       }
@@ -432,6 +457,10 @@ export class GameComponent {
 
   getRandomJoin(answerJoins: Array<join>) {
     const randomJoinIndex = Math.floor(Math.random() * answerJoins.length)
+
+    if (!answerJoins[randomJoinIndex])
+      throw new Error('Impossible to get a random join')
+
     return answerJoins[randomJoinIndex]
   }
 
@@ -439,7 +468,8 @@ export class GameComponent {
     this.onSelectAnswer.emit(answer)
   }
 
-  registerNode(node: node) {
-    this.onDrawNode.emit(node)
+  registerNodeEvents(node: node) {
+    if (node.type !== 'distributor') this.onDrawNode.emit(node)
+    if (node.type === 'end') this.onEndGame.emit()
   }
 }

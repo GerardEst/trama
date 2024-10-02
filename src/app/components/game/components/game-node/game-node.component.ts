@@ -87,10 +87,18 @@ export class GameNodeComponent {
 
   ngAfterViewInit() {
     if (!this.textContainer) {
-      setTimeout(() => (this.showAnswers = true), 350)
+      setTimeout(() => {
+        this.showAnswers = true
+        this.typingComplete.emit()
+      }, 350)
+
       return
     }
-    if (this.writeSpeed !== 'immediate') this.writeText()
+    if (this.writeSpeed !== 'immediate') {
+      this.writeText()
+    } else {
+      this.typingComplete.emit()
+    }
   }
 
   writeText() {

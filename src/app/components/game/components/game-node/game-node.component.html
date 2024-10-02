@@ -1,18 +1,20 @@
 <div #node class="node" [class.disabled]="disabled">
   @if (data.image) {
-  <img class="node__image" [src]="
-        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-        data.image.path
-      " />
+  <img
+    class="node__image"
+    [src]="
+      'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
+      data.image.path
+    "
+  />
   }
   <div class="node__text">
-    @if (data.text && !data.toAnswer) {
+    @if (data.text && !data.jumpToAnswers) {
     <p #textContainer class="nodetext">
       {{ writeSpeed === 'immediate' ? data.text : '' }}
     </p>
-    }
-    @if (data.answers && data.answers.length > 0 && showAnswers) {
-    @if (disabled) {
+    } @if (data.answers && data.answers.length > 0 && showAnswers) { @if
+    (disabled) {
     <div class="answers">
       @for (answer of data.answers; track $index) {
       <button>{{ answer.text }}</button>
@@ -21,51 +23,50 @@
     } @else {
     <div @showAnswers class="answers">
       @for (answer of data.answers; track $index) {
-      <button (click)="!disabled && markAsSelected($event)" (click)="!disabled && onSelectAnswer.emit(answer)">
+      <button
+        (click)="!disabled && markAsSelected($event)"
+        (click)="!disabled && onSelectAnswer.emit(answer)"
+      >
         {{ answer.text }}
       </button>
       }
     </div>
-    }
-    }
-    @if (showAnswers) {
-    @if(data.type==='text'){
+    } } @if (showAnswers) { @if(data.type==='text'){
     <div class="textInput">
       <input
         type="text"
         name="userText"
-        placeholder="{{data.userTextOptions.placeholder}}"
-        [formControl]="userText" />
+        placeholder="{{ data.userTextOptions.placeholder }}"
+        [formControl]="userText"
+      />
       <button
         aria-label="Continue"
         [disabled]="userText.invalid"
-        (click)="continue($event)"></button>
+        (click)="continue($event)"
+      ></button>
     </div>
     @if(userText.invalid && (userText.dirty || userText.touched)){
-      @if(userText.errors?.['required']){
-        <p>Please fill in the input</p>
-      }
-      @if(userText.errors?.['maxlength']){
-        <p>This cannot be more than 100 characters long</p>
-      }
-    }
-    }
-    @if(data.type==='end'){
+    @if(userText.errors?.['required']){
+    <p>Please fill in the input</p>
+    } @if(userText.errors?.['maxlength']){
+    <p>This cannot be more than 100 characters long</p>
+    } } } @if(data.type==='end'){
     <div class="endNodeExtras">
       @for (link of data.links; track $index) {
       <button (click)="onGoToLink.emit(link.url)">
         {{ link.name }}
         <img src="/assets/icons/open-external.svg" alt="Open external icon" />
       </button>
-      }
-      @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
-      <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || data.text)">
+      } @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
+      <button
+        class="sharebutton"
+        (click)="onShare.emit(data.share.sharedText || data.text)"
+      >
         {{ data.share?.shareButtonText || 'Share this story' }}
         <img src="/assets/icons/share.svg" alt="Share icon" />
       </button>
       }
     </div>
-    }
-    }
+    } }
   </div>
 </div>
