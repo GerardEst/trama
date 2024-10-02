@@ -292,7 +292,7 @@ export class GameComponent {
         // Then we check the comparator, if it's correct we can go to next node
         if (
           (distributorCondition.comparator === 'equalto' &&
-            playerStatAmount === distributorCondition.value) ||
+            playerStatAmount == distributorCondition.value) ||
           (distributorCondition.comparator === 'lessthan' &&
             playerStatAmount < distributorCondition.value) ||
           (distributorCondition.comparator === 'morethan' &&

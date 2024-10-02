@@ -27,8 +27,10 @@ test.describe('Flow of story with user text inputs', () => {
       await inputField.fill('User')
 
       // Find and click the continue button
-      const continueButton = page.getByRole('button', { name: /continue/i })
-      await continueButton.click()
+      await page.getByRole('button', { name: /continue/i }).click()
+
+      // WAIT BETWEEN NODES
+      await page.waitForTimeout(1000)
 
       // Wait for and check the new greeting text
       const node1Text = page.getByText('Hello User')
@@ -39,8 +41,10 @@ test.describe('Flow of story with user text inputs', () => {
       await inputField2.fill('Prop')
 
       // Find and click the continue button
-      const continueButton2 = page.getByRole('button', { name: /continue/i })
-      await continueButton2.click()
+      await page.getByRole('button', { name: /continue/i }).click()
+
+      // WAIT BETWEEN NODES
+      await page.waitForTimeout(1000)
 
       // Wait for and check the new greeting text
       const node2Text = page.getByText('New prop Prop')

@@ -1,6 +1,6 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "polo-angular"
+project_id = "textandplay"
 
 [api]
 enabled = true
@@ -35,7 +35,7 @@ port = 54329
 # Configure one of the supported pooler modes: `transaction`, `session`.
 pool_mode = "transaction"
 # How many server connections to allow per user/database pair.
-default_pool_size = 20
+default_pool_size = 15
 # Maximum number of client connections allowed.
 max_client_conn = 100
 
