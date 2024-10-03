@@ -55,7 +55,7 @@ export class GameNodeComponent {
   speeds: any = {
     immediate: 1,
     fast: 10,
-    slow: 50,
+    slow: 40,
   }
   writting: boolean = false
   showAnswers: boolean = false

@@ -56,7 +56,7 @@ export class GameComponent {
   @ViewChild('node') DOMnode?: GameNodeComponent
   @Input() customStyles?: string
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
-  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
+  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'slow'
 
   activeNodes?: any = []
   nodesToWrite: any = []
@@ -75,17 +75,17 @@ export class GameComponent {
   ) {
     effect(() => {
       // This starts the story when we receive the info from the back
-      if (this.activeStory.entireTree().nodes) {
-        console.log('activeStory initialized')
-        const firstNode = structuredClone(
-          this.activeStory.entireTree().nodes[0]
-        )
-
-        this.activeNodes = [this.interpolateNodeTexts(firstNode)]
-        if (firstNode.join && firstNode.type !== 'text')
-          this.nextStep(firstNode.join, true)
-      }
+      if (this.activeStory.entireTree().nodes) this.initializeGame()
     })
+  }
+
+  initializeGame() {
+    console.log('Game initialized. Enjoy!')
+    const firstNode = structuredClone(this.activeStory.entireTree().nodes[0])
+
+    this.activeNodes = [this.interpolateNodeTexts(firstNode)]
+    if (firstNode.join && firstNode.type !== 'text')
+      this.nextStep(firstNode.join, true)
   }
 
   selectAnswer(answer: node_answer) {
@@ -106,23 +106,22 @@ export class GameComponent {
     const isDistributor = activeNode.type === 'distributor'
     const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
 
-    if (isDistributor) this.nextStep(this.distributeNode(activeNode), true)
+    if (isDistributor) {
+      this.nextStep(this.distributeNode(activeNode), addToCurrentStep)
+      return
+    }
 
     setTimeout(() => {
-      if (isNonInteractableNode) this.nextStep(activeNode.join, true)
-
       if (!addToCurrentStep) {
-        // Add activeNodes (previous step nodes) to inactiveNodes
         this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
-        // Clean activeNodes
         this.activeNodes = []
       }
 
       this.nodesToWrite.push(activeNode)
 
-      if (!this.isWrittingNodes) {
-        this.processNextNode()
-      }
+      if (!this.isWrittingNodes) this.processNextNode()
+
+      if (isNonInteractableNode) this.nextStep(activeNode.join, true)
     }, this.TIME_BETWEEN_NODES)
   }
 
@@ -172,8 +171,6 @@ export class GameComponent {
         answer.requirements
       )
     )
-
-    console.log('node ready to paint!', nextNode)
 
     return nextNode
   }

@@ -17,7 +17,7 @@ export const exampleStory = {
       type: 'condition',
     },
     condition_3: {
-      name: 'itsInigoMontoya',
+      name: 'isInigoMontoya',
       type: 'condition',
     },
   },
@@ -25,7 +25,6 @@ export const exampleStory = {
     {
       id: 'node_0',
       top: 4502,
-      join: [],
       left: 743,
       text: 'Interact with your users with the easiest tools, as easy as joining nodes and as complex as you want it to be.',
       answers: [
@@ -114,7 +113,7 @@ export const exampleStory = {
       id: 'node_12',
       top: 4672,
       left: 3932,
-      text: 'Thanks for playing this preview test!\n\nStart creating if you want, and feel free to contact me if you have any request, doubt or suggestion on hello@textandplay.com',
+      text: 'Thanks for playing this preview example!\n\nStart creating and feel free to contact me if you have any request, doubt or suggestion on hello@textandplay.com',
       type: 'end',
       links: [
         {
@@ -138,7 +137,7 @@ export const exampleStory = {
         },
       ],
       left: 1717,
-      text: "Let's try to use some user data to customize a little bit the experience.\n\nWhat's your name?",
+      text: "Let's try to use some user data to customize the user experience.\n\nWhat's your name?",
       type: 'text',
       userTextOptions: {
         property: 'id',
@@ -149,7 +148,7 @@ export const exampleStory = {
       id: 'node_14',
       top: 4520,
       left: 2005,
-      text: 'Nice to meet you #id!\n\nFrom now on, I can use your name in the story. Even in multiple choices, look ⬇️',
+      text: 'Nice to meet you #id!\n\nFrom now on, I can use your name in the story. Even in the selectors, look ⬇️',
       type: 'content',
       answers: [
         {
@@ -197,7 +196,7 @@ export const exampleStory = {
       id: 'node_15',
       top: 4515,
       left: 2315,
-      text: "Nite to meet you again 😉\n\nNow, we will save some counters that you could use later. Let's buy some bananas! Let's say you have 10 coins and each banana cost 1 coin.",
+      text: "Nice to meet you again 😉\n\nNow, we will save some counters that you could use later. Let's buy some bananas! Let's say you have 10 coins and each banana cost 1 coin.",
       type: 'content',
       answers: [
         {
