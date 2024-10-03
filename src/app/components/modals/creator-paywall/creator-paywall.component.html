@@ -1,0 +1,12 @@
+<polo-modal-window>
+  <ng-container modal-content>
+    <p>
+      You have reached the maximum number of stories allowed in the free plan<br />
+      Upgrade your plat to creator to have <strong>unlimited</strong> stories
+    </p>
+    <polo-basic-button
+      (click)="upgradePlan()"
+      text="Upgrade to Creator plan - {{ creatorPrice }}€ / month"
+    ></polo-basic-button>
+  </ng-container>
+</polo-modal-window>

@@ -5,6 +5,8 @@ import { SeparatorComponent } from '../ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { ProfileComponent } from '../profile/profile.component'
+import { ModalService } from 'src/app/services/modal.service'
+import { CreatorPaywallComponent } from '../modals/creator-paywall/creator-paywall.component'
 
 @Component({
   selector: 'polo-menu',
@@ -23,9 +25,13 @@ export class MenuComponent {
   stories?: Array<any>
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
 
+  isSubscribedUser = () =>
+    this.db.user().profile.subscription_status === 'active'
+
   constructor(
     private db: DatabaseService,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    private modal: ModalService
   ) {
     effect(() => {
       this.activeStory.storyName()
@@ -42,6 +48,12 @@ export class MenuComponent {
   }
 
   async createNewTree() {
+    if (!this.isSubscribedUser() && this.stories && this.stories.length >= 3) {
+      this.modal.launch(CreatorPaywallComponent)
+      console.error('Cannot have more than 3 stories if not subscribed')
+      return
+    }
+
     const newTreeData = [
       {
         name: 'My new tree',
