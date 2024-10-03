@@ -24,10 +24,17 @@ test(
     await expect(page.getByText('answers')).toBeVisible()
     await page.getByRole('button', { name: /1/i }).click()
 
+    await expect(page.getByText('Hello')).toBeVisible()
+
     await page.waitForTimeout(1000)
 
     await expect(page.getByText('back to answers')).toBeVisible()
-    await page.getByRole('button', { name: /distribute/i }).click()
+    await page.waitForTimeout(1000)
+
+    await page
+      .getByRole('button', { name: /distribute/i })
+      .last()
+      .click()
 
     await page.waitForTimeout(1000)
 
