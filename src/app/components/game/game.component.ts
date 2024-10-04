@@ -116,13 +116,15 @@ export class GameComponent {
         this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
         this.activeNodes = []
       }
+    }, this.TIME_BETWEEN_NODES)
 
+    setTimeout(() => {
       this.nodesToWrite.push(activeNode)
 
       if (!this.isWrittingNodes) this.processNextNode()
 
       if (isNonInteractableNode) this.nextStep(activeNode.join, true)
-    }, this.TIME_BETWEEN_NODES)
+    }, this.TIME_BETWEEN_NODES + 500)
   }
 
   onNodeTypingComplete() {
