@@ -24,10 +24,10 @@ export class ProfileModalComponent {
   ) {}
 
   upgradePlan() {
-    window.open(
-      'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
-        this.db.user().email
-    )
+    // window.open(
+    //   'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
+    //     this.db.user().email
+    // )
   }
 
   cancelPlan() {
