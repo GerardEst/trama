@@ -2,9 +2,9 @@
   position: fixed
   bottom: 1rem
   right: 1rem
-  background-color: white
-  box-shadow: var(--menu-shadow)
-  padding: 0.3rem
+  background: var(--light-gray)
+  box-shadow: var(--shadow-elevation-medium)
+  padding: 0.7rem
   border-radius: 5px
   &__header
     display: flex
@@ -12,7 +12,7 @@
     justify-content: flex-end
   &__content
     min-height: 100px
-    padding: 0.7rem
+    padding-bottom: 1.5rem
     &__title
       font-weight: 600
       display: flex
@@ -33,32 +33,38 @@
   display: flex
   align-items: center
   gap: 0.6rem
-  input
-    max-width: 110px
-    background: none
-    border: none
-    padding: 0.5rem 0
-    &:not(:focus):hover
-      cursor: pointer
-    &:focus
-      padding-left: 0.5rem
   &__type
     min-width: 1.2rem
     min-height: 1.2rem
     background: no-repeat center/15px
+    align-self: flex-start
+    padding-top: 5px
     &--stat
       background-image: url('/assets/icons/stat.svg')
     &--condition
       background-image: url('/assets/icons/condition.svg')
+  &__names
+    display: flex
+    flex-direction: column
+    input
+      max-width: 110px
+      background: none
+      border: none
+      padding: 0
+      &:not(:focus):hover
+        cursor: pointer
+      &:focus
+        padding-left: 0.5rem
+    &__id
+      color: var(--light-text)
   &__category
-    padding: 0.4rem 0.7rem
     border-radius: 1rem
-    &--empty
-      background-color: white
-  &__id
-    color: var(--light-text)
-  &__times
     margin-left: auto
+    // &--empty
+    //   background-color: white
+  &__times
+    span
+      font-weight: 600
   &__delete
     min-width: 1.2rem
     min-height: 1.2rem
