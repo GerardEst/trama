@@ -81,11 +81,7 @@ export class GameComponent {
 
   initializeGame() {
     console.log('Game initialized. Enjoy!')
-    const firstNode = structuredClone(this.activeStory.entireTree().nodes[0])
-
-    this.activeNodes = [this.interpolateNodeTexts(firstNode)]
-    if (firstNode.join && firstNode.type !== 'text')
-      this.nextStep(firstNode.join, true)
+    this.nextStep([{ node: 'node_0' }])
   }
 
   selectAnswer(answer: node_answer) {
