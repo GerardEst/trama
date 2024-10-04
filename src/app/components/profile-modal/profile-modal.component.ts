@@ -60,6 +60,10 @@ export class ProfileModalComponent {
       })
   }
 
+  changePassword() {
+    this.router.navigate(['change-password'])
+  }
+
   logout() {
     this.db.supabase.auth.signOut()
     this.db.user.set(null)
