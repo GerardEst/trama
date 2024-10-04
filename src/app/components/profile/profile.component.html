@@ -1,6 +1,6 @@
 <div class="profile">
   <div>
-    <p>{{ username }}</p>
+    <p>{{ db.user().profile.user_name }}</p>
     <polo-basic-button
       icon="/assets/icons/configuration.svg"
       (click)="openProfile()"

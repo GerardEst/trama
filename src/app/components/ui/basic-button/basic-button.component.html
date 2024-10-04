@@ -1,6 +1,12 @@
-<button title="{{ title }}" [class.onlyIcon]="!text" [class.sizeS]="size === 's'" [disabled]="disabled">
+<button
+  title="{{ title }}"
+  [class.onlyIcon]="!text"
+  [class.sizeS]="size === 's'"
+  [class.transparent]="transparent"
+  [disabled]="disabled"
+>
   @if (icon) {
-  <img [src]="icon" alt="Button icon" />
+  <img [src]="icon" [width]="iconSize" alt="Button icon" />
   }
   {{ text }}
 </button>

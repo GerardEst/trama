@@ -11,31 +11,37 @@
   nav
     margin-top: 50px
     box-sizing: border-box
-    width: 200px
-    background: white
+    width: 230px
+    //background: #f7f7f5
+    background: var(--light-gray)
     padding: 1rem
     box-shadow: var(--shadow-elevation-medium)
     transition: 0.4s ease
     border-radius: 1rem
     height: auto
+    .storiesTitle
+      display: flex
+      justify-content: space-between
+      h2
+        padding: 0.7rem
+        color: var(--light-text)
     ul
       display: flex
       flex-direction: column
       gap: 0.5rem
-      margin-top: 1rem
       li
         cursor: pointer
-        padding: 0.5rem
-        background: var(--light-gray)
+        padding: 0.7rem
         border-radius: 7px
+        font-weight: 600
         &:hover, &.active
-          background: var(--dark-gray)
-        &:last-child
-          margin-top: 1rem
+          background: var(--medium-gray)
     header
       display: flex
       justify-content: flex-end
       gap: 0.5rem
+      padding-left: 0.7rem
+      margin-bottom: 3rem
       polo-profile
         flex: 1
   &.fixedMenu

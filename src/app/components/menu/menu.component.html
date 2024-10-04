@@ -2,38 +2,42 @@
   <nav>
     <header>
       @if (fixedMenu) {
-        <polo-profile username="Gerard" userplan="Free"></polo-profile>
-        <polo-basic-button
-          icon="/assets/icons/chevron-left.svg"
-          (click)="toggleMenu()"
-        ></polo-basic-button>
+      <polo-profile></polo-profile>
+      <polo-basic-button
+        icon="/assets/icons/chevron-left.svg"
+        (click)="toggleMenu()"
+      ></polo-basic-button>
       }
     </header>
     @if (!fixedMenu) {
-      <polo-profile username="Gerard" userplan="Free"></polo-profile>
+    <polo-profile></polo-profile>
     }
-    <polo-separator [space]="true"></polo-separator>
-    <h2>Your stories</h2>
-    <ul>
-      @for (story of stories; track story.id) {
-        <li
-          (click)="loadTree(story.id)"
-          [class.active]="story.id === activeStory.storyId()"
-        >
-          {{ story.name }}
-        </li>
-      }
+    <!--polo-separator [space]="true"></polo-separator-->
+    <div class="storiesTitle">
+      <h2>Your stories</h2>
       <polo-basic-button
-        text="+ Create a story"
+        text="New story"
+        [iconSize]="10"
+        icon="/assets/icons/plus.svg"
         (click)="createNewTree()"
       ></polo-basic-button>
+    </div>
+    <ul>
+      @for (story of stories; track story.id) {
+      <li
+        (click)="loadTree(story.id)"
+        [class.active]="story.id === activeStory.storyId()"
+      >
+        {{ story.name }}
+      </li>
+      }
     </ul>
   </nav>
   @if (!fixedMenu) {
-    <polo-basic-button
-      class="openMenu"
-      icon="/assets/icons/hamburger-menu.svg"
-      (click)="toggleMenu()"
-    ></polo-basic-button>
+  <polo-basic-button
+    class="openMenu"
+    icon="/assets/icons/hamburger-menu.svg"
+    (click)="toggleMenu()"
+  ></polo-basic-button>
   }
 </div>
