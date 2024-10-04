@@ -20,7 +20,11 @@ const appRoutes: Routes = [
   { path: '', title: 'Text&play', component: LandingpageComponent },
   { path: 'login', component: LoginComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'change-password', component: ChangePasswordComponent },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent,
+    canActivate: [authGuard],
+  },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',
