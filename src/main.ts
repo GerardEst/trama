@@ -11,11 +11,16 @@ import { DashboardComponent } from './app/pages/dashboard/dashboard.component'
 import { PlaygroundComponent } from './app/pages/playground/playground.component'
 import { StadisticsComponent } from './app/pages/stadistics/stadistics.component'
 import { LoginComponent } from './app/pages/login/login.component'
+import { ResetPasswordComponent } from './app/pages/reset-password/reset-password.component'
+import { ChangePasswordComponent } from './app/pages/change-password/change-password.component'
 import { authGuard } from './app/guards/auth.guard'
 import * as Cronitor from '@cronitorio/cronitor-rum'
 
 const appRoutes: Routes = [
   { path: '', title: 'Text&play', component: LandingpageComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',
