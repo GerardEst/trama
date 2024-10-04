@@ -54,6 +54,7 @@ export class DatabaseService {
       .from('stories')
       .select('id,name')
       .eq('profile_id', userId)
+      .order('created_at', { ascending: false })
 
     return stories
   }

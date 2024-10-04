@@ -63,6 +63,7 @@ export class GameComponent {
   isWrittingNodes: boolean = false
   inactiveNodes: any = []
 
+  gameInitialized: boolean = false
   private TIME_BETWEEN_NODES = 700
 
   @Output() onEndGame = new EventEmitter<void>()
@@ -74,14 +75,16 @@ export class GameComponent {
     public activeStory: ActiveStoryService
   ) {
     effect(() => {
-      // This starts the story when we receive the info from the back
       if (this.activeStory.entireTree().nodes) this.initializeGame()
     })
   }
 
   initializeGame() {
-    console.log('Game initialized. Enjoy!')
-    this.nextStep([{ node: 'node_0' }])
+    if (!this.gameInitialized) {
+      console.log('Game initialized. Enjoy!')
+      this.gameInitialized = true
+      this.nextStep([{ node: 'node_0' }])
+    }
   }
 
   selectAnswer(answer: node_answer) {
