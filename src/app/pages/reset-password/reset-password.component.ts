@@ -21,19 +21,29 @@ import { environment } from 'src/environments/environment'
 export class ResetPasswordComponent {
   constructor(private db: DatabaseService) {}
 
+  feedbackMessages = {
+    success: 'We have sent the link to your email',
+    error: 'There was an error sending the link, try again later',
+  }
+  feedback: string | null = null
   email_address = new FormControl('', [Validators.required, Validators.email])
 
   async resetPasswordFor(event: Event, address: FormControl) {
     event.preventDefault()
     if (address.invalid) return
 
-    const message = await this.db.supabase.auth.resetPasswordForEmail(
+    const sentMessage = await this.db.supabase.auth.resetPasswordForEmail(
       address.value,
       {
         redirectTo: environment.baseRoute + '/change-password',
       }
     )
 
-    console.log(message)
+    if (!sentMessage.error) {
+      this.feedback = this.feedbackMessages.success
+      return
+    } else {
+      this.feedback = this.feedbackMessages.error
+    }
   }
 }
