@@ -2,12 +2,14 @@
   position: fixed
   top: 0
   width: 240px
-  left: -200px
+  left: -240px
   transition: 0.2s ease
   &.fixedMenu
     left: 0
-  &:hover
+  &:not(.fixedMenu):hover
     left: 0
+  &:not(.fixedMenu) nav
+    box-shadow: var(--shadow-elevation-high)
   nav
     margin-top: 50px
     box-sizing: border-box
@@ -29,6 +31,7 @@
       display: flex
       flex-direction: column
       gap: 0.5rem
+      margin-top: 5px
       li
         cursor: pointer
         padding: 0.7rem
@@ -52,5 +55,5 @@
     height: 100%
 .openMenu
   position: fixed
-  left: 1rem
-  top: 1rem
+  left: 10px
+  top: 10px

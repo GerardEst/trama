@@ -1,17 +1,15 @@
 <div [class.fixedMenu]="fixedMenu" class="menu">
   <nav>
     <header>
-      @if (fixedMenu) {
       <polo-profile></polo-profile>
+      @if (fixedMenu) {
       <polo-basic-button
         icon="/assets/icons/chevron-left.svg"
         (click)="toggleMenu()"
       ></polo-basic-button>
       }
     </header>
-    @if (!fixedMenu) {
-    <polo-profile></polo-profile>
-    }
+
     <!--polo-separator [space]="true"></polo-separator-->
     <div class="storiesTitle">
       <h2>Your stories</h2>
