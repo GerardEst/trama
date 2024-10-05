@@ -6,42 +6,79 @@
       @if (type !== 'distributor') {
       <form #imageInput>
         <label class="simulateButton options__addImage">
-          <input type="file" id="image" name="image" accept="image/*" (change)="onAddImage($event)" />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            (change)="onAddImage($event)"
+          />
         </label>
       </form>
       }
-      <polo-basic-button title="Duplicate node" icon="/assets/icons/duplicate.svg"
-        (click)="onDuplicateNode()"></polo-basic-button>
+      <polo-basic-button
+        [transparent]="true"
+        title="Duplicate node"
+        icon="/assets/icons/duplicate.svg"
+        (click)="onDuplicateNode()"
+      ></polo-basic-button>
       @if(nodeId !== 'node_0'){
-      <polo-basic-button title="Delete node" icon="/assets/icons/trash.svg"
-        (click)="onRemoveNode()"></polo-basic-button>
+      <polo-basic-button
+        [transparent]="true"
+        title="Delete node"
+        icon="/assets/icons/trash.svg"
+        (click)="onRemoveNode()"
+      ></polo-basic-button>
       }
     </div>
   </header>
   <main>
     @if (type === 'distributor') {
     <div *ngIf="conditions && conditions.length > 0" class="node__answers">
-      <polo-condition *ngFor="let condition of conditions" id="{{ condition.id }}" [selectedRef]="condition.ref"
-        [comparator]="condition.comparator" [value]="condition.value"
-        (onRemoveCondition)="removeCondition($event)"></polo-condition>
+      <polo-condition
+        *ngFor="let condition of conditions"
+        id="{{ condition.id }}"
+        [selectedRef]="condition.ref"
+        [comparator]="condition.comparator"
+        [value]="condition.value"
+        (onRemoveCondition)="removeCondition($event)"
+      ></polo-condition>
     </div>
-    <polo-condition id="{{ 'condition_' + nodeId.split('_')[1] + '_fallback' }}" [fallback]="true"
-      (onRemoveCondition)="removeCondition($event)"></polo-condition>
-    } @else if (type === 'end') {
-    @if (image || loading) {
-    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
-      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
+    <polo-condition
+      id="{{ 'condition_' + nodeId.split('_')[1] + '_fallback' }}"
+      [fallback]="true"
+      (onRemoveCondition)="removeCondition($event)"
+    ></polo-condition>
+    } @else if (type === 'end') { @if (image || loading) {
+    <polo-image
+      (onRemoveImage)="removeNodeImage()"
+      [storageRoute]="image"
+      [loading]="loading"
+      [loadingMessage]="loadingMessage"
+      [canDelete]="true"
+    ></polo-image>
     }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div class="node__linkoptions">
       <div class="node__linkoptions__header">
         <p class="node__linkoptions__header__title">External links</p>
-        <polo-basic-button (click)="addExternalLink()" text="add">add</polo-basic-button>
+        <polo-basic-button (click)="addExternalLink()" text="add"
+          >add</polo-basic-button
+        >
       </div>
       <label class="node__linkoptions__link">
         @for (link of links | keyvalue; track $index) {
-        <input (change)="updateLinks()" [(ngModel)]="links[$index].name" type="text" placeholder="Link text" /><input
-          (change)="updateLinks()" [(ngModel)]="links[$index].url" type="text" placeholder="Link URL" />
+        <input
+          (change)="updateLinks()"
+          [(ngModel)]="links[$index].name"
+          type="text"
+          placeholder="Link text"
+        /><input
+          (change)="updateLinks()"
+          [(ngModel)]="links[$index].url"
+          type="text"
+          placeholder="Link URL"
+        />
         }
       </label>
     </div>
@@ -53,53 +90,89 @@
       @if(openedShareOptions){
       <label class="node__shareoptions__option">
         <p>Custom shared text</p>
-        <textarea (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
-            </textarea>
+        <textarea
+          (change)="updateShareOptions()"
+          [(ngModel)]="shareOptions.sharedText"
+        >
+        </textarea>
       </label>
       <label class="node__shareoptions__option">
         <p>Custom share button text</p>
-        <input type="text" (change)="updateShareOptions()" [(ngModel)]="shareOptions.shareButtonText" />
+        <input
+          type="text"
+          (change)="updateShareOptions()"
+          [(ngModel)]="shareOptions.shareButtonText"
+        />
       </label>
       }
     </div>
-    } @else if(type==='content'){
-    @if (image || loading) {
-    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
-      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
-    }
-    @if (!answers || answers.length === 0) {
+    } @else if(type==='content'){ @if (image || loading) {
+    <polo-image
+      (onRemoveImage)="removeNodeImage()"
+      [storageRoute]="image"
+      [loading]="loading"
+      [loadingMessage]="loadingMessage"
+      [canDelete]="true"
+    ></polo-image>
+    } @if (!answers || answers.length === 0) {
     <div id="{{ nodeId + '_join' }}" class="union_point"></div>
     }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div *ngIf="answers && answers.length > 0" class="node__answers">
-      <span id="{{ nodeId + '_joiner--answers' }}" class="joiner joiner--answers"></span>
-      <polo-answer *ngFor="let answer of answers" id="{{ answer.id }}" [text]="answer.text"
-        (onRemoveAnswer)="removeAnswer($event)"></polo-answer>
+      <span
+        id="{{ nodeId + '_joiner--answers' }}"
+        class="joiner joiner--answers"
+      ></span>
+      <polo-answer
+        *ngFor="let answer of answers"
+        id="{{ answer.id }}"
+        [text]="answer.text"
+        (onRemoveAnswer)="removeAnswer($event)"
+      ></polo-answer>
     </div>
-    }@else if(type==='text'){
-    @if (image || loading) {
-    <polo-image (onRemoveImage)="removeNodeImage()" [storageRoute]="image" [loading]="loading"
-      [loadingMessage]="loadingMessage" [canDelete]="true"></polo-image>
+    }@else if(type==='text'){ @if (image || loading) {
+    <polo-image
+      (onRemoveImage)="removeNodeImage()"
+      [storageRoute]="image"
+      [loading]="loading"
+      [loadingMessage]="loadingMessage"
+      [canDelete]="true"
+    ></polo-image>
     }
     <div id="{{ nodeId + '_join' }}" class="union_point"></div>
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <label>
       <p>Property</p>
-      <input type="text" (change)="saveProperty($event)" name="property" value="{{userTextOptions?.property}}" />
+      <input
+        type="text"
+        (change)="saveProperty($event)"
+        name="property"
+        value="{{ userTextOptions?.property }}"
+      />
     </label>
     <label>
       <p>Placeholder</p>
-      <input type="text" (change)="savePlaceholder($event)" name="placeholder"
-        value="{{userTextOptions?.placeholder}}" />
+      <input
+        type="text"
+        (change)="savePlaceholder($event)"
+        name="placeholder"
+        value="{{ userTextOptions?.placeholder }}"
+      />
     </label>
     }
   </main>
   <footer>
     <p>{{ nodeId }}</p>
     @if (type === 'distributor') {
-    <polo-basic-button (click)="addCondition()" text="Add condition"></polo-basic-button>
+    <polo-basic-button
+      (click)="addCondition()"
+      text="Add condition"
+    ></polo-basic-button>
     } @else if (type === 'content') {
-    <polo-basic-button (click)="addAnswer()" text="Add answer"></polo-basic-button>
+    <polo-basic-button
+      (click)="addAnswer()"
+      text="Add answer"
+    ></polo-basic-button>
     }
   </footer>
 </div>

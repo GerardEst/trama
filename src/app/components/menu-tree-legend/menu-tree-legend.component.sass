@@ -51,10 +51,16 @@
       background: none
       border: none
       padding: 0
+      transition: text-indent 0.2s ease
       &:not(:focus):hover
         cursor: pointer
-      &:focus
+      &:hover, &:focus
         padding-left: 0.5rem
+        background-image: url("/assets/icons/edit.svg")
+        background-repeat: no-repeat
+        background-position: left 3px center
+        background-size: 12px
+        text-indent: 1rem
     &__id
       color: var(--light-text)
   &__category
