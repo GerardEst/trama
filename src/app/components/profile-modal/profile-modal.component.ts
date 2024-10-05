@@ -23,11 +23,15 @@ export class ProfileModalComponent {
     private router: Router
   ) {}
 
-  upgradePlan() {
-    // window.open(
-    //   'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
-    //     this.db.user().email
-    // )
+  upgradePlan(plan: 'creator' | 'pro') {
+    if (plan === 'creator') {
+      window.open(
+        'https://buy.stripe.com/9AQ4gBeW88Qgb3G002?prefilled_email=' +
+          this.db.user().email
+      )
+    }
+    if (plan === 'pro') {
+    }
   }
 
   cancelPlan() {

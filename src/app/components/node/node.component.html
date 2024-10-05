@@ -60,6 +60,8 @@
     }
     <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
     <div class="node__linkoptions">
+      @if(database.user() && database.user().profile.subscription_status ===
+      'active'){
       <div class="node__linkoptions__header">
         <p class="node__linkoptions__header__title">External links</p>
         <polo-basic-button (click)="addExternalLink()" text="add"
@@ -81,7 +83,16 @@
         />
         }
       </label>
+      }@else {
+      <p class="node__linkoptions__header__title">External links</p>
+      <p>
+        With external links, you can lead your users to your products, websites
+        or social network as part of your story.
+      </p>
+      <p>External links are not allowed in the free plan.</p>
+      }
     </div>
+    @if(activeStory.storyConfiguration().sharing){
     <div class="node__shareoptions">
       <label class="node__shareoptions__toggle">
         <p class="node__shareoptions__toggle__title">Share customizations</p>
@@ -106,7 +117,7 @@
       </label>
       }
     </div>
-    } @else if(type==='content'){ @if (image || loading) {
+    } } @else if(type==='content'){ @if (image || loading) {
     <polo-image
       (onRemoveImage)="removeNodeImage()"
       [storageRoute]="image"

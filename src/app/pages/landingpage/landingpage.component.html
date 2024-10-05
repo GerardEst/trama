@@ -275,7 +275,7 @@
             <span class="txt-linethrough">71,4€</span> 36€/year
           </p>
           }@else {
-          <!--p class="txt-ralewayItalic">5.95€/month</p-->
+          <p class="txt-ralewayItalic">5.95€/month</p>
           }
         </div>
         <p>
@@ -316,10 +316,9 @@
           <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
         </ul>
         <polo-landing-button
-          [inactive]="true"
-          destiny="/dashboard"
+          (click)="useCreator()"
           behaviour="link"
-          text="In progress"
+          text="Be a creator"
         ></polo-landing-button>
       </div>
       <div class="pricing__plan">
@@ -354,7 +353,6 @@
         </ul>
         <polo-landing-button
           [inactive]="true"
-          (click)="usePro()"
           behaviour="link"
           text="In progress"
         ></polo-landing-button>

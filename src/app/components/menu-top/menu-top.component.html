@@ -24,21 +24,27 @@
       } @else {
       <label>
         <span>🚫 Enable tracking</span>
-        <input type="checkbox" />
+        <input
+          [checked]="activeStory.storyConfiguration().tracking"
+          type="checkbox"
+        />
       </label>
       } @if (db.user().profile.subscription_status==='active') {
       <label>
-        <span>Hide textandplay link</span>
+        <span>Enable sharing</span>
         <input
-          (change)="toggleTextandplayLink()"
+          (change)="toggleSharing()"
           type="checkbox"
-          [checked]="!activeStory.storyConfiguration().tapLink"
+          [checked]="activeStory.storyConfiguration().sharing"
         />
       </label>
-      } @else {
+      }@else {
       <label>
-        <span>🚫 Hide textandplay link</span>
-        <input type="checkbox" />
+        <span>🚫 Enable sharing</span>
+        <input
+          [checked]="activeStory.storyConfiguration().sharing"
+          type="checkbox"
+        />
       </label>
       }
       <label>
@@ -47,14 +53,6 @@
           type="checkbox"
           (change)="toggleCumulativeMode()"
           [checked]="activeStory.storyConfiguration().cumulativeMode"
-        />
-      </label>
-      <label>
-        <span>Enable sharing</span>
-        <input
-          (change)="toggleSharing()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().sharing"
         />
       </label>
     </div>
@@ -73,7 +71,17 @@
       </label>
     </div>
     <div class="dropdown__section">
-      <p>Footer</p>
+      <p class="txt-weight-bold">Footer</p>
+      @if (db.user().profile.subscription_status==='active') {
+      <label>
+        <span>Hide textandplay link</span>
+        <input
+          (change)="toggleTextandplayLink()"
+          type="checkbox"
+          [checked]="!activeStory.storyConfiguration().tapLink"
+        />
+      </label>
+
       <label class="label--column">
         <span>Footer text</span>
         <input
@@ -90,6 +98,10 @@
           [value]="activeStory.storyConfiguration().footer.link || ''"
         />
       </label>
+      } @else {
+      <p>You can modify the footer to show your logo, brand and link</p>
+      <p>Footer options are not allowed for free users</p>
+      }
     </div>
     @if (db.user().profile.subscription_status==='active') {
     <polo-basic-button

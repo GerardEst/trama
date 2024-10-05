@@ -6,19 +6,35 @@ import {
   findConditionsInTree,
   generateIDForNewRequirement,
 } from '../utils/tree-searching'
-import { link, node_conditions, node, shareOptions } from '../interfaces'
+import {
+  config,
+  link,
+  node_conditions,
+  node,
+  shareOptions,
+} from '../interfaces'
 import { DatabaseService } from './database.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActiveStoryService {
+  initialConfiguration: config = {
+    title: '',
+    showLockedAnswers: false,
+    sharing: false,
+    tapLink: false,
+    cumulativeMode: false,
+    footer: {},
+    tracking: false,
+    customId: undefined,
+  }
   storyId: WritableSignal<string> = signal('')
   entireTree: WritableSignal<any> = signal({})
 
   storyName: WritableSignal<string> = signal('')
   storyRefs: WritableSignal<any> = signal([])
-  storyConfiguration: WritableSignal<any> = signal({})
+  storyConfiguration: WritableSignal<config> = signal(this.initialConfiguration)
 
   constructor(private db: DatabaseService) {
     effect(() => {
@@ -32,7 +48,7 @@ export class ActiveStoryService {
     this.entireTree.set({})
     this.storyName.set('')
     this.storyRefs.set([])
-    this.storyConfiguration.set({})
+    this.storyConfiguration.set(this.initialConfiguration)
   }
   // REFS
   // The refs are built from the tree, so we need to build them first.

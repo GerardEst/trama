@@ -82,8 +82,8 @@ export class NodeComponent {
   constructor(
     public elementRef: ElementRef,
     private panzoom: PanzoomService,
-    private database: DatabaseService,
-    private activeStory: ActiveStoryService,
+    public database: DatabaseService,
+    public activeStory: ActiveStoryService,
     private apis: ApisService,
     private storage: StorageService
   ) {}

@@ -92,13 +92,23 @@ export class LandingpageComponent {
     this.checkedLoggedUser = true
   }
 
-  usePro() {
-    // Inactivated for now
-    return
+  useCreator() {
+    // TODO - Acabar aquet flow
+    /**
+     * Tenir en compte que:
+     * - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse amb el plan de creator. Li surtirà el pagament després de registrar-se correctament
+     * - si l'usuari es antic però li dona per pujar de plan des d'aquí
+     *  - si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
+     *  - si no tenim sort, el tractarem com a algú nou i el portarem a registrar-se.
+     *    Allà detectarem que ja existeix, i
+     *      - Si podem, el portarem a la pagina de stripe amb el mail que ha fet servir per intentar registrarse
+     *      - Si no, que es loguegi normal i un cop dins li obrirem la pestanya de perfil perquè li doni a upgrade
+     */
+
     this.loggedUser
       ? this.router.navigate(['dashboard'])
       : this.router.navigate(['login'], {
-          queryParams: { mode: 'register', plan: 'pro' },
+          queryParams: { mode: 'register', plan: 'creator' },
         })
   }
 }

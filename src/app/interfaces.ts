@@ -10,9 +10,14 @@ export interface tree {
 }
 
 export interface config {
-  title?: string
-  showLockedAnswers?: boolean
-  sharing?: boolean
+  title: string
+  showLockedAnswers: boolean
+  sharing: boolean
+  tapLink: boolean
+  cumulativeMode: boolean
+  footer: any
+  tracking: boolean
+  customId?: string
 }
 
 export interface node {

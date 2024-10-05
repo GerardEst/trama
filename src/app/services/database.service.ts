@@ -229,7 +229,7 @@ export class DatabaseService {
     return true
   }
 
-  async updateCustomIdOf(storyId: string, customId: boolean) {
+  async updateCustomIdOf(storyId: string, customId: string) {
     if (this.prod)
       console.log('%cdb call to set the custom ID of a story', 'color: #9999ff')
     const { data, error } = await this.supabase

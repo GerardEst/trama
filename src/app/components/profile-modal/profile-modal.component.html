@@ -16,9 +16,8 @@
     ></polo-basic-button>
     } @else {
     <polo-basic-button
-      (click)="upgradePlan()"
-      text="Upgrade plan"
-      [disabled]="true"
+      (click)="upgradePlan('creator')"
+      text="Upgrade to Creator Plan"
     ></polo-basic-button>
     } }
     <polo-basic-button
