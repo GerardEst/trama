@@ -45,8 +45,6 @@ export class ActiveStoryService {
           if (answer.requirements) {
             for (let requirement of answer.requirements) {
               if (requirement.id) {
-                if (builtRefs.some((ref: any) => ref.id === requirement.id))
-                  continue
                 builtRefs.push({
                   id: requirement.id,
                   name: this.entireTree().refs[requirement.id].name,
@@ -62,8 +60,6 @@ export class ActiveStoryService {
           if (answer.events) {
             for (let event of answer.events) {
               if (event.target) {
-                if (builtRefs.some((ref: any) => ref.id === event.target))
-                  continue
                 builtRefs.push({
                   id: event.target,
                   name: this.entireTree().refs[event.target].name,
@@ -82,6 +78,7 @@ export class ActiveStoryService {
 
     this.storyRefs.set(builtRefs)
   }
+
   addRef(on: 'event' | 'requirement', refId: any, previousRef?: any) {
     if (!this.entireTree().refs) return console.error('Error while adding ref')
 
@@ -105,6 +102,7 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
+
   removeRef(on: 'event' | 'requirement', refToRemove: any) {
     const withoutRef = this.storyRefs().filter(
       (ref: any) =>

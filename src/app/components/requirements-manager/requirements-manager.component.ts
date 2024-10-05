@@ -52,7 +52,6 @@ export class RequirementsManagerComponent {
     )
     if (requirement) requirement.id = element.value
 
-    // I have to send the answer id and the new requirement id
     this.activeStory.saveAnswerRequirements(this.answerId, this.requirements)
 
     this.activeStory.addRef(

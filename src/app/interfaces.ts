@@ -1,5 +1,11 @@
+export interface ref {
+  id?: string
+  name: string
+  type: string
+}
+
 export interface tree {
-  refs?: Array<{ name: string; type: string; category: string }>
+  refs?: Array<ref>
   nodes?: Array<node>
 }
 
@@ -7,12 +13,6 @@ export interface config {
   title?: string
   showLockedAnswers?: boolean
   sharing?: boolean
-}
-
-export interface guidebook {
-  nodes: Array<node>
-  refs?: any
-  categories?: Array<any>
 }
 
 export interface node {

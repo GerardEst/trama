@@ -9,6 +9,7 @@ import {
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { ref } from 'src/app/interfaces'
 
 @Component({
   selector: 'polo-condition',
@@ -19,6 +20,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
 })
 export class ConditionComponent {
   id: string = ''
+  refOptions: ref[] = []
 
   // Inputs to start with
   @Input() fallback: boolean = false
@@ -37,6 +39,15 @@ export class ConditionComponent {
 
   ngOnInit() {
     this.id = this.elementRef.nativeElement.id
+    this.refOptions = Object.keys(this.activeStory.entireTree().refs).map(
+      (refId) => {
+        return {
+          id: refId,
+          name: this.activeStory.entireTree().refs[refId].name,
+          type: this.activeStory.entireTree().refs[refId].type,
+        }
+      }
+    )
   }
   saveCondition(event: any) {
     if (event.target.id === 'ref') {
