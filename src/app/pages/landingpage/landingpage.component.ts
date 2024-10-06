@@ -81,6 +81,10 @@ export class LandingpageComponent {
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
   }
 
+  changePayingPeriod(state: boolean) {
+    this.payYearly = state
+  }
+
   selectUseCase(useCase: 'brands' | 'schools' | 'creatives') {
     this.activeUseCase = useCase
   }

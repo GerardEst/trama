@@ -199,6 +199,25 @@
 <section class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
+    <div class="period">
+      <div></div>
+      <div class="period__toggle">
+        <div
+          class="period__toggle__monthly"
+          [class.active]="!this.payYearly"
+          (click)="changePayingPeriod(false)"
+        >
+          <p>Monthly</p>
+        </div>
+        <div
+          class="period__toggle__yearly"
+          [class.active]="this.payYearly"
+          (click)="changePayingPeriod(true)"
+        >
+          <p>Yearly</p>
+        </div>
+      </div>
+    </div>
     <!--input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!-->
     <div class="pricing">
       <div class="pricing__plan">
@@ -271,9 +290,7 @@
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Creator</h2>
           @if(payYearly){
-          <p class="txt-ralewayItalic">
-            <span class="txt-linethrough">71,4€</span> 36€/year
-          </p>
+          <p class="txt-ralewayItalic">47.4€/year</p>
           }@else {
           <p class="txt-ralewayItalic">5.95€/month</p>
           }
