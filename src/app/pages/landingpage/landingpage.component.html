@@ -290,9 +290,13 @@
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Creator</h2>
           @if(payYearly){
-          <p class="txt-ralewayItalic">47.4€/year</p>
+          <p class="txt-ralewayItalic">
+            {{ pricing.CREATOR_YEARLY_PRICE }}€/year
+          </p>
           }@else {
-          <p class="txt-ralewayItalic">5.95€/month</p>
+          <p class="txt-ralewayItalic">
+            {{ pricing.CREATOR_MONTHLY_PRICE }}€/month
+          </p>
           }
         </div>
         <p>
@@ -333,15 +337,21 @@
           <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
         </ul>
         <polo-landing-button
-          (click)="useCreator()"
-          behaviour="link"
+          (click)="subscribe('creator', payYearly)"
+          behaviour="button"
           text="Be a creator"
         ></polo-landing-button>
       </div>
       <div class="pricing__plan">
         <div class="pricing__plan__header">
           <h2 class="txt-baskerville txt-2">Pro</h2>
-          <p class="txt-ralewayItalic"></p>
+          @if(payYearly){
+          <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
+          }@else {
+          <p class="txt-ralewayItalic">
+            {{ pricing.PRO_MONTHLY_PRICE }}€/month
+          </p>
+          }
         </div>
         <p>
           Powerful features to gain insights about your audince, track their
@@ -369,9 +379,9 @@
           </li-->
         </ul>
         <polo-landing-button
-          [inactive]="true"
-          behaviour="link"
-          text="In progress"
+          (click)="subscribe('pro', payYearly)"
+          behaviour="button"
+          text="Be a pro"
         ></polo-landing-button>
       </div>
     </div>

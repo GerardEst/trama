@@ -18,7 +18,6 @@ import * as Cronitor from '@cronitorio/cronitor-rum'
 
 const appRoutes: Routes = [
   { path: '', title: 'Text&play', component: LandingpageComponent },
-  { path: 'login', component: LoginComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: 'change-password',

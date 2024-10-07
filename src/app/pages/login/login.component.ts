@@ -5,6 +5,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { PRICING } from 'src/app/constants'
 @Component({
   selector: 'polo-login',
   standalone: true,
@@ -18,18 +19,11 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
   styleUrls: ['./login.component.sass'],
 })
 export class LoginComponent {
-  @Input() mode?: string
-  @Input() plan?: string
+  @Input() mode?: 'register' | 'login'
+  @Input() period?: 'yearly' | 'monthly'
+  @Input() plan?: 'creator' | 'pro'
 
-  constructor(
-    private db: DatabaseService,
-    private router: Router
-  ) {}
-
-  ngAfterViewInit() {
-    // // Remove indicator that user is coming from oauth login
-    // localStorage.removeItem('oauth')
-  }
+  constructor(private db: DatabaseService, private router: Router) {}
 
   login_email = new FormControl('', [Validators.required, Validators.email])
   login_password = new FormControl('', Validators.required)
@@ -38,8 +32,30 @@ export class LoginComponent {
   register_username = new FormControl('', Validators.required)
   checkMail: boolean = false
 
+  subscribing: boolean = false
+  paymentLink?: string
   // TODO - En cas de registre amb google, google redirigeix a dashboard després de registrar-se, però
   // en aquet cas hauria de redirigir a pagar
+
+  ngOnInit() {
+    if (this.period && this.plan) {
+      this.subscribing = true
+      if (this.period === 'monthly' && this.plan === 'creator') {
+        this.paymentLink = PRICING.CREATOR_MONTHLY_LINK
+      }
+      if (this.period === 'monthly' && this.plan === 'pro') {
+        this.paymentLink = PRICING.PRO_MONTHLY_LINK
+      }
+      if (this.period === 'yearly' && this.plan === 'creator') {
+        this.paymentLink = PRICING.CREATOR_YEARLY_LINK
+      }
+      if (this.period === 'yearly' && this.plan === 'pro') {
+        this.paymentLink = PRICING.PRO_YEARLY_LINK
+      } else {
+        throw new Error('Cant get an according plan')
+      }
+    }
+  }
 
   async signUpNewUser(
     event: Event,
@@ -64,11 +80,8 @@ export class LoginComponent {
     if (registered_error) return console.error(registered_error)
     console.log('user registered', registered_data)
 
-    if (this.plan === 'pro') {
-      window.open(
-        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
-          email.value
-      )
+    if (this.subscribing) {
+      window.open(this.paymentLink + '?prefilled_email=' + email.value)
     }
 
     this.checkMail = true
@@ -79,10 +92,9 @@ export class LoginComponent {
     this.db.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo:
-          this.plan === 'pro'
-            ? 'https://buy.stripe.com/fZe8wR01e3vW1t6bIM'
-            : 'https://textandplay.com/dashboard',
+        redirectTo: this.subscribing
+          ? this.paymentLink
+          : 'https://textandplay.com/dashboard',
       },
     })
   }
@@ -102,11 +114,8 @@ export class LoginComponent {
 
     if (error) return console.error(error)
 
-    if (this.plan === 'pro') {
-      window.open(
-        'https://buy.stripe.com/fZe8wR01e3vW1t6bIM?prefilled_email=' +
-          email.value
-      )
+    if (this.subscribing) {
+      window.open(this.paymentLink + '?prefilled_email=' + email.value)
     } else {
       this.router.navigate(['/dashboard'])
     }

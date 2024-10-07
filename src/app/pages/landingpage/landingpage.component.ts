@@ -11,8 +11,10 @@ import { exampleStory } from './exampleStory'
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
 import { LandingButtonComponent } from './components/button/landing-button.component'
 import { LandingMobileComponent } from './components/landing-mobile/landing-mobile.component'
+import { PRICING } from 'src/app/constants'
 
 import { trigger, style, animate, transition } from '@angular/animations'
+import { BasicButtonComponent } from '../../components/ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-landingpage',
@@ -24,6 +26,7 @@ import { trigger, style, animate, transition } from '@angular/animations'
     LandingCardComponent,
     GameComponent,
     FormsModule,
+    BasicButtonComponent,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
@@ -50,6 +53,8 @@ export class LandingpageComponent {
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
   payYearly: boolean = false
+
+  pricing = PRICING
 
   constructor(
     private activeStory: ActiveStoryService,
@@ -96,23 +101,28 @@ export class LandingpageComponent {
     this.checkedLoggedUser = true
   }
 
-  useCreator() {
+  subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
     // TODO - Acabar aquet flow
     /**
      * Tenir en compte que:
-     * - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse amb el plan de creator. Li surtirà el pagament després de registrar-se correctament
+     * ✅ [TESTEJAR] - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse amb el plan de creator.
+     * Li surtirà el pagament després de registrar-se correctament
      * - si l'usuari es antic però li dona per pujar de plan des d'aquí
-     *  - si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
+     *  - 🔜 si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
+     *       Aixo ens porta a corregir el component de profile, que ara només podem fer upgrade i hauriem de poder triar
      *  - si no tenim sort, el tractarem com a algú nou i el portarem a registrar-se.
-     *    Allà detectarem que ja existeix, i
-     *      - Si podem, el portarem a la pagina de stripe amb el mail que ha fet servir per intentar registrarse
-     *      - Si no, que es loguegi normal i un cop dins li obrirem la pestanya de perfil perquè li doni a upgrade
+     *    ✅ [TESTEJAR] Allà, si es logueja normal, el loguegem i el portem a la pagina de pagar
+     *    Si es torna a registrar amb un altre mail ia s'ho farà, es una persona nova què sé jo
      */
 
     this.loggedUser
-      ? this.router.navigate(['dashboard'])
-      : this.router.navigate(['login'], {
-          queryParams: { mode: 'register', plan: 'creator' },
+      ? this.router.navigate(['/dashboard'])
+      : this.router.navigate(['/login'], {
+          queryParams: {
+            mode: 'register',
+            plan,
+            period: isYearlyPlan ? 'yearly' : 'monthly',
+          },
         })
   }
 }
