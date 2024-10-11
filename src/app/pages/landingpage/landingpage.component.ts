@@ -105,18 +105,17 @@ export class LandingpageComponent {
     // TODO - Acabar aquet flow
     /**
      * Tenir en compte que:
-     * ✅ [TESTEJAR] - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse amb el plan de creator.
+     * ✅ [TESTEJAR] - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse
      * Li surtirà el pagament després de registrar-se correctament
      * - si l'usuari es antic però li dona per pujar de plan des d'aquí
-     *  - 🔜 si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
-     *       Aixo ens porta a corregir el component de profile, que ara només podem fer upgrade i hauriem de poder triar
+     *  - ✅ [TESTEJAR] si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
      *  - si no tenim sort, el tractarem com a algú nou i el portarem a registrar-se.
      *    ✅ [TESTEJAR] Allà, si es logueja normal, el loguegem i el portem a la pagina de pagar
      *    Si es torna a registrar amb un altre mail ia s'ho farà, es una persona nova què sé jo
      */
 
     this.loggedUser
-      ? this.router.navigate(['/dashboard'])
+      ? this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly')
       : this.router.navigate(['/login'], {
           queryParams: {
             mode: 'register',
@@ -124,5 +123,24 @@ export class LandingpageComponent {
             period: isYearlyPlan ? 'yearly' : 'monthly',
           },
         })
+  }
+
+  upgradePlan(plan: 'creator' | 'pro', period: 'monthly' | 'yearly') {
+    let paymentLink: string | undefined = undefined
+
+    if (period === 'monthly' && plan === 'creator') {
+      paymentLink = PRICING.CREATOR_MONTHLY_LINK
+    }
+    if (period === 'monthly' && plan === 'pro') {
+      paymentLink = PRICING.PRO_MONTHLY_LINK
+    }
+    if (period === 'yearly' && plan === 'creator') {
+      paymentLink = PRICING.CREATOR_YEARLY_LINK
+    }
+    if (period === 'yearly' && plan === 'pro') {
+      paymentLink = PRICING.PRO_YEARLY_LINK
+    }
+
+    window.open(paymentLink + '?prefilled_email=' + this.db.user().email)
   }
 }
