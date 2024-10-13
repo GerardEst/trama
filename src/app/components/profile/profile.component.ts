@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core'
 import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
 import { ModalService } from 'src/app/services/modal.service'
-import { ProfileModalComponent } from '../profile-modal/profile-modal.component'
+import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { DatabaseService } from 'src/app/services/database.service'
 
 @Component({

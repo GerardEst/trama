@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core'
 import { BoardComponent } from 'src/app/components/board/board.component'
-import { Router } from '@angular/router'
+//import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
 import * as Cronitor from '@cronitorio/cronitor-rum'
@@ -11,7 +11,7 @@ import { exampleStory } from './exampleStory'
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
 import { LandingButtonComponent } from './components/button/landing-button.component'
 import { LandingMobileComponent } from './components/landing-mobile/landing-mobile.component'
-import { PRICING } from 'src/app/constants'
+import { PricingComponent } from 'src/app/components/pricing/pricing.component'
 
 import { trigger, style, animate, transition } from '@angular/animations'
 import { BasicButtonComponent } from '../../components/ui/basic-button/basic-button.component'
@@ -27,6 +27,7 @@ import { BasicButtonComponent } from '../../components/ui/basic-button/basic-but
     GameComponent,
     FormsModule,
     BasicButtonComponent,
+    PricingComponent,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
@@ -49,18 +50,17 @@ export class LandingpageComponent {
   exampleTree: any = exampleStory
 
   checkedLoggedUser: boolean = false
-  loggedUser: boolean = false
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
-  payYearly: boolean = false
 
-  pricing = PRICING
+  loggedUser: boolean = false
+  payYearly: boolean = false
 
   constructor(
     private activeStory: ActiveStoryService,
     private titleService: Title,
     private meta: Meta,
-    public router: Router,
+    //public router: Router,
     public db: DatabaseService
   ) {}
 
@@ -99,48 +99,5 @@ export class LandingpageComponent {
 
     this.loggedUser = !!loggedUser?.data?.user?.id
     this.checkedLoggedUser = true
-  }
-
-  subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
-    // TODO - Acabar aquet flow
-    /**
-     * Tenir en compte que:
-     * ✅ [TESTEJAR] - si l'usuari es nou i no està registrat ni res, el portem primer a registrarse
-     * Li surtirà el pagament després de registrar-se correctament
-     * - si l'usuari es antic però li dona per pujar de plan des d'aquí
-     *  - ✅ [TESTEJAR] si tenim sort i està loguejat, podem anar directament a la pagina de pagament passant el mail que tinguem
-     *  - si no tenim sort, el tractarem com a algú nou i el portarem a registrar-se.
-     *    ✅ [TESTEJAR] Allà, si es logueja normal, el loguegem i el portem a la pagina de pagar
-     *    Si es torna a registrar amb un altre mail ia s'ho farà, es una persona nova què sé jo
-     */
-
-    this.loggedUser
-      ? this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly')
-      : this.router.navigate(['/login'], {
-          queryParams: {
-            mode: 'register',
-            plan,
-            period: isYearlyPlan ? 'yearly' : 'monthly',
-          },
-        })
-  }
-
-  upgradePlan(plan: 'creator' | 'pro', period: 'monthly' | 'yearly') {
-    let paymentLink: string | undefined = undefined
-
-    if (period === 'monthly' && plan === 'creator') {
-      paymentLink = PRICING.CREATOR_MONTHLY_LINK
-    }
-    if (period === 'monthly' && plan === 'pro') {
-      paymentLink = PRICING.PRO_MONTHLY_LINK
-    }
-    if (period === 'yearly' && plan === 'creator') {
-      paymentLink = PRICING.CREATOR_YEARLY_LINK
-    }
-    if (period === 'yearly' && plan === 'pro') {
-      paymentLink = PRICING.PRO_YEARLY_LINK
-    }
-
-    window.open(paymentLink + '?prefilled_email=' + this.db.user().email)
   }
 }

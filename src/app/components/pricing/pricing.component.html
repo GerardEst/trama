@@ -1,0 +1,147 @@
+<div class="pricing">
+  <div class="pricing__plan">
+    <div class="pricing__plan__header">
+      <h2 class="txt-baskerville txt-2">Hobby</h2>
+      <p class="txt-ralewayItalic">Free</p>
+    </div>
+    <p>
+      Try our node-based creation tool, test your ideas, share them and check if
+      textandplay could work for you
+    </p>
+    <ul class="pricing__plan__features">
+      <li>
+        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+        All types of nodes
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+        Full flow control
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+        Text interpolations
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+        Basic customization options
+      </li>
+      <li>
+        <img
+          src="/assets/images/drawn_icons/warning_2.webp"
+          alt="Warning icon"
+        />
+        Up to 3 stories
+      </li>
+      <li>
+        <img
+          src="/assets/images/drawn_icons/warning_2.webp"
+          alt="Warning icon"
+        />
+        Limited images
+      </li>
+      <li>
+        <img
+          src="/assets/images/drawn_icons/warning_2.webp"
+          alt="Warning icon"
+        />
+        Textandplay brand in the stories
+      </li>
+    </ul>
+    @if(loggedUser){
+    <polo-landing-button
+      (click)="cancelPlan()"
+      behaviour="button"
+      text="Use free"
+    ></polo-landing-button>
+    }@else {
+    <polo-landing-button
+      destiny="/dashboard"
+      behaviour="link"
+      text="Use free"
+    ></polo-landing-button>
+    }
+  </div>
+  <div class="pricing__plan">
+    <div class="pricing__plan__header">
+      <h2 class="txt-baskerville txt-2">Creator</h2>
+      @if(payYearly){
+      <p class="txt-ralewayItalic">{{ pricing.CREATOR_YEARLY_PRICE }}€/year</p>
+      }@else {
+      <p class="txt-ralewayItalic">
+        {{ pricing.CREATOR_MONTHLY_PRICE }}€/month
+      </p>
+      }
+    </div>
+    <p>
+      Perfect for small businesses and creatives to engage their audiences and
+      bring more traffic to their websites and projects
+    </p>
+    <ul class="pricing__plan__features">
+      <li class="txt-gray">Everything from hobby plan</li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+        Unlimited stories
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+        Unlimited images
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+        Customize brand in the stories
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+        Share options and external links
+      </li>
+      <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
+      <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
+    </ul>
+    <polo-landing-button
+      (click)="subscribe('creator', payYearly)"
+      behaviour="button"
+      text="Be a creator"
+    ></polo-landing-button>
+  </div>
+
+  <div class="pricing__plan">
+    <div class="pricing__plan__header">
+      <h2 class="txt-baskerville txt-2">Pro</h2>
+      @if(payYearly){
+      <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
+      }@else {
+      <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
+      }
+    </div>
+    <p>
+      Powerful features to gain insights about your audince, track their actions
+      in your stories, and reach more people
+    </p>
+    <ul class="pricing__plan__features">
+      <li class="txt-gray">Everything from other plans</li>
+      <li>
+        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+        Analytics of your stories
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+        Tracking of users actions
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+        Embed stories on your website
+      </li>
+      <li>
+        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+        Priority support
+      </li>
+      <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
+          </li-->
+    </ul>
+    <polo-landing-button
+      (click)="subscribe('pro', payYearly)"
+      behaviour="button"
+      text="Be a pro"
+    ></polo-landing-button>
+  </div>
+</div>

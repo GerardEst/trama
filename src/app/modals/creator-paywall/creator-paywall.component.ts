@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
-import { ModalWindowComponent } from '../../ui/modal-window/modal-window.component'
-import { BasicButtonComponent } from '../../ui/basic-button/basic-button.component'
+import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
+import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-window.component'
 import { DatabaseService } from 'src/app/services/database.service'
 import { PRICING } from 'src/app/constants'
 

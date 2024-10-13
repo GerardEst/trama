@@ -9,17 +9,8 @@
       You need to complete the payment. If the payment has been completed,
       refresh the page
     </p>
-    }@else { @if (db.user().profile.subscription_status==='active') {
-    <polo-basic-button
-      (click)="cancelPlan()"
-      text="{{ cancelButtonText }}"
-    ></polo-basic-button>
-    } @else {
-    <polo-basic-button
-      (click)="upgradePlan('creator')"
-      text="Upgrade to Creator Plan"
-    ></polo-basic-button>
-    } }
+    }
+    <polo-pricing [payYearly]="true" [loggedUser]="true"></polo-pricing>
     <polo-basic-button
       (click)="changePassword()"
       text="Change your password"

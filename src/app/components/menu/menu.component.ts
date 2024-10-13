@@ -6,7 +6,7 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { ProfileComponent } from '../profile/profile.component'
 import { ModalService } from 'src/app/services/modal.service'
-import { CreatorPaywallComponent } from '../modals/creator-paywall/creator-paywall.component'
+import { CreatorPaywallComponent } from 'src/app/modals/creator-paywall/creator-paywall.component'
 
 @Component({
   selector: 'polo-menu',
