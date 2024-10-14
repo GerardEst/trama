@@ -3,25 +3,26 @@ import { LandingButtonComponent } from 'src/app/pages/landingpage/components/but
 import { PRICING } from 'src/app/constants'
 import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/services/database.service'
+import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-pricing',
   standalone: true,
-  imports: [LandingButtonComponent],
+  imports: [LandingButtonComponent, BasicButtonComponent],
   templateUrl: './pricing.component.html',
   styleUrl: './pricing.component.sass',
 })
 export class PricingComponent {
   @Input() payYearly: boolean = false
-  @Input() loggedUser: boolean = false
+  @Input() email?: string
 
   pricing = PRICING
 
   constructor(private router: Router, public db: DatabaseService) {}
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
-    this.loggedUser
-      ? this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly')
+    this.email
+      ? this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly', this.email)
       : this.router.navigate(['/login'], {
           queryParams: {
             mode: 'register',
@@ -31,7 +32,11 @@ export class PricingComponent {
         })
   }
 
-  upgradePlan(plan: 'creator' | 'pro', period: 'monthly' | 'yearly') {
+  upgradePlan(
+    plan: 'creator' | 'pro',
+    period: 'monthly' | 'yearly',
+    email: string
+  ) {
     let paymentLink: string | undefined = undefined
 
     if (period === 'monthly' && plan === 'creator') {
@@ -47,7 +52,7 @@ export class PricingComponent {
       paymentLink = PRICING.PRO_YEARLY_LINK
     }
 
-    window.open(paymentLink + '?prefilled_email=' + this.db.user().email)
+    window.open(paymentLink + '?prefilled_email=' + email)
   }
 
   cancelPlan() {

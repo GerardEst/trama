@@ -5,7 +5,7 @@
     <polo-landing-button
       behaviour="link"
       destiny="/dashboard"
-      text="{{ loggedUser ? 'Dashboard' : 'Login' }}"
+      text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
     ></polo-landing-button>
     }
   </div>
@@ -221,7 +221,7 @@
     <!--input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!-->
     <polo-pricing
       [payYearly]="payYearly"
-      [loggedUser]="loggedUser"
+      [email]="loggedUserEmail"
     ></polo-pricing>
     <!--p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
     </p-->

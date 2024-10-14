@@ -50,10 +50,10 @@ export class LandingpageComponent {
   exampleTree: any = exampleStory
 
   checkedLoggedUser: boolean = false
+  loggedUserEmail?: string
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
 
-  loggedUser: boolean = false
   payYearly: boolean = false
 
   constructor(
@@ -97,7 +97,7 @@ export class LandingpageComponent {
   async checkLoggedUser() {
     const loggedUser = await this.db.supabase.auth.getUser()
 
-    this.loggedUser = !!loggedUser?.data?.user?.id
+    this.loggedUserEmail = loggedUser?.data?.user?.email
     this.checkedLoggedUser = true
   }
 }

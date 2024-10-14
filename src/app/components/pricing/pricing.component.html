@@ -47,12 +47,11 @@
         Textandplay brand in the stories
       </li>
     </ul>
-    @if(loggedUser){
-    <polo-landing-button
+    @if(email){
+    <polo-basic-button
       (click)="cancelPlan()"
-      behaviour="button"
       text="Use free"
-    ></polo-landing-button>
+    ></polo-basic-button>
     }@else {
     <polo-landing-button
       destiny="/dashboard"
@@ -97,11 +96,10 @@
       <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
-    <polo-landing-button
+    <polo-basic-button
       (click)="subscribe('creator', payYearly)"
-      behaviour="button"
       text="Be a creator"
-    ></polo-landing-button>
+    ></polo-basic-button>
   </div>
 
   <div class="pricing__plan">
@@ -138,10 +136,9 @@
       <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
     </ul>
-    <polo-landing-button
+    <polo-basic-button
       (click)="subscribe('pro', payYearly)"
-      behaviour="button"
       text="Be a pro"
-    ></polo-landing-button>
+    ></polo-basic-button>
   </div>
 </div>
