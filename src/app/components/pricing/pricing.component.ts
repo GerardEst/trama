@@ -13,6 +13,7 @@ import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
   styleUrl: './pricing.component.sass',
 })
 export class PricingComponent {
+  @Input() currentPlan?: 'creator' | 'pro'
   @Input() payAnnually: boolean = false
   @Input() email?: string
 

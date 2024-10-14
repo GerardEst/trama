@@ -53,6 +53,7 @@ export class LandingpageComponent {
 
   checkedLoggedUser: boolean = false
   loggedUserEmail?: string
+  loggedUserPlan?: 'creator' | 'pro'
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
 
@@ -93,9 +94,11 @@ export class LandingpageComponent {
   }
 
   async checkLoggedUser() {
-    const loggedUser = await this.db.supabase.auth.getUser()
+    const loggedUser = await this.db.getUser()
 
-    this.loggedUserEmail = loggedUser?.data?.user?.email
+    this.loggedUserEmail = loggedUser.email
+    this.loggedUserPlan = loggedUser?.plan || 'free'
+
     this.checkedLoggedUser = true
   }
 }

@@ -21,14 +21,13 @@ export class DatabaseService {
       const fetchUser = await this.supabase.auth.getUser()
       const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
       this.user.set({ ...fetchUser.data.user, profile: profileInfo })
-      console.log('user info', this.user())
-      return this.user
+      return this.user()
     } catch {
       return false
     }
   }
 
-  async getUserProfile(userId: string) {
+  private async getUserProfile(userId: string) {
     if (this.prod)
       console.log(
         '%cdb call to get the profile of the active user',
@@ -37,7 +36,7 @@ export class DatabaseService {
 
     let { data: userProfile, error } = await this.supabase
       .from('profiles')
-      .select('subscription_status, user_name')
+      .select('subscription_status, plan, user_name')
       .eq('id', userId)
 
     return userProfile[0]

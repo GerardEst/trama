@@ -1,5 +1,8 @@
 <div class="pricing">
-  <div class="pricing__plan">
+  <div
+    class="pricing__plan"
+    [class.currentPlan]="currentPlan !== 'creator' && currentPlan !== 'pro'"
+  >
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Hobby</h2>
       <p class="txt-ralewayItalic">Free</p>
@@ -60,7 +63,7 @@
     ></polo-landing-button>
     }
   </div>
-  <div class="pricing__plan">
+  <div class="pricing__plan" [class.currentPlan]="currentPlan === 'creator'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
       @if(payAnnually){
@@ -101,8 +104,7 @@
       text="Be a creator"
     ></polo-basic-button>
   </div>
-
-  <div class="pricing__plan">
+  <div class="pricing__plan" [class.currentPlan]="currentPlan === 'pro'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Pro</h2>
       @if(payAnnually){
