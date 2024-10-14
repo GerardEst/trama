@@ -10,7 +10,13 @@
       refresh the page
     </p>
     }
-    <polo-pricing [payYearly]="true" [email]="db.user().email"></polo-pricing>
+    <polo-billing-cycle
+      (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
+    ></polo-billing-cycle>
+    <polo-pricing
+      [payAnnually]="payAnnually"
+      [email]="db.user().email"
+    ></polo-pricing>
     <polo-basic-button
       (click)="changePassword()"
       text="Change your password"

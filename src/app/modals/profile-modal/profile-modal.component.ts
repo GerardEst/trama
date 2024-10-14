@@ -6,15 +6,23 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { StadisticsService } from 'src/app/services/stadistics.service'
 import { Router } from '@angular/router'
 import { PricingComponent } from 'src/app/components/pricing/pricing.component'
+import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-cycle.component'
 
 @Component({
   selector: 'polo-profile-modal',
   standalone: true,
-  imports: [ModalWindowComponent, BasicButtonComponent, PricingComponent],
+  imports: [
+    ModalWindowComponent,
+    BasicButtonComponent,
+    PricingComponent,
+    BillingCycleComponent,
+  ],
   templateUrl: './profile-modal.component.html',
   styleUrl: './profile-modal.component.sass',
 })
 export class ProfileModalComponent {
+  payAnnually: boolean = false
+
   constructor(
     public db: DatabaseService,
     private activeStory: ActiveStoryService,

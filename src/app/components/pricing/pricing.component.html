@@ -63,7 +63,7 @@
   <div class="pricing__plan">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
-      @if(payYearly){
+      @if(payAnnually){
       <p class="txt-ralewayItalic">{{ pricing.CREATOR_YEARLY_PRICE }}€/year</p>
       }@else {
       <p class="txt-ralewayItalic">
@@ -97,7 +97,7 @@
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
     <polo-basic-button
-      (click)="subscribe('creator', payYearly)"
+      (click)="subscribe('creator', payAnnually)"
       text="Be a creator"
     ></polo-basic-button>
   </div>
@@ -105,7 +105,7 @@
   <div class="pricing__plan">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Pro</h2>
-      @if(payYearly){
+      @if(payAnnually){
       <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
       }@else {
       <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
@@ -137,7 +137,7 @@
           </li-->
     </ul>
     <polo-basic-button
-      (click)="subscribe('pro', payYearly)"
+      (click)="subscribe('pro', payAnnually)"
       text="Be a pro"
     ></polo-basic-button>
   </div>

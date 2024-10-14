@@ -12,6 +12,7 @@ import { LandingCardComponent } from './components/landing-card/landing-card.com
 import { LandingButtonComponent } from './components/button/landing-button.component'
 import { LandingMobileComponent } from './components/landing-mobile/landing-mobile.component'
 import { PricingComponent } from 'src/app/components/pricing/pricing.component'
+import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-cycle.component'
 
 import { trigger, style, animate, transition } from '@angular/animations'
 import { BasicButtonComponent } from '../../components/ui/basic-button/basic-button.component'
@@ -28,6 +29,7 @@ import { BasicButtonComponent } from '../../components/ui/basic-button/basic-but
     FormsModule,
     BasicButtonComponent,
     PricingComponent,
+    BillingCycleComponent,
   ],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.sass',
@@ -54,7 +56,7 @@ export class LandingpageComponent {
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
 
-  payYearly: boolean = false
+  payAnnually: boolean = false
 
   constructor(
     private activeStory: ActiveStoryService,
@@ -84,10 +86,6 @@ export class LandingpageComponent {
     this.activeStory.entireTree.set(this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
     setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
-  }
-
-  changePayingPeriod(state: boolean) {
-    this.payYearly = state
   }
 
   selectUseCase(useCase: 'brands' | 'schools' | 'creatives') {

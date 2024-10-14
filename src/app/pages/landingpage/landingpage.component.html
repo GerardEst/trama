@@ -199,28 +199,11 @@
 <section class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
-    <div class="period">
-      <div></div>
-      <div class="period__toggle">
-        <div
-          class="period__toggle__monthly"
-          [class.active]="!this.payYearly"
-          (click)="changePayingPeriod(false)"
-        >
-          <p>Monthly</p>
-        </div>
-        <div
-          class="period__toggle__yearly"
-          [class.active]="this.payYearly"
-          (click)="changePayingPeriod(true)"
-        >
-          <p>Yearly</p>
-        </div>
-      </div>
-    </div>
-    <!--input type="checkbox" [(ngModel)]="payYearly" /> Early bird year discount!-->
+    <polo-billing-cycle
+      (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
+    ></polo-billing-cycle>
     <polo-pricing
-      [payYearly]="payYearly"
+      [payAnnually]="payAnnually"
       [email]="loggedUserEmail"
     ></polo-pricing>
     <!--p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
