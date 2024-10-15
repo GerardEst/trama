@@ -9,11 +9,12 @@ import {
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { node } from 'src/app/interfaces'
+import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
 
 @Component({
   selector: 'polo-board-flows',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './board-flows.component.html',
   styleUrls: ['./board-flows.component.sass'],
 })

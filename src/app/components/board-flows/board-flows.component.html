@@ -1,12 +1,21 @@
 @if (showContextMenuCursor) {
-  <div #openContextCursor class="openContextCursor"></div>
+<div #openContextCursor class="openContextCursor">...</div>
+} @if(showJoinContextMenu){
+<div class="overlay" (click)="showJoinContextMenu = false"></div>
 }
+
 <div
   #joinContextMenu
   [class.hideContextMenu]="!showJoinContextMenu"
   class="joinContextMenu"
 >
-  <button (click)="deleteJoin()">Delete join</button>
+  <p class="title">Join options</p>
+  <polo-basic-button
+    (click)="deleteJoin()"
+    icon="/assets/icons/trash.svg"
+    text="Delete join"
+    title="Delete join"
+  ></polo-basic-button>
 </div>
 
 <svg
@@ -17,37 +26,34 @@
   [class.hideCursor]="showContextMenuCursor"
 >
   @if (drawingFrom) {
+  <path
+    [attr.d]="getDrawingPath(drawingFrom, drawingTo)"
+    stroke-dasharray="4"
+    stroke-width="1"
+    stroke="#cccccc"
+    style="pointer-events: none"
+    fill="transparent"
+  ></path>
+  } @for (path of paths(); track path.id) {
+  <g
+    class="pathGroup"
+    (mouseenter)="changeCursorStyle(true)"
+    (mouseleave)="changeCursorStyle(false)"
+    (mousemove)="setCursorAndContextMenuPosition($event)"
+    (click)="openJoinContext($event, path.origin, path.destiny, path.toAnswer)"
+  >
     <path
-      [attr.d]="getDrawingPath(drawingFrom, drawingTo)"
-      stroke-dasharray="4"
-      stroke-width="1"
-      stroke="#cccccc"
-      style="pointer-events: none"
+      [attr.d]="path.svgPath"
+      stroke-width="20"
+      stroke="transparent"
       fill="transparent"
     ></path>
-  }
-  @for (path of paths(); track path.id) {
-    <g
-      class="pathGroup"
-      (mouseenter)="changeCursorStyle(true)"
-      (mouseleave)="changeCursorStyle(false)"
-      (mousemove)="setCursorAndContextMenuPosition($event)"
-      (click)="
-        openJoinContext($event, path.origin, path.destiny, path.toAnswer)
-      "
-    >
-      <path
-        [attr.d]="path.svgPath"
-        stroke-width="20"
-        stroke="transparent"
-        fill="transparent"
-      ></path>
-      <path
-        [attr.d]="path.svgPath"
-        stroke-width="1"
-        stroke="#cccccc"
-        fill="transparent"
-      ></path>
-    </g>
+    <path
+      [attr.d]="path.svgPath"
+      stroke-width="1"
+      stroke="#cccccc"
+      fill="transparent"
+    ></path>
+  </g>
   }
 </svg>
