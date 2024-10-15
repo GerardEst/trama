@@ -1,5 +1,7 @@
 @if (showContextMenuCursor) {
-<div #openContextCursor class="openContextCursor">...</div>
+<div #openContextCursor class="openContextCursor">
+  <img width="10px" src="/assets/icons/plus.svg" />
+</div>
 } @if(showJoinContextMenu){
 <div class="overlay" (click)="showJoinContextMenu = false"></div>
 }
