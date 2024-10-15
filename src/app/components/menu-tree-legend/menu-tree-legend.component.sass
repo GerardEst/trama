@@ -5,25 +5,27 @@
   background: var(--light-gray)
   box-shadow: var(--shadow-elevation-medium)
   padding: 0.7rem
-  padding-left: 1.2rem
   border-radius: 5px
   border: 1px solid var(--medium-gray)
+  width: 350px
   &__header
     display: flex
     gap: 1rem
-    justify-content: flex-end
+    align-items: center
+    font-weight: 600
+    &__buttons
+      margin-left: auto
   &__content
-    min-height: 100px
     padding-bottom: 1.5rem
     &__title
       font-weight: 600
       display: flex
-      justify-content: space-between
       align-items: center
       gap: 1rem
       &__buttons
         display: flex
         gap: 0.3rem
+        margin-left: auto
     &__refs, &__stadistics
       display: flex
       flex-direction: column

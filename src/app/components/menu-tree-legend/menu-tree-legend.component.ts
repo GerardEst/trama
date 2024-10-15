@@ -22,7 +22,8 @@ import { DatabaseService } from 'src/app/services/database.service'
 export class MenuTreeLegendComponent {
   arrayOfRefs: any = []
   unusedRefs: any = []
-  mode: 'H' | 'S' = 'H'
+  mode: 'refs' | 'games' = 'refs'
+  showLegend: boolean = true
 
   constructor(
     public db: DatabaseService,
@@ -129,5 +130,9 @@ export class MenuTreeLegendComponent {
 
       this.contextMenu.close()
     })
+  }
+
+  toggleLegend() {
+    this.showLegend = !this.showLegend
   }
 }

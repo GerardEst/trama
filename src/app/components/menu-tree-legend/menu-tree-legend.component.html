@@ -1,22 +1,36 @@
 <div class="legend">
+  @if(showLegend){
   <div class="legend__content">
     <div class="legend__content__title">
+      <polo-basic-button
+        (click)="toggleLegend()"
+        [icon]="
+          showLegend
+            ? '/assets/icons/chevron-down.svg'
+            : '/assets/icons/chevron-up.svg'
+        "
+        title="Toggle legend"
+      ></polo-basic-button>
       <p>Legend</p>
       <div class="legend__content__title__buttons">
-        <polo-basic-button (click)="mode = 'H'" icon="/assets/icons/tag.svg"
-          >H</polo-basic-button
-        >
+        <polo-basic-button
+          (click)="mode = 'refs'"
+          icon="/assets/icons/tag.svg"
+          text="Stats"
+          title="Stats and conditions"
+        ></polo-basic-button>
         @if (db.user().profile.subscription_status==='active' &&
         db.user().profile.plan==='pro') {
         <polo-basic-button
-          (click)="mode = 'S'"
+          (click)="mode = 'games'"
+          text="Activity"
           icon="/assets/icons/user-info.svg"
-          >S</polo-basic-button
-        >
+          title="Games played by users"
+        ></polo-basic-button>
         }
       </div>
     </div>
-    @if (mode === 'H') {
+    @if (mode === 'refs' && showLegend) {
     <div class="legend__content__refs">
       @for (ref of arrayOfRefs; track $index) {
       <div
@@ -25,6 +39,7 @@
         (mouseleave)="blurNodesWith(ref.id)"
       >
         <span class="tag__type tag__type--{{ ref.type }}"></span>
+
         <div class="tag__names">
           <input
             type="text"
@@ -59,17 +74,31 @@
       </div>
       }
     </div>
-    } @else if (mode === 'S') {
+    } @else if (mode === 'games' && showLegend) {
     <div class="legend__content__stadistics">
       <polo-stadistics-layer></polo-stadistics-layer>
     </div>
     }
   </div>
+  }
   <div class="legend__header">
-    <!--polo-tree-error-notifier></polo-tree-error-notifier-->
+    @if(!showLegend){
     <polo-basic-button
-      (click)="goToPlayground()"
-      text="Preview"
+      (click)="toggleLegend()"
+      [icon]="
+        showLegend
+          ? '/assets/icons/chevron-down.svg'
+          : '/assets/icons/chevron-up.svg'
+      "
+      title="Toggle legend"
     ></polo-basic-button>
+    <p>Legend</p>
+    }
+    <div class="legend__header__buttons">
+      <polo-basic-button
+        (click)="goToPlayground()"
+        text="Preview"
+      ></polo-basic-button>
+    </div>
   </div>
 </div>
