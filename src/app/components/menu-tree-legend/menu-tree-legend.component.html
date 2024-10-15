@@ -6,7 +6,8 @@
         <polo-basic-button (click)="mode = 'H'" icon="/assets/icons/tag.svg"
           >H</polo-basic-button
         >
-        @if (db.user().profile.subscription_status==='active') {
+        @if (db.user().profile.subscription_status==='active' &&
+        db.user().profile.plan==='pro') {
         <polo-basic-button
           (click)="mode = 'S'"
           icon="/assets/icons/user-info.svg"
