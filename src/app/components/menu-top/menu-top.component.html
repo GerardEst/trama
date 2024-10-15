@@ -34,7 +34,8 @@
           type="checkbox"
         />
       </label>
-      } @if (db.user().profile.subscription_status==='active') {
+      } @if (db.user().profile.subscription_status==='active' &&
+      db.user().profile.plan) {
       <label>
         <span>Enable sharing</span>
         <input
@@ -78,7 +79,8 @@
     </div>
     <div class="dropdown__section">
       <p class="txt-weight-bold">Footer</p>
-      @if (db.user().profile.subscription_status==='active') {
+      @if (db.user().profile.subscription_status==='active' &&
+      db.user().profile.plan) {
       <label>
         <span>Hide textandplay link</span>
         <input
@@ -120,7 +122,8 @@
       [disabled]="true"
       text="🚫 Open analytics"
     ></polo-basic-button>
-    } @if (db.user().profile.subscription_status==='active') {
+    } @if (db.user().profile.subscription_status==='active' &&
+    db.user().profile.plan) {
     <polo-basic-button
       (click)="exportTree()"
       icon="/assets/icons/export.svg"
