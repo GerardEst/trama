@@ -1,4 +1,16 @@
+.overlay
+  position: fixed
+  top: 0
+  left: 0
+  width: calc(100vw * 5)
+  height: calc(100vh*5)
+  transform: translate(-50%, -50%)
+  opacity: 0
+  z-index: 1
 .menu
+  position: fixed
+  top: 1rem
+  right: 1rem
   display: flex
   width: 300px
   box-sizing: border-box
@@ -9,6 +21,7 @@
   border-radius: 5px
   box-shadow: var(--shadow-elevation-medium)
   border: 1px solid var(--medium-gray)
+  z-index: 1
   input
     border: none
     font-weight: 600

@@ -1,3 +1,6 @@
+@if(showOptions){
+<div (click)="closePopup()" class="overlay"></div>
+}
 <div class="menu">
   <input
     aria-label="storyName"
@@ -9,7 +12,7 @@
     (click)="toggleOptions()"
     text="Story options"
   ></polo-basic-button>
-  @if (options) {
+  @if (showOptions) {
   <div class="dropdown">
     <div class="dropdown__section">
       @if (db.user().profile.subscription_status==='active' &&

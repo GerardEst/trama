@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Output, EventEmitter } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
@@ -15,7 +15,7 @@ import { DeleteStoryComponent } from '../alerts/delete-story/delete-story.compon
   styleUrl: './menu-top.component.sass',
 })
 export class MenuTopComponent {
-  options = false
+  showOptions: boolean = false
   savingTree = false
 
   takenCustomId = false
@@ -38,7 +38,7 @@ export class MenuTopComponent {
   }
 
   toggleOptions() {
-    this.options = !this.options
+    this.showOptions = !this.showOptions
   }
 
   toggleTracking() {
@@ -119,5 +119,9 @@ export class MenuTopComponent {
       window.location.reload()
     }
     // If result is false, do nothing (user cancelled)
+  }
+
+  closePopup() {
+    this.showOptions = false
   }
 }
