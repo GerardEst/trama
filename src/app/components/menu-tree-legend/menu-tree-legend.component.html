@@ -15,6 +15,7 @@
       <div class="legend__content__title__buttons">
         <polo-basic-button
           (click)="mode = 'refs'"
+          [selected]="mode === 'refs'"
           icon="/assets/icons/tag.svg"
           text="Stats"
           title="Stats and conditions"
@@ -23,6 +24,7 @@
         db.user().profile.plan==='pro') {
         <polo-basic-button
           (click)="mode = 'games'"
+          [selected]="mode === 'games'"
           text="Activity"
           icon="/assets/icons/user-info.svg"
           title="Games played by users"

@@ -13,7 +13,7 @@ export class BasicButtonComponent {
   @Input() icon?: string | undefined
   @Input() size?: 's' | undefined
   @Input() type?: 'danger' | 'success' | undefined
-
+  @Input() selected: boolean = false
   @Input() transparent: boolean = false
   @Input() iconSize: number = 15
   @Input() disabled: boolean = false

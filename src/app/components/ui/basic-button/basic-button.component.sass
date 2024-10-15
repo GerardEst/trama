@@ -15,8 +15,6 @@ button
   &.danger
     border: 1px solid var(--danger)
     background: var(--danger-light)
-    //background-color: var(--danger)
-
   &.success
     background-color: var(--success)
     color: white
@@ -30,6 +28,9 @@ button
       width: 20px
   &:hover
     background-color: var(--dark-gray)
+  &.selected
+    background-color: var(--dark-gray)
+    pointer-events: none
   &.transparent
     background: none
     &:hover
