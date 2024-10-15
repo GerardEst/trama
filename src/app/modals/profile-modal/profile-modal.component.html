@@ -1,20 +1,17 @@
 <polo-modal-window>
   <ng-container modal-content>
-    <p>Your plan</p>
-    <p>
-      {{ db.user().profile.subscription_status === 'active' ? 'Pro' : 'Free' }}
-    </p>
     @if(db.user().profile.subscription_status==='incomplete'){
     <p>
       You need to complete the payment. If the payment has been completed,
       refresh the page
     </p>
     }
+    <p>Plans</p>
     <polo-billing-cycle
       (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
     ></polo-billing-cycle>
     <polo-pricing
-      [currentPlan]="db.user().plan"
+      [currentPlan]="db.user().profile.plan"
       [payAnnually]="payAnnually"
       [email]="db.user().email"
     ></polo-pricing>

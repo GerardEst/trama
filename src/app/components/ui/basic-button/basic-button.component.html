@@ -3,6 +3,8 @@
   [class.onlyIcon]="!text"
   [class.sizeS]="size === 's'"
   [class.transparent]="transparent"
+  [class.danger]="type === 'danger'"
+  [class.success]="type === 'success'"
   [disabled]="disabled"
 >
   @if (icon) {

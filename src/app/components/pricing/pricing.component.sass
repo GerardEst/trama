@@ -11,16 +11,13 @@
     display: flex
     flex-direction: column
     gap: 2rem
-    // &:nth-child(1)
-    //   box-shadow: 0 0 20px inset var(--text-color)
-    &.currentPlan
-      opacity: 0.5
-      pointer-events: none
-    &:nth-child(2)
-      box-shadow: 0 0 20px inset var(--success)
-      outline: 3px solid var(--success)
-    // &:nth-child(3)
-    //   box-shadow: 0 0 20px inset var(--gold)
+    &.recommendedPlan
+      // box-shadow: 0 0 10px inset var(--success)
+      // outline: 3px solid var(--success)
+    & .currentPlan
+      padding: 0.5rem
+      background: var(--success-light)
+
     &__header
       display: flex
       justify-content: space-between

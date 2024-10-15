@@ -30,6 +30,10 @@ export class ProfileModalComponent {
     private router: Router
   ) {}
 
+  ngOnInit() {
+    console.log(this.db.user().profile.plan)
+  }
+
   changePassword() {
     this.router.navigate(['change-password'])
   }

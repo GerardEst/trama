@@ -97,7 +97,7 @@ export class LandingpageComponent {
     const loggedUser = await this.db.getUser()
 
     this.loggedUserEmail = loggedUser.email
-    this.loggedUserPlan = loggedUser?.plan || 'free'
+    this.loggedUserPlan = loggedUser.profile.plan
 
     this.checkedLoggedUser = true
   }

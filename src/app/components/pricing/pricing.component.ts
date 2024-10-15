@@ -16,10 +16,17 @@ export class PricingComponent {
   @Input() currentPlan?: 'creator' | 'pro'
   @Input() payAnnually: boolean = false
   @Input() email?: string
+  @Input() preventEasyDowngrading: boolean = false
 
   pricing = PRICING
 
-  constructor(private router: Router, public db: DatabaseService) {}
+  constructor(private router: Router, public db: DatabaseService) {
+    console.log(this.currentPlan)
+  }
+
+  userHasFreePlan(): boolean {
+    return this.currentPlan !== 'creator' && this.currentPlan !== 'pro'
+  }
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
     this.email
@@ -56,7 +63,7 @@ export class PricingComponent {
     window.open(paymentLink + '?prefilled_email=' + email)
   }
 
-  cancelPlan() {
+  cancelSubscription() {
     const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
     if (!jwtToken) {
       return console.error('No present JWT. Cant cancel plan.')
