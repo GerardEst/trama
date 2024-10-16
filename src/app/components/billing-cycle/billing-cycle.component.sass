@@ -1,26 +1,26 @@
-.period
+.period__toggle
   display: flex
-  justify-content: space-around
-  .period__toggle
+  &__monthly,&__annually
+    background: var(--medium-gray)
+    padding: 1rem 1.5rem
     display: flex
-    width: 200px
-    &__monthly,&__annually
-      width: 200px
-      border: 2px solid white
-      background: gray
-      padding: 1rem
-      display: flex
-      align-items: center
-      justify-content: center
-      cursor: pointer
-      p
-        font-size: 1.2rem
-        color: white
-      &.active
-        background: #64ab63
-    &__annually
-      border-left: 0
-      border-radius: 0 10px 10px 0
-    &__monthly
-      border-right: 0
-      border-radius: 10px 0 0 10px
+    align-items: center
+    justify-content: center
+    cursor: pointer
+    p
+      font-size: 1.2rem
+    &.active
+      background: var(--dark-gray)
+  &__annually
+    border-left: 0
+    border-radius: 0 10px 10px 0
+    p span
+      color: var(--light-text)
+      border: 1px solid var(--light-text)
+      border-radius: 5px
+      padding: 3px 6px
+      background: var(--medium-gray)
+      margin-left: 0.5rem
+  &__monthly
+    border-right: 0
+    border-radius: 10px 0 0 10px
