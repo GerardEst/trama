@@ -99,6 +99,8 @@ export class LandingpageComponent {
     if (!loggedUser) return
 
     this.loggedUserEmail = loggedUser.email
-    this.loggedUserPlan = loggedUser.profile.plan
+    this.loggedUserPlan =
+      loggedUser.profile.subscription_status === 'active' &&
+      loggedUser.profile.plan
   }
 }
