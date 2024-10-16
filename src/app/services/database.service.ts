@@ -10,8 +10,6 @@ export class DatabaseService {
   public supabase: any
   user: WritableSignal<any> = signal(null)
 
-  prod = !environment.production
-
   constructor() {
     this.supabase = createClient(environment.apiUrl, environment.apiAnonKey)
   }
@@ -28,7 +26,7 @@ export class DatabaseService {
   }
 
   private async getUserProfile(userId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get the profile of the active user',
         'color: #9999ff'
@@ -43,7 +41,7 @@ export class DatabaseService {
   }
 
   async getAllTreesForUser(userId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get all the stories id and name for the active user',
         'color: #9999ff'
@@ -59,7 +57,7 @@ export class DatabaseService {
   }
 
   async getStoryWithCustomID(customId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get everything about a story with a custom id',
         'color: #9999ff',
@@ -78,7 +76,7 @@ export class DatabaseService {
   }
 
   async getStoryWithID(storyId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get everything about a story with a normal id',
         'color: #9999ff'
@@ -96,7 +94,7 @@ export class DatabaseService {
   }
   async getNewestStory() {
     // Gets the most recently updated story, and the newest if there are multiple
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get everyting about THE NEWEST story of the user',
         'color: #9999ff'
@@ -120,7 +118,7 @@ export class DatabaseService {
   async removeImage() {}
 
   async createNewTree(story: object) {
-    if (this.prod)
+    if (!environment.production)
       console.log('%cdb call to create a new story', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('stories')
@@ -132,7 +130,7 @@ export class DatabaseService {
   }
 
   async saveTreeToDB(treeId: string, treeContent: tree) {
-    if (this.prod)
+    if (!environment.production)
       console.log('%cdb call to save story to db', 'color: #9999ff')
 
     // const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
@@ -153,7 +151,7 @@ export class DatabaseService {
   }
 
   async getConfigurationOf(storyId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get the configuration of the story ' + storyId,
         'color: #9999ff'
@@ -169,7 +167,7 @@ export class DatabaseService {
   }
 
   async setTrackingOf(storyId: string, tracking: boolean) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to set the tracking status of a story',
         'color: #9999ff'
@@ -184,7 +182,7 @@ export class DatabaseService {
   }
 
   async setTapLinkOf(storyId: string, tapLink: boolean) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to hide the textandplay link from the story',
         'color: #9999ff'
@@ -199,7 +197,7 @@ export class DatabaseService {
   }
 
   async setSharingOf(storyId: string, sharing: boolean) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to set the sharing status of a story',
         'color: #9999ff'
@@ -214,7 +212,7 @@ export class DatabaseService {
   }
 
   async setCumulativeModeOf(storyId: string, cumulativeMode: boolean) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to toggle cumulative mode of a story',
         'color: #9999ff'
@@ -229,7 +227,7 @@ export class DatabaseService {
   }
 
   async updateCustomIdOf(storyId: string, customId: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log('%cdb call to set the custom ID of a story', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('stories')
@@ -247,7 +245,7 @@ export class DatabaseService {
       link: string
     }
   ) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to set the footer options of a story',
         'color: #9999ff'
@@ -262,7 +260,7 @@ export class DatabaseService {
   }
 
   async saveNewStoryName(storyId: string, name: string) {
-    if (this.prod)
+    if (!environment.production)
       console.log('%cdb call to set a new name for a story', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('stories')
@@ -274,7 +272,7 @@ export class DatabaseService {
   }
 
   async getStadisticsOfTree(storyId: string, withPath: boolean = false) {
-    if (this.prod)
+    if (!environment.production)
       console.log(
         '%cdb call to get the stadistics of a story',
         'color: #9999ff'
@@ -293,7 +291,8 @@ export class DatabaseService {
   }
 
   async getRefsOfTree(storyId: string) {
-    if (this.prod) console.log('db call to get only the refs of a story')
+    if (!environment.production)
+      console.log('db call to get only the refs of a story')
     console.log('%cdb call to get everything about a tree', 'color: #9999ff')
     const { data, error } = await this.supabase
       .from('stories')
@@ -316,7 +315,7 @@ export class DatabaseService {
     result: any,
     externalEvents: Array<any>
   ) {
-    if (this.prod)
+    if (!environment.production)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
     const { data, error } = await this.supabase.from('games').upsert({
       id,

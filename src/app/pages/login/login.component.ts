@@ -5,7 +5,8 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
-import { PRICING } from 'src/app/constants'
+import { environment } from 'src/environments/environment'
+
 @Component({
   selector: 'polo-login',
   standalone: true,
@@ -41,16 +42,16 @@ export class LoginComponent {
     if (this.period && this.plan) {
       this.subscribing = true
       if (this.period === 'monthly' && this.plan === 'creator') {
-        this.paymentLink = PRICING.CREATOR_MONTHLY_LINK
+        this.paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
       }
       if (this.period === 'monthly' && this.plan === 'pro') {
-        this.paymentLink = PRICING.PRO_MONTHLY_LINK
+        this.paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
       }
       if (this.period === 'yearly' && this.plan === 'creator') {
-        this.paymentLink = PRICING.CREATOR_YEARLY_LINK
+        this.paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
       }
       if (this.period === 'yearly' && this.plan === 'pro') {
-        this.paymentLink = PRICING.PRO_YEARLY_LINK
+        this.paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
       } else {
         throw new Error('Cant get an according plan')
       }

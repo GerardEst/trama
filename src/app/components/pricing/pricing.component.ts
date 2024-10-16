@@ -4,6 +4,7 @@ import { PRICING } from 'src/app/constants'
 import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/services/database.service'
 import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'polo-pricing',
@@ -25,7 +26,11 @@ export class PricingComponent {
   }
 
   userHasFreePlan(): boolean {
-    return this.currentPlan !== 'creator' && this.currentPlan !== 'pro'
+    return (
+      !!this.email &&
+      this.currentPlan !== 'creator' &&
+      this.currentPlan !== 'pro'
+    )
   }
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
@@ -48,16 +53,16 @@ export class PricingComponent {
     let paymentLink: string | undefined = undefined
 
     if (period === 'monthly' && plan === 'creator') {
-      paymentLink = PRICING.CREATOR_MONTHLY_LINK
+      paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
     }
     if (period === 'monthly' && plan === 'pro') {
-      paymentLink = PRICING.PRO_MONTHLY_LINK
+      paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
     }
     if (period === 'yearly' && plan === 'creator') {
-      paymentLink = PRICING.CREATOR_YEARLY_LINK
+      paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
     }
     if (period === 'yearly' && plan === 'pro') {
-      paymentLink = PRICING.PRO_YEARLY_LINK
+      paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
     }
 
     window.open(paymentLink + '?prefilled_email=' + email)
