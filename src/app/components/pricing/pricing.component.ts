@@ -14,23 +14,27 @@ import { environment } from 'src/environments/environment'
   styleUrl: './pricing.component.sass',
 })
 export class PricingComponent {
-  @Input() currentPlan?: 'creator' | 'pro'
+  @Input() currentPlan?: string
   @Input() payAnnually: boolean = false
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
 
   pricing = PRICING
 
-  constructor(private router: Router, public db: DatabaseService) {
-    console.log(this.currentPlan)
-  }
+  constructor(private router: Router, public db: DatabaseService) {}
 
-  userHasFreePlan(): boolean {
+  isFree(): boolean {
     return (
       !!this.email &&
-      this.currentPlan !== 'creator' &&
-      this.currentPlan !== 'pro'
+      !this.currentPlan?.includes('creator') &&
+      !this.currentPlan?.includes('pro')
     )
+  }
+  isCreator(): boolean {
+    return this.currentPlan?.includes('creator') || false
+  }
+  isPro(): boolean {
+    return this.currentPlan?.includes('pro') || false
   }
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {

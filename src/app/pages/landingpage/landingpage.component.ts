@@ -53,7 +53,7 @@ export class LandingpageComponent {
 
   checkedLoggedUser: boolean = false
   loggedUserEmail?: string
-  loggedUserPlan?: 'creator' | 'pro'
+  loggedUserPlan?: string
   showEditor: boolean = false
   activeUseCase: 'brands' | 'schools' | 'creatives' = 'brands'
 
@@ -63,7 +63,6 @@ export class LandingpageComponent {
     private activeStory: ActiveStoryService,
     private titleService: Title,
     private meta: Meta,
-    //public router: Router,
     public db: DatabaseService
   ) {}
 
@@ -95,10 +94,11 @@ export class LandingpageComponent {
 
   async checkLoggedUser() {
     const loggedUser = await this.db.getUser()
+    this.checkedLoggedUser = true
+
+    if (!loggedUser) return
 
     this.loggedUserEmail = loggedUser.email
     this.loggedUserPlan = loggedUser.profile.plan
-
-    this.checkedLoggedUser = true
   }
 }

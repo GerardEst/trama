@@ -21,8 +21,8 @@ import { environment } from 'src/environments/environment'
 })
 export class LoginComponent {
   @Input() mode?: 'register' | 'login'
-  @Input() period?: 'yearly' | 'monthly'
-  @Input() plan?: 'creator' | 'pro'
+  @Input() selectedPeriod?: 'yearly' | 'monthly'
+  @Input() selectedPlan?: 'creator' | 'pro'
 
   constructor(private db: DatabaseService, private router: Router) {}
 
@@ -35,22 +35,29 @@ export class LoginComponent {
 
   subscribing: boolean = false
   paymentLink?: string
-  // TODO - En cas de registre amb google, google redirigeix a dashboard després de registrar-se, però
-  // en aquet cas hauria de redirigir a pagar
 
   ngOnInit() {
-    if (this.period && this.plan) {
+    if (this.selectedPeriod && this.selectedPlan) {
       this.subscribing = true
-      if (this.period === 'monthly' && this.plan === 'creator') {
+      if (
+        this.selectedPeriod === 'monthly' &&
+        this.selectedPlan === 'creator'
+      ) {
         this.paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
-      }
-      if (this.period === 'monthly' && this.plan === 'pro') {
+      } else if (
+        this.selectedPeriod === 'monthly' &&
+        this.selectedPlan === 'pro'
+      ) {
         this.paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
-      }
-      if (this.period === 'yearly' && this.plan === 'creator') {
+      } else if (
+        this.selectedPeriod === 'yearly' &&
+        this.selectedPlan === 'creator'
+      ) {
         this.paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
-      }
-      if (this.period === 'yearly' && this.plan === 'pro') {
+      } else if (
+        this.selectedPeriod === 'yearly' &&
+        this.selectedPlan === 'pro'
+      ) {
         this.paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
       } else {
         throw new Error('Cant get an according plan')
