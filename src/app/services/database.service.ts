@@ -25,6 +25,13 @@ export class DatabaseService {
     }
   }
 
+  public userPlanIs(plan: string) {
+    if (this.user().profile.subscription_status === 'active') {
+      if (this.user().profile.plan.includes(plan)) return true
+    }
+    return false
+  }
+
   private async getUserProfile(userId: string) {
     if (!environment.production)
       console.log(

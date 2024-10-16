@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core'
+import { Component } from '@angular/core'
 import { DatabaseService } from 'src/app/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'

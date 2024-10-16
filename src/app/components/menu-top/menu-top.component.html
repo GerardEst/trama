@@ -15,8 +15,7 @@
   @if (showOptions) {
   <div class="dropdown">
     <div class="dropdown__section">
-      @if (db.user().profile.subscription_status==='active' &&
-      db.user().profile.plan==='pro') {
+      @if (db.userPlanIs('pro')) {
       <label>
         <span>Enable tracking</span>
         <input
@@ -34,8 +33,7 @@
           type="checkbox"
         />
       </label>
-      } @if (db.user().profile.subscription_status==='active' &&
-      db.user().profile.plan) {
+      } @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
       <label>
         <span>Enable sharing</span>
         <input
@@ -79,8 +77,7 @@
     </div>
     <div class="dropdown__section">
       <p class="txt-weight-bold">Footer</p>
-      @if (db.user().profile.subscription_status==='active' &&
-      db.user().profile.plan) {
+      @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
       <label>
         <span>Hide textandplay link</span>
         <input
@@ -111,8 +108,7 @@
       <p>Footer options are not allowed for free users</p>
       }
     </div>
-    @if (db.user().profile.subscription_status==='active' &&
-    db.user().profile.plan==='pro') {
+    @if (db.userPlanIs('pro')) {
     <polo-basic-button
       (click)="openStadistics()"
       text="Open analytics"
@@ -122,8 +118,7 @@
       [disabled]="true"
       text="🚫 Open analytics"
     ></polo-basic-button>
-    } @if (db.user().profile.subscription_status==='active' &&
-    db.user().profile.plan) {
+    } @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
     <polo-basic-button
       (click)="exportTree()"
       icon="/assets/icons/export.svg"
