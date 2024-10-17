@@ -6,6 +6,7 @@ import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
+import { LOGIN_FEEDBACKS } from 'src/app/constants'
 
 @Component({
   selector: 'polo-login',
@@ -20,6 +21,8 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./login.component.sass'],
 })
 export class LoginComponent {
+  LOGIN_FEEDBACKS = LOGIN_FEEDBACKS
+
   @Input() mode?: 'register' | 'login'
   @Input() selectedPeriod?: 'yearly' | 'monthly'
   @Input() selectedPlan?: 'creator' | 'pro'
@@ -32,6 +35,7 @@ export class LoginComponent {
   register_password = new FormControl('', Validators.required)
   register_username = new FormControl('', Validators.required)
   checkMail: boolean = false
+  mailNotConfirmed?: boolean = false
 
   waitingForSignUp: boolean = false
   subscribing: boolean = false
@@ -124,7 +128,15 @@ export class LoginComponent {
       password: password.value,
     })
 
-    if (error) return console.error(error)
+    if (error) {
+      // TODO - Supabase is not giving the error code, so we have to check the message by now.
+      // https://github.com/supabase/auth/issues/1631
+      if (error.message === 'Email not confirmed') {
+        console.log('Email not confirmed')
+        this.mailNotConfirmed = true
+      }
+      return console.error(error)
+    }
 
     if (this.subscribing) {
       window.open(this.paymentLink + '?prefilled_email=' + email.value)
