@@ -10,6 +10,9 @@
 >
   @if (icon) {
   <img [src]="icon" [width]="iconSize" alt="Button icon" />
-  }
+  } @if(waiting){
+  <img class="waitingIcon" src="/assets/icons/loading.svg" alt="Loading icon" />
+  }@else {
   {{ text }}
+  }
 </button>

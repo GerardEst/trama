@@ -1,13 +1,1 @@
-<svg version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-  viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-    <path fill="#fff" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
-      <animateTransform
-         attributeName="transform"
-         attributeType="XML"
-         type="rotate"
-         dur="1s"
-         from="0 50 50"
-         to="360 50 50"
-         repeatCount="indefinite" />
-  </path>
-</svg>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="25 25 50 50" width="50" height="50"><style>.a{fill:#4f4f4f}</style><path class="a" d="m73 50c0-12.7-10.3-23-23-23-12.7 0-23 10.3-23 23m3.9 0c0-10.5 8.5-19.1 19.1-19.1 10.6 0 19.1 8.6 19.1 19.1"><animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="1s" from="0 50 50" to="360 50 50" repeatCount="indefinite"/></path></svg>

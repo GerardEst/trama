@@ -33,6 +33,7 @@ export class LoginComponent {
   register_username = new FormControl('', Validators.required)
   checkMail: boolean = false
 
+  waitingForSignUp: boolean = false
   subscribing: boolean = false
   paymentLink?: string
 
@@ -74,6 +75,8 @@ export class LoginComponent {
     event.preventDefault()
     if (email.invalid || password.invalid) return
 
+    this.waitingForSignUp = true
+
     const { data: registered_data, error: registered_error } =
       await this.db.supabase.auth.signUp({
         email: email.value,
@@ -92,6 +95,7 @@ export class LoginComponent {
       window.open(this.paymentLink + '?prefilled_email=' + email.value)
     }
 
+    this.waitingForSignUp = false
     this.checkMail = true
   }
 
