@@ -86,6 +86,7 @@ export class LoginComponent {
         email: email.value,
         password: password.value,
         options: {
+          emailRedirectTo: 'https://textandplay.com/dashboard',
           data: {
             user_name: username.value,
           },
