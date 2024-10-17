@@ -15,6 +15,7 @@ import { ResetPasswordComponent } from './app/pages/reset-password/reset-passwor
 import { ChangePasswordComponent } from './app/pages/change-password/change-password.component'
 import { authGuard } from './app/guards/auth.guard'
 import * as Cronitor from '@cronitorio/cronitor-rum'
+import { StoryNotFoundComponent } from './app/pages/story-not-found/story-not-found.component'
 
 const appRoutes: Routes = [
   { path: '', title: 'Text&play', component: LandingpageComponent },
@@ -37,6 +38,7 @@ const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   { path: 'private/:storyId', component: PlaygroundComponent },
+  { path: 'not-found', component: StoryNotFoundComponent },
   // This must be the last item on the router
   { path: ':customId', component: PlaygroundComponent },
 ]

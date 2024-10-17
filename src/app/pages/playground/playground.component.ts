@@ -63,7 +63,7 @@ export class PlaygroundComponent {
     const { story, configuration } = await this.getStoryByCorrectID()
 
     if (!story) {
-      this.router.navigate(['/'])
+      this.router.navigate(['/not-found'])
       return
     }
 
