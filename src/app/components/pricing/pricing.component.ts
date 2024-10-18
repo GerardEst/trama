@@ -14,28 +14,14 @@ import { environment } from 'src/environments/environment'
   styleUrl: './pricing.component.sass',
 })
 export class PricingComponent {
-  @Input() currentPlan?: string
+  pricing = PRICING
+
+  @Input({ transform: checkPlan }) userPlan?: string | undefined
   @Input() payAnnually: boolean = false
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
 
-  pricing = PRICING
-
   constructor(private router: Router, public db: DatabaseService) {}
-
-  isFree(): boolean {
-    return (
-      !!this.email &&
-      !this.currentPlan?.includes('creator') &&
-      !this.currentPlan?.includes('pro')
-    )
-  }
-  isCreator(): boolean {
-    return this.currentPlan?.includes('creator') || false
-  }
-  isPro(): boolean {
-    return this.currentPlan?.includes('pro') || false
-  }
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
     this.email
@@ -100,4 +86,11 @@ export class PricingComponent {
         alert('Failed to cancel subscription')
       })
   }
+}
+
+function checkPlan(value: string | undefined) {
+  if (!value) return 'free'
+  if (value.includes('creator')) return 'creator'
+  if (value.includes('pro')) return 'pro'
+  return 'free'
 }

@@ -4,7 +4,7 @@
       <h2 class="txt-baskerville txt-2">Hobby</h2>
       <p class="txt-ralewayItalic">Free</p>
     </div>
-    @if(isFree()){
+    @if(userPlan==='free'){
     <p class="currentPlan">Your current plan</p>
     }
     <p>
@@ -69,7 +69,7 @@
       </p>
       }
     </div>
-    @if(isCreator()){
+    @if(userPlan==='creator'){
     <p class="currentPlan">Your current plan</p>
     }
     <p>
@@ -97,7 +97,7 @@
       <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
-    @if(isCreator()){ @if(!preventEasyDowngrading){
+    @if(userPlan==='creator'){ @if(!preventEasyDowngrading){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"
@@ -119,7 +119,7 @@
       <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
       }
     </div>
-    @if(isPro()){
+    @if(userPlan==='pro'){
     <p class="currentPlan">Your current plan</p>
     }
     <p>
@@ -147,7 +147,7 @@
       <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
     </ul>
-    @if(isPro()){ @if(!preventEasyDowngrading){
+    @if(userPlan==='pro'){ @if(!preventEasyDowngrading){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"

@@ -203,7 +203,7 @@
       (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
     ></polo-billing-cycle>
     <polo-pricing
-      [currentPlan]="loggedUserPlan"
+      [userPlan]="loggedUserPlan"
       [payAnnually]="payAnnually"
       [email]="loggedUserEmail"
       [preventEasyDowngrading]="true"

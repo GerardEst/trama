@@ -100,7 +100,8 @@ export class LandingpageComponent {
 
     this.loggedUserEmail = loggedUser.email
     this.loggedUserPlan =
-      loggedUser.profile.subscription_status === 'active' &&
-      loggedUser.profile.plan
+      (loggedUser.profile.subscription_status === 'active' &&
+        loggedUser.profile.plan) ||
+      'free'
   }
 }
