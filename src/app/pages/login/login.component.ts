@@ -24,8 +24,8 @@ export class LoginComponent {
   LOGIN_FEEDBACKS = LOGIN_FEEDBACKS
 
   @Input() mode?: 'register' | 'login'
-  @Input() selectedPeriod?: 'yearly' | 'monthly'
-  @Input() selectedPlan?: 'creator' | 'pro'
+  @Input() period?: 'yearly' | 'monthly'
+  @Input() plan?: 'creator' | 'pro'
 
   constructor(private db: DatabaseService, private router: Router) {}
 
@@ -34,35 +34,24 @@ export class LoginComponent {
   register_email = new FormControl('', [Validators.required, Validators.email])
   register_password = new FormControl('', Validators.required)
   register_username = new FormControl('', Validators.required)
-  checkMail: boolean = false
-  mailNotConfirmed?: boolean = false
+  emailAlreadyRegistered?: boolean = false
+  //checkMail: boolean = false
+  //mailNotConfirmed?: boolean = false
 
   waitingForSignUp: boolean = false
   subscribing: boolean = false
   paymentLink?: string
 
   ngOnInit() {
-    if (this.selectedPeriod && this.selectedPlan) {
+    if (this.period && this.plan) {
       this.subscribing = true
-      if (
-        this.selectedPeriod === 'monthly' &&
-        this.selectedPlan === 'creator'
-      ) {
+      if (this.period === 'monthly' && this.plan === 'creator') {
         this.paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
-      } else if (
-        this.selectedPeriod === 'monthly' &&
-        this.selectedPlan === 'pro'
-      ) {
+      } else if (this.period === 'monthly' && this.plan === 'pro') {
         this.paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
-      } else if (
-        this.selectedPeriod === 'yearly' &&
-        this.selectedPlan === 'creator'
-      ) {
+      } else if (this.period === 'yearly' && this.plan === 'creator') {
         this.paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
-      } else if (
-        this.selectedPeriod === 'yearly' &&
-        this.selectedPlan === 'pro'
-      ) {
+      } else if (this.period === 'yearly' && this.plan === 'pro') {
         this.paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
       } else {
         throw new Error('Cant get an according plan')
@@ -86,22 +75,32 @@ export class LoginComponent {
         email: email.value,
         password: password.value,
         options: {
-          emailRedirectTo: 'https://textandplay.com/dashboard',
+          //emailRedirectTo: 'https://textandplay.com/dashboard',
           data: {
             user_name: username.value,
           },
         },
       })
 
-    if (registered_error) return console.error(registered_error)
-    console.log('user registered', registered_data)
+    if (registered_error) {
+      if (registered_error.message === 'User already registered') {
+        console.error('Email already being used')
+        this.emailAlreadyRegistered = true
+        this.waitingForSignUp = false
+      }
+      return console.error(registered_error)
+    }
 
     if (this.subscribing) {
       window.open(this.paymentLink + '?prefilled_email=' + email.value)
+    } else {
+      this.router.navigate(['/dashboard'])
     }
 
-    this.waitingForSignUp = false
-    this.checkMail = true
+    // The email confirmation has been disabled in supabase to improve signup process (especally for paid plans)
+    // If this proves to be a mistake, I'll go back to this old code
+    // this.waitingForSignUp = false
+    // this.checkMail = true
   }
 
   async signInWithGoogle() {
@@ -129,15 +128,17 @@ export class LoginComponent {
       password: password.value,
     })
 
-    if (error) {
-      // TODO - Supabase is not giving the error code, so we have to check the message by now.
-      // https://github.com/supabase/auth/issues/1631
-      if (error.message === 'Email not confirmed') {
-        console.log('Email not confirmed')
-        this.mailNotConfirmed = true
-      }
-      return console.error(error)
-    }
+    // The email confirmation has been disabled in supabase to improve signup process (especally for paid plans)
+    // If this proves to be a mistake, I'll go back to this old code
+    // if (error) {
+    //   // TODO - Supabase is not giving the error code, so we have to check the message by now.
+    //   // https://github.com/supabase/auth/issues/1631
+    //   if (error.message === 'Email not confirmed') {
+    //     console.log('Email not confirmed')
+    //     this.mailNotConfirmed = true
+    //   }
+    //   return console.error(error)
+    // }
 
     if (this.subscribing) {
       window.open(this.paymentLink + '?prefilled_email=' + email.value)

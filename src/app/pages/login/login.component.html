@@ -28,11 +28,16 @@
         />
       </label>
 
-      @if (checkMail) {
+      @if(emailAlreadyRegistered){
+      <div class="feedbackMessage feedbackMessage--error">
+        <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED"></p>
+      </div>
+      }
+      <!-- @if (checkMail) {
       <div class="feedbackMessage feedbackMessage--success">
         <p [innerHTML]="LOGIN_FEEDBACKS.CONFIRM_EMAIL"></p>
       </div>
-      }
+      } -->
 
       <polo-basic-button
         (click)="
@@ -76,11 +81,11 @@
           [formControl]="login_password"
         />
       </label>
-      @if (mailNotConfirmed) {
+      <!-- @if (mailNotConfirmed) {
       <div class="feedbackMessage feedbackMessage--error">
         <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_NOT_CONFIRMED"></p>
       </div>
-      }
+      } -->
       <polo-basic-button
         (click)="signInWithEmail($event, login_email, login_password)"
         [disabled]="false"
