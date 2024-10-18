@@ -6,7 +6,7 @@ test(
     tag: '@interpolations @noAnswerNodes @jumpToAnswers @distributors @userTextNodes',
   },
   async ({ page }) => {
-    await page.goto('/private/197d1779-2d9b-4237-be54-718288d07604')
+    await page.goto('/private/78509b8e-ee36-4a22-880e-2a9b5e7280a2')
 
     await expect(page.getByText('Hello')).toBeVisible()
     await page.getByRole('textbox').fill('User')

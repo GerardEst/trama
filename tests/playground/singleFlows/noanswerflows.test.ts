@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Flow of no-answers nodes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/private/c420ec0b-a8ff-4479-b9a9-9f0997e3eb4a')
+    await page.goto('/private/56224a4e-45df-4526-9806-342b0023627d')
   })
 
   test('can start and see all the steps till the end without interaction', async ({
     page,
   }) => {
-    await expect(page).toHaveTitle('Testing - No answer node')
+    await expect(page).toHaveTitle('noanswerflows.test')
 
-    const title = page.getByText(/Testing - No answer node/)
+    const title = page.getByText(/noanswerflows.test/)
     await title.waitFor()
     expect(title).toBeVisible()
 

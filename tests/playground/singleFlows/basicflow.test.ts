@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Basic flow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/private/1f1176f2-4320-4dff-b71f-905378bfb0c0')
+    await page.goto('/private/33a780d7-77ae-40f8-b899-f184d7a9a40c')
   })
 
   test('can see the first question', async ({ page }) => {
     // Title is on the tab
-    await expect(page).toHaveTitle('Testing - Basic flow')
+    await expect(page).toHaveTitle('basicflow.test')
 
     // There is a title on top
-    const title = page.getByText(/Testing - Basic flow/)
+    const title = page.getByText(/basicflow.test/)
     await title.waitFor()
     expect(title).toBeVisible()
 
@@ -39,7 +39,7 @@ test.describe('Basic flow', () => {
     await text.waitFor()
     expect(text).toBeVisible()
 
-    const answer = page.getByText('node 2 answer')
+    const answer = page.getByText('node2 answer')
     await answer.waitFor()
     await answer.click()
 

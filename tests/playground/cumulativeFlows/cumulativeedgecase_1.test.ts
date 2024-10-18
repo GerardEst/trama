@@ -6,7 +6,7 @@ test(
     tag: '@edgecase',
   },
   async ({ page }) => {
-    await page.goto('/private/7923f542-48b6-4ddd-94e8-ce363687e7f7')
+    await page.goto('/private/3825f7b5-47da-41d2-a283-f6ffb555cf36')
 
     await page.getByRole('button', { name: /answer1/i }).click()
 
