@@ -89,7 +89,7 @@ export class PricingComponent {
 }
 
 function checkPlan(value: string | undefined) {
-  if (!value) return 'free'
+  if (!value) return
   if (value.includes('creator')) return 'creator'
   if (value.includes('pro')) return 'pro'
   return 'free'
