@@ -48,6 +48,11 @@ Deno.serve(async (req) => {
 
     // Now process the verified Stripe event
     const subscription = stripeEvent.data.object
+
+    // Get the next payment date
+    const nextPaymentDate = new Date(subscription.current_period_end * 1000)
+
+    // Get the customer id
     const customerId = subscription.customer
     const customer = await stripe.customers.retrieve(customerId)
 
@@ -59,6 +64,7 @@ Deno.serve(async (req) => {
         subscription_status: subscription.status,
         customer_id: customerId,
         plan: subscription.plan.nickname,
+        next_payment: nextPaymentDate.toISOString(),
       })
       .eq('email', customer.email)
       .select()

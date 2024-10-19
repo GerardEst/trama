@@ -46,6 +46,10 @@ Deno.serve(async (req) => {
     }
 
     const subscription = stripeEvent.data.object
+
+    // Get the next payment date
+    const nextPaymentDate = new Date(subscription.current_period_end * 1000)
+
     const customerId = subscription.customer
 
     const { data, error } = await supabaseAdmin
@@ -53,6 +57,7 @@ Deno.serve(async (req) => {
       .update({
         subscription_status: subscription.status,
         plan: subscription.plan.nickname,
+        next_payment: nextPaymentDate.toISOString(),
       })
       .eq('customer_id', customerId)
 

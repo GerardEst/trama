@@ -41,7 +41,7 @@ export class DatabaseService {
 
     let { data: userProfile, error } = await this.supabase
       .from('profiles')
-      .select('subscription_status, plan, user_name')
+      .select('subscription_status, plan, user_name, next_payment')
       .eq('id', userId)
 
     return userProfile[0]
