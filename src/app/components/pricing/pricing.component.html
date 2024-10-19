@@ -103,7 +103,7 @@
       text="Cancel subscription"
       type="danger"
     ></polo-basic-button>
-    } }@else {
+    } }@if(!userPlan) {
     <polo-basic-button
       (click)="subscribe('creator', payAnnually)"
       text="Be a creator"
@@ -153,7 +153,7 @@
       text="Cancel subscription"
       type="danger"
     ></polo-basic-button>
-    } }@else {
+    } }@if(!userPlan) {
     <polo-basic-button
       (click)="subscribe('pro', payAnnually)"
       text="Upgrade to pro"
