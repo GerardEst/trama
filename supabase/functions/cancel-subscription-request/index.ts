@@ -23,7 +23,8 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
-        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Origin':
+          'https://www.textandplay.com, http://localhost:4200',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
@@ -73,7 +74,8 @@ Deno.serve(async (req) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+          'Access-Control-Allow-Origin':
+            'https://www.textandplay.com , http://localhost:4200',
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
@@ -84,7 +86,8 @@ Deno.serve(async (req) => {
     return new Response(String(err?.message ?? err), {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://www.textandplay.com',
+        'Access-Control-Allow-Origin':
+          'https://www.textandplay.com, http://localhost:4200',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
