@@ -85,13 +85,15 @@ export class PricingComponent {
         } else {
           alert('Failed to cancel subscription')
         }
+
+        this.cancelingSubscription = false
       })
       .catch((error) => {
         console.error(error)
         alert('Failed to cancel subscription')
-      })
 
-    this.cancelingSubscription = false
+        this.cancelingSubscription = false
+      })
   }
 }
 
