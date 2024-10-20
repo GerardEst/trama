@@ -105,6 +105,7 @@
     !canceledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
+      [waiting]="cancelingSubscription"
       text="Cancel subscription"
       type="danger"
     ></polo-basic-button>
@@ -160,6 +161,7 @@
     !canceledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
+      [waiting]="cancelingSubscription"
       text="Cancel subscription"
       type="danger"
     ></polo-basic-button>

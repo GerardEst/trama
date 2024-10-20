@@ -22,6 +22,8 @@ export class PricingComponent {
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
 
+  cancelingSubscription: boolean = false
+
   constructor(private router: Router, public db: DatabaseService) {}
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
@@ -60,6 +62,8 @@ export class PricingComponent {
   }
 
   cancelSubscription() {
+    this.cancelingSubscription = true
+
     const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
     if (!jwtToken) {
       return console.error('No present JWT. Cant cancel plan.')
@@ -86,6 +90,8 @@ export class PricingComponent {
         console.error(error)
         alert('Failed to cancel subscription')
       })
+
+    this.cancelingSubscription = false
   }
 }
 
