@@ -7,6 +7,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
 import { ProfileComponent } from '../profile/profile.component'
 import { ModalService } from 'src/app/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/modals/creator-paywall/creator-paywall.component'
+import { PanzoomService } from 'src/app/services/panzoom.service'
 
 @Component({
   selector: 'polo-menu',
@@ -31,7 +32,8 @@ export class MenuComponent {
   constructor(
     private db: DatabaseService,
     public activeStory: ActiveStoryService,
-    private modal: ModalService
+    private modal: ModalService,
+    private panzoom: PanzoomService
   ) {
     effect(() => {
       this.activeStory.storyName()
@@ -74,6 +76,9 @@ export class MenuComponent {
       id: newTree[0].id,
       name: newTree[0].name,
     })
+
+    this.panzoom.goTo(-5000, -5000)
+
     this.loadTree(newTree[0].id)
   }
 

@@ -51,4 +51,8 @@ export class PanzoomService {
 
     this.boardReference.moveTo(finalX, finalY)
   }
+
+  goTo(x: number, y: number) {
+    this.boardReference.moveTo(x, y)
+  }
 }
