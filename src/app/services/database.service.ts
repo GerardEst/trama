@@ -25,7 +25,17 @@ export class DatabaseService {
     }
   }
 
+  //  TODO - Comprovar si tot ho estic pillant aixi o tinc algo que encara mira user() profile i tal per saber el plan
   public userPlanIs(plan: string) {
+    console.log(this.user().profile.next_payment)
+    console.log(Date.now())
+    if (
+      this.user().profile.subscription_status === 'canceled' &&
+      this.user().profile.next_payment > Date.now()
+    ) {
+      console.log('Canceled plan')
+      if (this.user().profile.plan.includes(plan)) return true
+    }
     if (this.user().profile.subscription_status === 'active') {
       if (this.user().profile.plan.includes(plan)) return true
     }

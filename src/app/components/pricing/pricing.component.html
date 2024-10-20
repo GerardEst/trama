@@ -69,9 +69,9 @@
       </p>
       }
     </div>
-    @if(userPlan==='creator' && cancelledSubscription){
-    <p class="currentPlan currentPlan--cancelled">
-      Your current cancelled plan, you can enjoy it till the end of period
+    @if(userPlan==='creator' && canceledSubscription){
+    <p class="currentPlan currentPlan--canceled">
+      Your current canceled plan, you can enjoy it till the end of period
     </p>
     }@else if(userPlan==='creator'){
     <p class="currentPlan">Your current plan</p>
@@ -102,7 +102,7 @@
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
     @if(userPlan==='creator'){ @if(!preventEasyDowngrading &&
-    !cancelledSubscription){
+    !canceledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"
@@ -124,9 +124,9 @@
       <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
       }
     </div>
-    @if(userPlan==='pro' && cancelledSubscription){
-    <p class="currentPlan currentPlan--cancelled">
-      Your current cancelled plan, you can enjoy it till the end of period
+    @if(userPlan==='pro' && canceledSubscription){
+    <p class="currentPlan currentPlan--canceled">
+      Your current canceled plan, you can enjoy it till the end of period
     </p>
     }@else if(userPlan==='pro'){
     <p class="currentPlan">Your current plan</p>
@@ -157,7 +157,7 @@
           </li-->
     </ul>
     @if(userPlan==='pro'){ @if(!preventEasyDowngrading &&
-    !cancelledSubscription){
+    !canceledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"
