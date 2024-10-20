@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
       .update({
         subscription_status: subscription.status,
         plan: subscription.plan.nickname,
-        next_payment: nextPaymentDate.toISOString(),
+        next_payment: nextPaymentDate,
       })
       .eq('customer_id', customerId)
 

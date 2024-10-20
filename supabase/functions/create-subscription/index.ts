@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
         subscription_status: subscription.status,
         customer_id: customerId,
         plan: subscription.plan.nickname,
-        next_payment: nextPaymentDate.toISOString(),
+        next_payment: nextPaymentDate,
       })
       .eq('email', customer.email)
       .select()
