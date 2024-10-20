@@ -12,6 +12,9 @@
       (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
     ></polo-billing-cycle>
     <polo-pricing
+      [cancelledSubscription]="
+        db.user().profile.subscription_status === 'canceled'
+      "
       [userPlan]="db.user().profile.plan || 'free'"
       [payAnnually]="payAnnually"
       [email]="db.user().email"

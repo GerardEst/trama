@@ -69,7 +69,11 @@
       </p>
       }
     </div>
-    @if(userPlan==='creator'){
+    @if(userPlan==='creator' && cancelledSubscription){
+    <p class="currentPlan currentPlan--cancelled">
+      Your current cancelled plan, you can enjoy it till the end of period
+    </p>
+    }@else if(userPlan==='creator'){
     <p class="currentPlan">Your current plan</p>
     }
     <p>
@@ -97,7 +101,8 @@
       <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
-    @if(userPlan==='creator'){ @if(!preventEasyDowngrading){
+    @if(userPlan==='creator'){ @if(!preventEasyDowngrading &&
+    !cancelledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"
@@ -119,7 +124,11 @@
       <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
       }
     </div>
-    @if(userPlan==='pro'){
+    @if(userPlan==='pro' && cancelledSubscription){
+    <p class="currentPlan currentPlan--cancelled">
+      Your current cancelled plan, you can enjoy it till the end of period
+    </p>
+    }@else if(userPlan==='pro'){
     <p class="currentPlan">Your current plan</p>
     }
     <p>
@@ -147,7 +156,8 @@
       <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
     </ul>
-    @if(userPlan==='pro'){ @if(!preventEasyDowngrading){
+    @if(userPlan==='pro'){ @if(!preventEasyDowngrading &&
+    !cancelledSubscription){
     <polo-basic-button
       (click)="cancelSubscription()"
       text="Cancel subscription"

@@ -17,6 +17,7 @@ export class PricingComponent {
   pricing = PRICING
 
   @Input({ transform: checkPlan }) userPlan?: string | undefined
+  @Input() cancelledSubscription: boolean = false
   @Input() payAnnually: boolean = false
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
