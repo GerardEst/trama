@@ -5,6 +5,7 @@ import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   httpClient: Stripe.createFetchHttpClient(),
 })
+const allowedOrigins = ['https://www.textandplay.com', 'http://localhost:4200']
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -18,13 +19,16 @@ const supabase = createClient(
 )
 
 Deno.serve(async (req) => {
+  const origin = req.headers.get('origin')
+
   // Les altres funcions s'estan invocant desde stripe, aquesta desde textandplay
   // Per tant aquesta necessita una mica de CORS (no sé perquè, suposo que supabase ja permet per defecte stripe)
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
-        'Access-Control-Allow-Origin':
-          'https://www.textandplay.com, http://localhost:4200',
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
+          ? origin
+          : '',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
@@ -74,8 +78,9 @@ Deno.serve(async (req) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin':
-            'https://www.textandplay.com , http://localhost:4200',
+          'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
+            ? origin
+            : '',
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
@@ -86,8 +91,9 @@ Deno.serve(async (req) => {
     return new Response(String(err?.message ?? err), {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin':
-          'https://www.textandplay.com, http://localhost:4200',
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
+          ? origin
+          : '',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
