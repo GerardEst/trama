@@ -7,7 +7,14 @@
     </p>
     }
     <p>Plans</p>
+    @if(db.user().profile.subscription_status === 'canceled'){
+    <p>
+      You will not be charged, but you can enjoy the features of the plan till
+      {{ db.user().profile.next_payment }}
+    </p>
+    }@else{
     <p>Your next payment will be {{ db.user().profile.next_payment }}</p>
+    }
     <polo-billing-cycle
       (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
     ></polo-billing-cycle>
