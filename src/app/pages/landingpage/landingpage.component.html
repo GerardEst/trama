@@ -15,26 +15,29 @@
   <div class="intro section--centeredContent">
     <!--h1>Write interactive text content that reacts to user inputs</h1-->
     <!-- Interact with users with simple, fresh and engaging ways-->
-    <h1>
+    <h1>Create tests that users want to take</h1>
+    <!--h1>
       Engage your audience with interactive content that
       <span>react to their actions</span>
-    </h1>
+    </h1-->
     <h2>
-      From simple formularies and quizzes to intricate story-driven experiences.
+      From simple formularies and quizzes to intricate story-driven flows.
       Textandplay provides the simplest tools to
-      <strong>create, distribute and analyse results</strong> of interactive
-      text content
+      <strong>create</strong> tests, <strong>share</strong> them with your audience and <strong>analyse</strong> the results.
     </h2>
     <!--div>
       <li>Intuitive node-based platform for creating dynamic interactive tests and narratives</li>
       <li>Build complex, branching, reactive scenarios with ease</li>
       <li>Share with one click and track user decisions</li>
     </div-->
-    <polo-landing-button
-      destiny="/dashboard"
-      behaviour="link"
-      text="Start creating! (It's free 😉)"
-    ></polo-landing-button>
+    <div class="intro__buttons">
+      <polo-landing-button
+        destiny="/dashboard"
+        behaviour="link"
+        text="Start creating!"
+      ></polo-landing-button>
+      <polo-landing-button (click)="scrollToExamples()" text="See some examples"></polo-landing-button>
+    </div>
   </div>
 </section>
 
@@ -61,7 +64,7 @@
     </div>
   </div-->
 </section>
-<section class="section--usecases">
+<section #examplesSection class="section--usecases">
   <div class="usecases section--centeredContent textImageContent">
     <div class="usecases__list">
       <h2 class="usecases__title txt-baskerville">Who is this for?</h2>
@@ -112,7 +115,7 @@
         <iframe
           title="Brand flow example"
           @showUseCase
-          src="https://textandplay.com/private/0f4aad97-efb5-4d76-ae79-04a80f82db6b"
+          src="https://textandplay.com/private/0a9d2015-8d6c-44ae-95cc-980f59a8efdc"
         ></iframe>
         } @if(activeUseCase==='schools'){
         <iframe
@@ -143,7 +146,7 @@
         title="Dynamic flow control"
       >
         <p>
-          Guide users through personalized paths based on their choices and
+          Guide users through personalized paths based on their previous choices and
           actions
           <!--With our flow control features, you can lead your users to specific
           points depending on their previuos actions-->

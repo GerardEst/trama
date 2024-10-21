@@ -48,6 +48,7 @@ import { BasicButtonComponent } from '../../components/ui/basic-button/basic-but
 })
 export class LandingpageComponent {
   @ViewChild('board') board?: BoardComponent
+  @ViewChild('examplesSection') examplesSection?: any
 
   exampleTree: any = exampleStory
 
@@ -103,5 +104,10 @@ export class LandingpageComponent {
       (loggedUser.profile.subscription_status === 'active' &&
         loggedUser.profile.plan) ||
       'free'
+  }
+
+  scrollToExamples() {
+    if(!this.examplesSection) return
+    this.examplesSection.nativeElement.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 }
