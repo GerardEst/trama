@@ -56,7 +56,7 @@ export class GameComponent {
   @ViewChild('node') DOMnode?: GameNodeComponent
   @Input() customStyles?: string
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
-  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'slow'
+  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
   activeNodes?: any = []
   nodesToWrite: any = []
