@@ -219,6 +219,15 @@ export class ActiveStoryService {
         }
       )
     }
+    if (duplicatedNode.fallbackCondition) {
+      duplicatedNode.fallbackCondition.id =
+        duplicatedNode.fallbackCondition.id.replace(
+          /_[0-9]+_/,
+          `_${newId.split('_')[1]}_`
+        )
+      delete duplicatedNode.fallbackCondition.join
+    }
+
     duplicatedNode.left = duplicatedNode.left + 290
 
     // Add the new node to the entireTree object. This will add it to the board
