@@ -60,11 +60,16 @@ export class BoardComponent {
 
   @HostListener('contextmenu', ['$event'])
   handleRightClick(event: MouseEvent) {
-    event.preventDefault() // Prevent the default context menu from appearing
-    if (this.isDrawingJoin) {
-      this.stopDragging()
-    } else {
-      this.openContextMenu(event)
+    const target = event.target as HTMLElement
+    if (!target) return
+
+    if (target.classList.contains('board')) {
+      event.preventDefault() // Prevent the default context menu from appearing
+      if (this.isDrawingJoin) {
+        this.stopDragging()
+      } else {
+        this.openContextMenu(event)
+      }
     }
   }
 
