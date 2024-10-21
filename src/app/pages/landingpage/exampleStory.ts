@@ -362,7 +362,7 @@ export const exampleStory = {
       id: 'node_26',
       top: 4686,
       left: 3572,
-      text: "It's a legitimate use.\n\nTo end with this preview, let's see some of the information we gathered from your actions:\n\nYou went to node A? #condition_2\nYou went to node B? #condition_1\nYou stated you are Iñigo Montoya? #isInigoMontoya\nYou have #stat_5 coins\nYou have #stat_4 bananas\nAnd you said: \n#useOfThings\n\nApart from using that data inside the current story to customize the experience, this will also be saved in your analytics page, so you will have the stats you want for every player of your stories, maybe to evaluate some exams, to know your users better, to gain customized insights, etc.",
+      text: "It's a legitimate use.\n\nTo end with this preview, let's see some of the information we gathered from your actions:\n\nYou went to node A? #condition_2\nYou went to node B? #condition_1\nYou stated you are Iñigo Montoya? #condition_3\nYou have #stat_5 coins\nYou have #stat_4 bananas\nAnd you said: \n#useOfThings\n\nApart from using that data inside the current story to customize the experience, this will also be saved in your analytics page, so you will have the stats you want for every player of your stories, maybe to evaluate some exams, to know your users better, to gain customized insights, etc.",
       type: 'content',
       answers: [
         {

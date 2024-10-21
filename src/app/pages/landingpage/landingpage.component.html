@@ -23,7 +23,8 @@
     <h2>
       From simple formularies and quizzes to intricate story-driven flows.
       Textandplay provides the simplest tools to
-      <strong>create</strong> tests, <strong>share</strong> them with your audience and <strong>analyse</strong> the results.
+      <strong>create</strong> tests, <strong>share</strong> them with your
+      audience and <strong>analyse</strong> the results.
     </h2>
     <!--div>
       <li>Intuitive node-based platform for creating dynamic interactive tests and narratives</li>
@@ -36,7 +37,10 @@
         behaviour="link"
         text="Start creating!"
       ></polo-landing-button>
-      <polo-landing-button (click)="scrollToExamples()" text="See some examples"></polo-landing-button>
+      <polo-landing-button
+        (click)="scrollToExamples()"
+        text="See some examples"
+      ></polo-landing-button>
     </div>
   </div>
 </section>
@@ -52,7 +56,7 @@
     ></polo-board>
     <img src="assets/images/landing/arrow.webp" />
     <polo-landing-mobile [camera]="true" [topSpacing]="true">
-      <polo-game mode="cumulative"></polo-game>
+      <polo-game mode="single"></polo-game>
     </polo-landing-mobile>
   </div>
   <!--div class="mobile__text">
@@ -146,8 +150,8 @@
         title="Dynamic flow control"
       >
         <p>
-          Guide users through personalized paths based on their previous choices and
-          actions
+          Guide users through personalized paths based on their previous choices
+          and actions
           <!--With our flow control features, you can lead your users to specific
           points depending on their previuos actions-->
         </p>
