@@ -54,7 +54,7 @@ export class GameNodeComponent {
   // Writting options
   speeds: any = {
     immediate: 1,
-    fast: 10,
+    fast: 20,
     slow: 40,
   }
   writting: boolean = false
