@@ -1,5 +1,10 @@
 @if (behaviour === 'link') {
-<a [href]="destiny" [class.inactive]="inactive" [class.highlight]="highlight">
+<a
+  [href]="destiny"
+  [class.inactive]="inactive"
+  [class.highlight]="highlight"
+  [class.small]="small"
+>
   {{ text }}
 </a>
 } @else if (behaviour === 'buttonlink') {
@@ -7,11 +12,16 @@
   (click)="router.navigate([destiny])"
   [class.inactive]="inactive"
   [class.highlight]="highlight"
+  [class.small]="small"
 >
   {{ text }}
 </button>
 }@else if (behaviour === 'button') {
-<button [class.inactive]="inactive" [class.highlight]="highlight">
+<button
+  [class.inactive]="inactive"
+  [class.highlight]="highlight"
+  [class.small]="small"
+>
   {{ text }}
 </button>
 }

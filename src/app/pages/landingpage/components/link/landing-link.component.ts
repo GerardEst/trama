@@ -14,6 +14,7 @@ export class LandingLinkComponent {
   @Input() text?: string
   @Input() inactive: boolean = false
   @Input() highlight: boolean = false
+  @Input() small: boolean = false
 
   constructor(public router: Router) {}
 }

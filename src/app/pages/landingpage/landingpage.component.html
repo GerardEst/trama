@@ -94,6 +94,13 @@
           products and services, track most choosen answers and adapt your
           business to <strong>bring more value</strong>
         </p>
+        <polo-landing-link
+          [small]="true"
+          [highlight]="activeUseCase === 'brands'"
+          text="{{
+            activeUseCase === 'brands' ? 'Active example' : 'Check this example'
+          }}"
+        ></polo-landing-link>
       </div>
       <div
         class="usecases__list__item"
@@ -106,6 +113,15 @@
           discover where your students failed most, and
           <strong>upgrade quality of your classes</strong>
         </p>
+        <polo-landing-link
+          [small]="true"
+          [highlight]="activeUseCase === 'schools'"
+          text="{{
+            activeUseCase === 'schools'
+              ? 'Active example'
+              : 'Check this example'
+          }}"
+        ></polo-landing-link>
       </div>
       <div
         class="usecases__list__item"
@@ -118,6 +134,15 @@
           <strong>straightforward tools to let you just create</strong> whatever
           you want, from big text adventures to small funny quizzes
         </p>
+        <polo-landing-link
+          [small]="true"
+          [highlight]="activeUseCase === 'creatives'"
+          text="{{
+            activeUseCase === 'creatives'
+              ? 'Active example'
+              : 'Check this example'
+          }}"
+        ></polo-landing-link>
       </div>
       <div class="usecases__list__item">
         <h3 class="txt-baskerville txt-l">You!</h3>
