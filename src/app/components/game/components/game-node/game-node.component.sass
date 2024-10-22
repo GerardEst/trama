@@ -11,20 +11,6 @@
     padding: 0 2rem
     display: flex
     flex-direction: column
-    .textInput
-      display: flex
-      gap: 0.5rem
-      margin-top: 1rem
-      input
-        flex: 1
-        height: 3.5rem
-        border-radius: 6px
-        border: var(--buttons-border-width) solid var(--text-and-borders)
-        input:active
-          outline: var(--text-and-borders)
-      button
-        width: 40px
-        background: var(--button-background-color) no-repeat url("/assets/icons/play.svg") center/15px
     p
       font-family: 'Baskerville'
       font-size: 1.2rem
@@ -77,6 +63,28 @@
       animation: 0.4s selected
       animation-fill-mode: forwards
       border: var(--buttons-border-width) solid var(--button-background-selected)
+    .textInput
+      display: flex
+      gap: 0.5rem
+      margin-top: 1rem
+      input
+        flex: 1
+        height: 3.5rem
+        border-radius: 6px
+        border: var(--buttons-border-width) solid var(--text-and-borders)
+        input:active
+          outline: var(--text-and-borders)
+      button
+        width: 40px
+        background: var(--button-background-color) no-repeat
+        background-image: url("/assets/icons/play.svg")
+        background-position: center
+        background-size: 15px
+        &.selected
+          background-image: url("/assets/icons/play-white.svg") !important
+          background-size: 15px !important
+          background-repeat: no-repeat !important
+          background-position: center !important
 
 @keyframes selected
   from
