@@ -113,7 +113,7 @@ export class LandingpageComponent {
 
       this.examples.nativeElement.scrollIntoView({
         behavior: 'smooth',
-        block: 'center',
+        block: 'start',
       })
     } else if (sectionId === 'pricing') {
       console.log(sectionId)
