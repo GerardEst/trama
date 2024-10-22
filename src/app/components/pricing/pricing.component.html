@@ -110,10 +110,11 @@
       type="danger"
     ></polo-basic-button>
     } }@if(userPlan==='free' || !userPlan) {
-    <polo-basic-button
+    <polo-landing-link
       (click)="subscribe('creator', payAnnually)"
+      [highlight]="true"
       text="Be a creator"
-    ></polo-basic-button>
+    ></polo-landing-link>
     }
   </div>
   <div class="pricing__plan">
@@ -166,10 +167,10 @@
       type="danger"
     ></polo-basic-button>
     } }@if(userPlan==='free' || !userPlan) {
-    <polo-basic-button
+    <polo-landing-link
       (click)="subscribe('pro', payAnnually)"
       text="Upgrade to pro"
-    ></polo-basic-button>
+    ></polo-landing-link>
     }
   </div>
 </div>

@@ -2,12 +2,16 @@
 <a [href]="destiny" [class.inactive]="inactive" [class.highlight]="highlight">
   {{ text }}
 </a>
-} @if (behaviour === 'button') {
+} @else if (behaviour === 'buttonlink') {
 <button
   (click)="router.navigate([destiny])"
   [class.inactive]="inactive"
   [class.highlight]="highlight"
 >
+  {{ text }}
+</button>
+}@else if (behaviour === 'button') {
+<button [class.inactive]="inactive" [class.highlight]="highlight">
   {{ text }}
 </button>
 }

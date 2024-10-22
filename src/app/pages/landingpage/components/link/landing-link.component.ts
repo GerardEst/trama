@@ -9,7 +9,7 @@ import { Router } from '@angular/router'
   styleUrl: './landing-link.component.sass',
 })
 export class LandingLinkComponent {
-  @Input() behaviour: 'link' | 'button' = 'button'
+  @Input() behaviour?: 'link' | 'buttonlink' | 'button' = 'button'
   @Input() destiny?: string
   @Input() text?: string
   @Input() inactive: boolean = false
