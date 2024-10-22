@@ -88,10 +88,11 @@
         [class.active]="activeUseCase === 'brands'"
         (click)="selectUseCase('brands')"
       >
-        <h3 class="txt-baskerville txt-l">Brands</h3>
+        <h3 class="txt-baskerville txt-l">🛍️ Brands</h3>
         <p>
-          Engage your users with custom tests that lead them to your
-          products/services
+          Engage your users with personalized tests that guide them to your
+          products and services, track most choosen answers and adapt your
+          business to <strong>bring more value</strong>
         </p>
       </div>
       <div
@@ -99,18 +100,23 @@
         [class.active]="activeUseCase === 'schools'"
         (click)="selectUseCase('schools')"
       >
-        <h3 class="txt-baskerville txt-l">Schools</h3>
-        <p>Gamify your classes and exams, evaluate <br />automatically</p>
+        <h3 class="txt-baskerville txt-l">🎓 Schools</h3>
+        <p>
+          Gamify your classrooms, evaluate automatically, analyse the results,
+          discover where your students failed most, and
+          <strong>upgrade quality of your classes</strong>
+        </p>
       </div>
       <div
         class="usecases__list__item"
         [class.active]="activeUseCase === 'creatives'"
         (click)="selectUseCase('creatives')"
       >
-        <h3 class="txt-baskerville txt-l">Creative minds</h3>
+        <h3 class="txt-baskerville txt-l">🖍️ Creative minds</h3>
         <p>
-          Have fun creating questionnaries or text adventures and sharing with
-          whoever you want!
+          Writters, storytellers, creators... We provide the most
+          <strong>straightforward tools to let you just create</strong> whatever
+          you want, from big text adventures to small funny quizzes
         </p>
       </div>
       <div class="usecases__list__item">
@@ -120,6 +126,7 @@
           text="Start creating!"
           destiny="/dashboard"
           behaviour="link"
+          [highlight]="true"
         ></polo-landing-link>
       </div>
     </div>
