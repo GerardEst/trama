@@ -49,7 +49,7 @@
       ></polo-landing-link>
       <polo-landing-link
         (click)="scrollTo('examples')"
-        text="See some examples"
+        text="Check some examples"
       ></polo-landing-link>
     </div>
   </div>
@@ -95,6 +95,7 @@
           business to <strong>bring more value</strong>
         </p>
         <polo-landing-link
+          (click)="scrollTo('activeExample')"
           [small]="true"
           [highlight]="activeUseCase === 'brands'"
           text="{{
@@ -114,6 +115,7 @@
           <strong>upgrade quality of your classes</strong>
         </p>
         <polo-landing-link
+          (click)="scrollTo('activeExample')"
           [small]="true"
           [highlight]="activeUseCase === 'schools'"
           text="{{
@@ -135,6 +137,7 @@
           you want, from big text adventures to small funny quizzes
         </p>
         <polo-landing-link
+          (click)="scrollTo('activeExample')"
           [small]="true"
           [highlight]="activeUseCase === 'creatives'"
           text="{{
@@ -155,7 +158,7 @@
         ></polo-landing-link>
       </div>
     </div>
-    <div class="usecases__examples">
+    <div #activeExample class="usecases__examples">
       <polo-landing-mobile>
         @if(activeUseCase==='brands'){
         <iframe

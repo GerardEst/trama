@@ -50,6 +50,7 @@ export class LandingpageComponent {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('examplesSection') examples?: any
   @ViewChild('pricingSection') pricing?: any
+  @ViewChild('activeExample') activeExample?: any
 
   exampleTree: any = exampleStory
 
@@ -123,6 +124,13 @@ export class LandingpageComponent {
       this.pricing.nativeElement.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
+      })
+    } else if (sectionId === 'activeExample') {
+      if (!this.activeExample) return
+
+      this.activeExample.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
       })
     }
   }
