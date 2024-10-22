@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { LandingButtonComponent } from 'src/app/pages/landingpage/components/button/landing-button.component'
+import { LandingLinkComponent } from 'src/app/pages/landingpage/components/link/landing-link.component'
 import { PRICING } from 'src/app/constants'
 import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/services/database.service'
@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment'
 @Component({
   selector: 'polo-pricing',
   standalone: true,
-  imports: [LandingButtonComponent, BasicButtonComponent],
+  imports: [LandingLinkComponent, BasicButtonComponent],
   templateUrl: './pricing.component.html',
   styleUrl: './pricing.component.sass',
 })

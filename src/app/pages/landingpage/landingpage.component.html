@@ -1,13 +1,20 @@
 <menu>
   <p class="logo">Text & Play <sup> beta</sup></p>
-  <div class="login">
-    @if (checkedLoggedUser) {
-    <polo-landing-button
-      behaviour="link"
-      destiny="/dashboard"
-      text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
-    ></polo-landing-button>
-    }
+  <div>
+    <polo-landing-link
+      (click)="scrollTo('pricing')"
+      text="Pricing"
+    ></polo-landing-link>
+    <!--polo-landing-link destiny="/blog" text="Blog"></polo-landing-link-->
+    <div class="login">
+      @if (checkedLoggedUser) {
+      <polo-landing-link
+        behaviour="link"
+        destiny="/dashboard"
+        text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
+      ></polo-landing-link>
+      }
+    </div>
   </div>
 </menu>
 <section class="section--intro pattern-background">
@@ -33,15 +40,15 @@
       <li>Share with one click and track user decisions</li>
     </div-->
     <div class="intro__buttons">
-      <polo-landing-button
+      <polo-landing-link
         destiny="/dashboard"
         behaviour="link"
         text="Start creating!"
-      ></polo-landing-button>
-      <polo-landing-button
-        (click)="scrollToExamples()"
+      ></polo-landing-link>
+      <polo-landing-link
+        (click)="scrollTo('examples')"
         text="See some examples"
-      ></polo-landing-button>
+      ></polo-landing-link>
     </div>
   </div>
 </section>
@@ -107,11 +114,11 @@
       <div class="usecases__list__item">
         <h3 class="txt-baskerville txt-l">You!</h3>
         <p>We did all this for you to enjoy</p>
-        <polo-landing-button
+        <polo-landing-link
           text="Start creating!"
           destiny="/dashboard"
           behaviour="link"
-        ></polo-landing-button>
+        ></polo-landing-link>
       </div>
     </div>
     <div class="usecases__examples">
@@ -204,7 +211,7 @@
     </div>
   </div>
 </section>
-<section class="section--pricing">
+<section #pricingSection class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
     <polo-billing-cycle

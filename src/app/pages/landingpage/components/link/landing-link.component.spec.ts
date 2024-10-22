@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { LandingButtonComponent } from './landing-button.component'
+import { LandingButtonComponent } from './landing-link.component'
 
 describe('LandingButtonComponent', () => {
   let component: LandingButtonComponent

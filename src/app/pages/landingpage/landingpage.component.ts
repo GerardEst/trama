@@ -9,7 +9,7 @@ import { Title, Meta } from '@angular/platform-browser'
 import { FormsModule } from '@angular/forms'
 import { exampleStory } from './exampleStory'
 import { LandingCardComponent } from './components/landing-card/landing-card.component'
-import { LandingButtonComponent } from './components/button/landing-button.component'
+import { LandingLinkComponent } from './components/link/landing-link.component'
 import { LandingMobileComponent } from './components/landing-mobile/landing-mobile.component'
 import { PricingComponent } from 'src/app/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-cycle.component'
@@ -23,7 +23,7 @@ import { BasicButtonComponent } from '../../components/ui/basic-button/basic-but
   imports: [
     BoardComponent,
     LandingMobileComponent,
-    LandingButtonComponent,
+    LandingLinkComponent,
     LandingCardComponent,
     GameComponent,
     FormsModule,
@@ -48,7 +48,8 @@ import { BasicButtonComponent } from '../../components/ui/basic-button/basic-but
 })
 export class LandingpageComponent {
   @ViewChild('board') board?: BoardComponent
-  @ViewChild('examplesSection') examplesSection?: any
+  @ViewChild('examplesSection') examples?: any
+  @ViewChild('pricingSection') pricing?: any
 
   exampleTree: any = exampleStory
 
@@ -106,8 +107,23 @@ export class LandingpageComponent {
       'free'
   }
 
-  scrollToExamples() {
-    if(!this.examplesSection) return
-    this.examplesSection.nativeElement.scrollIntoView({ behavior: "smooth", block: "center" });
+  scrollTo(sectionId: string) {
+    if (sectionId === 'examples') {
+      if (!this.examples) return
+
+      this.examples.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
+    } else if (sectionId === 'pricing') {
+      console.log(sectionId)
+      if (!this.pricing) return
+
+      console.log(sectionId)
+      this.pricing.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
   }
 }
