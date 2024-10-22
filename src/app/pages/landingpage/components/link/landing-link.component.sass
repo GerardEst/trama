@@ -14,3 +14,10 @@ a.inactive, button.inactive
   pointer-events: none
 a:hover, button:hover
   background: var(--background-gray)
+a.highlight, button.highlight
+  background-color: var(--important-color)
+  color: white
+  border: 1px solid white
+  outline: 1px solid var(--important-color)
+  &:hover
+    background: var(--important-color-shade)

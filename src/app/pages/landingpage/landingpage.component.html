@@ -12,6 +12,7 @@
         behaviour="link"
         destiny="/dashboard"
         text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
+        [highlight]="true"
       ></polo-landing-link>
       }
     </div>
@@ -44,6 +45,7 @@
         destiny="/dashboard"
         behaviour="link"
         text="Start creating!"
+        [highlight]="true"
       ></polo-landing-link>
       <polo-landing-link
         (click)="scrollTo('examples')"

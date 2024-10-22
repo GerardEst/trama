@@ -1,10 +1,13 @@
 @if (behaviour === 'link') {
-<a [href]="destiny" [class.inactive]="inactive">
+<a [href]="destiny" [class.inactive]="inactive" [class.highlight]="highlight">
   {{ text }}
 </a>
-}
-@if (behaviour === 'button') {
-<button (click)="router.navigate([destiny])" [class.inactive]="inactive">
+} @if (behaviour === 'button') {
+<button
+  (click)="router.navigate([destiny])"
+  [class.inactive]="inactive"
+  [class.highlight]="highlight"
+>
   {{ text }}
 </button>
 }

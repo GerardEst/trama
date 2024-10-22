@@ -13,6 +13,7 @@ export class LandingLinkComponent {
   @Input() destiny?: string
   @Input() text?: string
   @Input() inactive: boolean = false
+  @Input() highlight: boolean = false
 
   constructor(public router: Router) {}
 }
