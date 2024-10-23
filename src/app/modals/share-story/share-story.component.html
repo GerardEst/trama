@@ -1,45 +1,57 @@
 <polo-modal-window mode="dialog" name="Share options">
   <ng-container modal-header></ng-container>
   <ng-container modal-content>
-    <p>Share with a private link</p>
-    <p>{{ environment.baseRoute }}/private/{{ activeStory.storyId() }}</p>
-    <polo-basic-button
-      [text]="copiedLinks.private ? 'Copied' : 'Copy link'"
-      (click)="copyLink('private')"
-    ></polo-basic-button>
-    <p>
-      This link is not alterable and will exist as long as the story exists, be
-      careful when sharing it
-    </p>
-    @if(activeStory.storyConfiguration().customId){
-    <p>Share with your customized path</p>
-    <p>
-      {{ environment.baseRoute }}/{{
-        activeStory.storyConfiguration().customId
-      }}
-    </p>
-    <polo-basic-button
-      [text]="copiedLinks.custom ? 'Copied' : 'Copy link'"
-      (click)="copyLink('custom')"
-    ></polo-basic-button>
-    <polo-basic-button
-      (click)="cleanCustomId()"
-      text="Remove link"
-    ></polo-basic-button>
-    }@else {
-    <p>Beautify the path adding a custom ID</p>
-    <input
-      [class.alert]="takenCustomId"
-      (change)="updateCustomId($event)"
-      type="text"
-    />
-    <p></p>
-    @if (takenCustomId) {
-    <p>ID already taken</p>
-    } }
-    <p>
-      Removing or changing the custom ID, users using this link will loose
-      access to the story
-    </p>
+    <div class="content">
+      <div class="linkContainer">
+        <p class="txt-weight-bold">Share with a private link</p>
+        <div class="linkBox">
+          <p>{{ environment.baseRoute }}/private/{{ activeStory.storyId() }}</p>
+          <polo-basic-button
+            [text]="copiedLinks.private ? 'Copied' : 'Copy'"
+            icon="/assets/icons/copy.svg"
+            (click)="copyLink('private')"
+          ></polo-basic-button>
+        </div>
+        <p class="txt-ralewayItalic">
+          This link is not alterable and will exist as long as the story exists,
+          be careful when sharing it
+        </p>
+      </div>
+      <div class="linkContainer">
+        @if(activeStory.storyConfiguration().customId){
+        <p class="txt-weight-bold">Share with your customized path</p>
+        <div class="linkBox">
+          <p>
+            {{ environment.baseRoute }}/{{
+              activeStory.storyConfiguration().customId
+            }}
+          </p>
+          <polo-basic-button
+            [text]="copiedLinks.custom ? 'Copied' : 'Copy'"
+            icon="/assets/icons/copy.svg"
+            (click)="copyLink('custom')"
+          ></polo-basic-button>
+          <!--polo-basic-button
+        (click)="cleanCustomId()"
+        text="Remove link"
+      ></polo-basic-button-->
+        </div>
+        }@else {
+        <p>Beautify the path adding a custom ID</p>
+        <input
+          [class.alert]="takenCustomId"
+          (change)="updateCustomId($event)"
+          type="text"
+        />
+        <p></p>
+        @if (takenCustomId) {
+        <p>ID already taken</p>
+        } }
+        <p class="txt-ralewayItalic">
+          Removing or changing the custom ID, users using this link will loose
+          access to the story
+        </p>
+      </div>
+    </div>
   </ng-container>
 </polo-modal-window>

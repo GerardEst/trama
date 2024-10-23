@@ -49,6 +49,6 @@ export class ShareStoryComponent {
     this.copiedLinks[type] = true
     setTimeout(() => {
       this.copiedLinks[type] = false
-    }, 1000)
+    }, 3000)
   }
 }
