@@ -1,9 +1,9 @@
 <div class="modal__background"></div>
-<div class="modal">
+<div class="modal" [class.dialog]="mode === 'dialog'">
   <div class="modal__header">
     <ng-content select="[modal-header]"></ng-content>
     @if (name) {
-      <p class="txt-semibold txt-size-l">{{ name }}</p>
+    <p class="txt-semibold txt-size-l">{{ name }}</p>
     }
     <polo-basic-button
       (click)="close()"

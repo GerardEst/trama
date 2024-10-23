@@ -12,6 +12,7 @@ import { BasicButtonComponent } from '../basic-button/basic-button.component'
 })
 export class ModalWindowComponent {
   @Input() name?: string
+  @Input() mode?: 'dialog'
 
   constructor(private modalService: ModalService) {}
 

@@ -6,6 +6,8 @@ import { SelectOrCreateComponent } from 'src/app/context-menus/select-or-create/
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.component'
 import { DatabaseService } from 'src/app/services/database.service'
+import { ShareStoryComponent } from 'src/app/modals/share-story/share-story.component'
+import { ModalService } from 'src/app/services/modal.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -28,7 +30,8 @@ export class MenuTreeLegendComponent {
   constructor(
     public db: DatabaseService,
     public activeStory: ActiveStoryService,
-    public contextMenu: ContextMenusService
+    public contextMenu: ContextMenusService,
+    private modal: ModalService
   ) {
     effect(() => {
       this.unusedRefs = []
@@ -134,5 +137,10 @@ export class MenuTreeLegendComponent {
 
   toggleLegend() {
     this.showLegend = !this.showLegend
+  }
+
+  openShareModal() {
+    console.log('share')
+    this.modal.launch(ShareStoryComponent)
   }
 }
