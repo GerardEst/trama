@@ -1,14 +1,15 @@
-<div class="modal__background"></div>
-<div class="modal" [class.dialog]="mode === 'dialog'">
+<div @toggleModalBackground class="modal__background" (click)="close()"></div>
+<div @toggleModal class="modal" [class.dialog]="mode === 'dialog'">
   <div class="modal__header">
     <ng-content select="[modal-header]"></ng-content>
     @if (name) {
-    <p class="txt-semibold txt-size-l">{{ name }}</p>
+    <p class="txt-weight-bold txt-l">{{ name }}</p>
     }
     <polo-basic-button
       (click)="close()"
+      [transparent]="true"
       class="close-modal-button"
-      icon="/assets/icons/cross.svg"
+      icon="/assets/icons/close.svg"
     ></polo-basic-button>
   </div>
   <div class="modal__body">
