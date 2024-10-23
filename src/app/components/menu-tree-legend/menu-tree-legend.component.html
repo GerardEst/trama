@@ -20,8 +20,7 @@
           text="Stats"
           title="Stats and conditions"
         ></polo-basic-button>
-        @if (db.user().profile.subscription_status==='active' &&
-        db.user().profile.plan==='pro') {
+        @if (db.userPlanIs('pro')) {
         <polo-basic-button
           (click)="mode = 'games'"
           [selected]="mode === 'games'"
