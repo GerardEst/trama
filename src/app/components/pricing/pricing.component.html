@@ -179,10 +179,11 @@
       type="danger"
     ></polo-basic-button>
     } }@if(userPlan==='free' || !userPlan) {
-    <polo-landing-link
+    <!--polo-landing-link
       (click)="subscribe('pro', payAnnually)"
       text="Upgrade to pro"
-    ></polo-landing-link>
+    ></polo-landing-link-->
+    <polo-landing-link text="Coming soon"></polo-landing-link>
     }
   </div>
 </div>
