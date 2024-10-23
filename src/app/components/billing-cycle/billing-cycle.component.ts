@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core'
+import { Component, Output, EventEmitter, Input } from '@angular/core'
 
 @Component({
   selector: 'polo-billing-cycle',
@@ -10,6 +10,7 @@ import { Component, Output, EventEmitter } from '@angular/core'
 export class BillingCycleComponent {
   @Output() onChangePayingPeriod: EventEmitter<string> = new EventEmitter()
   period: string = 'monthly'
+  @Input() small: boolean = false
 
   changePayingPeriod(period: string) {
     this.period = period

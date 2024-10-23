@@ -6,10 +6,14 @@
     flex: 1
     background-color: white
     border-radius: 15px
-    padding: 2rem 3rem
+    padding: 2rem
     display: flex
     flex-direction: column
     gap: 2rem
+    &.dashed
+      border: 1px dashed var(--dark-gray)
+      &.currentPlan
+        border: 1px solid var(--important-color-shade)
     &.recommendedPlan
       // box-shadow: 0 0 10px inset var(--success)
       // outline: 3px solid var(--success)

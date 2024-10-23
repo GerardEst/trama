@@ -7,6 +7,7 @@ import { StadisticsService } from 'src/app/services/stadistics.service'
 import { Router } from '@angular/router'
 import { PricingComponent } from 'src/app/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-cycle.component'
+import { SeparatorComponent } from '../../components/ui/separator/separator.component'
 
 @Component({
   selector: 'polo-profile-modal',
@@ -16,6 +17,7 @@ import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-
     BasicButtonComponent,
     PricingComponent,
     BillingCycleComponent,
+    SeparatorComponent,
   ],
   templateUrl: './profile-modal.component.html',
   styleUrl: './profile-modal.component.sass',

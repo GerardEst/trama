@@ -21,6 +21,7 @@ export class PricingComponent {
   @Input() payAnnually: boolean = false
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
+  @Input() dashed: boolean = false
 
   cancelingSubscription: boolean = false
 

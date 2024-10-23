@@ -1,5 +1,9 @@
 <div class="pricing">
-  <div class="pricing__plan">
+  <div
+    class="pricing__plan"
+    [class.dashed]="dashed"
+    [class.currentPlan]="userPlan === 'free'"
+  >
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Basic</h2>
       <p class="txt-ralewayItalic">Free</p>
@@ -58,7 +62,11 @@
     ></polo-landing-link>
     }
   </div>
-  <div class="pricing__plan recommendedPlan">
+  <div
+    class="pricing__plan recommendedPlan"
+    [class.dashed]="dashed"
+    [class.currentPlan]="userPlan === 'creator'"
+  >
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
       @if(payAnnually){
@@ -117,7 +125,11 @@
     ></polo-landing-link>
     }
   </div>
-  <div class="pricing__plan">
+  <div
+    class="pricing__plan"
+    [class.dashed]="dashed"
+    [class.currentPlan]="userPlan === 'pro'"
+  >
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Pro</h2>
       @if(payAnnually){
