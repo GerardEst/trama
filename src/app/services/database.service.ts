@@ -19,6 +19,7 @@ export class DatabaseService {
       const fetchUser = await this.supabase.auth.getUser()
       const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
       this.user.set({ ...fetchUser.data.user, profile: profileInfo })
+      console.log(this.user().app_metadata)
       return this.user()
     } catch {
       return false
