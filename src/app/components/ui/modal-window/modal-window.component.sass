@@ -8,6 +8,7 @@
   background-color: #00000088
 
 .modal
+  --spacing: 2rem
   overflow-y: auto
   position: absolute
   left: 50%
@@ -23,29 +24,30 @@
   display: flex
   max-height: calc(100% - 50px)
   flex-direction: column
-  padding: .5rem
+  padding: calc(var(--spacing) / 2)
   gap: 1.5rem
   box-sizing: border-box
   &.dialog
+    --spacing: 1rem
     width: 300px
     height: unset
+  &__header
+    display: flex
+    align-items: center
+    padding-left: var(--spacing)
+    .close-modal-button
+      cursor: pointer
+      align-self: flex-start
+      margin-left: auto
+  &.dialog .modal__header
 
-.modal__header
-  display: flex
-  align-items: center
-  padding-left: 1rem
-  .close-modal-button
-    cursor: pointer
-    align-self: flex-start
-    margin-left: auto
-
-.modal__body
-  max-height: calc(100% - 30px)
-  display: flex
-  flex-direction: column
-  padding: 0 1rem
-.modal__options
-  display: flex
-  gap: 0.5rem
-  justify-content: flex-end
-  padding: 0 1rem
+  &__body
+    max-height: calc(100% - 30px)
+    display: flex
+    flex-direction: column
+    padding: 0 var(--spacing)
+  &__options
+    display: flex
+    gap: calc(var(--spacing) / 2)
+    justify-content: flex-end
+    padding: 0 var(--spacing)
