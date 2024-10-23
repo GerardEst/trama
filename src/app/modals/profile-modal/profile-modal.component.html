@@ -9,7 +9,7 @@
     <p>Plans</p>
     @if(db.user().profile.subscription_status === 'canceled'){
     <p>
-      You will not be charged, but you can enjoy the features of the plan till
+      Your subscription will expire on
       {{ db.user().profile.next_payment }}
     </p>
     }@else{
@@ -26,7 +26,7 @@
       [payAnnually]="payAnnually"
       [email]="db.user().email"
     ></polo-pricing>
-    @if(db.user().email){
+    @if(db.user().app_metadata.provider === 'email'){
     <polo-basic-button
       (click)="changePassword()"
       text="Change your password"
