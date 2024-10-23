@@ -1,9 +1,47 @@
 <polo-modal-window mode="dialog">
+  <ng-container modal-header>
+    <p>Share options</p>
+  </ng-container>
   <ng-container modal-content>
+    <p>Share with a private link</p>
+    <p>{{ environment.baseRoute }}/private/{{ activeStory.storyId() }}</p>
+    <polo-basic-button
+      [text]="copiedLinks.private ? 'Copied' : 'Copy link'"
+      (click)="copyLink('private')"
+    ></polo-basic-button>
     <p>
-      You have reached the maximum number of stories allowed in the free plan<br />
-      Upgrade your plan to creator or pro to have
-      <strong>unlimited</strong> stories
+      This link is not alterable and will exist as long as the story exists, be
+      careful when sharing it
+    </p>
+    @if(activeStory.storyConfiguration().customId){
+    <p>Share with your customized path</p>
+    <p>
+      {{ environment.baseRoute }}/{{
+        activeStory.storyConfiguration().customId
+      }}
+    </p>
+    <polo-basic-button
+      [text]="copiedLinks.custom ? 'Copied' : 'Copy link'"
+      (click)="copyLink('custom')"
+    ></polo-basic-button>
+    <polo-basic-button
+      (click)="cleanCustomId()"
+      text="Remove link"
+    ></polo-basic-button>
+    }@else {
+    <p>Beautify the path adding a custom ID</p>
+    <input
+      [class.alert]="takenCustomId"
+      (change)="updateCustomId($event)"
+      type="text"
+    />
+    <p></p>
+    @if (takenCustomId) {
+    <p>ID already taken</p>
+    } }
+    <p>
+      Removing or changing the custom ID, users using this link will loose
+      access to the story
     </p>
   </ng-container>
 </polo-modal-window>

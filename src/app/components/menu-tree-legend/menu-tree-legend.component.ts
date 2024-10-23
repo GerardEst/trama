@@ -140,7 +140,6 @@ export class MenuTreeLegendComponent {
   }
 
   openShareModal() {
-    console.log('share')
     this.modal.launch(ShareStoryComponent)
   }
 }
