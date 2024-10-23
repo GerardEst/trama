@@ -1,3 +1,4 @@
+@if(isOpen){
 <div @toggleModalBackground class="modal__background" (click)="close()"></div>
 <div @toggleModal class="modal" [class.dialog]="mode === 'dialog'">
   <div class="modal__header">
@@ -19,3 +20,4 @@
     <ng-content select="[modal-options]"></ng-content>
   </div>
 </div>
+}
