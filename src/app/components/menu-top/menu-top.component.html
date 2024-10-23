@@ -119,7 +119,7 @@
       text="🚫 Open analytics"
     ></polo-basic-button>
     } @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-    <polo-basic-button
+    <!--polo-basic-button
       (click)="exportTree()"
       icon="/assets/icons/export.svg"
       text="Export tree"
@@ -131,7 +131,7 @@
       [disabled]="true"
       text="🚫 Export tree"
     >
-    </polo-basic-button>
+    </polo-basic-button-->
     }
     <polo-basic-button
       (click)="deleteTree()"
