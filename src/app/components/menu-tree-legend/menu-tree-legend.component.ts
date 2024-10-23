@@ -1,4 +1,4 @@
-import { Component, effect } from '@angular/core'
+import { Component, effect, Input } from '@angular/core'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { SelectorComponent } from '../ui/selector/selector.component'
 import { ContextMenusService } from 'src/app/services/context-menus.service'
@@ -22,10 +22,10 @@ import { ModalService } from 'src/app/services/modal.service'
   styleUrl: './menu-tree-legend.component.sass',
 })
 export class MenuTreeLegendComponent {
+  @Input() showLegend: boolean = true
   arrayOfRefs: any = []
   unusedRefs: any = []
   mode: 'refs' | 'games' = 'refs'
-  showLegend: boolean = true
 
   constructor(
     public db: DatabaseService,
