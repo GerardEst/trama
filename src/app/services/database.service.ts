@@ -92,16 +92,19 @@ export class DatabaseService {
     return stories[0]
   }
 
-  async getStoryWithID(storyId: string) {
+  async getStoryWithID(storyId: string, basicInfo = false) {
     if (!environment.production)
       console.log(
-        '%cdb call to get everything about a story with a normal id',
+        basicInfo
+          ? '%cdb call to get everything about a story with a normal id'
+          : '%cdb call to get basic info about a story with a normal id',
         'color: #9999ff'
       )
+    const infoToGet = basicInfo ? 'name' : '*'
     // Can't limit to stories of a user because the stories are PUBLIC and can be fetched by everyone to play them
     let { data: stories, error } = await this.supabase
       .from('stories')
-      .select('*')
+      .select(infoToGet)
       .eq('id', storyId)
 
     if (error || !stories[0]) {
@@ -309,8 +312,8 @@ export class DatabaseService {
 
   async getRefsOfTree(storyId: string) {
     if (!environment.production)
-      console.log('db call to get only the refs of a story')
-    console.log('%cdb call to get everything about a tree', 'color: #9999ff')
+      console.log('%cdb call to get only the refs of a story', 'color: #9999ff')
+
     const { data, error } = await this.supabase
       .from('stories')
       .select(`refs: tree->refs`)

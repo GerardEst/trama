@@ -1,12 +1,26 @@
-<div class="cards">
-  <div *ngFor="let play of plays" class="player">
-    <div class="player__data">
-      <p class="player__data__name">{{ play.user_name }}</p>
-      <p>{{ normalizeDate(play.created_at) }}</p>
-    </div>
-    <div *ngFor="let stat of play.result.stats" class="player__stats">
-      <p>{{ getRefName(stat.id) }}</p>
-      <p>{{ stat.amount }}</p>
+<div class="menu">
+  <polo-basic-button
+    (click)="goBack()"
+    icon="/assets/icons/chevron-left.svg"
+    title="Go back"
+  ></polo-basic-button>
+  <p>
+    Statistics - <span class="txt-weight-bold">{{ historyName }}</span>
+  </p>
+</div>
+<div class="statistics">
+  <p class="txt-weight-bold">All responses</p>
+  <polo-separator [space]="true"></polo-separator>
+  <div class="table">
+    <div *ngFor="let play of plays" class="table__row">
+      <div class="player__data">
+        <p class="player__data__name">{{ play.user_name }}</p>
+        <p>{{ normalizeDate(play.created_at) }}</p>
+      </div>
+      <div *ngFor="let stat of play.result.stats" class="player__stats">
+        <p>{{ getRefName(stat.id) }}</p>
+        <p>{{ stat.amount }}</p>
+      </div>
     </div>
   </div>
 </div>
