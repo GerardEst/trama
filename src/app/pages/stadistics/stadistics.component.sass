@@ -11,23 +11,20 @@
 .statistics
   max-width: 1000px
   margin: auto
-  padding: 2rem 0
-.table
-  display: flex
-  flex-direction: column
-  gap: 5px
-  &__row
-    display: flex
+  padding: 2rem
 
-.player
-  border: 1px solid var(--dark-gray)
-  padding: 1rem
-  &__data
-    display: flex
-    justify-content: space-between
-    margin-bottom: 1rem
-    &__name
-      font-weight: 700
-  &__stats
-    display: flex
-    justify-content: space-between
+table
+  width: 100%
+  border-collapse: separate
+  border-spacing: 0 1em
+  tr
+    th.stat, td.stat, th.condition, td.condition
+      width: 50px
+      text-align: center
+    th.condition, td.condition
+      text-align: center
+    th.date, td.date
+      width: 150px
+      text-align: left
+    th.name, td.name
+      text-align: left

@@ -6,6 +6,7 @@ import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-b
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/components/ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
+import { stat } from 'src/app/interfaces'
 
 @Component({
   selector: 'polo-stadistics',
@@ -17,31 +18,22 @@ import { ActiveStoryService } from 'src/app/services/active-story.service'
 export class StadisticsComponent implements OnInit {
   @Input() storyId!: string
   historyName?: string
-  plays: any
-  refs: any
+  games: any
+  statRefs: any
 
   constructor(
     private db: DatabaseService,
     private stadistics: StadisticsService,
-    private router: Router,
-    private activeStory: ActiveStoryService
+    private router: Router
   ) {}
 
   ngOnInit() {
-    // TODO - Si l'activeStory es el mateix que volem, pillem la basicInfo d'allà
-    if (this.activeStory.storyId() === this.storyId) {
-      this.setBasicStoryInfo()
-    } else {
-      console.log(this.activeStory.storyId())
-      console.log(this.activeStory.storyName())
-      this.historyName = this.activeStory.storyName()
-    }
+    this.setBasicStoryInfo()
     this.getStadistics()
   }
 
   async setBasicStoryInfo() {
     const basicInfo = await this.db.getStoryWithID(this.storyId, true)
-    console.log(basicInfo)
     this.historyName = basicInfo.name
   }
 
@@ -51,12 +43,24 @@ export class StadisticsComponent implements OnInit {
       return
     }
 
-    this.refs = await this.db.getRefsOfTree(this.storyId)
-    this.plays = await this.stadistics.getGamesOf(this.storyId)
+    this.statRefs = await this.db.getRefsOfTree(this.storyId)
+    this.games = await this.stadistics.getGamesOf(this.storyId)
   }
 
-  getRefName(id: number) {
-    return this.refs[id]?.name
+  getStatAmount(game: any, stat: any) {
+    const amount = game.result.stats.find(
+      (gameStat: any) => gameStat.id === stat.id
+    )?.amount
+
+    return amount
+  }
+
+  getConditionValue(game: any, condition: any) {
+    const isConditionPresent = game.result.conditions.find(
+      (gameStat: any) => gameStat.id === condition.id
+    )
+
+    return !!isConditionPresent ? '✅' : '❌'
   }
 
   normalizeDate(date: Date) {

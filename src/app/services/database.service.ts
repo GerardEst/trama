@@ -1,7 +1,7 @@
 import { Injectable, WritableSignal, signal } from '@angular/core'
 import { createClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
-import { tree } from '../interfaces'
+import { ref, tree } from '../interfaces'
 
 @Injectable({
   providedIn: 'root',
@@ -301,7 +301,9 @@ export class DatabaseService {
     const { data, error } = await this.supabase
       .from('games')
       .select(
-        `created_at, result, user_name ${withPath && ', path, external_events'}`
+        `id, created_at, result, user_name ${
+          withPath && ', path, external_events'
+        }`
       )
       .eq('story', storyId)
 
@@ -324,7 +326,14 @@ export class DatabaseService {
       return
     }
 
-    return data[0].refs
+    const arrayOfRefs = Object.keys(data[0].refs).map((ref: any) => {
+      return {
+        ...data[0].refs[ref],
+        id: ref,
+      }
+    })
+
+    return arrayOfRefs
   }
 
   async saveNewGameTo(

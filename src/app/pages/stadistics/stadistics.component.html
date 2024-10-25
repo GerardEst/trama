@@ -11,16 +11,40 @@
 <div class="statistics">
   <p class="txt-weight-bold">All responses</p>
   <polo-separator [space]="true"></polo-separator>
-  <div class="table">
-    <div *ngFor="let play of plays" class="table__row">
-      <div class="player__data">
-        <p class="player__data__name">{{ play.user_name }}</p>
-        <p>{{ normalizeDate(play.created_at) }}</p>
-      </div>
-      <div *ngFor="let stat of play.result.stats" class="player__stats">
-        <p>{{ getRefName(stat.id) }}</p>
-        <p>{{ stat.amount }}</p>
-      </div>
-    </div>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="name" onclick="sortTable(0)">Name</th>
+        @for(ref of statRefs; track ref.id){
+        <th
+          [class.stat]="ref.type === 'stat'"
+          [class.condition]="ref.type === 'condition'"
+        >
+          {{ ref.name }}
+        </th>
+        }
+        <th class="date" onclick="sortTable(1)">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(game of games; track game.id){
+      <tr>
+        <td>{{ game.user_name }}</td>
+        @for(ref of statRefs; track ref.id){
+        <td
+          [class.stat]="ref.type === 'stat'"
+          [class.condition]="ref.type === 'condition'"
+        >
+          {{
+            ref.type === 'stat'
+              ? getStatAmount(game, ref)
+              : getConditionValue(game, ref)
+          }}
+        </td>
+        }
+        <td>{{ normalizeDate(game.created_at) }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
 </div>
