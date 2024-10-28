@@ -8,13 +8,16 @@
     height: 180px
     object-fit: contain
     object-position: bottom
+    backdrop-filter: blur(1.5px)
+    border-radius: 100px
   &__text
     position: relative
     flex: 1
-    border: 1px dashed var(--light-text)
+    border: 1px solid var(--text-color)
     border-radius: 10px
     padding: 2.5rem
     display: flex
     flex-direction: column
     gap: 1rem
     background: white
+    box-shadow: 5px 5px var(--text-color)

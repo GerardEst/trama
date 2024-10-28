@@ -14,6 +14,8 @@ iframe
   border: none
   width: 100%
   height: 100%
+  background: #ffffffaa
+  border-radius: 10px
 .logo
     font-size: 2rem
     font-weight: 900
@@ -50,7 +52,7 @@ h2
 p, a, li, details,summary
   font-family: 'Raleway'
   font-size: 1.3rem
-  line-height: 1.8
+  line-height: 1.5
   font-weight: 300
 
 details
@@ -72,7 +74,8 @@ section
   & .section--centeredContent
     width: 100%
     max-width: 1200px
-    margin: auto
+    margin-left: auto
+    margin-right: auto
     padding: 0 30px
     box-sizing: border-box
   & .section--relativeMarginSpace
@@ -107,6 +110,9 @@ section
       &__editor
         padding: 1rem
         background: rgba(255, 255, 255, 0.9)
+  &.section--mainFeatures
+    position: relative
+    padding: 70px 0
   &.section--usecases
     position: relative
     background: white
@@ -115,7 +121,6 @@ section
     padding: 70px 0
   &.section--advantages
     position: relative
-    background: white
     padding: 60px 0
     padding-bottom: 100px
   &.section--roadmap
@@ -145,9 +150,9 @@ section
     margin-top: 2rem
   h1
     max-width: 700px
-    font-family: Baskerville
-    font-size: 3.5rem
-    line-height: 1.1
+    font-family: LibreBaskerville
+    font-size: 3rem
+    line-height: 1.3
     text-align: center
   h2
     font-family: Raleway
@@ -173,6 +178,82 @@ polo-board
 polo-landing-mobile
     padding-right: 5vw
 
+.claim
+  padding: 2rem 4rem
+  backdrop-filter: blur(1.8px)
+  text-align: center
+
+.buildFeatures, .shareFeatures
+  display: grid
+  grid-template-columns: 1fr 1fr 1fr
+  grid-template-rows: 1fr 1fr
+  grid-template-areas: "feature1 feature1 feature1" "feature2 feature2 feature3" "feature4 feature5 feature5" "feature6 feature6 feature6"
+  gap: 2rem
+// .shareFeatures
+//  grid-template-areas: "feature1 feature2 feature2" "feature3 feature3 feature3"
+.feature1
+  grid-area: feature1
+.feature2
+  grid-area: feature2
+.feature3
+  grid-area: feature3
+.feature4
+  grid-area: feature4
+.feature5
+  grid-area: feature5
+.feature6
+  grid-area: feature6
+.feature
+  position: relative
+  border: 1px solid var(--text-color)
+  box-shadow: 5px 5px var(--text-color)
+  border-radius: 10px
+  display: flex
+  overflow: hidden
+  background: white
+  transition: 0.5s ease
+  & .tag
+    border-radius: 6px
+    padding: 4px 10px
+    margin-bottom: 15px
+    width: fit-content
+    & p
+      color: white
+      font-size: 1rem
+    &--build
+      background-color: var(--important-color)
+    &--share
+      background-color: var(--important-color-tint)
+      & p
+        color: var(--text-color)
+    &--analyze
+      background-color: var(--important-color-shade)
+  &:hover
+    box-shadow: 10px 10px var(--text-color)
+    transform: translate(-5px, -5px)
+  & ul
+    & li
+      margin: 10px 0
+      margin-left: 15px
+      list-style: circle
+  &__text
+    padding: 3rem
+    padding-top: 2rem
+    display: flex
+    flex-direction: column
+    &__title
+      font-weight: 700
+      font-size: 1.7rem
+      margin-bottom: 1.2rem
+      font-family: LibreBaskerville
+    &__action
+      margin-top: auto
+      padding-top: 1rem
+  &__image
+    position: absolute
+    width: 250px
+    bottom: 0
+    right: 2rem
 .advantages
   display: flex
   flex-direction: column
@@ -198,15 +279,14 @@ polo-landing-mobile
     width: 100%
 
 .usecases
-  align-items: center
+  margin-top: 30px
   & .linepoints
     position: absolute
-    left: 20px
+    left: 50%
     height: calc(100% - 40px)
     bottom: 0
-    width: 5px
-    background-size: 5px 5px
-    background-image: radial-gradient(rgb(26 26 26) 15%, transparent 20%)
+    width: 2px
+    background: var(--background-gray)
   &__title
     text-align: center
   &__list
@@ -214,18 +294,24 @@ polo-landing-mobile
     display: flex
     align-items: flex-start
     flex-direction: column
-    gap: 4rem
+    gap: 2rem
     margin-top: 1rem
     &__item
+      width: 100%
+      box-sizing: border-box
       background-color: white
       z-index: 1
       padding: 1rem 0
       display: flex
       flex-direction: column
       align-items: flex-start
-      gap: 0.5rem
+      gap: 1rem
       cursor: pointer
       transition: padding-left 0.2s cubic-bezier(0,.74,.12,.95)
+      padding: 2rem
+      box-shadow: var(--shadow-elevation-high)
+      border-radius: 10px
+      border: 1px solid var(--dark-gray)
       h3
         font-size: 1.5rem
       p
@@ -233,12 +319,24 @@ polo-landing-mobile
       polo-landing-link
         margin-top: 0.5rem
       &.active
-        border-left: 2px solid var(--important-color-shade)
-        padding: 1rem 20px
-        background: var(--important-color-tint)
+        border: 1px solid var(--important-color-shade)
+        outline: 1px solid var(--important-color-shade)
+        background: var(--important-color-tint-gradient)
+        box-shadow: var(--shadow-elevation-high)
   &__examples
-    width: 300px
-    margin: auto
+    width: 100%
+    height: 500px
+    display: flex
+    flex-direction: column
+    & .exampleContainer
+      flex: 1
+      background: var(--important-color-tint-gradient)
+      padding: 1rem
+      margin-top: 10px
+      border-radius: 10px
+      box-sizing: border-box
+      box-shadow: var(--shadow-elevation-high)
+      // border: 2px solid var(--important-color-shade)
 
 .roadmap
   display: flex

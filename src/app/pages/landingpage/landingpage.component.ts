@@ -16,6 +16,7 @@ import { BillingCycleComponent } from 'src/app/components/billing-cycle/billing-
 
 import { trigger, style, animate, transition } from '@angular/animations'
 import { BasicButtonComponent } from '../../components/ui/basic-button/basic-button.component'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'polo-landingpage',
@@ -52,6 +53,7 @@ export class LandingpageComponent {
   @ViewChild('pricingSection') pricing?: any
   @ViewChild('activeExample') activeExample?: any
 
+  baseRoute = environment.baseRoute
   exampleTree: any = exampleStory
 
   checkedLoggedUser: boolean = false
