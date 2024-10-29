@@ -19,15 +19,19 @@
   </div>
 </menu>
 <section class="section--intro pattern-background">
-  <div class="background-cover"></div>
+  <polo-board
+    #board
+    [initialZoom]="0.9"
+    [grid]="true"
+    [focusElements]="false"
+    [zoomable]="false"
+  ></polo-board>
+  <!--div class="background-cover"></div-->
   <div class="intro section--centeredContent">
     <!--h1>Write interactive text content that reacts to user inputs</h1-->
     <!-- Interact with users with simple, fresh and engaging ways-->
     <!--h1>Create complex tests that users want to take</h1-->
-    <h1>
-      The no-code tool for creating complex, dynamic tests that adapt to user
-      choices
-    </h1>
+    <h1>The no-code tool for creating tests that adapt to user choices</h1>
     <!--h1>
       Engage your audience with interactive content that
       <span>react to their actions</span>
@@ -58,33 +62,34 @@
   </div>
 </section>
 
-<section class="section--mobile pattern-background">
+<!--section class="section--mobile pattern-background">
+
   <div class="mobile__playground">
-    <polo-board
-      #board
-      [initialZoom]="0.9"
-      [grid]="true"
-      [focusElements]="false"
-      [zoomable]="false"
-    ></polo-board>
+    <div>
+      <div class="interactAdvise">
+        <p class="txt-n">
+          <strong>Play with our node system right here! ⬇️</strong>
+        </p>
+      </div>
+      <polo-board
+        #board
+        [initialZoom]="0.9"
+        [grid]="true"
+        [focusElements]="false"
+        [zoomable]="false"
+      ></polo-board>
+    </div>
     <img alt="Decorative arrow" src="assets/images/landing/arrow.webp" />
     <polo-landing-mobile [camera]="true" [topSpacing]="true">
       <polo-game mode="single"></polo-game>
     </polo-landing-mobile>
   </div>
-  <!--div class="mobile__text">
-    <div class="mobile__text__editor">
-      <h3 class="txt-baskerville txt-l">The node editor</h3>
-      <p class="txt-baskerville">This nodes will be translated to the user experience you see in your right</p>
-    </div>
-    <div class="mobile__text__result">
-    </div>
-  </div-->
-</section>
+
+</section-->
 <section class="section--advantages">
   <div class="advantages section--centeredContent">
     <h2 class="claim advantages__title txt-baskerville">
-      Create, share and analyze results, in minutes
+      How is Textandplay better than others?
     </h2>
     <!--h2 class="claim advantages__title txt-baskerville">
       Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
@@ -93,34 +98,37 @@
     <div class="advantages__list">
       <polo-landing-card
         image="/assets/images/landing/advantages_unleash_creativity.webp"
-        title="Create any flow you need"
+        title="The freedom of nodes!"
         alt="Decorative drawing of a person drawing nodes in a canvas"
       >
         <p>
-          Quizzes, feedback formularies, complex story-driven experiences...
-          everything is possible, and everything is easy
+          Nodes allow you to create
+          <strong>complex and branching flows</strong> very easily and visually.
+          So you can build quizzes, formularies, text adventures... you name it!
         </p>
         <polo-landing-link text="Where is the limit?"></polo-landing-link>
       </polo-landing-card>
       <polo-landing-card
         image="/assets/images/landing/advantages_flow_control.webp"
-        title="Tailored for every user"
+        title="Flows that adapt to users"
         alt="Decorative drawing of a person in front of a signpost deciding where to go"
       >
         <p>
-          Users will be more engaged and give better feedback if the flow is
-          personalized specially for them. We make this easy.
+          Every user action can change the flow thanks to
+          <strong>properties, requirements and distributor nodes</strong>. Make
+          the experience trully unique!
         </p>
         <polo-landing-link text="How?"></polo-landing-link>
       </polo-landing-card>
       <polo-landing-card
         image="/assets/images/landing/advantages_analyze.webp"
-        title="Analyze the results"
+        title="Deeply analyze the results"
         alt="Decorative drawing of two persons making cientific experiments"
       >
         <p>
-          What did users chose? Which were their paths? How many completed the
-          test? For every question you have an answer
+          Analyze globally or in detail, from how many users completed the flow
+          to the
+          <strong>exact path and choices for a specific user</strong>.
         </p>
         <polo-landing-link text="Analyze it"></polo-landing-link>
       </polo-landing-card>
@@ -147,7 +155,7 @@
     </div>
   </div>
 </section>
-<h2 class="claim txt-baskerville">Build freely with flexible tools</h2>
+<h2 class="claim txt-baskerville">Build free with the most flexible tools</h2>
 <!--p>We provide the most flexible tools so you can build any flow</p-->
 <section class="section--mainFeatures">
   <div class="section--centeredContent buildFeatures">
@@ -156,18 +164,19 @@
         <div class="tag tag--build"><p>Build tools</p></div>
         <p class="feature__text__title">No-code and nodes, a winning pair</p>
         <p>
-          By joining predefined nodes, anyone can handle anything without hassle
+          By joining predefined nodes, anyone can handle anything without
+          hassle.
         </p>
         <ul>
           <li>Drag and drop nodes around to build your flow</li>
           <li>Understand all your structure at a glance</li>
           <li>Unlimited paths and endings</li>
         </ul>
-        <polo-landing-link
+        <!--polo-landing-link
           class="feature__text__action"
           text="Check all the possibilities"
           [highlight]="true"
-        ></polo-landing-link>
+        ></polo-landing-link-->
       </div>
       <video loop autoplay>
         <source src="/assets/videos/nodes.webm" type="video/webm" />
@@ -181,7 +190,7 @@
         </p>
         <p>
           Use information user give to you in the same flow to be more personal
-          and to provide a personalized flow adapted to his specific needs
+          and to provide a personalized flow adapted to his specific needs.
         </p>
         <ul>
           <li>
@@ -190,11 +199,11 @@
           <li>Send users to specific nodes depending on previous actions</li>
           <li>Dynamic hashtags</li>
         </ul>
-        <polo-landing-link
+        <!--polo-landing-link
           class="feature__text__action"
           text="Learn more about personalization"
           [highlight]="true"
-        ></polo-landing-link>
+        ></polo-landing-link-->
       </div>
     </div>
     <div class="feature feature3">
@@ -215,34 +224,38 @@
         <p>
           More users completing the flow means more data and visits for you.
         </p>
-        <p>That's why we made share a flow as easy as sharing a link.</p>
-        <polo-landing-link
+        <br />
+        <p>
+          That's why we make share a flow as easy as sharing a link and provide
+          resharing options. Make something viral!
+        </p>
+        <!--polo-landing-link
           class="feature__text__action"
           text="Discover more sharing options"
           [highlight]="true"
-        ></polo-landing-link>
+        ></polo-landing-link-->
       </div>
     </div>
     <div class="feature feature5">
       <div class="feature__text">
         <div class="tag tag--share"><p>Share tools</p></div>
         <p class="feature__text__title">
-          Want real user feedback? Treat users as humans
+          Want real user feedback? Treat them like humans
         </p>
         <p>
           There are many tools to build a form, but from the user perspective
           every form will be just another form. Give them something better and
-          start receiving better feedback
+          start receiving better feedback.
         </p>
         <ul>
           <li>Options for conversational flows</li>
           <li>Trully personalized texts and experiences</li>
         </ul>
-        <polo-landing-link
+        <!--polo-landing-link
           class="feature__text__action"
           text="More options for better engagement"
           [highlight]="true"
-        ></polo-landing-link>
+        ></polo-landing-link-->
       </div>
     </div>
     <!--div class="feature feature6">

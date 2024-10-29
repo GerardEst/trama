@@ -4,7 +4,7 @@
   background-color: rgb(243 243 243)
   background-position: 44px 44px
   background-size: 10px 10px
-  background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 11%)
+  background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 14%)
 
   display: flex
   flex-direction: column
@@ -16,13 +16,7 @@ iframe
   height: 100%
   background: #ffffffaa
   border-radius: 10px
-.logo
-    font-size: 2rem
-    font-weight: 900
-    margin: 0
-    font-family: 'LibreBaskerville'
-    sup
-      font-size: 1rem
+
 menu
   position: fixed
   width: calc(100% - 20px)
@@ -38,6 +32,15 @@ menu
   background: #ffffffcc
   z-index: 3
   backdrop-filter: blur(15px)
+  // box-shadow: 2px 2px var(--text-color)
+  // border: 1px solid var(--text-color)
+  .logo
+    font-size: 2rem
+    font-weight: 900
+    margin: 0
+    font-family: 'LibreBaskerville'
+    sup
+      font-size: 1rem
   > div
     margin-left: auto
     display: flex
@@ -82,29 +85,33 @@ section
     margin: 10vw 0
   &.section--intro
     padding-bottom: 90px
-    padding-top: 220px
+    padding-top: 160px
+    height: 120vh
   &.section--mobile
     display: flex
     flex-direction: column
     padding: 60px
     padding-bottom: 130px
     .mobile__playground
+      position: relative
       display: flex
       align-items: center
       justify-content: space-around
       flex-wrap: wrap
       gap: 20px
-      polo-board
-        position: relative
-      polo-board::after
-        content:"This is a simplified preview of the Textandplay dashboard"
-        position: absolute
-        bottom: 10px
-        right: 10px
-        font-family: 'RalewayItalic'
-        color: var(--light-text)
+
       img
         width: 100px
+      .interactAdvise
+        position: absolute
+        top: 1rem
+        z-index: 1
+        background: var(--important-color)
+        padding: 1rem
+        border-radius: 10px
+        box-shadow: var(--shadow-elevation-medium)
+        p
+          color: white
     .mobile__text
       display: flex
       &__editor
@@ -123,15 +130,15 @@ section
   &.section--advantages
     position: relative
     background: var(--button-background-color)
-    border-radius: 20px
-    width: calc(100% - 60px)
-    max-width: 1200px
+    //border-radius: 10px
+    //max-width: calc(1200px - 60px)
     padding: 60px 30px
     padding-bottom: 100px
-    margin-left: auto
-    margin-right: auto
+    //border: 1px solid var(--text-color)
+    //margin-left: auto
+    //margin-right: auto
     box-sizing: border-box
-    box-shadow: var(--shadow-elevation-high)
+    box-shadow: var(--shadow-elevation-omph)
     margin-bottom: 100px
   &.section--roadmap
     padding: 60px 0
@@ -156,8 +163,7 @@ section
   gap: 2rem
   position: relative
   z-index: 1
-  polo-landing-link
-    margin-top: 2rem
+  pointer-events: none
   h1
     max-width: 700px
     font-family: LibreBaskerville
@@ -174,19 +180,8 @@ section
   &__buttons
     display: flex
     gap: 1rem
+    pointer-events: auto
 
-polo-board
-  width: 500px
-  height: 500px
-  overflow: hidden
-  border-radius: 20px
-  flex-grow: 1
-  border: 1px dashed var(--text-color)
-  cursor: grab
-  &:hover
-    border-style: solid
-polo-landing-mobile
-    padding-right: 5vw
 
 .claim
   padding: 2rem 4rem
@@ -418,9 +413,32 @@ footer
   transform: rotate(13deg) translate(27px, -8px)
   box-shadow: 0px 0px 0px 4px #fff9d9
 
+polo-board
+  position: relative
+  position: absolute
+  top: 0
+  width: 100%
+  height: 100%
+  overflow: hidden
+  //flex-grow: 1
+  //border: 1px solid var(--text-color)
+  box-shadow: 5px 5px var(--text-color)
+  cursor: grab
+  // &:hover
+  //   border: 1px solid var(--important-color-shade)
+  //   outline: 4px solid var(--important-color-shade)
+polo-landing-mobile
+    padding-right: 5vw
+polo-board::after
+  content:"This is a simplified preview of the Textandplay dashboard"
+  position: absolute
+  bottom: 10px
+  right: 10px
+  font-family: 'RalewayItalic'
+  color: var(--light-text)
 @media screen and (max-width: 1098px)
   polo-board
-    width: 100%
+    //width: 100%
   section.section--mobile .mobile__playground
     flex-direction: column
     gap: 50px
