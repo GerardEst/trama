@@ -35,6 +35,7 @@ export class BoardComponent {
   @Input() grid?: boolean
   @Input() initialZoom?: number
   @Input() focusElements: boolean = true
+  @Input() initialPosition: { x: number; y: number } = { x: 0, y: 0 }
   @Input() zoomable: boolean = true
 
   nodeDragThrottle: any = null
@@ -86,6 +87,7 @@ export class BoardComponent {
 
   ngAfterViewInit(): void {
     this.panzoom.createPanzoomBoard(this.boardElement?.nativeElement, {
+      initialPosition: this.initialPosition,
       initialZoom: this.initialZoom,
       zoomable: this.zoomable,
     })

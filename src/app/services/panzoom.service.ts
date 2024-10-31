@@ -11,7 +11,11 @@ export class PanzoomService {
 
   createPanzoomBoard(
     element: any,
-    options: { initialZoom: number | undefined; zoomable: boolean }
+    options: {
+      initialZoom: number | undefined
+      zoomable: boolean
+      initialPosition: { x: number; y: number }
+    }
   ) {
     //https://github.com/anvaka/panzoom
     this.boardReference = createPanZoom(element, {
@@ -30,6 +34,13 @@ export class PanzoomService {
       initialZoom: options.initialZoom || 1,
       zoomSpeed: 0.065,
       zoomDoubleClickSpeed: 1,
+    })
+
+    setTimeout(() => {
+      this.boardReference.moveTo(
+        -options.initialPosition.x,
+        -options.initialPosition.y
+      )
     })
   }
 
