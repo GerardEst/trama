@@ -39,8 +39,6 @@ menu
     font-weight: 900
     margin: 0
     font-family: 'LibreBaskerville'
-    sup
-      font-size: 1rem
   > div
     margin-left: auto
     display: flex
@@ -87,6 +85,13 @@ section
     padding-bottom: 90px
     padding-top: 160px
     height: 120vh
+    // &::after
+    //   content:"This is a simplified preview of the Textandplay dashboard"
+    //   position: absolute
+    //   bottom: 10px
+    //   right: 10px
+    //   font-family: 'RalewayItalic'
+    //   color: var(--light-text)
   &.section--mobile
     display: flex
     flex-direction: column
@@ -130,15 +135,10 @@ section
   &.section--advantages
     position: relative
     background: var(--button-background-color)
-    //border-radius: 10px
-    //max-width: calc(1200px - 60px)
     padding: 60px 30px
     padding-bottom: 100px
-    //border: 1px solid var(--text-color)
-    //margin-left: auto
-    //margin-right: auto
     box-sizing: border-box
-    box-shadow: var(--shadow-elevation-omph)
+    box-shadow: 0px 5px 5px var(--shadow-color-light), 0px -60px 50px white
     margin-bottom: 100px
   &.section--roadmap
     padding: 60px 0
@@ -164,6 +164,10 @@ section
   position: relative
   z-index: 1
   pointer-events: none
+  background: #ffffffaa
+  box-shadow: 0 0 80px 50px #ffffffaa
+  width: fit-content
+  margin: auto
   h1
     max-width: 700px
     font-family: LibreBaskerville
@@ -429,13 +433,7 @@ polo-board
   //   outline: 4px solid var(--important-color-shade)
 polo-landing-mobile
     padding-right: 5vw
-polo-board::after
-  content:"This is a simplified preview of the Textandplay dashboard"
-  position: absolute
-  bottom: 10px
-  right: 10px
-  font-family: 'RalewayItalic'
-  color: var(--light-text)
+
 @media screen and (max-width: 1098px)
   polo-board
     //width: 100%
