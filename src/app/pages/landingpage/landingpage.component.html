@@ -179,14 +179,17 @@
         ></polo-landing-link-->
       </div>
       <video
-        autoPlay
+        autoplay
         loop
         muted
         playsinline
+        preload="auto"
+        disableremoteplayback
+        x5-playsinline
+        webkit-playsinline
+        crossorigin="anonymous"
         width="640"
         height="360"
-        controls
-        onerror="console.log('Video error:', this.error);"
       >
         <source src="/assets/videos/nodes.webm" type="video/webm" />
         <source src="/assets/videos/nodes.mp4" type="video/mp4" />
