@@ -3,7 +3,6 @@ import { BoardComponent } from 'src/app/components/board/board.component'
 //import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { DatabaseService } from 'src/app/services/database.service'
-import * as Cronitor from '@cronitorio/cronitor-rum'
 import { GameComponent } from 'src/app/components/game/game.component'
 import { Title, Meta } from '@angular/platform-browser'
 import { FormsModule } from '@angular/forms'
@@ -83,8 +82,6 @@ export class LandingpageComponent {
   }
 
   ngAfterViewInit() {
-    Cronitor.track('LandingpageView')
-
     this.checkLoggedUser()
 
     // Initializes the example tree

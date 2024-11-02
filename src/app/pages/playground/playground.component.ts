@@ -6,7 +6,6 @@ import { ModalWindowComponent } from 'src/app/components/ui/modal-window/modal-w
 import { node, node_answer } from 'src/app/interfaces'
 import { PlayerService } from './services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import * as Cronitor from '@cronitorio/cronitor-rum'
 import { Router } from '@angular/router'
 import { BasicButtonComponent } from 'src/app/components/ui/basic-button/basic-button.component'
 
@@ -58,8 +57,6 @@ export class PlaygroundComponent {
   }
 
   async ngOnInit(): Promise<void> {
-    Cronitor.track('SomeoneStartedAGame')
-
     const { story, configuration } = await this.getStoryByCorrectID()
 
     if (!story) {
@@ -124,7 +121,6 @@ export class PlaygroundComponent {
   }
 
   endGame() {
-    Cronitor.track('SomeoneEndedAGame')
     if (this.activeStory.storyConfiguration().tracking) {
       this.saveGame()
     }

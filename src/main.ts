@@ -14,7 +14,6 @@ import { LoginComponent } from './app/pages/login/login.component'
 import { ResetPasswordComponent } from './app/pages/reset-password/reset-password.component'
 import { ChangePasswordComponent } from './app/pages/change-password/change-password.component'
 import { authGuard } from './app/guards/auth.guard'
-import * as Cronitor from '@cronitorio/cronitor-rum'
 import { StoryNotFoundComponent } from './app/pages/story-not-found/story-not-found.component'
 
 const appRoutes: Routes = [
@@ -48,10 +47,4 @@ bootstrapApplication(AppComponent, {
     provideRouter(appRoutes, withComponentInputBinding()),
     provideAnimations(),
   ],
-})
-
-// Load the Cronitor tracker once in your app
-Cronitor.load('1f9fd1f09a4375fd53191b6a385e06f9', {
-  debug: false, // <-- You can enable this to see logs in the console
-  trackMode: 'off', // <-- You can change this to 'off' to track events manually
 })

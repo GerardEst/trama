@@ -19,7 +19,6 @@ import {
 } from 'src/app/interfaces'
 import { PlayerService } from 'src/app/pages/playground/services/player.service'
 import { ActiveStoryService } from 'src/app/services/active-story.service'
-import * as Cronitor from '@cronitorio/cronitor-rum'
 import { normalizeLink } from 'src/app/utils/links'
 import { trigger, style, transition, animate } from '@angular/animations'
 import { GameNodeComponent } from './components/game-node/game-node.component'
@@ -339,7 +338,6 @@ export class GameComponent {
           url: window.location.href,
         })
         .then(() => {
-          Cronitor.track('SomeoneHasShared')
           console.log('Successful share')
         })
         .catch((error) => console.log('Error sharing', error))
@@ -349,7 +347,6 @@ export class GameComponent {
   }
 
   registerLink(link: string) {
-    Cronitor.track('SomeoneWentToAFinalLink')
     window.open(normalizeLink(link), '_blank')
   }
 
