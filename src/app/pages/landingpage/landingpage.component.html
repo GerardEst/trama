@@ -178,7 +178,16 @@
           [highlight]="true"
         ></polo-landing-link-->
       </div>
-      <video autoplay loop muted playsinline width="640" height="360">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        width="640"
+        height="360"
+        crossorigin="anonymous"
+        onerror="console.log('Video error:', this.error);"
+      >
         <source src="/assets/videos/nodes.webm" type="video/webm" />
         <source src="/assets/videos/nodes.mp4" type="video/mp4" />
         <!-- Fallback for older browsers -->
