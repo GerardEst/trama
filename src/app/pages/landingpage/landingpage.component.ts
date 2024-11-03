@@ -68,7 +68,17 @@ export class LandingpageComponent {
     private titleService: Title,
     private meta: Meta,
     public db: DatabaseService
-  ) {}
+  ) {
+    console.log('que')
+    document.addEventListener('DOMContentLoaded', function () {
+      const video = document.querySelector('video')
+      if (!video) return
+      console.log(video)
+      video.play().catch(function (error) {
+        console.log('Video play failed:', error)
+      })
+    })
+  }
 
   ngOnInit() {
     this.titleService.setTitle('Text & Play')
