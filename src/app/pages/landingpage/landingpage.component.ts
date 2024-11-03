@@ -69,11 +69,9 @@ export class LandingpageComponent {
     private meta: Meta,
     public db: DatabaseService
   ) {
-    console.log('que')
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('scroll', function () {
       const video = document.querySelector('video')
       if (!video) return
-      console.log(video)
       video.play().catch(function (error) {
         console.log('Video play failed:', error)
       })
