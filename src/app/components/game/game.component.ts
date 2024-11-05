@@ -273,45 +273,43 @@ export class GameComponent {
   }
 
   distributeNode(node: node) {
-    if (!node.conditions) {
-      console.error('Distributor node with no conditions')
-      return []
-    }
-    for (let distributorCondition of node.conditions) {
-      const distributorConditionType = distributorCondition.ref.split('_')[0]
-      if (distributorConditionType === 'stat') {
-        // If it's a stat, we find this stat in the player object
-        const playerStat = this.playerService
-          .playerStats()
-          .find((stat: any) => stat.id === distributorCondition.ref)
-        // If the player doesn't have the stat, the amount is 0
-        const playerStatAmount = playerStat ? playerStat.amount : 0
-        // Then we check the comparator, if it's correct we can go to next node
-        if (
-          (distributorCondition.comparator === 'equalto' &&
-            playerStatAmount == distributorCondition.value) ||
-          (distributorCondition.comparator === 'lessthan' &&
-            playerStatAmount < distributorCondition.value) ||
-          (distributorCondition.comparator === 'morethan' &&
-            playerStatAmount > distributorCondition.value)
-        ) {
-          return distributorCondition.join || []
+    if (node.conditions) {
+      for (let distributorCondition of node.conditions) {
+        const distributorConditionType = distributorCondition.ref.split('_')[0]
+        if (distributorConditionType === 'stat') {
+          // If it's a stat, we find this stat in the player object
+          const playerStat = this.playerService
+            .playerStats()
+            .find((stat: any) => stat.id === distributorCondition.ref)
+          // If the player doesn't have the stat, the amount is 0
+          const playerStatAmount = playerStat ? playerStat.amount : 0
+          // Then we check the comparator, if it's correct we can go to next node
+          if (
+            (distributorCondition.comparator === 'equalto' &&
+              playerStatAmount == distributorCondition.value) ||
+            (distributorCondition.comparator === 'lessthan' &&
+              playerStatAmount < distributorCondition.value) ||
+            (distributorCondition.comparator === 'morethan' &&
+              playerStatAmount > distributorCondition.value)
+          ) {
+            return distributorCondition.join || []
+          }
         }
-      }
-      if (distributorConditionType === 'condition') {
-        // If it's a condition, we find this condition in the player object
-        const playerCondition = this.playerService
-          .playerConditions()
-          .find((condition: any) => condition.id === distributorCondition.ref)
+        if (distributorConditionType === 'condition') {
+          // If it's a condition, we find this condition in the player object
+          const playerCondition = this.playerService
+            .playerConditions()
+            .find((condition: any) => condition.id === distributorCondition.ref)
 
-        // We check the comparator
-        // If the player has the condition and the requirement is 1, we can go to next node
-        // If the player doesn't have the condition and the requirement is 0, we can go to next node too
-        if (
-          (distributorCondition.value == 1 && playerCondition) ||
-          (distributorCondition.value == 0 && !playerCondition)
-        ) {
-          return distributorCondition.join || []
+          // We check the comparator
+          // If the player has the condition and the requirement is 1, we can go to next node
+          // If the player doesn't have the condition and the requirement is 0, we can go to next node too
+          if (
+            (distributorCondition.value == 1 && playerCondition) ||
+            (distributorCondition.value == 0 && !playerCondition)
+          ) {
+            return distributorCondition.join || []
+          }
         }
       }
     }
