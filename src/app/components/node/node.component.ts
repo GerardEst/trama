@@ -55,6 +55,7 @@ export class NodeComponent {
   // Common
   @Input() text: string = ''
   @Input() image?: string
+  @Input() join: string = ''
   // Answer nodes
   @Input() answers?: Array<node_answer>
   // Distributor nodes

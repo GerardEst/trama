@@ -24,49 +24,43 @@
     <li (click)="addNode($event, 'end')">End node</li>
   </div>
 
-  <polo-board-flows
-    [drawingFrom]="dragStartedOn"
-    [drawingTo]="dragMouseOn"
-  ></polo-board-flows>
+  <polo-board-flows [drawingFrom]="dragStartedOn" [drawingTo]="dragMouseOn"></polo-board-flows>
   @if (activeStory.entireTree()) {
-    <ng-container>
-      @for (node of activeStory.entireTree().nodes; track node.id) {
-        <polo-node
-          #node
-          cdkDrag
-          id="{{ node.id }}"
-          [nodeId]="node.id"
-          [type]="node.type || 'content'"
-          (click)="setActiveNode(node.id, activeStory.storyId())"
-          (mousedown)="panzoom.pauseDrag()"
-          (mouseenter)="focusNode($event)"
-          (mouseleave)="blurNode($event)"
-          (duplicateNode)="duplicateNode($event)"
-          (removeNode)="removeNode($event)"
-          (cdkDragStarted)="nodeDragStarted($event)"
-          (cdkDragReleased)="nodeDragReleased($event)"
-          (cdkDragMoved)="nodeDragCheck()"
-          [style.transform]="
-            'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'
-          "
-          [text]="node.text"
-          [answers]="node.answers"
-          [userTextOptions]="node.userTextOptions"
-          [conditions]="node.conditions"
-          [shareOptions]="node.share || {}"
-          [image]="node.image?.path"
-          [links]="node.links || []"
-        >
-          <dragHandle cdkDragHandle>
-            <p>
-              <span style="text-transform: capitalize">{{
-                node.type || 'content'
-              }}</span>
-              node
-            </p>
-          </dragHandle>
-        </polo-node>
-      }
-    </ng-container>
+  <ng-container>
+    @for (node of activeStory.entireTree().nodes; track node.id) {
+    <polo-node
+      #node
+      cdkDrag
+      id="{{ node.id }}"
+      [nodeId]="node.id"
+      [type]="node.type || 'content'"
+      (click)="setActiveNode(node.id, activeStory.storyId())"
+      (mousedown)="panzoom.pauseDrag()"
+      (mouseenter)="focusNode($event)"
+      (mouseleave)="blurNode($event)"
+      (duplicateNode)="duplicateNode($event)"
+      (removeNode)="removeNode($event)"
+      (cdkDragStarted)="nodeDragStarted($event)"
+      (cdkDragReleased)="nodeDragReleased($event)"
+      (cdkDragMoved)="nodeDragCheck()"
+      [style.transform]="'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'"
+      [join]="node.join"
+      [text]="node.text"
+      [answers]="node.answers"
+      [userTextOptions]="node.userTextOptions"
+      [conditions]="node.conditions"
+      [shareOptions]="node.share || {}"
+      [image]="node.image?.path"
+      [links]="node.links || []"
+    >
+      <dragHandle cdkDragHandle>
+        <p>
+          <span style="text-transform: capitalize">{{ node.type || 'content' }}</span>
+          node
+        </p>
+      </dragHandle>
+    </polo-node>
+    }
+  </ng-container>
   }
 </div>

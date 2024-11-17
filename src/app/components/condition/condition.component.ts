@@ -27,6 +27,7 @@ export class ConditionComponent {
   @Input() selectedRef: string = ''
   @Input() comparator: string = ''
   @Input() value: number = 0
+  @Input() hasJoin: boolean = false
 
   @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })

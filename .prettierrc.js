@@ -6,6 +6,15 @@ const config = {
   tabWidth: 2,
   semi: false,
   singleQuote: true,
+  overrides: [
+    {
+      files: ['*.html', '*.component.html', '*.layout.html'],
+      options: {
+        parser: 'angular',
+        printWidth: 100,
+      },
+    },
+  ],
 }
 
 module.exports = config

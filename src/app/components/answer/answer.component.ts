@@ -23,6 +23,7 @@ export class AnswerComponent {
   id: string = ''
 
   @Input() text: string = ''
+  @Input() hasJoin: boolean = false
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef

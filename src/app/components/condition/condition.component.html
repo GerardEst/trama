@@ -1,37 +1,29 @@
 @if (fallback === true) {
-<p>Fallback</p>
+  <p>Fallback</p>
 } @else {
-<polo-basic-button
-  icon="/assets/icons/trash.svg"
-  (click)="removeCondition()"
-  title="Remove condition"
-></polo-basic-button>
-<select id="ref" (change)="saveCondition($event)">
-  <option selected>None</option>
-  @for (ref of refOptions; track $index) {
-  <option [selected]="selectedRef === ref.id" id="{{ ref.id }}">
-    {{ ref.name }}
-  </option>
-  }
-</select>
-<select id="comparator" (change)="saveCondition($event)">
-  <option selected>None</option>
-  <option [selected]="comparator === 'equalto'" id="equalto">equal to</option>
-  <option [selected]="comparator === 'lessthan'" id="lessthan">
-    less than
-  </option>
-  <option [selected]="comparator === 'morethan'" id="morethan">
-    more than
-  </option>
-</select>
-<input
-  id="value"
-  (change)="saveCondition($event)"
-  type="number"
-  value="{{ value }}"
-/>
+  <polo-basic-button
+    icon="/assets/icons/trash.svg"
+    (click)="removeCondition()"
+    title="Remove condition"
+  ></polo-basic-button>
+  <select id="ref" (change)="saveCondition($event)">
+    <option selected>None</option>
+    @for (ref of refOptions; track $index) {
+      <option [selected]="selectedRef === ref.id" id="{{ ref.id }}">
+        {{ ref.name }}
+      </option>
+    }
+  </select>
+  <select id="comparator" (change)="saveCondition($event)">
+    <option selected>None</option>
+    <option [selected]="comparator === 'equalto'" id="equalto">equal to</option>
+    <option [selected]="comparator === 'lessthan'" id="lessthan">less than</option>
+    <option [selected]="comparator === 'morethan'" id="morethan">more than</option>
+  </select>
+  <input id="value" (change)="saveCondition($event)" type="number" value="{{ value }}" />
 }
 <div
   id="{{ this.elementRef.nativeElement.id + '_join' }}"
   class="union_point"
+  [class.union_point--hasJoin]="hasJoin"
 ></div>
