@@ -15,6 +15,7 @@ import { ResetPasswordComponent } from './app/pages/reset-password/reset-passwor
 import { ChangePasswordComponent } from './app/pages/change-password/change-password.component'
 import { authGuard } from './app/guards/auth.guard'
 import { StoryNotFoundComponent } from './app/pages/story-not-found/story-not-found.component'
+import { provideMarkdown } from 'ngx-markdown'
 
 const appRoutes: Routes = [
   { path: '', title: 'Text&play', component: LandingpageComponent },
@@ -46,5 +47,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withComponentInputBinding()),
     provideAnimations(),
+    provideMarkdown(),
   ],
 })

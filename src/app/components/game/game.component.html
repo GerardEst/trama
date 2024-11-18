@@ -1,34 +1,35 @@
 <div #game class="gameContainer">
   <div class="game" [class.game--cumulative]="mode === 'cumulative'">
-    @if (mode === 'cumulative') { @for (inactiveNode of inactiveNodes; track
-    inactiveNode.id) {
-    <polo-game-node [data]="inactiveNode" [disabled]="true"></polo-game-node>
-    } } @if (activeNodes) { @for (activeNode of activeNodes; track
-    activeNode.key) { @if (mode === 'single') {
-    <polo-game-node
-      #node
-      @insertNode
-      @removeNode
-      [data]="activeNode"
-      [writeSpeed]="writeSpeed"
-      (onSelectAnswer)="selectAnswer($event)"
-      (onContinue)="continueFlow($event)"
-      (onShare)="openShareContext($event)"
-      (onGoToLink)="registerLink($event)"
-      (typingComplete)="onNodeTypingComplete()"
-    ></polo-game-node>
-    } @else {
-    <polo-game-node
-      #node
-      @insertNode
-      [writeSpeed]="writeSpeed"
-      [data]="activeNode"
-      (onSelectAnswer)="selectAnswer($event)"
-      (onContinue)="continueFlow($event)"
-      (onShare)="openShareContext($event)"
-      (onGoToLink)="registerLink($event)"
-      (typingComplete)="onNodeTypingComplete()"
-    ></polo-game-node>
-    } } }
+    @if (mode === 'cumulative') {
+      @for (inactiveNode of inactiveNodes; track inactiveNode.id) {
+        <polo-game-node [data]="inactiveNode" [disabled]="true"></polo-game-node>
+      }
+    }
+    @if (activeNodes) {
+      @for (activeNode of activeNodes; track activeNode.key) {
+        @if (mode === 'single') {
+          <polo-game-node
+            #node
+            @insertNode
+            @removeNode
+            [data]="activeNode"
+            (onSelectAnswer)="selectAnswer($event)"
+            (onContinue)="continueFlow($event)"
+            (onShare)="openShareContext($event)"
+            (onGoToLink)="registerLink($event)"
+          ></polo-game-node>
+        } @else {
+          <polo-game-node
+            #node
+            @insertNode
+            [data]="activeNode"
+            (onSelectAnswer)="selectAnswer($event)"
+            (onContinue)="continueFlow($event)"
+            (onShare)="openShareContext($event)"
+            (onGoToLink)="registerLink($event)"
+          ></polo-game-node>
+        }
+      }
+    }
   </div>
 </div>

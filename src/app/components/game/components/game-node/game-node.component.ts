@@ -10,11 +10,12 @@ import {
 import { ActiveStoryService } from 'src/app/services/active-story.service'
 import { trigger, style, transition, animate } from '@angular/animations'
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms'
+import { MarkdownComponent } from 'ngx-markdown'
 
 @Component({
   selector: 'polo-game-node',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MarkdownComponent],
   templateUrl: './game-node.component.html',
   styleUrl: './game-node.component.sass',
   animations: [
@@ -31,7 +32,6 @@ export class GameNodeComponent {
   @ViewChild('textContainer') textContainer!: ElementRef
   @Input() data!: any
   @Input() disabled: boolean = false
-  @Input() writeSpeed: 'immediate' | 'slow' | 'fast' = 'immediate'
   @Output() onSelectAnswer: EventEmitter<any> = new EventEmitter()
   @Output() onContinue: EventEmitter<any> = new EventEmitter()
   @Output() onGoToLink: EventEmitter<any> = new EventEmitter()
@@ -40,9 +40,7 @@ export class GameNodeComponent {
 
   @HostListener('window:click', ['$event'])
   onWindowClick(event: MouseEvent) {
-    if (this.writting) {
-      this.writeSpeed = 'immediate'
-    }
+    // Accelerate appearing of content some day
   }
 
   // Text nodes
@@ -51,22 +49,9 @@ export class GameNodeComponent {
     Validators.maxLength(100),
   ])
 
-  // Writting options
-  speeds: any = {
-    immediate: 1,
-    fast: 20,
-    slow: 40,
-  }
-  writting: boolean = false
-  showAnswers: boolean = false
-  writterCounter: number = 0
+  showAnswers: boolean = true
 
   constructor(public activeStory: ActiveStoryService) {}
-
-  ngOnInit() {
-    this.writeSpeed = this.disabled ? 'immediate' : this.writeSpeed
-    this.showAnswers = this.writeSpeed === 'immediate'
-  }
 
   // Text node
   continue(event: Event) {
@@ -80,43 +65,8 @@ export class GameNodeComponent {
   }
 
   // Others
-
   getNativeElement(): HTMLElement {
     return this.node?.nativeElement
-  }
-
-  ngAfterViewInit() {
-    if (!this.textContainer) {
-      setTimeout(() => {
-        this.showAnswers = true
-        this.typingComplete.emit()
-      }, 350)
-
-      return
-    }
-    if (this.writeSpeed !== 'immediate') {
-      this.writeText()
-    } else {
-      this.typingComplete.emit()
-    }
-  }
-
-  writeText() {
-    this.writting = true
-
-    if (this.writterCounter < this.data.text.length) {
-      this.textContainer.nativeElement.innerHTML += this.data.text.charAt(
-        this.writterCounter
-      )
-      this.writterCounter++
-      setTimeout(() => this.writeText(), this.speeds[this.writeSpeed])
-    } else {
-      this.writting = false
-      setTimeout(() => {
-        this.showAnswers = true
-        this.typingComplete.emit()
-      }, 350)
-    }
   }
 
   markAsSelected(event: any) {

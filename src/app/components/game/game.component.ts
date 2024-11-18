@@ -58,7 +58,6 @@ export class GameComponent {
   @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
   activeNodes?: any = []
-  nodesToWrite: any = []
   isWrittingNodes: boolean = false
   inactiveNodes: any = []
 
@@ -117,31 +116,13 @@ export class GameComponent {
     }, this.TIME_BETWEEN_NODES)
 
     setTimeout(() => {
-      this.nodesToWrite.push(activeNode)
+      this.activeNodes.push(activeNode)
+      if (this.activeNodes.length === 1) this.scrollToNewNode()
 
-      if (!this.isWrittingNodes) this.processNextNode()
+      this.registerNodeEvents(activeNode)
 
       if (isNonInteractableNode) this.nextStep(activeNode.join, true)
     }, this.TIME_BETWEEN_NODES + 500)
-  }
-
-  onNodeTypingComplete() {
-    this.processNextNode()
-  }
-
-  processNextNode() {
-    if (this.nodesToWrite.length === 0) {
-      this.isWrittingNodes = false
-      return
-    }
-    this.isWrittingNodes = true
-
-    const node = this.nodesToWrite.shift()
-    this.activeNodes.push(node)
-
-    if (this.activeNodes.length === 1) this.scrollToNewNode()
-
-    this.registerNodeEvents(node)
   }
 
   buildNextNodeFromJoin(originJoin: join) {
