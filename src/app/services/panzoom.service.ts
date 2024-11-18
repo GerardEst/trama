@@ -20,7 +20,7 @@ export class PanzoomService {
     //https://github.com/anvaka/panzoom
     this.boardReference = createPanZoom(element, {
       maxZoom: 1,
-      minZoom: 0.4,
+      minZoom: 0.1,
       filterKey: function (/* e, dx, dy, dz */) {
         // don't let panzoom handle this event:
         return true
