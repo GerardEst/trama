@@ -10,9 +10,9 @@
   }
   <div class="node__text">
     @if (data.text && !data.jumpToAnswers) {
-      <p markdown ngPreserveWhitespaces class="nodetext">
+      <div markdown class="test" ngPreserveWhitespaces>
         {{ data.text }}
-      </p>
+      </div>
     }
     @if (data.answers && data.answers.length > 0 && showAnswers) {
       @if (disabled) {
