@@ -4,7 +4,7 @@ import { DatabaseService } from 'src/app/core/services/database.service'
 @Injectable({
   providedIn: 'root',
 })
-export class StadisticsService {
+export class StatisticsService {
   games?: any
 
   constructor(private db: DatabaseService) {}

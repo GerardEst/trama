@@ -7,7 +7,7 @@ import { MenuTopComponent } from 'src/app/features/dashboard/components/menu-top
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { MenuTreeLegendComponent } from './components/menu-tree-legend/menu-tree-legend.component'
 import { findNodeInTree } from 'src/app/shared/utils/tree-searching'
-import { StadisticsService } from 'src/app/shared/services/stadistics.service'
+import { StatisticsService } from 'src/app/shared/services/statistics.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -32,7 +32,7 @@ export class DashboardComponent {
   constructor(
     private db: DatabaseService,
     public activeStory: ActiveStoryService,
-    private stadistics: StadisticsService
+    private stadistics: StatisticsService
   ) {}
 
   ngOnInit(): void {

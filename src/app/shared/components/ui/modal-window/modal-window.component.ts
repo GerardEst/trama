@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { ModalService } from 'src/app/shared/services/modal.service'
+import { ModalService } from 'src/app/core/services/modal.service'
 import { BasicButtonComponent } from '../basic-button/basic-button.component'
 import { animate, style, transition, trigger } from '@angular/animations'
 

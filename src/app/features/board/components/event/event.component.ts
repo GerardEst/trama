@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common'
 import { SelectorComponent } from '../../../../shared/components/ui/selector/selector.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
-import { ContextMenusService } from 'src/app/shared/services/context-menus.service'
+import { ContextMenusService } from 'src/app/core/services/context-menus.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 
 @Component({

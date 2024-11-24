@@ -26,7 +26,7 @@ import {
   generateIDForNewAnswer,
   generateIDForNewCondition,
 } from 'src/app/shared/utils/tree-searching'
-import { ApisService } from 'src/app/shared/services/apis.service'
+import { ApisService } from 'src/app/core/services/apis.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 
 @Component({

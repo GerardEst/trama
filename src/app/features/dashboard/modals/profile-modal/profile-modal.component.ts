@@ -3,7 +3,7 @@ import { ModalWindowComponent } from '../../../../shared/components/ui/modal-win
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { StadisticsService } from 'src/app/shared/services/stadistics.service'
+import { StatisticsService } from 'src/app/shared/services/statistics.service'
 import { Router } from '@angular/router'
 import { PricingComponent } from 'src/app/shared/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/billing-cycle.component'
@@ -28,7 +28,7 @@ export class ProfileModalComponent {
   constructor(
     public db: DatabaseService,
     private activeStory: ActiveStoryService,
-    private stadistics: StadisticsService,
+    private stadistics: StatisticsService,
     private router: Router
   ) {}
 

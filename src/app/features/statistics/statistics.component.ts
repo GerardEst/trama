@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import { StadisticsService } from 'src/app/shared/services/stadistics.service'
+import { StatisticsService } from 'src/app/shared/services/statistics.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
@@ -23,7 +23,7 @@ export class StatisticsComponent implements OnInit {
 
   constructor(
     private db: DatabaseService,
-    private stadistics: StadisticsService,
+    private stadistics: StatisticsService,
     private router: Router
   ) {}
 

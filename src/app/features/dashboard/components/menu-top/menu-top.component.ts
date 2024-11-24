@@ -4,7 +4,7 @@ import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { normalizeLink } from 'src/app/shared/utils/normalizers'
-import { AlertService } from 'src/app/shared/services/alert.service'
+import { AlertService } from 'src/app/core/services/alert.service'
 import { DeleteStoryComponent } from '../delete-story/delete-story.component'
 
 @Component({

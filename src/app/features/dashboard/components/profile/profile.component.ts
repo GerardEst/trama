@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
-import { ModalService } from 'src/app/shared/services/modal.service'
+import { ModalService } from 'src/app/core/services/modal.service'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 

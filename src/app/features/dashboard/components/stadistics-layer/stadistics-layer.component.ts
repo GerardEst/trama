@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
-import { StadisticsService } from 'src/app/shared/services/stadistics.service'
+import { StatisticsService } from 'src/app/shared/services/statistics.service'
 
 @Component({
   selector: 'polo-stadistics-layer',
@@ -15,7 +15,7 @@ export class StadisticsLayerComponent {
 
   constructor(
     private story: ActiveStoryService,
-    private stadistics: StadisticsService
+    private stadistics: StatisticsService
   ) {}
 
   async ngOnInit() {

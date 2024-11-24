@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core'
-import { AlertService } from 'src/app/shared/services/alert.service'
+import { AlertService } from 'src/app/core/services/alert.service'
 import { BasicButtonComponent } from '../basic-button/basic-button.component'
 
 @Component({

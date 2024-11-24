@@ -5,7 +5,7 @@ import { SeparatorComponent } from '../../../../shared/components/ui/separator/s
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ProfileComponent } from '../profile/profile.component'
-import { ModalService } from 'src/app/shared/services/modal.service'
+import { ModalService } from 'src/app/core/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/features/dashboard/modals/creator-paywall/creator-paywall.component'
 import { PanzoomService } from 'src/app/shared/services/panzoom.service'
 
