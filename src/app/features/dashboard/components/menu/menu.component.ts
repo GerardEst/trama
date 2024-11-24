@@ -1,11 +1,10 @@
-import { Component, Output, EventEmitter, Input, effect } from '@angular/core'
+import { Component, Output, EventEmitter, effect,WritableSignal,signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/features/dashboard/modals/creator-paywall/creator-paywall.component'
-import { PanzoomService } from 'src/app/shared/services/panzoom.service'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 
 @Component({
@@ -17,8 +16,9 @@ import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.
 })
 export class MenuComponent {
   fixedMenu: boolean = true
-  stories?: Array<any>
+  public stories: WritableSignal<any> = signal([])
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
+  @Output() onNewStory: EventEmitter<any> = new EventEmitter()
 
   isSubscribedUser = () =>
     this.db.user().profile.subscription_status === 'active'
@@ -26,8 +26,7 @@ export class MenuComponent {
   constructor(
     public db: DatabaseService,
     public activeStory: ActiveStoryService,
-    private modal: ModalService,
-    private panzoom: PanzoomService
+    private modal: ModalService
   ) {
     effect(() => {
       this.activeStory.storyName()
@@ -36,44 +35,20 @@ export class MenuComponent {
   }
 
   async getTrees(userId: string) {
-    this.stories = await this.db.getAllTreesForUser(userId)
+    this.stories.set(await this.db.getAllTreesForUser(userId))
   }
 
   loadTree(treeId: number) {
     this.onChangeTree.emit(treeId)
   }
 
-  async createNewTree() {
-    if (!this.isSubscribedUser() && this.stories && this.stories.length >= 3) {
+  createNewTree() {
+    if (!this.isSubscribedUser() && this.stories() && this.stories().length >= 3) {
       this.modal.launch(CreatorPaywallComponent)
       console.error('Cannot have more than 3 stories if not subscribed')
       return
     }
-
-    const newTreeData = [
-      {
-        name: 'My new tree',
-        tree: {
-          nodes: [],
-        },
-        profile_id: this.db.user().id,
-      },
-    ]
-
-    const newTree = await this.db.createNewTree(newTreeData)
-    if (!newTree) {
-      console.error("Can't create new tree")
-      return
-    }
-
-    this.stories?.push({
-      id: newTree[0].id,
-      name: newTree[0].name,
-    })
-
-    this.panzoom.goTo(-5000, -5000)
-
-    this.loadTree(newTree[0].id)
+    this.onNewStory.emit()
   }
 
   toggleMenu() {

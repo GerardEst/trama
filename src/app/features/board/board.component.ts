@@ -93,6 +93,16 @@ export class BoardComponent {
     })
   }
 
+  public centerToNode(node: any) {
+    if (!node) return
+
+    this.panzoom.centerToNode(node)
+  }
+
+  public goTo(x:number,y:number) {
+    this.panzoom.goTo(x, y)
+  }
+
   openContextMenu(event: MouseEvent) {
     event.preventDefault()
 
@@ -104,12 +114,6 @@ export class BoardComponent {
 
   closeContextMenu() {
     this.contextMenuActive = false
-  }
-
-  public centerToNode(node: any) {
-    if (!node) return
-
-    this.panzoom.centerToNode(node)
   }
 
   checkDragStart(event: any) {

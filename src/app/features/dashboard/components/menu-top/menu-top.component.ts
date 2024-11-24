@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, Output, EventEmitter } from '@angular/core'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { Router } from '@angular/router'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -10,15 +10,16 @@ import { DeleteStoryComponent } from '../delete-story/delete-story.component'
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [BasicButtonComponent, DeleteStoryComponent],
+  imports: [BasicButtonComponent],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.sass',
 })
 export class MenuTopComponent {
   showOptions: boolean = false
   savingTree = false
-
   takenCustomId = false
+
+  @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
 
   constructor(
     public db: DatabaseService,
@@ -113,12 +114,9 @@ export class MenuTopComponent {
     const result = await this.alertService.launch(DeleteStoryComponent)
 
     if (result) {
-      // User confirmed deletion
-      await this.db.deleteStory(this.activeStory.storyId())
-      // Optionally, navigate to a different page or update UI
-      window.location.reload()
+      this.onDeleteStory.emit(this.activeStory.storyId())
+      this.closePopup()
     }
-    // If result is false, do nothing (user cancelled)
   }
 
   closePopup() {

@@ -25,6 +25,7 @@ import { StatisticsService } from 'src/app/shared/services/statistics.service'
 export class DashboardComponent {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('menuTop') menuTop?: MenuTopComponent
+  @ViewChild('menuSide') menuSide?: MenuComponent
 
   id?: string
   savingTree: boolean = false
@@ -93,4 +94,44 @@ export class DashboardComponent {
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode
   }
+
+  async createNewStory() {
+    const newTreeData = [
+      {
+        name: 'My new tree',
+        tree: {
+          nodes: [],
+        },
+        profile_id: this.db.user().id,
+      },
+    ]
+    const newTree = await this.db.createNewTree(newTreeData)
+    if (!newTree) {
+      console.error("Can't create new tree")
+      return
+    }
+
+    this.menuSide?.stories().push({
+      id: newTree[0].id,
+      name: newTree[0].name,
+    })
+
+    this.initBoard(newTree[0].id)
+    this.board?.goTo(-5000, -5000)
+  }
+
+  async deleteStory(storyId: string) {
+    try {
+      // remove the story from database
+      await this.db.deleteStory(storyId)
+      // remove the story from stories
+      this.menuSide?.stories.set(this.menuSide?.stories().filter((story: any) => story.id !== storyId))
+      // clean board
+      this.activeStory.reset()
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
 }

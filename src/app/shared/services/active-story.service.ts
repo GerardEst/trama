@@ -43,7 +43,7 @@ export class ActiveStoryService {
     })
   }
 
-  reset() {
+  public reset() {
     this.storyId.set('')
     this.entireTree.set({})
     this.storyName.set('')

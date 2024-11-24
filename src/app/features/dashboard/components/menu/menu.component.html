@@ -36,7 +36,7 @@
         ></polo-basic-button>
       </div>
       <ul>
-        @for (story of stories; track story.id) {
+        @for (story of stories(); track story.id) {
           <li (click)="loadTree(story.id)" [class.active]="story.id === activeStory.storyId()">
             {{ story.name }}
             <img class="action" width="15px" src="/assets/icons/arrow-right.svg" />
