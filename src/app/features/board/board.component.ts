@@ -12,7 +12,7 @@ import { BoardFlowsComponent } from './components/board-flows/board-flows.compon
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { combineTransforms } from 'src/app/features/dashboard/utils/operations'
 import { node } from 'src/app/core/interfaces/interfaces'
-import { PanzoomService } from 'src/app/shared/services/panzoom.service'
+import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 

@@ -9,7 +9,7 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
-import { PanzoomService } from 'src/app/shared/services/panzoom.service'
+import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 @Component({
