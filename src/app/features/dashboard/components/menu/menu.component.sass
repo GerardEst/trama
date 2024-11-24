@@ -1,8 +1,11 @@
 .menu
+  --spacing: 0.7rem
+  --width: 230px
+  --gaps: 0.5rem
   position: fixed
   top: 0
-  width: 240px
-  left: -240px
+  width: calc(var(--width) + 10px)
+  left: calc((var(--width) + 10px) * -1)
   transition: 0.2s ease
   &.fixedMenu
     left: 0
@@ -10,43 +13,60 @@
     left: 0
   &:not(.fixedMenu) nav
     box-shadow: var(--shadow-elevation-high)
+
   nav
+    display: flex
+    flex-direction: column
+    gap: 2rem
+    position: relative
     margin-top: 50px
     box-sizing: border-box
-    width: 230px
-    //background: #f7f7f5
+    width: var(--width)
     background: var(--light-gray)
     padding: 1rem
     box-shadow: var(--shadow-elevation-medium)
     transition: 0.4s ease
     border-radius: 1rem
     height: auto
-    .storiesTitle
+    section
       display: flex
+      flex-direction: column
+      gap: var(--gaps)
+    h4
+      padding-left: var(--spacing)
+      color: var(--light-text)
+      line-height: 1
+    .nav__title
+      display: flex
+      align-items: center
       justify-content: space-between
-      h2
-        padding: 0.7rem
-        color: var(--light-text)
+
     ul
       display: flex
       flex-direction: column
-      gap: 0.5rem
-      margin-top: 5px
+      gap: var(--gaps)
       li
+        position: relative
+        display: flex
+        align-items: center
+        gap: 5px
         cursor: pointer
-        padding: 0.7rem
+        padding: var(--spacing)
         border-radius: 7px
         font-weight: 600
+        img.action
+          position: absolute
+          right: 15px
+          opacity: 0
+          transition: 0.2s ease
         &:hover, &.active
           background: var(--medium-gray)
-    header
-      display: flex
-      justify-content: flex-end
-      gap: 0.5rem
-      padding-left: 0.7rem
-      margin-bottom: 3rem
-      polo-profile
-        flex: 1
+        &:hover
+          img.action
+            right: 7px
+            opacity: 1
+            display: block
+
   &.fixedMenu
     height: 100vh
   &.fixedMenu nav

@@ -1,18 +1,17 @@
 import { Component, Output, EventEmitter, Input, effect } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import { SeparatorComponent } from '../../../../shared/components/ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
-import { ProfileComponent } from '../profile/profile.component'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/features/dashboard/modals/creator-paywall/creator-paywall.component'
 import { PanzoomService } from 'src/app/shared/services/panzoom.service'
+import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent, ProfileComponent],
+  imports: [CommonModule, BasicButtonComponent],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })
@@ -25,7 +24,7 @@ export class MenuComponent {
     this.db.user().profile.subscription_status === 'active'
 
   constructor(
-    private db: DatabaseService,
+    public db: DatabaseService,
     public activeStory: ActiveStoryService,
     private modal: ModalService,
     private panzoom: PanzoomService
@@ -79,5 +78,9 @@ export class MenuComponent {
 
   toggleMenu() {
     this.fixedMenu = !this.fixedMenu
+  }
+
+  openProfile() {
+    this.modal.launch(ProfileModalComponent)
   }
 }

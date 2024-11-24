@@ -1,32 +1,49 @@
 <div [class.fixedMenu]="fixedMenu" class="menu">
   <nav>
-    <header>
-      <polo-profile></polo-profile>
-      @if (fixedMenu) {
-        <polo-basic-button
-          icon="/assets/icons/chevron-left.svg"
-          (click)="toggleMenu()"
-        ></polo-basic-button>
-      }
-    </header>
-
-    <!--polo-separator [space]="true"></polo-separator-->
-    <div class="storiesTitle">
-      <h2>Your stories</h2>
-    </div>
-    <ul>
-      <polo-basic-button
-        text="New story"
-        [iconSize]="10"
-        icon="/assets/icons/plus.svg"
-        (click)="createNewTree()"
-      ></polo-basic-button>
-      @for (story of stories; track story.id) {
-        <li (click)="loadTree(story.id)" [class.active]="story.id === activeStory.storyId()">
-          {{ story.name }}
+    <section>
+      <div class="nav__title">
+        <h4>{{ db.user().profile.user_name }}</h4>
+        @if (fixedMenu) {
+          <polo-basic-button
+            class="menuToggler"
+            icon="/assets/icons/chevron-left.svg"
+            (click)="toggleMenu()"
+          ></polo-basic-button>
+        }
+      </div>
+      <ul>
+        <li (click)="openProfile()">
+          <img width="12px" src="/assets/icons/configuration.svg" /> Your account
         </li>
-      }
-    </ul>
+        <li>
+          <img width="12px" src="/assets/icons/docs.svg" /> Docs<img
+            class="action"
+            width="15px"
+            src="/assets/icons/external-link.svg"
+          />
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="nav__title">
+        <h4>Your stories</h4>
+        <polo-basic-button
+          [iconSize]="10"
+          icon="/assets/icons/plus.svg"
+          (click)="createNewTree()"
+          title="Create new story"
+        ></polo-basic-button>
+      </div>
+      <ul>
+        @for (story of stories; track story.id) {
+          <li (click)="loadTree(story.id)" [class.active]="story.id === activeStory.storyId()">
+            {{ story.name }}
+            <img class="action" width="15px" src="/assets/icons/arrow-right.svg" />
+          </li>
+        }
+      </ul>
+    </section>
   </nav>
   @if (!fixedMenu) {
     <polo-basic-button
