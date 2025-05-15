@@ -253,6 +253,7 @@ export class ActiveStoryService {
       newNode.userTextOptions = {
         placeholder: '',
         property: '',
+        description: '',
       }
     }
 
@@ -324,6 +325,15 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
+
+  updateNodeDescription(nodeId: string, newDescription: string) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node) node.userTextOptions.description = newDescription
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+
   updateNodeLinks(nodeId: string, links: link[]) {
     const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.links = links
@@ -341,6 +351,13 @@ export class ActiveStoryService {
   updateNodeShareOptions(nodeId: string, sharingOptions: shareOptions) {
     const node: node = findNodeInTree(nodeId, this.entireTree())
     node.share = sharingOptions
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+  updateNodeButtonText(nodeId: string, newButtonText: string) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node) node.userTextOptions.buttonText = newButtonText
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())

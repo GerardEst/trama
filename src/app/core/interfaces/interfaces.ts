@@ -54,6 +54,8 @@ export interface node_conditions {
 export interface node_userTextOptions {
   property: string
   placeholder?: string
+  buttonText?: string
+  description?: string
 }
 export interface node_fallbackCondition {
   id: string

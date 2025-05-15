@@ -195,6 +195,16 @@ export class NodeComponent {
     this.activeStory.updateNodePlaceholder(this.nodeId, newPlaceholder)
   }
 
+  saveDescription(event: any) {
+    const newDescription = event.target.value
+    this.activeStory.updateNodeDescription(this.nodeId, newDescription)
+  }
+
+  saveButtonText(event: any) {
+    const newButtonText = event.target.value
+    this.activeStory.updateNodeButtonText(this.nodeId, newButtonText)
+  }
+
   onDuplicateNode() {
     this.duplicateNode.emit(this.nodeId)
   }

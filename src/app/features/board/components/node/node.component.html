@@ -182,6 +182,23 @@
           value="{{ userTextOptions?.placeholder }}"
         />
       </label>
+      <label>
+        <p>Button text</p>
+        <input
+          type="text"
+          (change)="saveButtonText($event)"
+          name="buttonText"
+          value="{{ userTextOptions?.buttonText }}"
+        />
+      </label>
+      <label>
+        <p>Description</p>
+        <textarea
+          (change)="saveDescription($event)"
+          name="description"
+          value="{{ userTextOptions?.description }}"
+        ></textarea>
+      </label>
     }
   </main>
   <footer>
