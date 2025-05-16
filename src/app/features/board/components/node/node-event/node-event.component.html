@@ -1,0 +1,12 @@
+<p>{{ event.id }}</p>
+<p>{{ event.amount }}</p>
+<p>{{ event.type }}</p>
+
+@if (openModifyEvent) {
+  <div class="node__modifyEvent">
+    <polo-node-add-event
+      (onModifyEvent)="modifyEvent($event)"
+      (onClose)="openModifyEvent = false"
+    ></polo-node-add-event>
+  </div>
+}

@@ -5,8 +5,15 @@
   icon="/assets/icons/plus.svg"
   (click)="openAddEvent = true"
 ></polo-basic-button>
+@for (event of events; track event.id) {
+  <polo-node-event [event]="event"></polo-node-event>
+}
 @if (openAddEvent) {
   <div class="node__addEvent">
-    <polo-node-add-event (onClose)="openAddEvent = false"></polo-node-add-event>
+    <polo-node-add-event
+      (onModifyEvent)="modifyEvent($event)"
+      (onCreateNewEvent)="createNewEvent($event)"
+      (onClose)="openAddEvent = false"
+    ></polo-node-add-event>
   </div>
 }

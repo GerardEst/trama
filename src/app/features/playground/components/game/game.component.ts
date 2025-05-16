@@ -10,7 +10,7 @@ import {
 import {
   answer_requirement,
   join,
-  answer_event,
+  event,
   stat,
   condition,
   property,
@@ -377,7 +377,7 @@ export class GameComponent {
     return true
   }
 
-  applyEvents(events: Array<answer_event>) {
+  applyEvents(events: Array<event>) {
     events?.forEach((event) => {
       if (event.action === 'alterStat') this.alterStat(event)
       if (event.action === 'alterCondition') this.alterCondition(event)
@@ -391,7 +391,7 @@ export class GameComponent {
     })
   }
 
-  private alterStat(event: answer_event) {
+  private alterStat(event: event) {
     const amount = parseInt(event.amount)
 
     let statIndex = this.playerService
@@ -412,7 +412,7 @@ export class GameComponent {
     }
   }
 
-  private alterCondition(event: answer_event) {
+  private alterCondition(event: event) {
     if (event.amount) {
       let condition = this.playerService
         .playerConditions()

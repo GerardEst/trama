@@ -19,19 +19,21 @@
     @if (eventType === 'stat') {
       <polo-node-add-modify-event
         type="stat"
-        [id]="eventId"
-        [amount]="eventAmount"
+        (onChangeElement)="onChangeElement($event)"
+        (onChangeAmount)="onChangeAmount($event)"
       ></polo-node-add-modify-event>
     } @else if (eventType === 'condition') {
       <polo-node-add-modify-event
         type="condition"
-        [id]="eventId"
-        [amount]="eventAmount"
+        (onChangeElement)="onChangeElement($event)"
+        (onChangeAmount)="onChangeAmount($event)"
       ></polo-node-add-modify-event>
     }
   </div>
-  <div class="addEvent__actions">
-    <button class="addEvent__actions__button" (click)="onCancel()">Cancel</button>
-    <button class="addEvent__actions__button" (click)="addEvent()">Add</button>
-  </div>
+  @if (eventId) {
+    <div class="addEvent__actions">
+      <button class="addEvent__actions__button" (click)="onCancel()">Cancel</button>
+      <button class="addEvent__actions__button" (click)="addEvent()">Create</button>
+    </div>
+  }
 </div>

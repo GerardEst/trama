@@ -10,9 +10,10 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
   styleUrl: './node-add-modify-event.component.sass',
 })
 export class NodeAddModifyEventComponent {
+  // Els inputs per configurar l'event depenent de si és stat o condition
+
   @Output() onChangeElement: EventEmitter<any> = new EventEmitter()
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
-  @Output() onDelete: EventEmitter<any> = new EventEmitter()
 
   @Input() id?: string
   @Input() amount?: number
@@ -58,15 +59,7 @@ export class NodeAddModifyEventComponent {
   }
 
   changeAmount(event: any) {
-    const eventId = this.id
-    const amount = parseInt(event.target.value)
-
-    // const event = this.events.find((event) => event.target === eventId)
-    // if (event) event.amount = amount
-
-    // this.activeStory.saveAnswerEvents(this.answerId, this.events)
-
-    // this.onChangeAmount.emit({ id: this.id, value: event.target.value })
+    this.onChangeAmount.emit({ id: this.id, value: event.target.value })
   }
 
   changeCheckbox(event: any) {

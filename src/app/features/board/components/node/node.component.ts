@@ -21,6 +21,7 @@ import {
   node_answer,
   node_conditions,
   node_userTextOptions,
+  event,
 } from 'src/app/core/interfaces/interfaces'
 import {
   generateIDForNewAnswer,
@@ -60,6 +61,7 @@ export class NodeComponent {
   @Input() text: string = ''
   @Input() image?: string
   @Input() join: string = ''
+  @Input() events?: Array<event>
   // Answer nodes
   @Input() answers?: Array<node_answer>
   // Distributor nodes

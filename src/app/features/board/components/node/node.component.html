@@ -23,7 +23,7 @@
     }
   </header>
   <div class="node__events">
-    <polo-node-events></polo-node-events>
+    <polo-node-events [events]="events" [nodeId]="nodeId"></polo-node-events>
   </div>
   <main>
     @if (type === 'distributor') {

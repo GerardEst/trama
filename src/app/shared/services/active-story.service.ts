@@ -311,6 +311,24 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
+  saveNodeEvents(nodeId: string, events: any) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    node.events = events
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+  deleteEventFromNode(nodeId: string, eventTarget: string) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node.events) {
+      node.events = node.events.filter((event: any) => {
+        return event.target !== eventTarget
+      })
+    }
+
+    // Saving to DB
+    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
   updateNodeProperty(nodeId: string, newProperty: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
     if (node) node.userTextOptions.property = newProperty

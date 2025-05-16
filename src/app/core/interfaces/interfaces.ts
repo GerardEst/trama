@@ -34,13 +34,14 @@ export interface node {
   share?: shareOptions
   links?: link[]
   userTextOptions?: node_userTextOptions
+  events?: Array<event>
 }
 
 export interface node_answer {
   id: string
   join: Array<join>
   text: string
-  events: Array<answer_event>
+  events: Array<event>
   requirements: Array<answer_requirement>
 }
 
@@ -61,9 +62,10 @@ export interface node_fallbackCondition {
   id: string
   join?: Array<join>
 }
-export interface answer_event {
+export interface event {
   id: string
-  action: 'alterStat' | 'alterCondition'
+  action: 'alterStat' | 'alterCondition' // TODO - Quedar-me amb type, crec que action només l'està liant
+  type: 'stat' | 'condition'
   amount: string
   target: string
 }
