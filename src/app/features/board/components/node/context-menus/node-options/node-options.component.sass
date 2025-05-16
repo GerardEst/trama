@@ -1,0 +1,26 @@
+.options
+  display: flex
+  gap: 0.3rem
+  flex-direction: column
+  padding: 0.5rem
+
+  & > span
+    cursor: pointer
+    margin: 0 0.2rem
+
+  &__addImage
+    height: 30px
+    border-radius: 5px
+    aspect-ratio: 1
+    background-repeat: no-repeat
+    background-size: 1.1rem
+    background-position: center
+    cursor: pointer
+    background-image: url("/assets/icons/camera.svg")
+    &:hover
+      background-color: var(--medium-gray)
+    input
+      opacity: 0
+      position: absolute
+      z-index: -1
+      pointer-events: none

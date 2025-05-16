@@ -1,0 +1,42 @@
+:host
+  position: relative
+  display: block
+
+.addEvent
+  position: absolute
+  top: calc(100% + 5px)
+  left: 0
+  height: auto
+  background-color: white
+  border-radius: 0.5rem
+  box-shadow: var(--shadow-elevation-medium-light)
+  z-index: 1
+  padding: 0.5rem
+  &__type
+    display: flex
+    align-items: center
+    gap: 0.5rem
+    &__item
+      display: flex
+      padding: 0.5rem
+      border-radius: 0.5rem
+      background-color: var(--medium-gray)
+      border: 1px solid var(--medium-gray)
+      &.active
+        border: 1px solid var(--dark-gray)
+  &__content
+    display: flex
+    gap: 0.5rem
+    padding: 0.5rem
+  &__actions
+    display: flex
+    gap: 0.5rem
+    padding: 0.5rem
+    button
+      padding: 0.5rem
+      border-radius: 0.5rem
+      background-color: var(--medium-gray)
+      border: 1px solid var(--medium-gray)
+      &:hover
+        background-color: var(--dark-gray)
+        border: 1px solid var(--dark-gray)

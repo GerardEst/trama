@@ -1,0 +1,12 @@
+<polo-basic-button
+  [transparent]="true"
+  title="Add event"
+  text="Add event"
+  icon="/assets/icons/plus.svg"
+  (click)="openAddEvent = true"
+></polo-basic-button>
+@if (openAddEvent) {
+  <div class="node__addEvent">
+    <polo-node-add-event (onClose)="openAddEvent = false"></polo-node-add-event>
+  </div>
+}

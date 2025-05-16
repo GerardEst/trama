@@ -7,12 +7,16 @@
   [class.success]="type === 'success'"
   [class.selected]="selected"
   [disabled]="disabled"
+  [class.alignLeft]="align === 'left'"
+  [class.alignRight]="align === 'right'"
+  [class.alignCenter]="align === 'center'"
 >
   @if (icon) {
-  <img [src]="icon" [width]="iconSize" alt="Button icon" />
-  } @if(waiting){
-  <img class="waitingIcon" src="/assets/icons/loading.svg" alt="Loading icon" />
-  }@else {
-  {{ text }}
+    <img [src]="icon" [width]="iconSize" alt="Button icon" />
+  }
+  @if (waiting) {
+    <img class="waitingIcon" src="/assets/icons/loading.svg" alt="Loading icon" />
+  } @else {
+    {{ text }}
   }
 </button>

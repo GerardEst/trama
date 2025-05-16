@@ -2,36 +2,29 @@
   <header>
     <span id="{{ nodeId + '_joiner' }}" class="joiner"></span>
     <ng-content select="dragHandle"> </ng-content>
-    <div class="options">
-      @if (type !== 'distributor') {
-        <form #imageInput>
-          <label class="simulateButton options__addImage">
-            <input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              (change)="onAddImage($event)"
-            />
-          </label>
-        </form>
-      }
-      <polo-basic-button
-        [transparent]="true"
-        title="Duplicate node"
-        icon="/assets/icons/duplicate.svg"
-        (click)="onDuplicateNode()"
-      ></polo-basic-button>
-      @if (nodeId !== 'node_0') {
-        <polo-basic-button
-          [transparent]="true"
-          title="Delete node"
-          icon="/assets/icons/trash.svg"
-          (click)="onRemoveNode()"
-        ></polo-basic-button>
-      }
-    </div>
+
+    <polo-basic-button
+      [transparent]="true"
+      title="Duplicate node"
+      icon="/assets/icons/hamburger-menu.svg"
+      (click)="optionsOpen = true"
+    ></polo-basic-button>
+    @if (optionsOpen) {
+      <div class="node__options">
+        <polo-node-options
+          [type]="type"
+          [nodeId]="nodeId"
+          (onAddImage)="onAddImage($event)"
+          (onDuplicateNode)="onDuplicateNode()"
+          (onRemoveNode)="onRemoveNode()"
+          (onClose)="optionsOpen = false"
+        ></polo-node-options>
+      </div>
+    }
   </header>
+  <div class="node__events">
+    <polo-node-events></polo-node-events>
+  </div>
   <main>
     @if (type === 'distributor') {
       @if (conditions && conditions.length > 0) {

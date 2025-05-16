@@ -1,0 +1,24 @@
+@if (selectedOption) {
+  <p (click)="selectorOpen = true">{{ selectedOption }}</p>
+} @else {
+  <p (click)="selectorOpen = true">Choose a {{ type }}</p>
+}
+@if (type === 'stat') {
+  <input type="number" (change)="changeAmount($event)" value="{{ amount }}" />
+} @else if (type === 'condition') {
+  <input
+    type="checkbox"
+    [checked]="amount"
+    (change)="changeCheckbox($event)"
+    value="{{ amount }}"
+  />
+}
+@if (selectorOpen) {
+  <polo-select-or-create
+    [options]="options"
+    [message]="message"
+    [selectedOption]="selectedOption"
+    (onNewOption)="onNewOption($event)"
+    (onSelectOption)="onSelectOption($event)"
+  ></polo-select-or-create>
+}

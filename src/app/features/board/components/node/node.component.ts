@@ -28,6 +28,8 @@ import {
 } from 'src/app/shared/utils/tree-searching'
 import { ApisService } from 'src/app/core/services/apis.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
+import { NodeOptionsComponent } from './context-menus/node-options/node-options.component'
+import { NodeEventsComponent } from './node-events/node-events.component'
 
 @Component({
   selector: 'polo-node',
@@ -39,6 +41,8 @@ import { StorageService } from 'src/app/shared/services/storage.service'
     FormsModule,
     BasicButtonComponent,
     ImageComponent,
+    NodeOptionsComponent,
+    NodeEventsComponent,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
@@ -72,6 +76,7 @@ export class NodeComponent {
   openedShareOptions: boolean = false
   loading: boolean = false
   loadingMessage?: string
+  optionsOpen: boolean = false
 
   @Input() type: 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode: EventEmitter<any> = new EventEmitter()

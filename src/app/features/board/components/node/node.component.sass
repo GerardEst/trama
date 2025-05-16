@@ -25,6 +25,21 @@
     z-index: -1
     &--answers
       left: -20px
+  &__options
+    position: absolute
+    top: -5px
+    right: 0
+    transform: translateY(-100%)
+    width: 100px
+    height: auto
+    background-color: white
+    border-radius: 0.5rem
+    box-shadow: var(--shadow-elevation-medium-light)
+    z-index: 1
+  &__events
+    display: flex
+    gap: 0.5rem
+    align-items: center
   &__answers
     position: relative
     display: flex
@@ -90,34 +105,6 @@ header
   background: white url("/assets/icons/drag.svg") no-repeat left 0.5rem center/1.3rem
   padding: 0.3rem 0
   border-bottom: 1px solid var(--medium-gray)
-
-.options
-  display: flex
-  align-items: center
-  margin-left: auto
-  gap: 0.3rem
-
-  & > span
-    cursor: pointer
-    margin: 0 0.2rem
-
-  &__addImage
-    height: 30px
-    border-radius: 5px
-    aspect-ratio: 1
-    background-repeat: no-repeat
-    background-size: 1.1rem
-    background-position: center
-    cursor: pointer
-    background-image: url("/assets/icons/camera.svg")
-    &:hover
-        background-color: var(--medium-gray)
-    input
-      opacity: 0
-      position: absolute
-      z-index: -1
-      pointer-events: none
-
 
 .union_point
   width: 1.5rem
