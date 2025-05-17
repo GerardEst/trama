@@ -1,18 +1,24 @@
-<polo-basic-button
-  [transparent]="true"
-  title="Add event"
-  text="Add event"
-  icon="/assets/icons/plus.svg"
-  (click)="openAddEvent = true"
-></polo-basic-button>
-@for (event of events; track event.target) {
-  <polo-node-event [event]="event" (onSaveEvent)="saveEvent($event)"></polo-node-event>
-}
-@if (openAddEvent) {
-  <div class="node__addEvent">
-    <polo-node-add-event
+<div class="node__events">
+  <button class="node__addEventButton" (click)="openAddEvent = true">
+    <img src="/assets/icons/plus.svg" alt="Add event" />
+    @if (!events || events.length === 0) {
+      <p>Add event</p>
+    }
+  </button>
+  @for (event of events; track event.target) {
+    <polo-node-event
+      [type]="event.type"
+      [amount]="event.amount"
+      [target]="event.target"
       (onSaveEvent)="saveEvent($event)"
-      (onClose)="openAddEvent = false"
-    ></polo-node-add-event>
-  </div>
-}
+    ></polo-node-event>
+  }
+  @if (openAddEvent) {
+    <div class="node__addEvent">
+      <polo-node-add-event
+        (onSaveEvent)="saveEvent($event)"
+        (onClose)="openAddEvent = false"
+      ></polo-node-add-event>
+    </div>
+  }
+</div>

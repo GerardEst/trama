@@ -1,13 +1,18 @@
-<div class="node__event" (click)="openModifyEvent = true">
-  <p>{{ event.type }} {{ event.target }} {{ event.amount }}</p>
+<div
+  class="node__event"
+  (click)="openModifyEvent = true"
+  [style.background-color]="isNegative ? 'var(--danger-light)' : 'var(--success-light)'"
+  [style.border-color]="isNegative ? 'var(--danger)' : 'var(--success)'"
+>
+  <p>{{ target }} {{ amount }}</p>
 </div>
 
 @if (openModifyEvent) {
   <div class="node__modifyEvent">
     <polo-node-add-event
-      [amount]="event.amount"
-      [type]="event.type"
-      [target]="event.target"
+      [amount]="amount"
+      [type]="type"
+      [target]="target"
       (onSaveEvent)="saveEvent($event)"
       (onClose)="openModifyEvent = false"
     ></polo-node-add-event>

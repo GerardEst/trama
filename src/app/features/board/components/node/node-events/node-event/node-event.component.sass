@@ -1,13 +1,18 @@
+:host
+  position: relative
+  display: block
+
 .node__event
   display: flex
   align-items: center
   justify-content: center
+  border-radius: 10px
+  padding: 2px 5px
+  background-color: var(--medium-gray)
+  border: 1px solid var(--dark-gray)
+  cursor: pointer
 
 .node__modifyEvent
   position: absolute
-  top: 0
+  bottom: 0
   left: 0
-  width: 100%
-  height: 100%
-  background-color: rgba(0, 0, 0, 0.5)
-  z-index: 1
