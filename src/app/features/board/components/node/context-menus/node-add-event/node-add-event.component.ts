@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core'
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
-import { NodeAddModifyEventComponent } from '../../node-events/node-add-modify-event/node-add-modify-event.component'
+import { NodeAddModifyEventComponent } from '../node-add-modify-event/node-add-modify-event.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 @Component({
@@ -16,35 +16,26 @@ export class NodeAddEventComponent extends PopupBaseComponent {
 
   @Inject(ActiveStoryService) private activeStory!: ActiveStoryService
 
-  @Output() onModifyEvent: EventEmitter<any> = new EventEmitter()
-  @Output() onCreateNewEvent: EventEmitter<any> = new EventEmitter()
+  @Output() onSaveEvent: EventEmitter<any> = new EventEmitter()
+
   @Input() eventId: string = ''
-  @Input() eventType: 'stat' | 'condition' = 'stat'
-  @Input() eventAmount?: number
+  @Input() target: string = ''
+  @Input() type: 'stat' | 'condition' = 'stat'
+  @Input() amount?: string
 
-  onChangeElement(event: any) {
-    this.eventId = event.value.value
-    this.eventAmount = event.amount
-
-    this.onModifyEvent.emit({
-      eventId: this.eventId,
-      eventAmount: this.eventAmount,
-    })
+  onChangeTarget(event: any) {
+    this.target = event.value.value
   }
 
   onChangeAmount(event: any) {
-    this.eventAmount = event.amount
-
-    this.onModifyEvent.emit({
-      eventId: this.eventId,
-      eventAmount: this.eventAmount,
-    })
+    this.amount = event.value
   }
 
-  addEvent() {
-    this.onCreateNewEvent.emit({
-      eventId: this.eventId,
-      eventAmount: this.eventAmount,
+  saveEvent() {
+    this.onSaveEvent.emit({
+      target: this.target,
+      amount: this.amount,
+      type: this.type,
     })
     this.onClose.emit()
   }

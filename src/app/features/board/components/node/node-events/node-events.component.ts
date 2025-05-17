@@ -3,7 +3,7 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { NodeAddEventComponent } from '../context-menus/node-add-event/node-add-event.component'
 import { event } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { NodeEventComponent } from '../node-event/node-event.component'
+import { NodeEventComponent } from './node-event/node-event.component'
 
 @Component({
   selector: 'polo-node-events',
@@ -14,38 +14,25 @@ import { NodeEventComponent } from '../node-event/node-event.component'
 })
 export class NodeEventsComponent {
   // La llista dels events que hi ha al node
-  // Podria rebre tota la lògica aquí i que aquet fos el que gestiona, aixi podria modificar la llista en directe
 
-  @Inject(ActiveStoryService) private activeStory!: ActiveStoryService
   @Input() nodeId!: string
   @Input() events?: Array<event>
 
   openAddEvent: boolean = false
 
-  modifyEvent(event: any) {
-    console.log(event)
-    if (!this.events) return
+  constructor(private activeStory: ActiveStoryService) {}
 
-    // Modificar l'event
-    this.events = this.events.map((e) => {
-      if (e.id === event.eventId) {
-        e.amount = event.eventAmount
-      }
-      return e
-    })
-
-    this.activeStory.saveNodeEvents(this.nodeId, this.events)
-  }
-
-  createNewEvent(event: any) {
+  saveEvent(event: any) {
     console.log(event)
 
-    const newEvent = {
-      id: event.eventId,
-      amount: event.eventAmount,
+    if (!this.events) this.events = []
+
+    const eventIndex = this.events?.findIndex((e) => e.target === event.target)
+    if (eventIndex !== -1) {
+      this.events[eventIndex] = event
+    } else {
+      this.events?.push(event)
     }
-
-    this.events?.push(event)
 
     this.activeStory.saveNodeEvents(this.nodeId, this.events)
   }

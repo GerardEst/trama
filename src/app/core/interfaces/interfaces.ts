@@ -64,7 +64,7 @@ export interface node_fallbackCondition {
 }
 export interface event {
   id: string
-  action: 'alterStat' | 'alterCondition' // TODO - Quedar-me amb type, crec que action només l'està liant
+  action: 'alterStat' | 'alterCondition'
   type: 'stat' | 'condition'
   amount: string
   target: string

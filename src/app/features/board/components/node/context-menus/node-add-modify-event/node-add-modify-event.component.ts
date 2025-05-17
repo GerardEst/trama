@@ -12,16 +12,16 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 export class NodeAddModifyEventComponent {
   // Els inputs per configurar l'event depenent de si és stat o condition
 
-  @Output() onChangeElement: EventEmitter<any> = new EventEmitter()
+  @Output() onChangeTarget: EventEmitter<any> = new EventEmitter()
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
 
   @Input() id?: string
-  @Input() amount?: number
+  @Input() amount?: string
   @Input() type: 'stat' | 'condition' = 'stat'
+  @Input() selectedOption?: string
 
   options: any = []
   message?: string
-  selectedOption?: string
   selectorOpen: boolean = false
 
   constructor(private activeStory: ActiveStoryService) {}
@@ -35,7 +35,7 @@ export class NodeAddModifyEventComponent {
   onNewOption(option: any) {
     const createdRef = this.activeStory.createNewRef(option, this.type)
     if (createdRef) {
-      this.onChangeElement.emit({
+      this.onChangeTarget.emit({
         value: createdRef.id,
         previousValue: this.selectedOption,
       })
@@ -48,7 +48,7 @@ export class NodeAddModifyEventComponent {
 
   onSelectOption(option: any) {
     this.selectedOption = option.value
-    this.onChangeElement.emit({
+    this.onChangeTarget.emit({
       value: option,
       previousValue: this.selectedOption,
     })

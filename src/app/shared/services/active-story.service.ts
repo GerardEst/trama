@@ -315,6 +315,9 @@ export class ActiveStoryService {
     const node = findNodeInTree(nodeId, this.entireTree())
     node.events = events
 
+    console.log(events)
+    console.log(node)
+
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
