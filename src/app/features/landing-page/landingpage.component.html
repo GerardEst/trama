@@ -1,19 +1,16 @@
 <menu>
   <p class="logo">Text & Play</p>
   <div>
-    <polo-landing-link
-      (click)="scrollTo('pricing')"
-      text="Pricing"
-    ></polo-landing-link>
+    <polo-landing-link (click)="scrollTo('pricing')" text="Pricing"></polo-landing-link>
     <!--polo-landing-link destiny="/blog" text="Blog"></polo-landing-link-->
     <div class="login">
       @if (checkedLoggedUser) {
-      <polo-landing-link
-        behaviour="link"
-        destiny="/dashboard"
-        text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
-        [highlight]="true"
-      ></polo-landing-link>
+        <polo-landing-link
+          behaviour="link"
+          destiny="/dashboard"
+          text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
+          [highlight]="true"
+        ></polo-landing-link>
       }
     </div>
   </div>
@@ -38,9 +35,8 @@
     </h1-->
     <h2>
       From simple formularies and quizzes to intricate story-driven flows.
-      <br />Textandplay provides the simplest tools to
-      <strong>create</strong> tests, <strong>share</strong> them with your
-      audience and <strong>analyse</strong> the results.
+      <br />Textandplay provides the simplest tools to <strong>create</strong> tests,
+      <strong>share</strong> them with your audience and <strong>analyse</strong> the results.
     </h2>
     <!--div>
       <li>Intuitive node-based platform for creating dynamic interactive tests and narratives</li>
@@ -88,9 +84,7 @@
 </section-->
 <section class="section--advantages">
   <div class="advantages section--centeredContent">
-    <h2 class="claim advantages__title txt-baskerville">
-      Where is Textandplay better than others?
-    </h2>
+    <h2 class="claim advantages__title txt-baskerville">Awasome features</h2>
     <!--h2 class="claim advantages__title txt-baskerville">
       Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
       textandplay
@@ -103,10 +97,10 @@
       >
         <p>
           Nodes allow you to create
-          <strong>complex and branching flows</strong> very easily and visually.
-          So you can build quizzes, formularies, text adventures... you name it!
+          <strong>complex and branching flows</strong> very easily and visually. So you can build
+          quizzes, formularies, text adventures... you name it!
         </p>
-        <polo-landing-link text="Where is the limit?"></polo-landing-link>
+        <!-- <polo-landing-link text="Where is the limit?"></polo-landing-link> -->
       </polo-landing-card>
       <polo-landing-card
         image="/assets/images/landing/advantages_flow_control.webp"
@@ -115,10 +109,10 @@
       >
         <p>
           Every user action can change the flow thanks to
-          <strong>properties, requirements and distributor nodes</strong>. Make
-          the experience trully unique!
+          <strong>properties, requirements and distributor nodes</strong>. Make the experience
+          trully unique!
         </p>
-        <polo-landing-link text="How?"></polo-landing-link>
+        <!-- <polo-landing-link text="How?"></polo-landing-link> -->
       </polo-landing-card>
       <polo-landing-card
         image="/assets/images/landing/advantages_analyze.webp"
@@ -126,11 +120,10 @@
         alt="Decorative drawing of two persons making cientific experiments"
       >
         <p>
-          Analyze globally or in detail, from how many users completed the flow
-          to the
+          Analyze globally or in detail, from how many users completed the flow to the
           <strong>exact path and choices for a specific user</strong>.
         </p>
-        <polo-landing-link text="Analyze it"></polo-landing-link>
+        <!-- <polo-landing-link text="Analyze it"></polo-landing-link> -->
       </polo-landing-card>
       <!--polo-landing-card
         image="/assets/images/landing/advantages_integrate_everywhere.webp"
@@ -163,10 +156,7 @@
       <div class="feature__text">
         <div class="tag tag--build"><p>Build tools</p></div>
         <p class="feature__text__title">No-code and nodes, a winning pair</p>
-        <p>
-          By joining predefined nodes, anyone can handle anything without
-          hassle.
-        </p>
+        <p>By joining predefined nodes, anyone can handle anything without hassle.</p>
         <ul>
           <li>Drag and drop nodes around to build your flow</li>
           <li>Understand all your structure at a glance</li>
@@ -187,17 +177,13 @@
     <div class="feature feature2">
       <div class="feature__text">
         <div class="tag tag--build"><p>Build tools</p></div>
-        <p class="feature__text__title">
-          Personalization and unique user experience
-        </p>
+        <p class="feature__text__title">Personalization and unique user experience</p>
         <p>
-          Use information user give to you in the same flow to be more personal
-          and to provide a personalized flow adapted to his specific needs.
+          Use information user give to you in the same flow to be more personal and to provide a
+          personalized flow adapted to his specific needs.
         </p>
         <ul>
-          <li>
-            Add some randomness to the flows to make the experience unique
-          </li>
+          <li>Add some randomness to the flows to make the experience unique</li>
           <li>Send users to specific nodes depending on previous actions</li>
           <li>Dynamic hashtags</li>
         </ul>
@@ -213,9 +199,8 @@
         <div class="tag tag--build"><p>Build tools</p></div>
         <p class="feature__text__title">Simplicity to handle complexity</p>
         <p>
-          We build with simplicity in mind so everything is as easy and
-          straightforward as it can be. <br /><br />You don't have to learn a
-          new tool, you just have to use it.
+          We build with simplicity in mind so everything is as easy and straightforward as it can
+          be. <br /><br />You don't have to learn a new tool, you just have to use it.
         </p>
       </div>
     </div>
@@ -223,13 +208,11 @@
       <div class="feature__text">
         <div class="tag tag--share"><p>Share tools</p></div>
         <p class="feature__text__title">Let your flow, flow!</p>
-        <p>
-          More users completing the flow means more data and visits for you.
-        </p>
+        <p>More users completing the flow means more data and visits for you.</p>
         <br />
         <p>
-          That's why we make share a flow as easy as sharing a link and provide
-          resharing options. Make something viral!
+          That's why we make share a flow as easy as sharing a link and provide resharing options.
+          Make something viral!
         </p>
         <!--polo-landing-link
           class="feature__text__action"
@@ -241,13 +224,10 @@
     <div class="feature feature5">
       <div class="feature__text">
         <div class="tag tag--share"><p>Share tools</p></div>
-        <p class="feature__text__title">
-          Want real user feedback? Treat users like humans
-        </p>
+        <p class="feature__text__title">Want real user feedback? Treat users like humans</p>
         <p>
-          There are many tools to build a form, but from the user perspective
-          every form will be just another form. Give them something better and
-          start receiving better feedback.
+          There are many tools to build a form, but from the user perspective every form will be
+          just another form. Give them something better and start receiving better feedback.
         </p>
         <ul>
           <li>Options for conversational flows</li>
@@ -337,7 +317,7 @@
     </div>
   </div>
 </section-->
-<section #examplesSection class="section--usecases">
+<!-- <section #examplesSection class="section--usecases">
   <h2 class="usecases__title txt-baskerville">Who is this for?</h2>
   <div class="usecases section--centeredContent textImageContent">
     <div class="usecases__list">
@@ -408,23 +388,9 @@
           }}"
         ></polo-landing-link>
       </div>
-      <!--div class="usecases__list__item">
-        <h3 class="txt-baskerville txt-l">You!</h3>
-        <p>
-          There are infinite ways to use Textandplay! Experiment, try things,
-          create, use it however you want
-        </p>
-        <polo-landing-link
-          text="Start creating!"
-          destiny="/dashboard"
-          behaviour="link"
-          [highlight]="true"
-        ></polo-landing-link>
-      </div-->
     </div>
     <div #activeExample class="usecases__examples">
       <div class="exampleContainer">
-        <!--polo-landing-mobile-->
         @if(activeUseCase==='brands'){
         <iframe
           title="Brand flow example"
@@ -444,11 +410,10 @@
           src="https://textandplay.com/private/337b5201-40eb-4732-b29a-8c09663ef8b5"
         ></iframe>
         }
-        <!--/polo-landing-mobile-->
       </div>
     </div>
   </div>
-</section>
+</section> -->
 <section #pricingSection class="section--pricing">
   <div class="section--centeredContent">
     <h2 class="txt-white txt-baskerville">Pricing</h2>
@@ -512,9 +477,7 @@
     </div>
     <div>
       <p class="txt-white txt-weight-bold">Contact</p>
-      <a href="mailto:hello@textandplay.com" class="txt-white"
-        >hello&#64;textandplay.com</a
-      >
+      <a href="mailto:hello@textandplay.com" class="txt-white">hello&#64;textandplay.com</a>
     </div>
   </div>
 </footer>
