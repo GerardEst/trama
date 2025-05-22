@@ -8,6 +8,8 @@ import {
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
+import { PopupBaseComponent } from '../popup-base/popup-base.component'
+
 @Component({
   selector: 'polo-select-or-create',
   standalone: true,
@@ -15,7 +17,7 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
 })
-export class SelectOrCreateComponent {
+export class SelectOrCreateComponent extends PopupBaseComponent {
   @Input() options: Array<any> = []
   @Input() message?: string
   @Input() selectedOption?: string
@@ -26,8 +28,6 @@ export class SelectOrCreateComponent {
   searchedOptions: Array<any> = []
   newOption?: string
   optionsOpened: boolean = false
-
-  constructor() {}
 
   ngOnInit(): void {
     setTimeout(() => {

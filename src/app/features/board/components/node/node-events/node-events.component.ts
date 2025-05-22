@@ -1,5 +1,4 @@
-import { Component, Inject, Input } from '@angular/core'
-import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
+import { Component, Input } from '@angular/core'
 import { NodeAddEventComponent } from '../context-menus/node-add-event/node-add-event.component'
 import { event } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -8,7 +7,7 @@ import { NodeEventComponent } from './node-event/node-event.component'
 @Component({
   selector: 'polo-node-events',
   standalone: true,
-  imports: [BasicButtonComponent, NodeAddEventComponent, NodeEventComponent],
+  imports: [NodeAddEventComponent, NodeEventComponent],
   templateUrl: './node-events.component.html',
   styleUrl: './node-events.component.sass',
 })
@@ -23,7 +22,7 @@ export class NodeEventsComponent {
   constructor(private activeStory: ActiveStoryService) {}
 
   saveEvent(event: any) {
-    console.log(event)
+    event.action = event.type === 'stat' ? 'alterStat' : 'alterCondition'
 
     if (!this.events) this.events = []
 

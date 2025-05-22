@@ -10,7 +10,6 @@ import {
   selector: 'polo-popup-base',
   standalone: true,
   template: '<ng-content></ng-content>',
-  styles: [':host { display: contents; }'],
 })
 export class PopupBaseComponent {
   private isInitialized = false

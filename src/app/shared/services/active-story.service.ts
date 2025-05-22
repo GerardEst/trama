@@ -313,10 +313,7 @@ export class ActiveStoryService {
   }
   saveNodeEvents(nodeId: string, events: any) {
     const node = findNodeInTree(nodeId, this.entireTree())
-    node.events = events
-
-    console.log(events)
-    console.log(node)
+    if (node) node.events = events
 
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
