@@ -21,6 +21,7 @@ import { ref } from 'src/app/core/interfaces/interfaces'
 export class ConditionComponent {
   id: string = ''
   refOptions: ref[] = []
+  refType: 'stat' | 'condition' | 'property' = 'stat'
 
   // Inputs to start with
   @Input() fallback: boolean = false
@@ -49,10 +50,16 @@ export class ConditionComponent {
         }
       }
     )
+    this.refType = this.refOptions.find((ref) => ref.id === this.selectedRef)
+      ?.type as 'stat' | 'condition' | 'property'
   }
   saveCondition(event: any) {
     if (event.target.id === 'ref') {
+      this.refType = this.refOptions.find(
+        (ref) => ref.id === event.target.selectedOptions[0].id
+      )?.type as 'stat' | 'condition' | 'property'
       this.selectedRef = event.target.selectedOptions[0].id
+      console.log('this.refType', this.refType)
     } else if (event.target.id === 'comparator') {
       this.comparator = event.target.selectedOptions[0].id
     } else if (event.target.id === 'value') {
