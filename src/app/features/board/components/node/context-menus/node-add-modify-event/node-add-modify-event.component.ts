@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+} from '@angular/core'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
@@ -26,10 +32,11 @@ export class NodeAddModifyEventComponent {
 
   constructor(private activeStory: ActiveStoryService) {}
 
-  ngOnInit() {
-    this.options = this.activeStory.getRefsFormatted(this.type)
-
-    this.message = `Select a ${this.type} or create new one`
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['type']) {
+      this.options = this.activeStory.getRefsFormatted(this.type)
+      this.message = `Select a ${this.type} or create new one`
+    }
   }
 
   onNewOption(option: any) {
@@ -49,7 +56,7 @@ export class NodeAddModifyEventComponent {
   onSelectOption(option: any) {
     this.selectedOption = option.value
     this.onChangeTarget.emit({
-      value: option,
+      value: this.selectedOption,
       previousValue: this.selectedOption,
     })
 

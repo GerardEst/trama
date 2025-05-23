@@ -40,7 +40,6 @@ export class DashboardComponent {
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)
-    //this.initBoard('bfc7876c-0d71-4384-93cb-b31be13ad2d8')
   }
 
   async initBoard(storyId: string | null) {
