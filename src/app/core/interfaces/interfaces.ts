@@ -64,10 +64,11 @@ export interface node_fallbackCondition {
 }
 export interface event {
   id: string
-  action: 'alterStat' | 'alterCondition'
-  type: 'stat' | 'condition'
+  action: 'alterStat' | 'alterCondition' | 'alterProperty'
+  type: 'stat' | 'condition' | 'property'
   amount: string
   target: string
+  property?: string
 }
 export interface answer_requirement {
   id: string

@@ -35,4 +35,12 @@ export class NodeEventsComponent {
 
     this.activeStory.saveNodeEvents(this.nodeId, this.events)
   }
+
+  deleteEvent(event: any) {
+    console.log('event', event)
+    this.events = this.events?.filter((e) => e.target !== event.target)
+    console.log('this.events', this.events)
+
+    this.activeStory.saveNodeEvents(this.nodeId, this.events)
+  }
 }

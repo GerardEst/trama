@@ -10,7 +10,9 @@
       [type]="event.type"
       [amount]="event.amount"
       [target]="event.target"
+      [property]="event.property"
       (onSaveEvent)="saveEvent($event)"
+      (onDeleteEvent)="deleteEvent($event)"
     ></polo-node-event>
   }
   @if (openAddEvent) {

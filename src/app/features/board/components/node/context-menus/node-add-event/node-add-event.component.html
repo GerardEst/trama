@@ -10,17 +10,29 @@
     >
       <p>Condition</p>
     </div>
+    <div
+      class="addEvent__type__item"
+      [class.active]="type === 'property'"
+      (click)="type = 'property'"
+    >
+      <p>Property</p>
+    </div>
   </div>
   <div class="addEvent__content">
     <polo-node-add-modify-event
       [type]="type"
       [selectedOption]="target"
       [amount]="amount"
+      [property]="property"
       (onChangeTarget)="onChangeTarget($event)"
       (onChangeAmount)="onChangeAmount($event)"
+      (onChangeProperty)="onChangeProperty($event)"
     ></polo-node-add-modify-event>
   </div>
   <div class="addEvent__actions">
+    @if (canBeDeleted) {
+      <button class="addEvent__actions__button" (click)="deleteEvent()">Delete</button>
+    }
     <button class="addEvent__actions__button" (click)="onCancel()">Cancel</button>
     <button class="addEvent__actions__button" (click)="saveEvent()">Ok</button>
   </div>

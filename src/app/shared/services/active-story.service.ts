@@ -134,7 +134,7 @@ export class ActiveStoryService {
     // Saving to DB
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
-  createNewRef(name: string, type: 'stat' | 'condition') {
+  createNewRef(name: string, type: 'stat' | 'condition' | 'property') {
     if (!this.entireTree().refs) {
       this.entireTree().refs = {}
     }
@@ -172,7 +172,7 @@ export class ActiveStoryService {
   getRefs() {
     return this.entireTree().refs
   }
-  getRefsFormatted(type: 'stat' | 'condition') {
+  getRefsFormatted(type: 'stat' | 'condition' | 'property') {
     const refs = this.entireTree().refs
 
     if (!refs) return []

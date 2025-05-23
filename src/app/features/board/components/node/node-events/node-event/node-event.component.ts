@@ -5,9 +5,8 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core'
-import { event } from 'src/app/core/interfaces/interfaces'
 import { NodeAddEventComponent } from '../../context-menus/node-add-event/node-add-event.component'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+
 @Component({
   selector: 'polo-node-event',
   standalone: true,
@@ -17,14 +16,15 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 })
 export class NodeEventComponent {
   @Output() onSaveEvent: EventEmitter<any> = new EventEmitter()
-  @Input() type: 'stat' | 'condition' = 'stat'
+  @Output() onDeleteEvent: EventEmitter<any> = new EventEmitter()
+
+  @Input() type: 'stat' | 'condition' | 'property' = 'stat'
   @Input() amount!: string
   @Input() target!: string
+  @Input() property?: string
 
   isNegative: boolean = false
   openModifyEvent: boolean = false
-
-  constructor(private activeStory: ActiveStoryService) {}
 
   ngOnInit() {
     if (!this.amount) return
@@ -46,5 +46,9 @@ export class NodeEventComponent {
 
   saveEvent(event: any) {
     this.onSaveEvent.emit(event)
+  }
+
+  deleteEvent(event: any) {
+    this.onDeleteEvent.emit(event)
   }
 }

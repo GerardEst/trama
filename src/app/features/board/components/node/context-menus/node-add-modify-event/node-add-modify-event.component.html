@@ -13,6 +13,8 @@
       (change)="changeCheckbox($event)"
       value="{{ amount }}"
     />
+  } @else if (type === 'property') {
+    <input type="text" (change)="changeProperty($event)" value="{{ property }}" />
   }
   @if (selectorOpen) {
     <polo-select-or-create

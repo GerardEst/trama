@@ -13,8 +13,11 @@
       [amount]="amount"
       [type]="type"
       [target]="target"
+      [property]="property"
       (onSaveEvent)="saveEvent($event)"
       (onClose)="openModifyEvent = false"
+      (onDeleteEvent)="deleteEvent($event)"
+      [canBeDeleted]="true"
     ></polo-node-add-event>
   </div>
 }

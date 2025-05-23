@@ -20,10 +20,12 @@ export class NodeAddModifyEventComponent {
 
   @Output() onChangeTarget: EventEmitter<any> = new EventEmitter()
   @Output() onChangeAmount: EventEmitter<any> = new EventEmitter()
+  @Output() onChangeProperty: EventEmitter<any> = new EventEmitter()
 
   @Input() id?: string
   @Input() amount?: string
-  @Input() type: 'stat' | 'condition' = 'stat'
+  @Input() property?: string
+  @Input() type: 'stat' | 'condition' | 'property' = 'stat'
   @Input() selectedOption?: string
 
   options: any = []
@@ -74,5 +76,9 @@ export class NodeAddModifyEventComponent {
       id: this.id,
       value: Number(event.target.checked),
     })
+  }
+
+  changeProperty(event: any) {
+    this.onChangeProperty.emit({ id: this.id, value: event.target.value })
   }
 }
