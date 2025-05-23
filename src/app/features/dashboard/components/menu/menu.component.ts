@@ -1,4 +1,11 @@
-import { Component, Output, EventEmitter, effect,WritableSignal,signal } from '@angular/core'
+import {
+  Component,
+  Output,
+  EventEmitter,
+  effect,
+  WritableSignal,
+  signal,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -28,14 +35,34 @@ export class MenuComponent {
     public activeStory: ActiveStoryService,
     private modal: ModalService
   ) {
-    effect(() => {
-      this.activeStory.storyName()
-      this.getTrees(this.db.user().id)
-    })
+    effect(
+      () => {
+        this.changeStoryName(
+          this.activeStory.storyId(),
+          this.activeStory.storyName()
+        )
+      },
+      { allowSignalWrites: true }
+    )
+  }
+
+  ngOnInit() {
+    this.getTrees(this.db.user().id)
   }
 
   async getTrees(userId: string) {
     this.stories.set(await this.db.getAllTreesForUser(userId))
+  }
+
+  changeStoryName(storyId: string, storyName: string) {
+    this.stories.update((currentStories) =>
+      currentStories.map((story: any) => {
+        if (story.id === storyId) {
+          story.name = storyName
+        }
+        return story
+      })
+    )
   }
 
   loadTree(treeId: number) {
@@ -43,7 +70,11 @@ export class MenuComponent {
   }
 
   createNewTree() {
-    if (!this.isSubscribedUser() && this.stories() && this.stories().length >= 3) {
+    if (
+      !this.isSubscribedUser() &&
+      this.stories() &&
+      this.stories().length >= 3
+    ) {
       this.modal.launch(CreatorPaywallComponent)
       console.error('Cannot have more than 3 stories if not subscribed')
       return
