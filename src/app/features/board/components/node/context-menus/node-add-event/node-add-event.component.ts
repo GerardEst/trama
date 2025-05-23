@@ -24,7 +24,7 @@ export class NodeAddEventComponent extends PopupBaseComponent {
   @Input() amount?: string
 
   onChangeTarget(event: any) {
-    this.target = event.value.value
+    this.target = event.value
   }
 
   onChangeAmount(event: any) {

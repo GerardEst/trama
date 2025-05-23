@@ -40,6 +40,7 @@ export class DashboardComponent {
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)
+    //this.initBoard('bfc7876c-0d71-4384-93cb-b31be13ad2d8')
   }
 
   async initBoard(storyId: string | null) {
@@ -101,6 +102,7 @@ export class DashboardComponent {
         name: 'My new tree',
         tree: {
           nodes: [],
+          refs: {},
         },
         profile_id: this.db.user().id,
       },
@@ -125,13 +127,13 @@ export class DashboardComponent {
       // remove the story from database
       await this.db.deleteStory(storyId)
       // remove the story from stories
-      this.menuSide?.stories.set(this.menuSide?.stories().filter((story: any) => story.id !== storyId))
+      this.menuSide?.stories.set(
+        this.menuSide?.stories().filter((story: any) => story.id !== storyId)
+      )
       // clean board
       this.activeStory.reset()
-
     } catch (err) {
       console.error(err)
     }
   }
-
 }
