@@ -4,25 +4,27 @@
     [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
     (onEndGame)="endGame()"
     (onDrawNode)="drawNode($event)"
-    (onSelectAnswer)="selectAnswer($event)">
+    (onSelectAnswer)="selectAnswer($event)"
+  >
   </polo-game>
   <div class="storyfooter">
     <span></span>
     @if (activeStory.storyConfiguration().footer?.text) {
-    @if (activeStory.storyConfiguration().footer.link) {
-    <a href="{{ activeStory.storyConfiguration().footer.link }}" target="_blank">{{
-      activeStory.storyConfiguration().footer.text }}</a>
-    } @else {
-    <p>
-      {{ activeStory.storyConfiguration().footer.text }}
-    </p>
+      @if (activeStory.storyConfiguration().footer.link) {
+        <a href="{{ activeStory.storyConfiguration().footer.link }}" target="_blank">{{
+          activeStory.storyConfiguration().footer.text
+        }}</a>
+      } @else {
+        <p>
+          {{ activeStory.storyConfiguration().footer.text }}
+        </p>
+      }
     }
-    }
-    @if(activeStory.storyConfiguration().tapLink){
-    <p>
-      Created with
-      <a target="_blank" href="https://textandplay.com">Textandplay</a>
-    </p>
+    @if (activeStory.storyConfiguration().tapLink) {
+      <p>
+        Created with
+        <a target="_blank" href="https://trama.app">Trama</a>
+      </p>
     }
   </div>
 </div>

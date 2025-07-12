@@ -71,7 +71,7 @@ export class MenuTopComponent {
     )
   }
 
-  toggleTextandplayLink() {
+  toggleAppLink() {
     this.activeStory.storyConfiguration().tapLink =
       !this.activeStory.storyConfiguration().tapLink
     this.db.setTapLinkOf(

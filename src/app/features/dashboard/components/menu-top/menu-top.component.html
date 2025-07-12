@@ -1,5 +1,5 @@
-@if(showOptions){
-<div (click)="closePopup()" class="overlay"></div>
+@if (showOptions) {
+  <div (click)="closePopup()" class="overlay"></div>
 }
 <div class="menu">
   <input
@@ -13,113 +13,109 @@
     text="Story options"
   ></polo-basic-button>
   @if (showOptions) {
-  <div class="dropdown">
-    <div class="dropdown__section">
-      @if (db.userPlanIs('pro')) {
-      <label>
-        <span>Enable tracking</span>
-        <input
-          (change)="toggleTracking()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().tracking"
-        />
-      </label>
-      } @else {
-      <label>
-        <span>🚫 Enable tracking</span>
-        <input
-          [disabled]="true"
-          [checked]="activeStory.storyConfiguration().tracking"
-          type="checkbox"
-        />
-      </label>
-      } @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-      <label>
-        <span>Enable sharing</span>
-        <input
-          (change)="toggleSharing()"
-          type="checkbox"
-          [checked]="activeStory.storyConfiguration().sharing"
-        />
-      </label>
-      }@else {
-      <label>
-        <span>🚫 Enable sharing</span>
-        <input
-          [disabled]="true"
-          [checked]="activeStory.storyConfiguration().sharing"
-          type="checkbox"
-        />
-      </label>
-      }
-      <label>
-        <span>Cumulative mode</span>
-        <input
-          type="checkbox"
-          (change)="toggleCumulativeMode()"
-          [checked]="activeStory.storyConfiguration().cumulativeMode"
-        />
-      </label>
-    </div>
-    <div class="dropdown__section">
-      <label class="label--column">
-        <span>Custom ID</span>
-        <input
-          [class.alert]="takenCustomId"
-          (change)="updateCustomId($event)"
-          type="text"
-          [value]="activeStory.storyConfiguration().customId"
-        />
-        @if (takenCustomId) {
-        <p>ID already taken</p>
+    <div class="dropdown">
+      <div class="dropdown__section">
+        @if (db.userPlanIs('pro')) {
+          <label>
+            <span>Enable tracking</span>
+            <input
+              (change)="toggleTracking()"
+              type="checkbox"
+              [checked]="activeStory.storyConfiguration().tracking"
+            />
+          </label>
+        } @else {
+          <label>
+            <span>🚫 Enable tracking</span>
+            <input
+              [disabled]="true"
+              [checked]="activeStory.storyConfiguration().tracking"
+              type="checkbox"
+            />
+          </label>
         }
-      </label>
-    </div>
-    <div class="dropdown__section">
-      <p class="txt-weight-bold">Footer</p>
-      @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-      <label>
-        <span>Hide textandplay link</span>
-        <input
-          (change)="toggleTextandplayLink()"
-          type="checkbox"
-          [checked]="!activeStory.storyConfiguration().tapLink"
-        />
-      </label>
+        @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
+          <label>
+            <span>Enable sharing</span>
+            <input
+              (change)="toggleSharing()"
+              type="checkbox"
+              [checked]="activeStory.storyConfiguration().sharing"
+            />
+          </label>
+        } @else {
+          <label>
+            <span>🚫 Enable sharing</span>
+            <input
+              [disabled]="true"
+              [checked]="activeStory.storyConfiguration().sharing"
+              type="checkbox"
+            />
+          </label>
+        }
+        <label>
+          <span>Cumulative mode</span>
+          <input
+            type="checkbox"
+            (change)="toggleCumulativeMode()"
+            [checked]="activeStory.storyConfiguration().cumulativeMode"
+          />
+        </label>
+      </div>
+      <div class="dropdown__section">
+        <label class="label--column">
+          <span>Custom ID</span>
+          <input
+            [class.alert]="takenCustomId"
+            (change)="updateCustomId($event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().customId"
+          />
+          @if (takenCustomId) {
+            <p>ID already taken</p>
+          }
+        </label>
+      </div>
+      <div class="dropdown__section">
+        <p class="txt-weight-bold">Footer</p>
+        @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
+          <label>
+            <span>Hide Trama link</span>
+            <input
+              (change)="toggleAppLink()"
+              type="checkbox"
+              [checked]="!activeStory.storyConfiguration().tapLink"
+            />
+          </label>
 
-      <label class="label--column">
-        <span>Footer text</span>
-        <input
-          (change)="updateFooter('text', $event)"
-          type="text"
-          [value]="activeStory.storyConfiguration().footer.text || ''"
-        />
-      </label>
-      <label class="label--column">
-        <span>Footer link</span>
-        <input
-          (change)="updateFooter('link', $event)"
-          type="text"
-          [value]="activeStory.storyConfiguration().footer.link || ''"
-        />
-      </label>
+          <label class="label--column">
+            <span>Footer text</span>
+            <input
+              (change)="updateFooter('text', $event)"
+              type="text"
+              [value]="activeStory.storyConfiguration().footer.text || ''"
+            />
+          </label>
+          <label class="label--column">
+            <span>Footer link</span>
+            <input
+              (change)="updateFooter('link', $event)"
+              type="text"
+              [value]="activeStory.storyConfiguration().footer.link || ''"
+            />
+          </label>
+        } @else {
+          <p>You can modify the footer to show your logo, brand and link</p>
+          <p>Footer options are not allowed for free users</p>
+        }
+      </div>
+      @if (db.userPlanIs('pro')) {
+        <polo-basic-button (click)="openStadistics()" text="Open analytics"></polo-basic-button>
       } @else {
-      <p>You can modify the footer to show your logo, brand and link</p>
-      <p>Footer options are not allowed for free users</p>
+        <polo-basic-button [disabled]="true" text="🚫 Open analytics"></polo-basic-button>
       }
-    </div>
-    @if (db.userPlanIs('pro')) {
-    <polo-basic-button
-      (click)="openStadistics()"
-      text="Open analytics"
-    ></polo-basic-button>
-    } @else {
-    <polo-basic-button
-      [disabled]="true"
-      text="🚫 Open analytics"
-    ></polo-basic-button>
-    } @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-    <!--polo-basic-button
+      @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
+        <!--polo-basic-button
       (click)="exportTree()"
       icon="/assets/icons/export.svg"
       text="Export tree"
@@ -132,13 +128,9 @@
       text="🚫 Export tree"
     >
     </polo-basic-button-->
-    }
-    <polo-basic-button
-      (click)="deleteTree()"
-      icon="/assets/icons/trash.svg"
-      text="Delete tree"
-    >
-    </polo-basic-button>
-  </div>
+      }
+      <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg" text="Delete tree">
+      </polo-basic-button>
+    </div>
   }
 </div>

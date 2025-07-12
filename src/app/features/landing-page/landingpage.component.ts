@@ -82,7 +82,7 @@ export class LandingpageComponent {
   }
 
   ngOnInit() {
-    this.titleService.setTitle('Text & Play')
+    this.titleService.setTitle('Trama')
     this.meta.addTags([
       {
         name: 'description',

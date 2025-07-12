@@ -1,19 +1,15 @@
 <div class="pricing">
-  <div
-    class="pricing__plan"
-    [class.dashed]="dashed"
-    [class.currentPlan]="userPlan === 'free'"
-  >
+  <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'free'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Basic</h2>
       <p class="txt-ralewayItalic">Free</p>
     </div>
-    @if(userPlan==='free'){
-    <p class="currentPlan">Your current plan</p>
+    @if (userPlan === 'free') {
+      <p class="currentPlan">Your current plan</p>
     }
     <p>
-      Try our no-code creation tool, test your ideas, share them and check if
-      textandplay could work for you
+      Try our no-code creation tool, test your ideas, share them and check if Trama could work for
+      you
     </p>
     <ul class="pricing__plan__features">
       <li>
@@ -33,33 +29,24 @@
         Basic customization options
       </li>
       <li>
-        <img
-          src="/assets/images/drawn_icons/warning_2.webp"
-          alt="Warning icon"
-        />
+        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
         Up to 3 stories
       </li>
       <li>
-        <img
-          src="/assets/images/drawn_icons/warning_2.webp"
-          alt="Warning icon"
-        />
+        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
         Limited images
       </li>
       <li>
-        <img
-          src="/assets/images/drawn_icons/warning_2.webp"
-          alt="Warning icon"
-        />
-        Textandplay brand in the stories
+        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
+        Trama brand in the stories
       </li>
     </ul>
-    @if(!email){
-    <polo-landing-link
-      destiny="/login?mode=register"
-      behaviour="link"
-      text="Use free"
-    ></polo-landing-link>
+    @if (!email) {
+      <polo-landing-link
+        destiny="/login?mode=register"
+        behaviour="link"
+        text="Use free"
+      ></polo-landing-link>
     }
   </div>
   <div
@@ -69,24 +56,22 @@
   >
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
-      @if(payAnnually){
-      <p class="txt-ralewayItalic">{{ pricing.CREATOR_YEARLY_PRICE }}€/year</p>
-      }@else {
-      <p class="txt-ralewayItalic">
-        {{ pricing.CREATOR_MONTHLY_PRICE }}€/month
-      </p>
+      @if (payAnnually) {
+        <p class="txt-ralewayItalic">{{ pricing.CREATOR_YEARLY_PRICE }}€/year</p>
+      } @else {
+        <p class="txt-ralewayItalic">{{ pricing.CREATOR_MONTHLY_PRICE }}€/month</p>
       }
     </div>
-    @if(userPlan==='creator' && canceledSubscription){
-    <p class="currentPlan currentPlan--canceled">
-      Your current canceled plan, you can enjoy it till the end of this period
-    </p>
-    }@else if(userPlan==='creator'){
-    <p class="currentPlan">Your current plan</p>
+    @if (userPlan === 'creator' && canceledSubscription) {
+      <p class="currentPlan currentPlan--canceled">
+        Your current canceled plan, you can enjoy it till the end of this period
+      </p>
+    } @else if (userPlan === 'creator') {
+      <p class="currentPlan">Your current plan</p>
     }
     <p>
-      Perfect for small businesses and creatives to engage their audiences and
-      bring more traffic to their websites and projects
+      Perfect for small businesses and creatives to engage their audiences and bring more traffic to
+      their websites and projects
     </p>
     <ul class="pricing__plan__features">
       <li class="txt-gray">Everything from hobby plan</li>
@@ -109,45 +94,43 @@
       <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
       <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
     </ul>
-    @if(userPlan==='creator'){ @if(!preventEasyDowngrading &&
-    !canceledSubscription){
-    <polo-basic-button
-      (click)="cancelSubscription()"
-      [waiting]="cancelingSubscription"
-      text="Cancel subscription"
-      type="danger"
-    ></polo-basic-button>
-    } }@if(userPlan==='free' || !userPlan) {
-    <polo-landing-link
-      (click)="subscribe('creator', payAnnually)"
-      [highlight]="true"
-      text="Be a creator"
-    ></polo-landing-link>
+    @if (userPlan === 'creator') {
+      @if (!preventEasyDowngrading && !canceledSubscription) {
+        <polo-basic-button
+          (click)="cancelSubscription()"
+          [waiting]="cancelingSubscription"
+          text="Cancel subscription"
+          type="danger"
+        ></polo-basic-button>
+      }
+    }
+    @if (userPlan === 'free' || !userPlan) {
+      <polo-landing-link
+        (click)="subscribe('creator', payAnnually)"
+        [highlight]="true"
+        text="Be a creator"
+      ></polo-landing-link>
     }
   </div>
-  <div
-    class="pricing__plan"
-    [class.dashed]="dashed"
-    [class.currentPlan]="userPlan === 'pro'"
-  >
+  <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'pro'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Pro</h2>
-      @if(payAnnually){
-      <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
-      }@else {
-      <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
+      @if (payAnnually) {
+        <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
+      } @else {
+        <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
       }
     </div>
-    @if(userPlan==='pro' && canceledSubscription){
-    <p class="currentPlan currentPlan--canceled">
-      Your current canceled plan, you can enjoy it till the end of this period
-    </p>
-    }@else if(userPlan==='pro'){
-    <p class="currentPlan">Your current plan</p>
+    @if (userPlan === 'pro' && canceledSubscription) {
+      <p class="currentPlan currentPlan--canceled">
+        Your current canceled plan, you can enjoy it till the end of this period
+      </p>
+    } @else if (userPlan === 'pro') {
+      <p class="currentPlan">Your current plan</p>
     }
     <p>
-      Powerful features to gain insights about your audience, track their
-      actions in your stories, and reach more people
+      Powerful features to gain insights about your audience, track their actions in your stories,
+      and reach more people
     </p>
     <ul class="pricing__plan__features">
       <li class="txt-gray">Everything from other plans</li>
@@ -170,20 +153,22 @@
       <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
     </ul>
-    @if(userPlan==='pro'){ @if(!preventEasyDowngrading &&
-    !canceledSubscription){
-    <polo-basic-button
-      (click)="cancelSubscription()"
-      [waiting]="cancelingSubscription"
-      text="Cancel subscription"
-      type="danger"
-    ></polo-basic-button>
-    } }@if(userPlan==='free' || !userPlan) {
-    <!--polo-landing-link
+    @if (userPlan === 'pro') {
+      @if (!preventEasyDowngrading && !canceledSubscription) {
+        <polo-basic-button
+          (click)="cancelSubscription()"
+          [waiting]="cancelingSubscription"
+          text="Cancel subscription"
+          type="danger"
+        ></polo-basic-button>
+      }
+    }
+    @if (userPlan === 'free' || !userPlan) {
+      <!--polo-landing-link
       (click)="subscribe('pro', payAnnually)"
       text="Upgrade to pro"
     ></polo-landing-link-->
-    <polo-landing-link text="Coming soon"></polo-landing-link>
+      <polo-landing-link text="Coming soon"></polo-landing-link>
     }
   </div>
 </div>

@@ -12,7 +12,7 @@ setup('authenticate', async ({ page }) => {
 
   await page.waitForURL('/dashboard')
 
-  await expect(page.getByText('Textandplay')).toBeVisible()
+  await expect(page.getByText('Trama')).toBeVisible()
 
   await page.context().storageState({ path: authFile })
 })

@@ -78,7 +78,7 @@ export class LoginComponent {
         email: email.value,
         password: password.value,
         options: {
-          //emailRedirectTo: 'https://textandplay.com/dashboard',
+          //emailRedirectTo: 'https://trama.app/dashboard',
           data: {
             user_name: username.value,
           },
@@ -113,7 +113,7 @@ export class LoginComponent {
       options: {
         redirectTo: this.subscribing
           ? this.paymentLink
-          : 'https://textandplay.com/dashboard',
+          : 'https://trama.app/dashboard',
       },
     })
   }

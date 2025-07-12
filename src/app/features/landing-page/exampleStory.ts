@@ -113,17 +113,17 @@ export const exampleStory = {
       id: 'node_12',
       top: 4672,
       left: 3932,
-      text: 'Thanks for playing this preview example!\n\nStart creating and feel free to contact me if you have any request, doubt or suggestion on hello@textandplay.com',
+      text: 'Thanks for playing this preview example!\n\nStart creating and feel free to contact me if you have any request, doubt or suggestion on gesteve.12@gmail.com',
       type: 'end',
       links: [
         {
-          url: 'textandplay.com/dashboard',
+          url: 'trama.app/dashboard',
           name: 'Start creating something!',
         },
       ],
       share: {
         sharedText:
-          'Take a look at this example of dynamic stories that can be done in textandplay.com',
+          'Take a look at this example of dynamic stories that can be done in trama.app',
         shareButtonText: 'Share this test',
       },
     },

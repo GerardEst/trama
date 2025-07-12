@@ -5,7 +5,7 @@ import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   httpClient: Stripe.createFetchHttpClient(),
 })
-const allowedOrigins = ['https://www.textandplay.com', 'http://localhost:4200']
+const allowedOrigins = ['https://www.trama.app', 'http://localhost:4200']
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -21,7 +21,7 @@ const supabase = createClient(
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin')
 
-  // Les altres funcions s'estan invocant desde stripe, aquesta desde textandplay
+  // Les altres funcions s'estan invocant desde stripe, aquesta desde trama
   // Per tant aquesta necessita una mica de CORS (no sé perquè, suposo que supabase ja permet per defecte stripe)
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -64,9 +64,8 @@ Deno.serve(async (req) => {
     }
 
     const subscriptionId = data[0].subscription_id
-    const cancelledSubscription = await stripe.subscriptions.cancel(
-      subscriptionId
-    )
+    const cancelledSubscription =
+      await stripe.subscriptions.cancel(subscriptionId)
     if (cancelledSubscription.status !== 'canceled') {
       return new Response('Failed to cancel subscription', { status: 500 })
     }
