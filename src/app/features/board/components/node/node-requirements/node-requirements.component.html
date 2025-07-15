@@ -1,0 +1,25 @@
+<div class="node__requirements">
+  <button class="node__addRequirementButton" (click)="openAddRequirement = true">
+    <img src="/assets/icons/plus.svg" alt="Add requirement" />
+    @if (!requirements || requirements.length === 0) {
+      <p>Add requirement</p>
+    }
+  </button>
+  @for (requirement of requirements; track requirement.target) {
+    <polo-node-requirement
+      [type]="requirement.type"
+      [amount]="requirement.amount"
+      [target]="requirement.target"
+      (onSaveRequirement)="saveRequirement($event)"
+      (onDeleteRequirement)="deleteRequirement($event)"
+    ></polo-node-requirement>
+  }
+  @if (openAddRequirement) {
+    <div class="node__addRequirement">
+      <polo-node-add-requirement
+        (onSaveRequirement)="saveRequirement($event)"
+        (onClose)="openAddRequirement = false"
+      ></polo-node-add-requirement>
+    </div>
+  }
+</div>

@@ -9,13 +9,13 @@ import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 @Component({
-  selector: 'polo-node-add-modify-event',
+  selector: 'polo-node-add-modify-ref',
   standalone: true,
   imports: [SelectOrCreateComponent],
-  templateUrl: './node-add-modify-event.component.html',
-  styleUrl: './node-add-modify-event.component.sass',
+  templateUrl: './node-add-modify-ref.component.html',
+  styleUrl: './node-add-modify-ref.component.sass',
 })
-export class NodeAddModifyEventComponent {
+export class NodeAddModifyRefComponent {
   // Els inputs per configurar l'event depenent de si és stat o condition
 
   @Output() onChangeTarget: EventEmitter<any> = new EventEmitter()

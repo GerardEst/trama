@@ -1,9 +1,0 @@
-<div class="options">
-  <span #optionsContainer (click)="openOptions()" class="options__more"></span>
-</div>
-<textarea #textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
-<div
-  id="{{ this.elementRef.nativeElement.id + '_join' }}"
-  class="union_point"
-  [class.union_point--hasJoin]="hasJoin"
-></div>

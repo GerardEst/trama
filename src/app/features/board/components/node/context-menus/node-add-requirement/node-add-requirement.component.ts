@@ -1,20 +1,17 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core'
+import { Component, Output, EventEmitter, Input } from '@angular/core'
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
 import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modify-ref.component'
 
 @Component({
-  selector: 'polo-node-add-event',
+  selector: 'polo-node-add-requirement',
   standalone: true,
   imports: [NodeAddModifyRefComponent],
-  templateUrl: './node-add-event.component.html',
-  styleUrl: './node-add-event.component.sass',
+  templateUrl: './node-add-requirement.component.html',
+  styleUrl: './node-add-requirement.component.sass',
 })
-export class NodeAddEventComponent extends PopupBaseComponent {
-  // El popup per configurar l'event
-  // S'obre al crear i modificar events
-
-  @Output() onSaveEvent: EventEmitter<any> = new EventEmitter()
-  @Output() onDeleteEvent: EventEmitter<any> = new EventEmitter()
+export class NodeAddRequirementComponent extends PopupBaseComponent {
+  @Output() onSaveRequirement: EventEmitter<any> = new EventEmitter()
+  @Output() onDeleteRequirement: EventEmitter<any> = new EventEmitter()
 
   @Input() canBeDeleted: boolean = false
   @Input() eventId: string = ''
@@ -35,12 +32,11 @@ export class NodeAddEventComponent extends PopupBaseComponent {
     this.property = event.value
   }
 
-  saveEvent() {
-    this.onSaveEvent.emit({
+  saveRequirement() {
+    this.onSaveRequirement.emit({
       target: this.target,
       amount: this.amount,
       type: this.type,
-      property: this.property,
     })
     this.onClose.emit()
   }
@@ -49,12 +45,11 @@ export class NodeAddEventComponent extends PopupBaseComponent {
     this.onClose.emit()
   }
 
-  deleteEvent() {
-    this.onDeleteEvent.emit({
+  deleteRequirement() {
+    this.onDeleteRequirement.emit({
       target: this.target,
       amount: this.amount,
       type: this.type,
-      property: this.property,
     })
     this.onClose.emit()
   }

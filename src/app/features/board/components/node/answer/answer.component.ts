@@ -5,28 +5,35 @@ import {
   Input,
   Output,
   ViewChild,
-  ViewContainerRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { PopupAnswerOptionsComponent } from '../popup-answer-options/popup-answer-options.component'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { event } from 'src/app/core/interfaces/interfaces'
+import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
+import { NodeEventsComponent } from '../node-events/node-events.component'
+import { NodeRequirementsComponent } from '../node-requirements/node-requirements.component'
 
 @Component({
   selector: 'polo-answer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    NodeEventsComponent,
+    BasicButtonComponent,
+    NodeRequirementsComponent,
+  ],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],
 })
 export class AnswerComponent {
   id: string = ''
+  events: Array<event> = []
+  requirements: Array<event> = []
 
   @Input() text: string = ''
   @Input() hasJoin: boolean = false
   @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
-  @ViewChild('optionsContainer', { read: ViewContainerRef })
-  optionsContainer?: ViewContainerRef
   @ViewChild('textarea') textarea?: ElementRef
 
   constructor(
@@ -37,39 +44,15 @@ export class AnswerComponent {
 
   ngOnInit() {
     this.id = this.elementRef.nativeElement.id
+    this.events = this.activeStory.getEventsOfAnswer(this.id) || []
+    this.requirements = this.activeStory.getRequirementsOfAnswer(this.id) || []
+
     if (this.panzoom.focusElements) {
       setTimeout(() => {
         const textarea = this.textarea
         if (textarea) textarea.nativeElement.focus()
       }, 0)
     }
-  }
-  openOptions() {
-    if (!this.optionsContainer) return
-
-    // Create the component
-    const ref = this.optionsContainer.createComponent(
-      PopupAnswerOptionsComponent
-    )
-    ref.instance.answerId = this.id
-
-    // Manage subscriptions to talk with answer component, because this is a dinamically created component
-    const subscriptions: Array<any> = []
-    subscriptions.push(
-      ref.instance.onRemoveAnswer.subscribe(() => {
-        this.panzoom.resumeDrag()
-        this.removeAnswer()
-      }),
-      ref.instance.onClosePopup.subscribe(() => {
-        this.panzoom.resumeDrag()
-        ref.destroy()
-        for (let subscription of subscriptions) {
-          // I checked that if we don't unsubscribe, the subscription status closed is false even when I close the popup.
-          // So this is necessary
-          subscription.unsubscribe()
-        }
-      })
-    )
   }
 
   saveAnswerText(e: any) {

@@ -1,0 +1,5 @@
+<polo-node-events [events]="events" [answerId]="id"></polo-node-events>
+<polo-node-requirements [requirements]="requirements" [answerId]="id"></polo-node-requirements>
+<polo-basic-button (click)="removeAnswer()" text="D"></polo-basic-button>
+<textarea #textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
+<div id="{{ id + '_join' }}" class="union_point" [class.union_point--hasJoin]="hasJoin"></div>

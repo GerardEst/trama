@@ -19,7 +19,7 @@
     </div>
   </div>
   <div class="addEvent__content">
-    <polo-node-add-modify-event
+    <polo-node-add-modify-ref
       [type]="type"
       [selectedOption]="target"
       [amount]="amount"
@@ -27,7 +27,7 @@
       (onChangeTarget)="onChangeTarget($event)"
       (onChangeAmount)="onChangeAmount($event)"
       (onChangeProperty)="onChangeProperty($event)"
-    ></polo-node-add-modify-event>
+    ></polo-node-add-modify-ref>
   </div>
   <div class="addEvent__actions">
     @if (canBeDeleted) {

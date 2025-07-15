@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { AnswerComponent } from '../answer/answer.component'
+import { AnswerComponent } from './answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { FormsModule } from '@angular/forms'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'

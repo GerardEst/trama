@@ -1,0 +1,36 @@
+<div class="addRequirement">
+  <div class="addRequirement__type">
+    <div
+      class="addRequirement__type__item"
+      [class.active]="type === 'stat'"
+      (click)="type = 'stat'"
+    >
+      <p>Stat</p>
+    </div>
+    <div
+      class="addRequirement__type__item"
+      [class.active]="type === 'condition'"
+      (click)="type = 'condition'"
+    >
+      <p>Condition</p>
+    </div>
+  </div>
+  <div class="addRequirement__content">
+    <polo-node-add-modify-ref
+      [type]="type"
+      [selectedOption]="target"
+      [amount]="amount"
+      [property]="property"
+      (onChangeTarget)="onChangeTarget($event)"
+      (onChangeAmount)="onChangeAmount($event)"
+      (onChangeProperty)="onChangeProperty($event)"
+    ></polo-node-add-modify-ref>
+  </div>
+  <div class="addRequirement__actions">
+    @if (canBeDeleted) {
+      <button class="addRequirement__actions__button" (click)="deleteRequirement()">Delete</button>
+    }
+    <button class="addRequirement__actions__button" (click)="onCancel()">Cancel</button>
+    <button class="addRequirement__actions__button" (click)="saveRequirement()">Ok</button>
+  </div>
+</div>

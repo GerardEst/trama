@@ -73,25 +73,31 @@ export class LoginComponent {
 
     this.waitingForSignUp = true
 
-    const { data: registered_data, error: registered_error } =
-      await this.db.supabase.auth.signUp({
-        email: email.value,
-        password: password.value,
-        options: {
-          //emailRedirectTo: 'https://trama.app/dashboard',
-          data: {
-            user_name: username.value,
+    try {
+      const { data: registered_data, error: registered_error } =
+        await this.db.supabase.auth.signUp({
+          email: email.value,
+          password: password.value,
+          options: {
+            //emailRedirectTo: 'https://trama.app/dashboard',
+            data: {
+              user_name: username.value,
+            },
           },
-        },
-      })
+        })
 
-    if (registered_error) {
-      if (registered_error.message === 'User already registered') {
-        console.error('Email already being used')
-        this.emailAlreadyRegistered = true
-        this.waitingForSignUp = false
+      if (registered_error) {
+        if (registered_error.message === 'User already registered') {
+          console.error('Email already being used')
+          this.emailAlreadyRegistered = true
+          this.waitingForSignUp = false
+        }
+        throw registered_error
       }
-      return console.error(registered_error)
+    } catch (error) {
+      console.error('Error during sign up:', error)
+      this.waitingForSignUp = false
+      return
     }
 
     if (this.subscribing) {

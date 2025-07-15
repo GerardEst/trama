@@ -12,9 +12,8 @@ import { NodeEventComponent } from './node-event/node-event.component'
   styleUrl: './node-events.component.sass',
 })
 export class NodeEventsComponent {
-  // La llista dels events que hi ha al node
-
-  @Input() nodeId!: string
+  @Input() nodeId?: string
+  @Input() answerId?: string
   @Input() events?: Array<event>
 
   openAddEvent: boolean = false
@@ -33,14 +32,20 @@ export class NodeEventsComponent {
       this.events?.push(event)
     }
 
-    this.activeStory.saveNodeEvents(this.nodeId, this.events)
+    if (this.nodeId) {
+      this.activeStory.saveNodeEvents(this.nodeId, this.events)
+    } else if (this.answerId) {
+      this.activeStory.saveAnswerEvents(this.answerId, this.events)
+    }
   }
 
   deleteEvent(event: any) {
-    console.log('event', event)
     this.events = this.events?.filter((e) => e.target !== event.target)
-    console.log('this.events', this.events)
 
-    this.activeStory.saveNodeEvents(this.nodeId, this.events)
+    if (this.nodeId) {
+      this.activeStory.saveNodeEvents(this.nodeId, event)
+    } else if (this.answerId) {
+      this.activeStory.saveAnswerEvents(this.answerId, event)
+    }
   }
 }

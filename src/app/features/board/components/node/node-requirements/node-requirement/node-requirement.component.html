@@ -1,0 +1,18 @@
+<div class="node__requirement" (click)="openModifyRequirement = true">
+  <p>{{ target }} {{ amount }}</p>
+</div>
+
+@if (openModifyRequirement) {
+  <div class="node__modifyRequirement">
+    <polo-node-add-requirement
+      [amount]="amount"
+      [type]="type"
+      [target]="target"
+      [property]="property"
+      (onSaveRequirement)="saveRequirement($event)"
+      (onClose)="openModifyRequirement = false"
+      (onDeleteRequirement)="deleteRequirement($event)"
+      [canBeDeleted]="true"
+    ></polo-node-add-requirement>
+  </div>
+}
