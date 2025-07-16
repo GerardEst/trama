@@ -437,9 +437,11 @@ polo-board
 polo-landing-mobile
     padding-right: 5vw
 
-@media screen and (max-width: 1098px)
+@media screen and (max-width: 768px)
   polo-board
-    //width: 100%
+    pointer-events: none
+    touch-action: none
+    cursor: default
   section.section--mobile .mobile__playground
     flex-direction: column
     gap: 50px
