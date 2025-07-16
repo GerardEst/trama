@@ -1,5 +1,12 @@
-<polo-node-events [events]="events" [answerId]="id"></polo-node-events>
-<polo-node-requirements [requirements]="requirements" [answerId]="id"></polo-node-requirements>
-<polo-basic-button (click)="removeAnswer()" text="D"></polo-basic-button>
+<div class="top-bar">
+  <polo-node-requirements [requirements]="requirements" [answerId]="id"></polo-node-requirements>
+  <polo-basic-button
+    class="delete-answer"
+    (click)="removeAnswer()"
+    icon="/assets/icons/trash.svg"
+    [transparent]="true"
+  ></polo-basic-button>
+</div>
 <textarea #textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
+<polo-node-events [events]="events" [answerId]="id"></polo-node-events>
 <div id="{{ id + '_join' }}" class="union_point" [class.union_point--hasJoin]="hasJoin"></div>

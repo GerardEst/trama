@@ -1,15 +1,27 @@
 :host
   position: relative
   display: flex
-  gap: 0.5rem
-:host:hover .answer__options
-  display: flex
+  flex-direction: column
+  border: 1px solid var(--medium-gray)
+  border-radius: 1rem
+:host:hover .delete-answer
+  opacity: 1
+  mouse-events: auto
 :host.highlighted
   outline: 2px solid #2ECC71
 
+.delete-answer
+  mouse-events: none
+  opacity: 0
+.top-bar
+  display: flex
+  align-items: center
+  justify-content: space-between
 textarea
-  border: 1px solid var(--medium-gray)
+  border: none
   min-height: 0
+  field-sizing: content
+  resize: none
 .union_point
   width: 1.5rem
   height: 1rem
