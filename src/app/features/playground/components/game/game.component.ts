@@ -98,7 +98,10 @@ export class GameComponent {
 
   // Each step can contain multiple nodes
   nextStep(possibleJoins: Array<join>, addToCurrentStep: boolean = false) {
+    console.log('Choosing next step from possible joins:', possibleJoins)
     const randomlyChoosedJoin = this.getRandomJoin(possibleJoins)
+    console.log('Choosed next step:', randomlyChoosedJoin)
+
     const activeNode = this.buildNextNodeFromJoin(randomlyChoosedJoin)
     const isDistributor = activeNode.type === 'distributor'
     const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
@@ -126,6 +129,8 @@ export class GameComponent {
   }
 
   buildNextNodeFromJoin(originJoin: join) {
+    console.log('Building next node')
+
     // Fem una copia del node al que fem join
     let nextNode = structuredClone(
       this.activeStory
@@ -335,7 +340,14 @@ export class GameComponent {
     playerConditions: Array<condition>,
     requirements: Array<answer_requirement>
   ) {
-    if (!requirements) return true
+    if (!requirements || requirements.length === 0) return true
+
+    console.log('Checking player requirements:', requirements)
+    console.log('Using player data:', {
+      properties: playerProperties,
+      stats: playerStats,
+      conditions: playerConditions,
+    })
 
     // If just some of the requirements is not met, we can throw false and stop checking
     for (let requirement of requirements) {
@@ -344,7 +356,7 @@ export class GameComponent {
         if (playerStats.length === 0) return false
 
         const playerHasSomeRequiredStats = playerStats.some(
-          (stat: stat) => stat.id === requirement.id
+          (stat: stat) => stat.id === requirement.target
         )
         if (!playerHasSomeRequiredStats) return false
 
@@ -355,21 +367,21 @@ export class GameComponent {
       }
       if (requirement.type === 'condition') {
         // In conditions, the requirement might be that the condition is not checked
-        const conditionIsRequired = requirement_amount === 1
+        const conditionIsRequired = requirement_amount == 1
 
         // If condition should be checked but player doesn't have any conditions
         if (conditionIsRequired && playerConditions.length === 0) return false
 
         // If condition should be checked but player doesn't have this condition
         const playerHasSomeRequiredConditions = playerConditions.some(
-          (condition: condition) => condition.id === requirement.id
+          (condition: condition) => condition.id === requirement.target
         )
         if (conditionIsRequired && !playerHasSomeRequiredConditions)
           return false
 
         for (let condition of playerConditions) {
           // If player has the condition, but it should not be checked
-          if (condition.id === requirement.id && !conditionIsRequired)
+          if (condition.id === requirement.target && !conditionIsRequired)
             return false
         }
       }
@@ -378,6 +390,7 @@ export class GameComponent {
   }
 
   applyEvents(events: Array<event>) {
+    console.log('Applying events:', events)
     events?.forEach((event) => {
       if (event.action === 'alterStat') this.alterStat(event)
       if (event.action === 'alterCondition') this.alterCondition(event)

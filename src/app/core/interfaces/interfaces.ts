@@ -71,7 +71,7 @@ export interface event {
   property?: string
 }
 export interface answer_requirement {
-  id: string
+  target: string
   type: 'stat' | 'condition'
   amount: number
 }

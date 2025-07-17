@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { NodeAddModifyEventComponent } from './node-add-modify-ref.component'
+import { NodeAddModifyRefComponent } from './node-add-modify-ref.component'
 
 describe('NodeAddModifyEventComponent', () => {
-  let component: NodeAddModifyEventComponent
-  let fixture: ComponentFixture<NodeAddModifyEventComponent>
+  let component: NodeAddModifyRefComponent
+  let fixture: ComponentFixture<NodeAddModifyRefComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NodeAddModifyEventComponent],
+      imports: [NodeAddModifyRefComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(NodeAddModifyEventComponent)
+    fixture = TestBed.createComponent(NodeAddModifyRefComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
