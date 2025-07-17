@@ -44,6 +44,17 @@
         }
       </ul>
     </section>
+
+    <section>
+      <polo-basic-button
+        text="Give feedback"
+        icon="/assets/icons/user-info.svg"
+        (click)="openFeedbackModal()"
+        [transparent]="true"
+        [border]="true"
+      >
+      </polo-basic-button>
+    </section>
   </nav>
   @if (!fixedMenu) {
     <polo-basic-button

@@ -13,6 +13,7 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { ModalService } from 'src/app/core/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/features/dashboard/modals/creator-paywall/creator-paywall.component'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
+import { FeedbackModalComponent } from 'src/app/features/feedback/feedback-modal/feedback-modal.component'
 
 @Component({
   selector: 'polo-menu',
@@ -88,5 +89,9 @@ export class MenuComponent {
 
   openProfile() {
     this.modal.launch(ProfileModalComponent)
+  }
+
+  openFeedbackModal() {
+    this.modal.launch(FeedbackModalComponent)
   }
 }

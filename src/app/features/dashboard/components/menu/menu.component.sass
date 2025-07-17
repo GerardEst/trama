@@ -24,6 +24,7 @@
     width: var(--width)
     background: var(--light-gray)
     padding: 1rem
+    padding-bottom: 2rem
     box-shadow: var(--shadow-elevation-medium)
     transition: 0.4s ease
     border-radius: 1rem
@@ -32,6 +33,8 @@
       display: flex
       flex-direction: column
       gap: var(--gaps)
+      &:last-child
+        margin-top: auto
     h4
       padding-left: var(--spacing)
       color: var(--light-text)

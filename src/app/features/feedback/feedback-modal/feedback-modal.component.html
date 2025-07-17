@@ -1,0 +1,40 @@
+<polo-modal-window name="Send Feedback">
+  <div modal-content>
+    <div class="feedback-content">
+      <div class="feedback-message">
+        <label for="message">Your feedback:</label>
+        <textarea 
+          id="message"
+          [(ngModel)]="feedbackMessage"
+          placeholder="Tell us about your experience, report a bug, or suggest a feature..."
+          rows="4"
+          [disabled]="isSubmitting"
+        ></textarea>
+      </div>
+      
+      @if (screenshot) {
+        <div class="screenshot-preview">
+          <label>Screenshot (automatically captured):</label>
+          <img [src]="screenshot" alt="Screenshot preview" class="screenshot-image">
+        </div>
+      }
+    </div>
+  </div>
+  
+  <div modal-options>
+    <polo-basic-button 
+      text="Cancel"
+      (click)="cancel()"
+      [transparent]="true"
+      [disabled]="isSubmitting"
+    ></polo-basic-button>
+    
+    <polo-basic-button 
+      text="Send Feedback"
+      type="success"
+      (click)="submitFeedback()"
+      [disabled]="!feedbackMessage.trim() || isSubmitting"
+      [waiting]="isSubmitting"
+    ></polo-basic-button>
+  </div>
+</polo-modal-window>

@@ -19,4 +19,5 @@ export class BasicButtonComponent {
   @Input() iconSize: number = 15
   @Input() disabled: boolean = false
   @Input() align?: 'left' | 'right' | 'center' = 'center'
+  @Input() border: boolean = false
 }
