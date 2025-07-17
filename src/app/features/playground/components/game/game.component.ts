@@ -395,6 +395,7 @@ export class GameComponent {
       if (event.action === 'alterStat') this.alterStat(event)
       if (event.action === 'alterCondition') this.alterCondition(event)
     })
+    console.log('Player stats after events:', this.playerService.playerStats())
   }
 
   private alterProperty(property: string, value: string) {
@@ -456,6 +457,8 @@ export class GameComponent {
   }
 
   registerNodeEvents(node: node) {
+    console.log('Registering node events:', node)
+    if (node.events) this.applyEvents(node.events)
     if (node.type !== 'distributor') this.onDrawNode.emit(node)
     if (node.type === 'end') this.onEndGame.emit()
   }
