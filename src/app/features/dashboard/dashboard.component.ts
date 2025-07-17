@@ -43,11 +43,14 @@ export class DashboardComponent {
   }
 
   async initBoard(storyId: string | null) {
+    console.log('Initializing board with story ID:', storyId)
     if (storyId) {
       const story = await this.db.getStoryWithID(storyId)
       if (story) this.loadStory(story)
     } else {
+      console.log('No story ID found in localStorage, loading newest story')
       const story = await this.db.getNewestStory()
+      console.log('Newest story:', story)
       if (story) this.loadStory(story)
     }
   }
@@ -70,6 +73,8 @@ export class DashboardComponent {
   }
 
   setInitialBoardPositionFor(storyId: string) {
+    console.log('Setting initial board position for story:', storyId)
+
     const activeNodes = localStorage.getItem('polo-activeNodes')
     const activeNodeId = activeNodes && JSON.parse(activeNodes)[storyId]
     if (activeNodeId) {
@@ -79,7 +84,10 @@ export class DashboardComponent {
       )
       this.board?.centerToNode(activeNode)
     } else {
-      this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
+      console.log('No active node found, centering to first node')
+      setTimeout(() => {
+        this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
+      }, 0)
     }
   }
 
