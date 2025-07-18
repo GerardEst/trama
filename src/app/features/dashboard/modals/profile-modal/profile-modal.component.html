@@ -11,45 +11,38 @@
           <p>{{ db.user().user_metadata.user_name }}</p>
         </div>
         <div class="profileOptions">
-          @if(db.user().app_metadata.provider === 'email'){
-          <polo-basic-button
-            (click)="changePassword()"
-            text="Change your password"
-          ></polo-basic-button>
+          @if (db.user().app_metadata.provider === 'email') {
+            <polo-basic-button
+              (click)="changePassword()"
+              text="Change your password"
+            ></polo-basic-button>
           }
-          <polo-basic-button
-            (click)="logout()"
-            text="Logout"
-          ></polo-basic-button>
+          <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
         </div>
       </section>
-      <polo-separator [space]="true"></polo-separator>
+      <polo-separator [space]="20"></polo-separator>
       <section>
         <p class="txt-l txt-weight-bold">Billing</p>
-        @if(db.user().profile.subscription_status==='incomplete'){
-        <p>
-          You need to complete the payment. If the payment has been completed,
-          refresh the page
-        </p>
-        } @if(db.user().profile.subscription_status === 'canceled'){
-        <p>
-          Your subscription will expire on
-          {{ db.user().profile.next_payment }}
-        </p>
-        }@else{
-        <p>Your next payment will be {{ db.user().profile.next_payment }}</p>
+        @if (db.user().profile.subscription_status === 'incomplete') {
+          <p>
+            You need to complete the payment. If the payment has been completed, refresh the page
+          </p>
+        }
+        @if (db.user().profile.subscription_status === 'canceled') {
+          <p>
+            Your subscription will expire on
+            {{ db.user().profile.next_payment }}
+          </p>
+        } @else {
+          <p>Your next payment will be {{ db.user().profile.next_payment }}</p>
         }
         <polo-billing-cycle
           [small]="true"
-          (onChangePayingPeriod)="
-            payAnnually = $event === 'annual' ? true : false
-          "
+          (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
         ></polo-billing-cycle>
         <polo-pricing
           [dashed]="true"
-          [canceledSubscription]="
-            db.user().profile.subscription_status === 'canceled'
-          "
+          [canceledSubscription]="db.user().profile.subscription_status === 'canceled'"
           [userPlan]="db.user().profile.plan || 'free'"
           [payAnnually]="payAnnually"
           [email]="db.user().email"

@@ -1,113 +1,84 @@
 <div class="loginBox">
   <div class="box">
+    <p class="logo">Trama</p>
     @if (mode === 'register') {
-    <div class="header">
-      <p class="logo">Trama</p>
       <h3>Create an account</h3>
-    </div>
-    <polo-basic-button
-      (click)="signInWithGoogle()"
-      text="Google"
-    ></polo-basic-button>
-    <form>
-      <label>
-        <p>User name</p>
-        <input
-          id="register_username"
-          type="text"
-          [formControl]="register_username"
-        />
-      </label>
-      <label>
-        <p>Your email</p>
-        <input id="register_email" type="text" [formControl]="register_email" />
-      </label>
-      <label>
-        <p>New password</p>
-        <input
-          id="register_password"
-          type="password"
-          [formControl]="register_password"
-        />
-      </label>
+      <polo-google-login [isRegistering]="true" (click)="signInWithGoogle()"></polo-google-login>
+      <polo-separator [space]="20" [word]="'or'"></polo-separator>
+      <form>
+        <label>
+          <p>User name</p>
+          <input id="register_username" type="text" [formControl]="register_username" />
+        </label>
+        <label>
+          <p>Your email</p>
+          <input id="register_email" type="text" [formControl]="register_email" />
+        </label>
+        <label>
+          <p>New password</p>
+          <input id="register_password" type="password" [formControl]="register_password" />
+        </label>
 
-      @if(emailAlreadyRegistered){
-      <div class="feedbackMessage feedbackMessage--error">
-        <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED"></p>
-      </div>
-      }
-      <!-- @if (checkMail) {
+        @if (emailAlreadyRegistered) {
+          <div class="feedbackMessage feedbackMessage--error">
+            <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED"></p>
+          </div>
+        }
+        <!-- @if (checkMail) {
       <div class="feedbackMessage feedbackMessage--success">
         <p [innerHTML]="LOGIN_FEEDBACKS.CONFIRM_EMAIL"></p>
       </div>
       } -->
-
-      <polo-basic-button
-        (click)="
-          signUpNewUser(
-            $event,
-            register_email,
-            register_password,
-            register_username
-          )
-        "
-        [disabled]="false"
-        [waiting]="waitingForSignUp"
-        text="Register"
-      >
-      </polo-basic-button>
-      <polo-separator></polo-separator>
-      <div class="change">
-        <p>Already have an account?</p>
         <polo-basic-button
-          (click)="goToLogin()"
-          text="Login"
-        ></polo-basic-button>
-      </div>
-    </form>
+          (click)="signUpNewUser($event, register_email, register_password, register_username)"
+          [disabled]="false"
+          [waiting]="waitingForSignUp"
+          text="Register"
+        >
+        </polo-basic-button>
+      </form>
     } @else {
-    <div class="header">
-      <p class="logo">Trama</p>
       <h3>Log in</h3>
-    </div>
-    <polo-basic-button
-      (click)="signInWithGoogle()"
-      text="Google"
-    ></polo-basic-button>
-    <form>
-      <label>
-        <p>Your email</p>
-        <input id="login_email" type="text" [formControl]="login_email" />
-      </label>
-      <label>
-        <p>Your password</p>
-        <input
-          id="login_password"
-          type="password"
-          [formControl]="login_password"
-        />
-      </label>
-      <!-- @if (mailNotConfirmed) {
+      <polo-google-login (click)="signInWithGoogle()"></polo-google-login>
+      <polo-separator [space]="20" [word]="'or'"></polo-separator>
+      <form>
+        <div class="form__row">
+          <label>
+            <p>Your email</p>
+            <input id="login_email" type="text" [formControl]="login_email" />
+          </label>
+          <label>
+            <p>Your password</p>
+            <input id="login_password" type="password" [formControl]="login_password" />
+          </label>
+        </div>
+        <!-- @if (mailNotConfirmed) {
       <div class="feedbackMessage feedbackMessage--error">
         <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_NOT_CONFIRMED"></p>
       </div>
       } -->
-      <polo-basic-button
-        (click)="signInWithEmail($event, login_email, login_password)"
-        [disabled]="false"
-        text="Login"
-      >
-      </polo-basic-button>
-      <a href="/reset-password">Forgot password</a>
-      <polo-separator></polo-separator>
+        <div class="form__footer">
+          <a href="/reset-password">Forgot password</a>
+          <polo-basic-button
+            (click)="signInWithEmail($event, login_email, login_password)"
+            [disabled]="false"
+            text="Login"
+          >
+          </polo-basic-button>
+        </div>
+      </form>
+    }
+    <polo-separator [space]="20"></polo-separator>
+    @if (mode === 'register') {
+      <div class="change">
+        <p>Already have an account?</p>
+        <polo-basic-button (click)="goToLogin()" text="Login"></polo-basic-button>
+      </div>
+    } @else {
       <div class="change">
         <p>Don't have an account?</p>
-        <polo-basic-button
-          (click)="goToRegister()"
-          text="Register"
-        ></polo-basic-button>
+        <polo-basic-button (click)="goToRegister()" text="Register"></polo-basic-button>
       </div>
-    </form>
     }
   </div>
 </div>

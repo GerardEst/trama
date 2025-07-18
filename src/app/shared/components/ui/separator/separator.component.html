@@ -1,1 +1,5 @@
-<div class="separator" [class.separator--space]="space"></div>
+<div class="separator" style.margin="{{ space }}px 0"></div>
+@if (word) {
+  <p class="separator__word">{{ word }}</p>
+  <div class="separator" style.margin="{{ space }}px 0"></div>
+}

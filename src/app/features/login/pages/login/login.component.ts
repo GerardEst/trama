@@ -7,6 +7,7 @@ import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separ
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
 import { LOGIN_FEEDBACKS } from '../../constants'
+import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/google-login.component'
 
 @Component({
   selector: 'polo-login',
@@ -16,6 +17,7 @@ import { LOGIN_FEEDBACKS } from '../../constants'
     ReactiveFormsModule,
     SeparatorComponent,
     BasicButtonComponent,
+    GoogleLoginComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],

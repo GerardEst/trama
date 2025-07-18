@@ -8,5 +8,6 @@ import { Component, Input } from '@angular/core'
   styleUrl: './separator.component.sass',
 })
 export class SeparatorComponent {
-  @Input() space: boolean = false
+  @Input() space: number = 0
+  @Input() word?: string
 }

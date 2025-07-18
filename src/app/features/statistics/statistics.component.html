@@ -10,40 +10,30 @@
 </div>
 <div class="allResponses">
   <p class="txt-weight-bold">All responses</p>
-  <polo-separator [space]="true"></polo-separator>
+  <polo-separator [space]="20"></polo-separator>
   <table>
     <thead>
       <tr>
         <th class="name" onclick="sortTable(0)">Name</th>
-        @for(ref of statRefs; track ref.id){
-        <th
-          [class.stat]="ref.type === 'stat'"
-          [class.condition]="ref.type === 'condition'"
-        >
-          {{ ref.name }}
-        </th>
+        @for (ref of statRefs; track ref.id) {
+          <th [class.stat]="ref.type === 'stat'" [class.condition]="ref.type === 'condition'">
+            {{ ref.name }}
+          </th>
         }
         <th class="date" onclick="sortTable(1)">Date</th>
       </tr>
     </thead>
     <tbody>
-      @for(game of games; track game.id){
-      <tr>
-        <td>{{ game.user_name }}</td>
-        @for(ref of statRefs; track ref.id){
-        <td
-          [class.stat]="ref.type === 'stat'"
-          [class.condition]="ref.type === 'condition'"
-        >
-          {{
-            ref.type === 'stat'
-              ? getStatAmount(game, ref)
-              : getConditionValue(game, ref)
-          }}
-        </td>
-        }
-        <td>{{ normalizeDate(game.created_at) }}</td>
-      </tr>
+      @for (game of games; track game.id) {
+        <tr>
+          <td>{{ game.user_name }}</td>
+          @for (ref of statRefs; track ref.id) {
+            <td [class.stat]="ref.type === 'stat'" [class.condition]="ref.type === 'condition'">
+              {{ ref.type === 'stat' ? getStatAmount(game, ref) : getConditionValue(game, ref) }}
+            </td>
+          }
+          <td>{{ normalizeDate(game.created_at) }}</td>
+        </tr>
       }
     </tbody>
   </table>
