@@ -1,7 +1,10 @@
 <div class="loginBox">
   <div class="box">
     @if (mode === 'register') {
-    <h3>Create an account</h3>
+    <div class="header">
+      <p class="logo">Trama</p>
+      <h3>Create an account</h3>
+    </div>
     <polo-basic-button
       (click)="signInWithGoogle()"
       text="Google"
@@ -63,7 +66,10 @@
       </div>
     </form>
     } @else {
-    <h3>Log in</h3>
+    <div class="header">
+      <p class="logo">Trama</p>
+      <h3>Log in</h3>
+    </div>
     <polo-basic-button
       (click)="signInWithGoogle()"
       text="Google"
