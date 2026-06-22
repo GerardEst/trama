@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -22,7 +22,7 @@ import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   LOGIN_FEEDBACKS = LOGIN_FEEDBACKS
 
   @Input() mode?: 'register' | 'login'

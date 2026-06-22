@@ -4,6 +4,8 @@ import {
   Input,
   Output,
   SimpleChanges,
+  OnInit,
+  OnChanges,
 } from '@angular/core'
 import { NodeAddEventComponent } from '../../context-menus/node-add-event/node-add-event.component'
 
@@ -14,7 +16,7 @@ import { NodeAddEventComponent } from '../../context-menus/node-add-event/node-a
   templateUrl: './node-event.component.html',
   styleUrl: './node-event.component.sass',
 })
-export class NodeEventComponent {
+export class NodeEventComponent implements OnInit, OnChanges {
   @Output() onSaveEvent: EventEmitter<any> = new EventEmitter()
   @Output() onDeleteEvent: EventEmitter<any> = new EventEmitter()
 

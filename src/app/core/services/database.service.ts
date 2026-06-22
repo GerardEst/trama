@@ -55,7 +55,7 @@ export class DatabaseService {
         'color: #9999ff'
       )
 
-    let { data, error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('profiles')
       .select('subscription_status, plan, user_name, next_payment')
       .eq('id', userId)
@@ -70,7 +70,7 @@ export class DatabaseService {
         'color: #9999ff'
       )
 
-    let { data: stories, error } = await this.supabase
+    const { data: stories, error } = await this.supabase
       .from('stories')
       .select('id,name')
       .eq('profile_id', userId)
@@ -87,7 +87,7 @@ export class DatabaseService {
         customId
       )
     // Can't limit to stories of a user because the stories are PUBLIC and can be fetched by everyone to play them
-    let { data: stories, error } = await this.supabase
+    const { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .eq('custom_id', customId)
@@ -108,7 +108,7 @@ export class DatabaseService {
       )
     const infoToGet = basicInfo ? 'name' : '*'
     // Can't limit to stories of a user because the stories are PUBLIC and can be fetched by everyone to play them
-    let { data: stories, error } = await this.supabase
+    const { data: stories, error } = await this.supabase
       .from('stories')
       .select(infoToGet)
       .eq('id', storyId)
@@ -129,7 +129,7 @@ export class DatabaseService {
     const userId = this.user()?.id
     if (!userId) return false
 
-    let { data: stories, error } = await this.supabase
+    const { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .order('updated_at', { ascending: false })
@@ -183,7 +183,7 @@ export class DatabaseService {
         '%cdb call to get the configuration of the story ' + storyId,
         'color: #9999ff'
       )
-    let { data, error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('stories')
       .select('custom_id, tracking, sharing, tapLink, cumulativeMode, footer')
       .eq('id', storyId)
@@ -381,12 +381,11 @@ export class DatabaseService {
         .from('stories')
         .delete()
         .eq('id', storyId)
-      
+
       return data
     } catch (err) {
       console.error('error deleting the story:', err)
       throw err
     }
-    
   }
 }

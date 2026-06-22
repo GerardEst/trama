@@ -118,32 +118,32 @@ export class BoardFlowsComponent {
     const paths: any = []
     if (!nodes) return paths
 
-    for (let node of nodes) {
+    for (const node of nodes) {
       if (node.join) {
-        for (let join of node.join) {
+        for (const join of node.join) {
           paths.push(this.getPath(node, join))
         }
       }
       if (node.answers) {
-        for (let answer of node.answers) {
+        for (const answer of node.answers) {
           if (answer.join) {
-            for (let join of answer.join) {
+            for (const join of answer.join) {
               paths.push(this.getPath(answer, join))
             }
           }
         }
       }
       if (node.conditions) {
-        for (let condition of node.conditions) {
+        for (const condition of node.conditions) {
           if (condition.join) {
-            for (let join of condition.join) {
+            for (const join of condition.join) {
               paths.push(this.getPath(condition, join))
             }
           }
         }
       }
       if (node.fallbackCondition?.join) {
-        for (let join of node.fallbackCondition.join) {
+        for (const join of node.fallbackCondition.join) {
           paths.push(this.getPath(node.fallbackCondition, join))
         }
       }

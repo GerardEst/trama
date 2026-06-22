@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -22,7 +22,7 @@ import { StatisticsService } from 'src/app/shared/services/statistics.service'
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.sass'],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('menuTop') menuTop?: MenuTopComponent
   @ViewChild('menuSide') menuSide?: MenuComponent

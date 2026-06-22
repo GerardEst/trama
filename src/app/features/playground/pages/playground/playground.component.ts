@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2 } from '@angular/core'
+import { Component, Input, Renderer2, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { GameComponent } from 'src/app/features/playground/components/game/game.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -18,7 +18,7 @@ import { Router } from '@angular/router'
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })
-export class PlaygroundComponent {
+export class PlaygroundComponent implements OnInit {
   // Complex id, used for private stories
   @Input() storyId: string = ''
   // Easy and customizable id, used for public stories
@@ -44,10 +44,10 @@ export class PlaygroundComponent {
     if (this.storyId) {
       // Get the story and configuration to save it to activeStory and use activeStory from now on
       story = await this.db.getStoryWithID(this.storyId)
-      configuration: configuration = await this.db.getConfigurationOf(story.id)
+      configuration = await this.db.getConfigurationOf(story.id)
     } else if (this.customId) {
       story = await this.db.getStoryWithCustomID(this.customId)
-      configuration: configuration = await this.db.getConfigurationOf(story.id)
+      configuration = await this.db.getConfigurationOf(story.id)
     }
 
     return { story, configuration }

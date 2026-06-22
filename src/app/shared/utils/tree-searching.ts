@@ -32,7 +32,7 @@ export function generateIDForNewNode(nodes: node[] | undefined) {
   const node_ids = []
   if (!nodes || nodes.length === 0) return `node_${0}`
 
-  for (let node of nodes) node_ids.push(parseInt(node.id.split('_')[1]))
+  for (const node of nodes) node_ids.push(parseInt(node.id.split('_')[1]))
   const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
 
   return `node_${great_id + 1}`
@@ -42,10 +42,10 @@ export function generateIDForNewAnswer(
   nodeId: string,
   currentAnswers: any[] | undefined
 ) {
-  let answer_ids = []
+  const answer_ids = []
   if (!currentAnswers) return `answer_${nodeId.split('_')[1]}_0`
 
-  for (let answer of currentAnswers)
+  for (const answer of currentAnswers)
     answer_ids.push(parseInt(answer.id.split('_')[2]))
   const great_id = Math.max(...answer_ids) > 0 ? Math.max(...answer_ids) : 0
 
@@ -56,10 +56,10 @@ export function generateIDForNewCondition(
   nodeId: string,
   currentConditions: any[] | undefined
 ) {
-  let condition_ids = []
+  const condition_ids = []
   if (!currentConditions) return `condition_${nodeId.split('_')[1]}_0`
 
-  for (let condition of currentConditions)
+  for (const condition of currentConditions)
     condition_ids.push(parseInt(condition.id.split('_')[2]))
   const great_id =
     Math.max(...condition_ids) > 0 ? Math.max(...condition_ids) : 0

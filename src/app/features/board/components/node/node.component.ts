@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   ViewChild,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { AnswerComponent } from './answer/answer.component'
@@ -54,7 +55,7 @@ import { NodeEventsComponent } from './node-events/node-events.component'
  * and updates activeStory object, so input changes
  * are detected and node is updated
  */
-export class NodeComponent {
+export class NodeComponent implements OnInit {
   @Input() nodeId: string = ''
 
   // Common

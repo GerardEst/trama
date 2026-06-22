@@ -4,6 +4,8 @@ import {
   Input,
   ViewChild,
   HostListener,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { NodeComponent } from './components/node/node.component'
@@ -29,7 +31,7 @@ import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
 })
-export class BoardComponent {
+export class BoardComponent implements OnInit, AfterViewInit {
   @ViewChild('board') boardElement?: ElementRef
 
   @Input() grid?: boolean
@@ -99,7 +101,7 @@ export class BoardComponent {
     this.panzoom.centerToNode(node)
   }
 
-  public goTo(x:number,y:number) {
+  public goTo(x: number, y: number) {
     this.panzoom.goTo(x, y)
   }
 

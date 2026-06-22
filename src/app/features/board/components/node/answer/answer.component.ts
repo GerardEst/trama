@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   ViewChild,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
@@ -26,7 +27,7 @@ import { NodeRequirementsComponent } from '../node-requirements/node-requirement
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],
 })
-export class AnswerComponent {
+export class AnswerComponent implements OnInit {
   id: string = ''
   events: Array<event> = []
   requirements: Array<event> = []

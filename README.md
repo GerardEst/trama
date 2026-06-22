@@ -1,27 +1,84 @@
-# PoloAngular
+# Trama
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
+Trama is a web app for **building and playing interactive, branching
+narratives**. Authors design stories visually on a node-based board, and
+players move through them in a runtime "playground". It is the codebase behind
+[trama.app](https://trama.app).
 
-## Development server
+Built with **Angular 18** (standalone components) and a **Supabase** backend
+(Postgres + Auth + Edge Functions), with Stripe for subscriptions and an AWS
+Lambda for image optimization.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Tech stack
 
-## Code scaffolding
+- **Frontend:** Angular 18.2, standalone components, RxJS, SASS (indented)
+- **Backend:** Supabase (`@supabase/supabase-js`) — auth, Postgres, storage, edge functions
+- **Payments:** Stripe (subscription links + edge functions)
+- **Testing:** Playwright (e2e), Karma + Jasmine (unit)
+- **Misc:** panzoom (board canvas), html2canvas, ngx-markdown
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Project structure
+
+```
+src/app/
+  core/        Singletons & contracts: database/auth/modal/alert services,
+               guards, interfaces (the domain model), constants
+  shared/      Reusable UI components, app-wide state
+               (active-story.service holds the in-memory story tree), utils
+  features/
+    landing-page/  Marketing site
+    login/         Auth pages (Supabase + Google OAuth)
+    dashboard/     Authoring shell (story menu, stats, modals)
+    board/         The node-based story editor
+    playground/    The runtime player that executes a story tree
+    statistics/    Aggregated play results / analytics
+    feedback/      Feedback modal -> edge function email
+supabase/functions/   Deno edge functions (subscriptions, feedback email)
+aws/resize-image/     Standalone Lambda for image optimization
+tests/                Playwright e2e specs
+```
+
+The story domain model lives in `src/app/core/interfaces/interfaces.ts`
+(`node`, `node_answer`, `event`, `condition`, `tree`, `game`, …).
+
+## Development
+
+Install dependencies and start the dev server:
+
+```bash
+npm install
+npm start          # ng serve -> http://localhost:4200/
+```
+
+Environment config lives in `src/environments/`. `environment.ts` is used for
+production builds and `environment.development.ts` for development (Supabase URL
++ anon key, Stripe links). The Supabase anon key is public by design; data
+access is protected by Supabase Row-Level Security policies.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+npm run build      # production build to dist/polo-angular
+npm run watch      # development build, rebuild on change
+```
 
-## Running unit tests
+## Testing
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+npm test                       # unit tests (Karma/Jasmine)
+npm run tests-e2e-playground   # Playwright e2e, playground project
+npm run tests-e2e-dashboard    # Playwright e2e, dashboard project (needs auth)
+```
 
-## Running end-to-end tests
+Playwright config is in `playwright.config.ts`; e2e specs live in `tests/`.
+In CI the suite runs against `https://trama.app`; locally against
+`http://localhost:4200`.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Edge functions
 
-## Further help
+Supabase edge functions are under `supabase/functions/`. Deploy the
+subscription function with:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```bash
+npm run deploy-edge
+```

@@ -5,6 +5,7 @@ import {
   effect,
   WritableSignal,
   signal,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -22,7 +23,7 @@ import { FeedbackModalComponent } from 'src/app/features/feedback/feedback-modal
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit {
   fixedMenu: boolean = true
   public stories: WritableSignal<any> = signal([])
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
