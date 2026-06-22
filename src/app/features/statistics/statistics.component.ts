@@ -60,7 +60,7 @@ export class StatisticsComponent implements OnInit {
       (gameStat: any) => gameStat.id === condition.id
     )
 
-    return !!isConditionPresent ? '✅' : '❌'
+    return isConditionPresent ? '✅' : '❌'
   }
 
   normalizeDate(date: Date) {

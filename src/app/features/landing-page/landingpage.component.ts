@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core'
 import { BoardComponent } from 'src/app/features/board/board.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -45,7 +45,7 @@ import { environment } from 'src/environments/environment'
     ]),
   ],
 })
-export class LandingpageComponent {
+export class LandingpageComponent implements OnInit, AfterViewInit {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('examplesSection') examples?: any
   @ViewChild('pricingSection') pricing?: any

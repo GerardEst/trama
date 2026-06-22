@@ -5,6 +5,7 @@ import {
   Output,
   ViewChild,
   ElementRef,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
@@ -17,7 +18,10 @@ import { PopupBaseComponent } from '../popup-base/popup-base.component'
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
 })
-export class SelectOrCreateComponent extends PopupBaseComponent {
+export class SelectOrCreateComponent
+  extends PopupBaseComponent
+  implements OnInit
+{
   @Input() options: Array<any> = []
   @Input() message?: string
   @Input() selectedOption?: string

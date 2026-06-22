@@ -52,7 +52,7 @@ export class MenuTreeLegendComponent {
 
       // Check and list unused refs
       const allRefs = this.activeStory.getRefs()
-      for (let refId in allRefs) {
+      for (const refId in allRefs) {
         if (!this.arrayOfRefs.find((ref: any) => ref.id === refId)) {
           this.unusedRefs.push({
             id: refId,
@@ -69,7 +69,7 @@ export class MenuTreeLegendComponent {
     const refs = this.activeStory
       .storyRefs()
       .filter((ref: any) => ref.id === refId)
-    for (let ref of refs) {
+    for (const ref of refs) {
       const DOMNode = document.querySelector('#' + ref.node)
       if (DOMNode) DOMNode.classList.add('highlighted')
     }
@@ -78,7 +78,7 @@ export class MenuTreeLegendComponent {
     const refs = this.activeStory
       .storyRefs()
       .filter((ref: any) => ref.id === refId)
-    for (let ref of refs) {
+    for (const ref of refs) {
       const DOMNode = document.querySelector('#' + ref.node)
       if (DOMNode) DOMNode.classList.remove('highlighted')
     }

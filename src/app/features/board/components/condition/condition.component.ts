@@ -6,6 +6,7 @@ import {
   Output,
   ViewChild,
   ViewContainerRef,
+  OnInit,
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
@@ -18,7 +19,7 @@ import { ref } from 'src/app/core/interfaces/interfaces'
   templateUrl: './condition.component.html',
   styleUrl: './condition.component.sass',
 })
-export class ConditionComponent {
+export class ConditionComponent implements OnInit {
   id: string = ''
   refOptions: ref[] = []
   refType: 'stat' | 'condition' | 'property' = 'stat'
@@ -59,7 +60,6 @@ export class ConditionComponent {
         (ref) => ref.id === event.target.selectedOptions[0].id
       )?.type as 'stat' | 'condition' | 'property'
       this.selectedRef = event.target.selectedOptions[0].id
-      console.log('this.refType', this.refType)
     } else if (event.target.id === 'comparator') {
       this.comparator = event.target.selectedOptions[0].id
     } else if (event.target.id === 'value') {

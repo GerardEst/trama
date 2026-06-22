@@ -2,7 +2,7 @@
   <nav>
     <section>
       <div class="nav__title">
-        <h4>{{ db.user().profile.user_name }}</h4>
+        <h4>{{ db.user()?.profile?.user_name }}</h4>
         @if (fixedMenu) {
           <polo-basic-button
             class="menuToggler"

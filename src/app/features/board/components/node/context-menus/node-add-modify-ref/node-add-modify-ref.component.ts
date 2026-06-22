@@ -4,6 +4,7 @@ import {
   Input,
   Output,
   SimpleChanges,
+  OnChanges,
 } from '@angular/core'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -15,7 +16,7 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
   templateUrl: './node-add-modify-ref.component.html',
   styleUrl: './node-add-modify-ref.component.sass',
 })
-export class NodeAddModifyRefComponent {
+export class NodeAddModifyRefComponent implements OnChanges {
   // Els inputs per configurar l'event depenent de si és stat o condition
 
   @Output() onChangeTarget: EventEmitter<any> = new EventEmitter()

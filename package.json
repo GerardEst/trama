@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "lint": "eslint \"src/**/*.{ts,html}\"",
     "tests-e2e-dashboard": "npx playwright test --project=dashboard",
     "tests-e2e-playground": "npx playwright test --project=playground",
     "ts-coverage": "typescript-coverage-report",
@@ -40,7 +41,9 @@
     "@playwright/test": "^1.44.1",
     "@types/jasmine": "~4.3.0",
     "@types/node": "^20.14.0",
+    "angular-eslint": "^18.4.3",
     "dotenv": "^16.4.5",
+    "eslint": "^9.39.4",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -48,7 +51,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.5.4",
-    "typescript-coverage-report": "^0.8.0"
+    "typescript-coverage-report": "^0.8.0",
+    "typescript-eslint": "^8.61.1"
   },
   "overrides": {
     "@supabase/supabase-js": {

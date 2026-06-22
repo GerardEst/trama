@@ -58,7 +58,7 @@
       }
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
       <div class="node__linkoptions">
-        @if (database.user() && database.user().profile.subscription_status === 'active') {
+        @if (database.user()?.profile?.subscription_status === 'active') {
           <div class="node__linkoptions__header">
             <p class="node__linkoptions__header__title">External links</p>
             <polo-basic-button (click)="addExternalLink()" text="add">add</polo-basic-button>

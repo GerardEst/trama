@@ -28,7 +28,7 @@ export class PanzoomService {
       beforeWheel: (e) => {
         if (options.zoomable) return
         // allow wheel-zoom only if altKey is down. Otherwise - ignore
-        var shouldIgnore = !e.altKey
+        const shouldIgnore = !e.altKey
         return shouldIgnore
       },
       initialZoom: options.initialZoom || 1,

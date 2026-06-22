@@ -176,15 +176,15 @@ export class GameComponent {
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
       (match: string, p1: string): any => {
-        let property = this.playerService.playerProperties()[p1]
+        const property = this.playerService.playerProperties()[p1]
         if (property) return property
 
-        let condition = this.playerService
+        const condition = this.playerService
           .playerConditions()
           .find((condition: any) => condition.id === p1)
         if (condition) return true
 
-        let stat = this.playerService
+        const stat = this.playerService
           .playerStats()
           .find((stat: any) => stat.id === p1)
         if (stat) return stat.amount.toString()
@@ -195,14 +195,14 @@ export class GameComponent {
     const withBlockReplacements = withInlineReplacements.replace(
       /\[([a-zA-Z0-9_]+)\]/g,
       (match: string, p1: string) => {
-        let refsWithCategory: any = Object.values(
+        const refsWithCategory: any = Object.values(
           this.activeStory.storyRefs()
         ).filter((val: any) => {
           return val.category === p1
         })
 
         let string = ' '
-        for (let refWithCategory of refsWithCategory) {
+        for (const refWithCategory of refsWithCategory) {
           const playerStat = this.playerService
             .playerStats()
             .find((stat: any) => stat.id === refWithCategory.id)
@@ -219,7 +219,7 @@ export class GameComponent {
               playerStat.amount
           }
         }
-        for (let refWithCategory of refsWithCategory) {
+        for (const refWithCategory of refsWithCategory) {
           const playerCondition = this.playerService
             .playerConditions()
             .find((condition: any) => condition.id === refWithCategory.id)
@@ -260,7 +260,7 @@ export class GameComponent {
 
   distributeNode(node: node) {
     if (node.conditions) {
-      for (let distributorCondition of node.conditions) {
+      for (const distributorCondition of node.conditions) {
         const distributorConditionType = distributorCondition.ref.split('_')[0]
         if (distributorConditionType === 'stat') {
           // If it's a stat, we find this stat in the player object
@@ -350,8 +350,8 @@ export class GameComponent {
     })
 
     // If just some of the requirements is not met, we can throw false and stop checking
-    for (let requirement of requirements) {
-      let requirement_amount = requirement.amount
+    for (const requirement of requirements) {
+      const requirement_amount = requirement.amount
       if (requirement.type === 'stat') {
         if (playerStats.length === 0) return false
 
@@ -379,7 +379,7 @@ export class GameComponent {
         if (conditionIsRequired && !playerHasSomeRequiredConditions)
           return false
 
-        for (let condition of playerConditions) {
+        for (const condition of playerConditions) {
           // If player has the condition, but it should not be checked
           if (condition.id === requirement.target && !conditionIsRequired)
             return false
@@ -408,10 +408,10 @@ export class GameComponent {
   private alterStat(event: event) {
     const amount = parseInt(event.amount)
 
-    let statIndex = this.playerService
+    const statIndex = this.playerService
       .playerStats()
       .findIndex((element: stat) => element.id === event.target)
-    let stat = this.playerService.playerStats()[statIndex]
+    const stat = this.playerService.playerStats()[statIndex]
 
     if (stat) {
       stat.amount += amount
@@ -428,14 +428,14 @@ export class GameComponent {
 
   private alterCondition(event: event) {
     if (event.amount) {
-      let condition = this.playerService
+      const condition = this.playerService
         .playerConditions()
         .find((element: condition) => element.id === event.target)
 
       if (!condition)
         this.playerService.playerConditions().push({ id: event.target })
     } else {
-      let condition = this.playerService
+      const condition = this.playerService
         .playerConditions()
         .findIndex((condition: condition) => condition.id === event.target)
 

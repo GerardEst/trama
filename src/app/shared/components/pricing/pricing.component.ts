@@ -31,15 +31,17 @@ export class PricingComponent {
   ) {}
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
-    this.email
-      ? this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly', this.email)
-      : this.router.navigate(['/login'], {
-          queryParams: {
-            mode: 'register',
-            plan,
-            period: isYearlyPlan ? 'yearly' : 'monthly',
-          },
-        })
+    if (this.email) {
+      this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly', this.email)
+    } else {
+      this.router.navigate(['/login'], {
+        queryParams: {
+          mode: 'register',
+          plan,
+          period: isYearlyPlan ? 'yearly' : 'monthly',
+        },
+      })
+    }
   }
 
   upgradePlan(
@@ -85,7 +87,8 @@ export class PricingComponent {
     )
       .then((response) => {
         if (response.status === 200) {
-          this.db.user().profile.subscription_status = 'canceled'
+          const user = this.db.user()
+          if (user) user.profile.subscription_status = 'canceled'
         } else {
           alert('Failed to cancel subscription')
         }

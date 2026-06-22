@@ -1,53 +1,55 @@
 <polo-modal-window name="Account">
   <ng-container modal-content>
-    <div class="profileContainer">
-      <section>
-        <div>
-          <p class="txt-weight-bold">Email</p>
-          <p>{{ db.user().email }}</p>
-        </div>
-        <div>
-          <p class="txt-weight-bold">Name</p>
-          <p>{{ db.user().user_metadata.user_name }}</p>
-        </div>
-        <div class="profileOptions">
-          @if (db.user().app_metadata.provider === 'email') {
-            <polo-basic-button
-              (click)="changePassword()"
-              text="Change your password"
-            ></polo-basic-button>
+    @if (db.user(); as user) {
+      <div class="profileContainer">
+        <section>
+          <div>
+            <p class="txt-weight-bold">Email</p>
+            <p>{{ user.email }}</p>
+          </div>
+          <div>
+            <p class="txt-weight-bold">Name</p>
+            <p>{{ user.user_metadata['user_name'] }}</p>
+          </div>
+          <div class="profileOptions">
+            @if (user.app_metadata.provider === 'email') {
+              <polo-basic-button
+                (click)="changePassword()"
+                text="Change your password"
+              ></polo-basic-button>
+            }
+            <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
+          </div>
+        </section>
+        <polo-separator [space]="20"></polo-separator>
+        <section>
+          <p class="txt-l txt-weight-bold">Billing</p>
+          @if (user.profile.subscription_status === 'incomplete') {
+            <p>
+              You need to complete the payment. If the payment has been completed, refresh the page
+            </p>
           }
-          <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
-        </div>
-      </section>
-      <polo-separator [space]="20"></polo-separator>
-      <section>
-        <p class="txt-l txt-weight-bold">Billing</p>
-        @if (db.user().profile.subscription_status === 'incomplete') {
-          <p>
-            You need to complete the payment. If the payment has been completed, refresh the page
-          </p>
-        }
-        @if (db.user().profile.subscription_status === 'canceled') {
-          <p>
-            Your subscription will expire on
-            {{ db.user().profile.next_payment }}
-          </p>
-        } @else {
-          <p>Your next payment will be {{ db.user().profile.next_payment }}</p>
-        }
-        <polo-billing-cycle
-          [small]="true"
-          (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
-        ></polo-billing-cycle>
-        <polo-pricing
-          [dashed]="true"
-          [canceledSubscription]="db.user().profile.subscription_status === 'canceled'"
-          [userPlan]="db.user().profile.plan || 'free'"
-          [payAnnually]="payAnnually"
-          [email]="db.user().email"
-        ></polo-pricing>
-      </section>
-    </div>
+          @if (user.profile.subscription_status === 'canceled') {
+            <p>
+              Your subscription will expire on
+              {{ user.profile.next_payment }}
+            </p>
+          } @else {
+            <p>Your next payment will be {{ user.profile.next_payment }}</p>
+          }
+          <polo-billing-cycle
+            [small]="true"
+            (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
+          ></polo-billing-cycle>
+          <polo-pricing
+            [dashed]="true"
+            [canceledSubscription]="user.profile.subscription_status === 'canceled'"
+            [userPlan]="user.profile.plan || 'free'"
+            [payAnnually]="payAnnually"
+            [email]="user.email"
+          ></polo-pricing>
+        </section>
+      </div>
+    }
   </ng-container>
 </polo-modal-window>

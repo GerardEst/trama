@@ -55,11 +55,11 @@ export class ActiveStoryService {
   // We add and remove refs on the active story. We don't need this on the tree.
   initTreeRefs() {
     const builtRefs: any = []
-    for (let node of this.entireTree().nodes) {
+    for (const node of this.entireTree().nodes) {
       if (node.answers) {
-        for (let answer of node.answers) {
+        for (const answer of node.answers) {
           if (answer.requirements) {
-            for (let requirement of answer.requirements) {
+            for (const requirement of answer.requirements) {
               if (requirement.id) {
                 builtRefs.push({
                   id: requirement.id,
@@ -74,7 +74,7 @@ export class ActiveStoryService {
             }
           }
           if (answer.events) {
-            for (let event of answer.events) {
+            for (const event of answer.events) {
               if (event.target) {
                 builtRefs.push({
                   id: event.target,
@@ -190,7 +190,7 @@ export class ActiveStoryService {
   // TREE updates
   // Nodes
   duplicateNode(id: string, newId: string) {
-    let duplicatedNode = structuredClone(
+    const duplicatedNode = structuredClone(
       this.entireTree().nodes.find((node: any) => node.id === id)
     )
 
@@ -269,13 +269,13 @@ export class ActiveStoryService {
     )
 
     // Remove node from joins that have it
-    for (let node of this.entireTree().nodes) {
+    for (const node of this.entireTree().nodes) {
       if (node.join) {
         node.join = node.join.filter((join: any) => join.node !== nodeId)
       }
 
       if (node.answers) {
-        for (let answer of node.answers) {
+        for (const answer of node.answers) {
           if (answer.join) {
             answer.join = answer.join.filter(
               (join: any) => join.node !== nodeId
@@ -284,7 +284,7 @@ export class ActiveStoryService {
         }
       }
       if (node.conditions) {
-        for (let condition of node.conditions) {
+        for (const condition of node.conditions) {
           if (condition.join) {
             condition.join = condition.join.filter(
               (join: any) => join.node !== nodeId
@@ -360,7 +360,7 @@ export class ActiveStoryService {
     this.db.saveTreeToDB(this.storyId(), this.entireTree())
   }
   updateNodePosition(nodeId: string, left: number, top: number) {
-    let node = findNodeInTree(nodeId, this.entireTree())
+    const node = findNodeInTree(nodeId, this.entireTree())
     node.left = left
     node.top = top
 

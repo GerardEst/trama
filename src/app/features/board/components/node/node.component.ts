@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   ViewChild,
+  OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { AnswerComponent } from './answer/answer.component'
@@ -54,7 +55,7 @@ import { NodeEventsComponent } from './node-events/node-events.component'
  * and updates activeStory object, so input changes
  * are detected and node is updated
  */
-export class NodeComponent {
+export class NodeComponent implements OnInit {
   @Input() nodeId: string = ''
 
   // Common
@@ -108,6 +109,7 @@ export class NodeComponent {
     const {
       data: { user },
     } = await this.database.supabase.auth.getUser()
+    if (!user) return
 
     const randomStr = Math.random().toString(36).substring(2, 10)
     const imagePath = `${user.id}/${this.activeStory.storyId()}/${
@@ -145,6 +147,7 @@ export class NodeComponent {
   }
 
   async removeNodeImage() {
+    if (!this.image) return
     const { data, error } = await this.database.supabase.storage
       .from('images')
       .remove([this.image])

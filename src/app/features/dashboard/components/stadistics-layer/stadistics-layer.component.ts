@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { StatisticsService } from 'src/app/shared/services/statistics.service'
@@ -10,7 +10,7 @@ import { StatisticsService } from 'src/app/shared/services/statistics.service'
   templateUrl: './stadistics-layer.component.html',
   styleUrl: './stadistics-layer.component.sass',
 })
-export class StadisticsLayerComponent {
+export class StadisticsLayerComponent implements OnInit {
   games?: any
 
   constructor(
@@ -26,7 +26,7 @@ export class StadisticsLayerComponent {
 
   toggleGame(game: any) {
     console.log(game)
-    for (let step of game.path) {
+    for (const step of game.path) {
       if (step.type === 'node') {
         document.querySelector('#' + step.id)?.classList.add('highlighted')
       }
