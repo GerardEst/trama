@@ -2,7 +2,11 @@ import { Component, Input, Renderer2 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { GameComponent } from 'src/app/features/playground/components/game/game.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import { node, node_answer } from 'src/app/core/interfaces/interfaces'
+import {
+  externalEvent,
+  node,
+  node_answer,
+} from 'src/app/core/interfaces/interfaces'
 import { PlayerService } from '../../services/player.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { Router } from '@angular/router'
@@ -22,7 +26,7 @@ export class PlaygroundComponent {
 
   userName: string | null = null
   playerPath: Array<any> = []
-  externalEvents: Array<any> = []
+  externalEvents: externalEvent[] = []
   gameId?: string
   customStyles?: string
 
@@ -52,7 +56,7 @@ export class PlaygroundComponent {
   async ngOnInit(): Promise<void> {
     const { story, configuration } = await this.getStoryByCorrectID()
 
-    if (!story) {
+    if (!story || !configuration) {
       this.router.navigate(['/not-found'])
       return
     }
@@ -68,7 +72,7 @@ export class PlaygroundComponent {
     this.activeStory.storyConfiguration().cumulativeMode =
       configuration.cumulativeMode
 
-    this.customStyles = configuration.customStyles || 'default'
+    this.customStyles = (configuration as any).customStyles || 'default'
 
     // We have to manually init the refs by now
     this.activeStory.initTreeRefs()
@@ -145,7 +149,7 @@ export class PlaygroundComponent {
 
   private startTabChangeDetection() {
     document.addEventListener('visibilitychange', () => {
-      let externalEvent
+      let externalEvent: externalEvent
       if (document.hidden) {
         externalEvent = { name: 'leaveTab', time: Date.now() }
         this.externalEvents.push(externalEvent)
@@ -158,14 +162,14 @@ export class PlaygroundComponent {
 
   private startBlurWindowDetection() {
     window.addEventListener('focus', () => {
-      let externalEvent = {
+      const externalEvent: externalEvent = {
         name: 'focusWindow',
         time: Date.now(),
       }
       this.externalEvents.push(externalEvent)
     })
     window.addEventListener('blur', () => {
-      let externalEvent = {
+      const externalEvent: externalEvent = {
         name: 'blurWindow',
         time: Date.now(),
       }

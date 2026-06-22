@@ -85,7 +85,8 @@ export class PricingComponent {
     )
       .then((response) => {
         if (response.status === 200) {
-          this.db.user().profile.subscription_status = 'canceled'
+          const user = this.db.user()
+          if (user) user.profile.subscription_status = 'canceled'
         } else {
           alert('Failed to cancel subscription')
         }

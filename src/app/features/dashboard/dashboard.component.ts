@@ -111,7 +111,7 @@ export class DashboardComponent {
           nodes: [],
           refs: {},
         },
-        profile_id: this.db.user().id,
+        profile_id: this.db.user()?.id,
       },
     ]
     const newTree = await this.db.createNewTree(newTreeData)

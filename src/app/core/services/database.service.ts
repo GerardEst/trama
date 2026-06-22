@@ -1,14 +1,14 @@
 import { Injectable, WritableSignal, signal } from '@angular/core'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
-import { ref, tree } from 'src/app/core/interfaces/interfaces'
+import { appUser, tree, userProfile } from 'src/app/core/interfaces/interfaces'
 
 @Injectable({
   providedIn: 'root',
 })
 export class DatabaseService {
-  public supabase: any
-  user: WritableSignal<any> = signal(null)
+  public supabase: SupabaseClient
+  user: WritableSignal<appUser | null> = signal(null)
 
   constructor() {
     this.supabase = createClient(environment.apiUrl, environment.apiAnonKey)
@@ -17,8 +17,11 @@ export class DatabaseService {
   async getUser() {
     try {
       const fetchUser = await this.supabase.auth.getUser()
-      const profileInfo = await this.getUserProfile(fetchUser.data.user.id)
-      this.user.set({ ...fetchUser.data.user, profile: profileInfo })
+      const authUser = fetchUser.data.user
+      if (!authUser) return false
+
+      const profileInfo = await this.getUserProfile(authUser.id)
+      this.user.set({ ...authUser, profile: profileInfo })
 
       return this.user()
     } catch {
@@ -27,34 +30,37 @@ export class DatabaseService {
   }
 
   public userPlanIs(plan: string) {
-    const nextPaymentDate = new Date(this.user().profile.next_payment)
+    const user = this.user()
+    if (!user) return false
+
+    const nextPaymentDate = new Date(user.profile.next_payment)
     const dateOfNow = new Date(Date.now())
 
     if (
-      this.user().profile.subscription_status === 'canceled' &&
+      user.profile.subscription_status === 'canceled' &&
       nextPaymentDate > dateOfNow
     ) {
-      if (this.user().profile.plan.includes(plan)) return true
+      if (user.profile.plan.includes(plan)) return true
     }
-    if (this.user().profile.subscription_status === 'active') {
-      if (this.user().profile.plan.includes(plan)) return true
+    if (user.profile.subscription_status === 'active') {
+      if (user.profile.plan.includes(plan)) return true
     }
     return false
   }
 
-  private async getUserProfile(userId: string) {
+  private async getUserProfile(userId: string): Promise<userProfile> {
     if (!environment.production)
       console.log(
         '%cdb call to get the profile of the active user',
         'color: #9999ff'
       )
 
-    let { data: userProfile, error } = await this.supabase
+    let { data, error } = await this.supabase
       .from('profiles')
       .select('subscription_status, plan, user_name, next_payment')
       .eq('id', userId)
 
-    return userProfile[0]
+    return data?.[0] as userProfile
   }
 
   async getAllTreesForUser(userId: string) {
@@ -86,7 +92,7 @@ export class DatabaseService {
       .select('*')
       .eq('custom_id', customId)
 
-    if (error || !stories[0]) {
+    if (error || !stories?.[0]) {
       return false
     }
     return stories[0]
@@ -107,7 +113,7 @@ export class DatabaseService {
       .select(infoToGet)
       .eq('id', storyId)
 
-    if (error || !stories[0]) {
+    if (error || !stories?.[0]) {
       return false
     }
     return stories[0]
@@ -120,18 +126,19 @@ export class DatabaseService {
         'color: #9999ff'
       )
 
+    const userId = this.user()?.id
+    if (!userId) return false
+
     let { data: stories, error } = await this.supabase
       .from('stories')
       .select('*')
       .order('updated_at', { ascending: false })
       .limit(1)
-      .eq('profile_id', this.user().id)
+      .eq('profile_id', userId)
 
-    if (stories.length === 0) {
-      console.log('User has no stories')
+    if (!stories || stories.length === 0) {
       return false
     }
-    console.log('The newest story is ', stories)
     return stories[0]
   }
 
@@ -181,9 +188,12 @@ export class DatabaseService {
       .select('custom_id, tracking, sharing, tapLink, cumulativeMode, footer')
       .eq('id', storyId)
 
-    if (error) return console.error(error)
+    if (error) {
+      console.error(error)
+      return null
+    }
 
-    return data[0]
+    return data?.[0]
   }
 
   async setTrackingOf(storyId: string, tracking: boolean) {
@@ -326,9 +336,10 @@ export class DatabaseService {
       return
     }
 
-    const arrayOfRefs = Object.keys(data[0].refs).map((ref: any) => {
+    const refs = (data?.[0] as any)?.refs ?? {}
+    const arrayOfRefs = Object.keys(refs).map((ref: any) => {
       return {
-        ...data[0].refs[ref],
+        ...refs[ref],
         id: ref,
       }
     })

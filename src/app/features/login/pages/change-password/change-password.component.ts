@@ -52,7 +52,9 @@ export class ChangePasswordComponent {
       return
     }
 
-    const passwordChanged = await this.db.supabase.auth.updateUser({ password })
+    const passwordChanged = await this.db.supabase.auth.updateUser({
+      password: password ?? undefined,
+    })
     console.log(passwordChanged)
     if (passwordChanged.error) {
       this.feedback = this.feedbackMessages.error

@@ -108,6 +108,7 @@ export class NodeComponent {
     const {
       data: { user },
     } = await this.database.supabase.auth.getUser()
+    if (!user) return
 
     const randomStr = Math.random().toString(36).substring(2, 10)
     const imagePath = `${user.id}/${this.activeStory.storyId()}/${
@@ -145,6 +146,7 @@ export class NodeComponent {
   }
 
   async removeNodeImage() {
+    if (!this.image) return
     const { data, error } = await this.database.supabase.storage
       .from('images')
       .remove([this.image])

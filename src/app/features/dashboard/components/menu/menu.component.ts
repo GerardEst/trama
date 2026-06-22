@@ -29,7 +29,7 @@ export class MenuComponent {
   @Output() onNewStory: EventEmitter<any> = new EventEmitter()
 
   isSubscribedUser = () =>
-    this.db.user().profile.subscription_status === 'active'
+    this.db.user()?.profile.subscription_status === 'active'
 
   constructor(
     public db: DatabaseService,
@@ -48,7 +48,8 @@ export class MenuComponent {
   }
 
   ngOnInit() {
-    this.getTrees(this.db.user().id)
+    const userId = this.db.user()?.id
+    if (userId) this.getTrees(userId)
   }
 
   async getTrees(userId: string) {
