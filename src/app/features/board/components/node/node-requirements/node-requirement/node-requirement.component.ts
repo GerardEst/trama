@@ -20,12 +20,10 @@ export class NodeRequirementComponent {
   openModifyRequirement: boolean = false
 
   saveRequirement(event: any) {
-    console.log('Saving requirement:', event)
     this.onSaveRequirement.emit(event)
   }
 
   deleteRequirement(event: any) {
-    console.log('Deleting requirement:', event)
     this.onDeleteRequirement.emit(event.target)
   }
 }

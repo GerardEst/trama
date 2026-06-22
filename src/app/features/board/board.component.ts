@@ -163,7 +163,6 @@ export class BoardComponent {
           nodeId,
           this.dragMouseOn.classList.contains('joiner--answers')
         )
-        console.log('current tree:', this.activeStory.entireTree())
       } else {
         this.addNode(event, 'content')
       }
@@ -272,8 +271,6 @@ export class BoardComponent {
   }
 
   async removeNode(event: any) {
-    console.log('Try to remove node ', event)
-
     // Remove node image from db
     const image = this.activeStory.getImageFromNode(event.nodeId)
     if (image) {

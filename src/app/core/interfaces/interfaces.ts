@@ -109,7 +109,7 @@ export interface externalEvent {
 // Results and Stadistics
 export interface external_event {
   name: 'goBackToTab' | 'focusWindow' | 'blurWindow' | 'leave tab'
-  time: 1708971350724
+  time: number
 }
 export interface path {
   id: string

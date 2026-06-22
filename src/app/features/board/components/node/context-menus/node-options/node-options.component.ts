@@ -18,7 +18,6 @@ export class NodeOptionsComponent extends PopupBaseComponent {
   @Output() onAddImage = new EventEmitter<Event>()
 
   protected override closePopup(): void {
-    console.log('Closing options')
     super.closePopup()
   }
 }

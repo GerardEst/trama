@@ -59,7 +59,6 @@ export class ConditionComponent {
         (ref) => ref.id === event.target.selectedOptions[0].id
       )?.type as 'stat' | 'condition' | 'property'
       this.selectedRef = event.target.selectedOptions[0].id
-      console.log('this.refType', this.refType)
     } else if (event.target.id === 'comparator') {
       this.comparator = event.target.selectedOptions[0].id
     } else if (event.target.id === 'value') {
