@@ -75,8 +75,8 @@ describe('GameEngineService', () => {
     })
 
     it('throws when there are no joins to choose from', () => {
-      expect(() => engine.getRandomJoin([])).toThrowError(
-        'Impossible to get a random join'
+      expect(() => engine.getRandomJoin([])).toThrow(
+        new Error('Impossible to get a random join')
       )
     })
   })
@@ -85,7 +85,7 @@ describe('GameEngineService', () => {
     it('passes when there are no requirements', () => {
       expect(
         engine.playerHasAnswerRequirements({}, [], [], [])
-      ).toBeTrue()
+      ).toBe(true)
     })
 
     it('passes a stat requirement when the player has enough', () => {
@@ -95,7 +95,7 @@ describe('GameEngineService', () => {
         [],
         [statRequirement('gold', 5)]
       )
-      expect(result).toBeTrue()
+      expect(result).toBe(true)
     })
 
     it('fails a stat requirement when the amount is below the threshold', () => {
@@ -105,7 +105,7 @@ describe('GameEngineService', () => {
         [],
         [statRequirement('gold', 5)]
       )
-      expect(result).toBeFalse()
+      expect(result).toBe(false)
     })
 
     it('fails a stat requirement when the player lacks the stat', () => {
@@ -115,7 +115,7 @@ describe('GameEngineService', () => {
         [],
         [statRequirement('gold', 5)]
       )
-      expect(result).toBeFalse()
+      expect(result).toBe(false)
     })
 
     it('passes a required condition the player holds', () => {
@@ -125,7 +125,7 @@ describe('GameEngineService', () => {
         [{ id: 'hasKey' }],
         [conditionRequirement('hasKey', 1)]
       )
-      expect(result).toBeTrue()
+      expect(result).toBe(true)
     })
 
     it('fails a required condition the player does not hold', () => {
@@ -135,7 +135,7 @@ describe('GameEngineService', () => {
         [],
         [conditionRequirement('hasKey', 1)]
       )
-      expect(result).toBeFalse()
+      expect(result).toBe(false)
     })
 
     it('fails a "must not have" condition the player holds', () => {
@@ -145,7 +145,7 @@ describe('GameEngineService', () => {
         [{ id: 'hasKey' }],
         [conditionRequirement('hasKey', 0)]
       )
-      expect(result).toBeFalse()
+      expect(result).toBe(false)
     })
   })
 

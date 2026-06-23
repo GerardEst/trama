@@ -55,44 +55,47 @@ export class ActiveStoryService {
   // We add and remove refs on the active story. We don't need this on the tree.
   initTreeRefs() {
     const builtRefs: any = []
+
     for (const node of this.entireTree().nodes) {
-      if (node.answers) {
-        for (const answer of node.answers) {
-          if (answer.requirements) {
-            for (const requirement of answer.requirements) {
-              if (requirement.id) {
-                builtRefs.push({
-                  id: requirement.id,
-                  name: this.entireTree().refs[requirement.id].name,
-                  type: this.entireTree().refs[requirement.id].type,
-                  category: this.entireTree().refs[requirement.id].category,
-                  node: node.id,
-                  answer: answer.id,
-                  on: 'requirement',
-                })
-              }
-            }
+      for (const answer of node.answers ?? []) {
+        for (const requirement of answer.requirements ?? []) {
+          if (requirement.id) {
+            builtRefs.push(
+              this.buildRef(requirement.id, node.id, answer.id, 'requirement')
+            )
           }
-          if (answer.events) {
-            for (const event of answer.events) {
-              if (event.target) {
-                builtRefs.push({
-                  id: event.target,
-                  name: this.entireTree().refs[event.target].name,
-                  type: this.entireTree().refs[event.target].type,
-                  category: this.entireTree().refs[event.target].category,
-                  node: node.id,
-                  answer: answer.id,
-                  on: 'event',
-                })
-              }
-            }
+        }
+        for (const event of answer.events ?? []) {
+          if (event.target) {
+            builtRefs.push(
+              this.buildRef(event.target, node.id, answer.id, 'event')
+            )
           }
         }
       }
     }
 
     this.storyRefs.set(builtRefs)
+  }
+
+  // Builds a story-ref entry by combining a tree ref (name/type/category)
+  // with its location in the tree (node, answer) and what it is used for.
+  private buildRef(
+    refId: string,
+    nodeId: string,
+    answerId: string,
+    on: 'event' | 'requirement'
+  ) {
+    const ref = this.entireTree().refs[refId]
+    return {
+      id: refId,
+      name: ref.name,
+      type: ref.type,
+      category: ref.category,
+      node: nodeId,
+      answer: answerId,
+      on,
+    }
   }
 
   addRef(on: 'event' | 'requirement', refId: any, previousRef?: any) {
@@ -102,21 +105,17 @@ export class ActiveStoryService {
 
     const withNewRef = [
       ...this.storyRefs(),
-      {
-        id: refId.id,
-        answer: refId.answer,
-        name: this.entireTree().refs[refId.id].name,
-        type: this.entireTree().refs[refId.id].type,
-        category: this.entireTree().refs[refId.id].category,
-        on,
-        node: getNodeIdFromAnswerId(refId.answer),
-      },
+      this.buildRef(
+        refId.id,
+        getNodeIdFromAnswerId(refId.answer),
+        refId.answer,
+        on
+      ),
     ]
 
     this.storyRefs.set(withNewRef)
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
 
   removeRef(on: 'event' | 'requirement', refToRemove: any) {
@@ -131,8 +130,7 @@ export class ActiveStoryService {
 
     this.storyRefs.set(withoutRef)
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   createNewRef(name: string, type: 'stat' | 'condition' | 'property') {
     if (!this.entireTree().refs) {
@@ -160,14 +158,12 @@ export class ActiveStoryService {
   updateRefName(refId: string, newName: string) {
     this.entireTree().refs[refId].name = newName
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   deleteRef(refId: string) {
     delete this.entireTree().refs[refId]
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   getRefs() {
     return this.entireTree().refs
@@ -233,8 +229,7 @@ export class ActiveStoryService {
     // Add the new node to the entireTree object. This will add it to the board
     this.entireTree().nodes.push(duplicatedNode)
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
 
   createNode({ id, top, left, type }: any) {
@@ -259,8 +254,7 @@ export class ActiveStoryService {
 
     this.entireTree().nodes?.push(newNode)
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   removeNode(nodeId: string) {
     // Remove node from tree
@@ -301,63 +295,45 @@ export class ActiveStoryService {
 
     this.activateTreeChangeEffects()
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   updateNodeText(nodeId: string, newText: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.text = newText
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.text = newText))
   }
   saveNodeEvents(nodeId: string, events: any) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.events = events
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.events = events))
   }
   deleteEventFromNode(nodeId: string, eventTarget: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node.events) {
-      node.events = node.events.filter((event: any) => {
-        return event.target !== eventTarget
-      })
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => {
+      if (node.events) {
+        node.events = node.events.filter(
+          (event: any) => event.target !== eventTarget
+        )
+      }
+    })
   }
   updateNodeProperty(nodeId: string, newProperty: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.userTextOptions.property = newProperty
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(
+      nodeId,
+      (node) => (node.userTextOptions.property = newProperty)
+    )
   }
   updateNodePlaceholder(nodeId: string, newPlaceholder: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.userTextOptions.placeholder = newPlaceholder
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(
+      nodeId,
+      (node) => (node.userTextOptions.placeholder = newPlaceholder)
+    )
   }
 
   updateNodeDescription(nodeId: string, newDescription: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.userTextOptions.description = newDescription
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(
+      nodeId,
+      (node) => (node.userTextOptions.description = newDescription)
+    )
   }
 
   updateNodeLinks(nodeId: string, links: link[]) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.links = links
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.links = links))
   }
   updateNodePosition(nodeId: string, left: number, top: number) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -367,34 +343,19 @@ export class ActiveStoryService {
     this.activateTreeChangeEffects()
   }
   updateNodeShareOptions(nodeId: string, sharingOptions: shareOptions) {
-    const node: node = findNodeInTree(nodeId, this.entireTree())
-    node.share = sharingOptions
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.share = sharingOptions))
   }
   updateNodeButtonText(nodeId: string, newButtonText: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    if (node) node.userTextOptions.buttonText = newButtonText
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(
+      nodeId,
+      (node) => (node.userTextOptions.buttonText = newButtonText)
+    )
   }
   addImageToNode(nodeId: string, imagePath: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    node.image = {
-      path: imagePath,
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.image = { path: imagePath }))
   }
   removeImageFromNode(nodeId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    node.image = undefined
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => (node.image = undefined))
   }
 
   // TODO -> Are all this get really necessary since the use of signals for the tree?
@@ -416,39 +377,28 @@ export class ActiveStoryService {
   updateConditionValues(conditionId: string, values: node_conditions) {
     const conditionNodeId = conditionId.split('_')[1]
 
-    const node = findNodeInTree(`node_${conditionNodeId}`, this.entireTree())
-    const condition = node?.conditions?.find(
-      (condition: any) => condition.id === conditionId
-    )
-
-    if (condition) {
-      condition.ref = values.ref
-      condition.comparator = values.comparator
-      condition.value = values.value
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(`node_${conditionNodeId}`, (node) => {
+      const condition = node.conditions?.find(
+        (condition: any) => condition.id === conditionId
+      )
+      if (condition) {
+        condition.ref = values.ref
+        condition.comparator = values.comparator
+        condition.value = values.value
+      }
+    })
   }
   removeCondition(nodeId: string, conditionId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    const newConditions = node.conditions?.filter(
-      (condition: any) => condition.id !== conditionId
-    )
-
-    node.conditions = newConditions
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => {
+      node.conditions = node.conditions?.filter(
+        (condition: any) => condition.id !== conditionId
+      )
+    })
   }
 
   // Answers
   updateAnswerText(answerId: string, newText: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-    if (answer) answer.text = newText
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => (answer.text = newText))
   }
   createNodeAnswer(nodeId: string, answerId: string) {
     const node = findNodeInTree(nodeId, this.entireTree())
@@ -463,71 +413,50 @@ export class ActiveStoryService {
     delete node.join
   }
   removeAnswer(nodeId: string, answerId: string) {
-    const node = findNodeInTree(nodeId, this.entireTree())
-    const newAnswers = node.answers?.filter(
-      (answer: any) => answer.id !== answerId
-    )
-
-    node.answers = newAnswers
-
-    if (node.answers.length === 0) delete node.answers
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withNode(nodeId, (node) => {
+      node.answers = node.answers?.filter(
+        (answer: any) => answer.id !== answerId
+      )
+      if (node.answers.length === 0) delete node.answers
+    })
   }
   saveAnswerEvents(answerId: string, events: any) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-    answer.events = events
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => (answer.events = events))
   }
   deleteEventFromAnswer(answerId: string, eventTarget: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-    if (answer.events) {
-      answer.events = answer.events.filter((event: any) => {
-        return event.target !== eventTarget
-      })
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => {
+      if (answer.events) {
+        answer.events = answer.events.filter(
+          (event: any) => event.target !== eventTarget
+        )
+      }
+    })
   }
   saveAnswerRequirements(answerId: string, requirements: any) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-    answer.requirements = requirements
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => (answer.requirements = requirements))
   }
   updateRequirementAmount(
     answerId: string,
     requirementId: string,
     amount: number
   ) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-
-    if (answer.requirements) {
-      const requirement = answer.requirements.find(
-        (req: any) => req.id === requirementId
-      )
-      requirement.amount = amount
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => {
+      if (answer.requirements) {
+        const requirement = answer.requirements.find(
+          (req: any) => req.id === requirementId
+        )
+        requirement.amount = amount
+      }
+    })
   }
   deleteRequirementFromAnswer(answerId: string, requirementId: string) {
-    const answer = findAnswerInTree(answerId, this.entireTree())
-
-    if (answer.requirements) {
-      answer.requirements = answer.requirements.filter((req: any) => {
-        return req.id !== requirementId
-      })
-    }
-
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.withAnswer(answerId, (answer) => {
+      if (answer.requirements) {
+        answer.requirements = answer.requirements.filter(
+          (req: any) => req.id !== requirementId
+        )
+      }
+    })
   }
 
   updateJoinOfOption(
@@ -535,73 +464,39 @@ export class ActiveStoryService {
     destinyNodeId: string,
     toAnswer = false
   ) {
-    const optionNodeType = originId.split('_')[0]
-    const optionNodeId = originId.split('_')[1]
-    const isFallbackCondition = originId.split('_')[2] === 'fallback'
+    const [optionNodeType, optionNodeId, suffix] = originId.split('_')
+    const isFallbackCondition = suffix === 'fallback'
     const node = findNodeInTree(`node_${optionNodeId}`, this.entireTree())
 
-    // TODO -> tot aixo es horrible en molts sentits
+    let added: boolean
     if (isFallbackCondition) {
       if (!node.fallbackCondition) {
         node.fallbackCondition = {
           id: 'condition_' + optionNodeId + '_fallback',
         }
       }
-      const duplicatedJoin = node.fallbackCondition.join?.find((join: any) => {
-        return join.node === destinyNodeId
-      })
-
-      if (duplicatedJoin) {
-        console.log('Duplicated join. Skip creation')
-        return
-      }
-
-      if (!node.fallbackCondition.join) {
-        node.fallbackCondition.join = []
-      }
-      node.fallbackCondition.join.push({ node: destinyNodeId, toAnswer })
+      // Fallback joins are deduped on the destiny node only, ignoring toAnswer
+      added = this.addJoin(
+        node.fallbackCondition,
+        destinyNodeId,
+        toAnswer,
+        false
+      )
     } else if (optionNodeType === 'node') {
       const willJoinNode = findNodeInTree(originId, this.entireTree())
-
-      const duplicatedJoin = willJoinNode.join?.find((join: any) => {
-        return join.node === destinyNodeId && join.toAnswer === toAnswer
-      })
-
-      if (duplicatedJoin) {
-        console.log('Duplicated join. Skip creation')
-        return
-      }
-
-      if (willJoinNode.join) {
-        willJoinNode.join.push({ node: destinyNodeId, toAnswer })
-      } else {
-        willJoinNode.join = [{ node: destinyNodeId, toAnswer }]
-      }
+      added = this.addJoin(willJoinNode, destinyNodeId, toAnswer)
     } else {
-      const option = node[optionNodeType + 's']?.filter(
+      const option = node[optionNodeType + 's']?.find(
         (option: any) => option.id === originId
       )
-
-      const duplicatedJoin = option[0].join?.find((join: any) => {
-        return join.node === destinyNodeId && join.toAnswer === toAnswer
-      })
-
-      if (duplicatedJoin) {
-        console.log('Duplicated join. Skip creation')
-        return
-      }
-
-      if (option[0].join) {
-        option[0].join.push({ node: destinyNodeId, toAnswer })
-      } else {
-        option[0].join = [{ node: destinyNodeId, toAnswer }]
-      }
+      added = this.addJoin(option, destinyNodeId, toAnswer)
     }
+
+    if (!added) return
 
     this.activateTreeChangeEffects()
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   removeJoin(originId: string, destinyId: string, toAnswer: boolean) {
     const origin =
@@ -617,8 +512,7 @@ export class ActiveStoryService {
 
     this.activateTreeChangeEffects()
 
-    // Saving to DB
-    const saved = this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    const saved = this.saveTree()
     if (!saved) return false
 
     return origin.join
@@ -660,8 +554,7 @@ export class ActiveStoryService {
   setCategoryToRef(refId: string, categoryId: string) {
     this.entireTree().refs[refId].category = categoryId
 
-    // Saving to DB
-    this.db.saveTreeToDB(this.storyId(), this.entireTree())
+    this.saveTree()
   }
   getCategories() {
     return this.entireTree().categories || []
@@ -670,5 +563,50 @@ export class ActiveStoryService {
   // Utility to launch all the signal effect listeners
   public activateTreeChangeEffects() {
     if (this.entireTree) this.entireTree.set({ ...this.entireTree() })
+  }
+
+  // Persists the current tree to the DB. Most mutations call this after
+  // updating the in-memory tree.
+  private saveTree() {
+    return this.db.saveTreeToDB(this.storyId(), this.entireTree())
+  }
+
+  // Finds a node, applies a mutation to it (if found) and persists the tree.
+  private withNode(nodeId: string, mutate: (node: any) => void) {
+    const node = findNodeInTree(nodeId, this.entireTree())
+    if (node) mutate(node)
+    this.saveTree()
+  }
+
+  // Finds an answer, applies a mutation to it (if found) and persists the tree.
+  private withAnswer(answerId: string, mutate: (answer: any) => void) {
+    const answer = findAnswerInTree(answerId, this.entireTree())
+    if (answer) mutate(answer)
+    this.saveTree()
+  }
+
+  // Pushes a join onto an option (node/answer/condition), skipping duplicates.
+  // Returns true if a join was added, false if it was a duplicate. Set
+  // matchToAnswer to false to dedupe on the destiny node only.
+  private addJoin(
+    option: any,
+    destinyNodeId: string,
+    toAnswer: boolean,
+    matchToAnswer = true
+  ): boolean {
+    const isDuplicate = option.join?.some(
+      (join: any) =>
+        join.node === destinyNodeId &&
+        (!matchToAnswer || join.toAnswer === toAnswer)
+    )
+
+    if (isDuplicate) {
+      console.log('Duplicated join. Skip creation')
+      return false
+    }
+
+    if (!option.join) option.join = []
+    option.join.push({ node: destinyNodeId, toAnswer })
+    return true
   }
 }
