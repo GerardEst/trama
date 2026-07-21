@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 import { ConditionComponent } from './condition.component'
 
@@ -9,6 +10,12 @@ describe('ConditionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ConditionComponent],
+      providers: [
+        {
+          provide: ActiveStoryService,
+          useValue: { entireTree: () => ({ refs: {} }) },
+        },
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(ConditionComponent)

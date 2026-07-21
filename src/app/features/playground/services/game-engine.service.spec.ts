@@ -74,10 +74,75 @@ describe('GameEngineService', () => {
       expect(engine.getRandomJoin([join])).toBe(join)
     })
 
+    it('returns one of the available joins', () => {
+      const joins = [{ node: 'node_1' }, { node: 'node_2' }]
+
+      expect(joins).toContain(engine.getRandomJoin(joins))
+    })
+
     it('throws when there are no joins to choose from', () => {
       expect(() => engine.getRandomJoin([])).toThrow(
         new Error('Impossible to get a random join')
       )
+    })
+  })
+
+  describe('buildNextNodeFromJoin', () => {
+    const answer = (
+      id: string,
+      text: string,
+      requirements: answer_requirement[] = []
+    ) => ({
+      id,
+      text,
+      requirements,
+      events: [],
+      join: [],
+    })
+
+    it('builds a playable node without mutating the stored story', () => {
+      player.playerProperties.set({ name: 'Ada' })
+      player.playerStats.set([{ id: 'gold', amount: 5 }])
+      tree.nodes = [
+        {
+          id: 'node_1',
+          top: '10',
+          left: '20',
+          type: 'content',
+          text: 'Hello #name',
+          answers: [
+            answer('available', 'Spend #gold', [statRequirement('gold', 5)]),
+            answer('locked', 'Need a key', [
+              conditionRequirement('hasKey', 1),
+            ]),
+          ],
+        },
+      ]
+      const storedNode = structuredClone(tree.nodes[0])
+
+      const result: any = engine.buildNextNodeFromJoin({
+        node: 'node_1',
+        toAnswer: true,
+      })
+
+      expect(result).toEqual(
+        jasmine.objectContaining({
+          id: 'node_1',
+          text: 'Hello Ada',
+          jumpToAnswers: true,
+        })
+      )
+      expect(result.answers.map((item: any) => item.id)).toEqual(['available'])
+      expect(result.answers[0].text).toBe('Spend 5')
+      expect(typeof result.key).toBe('number')
+      expect(tree.nodes[0]).toEqual(storedNode)
+      expect(result).not.toBe(tree.nodes[0])
+    })
+
+    it('throws when the joined node does not exist', () => {
+      expect(() =>
+        engine.buildNextNodeFromJoin({ node: 'missing-node' })
+      ).toThrowError('Next node not found')
     })
   })
 

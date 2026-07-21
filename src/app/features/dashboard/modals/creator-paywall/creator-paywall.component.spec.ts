@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 import { CreatorPaywallComponent } from './creator-paywall.component'
 
@@ -8,7 +9,7 @@ describe('CreatorPaywallComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreatorPaywallComponent],
+      imports: [CreatorPaywallComponent, NoopAnimationsModule],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CreatorPaywallComponent)

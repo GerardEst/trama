@@ -3,7 +3,6 @@ import { By } from '@angular/platform-browser'
 import { DropdownButtonsComponent } from './dropdown-buttons.component'
 
 describe('DropdownButtonComponent', () => {
-  let component: DropdownButtonsComponent
   let fixture: ComponentFixture<DropdownButtonsComponent>
 
   beforeEach(() => {
@@ -11,13 +10,12 @@ describe('DropdownButtonComponent', () => {
       imports: [DropdownButtonsComponent],
     })
     fixture = TestBed.createComponent(DropdownButtonsComponent)
-    component = fixture.componentInstance
     fixture.detectChanges()
   })
 
   it('should toggle dropdown when button is clicked', () => {
     // Arrange
-    const button = fixture.debugElement.query(By.css('button'))
+    const button = fixture.debugElement.query(By.css('polo-basic-button'))
 
     // Act
     button.triggerEventHandler('click', null)
@@ -38,7 +36,7 @@ describe('DropdownButtonComponent', () => {
 
   it('should close dropdown when dropdown is clicked', () => {
     // Arrange
-    const button = fixture.debugElement.query(By.css('button'))
+    const button = fixture.debugElement.query(By.css('polo-basic-button'))
     button.triggerEventHandler('click', null)
     fixture.detectChanges()
 
@@ -54,7 +52,7 @@ describe('DropdownButtonComponent', () => {
 
   it('should close dropdown when mouse leaves', () => {
     // Arrange
-    const button = fixture.debugElement.query(By.css('button'))
+    const button = fixture.debugElement.query(By.css('polo-basic-button'))
     button.triggerEventHandler('click', null)
     fixture.detectChanges()
 

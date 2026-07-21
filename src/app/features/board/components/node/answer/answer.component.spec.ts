@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 import { AnswerComponent } from './answer.component'
 
@@ -9,6 +10,15 @@ describe('AnswerComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AnswerComponent],
+      providers: [
+        {
+          provide: ActiveStoryService,
+          useValue: {
+            getEventsOfAnswer: () => [],
+            getRequirementsOfAnswer: () => [],
+          },
+        },
+      ],
     })
     fixture = TestBed.createComponent(AnswerComponent)
     component = fixture.componentInstance
