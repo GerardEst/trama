@@ -31,10 +31,11 @@ test(
     await expect(page.getByText('back to answers')).toBeVisible()
     await page.waitForTimeout(1000)
 
-    await page
+    const activeDistributeButton = page
+      .locator('.node:not(.disabled)')
       .getByRole('button', { name: /distribute/i })
-      .last()
-      .click()
+    await expect(activeDistributeButton).toBeVisible()
+    await activeDistributeButton.click()
 
     await page.waitForTimeout(1000)
 

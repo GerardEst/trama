@@ -1,7 +1,9 @@
 import { Input, Component } from '@angular/core'
 import { NodeRequirementComponent } from './node-requirement/node-requirement.component'
 import { NodeAddRequirementComponent } from '../context-menus/node-add-requirement/node-add-requirement.component'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { answer_requirement } from 'src/app/core/interfaces/interfaces'
+import { StoryEditorService } from '../../../services/story-editor.service'
+import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 
 @Component({
   selector: 'polo-node-requirements',
@@ -12,53 +14,47 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 })
 export class NodeRequirementsComponent {
   @Input() answerId: string = ''
-  @Input() requirements: Array<any> = []
+  @Input() requirements: answer_requirement[] = []
 
   openAddRequirement: boolean = false
 
-  constructor(private activeStory: ActiveStoryService) {}
+  constructor(private storyEditor: StoryEditorService) {}
 
-  saveRequirement(element: any) {
-    const requirement = this.requirements.find(
-      (requirement) => requirement.id === element.previousValue
-    )
-    if (requirement) {
-      requirement.target = element.target
-      requirement.type = element.type
-      requirement.amount = element.amount
-    } else {
-      this.requirements.push({
-        target: element.target,
-        type: element.type,
-        amount: element.amount,
-      })
+  saveRequirement(element: {
+    target: string
+    previousValue?: string
+    type: answer_requirement['type']
+    amount: number | string
+  }) {
+    const updatedRequirement: answer_requirement = {
+      target: element.target,
+      type: element.type,
+      amount: Number(element.amount),
     }
-
-    this.activeStory.saveAnswerRequirements(this.answerId, this.requirements)
-
-    this.activeStory.addRef(
-      'requirement',
-      {
-        id: element.target,
-        answer: this.answerId,
-      },
-      {
-        id: element.previousValue,
-        answer: this.answerId,
-      }
+    const existingIndex = this.requirements.findIndex(
+      (requirement) =>
+        getRequirementRefId(requirement) === element.previousValue
     )
+
+    this.requirements =
+      existingIndex === -1
+        ? [...this.requirements, updatedRequirement]
+        : this.requirements.map((requirement, index) =>
+            index === existingIndex ? updatedRequirement : requirement
+          )
+
+    this.storyEditor.saveAnswerRequirements(this.answerId, this.requirements)
   }
 
-  deleteRequirement(requirementTarget: string) {
-    this.requirements = this.requirements.filter((requirement: any) => {
-      return requirement.target !== requirementTarget
-    })
+  deleteRequirement(requirementRefId: string) {
+    this.requirements = this.requirements.filter(
+      (requirement) => getRequirementRefId(requirement) !== requirementRefId
+    )
 
-    this.activeStory.saveAnswerRequirements(this.answerId, this.requirements)
+    this.storyEditor.saveAnswerRequirements(this.answerId, this.requirements)
+  }
 
-    this.activeStory.removeRef('requirement', {
-      id: requirementTarget,
-      answer: this.answerId,
-    })
+  getRefId(requirement: answer_requirement): string {
+    return getRequirementRefId(requirement) ?? ''
   }
 }

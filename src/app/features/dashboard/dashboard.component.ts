@@ -58,16 +58,12 @@ export class DashboardComponent implements OnInit {
   loadStory(story: any) {
     localStorage.setItem('polo-id', story.id)
 
-    // Set active-story states
-    this.activeStory.storyId.set(story.id)
-    this.activeStory.entireTree.set(story.tree)
-    this.activeStory.storyName.set(story.name)
+    this.activeStory.load(story.id, story.name, story.tree)
 
     this.stadistics.clean()
-    this.activeStory.initTreeRefs()
     this.setInitialBoardPositionFor(story.id)
 
-    setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
+    setTimeout(() => this.board?.refreshFlows(), 0)
 
     this.loadConfigurationForStory(story.id)
   }
@@ -94,13 +90,16 @@ export class DashboardComponent implements OnInit {
   async loadConfigurationForStory(storyId: string) {
     const configuration: any = await this.db.getConfigurationOf(storyId)
 
-    this.activeStory.storyConfiguration().customId = configuration.custom_id
-    this.activeStory.storyConfiguration().tracking = configuration.tracking
-    this.activeStory.storyConfiguration().sharing = configuration.sharing
-    this.activeStory.storyConfiguration().tapLink = configuration.tapLink
-    this.activeStory.storyConfiguration().footer = configuration.footer
-    this.activeStory.storyConfiguration().cumulativeMode =
-      configuration.cumulativeMode
+    if (!configuration) return
+
+    this.activeStory.patchConfiguration({
+      customId: configuration.custom_id,
+      tracking: configuration.tracking,
+      sharing: configuration.sharing,
+      tapLink: configuration.tapLink,
+      footer: configuration.footer,
+      cumulativeMode: configuration.cumulativeMode,
+    })
   }
 
   async createNewStory() {

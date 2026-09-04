@@ -7,6 +7,16 @@ import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.c
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ShareStoryComponent } from 'src/app/features/dashboard/modals/share-story/share-story.component'
 import { ModalService } from 'src/app/core/services/modal.service'
+import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
+import { refType } from 'src/app/core/interfaces/interfaces'
+
+interface DisplayedRef {
+  id: string
+  name: string
+  type: refType
+  category?: string
+  times?: number
+}
 
 @Component({
   selector: 'polo-menu-tree-legend',
@@ -17,43 +27,35 @@ import { ModalService } from 'src/app/core/services/modal.service'
 })
 export class MenuTreeLegendComponent {
   @Input() showLegend: boolean = true
-  arrayOfRefs: any = []
-  unusedRefs: any = []
+  arrayOfRefs: DisplayedRef[] = []
+  unusedRefs: DisplayedRef[] = []
   mode: 'refs' | 'games' = 'refs'
 
   constructor(
     public db: DatabaseService,
     public activeStory: ActiveStoryService,
     public contextMenu: ContextMenusService,
-    private modal: ModalService
+    private modal: ModalService,
+    private storyReferences: StoryReferencesService
   ) {
     effect(() => {
       this.unusedRefs = []
       const countById = activeStory
-        .storyRefs()
-        .reduce(
-          (
-            acc: any,
-            {
-              id,
-              name,
-              type,
-              category,
-            }: { id: string; name: string; type: string; category: string }
-          ) => {
-            acc[id] = acc[id] || { id, name, type, category, times: 0 }
-            acc[id].times++
-            return acc
-          },
-          {}
-        )
+        .referenceUsages()
+        .reduce<
+          Record<string, DisplayedRef>
+        >((acc, { id, name, type, category }) => {
+          acc[id] = acc[id] || { id, name, type, category, times: 0 }
+          acc[id].times = (acc[id].times ?? 0) + 1
+          return acc
+        }, {})
 
       this.arrayOfRefs = Object.values(countById)
 
       // Check and list unused refs
-      const allRefs = this.activeStory.getRefs()
+      const allRefs = this.storyReferences.getAll()
       for (const refId in allRefs) {
-        if (!this.arrayOfRefs.find((ref: any) => ref.id === refId)) {
+        if (!this.arrayOfRefs.find((storyRef) => storyRef.id === refId)) {
           this.unusedRefs.push({
             id: refId,
             name: allRefs[refId].name,
@@ -67,8 +69,8 @@ export class MenuTreeLegendComponent {
 
   focusNodesWith(refId: string) {
     const refs = this.activeStory
-      .storyRefs()
-      .filter((ref: any) => ref.id === refId)
+      .referenceUsages()
+      .filter((ref) => ref.id === refId)
     for (const ref of refs) {
       const DOMNode = document.querySelector('#' + ref.node)
       if (DOMNode) DOMNode.classList.add('highlighted')
@@ -76,8 +78,8 @@ export class MenuTreeLegendComponent {
   }
   blurNodesWith(refId: string) {
     const refs = this.activeStory
-      .storyRefs()
-      .filter((ref: any) => ref.id === refId)
+      .referenceUsages()
+      .filter((ref) => ref.id === refId)
     for (const ref of refs) {
       const DOMNode = document.querySelector('#' + ref.node)
       if (DOMNode) DOMNode.classList.remove('highlighted')
@@ -85,15 +87,15 @@ export class MenuTreeLegendComponent {
   }
 
   updateRefName(event: any, refId: string) {
-    this.activeStory.updateRefName(refId, event.target.value)
+    this.storyReferences.rename(refId, event.target.value)
   }
 
   getCategories() {
-    return this.activeStory.getCategories()
+    return this.storyReferences.getCategories()
   }
 
   deleteRef(refId: string) {
-    this.activeStory.deleteRef(refId)
+    this.storyReferences.delete(refId)
     this.unusedRefs = this.unusedRefs.filter((ref: any) => ref.id !== refId)
   }
 
@@ -113,17 +115,22 @@ export class MenuTreeLegendComponent {
 
     contextMenu.instance.onSelectOption.subscribe(
       (event: { value: string; previousValue: string }) => {
-        this.activeStory.setCategoryToRef(refId, event.value)
-        this.arrayOfRefs.find((ref: any) => ref.id === refId).category =
-          event.value
+        this.storyReferences.setCategory(refId, event.value)
+        const selectedRef = this.arrayOfRefs.find(
+          (storyRef) => storyRef.id === refId
+        )
+        if (selectedRef) selectedRef.category = event.value
 
         this.contextMenu.close()
       }
     )
     contextMenu.instance.onNewOption.subscribe((event: string) => {
-      this.activeStory.createCategory(event)
-      this.activeStory.setCategoryToRef(refId, event)
-      this.arrayOfRefs.find((ref: any) => ref.id === refId).category = event
+      this.storyReferences.createCategory(event)
+      this.storyReferences.setCategory(refId, event)
+      const selectedRef = this.arrayOfRefs.find(
+        (storyRef) => storyRef.id === refId
+      )
+      if (selectedRef) selectedRef.category = event
 
       this.contextMenu.close()
     })

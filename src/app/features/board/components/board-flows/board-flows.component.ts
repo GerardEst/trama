@@ -5,11 +5,13 @@ import {
   Signal,
   computed,
   Input,
+  signal,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
+import { StoryEditorService } from '../../services/story-editor.service'
 
 @Component({
   selector: 'polo-board-flows',
@@ -40,13 +42,21 @@ export class BoardFlowsComponent {
     toAnswer: undefined,
   }
 
+  private readonly layoutVersion = signal(0)
+
   paths: Signal<any> = computed(() => {
-    if (this.activeStory.entireTree().nodes) {
-      return this.calculatePaths(this.activeStory.entireTree().nodes)
-    }
+    this.layoutVersion()
+    return this.calculatePaths(this.activeStory.entireTree().nodes)
   })
 
-  constructor(public activeStory: ActiveStoryService) {}
+  constructor(
+    public activeStory: ActiveStoryService,
+    private storyEditor: StoryEditorService
+  ) {}
+
+  refreshPaths() {
+    this.layoutVersion.update((version) => version + 1)
+  }
 
   changeCursorStyle(state: boolean) {
     this.showContextMenuCursor = state
@@ -76,7 +86,7 @@ export class BoardFlowsComponent {
   }
 
   deleteJoin() {
-    const removed = this.activeStory.removeJoin(
+    const removed = this.storyEditor.removeJoin(
       this.joinContextMenuInfo.origin,
       this.joinContextMenuInfo.destiny,
       this.joinContextMenuInfo.toAnswer

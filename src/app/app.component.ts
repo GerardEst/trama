@@ -1,6 +1,7 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterOutlet } from '@angular/router'
+import { ActiveStoryTitleService } from './shared/services/active-story-title.service'
 
 @Component({
   selector: 'polo-root',
@@ -9,4 +10,8 @@ import { RouterOutlet } from '@angular/router'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass'],
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor() {
+    inject(ActiveStoryTitleService)
+  }
+}

@@ -7,7 +7,7 @@ import {
   OnChanges,
 } from '@angular/core'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryReferencesService } from '../../../../services/story-references.service'
 
 @Component({
   selector: 'polo-node-add-modify-ref',
@@ -33,17 +33,17 @@ export class NodeAddModifyRefComponent implements OnChanges {
   message?: string
   selectorOpen: boolean = false
 
-  constructor(private activeStory: ActiveStoryService) {}
+  constructor(private storyReferences: StoryReferencesService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['type']) {
-      this.options = this.activeStory.getRefsFormatted(this.type)
+      this.options = this.storyReferences.getByType(this.type)
       this.message = `Select a ${this.type} or create new one`
     }
   }
 
   onNewOption(option: any) {
-    const createdRef = this.activeStory.createNewRef(option, this.type)
+    const createdRef = this.storyReferences.create(option, this.type)
     if (createdRef) {
       this.onChangeTarget.emit({
         value: createdRef.id,

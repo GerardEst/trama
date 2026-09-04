@@ -61,21 +61,16 @@ export class PlaygroundComponent implements OnInit {
       return
     }
 
-    this.activeStory.storyId.set(story.id)
-    this.activeStory.entireTree.set(story.tree)
-    this.activeStory.storyName.set(story.name)
-
-    this.activeStory.storyConfiguration().tracking = configuration.tracking
-    this.activeStory.storyConfiguration().sharing = configuration.sharing
-    this.activeStory.storyConfiguration().tapLink = configuration.tapLink
-    this.activeStory.storyConfiguration().footer = configuration.footer
-    this.activeStory.storyConfiguration().cumulativeMode =
-      configuration.cumulativeMode
+    this.activeStory.load(story.id, story.name, story.tree)
+    this.activeStory.patchConfiguration({
+      tracking: configuration.tracking,
+      sharing: configuration.sharing,
+      tapLink: configuration.tapLink,
+      footer: configuration.footer,
+      cumulativeMode: configuration.cumulativeMode,
+    })
 
     this.customStyles = (configuration as any).customStyles || 'default'
-
-    // We have to manually init the refs by now
-    this.activeStory.initTreeRefs()
 
     this.displayGame()
   }
@@ -101,7 +96,7 @@ export class PlaygroundComponent implements OnInit {
     const saved = await this.db.saveNewGameTo(
       this.gameId,
       this.playerService.playerProperties()['id'] || 'anonymous',
-      this.storyId,
+      this.activeStory.storyId(),
       this.playerPath,
       {
         properties: this.playerService.playerProperties(),

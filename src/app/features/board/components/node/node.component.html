@@ -32,9 +32,9 @@
           @for (condition of conditions; track condition.id) {
             <polo-condition
               id="{{ condition.id }}"
-              [selectedRef]="condition.ref"
-              [comparator]="condition.comparator"
-              [value]="condition.value"
+              [selectedRef]="condition.ref || ''"
+              [comparator]="condition.comparator || ''"
+              [value]="condition.value ?? 0"
               [hasJoin]="!!(condition.join && condition.join.length > 0)"
               (onRemoveCondition)="removeCondition($event)"
             ></polo-condition>
@@ -134,7 +134,7 @@
           @for (answer of answers; track answer.id) {
             <polo-answer
               id="{{ answer.id }}"
-              [text]="answer.text"
+              [text]="answer.text || ''"
               [hasJoin]="!!(answer.join && answer.join.length > 0)"
               (onRemoveAnswer)="removeAnswer($event)"
             ></polo-answer>

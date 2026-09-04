@@ -17,6 +17,7 @@ import { node } from 'src/app/core/interfaces/interfaces'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
+import { StoryEditorService } from './services/story-editor.service'
 
 @Component({
   selector: 'polo-board',
@@ -33,6 +34,7 @@ import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 })
 export class BoardComponent implements OnInit, AfterViewInit {
   @ViewChild('board') boardElement?: ElementRef
+  @ViewChild(BoardFlowsComponent) boardFlows?: BoardFlowsComponent
 
   @Input() grid?: boolean
   @Input() initialZoom?: number
@@ -79,7 +81,8 @@ export class BoardComponent implements OnInit, AfterViewInit {
   constructor(
     public panzoom: PanzoomService,
     public activeStory: ActiveStoryService,
-    private database: DatabaseService
+    private database: DatabaseService,
+    private storyEditor: StoryEditorService
   ) {}
 
   ngOnInit() {
@@ -103,6 +106,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   public goTo(x: number, y: number) {
     this.panzoom.goTo(x, y)
+  }
+
+  public refreshFlows() {
+    this.boardFlows?.refreshPaths()
   }
 
   openContextMenu(event: MouseEvent) {
@@ -160,7 +167,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
           this.dragStartedOn.closest('polo-condition')?.id ||
           this.dragStartedOn.closest('polo-node')?.id
 
-        this.activeStory.updateJoinOfOption(
+        this.storyEditor.updateJoinOfOption(
           originId,
           nodeId,
           this.dragMouseOn.classList.contains('joiner--answers')
@@ -196,7 +203,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
     event.source.getRootElement().style.transform = `translate3d(${finalTransform.x}px, ${finalTransform.y}px, 0}px)`
 
-    this.activeStory.updateNodePosition(
+    this.storyEditor.updateNodePosition(
       event.source.getRootElement().id,
       finalTransform.x,
       finalTransform.y
@@ -205,7 +212,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
   nodeDragCheck() {
     if (!this.nodeDragThrottle) {
       this.nodeDragThrottle = setTimeout(() => {
-        this.activeStory.activateTreeChangeEffects()
+        this.boardFlows?.refreshPaths()
         this.nodeDragThrottle = null
       }, 10)
     }
@@ -246,7 +253,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
         this.dragStartedOn.closest('polo-condition')?.id ||
         this.dragStartedOn.closest('polo-node')?.id
 
-      this.activeStory.updateJoinOfOption(originId, newNodeInfo.id)
+      this.storyEditor.updateJoinOfOption(originId, newNodeInfo.id)
     }
   }
 
@@ -260,7 +267,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       top: position.top,
       left: position.left,
     }
-    this.activeStory.createNode(newNodeInfo)
+    this.storyEditor.createNode(newNodeInfo)
 
     return newNodeInfo
   }
@@ -269,12 +276,12 @@ export class BoardComponent implements OnInit, AfterViewInit {
     const idForNewNode = generateIDForNewNode(
       this.activeStory.entireTree().nodes
     )
-    this.activeStory.duplicateNode(event, idForNewNode)
+    this.storyEditor.duplicateNode(event, idForNewNode)
   }
 
   async removeNode(event: any) {
     // Remove node image from db
-    const image = this.activeStory.getImageFromNode(event.nodeId)
+    const image = this.storyEditor.getImageFromNode(event.nodeId)
     if (image) {
       const { data, error } = await this.database.supabase.storage
         .from('images')
@@ -283,7 +290,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
 
     // remove node from tree
-    this.activeStory.removeNode(event.nodeId)
+    this.storyEditor.removeNode(event.nodeId)
 
     // change active node from localstorage
     const currentActiveNodes = localStorage.getItem('polo-activeNodes')

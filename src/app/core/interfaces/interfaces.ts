@@ -1,12 +1,30 @@
+export type refType = 'stat' | 'condition' | 'property'
+
 export interface ref {
   id?: string
   name: string
-  type: string
+  type: refType
+  category?: string
 }
 
+export interface refCategory {
+  id: string
+  name: string
+}
+
+/**
+ * Runtime representation of a story tree. Persisted stories are normalized to
+ * this shape when they become active so consumers do not need null checks.
+ */
 export interface tree {
-  refs?: Array<ref>
-  nodes?: Array<node>
+  refs: Record<string, ref>
+  nodes: Array<node>
+  categories: Array<refCategory>
+}
+
+export interface storyFooter {
+  text?: string
+  link?: string
 }
 
 export interface config {
@@ -15,15 +33,22 @@ export interface config {
   sharing: boolean
   tapLink: boolean
   cumulativeMode: boolean
-  footer: any
+  footer: storyFooter
   tracking: boolean
   customId?: string
 }
 
+export interface storyReferenceUsage extends ref {
+  id: string
+  node: string
+  answer?: string
+  on: 'event' | 'requirement'
+}
+
 export interface node {
   id: string
-  top: string
-  left: string
+  top: string | number
+  left: string | number
   join?: Array<join>
   image?: { path: string }
   answers?: Array<node_answer>
@@ -39,18 +64,18 @@ export interface node {
 
 export interface node_answer {
   id: string
-  join: Array<join>
-  text: string
-  events: Array<event>
-  requirements: Array<answer_requirement>
+  join?: Array<join>
+  text?: string
+  events?: Array<event>
+  requirements?: Array<answer_requirement>
 }
 
 export interface node_conditions {
   id: string
   join?: Array<join>
-  ref: string
-  comparator: string
-  value: number
+  ref?: string
+  comparator?: string
+  value?: number
 }
 export interface node_userTextOptions {
   property: string
@@ -71,7 +96,9 @@ export interface event {
   property?: string
 }
 export interface answer_requirement {
-  target: string
+  /** Legacy stories use id; newly saved requirements use target. */
+  id?: string
+  target?: string
   type: 'stat' | 'condition'
   amount: number
 }

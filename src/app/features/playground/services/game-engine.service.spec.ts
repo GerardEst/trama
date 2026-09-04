@@ -41,16 +41,13 @@ describe('GameEngineService', () => {
 
   // Controllable stand-ins for the story state the engine reads.
   let tree: any
-  let refs: any
 
   const activeStoryStub = {
     entireTree: () => tree,
-    storyRefs: () => refs,
   }
 
   beforeEach(() => {
-    tree = { nodes: [] }
-    refs = []
+    tree = { nodes: [], refs: {}, categories: [] }
 
     TestBed.configureTestingModule({
       providers: [
@@ -112,9 +109,7 @@ describe('GameEngineService', () => {
           text: 'Hello #name',
           answers: [
             answer('available', 'Spend #gold', [statRequirement('gold', 5)]),
-            answer('locked', 'Need a key', [
-              conditionRequirement('hasKey', 1),
-            ]),
+            answer('locked', 'Need a key', [conditionRequirement('hasKey', 1)]),
           ],
         },
       ]
@@ -148,9 +143,7 @@ describe('GameEngineService', () => {
 
   describe('playerHasAnswerRequirements', () => {
     it('passes when there are no requirements', () => {
-      expect(
-        engine.playerHasAnswerRequirements({}, [], [], [])
-      ).toBe(true)
+      expect(engine.playerHasAnswerRequirements({}, [], [], [])).toBe(true)
     })
 
     it('passes a stat requirement when the player has enough', () => {
@@ -183,6 +176,29 @@ describe('GameEngineService', () => {
       expect(result).toBe(false)
     })
 
+    it('supports the id field used by legacy stat requirements', () => {
+      const result = engine.playerHasAnswerRequirements(
+        {},
+        [{ id: 'stat_4', amount: 1 }],
+        [],
+        [{ id: 'stat_4', type: 'stat', amount: 1 }]
+      )
+      expect(result).toBe(true)
+    })
+
+    it('checks the required stat without rejecting unrelated lower stats', () => {
+      const result = engine.playerHasAnswerRequirements(
+        {},
+        [
+          { id: 'gold', amount: 10 },
+          { id: 'health', amount: 1 },
+        ],
+        [],
+        [statRequirement('gold', 5)]
+      )
+      expect(result).toBe(true)
+    })
+
     it('passes a required condition the player holds', () => {
       const result = engine.playerHasAnswerRequirements(
         {},
@@ -201,6 +217,16 @@ describe('GameEngineService', () => {
         [conditionRequirement('hasKey', 1)]
       )
       expect(result).toBe(false)
+    })
+
+    it('supports the id field used by legacy condition requirements', () => {
+      const result = engine.playerHasAnswerRequirements(
+        {},
+        [],
+        [{ id: 'hasKey' }],
+        [{ id: 'hasKey', type: 'condition', amount: 1 }]
+      )
+      expect(result).toBe(true)
     })
 
     it('fails a "must not have" condition the player holds', () => {
@@ -348,7 +374,9 @@ describe('GameEngineService', () => {
     })
 
     it('expands a category block from the story refs', () => {
-      refs = [{ id: 'stat_gold', name: 'gold', category: 'inventory' }]
+      tree.refs = {
+        stat_gold: { name: 'gold', type: 'stat', category: 'inventory' },
+      }
       player.playerStats.set([{ id: 'stat_gold', amount: 9 }])
       expect(engine.getTextWithFinalParameters('[inventory]')).toContain(
         'Gold: 9'

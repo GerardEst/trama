@@ -5,11 +5,11 @@
       <p>Add requirement</p>
     }
   </button>
-  @for (requirement of requirements; track requirement.target) {
+  @for (requirement of requirements; track getRefId(requirement)) {
     <polo-node-requirement
       [type]="requirement.type"
-      [amount]="requirement.amount"
-      [target]="requirement.target"
+      [amount]="requirement.amount.toString()"
+      [target]="getRefId(requirement)"
       (onSaveRequirement)="saveRequirement($event)"
       (onDeleteRequirement)="deleteRequirement($event)"
     ></polo-node-requirement>

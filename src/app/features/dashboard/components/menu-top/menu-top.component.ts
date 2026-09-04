@@ -35,7 +35,7 @@ export class MenuTopComponent {
 
     await this.db.saveNewStoryName(storyId, $event.target.value)
 
-    this.activeStory.storyName.set(newName)
+    this.activeStory.setStoryName(newName)
   }
 
   toggleOptions() {
@@ -45,47 +45,36 @@ export class MenuTopComponent {
   toggleTracking() {
     if (this.db.user()?.profile.subscription_status !== 'active') return
 
-    this.activeStory.storyConfiguration().tracking =
-      !this.activeStory.storyConfiguration().tracking
-    this.db.setTrackingOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().tracking
-    )
+    const tracking = !this.activeStory.storyConfiguration().tracking
+    this.activeStory.patchConfiguration({ tracking })
+    this.db.setTrackingOf(this.activeStory.storyId(), tracking)
   }
 
   toggleSharing() {
-    this.activeStory.storyConfiguration().sharing =
-      !this.activeStory.storyConfiguration().sharing
-    this.db.setSharingOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().sharing
-    )
+    const sharing = !this.activeStory.storyConfiguration().sharing
+    this.activeStory.patchConfiguration({ sharing })
+    this.db.setSharingOf(this.activeStory.storyId(), sharing)
   }
 
   toggleCumulativeMode() {
-    this.activeStory.storyConfiguration().cumulativeMode =
-      !this.activeStory.storyConfiguration().cumulativeMode
-    this.db.setCumulativeModeOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().cumulativeMode
-    )
+    const cumulativeMode = !this.activeStory.storyConfiguration().cumulativeMode
+    this.activeStory.patchConfiguration({ cumulativeMode })
+    this.db.setCumulativeModeOf(this.activeStory.storyId(), cumulativeMode)
   }
 
   toggleAppLink() {
-    this.activeStory.storyConfiguration().tapLink =
-      !this.activeStory.storyConfiguration().tapLink
-    this.db.setTapLinkOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().tapLink
-    )
+    const tapLink = !this.activeStory.storyConfiguration().tapLink
+    this.activeStory.patchConfiguration({ tapLink })
+    this.db.setTapLinkOf(this.activeStory.storyId(), tapLink)
   }
 
   async updateCustomId(event: any) {
-    this.activeStory.storyConfiguration().customId = event.target.value
+    const customId = event.target.value
+    this.activeStory.patchConfiguration({ customId })
 
     const couldUpdate = await this.db.updateCustomIdOf(
       this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().customId || ''
+      customId
     )
     this.takenCustomId = !couldUpdate
   }
@@ -95,11 +84,15 @@ export class MenuTopComponent {
     if (option === 'link') {
       newValue = normalizeLink(newValue)
     }
-    this.activeStory.storyConfiguration().footer[option] = newValue
-    this.db.updateFooterOf(
-      this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().footer
-    )
+    const footer = {
+      ...this.activeStory.storyConfiguration().footer,
+      [option]: newValue,
+    }
+    this.activeStory.patchConfiguration({ footer })
+    this.db.updateFooterOf(this.activeStory.storyId(), {
+      text: footer.text ?? '',
+      link: footer.link ?? '',
+    })
   }
 
   async openStadistics() {

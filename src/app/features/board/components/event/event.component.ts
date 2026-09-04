@@ -7,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryReferencesService } from '../../services/story-references.service'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
 import { ContextMenusService } from 'src/app/core/services/context-menus.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
@@ -31,13 +31,13 @@ export class EventComponent implements OnInit {
   @ViewChild('selector') selector?: any
 
   constructor(
-    private activeStory: ActiveStoryService,
+    private storyReferences: StoryReferencesService,
     private contextMenu: ContextMenusService
   ) {}
 
   ngOnInit() {
     this.infoData = {
-      value: this.id ? this.activeStory.getRefName(this.id) : '',
+      value: this.id ? this.storyReferences.getName(this.id) : '',
       amount: this.amount,
     }
   }
@@ -61,7 +61,7 @@ export class EventComponent implements OnInit {
         contextMenu.setInput('selectedOption', event.value)
 
         // update the info message
-        this.infoData.value = this.activeStory.getRefName(event.value)
+        this.infoData.value = this.storyReferences.getName(event.value)
 
         this.onChangeElement.emit(event)
 
@@ -74,9 +74,9 @@ export class EventComponent implements OnInit {
         console.log('No action defined for this event')
         return
       }
-      const createdRef = this.activeStory.createNewRef(event, type)
+      const createdRef = this.storyReferences.create(event, type)
       if (createdRef) {
-        this.infoData.value = this.activeStory.getRefName(createdRef.id)
+        this.infoData.value = this.storyReferences.getName(createdRef.id)
         this.onChangeElement.emit({
           value: createdRef.id,
           previousValue: contextMenu.instance.selectedOption,
@@ -115,7 +115,7 @@ export class EventComponent implements OnInit {
     const type = this.getTypeForEvent()
 
     if (!type) return []
-    return this.activeStory.getRefsFormatted(type)
+    return this.storyReferences.getByType(type)
   }
 
   getTypeForEvent() {

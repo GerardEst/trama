@@ -26,16 +26,17 @@ export class ShareStoryComponent {
   ) {}
 
   async updateCustomId(event: any) {
-    this.activeStory.storyConfiguration().customId = event.target.value
+    const customId = event.target.value
+    this.activeStory.patchConfiguration({ customId })
 
     const couldUpdate = await this.db.updateCustomIdOf(
       this.activeStory.storyId(),
-      this.activeStory.storyConfiguration().customId || ''
+      customId
     )
     this.takenCustomId = !couldUpdate
   }
   cleanCustomId() {
-    this.activeStory.storyConfiguration().customId = undefined
+    this.activeStory.patchConfiguration({ customId: undefined })
   }
 
   copyLink(type: 'custom' | 'private') {

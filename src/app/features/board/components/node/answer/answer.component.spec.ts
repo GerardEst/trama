@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryEditorService } from '../../../services/story-editor.service'
 
 import { AnswerComponent } from './answer.component'
 
@@ -12,7 +12,7 @@ describe('AnswerComponent', () => {
       imports: [AnswerComponent],
       providers: [
         {
-          provide: ActiveStoryService,
+          provide: StoryEditorService,
           useValue: {
             getEventsOfAnswer: () => [],
             getRequirementsOfAnswer: () => [],

@@ -1,7 +1,7 @@
 <div #game class="gameContainer">
   <div class="game" [class.game--cumulative]="mode === 'cumulative'">
     @if (mode === 'cumulative') {
-      @for (inactiveNode of inactiveNodes; track inactiveNode.id) {
+      @for (inactiveNode of inactiveNodes; track inactiveNode.key) {
         <polo-game-node [data]="inactiveNode" [disabled]="true"></polo-game-node>
       }
     }

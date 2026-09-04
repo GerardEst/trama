@@ -10,7 +10,13 @@ import {
   stat,
 } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { PlayerService } from './player.service'
+
+interface playableNode extends node {
+  jumpToAnswers?: boolean
+  key?: number
+}
 
 /**
  * Runtime engine for playing a story tree. Resolves the next node, evaluates
@@ -42,13 +48,13 @@ export class GameEngineService {
   buildNextNodeFromJoin(originJoin: join) {
     console.log('Building next node')
 
-    // Fem una copia del node al que fem join
-    let nextNode = structuredClone(
-      this.activeStory
-        .entireTree()
-        .nodes.find((node: any) => node.id === originJoin.node)
-    )
-    if (!nextNode) throw new Error('Next node not found')
+    const storedNode = this.activeStory
+      .entireTree()
+      .nodes.find((storyNode) => storyNode.id === originJoin.node)
+    if (!storedNode) throw new Error('Next node not found')
+
+    // The runtime copy can be enriched without changing the authored story.
+    let nextNode = structuredClone(storedNode) as playableNode
 
     // Li afegim el valor de toAnswer, que farem servir per saltar-nos o no el text quan el pintem
     nextNode.jumpToAnswers = originJoin.toAnswer
@@ -106,11 +112,11 @@ export class GameEngineService {
     const withBlockReplacements = withInlineReplacements.replace(
       /\[([a-zA-Z0-9_]+)\]/g,
       (_match: string, p1: string) => {
-        const refsWithCategory: any = Object.values(
-          this.activeStory.storyRefs()
-        ).filter((val: any) => {
-          return val.category === p1
-        })
+        const refsWithCategory = Object.entries(
+          this.activeStory.entireTree().refs
+        )
+          .filter(([, storyRef]) => storyRef.category === p1)
+          .map(([id, storyRef]) => ({ id, ...storyRef }))
 
         let string = ' '
         for (const refWithCategory of refsWithCategory) {
@@ -122,9 +128,7 @@ export class GameEngineService {
               string +
               '\n' +
               this.capitalize(
-                this.activeStory
-                  .storyRefs()
-                  .find((ref: any) => ref.id === playerStat.id).name
+                this.activeStory.entireTree().refs[playerStat.id].name
               ) +
               ': ' +
               playerStat.amount
@@ -139,9 +143,7 @@ export class GameEngineService {
               string +
               '\n' +
               this.capitalize(
-                this.activeStory
-                  .storyRefs()
-                  .find((ref: any) => ref.id === playerCondition.id).name
+                this.activeStory.entireTree().refs[playerCondition.id].name
               )
           }
         }
@@ -156,7 +158,9 @@ export class GameEngineService {
   distributeNode(node: node) {
     if (node.conditions) {
       for (const distributorCondition of node.conditions) {
+        if (!distributorCondition.ref) continue
         const distributorConditionType = distributorCondition.ref.split('_')[0]
+        const requiredValue = Number(distributorCondition.value ?? 0)
         if (distributorConditionType === 'stat') {
           // If it's a stat, we find this stat in the player object
           const playerStat = this.player
@@ -167,11 +171,11 @@ export class GameEngineService {
           // Then we check the comparator, if it's correct we can go to next node
           if (
             (distributorCondition.comparator === 'equalto' &&
-              playerStatAmount == distributorCondition.value) ||
+              playerStatAmount === requiredValue) ||
             (distributorCondition.comparator === 'lessthan' &&
-              playerStatAmount < distributorCondition.value) ||
+              playerStatAmount < requiredValue) ||
             (distributorCondition.comparator === 'morethan' &&
-              playerStatAmount > distributorCondition.value)
+              playerStatAmount > requiredValue)
           ) {
             return distributorCondition.join || []
           }
@@ -186,8 +190,8 @@ export class GameEngineService {
           // If the player has the condition and the requirement is 1, we can go to next node
           // If the player doesn't have the condition and the requirement is 0, we can go to next node too
           if (
-            (distributorCondition.value == 1 && playerCondition) ||
-            (distributorCondition.value == 0 && !playerCondition)
+            (requiredValue === 1 && playerCondition) ||
+            (requiredValue === 0 && !playerCondition)
           ) {
             return distributorCondition.join || []
           }
@@ -215,7 +219,7 @@ export class GameEngineService {
     playerProperties: property,
     playerStats: Array<stat>,
     playerConditions: Array<condition>,
-    requirements: Array<answer_requirement>
+    requirements?: Array<answer_requirement>
   ) {
     if (!requirements || requirements.length === 0) return true
 
@@ -226,41 +230,23 @@ export class GameEngineService {
       conditions: playerConditions,
     })
 
-    // If just some of the requirements is not met, we can throw false and stop checking
     for (const requirement of requirements) {
-      const requirement_amount = requirement.amount
+      const refId = getRequirementRefId(requirement)
+      if (!refId) return false
+
+      const requiredAmount = Number(requirement.amount)
       if (requirement.type === 'stat') {
-        if (playerStats.length === 0) return false
-
-        const playerHasSomeRequiredStats = playerStats.some(
-          (stat: stat) => stat.id === requirement.target
-        )
-        if (!playerHasSomeRequiredStats) return false
-
-        const someUnsatisfiedStat = playerStats.some(
-          (stat: stat) => stat.amount < requirement_amount
-        )
-        if (someUnsatisfiedStat) return false
+        const playerStat = playerStats.find((stat) => stat.id === refId)
+        if (!playerStat || playerStat.amount < requiredAmount) return false
       }
+
       if (requirement.type === 'condition') {
-        // In conditions, the requirement might be that the condition is not checked
-        const conditionIsRequired = requirement_amount == 1
-
-        // If condition should be checked but player doesn't have any conditions
-        if (conditionIsRequired && playerConditions.length === 0) return false
-
-        // If condition should be checked but player doesn't have this condition
-        const playerHasSomeRequiredConditions = playerConditions.some(
-          (condition: condition) => condition.id === requirement.target
+        const conditionIsRequired = requiredAmount === 1
+        const playerHasCondition = playerConditions.some(
+          (condition) => condition.id === refId
         )
-        if (conditionIsRequired && !playerHasSomeRequiredConditions)
-          return false
 
-        for (const condition of playerConditions) {
-          // If player has the condition, but it should not be checked
-          if (condition.id === requirement.target && !conditionIsRequired)
-            return false
-        }
+        if (conditionIsRequired !== playerHasCondition) return false
       }
     }
     return true

@@ -1,24 +1,38 @@
-import { node } from '../../core/interfaces/interfaces'
+import {
+  node,
+  node_answer,
+  node_conditions,
+  node_fallbackCondition,
+  tree,
+} from '../../core/interfaces/interfaces'
 
-export function findNodeInTree(nodeId: string, tree: any) {
-  return tree.nodes.find((node: any) => node.id === nodeId)
+export function findNodeInTree(
+  nodeId: string,
+  storyTree: tree
+): node | undefined {
+  return storyTree.nodes.find((storyNode) => storyNode.id === nodeId)
 }
 
-export function findAnswerInTree(answerId: string, tree: any) {
+export function findAnswerInTree(
+  answerId: string,
+  storyTree: tree
+): node_answer | undefined {
   const answerNodeId = answerId.split('_')[1]
-  const node = findNodeInTree(`node_${answerNodeId}`, tree)
+  const storyNode = findNodeInTree(`node_${answerNodeId}`, storyTree)
 
-  return node.answers?.find((answer: any) => answer.id === answerId)
+  return storyNode?.answers?.find((answer) => answer.id === answerId)
 }
 
-export function findConditionsInTree(conditionId: string, tree: any) {
+export function findConditionsInTree(
+  conditionId: string,
+  storyTree: tree
+): node_conditions | node_fallbackCondition | undefined {
   const conditionNodeId = conditionId.split('_')[1]
-  const node = findNodeInTree(`node_${conditionNodeId}`, tree)
+  const storyNode = findNodeInTree(`node_${conditionNodeId}`, storyTree)
+  if (!storyNode) return undefined
 
-  return (
-    node.conditions?.find((condition: any) => condition.id === conditionId) ||
-    node.fallbackCondition
-  )
+  if (conditionId.endsWith('_fallback')) return storyNode.fallbackCondition
+  return storyNode.conditions?.find((condition) => condition.id === conditionId)
 }
 
 export function getNodeIdFromAnswerId(answerId: string) {
@@ -29,53 +43,53 @@ export function getNodeIdFromAnswerId(answerId: string) {
 // ID Generators
 
 export function generateIDForNewNode(nodes: node[] | undefined) {
-  const node_ids = []
-  if (!nodes || nodes.length === 0) return `node_${0}`
+  const nodeIds = []
+  if (!nodes || nodes.length === 0) return 'node_0'
 
-  for (const node of nodes) node_ids.push(parseInt(node.id.split('_')[1]))
-  const great_id = Math.max(...node_ids) > 0 ? Math.max(...node_ids) : 0
+  for (const storyNode of nodes) {
+    nodeIds.push(parseInt(storyNode.id.split('_')[1]))
+  }
+  const greatestId = Math.max(...nodeIds) > 0 ? Math.max(...nodeIds) : 0
 
-  return `node_${great_id + 1}`
+  return `node_${greatestId + 1}`
 }
 
 export function generateIDForNewAnswer(
   nodeId: string,
-  currentAnswers: any[] | undefined
+  currentAnswers: node_answer[] | undefined
 ) {
-  const answer_ids = []
+  const answerIds = []
   if (!currentAnswers) return `answer_${nodeId.split('_')[1]}_0`
 
-  for (const answer of currentAnswers)
-    answer_ids.push(parseInt(answer.id.split('_')[2]))
-  const great_id = Math.max(...answer_ids) > 0 ? Math.max(...answer_ids) : 0
+  for (const answer of currentAnswers) {
+    answerIds.push(parseInt(answer.id.split('_')[2]))
+  }
+  const greatestId = Math.max(...answerIds) > 0 ? Math.max(...answerIds) : 0
 
-  return `answer_${nodeId.split('_')[1]}_${great_id + 1}`
+  return `answer_${nodeId.split('_')[1]}_${greatestId + 1}`
 }
 
 export function generateIDForNewCondition(
   nodeId: string,
-  currentConditions: any[] | undefined
+  currentConditions: node_conditions[] | undefined
 ) {
-  const condition_ids = []
+  const conditionIds = []
   if (!currentConditions) return `condition_${nodeId.split('_')[1]}_0`
 
-  for (const condition of currentConditions)
-    condition_ids.push(parseInt(condition.id.split('_')[2]))
-  const great_id =
-    Math.max(...condition_ids) > 0 ? Math.max(...condition_ids) : 0
+  for (const condition of currentConditions) {
+    conditionIds.push(parseInt(condition.id.split('_')[2]))
+  }
+  const greatestId =
+    Math.max(...conditionIds) > 0 ? Math.max(...conditionIds) : 0
 
-  return `condition_${nodeId.split('_')[1]}_${great_id + 1}`
+  return `condition_${nodeId.split('_')[1]}_${greatestId + 1}`
 }
 
-export function generateIDForNewRequirement(refs?: any) {
+export function generateIDForNewRequirement(
+  refs?: Readonly<Record<string, unknown>>
+) {
   if (!refs || Object.keys(refs).length === 0) return 0
 
-  if (refs) {
-    const ids = Object.keys(refs).map((key) => parseInt(key.split('_')[1]))
-
-    const maxId = Math.max(...ids)
-
-    return maxId + 1
-  }
-  return 1
+  const ids = Object.keys(refs).map((key) => parseInt(key.split('_')[1]))
+  return Math.max(...ids) + 1
 }

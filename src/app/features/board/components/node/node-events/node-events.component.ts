@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core'
 import { NodeAddEventComponent } from '../context-menus/node-add-event/node-add-event.component'
 import { event } from 'src/app/core/interfaces/interfaces'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryEditorService } from '../../../services/story-editor.service'
 import { NodeEventComponent } from './node-event/node-event.component'
 
 @Component({
@@ -14,38 +14,52 @@ import { NodeEventComponent } from './node-event/node-event.component'
 export class NodeEventsComponent {
   @Input() nodeId?: string
   @Input() answerId?: string
-  @Input() events?: Array<event>
+
+  private storyEvents: event[] = []
+
+  @Input()
+  set events(events: event[] | undefined) {
+    this.storyEvents = structuredClone(events ?? [])
+  }
+  get events() {
+    return this.storyEvents
+  }
 
   openAddEvent: boolean = false
 
-  constructor(private activeStory: ActiveStoryService) {}
+  constructor(private storyEditor: StoryEditorService) {}
 
-  saveEvent(event: any) {
-    event.action = event.type === 'stat' ? 'alterStat' : 'alterCondition'
-
-    if (!this.events) this.events = []
-
-    const eventIndex = this.events?.findIndex((e) => e.target === event.target)
-    if (eventIndex !== -1) {
-      this.events[eventIndex] = event
-    } else {
-      this.events?.push(event)
+  saveEvent(changedEvent: event) {
+    const eventToSave: event = {
+      ...changedEvent,
+      action: changedEvent.type === 'stat' ? 'alterStat' : 'alterCondition',
     }
+    const eventIndex = this.storyEvents.findIndex(
+      (storyEvent) => storyEvent.target === eventToSave.target
+    )
 
-    if (this.nodeId) {
-      this.activeStory.saveNodeEvents(this.nodeId, this.events)
-    } else if (this.answerId) {
-      this.activeStory.saveAnswerEvents(this.answerId, this.events)
-    }
+    this.storyEvents =
+      eventIndex === -1
+        ? [...this.storyEvents, eventToSave]
+        : this.storyEvents.map((storyEvent, index) =>
+            index === eventIndex ? eventToSave : storyEvent
+          )
+
+    this.persistEvents()
   }
 
-  deleteEvent(event: any) {
-    this.events = this.events?.filter((e) => e.target !== event.target)
+  deleteEvent(eventToDelete: event) {
+    this.storyEvents = this.storyEvents.filter(
+      (storyEvent) => storyEvent.target !== eventToDelete.target
+    )
+    this.persistEvents()
+  }
 
+  private persistEvents() {
     if (this.nodeId) {
-      this.activeStory.saveNodeEvents(this.nodeId, event)
+      this.storyEditor.saveNodeEvents(this.nodeId, this.storyEvents)
     } else if (this.answerId) {
-      this.activeStory.saveAnswerEvents(this.answerId, event)
+      this.storyEditor.saveAnswerEvents(this.answerId, this.storyEvents)
     }
   }
 }

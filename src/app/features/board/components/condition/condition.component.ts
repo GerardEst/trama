@@ -8,7 +8,8 @@ import {
   ViewContainerRef,
   OnInit,
 } from '@angular/core'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryEditorService } from '../../services/story-editor.service'
+import { StoryReferencesService } from '../../services/story-references.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ref } from 'src/app/core/interfaces/interfaces'
 
@@ -36,20 +37,15 @@ export class ConditionComponent implements OnInit {
   optionsContainer?: ViewContainerRef
 
   constructor(
-    public activeStory: ActiveStoryService,
-    public elementRef: ElementRef
+    public elementRef: ElementRef,
+    private storyEditor: StoryEditorService,
+    private storyReferences: StoryReferencesService
   ) {}
 
   ngOnInit() {
     this.id = this.elementRef.nativeElement.id
-    this.refOptions = Object.keys(this.activeStory.entireTree().refs).map(
-      (refId) => {
-        return {
-          id: refId,
-          name: this.activeStory.entireTree().refs[refId].name,
-          type: this.activeStory.entireTree().refs[refId].type,
-        }
-      }
+    this.refOptions = Object.entries(this.storyReferences.getAll()).map(
+      ([id, storyRef]) => ({ id, ...storyRef })
     )
     this.refType = this.refOptions.find((ref) => ref.id === this.selectedRef)
       ?.type as 'stat' | 'condition' | 'property'
@@ -66,7 +62,7 @@ export class ConditionComponent implements OnInit {
       this.value = event.target.value
     }
 
-    this.activeStory.updateConditionValues(this.id, {
+    this.storyEditor.updateConditionValues(this.id, {
       id: this.id,
       ref: this.selectedRef,
       comparator: this.comparator,

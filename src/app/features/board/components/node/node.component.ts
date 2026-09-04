@@ -23,6 +23,7 @@ import {
   node_conditions,
   node_userTextOptions,
   event,
+  join,
 } from 'src/app/core/interfaces/interfaces'
 import {
   generateIDForNewAnswer,
@@ -32,6 +33,7 @@ import { ApisService } from 'src/app/core/services/apis.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 import { NodeOptionsComponent } from './context-menus/node-options/node-options.component'
 import { NodeEventsComponent } from './node-events/node-events.component'
+import { StoryEditorService } from '../../services/story-editor.service'
 
 @Component({
   selector: 'polo-node',
@@ -61,17 +63,30 @@ export class NodeComponent implements OnInit {
   // Common
   @Input() text: string = ''
   @Input() image?: string
-  @Input() join: string = ''
+  @Input() join: join[] = []
   @Input() events?: Array<event>
   // Answer nodes
   @Input() answers?: Array<node_answer>
   // Distributor nodes
   @Input() conditions?: Array<node_conditions>
   // End nodes
-  @Input() links: link[] = []
-  @Input() shareOptions: shareOptions = {
-    sharedText: '',
-    shareButtonText: '',
+  private nodeLinks: link[] = []
+  private nodeShareOptions: shareOptions = {}
+
+  @Input()
+  set links(links: link[]) {
+    this.nodeLinks = structuredClone(links ?? [])
+  }
+  get links() {
+    return this.nodeLinks
+  }
+
+  @Input()
+  set shareOptions(options: shareOptions) {
+    this.nodeShareOptions = structuredClone(options ?? {})
+  }
+  get shareOptions() {
+    return this.nodeShareOptions
   }
   // Text nodes
   @Input() userTextOptions?: node_userTextOptions
@@ -81,7 +96,7 @@ export class NodeComponent implements OnInit {
   loadingMessage?: string
   optionsOpen: boolean = false
 
-  @Input() type: 'content' | 'distributor' | 'end' = 'content'
+  @Input() type: 'text' | 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
   @Output() removeNode: EventEmitter<any> = new EventEmitter()
 
@@ -94,7 +109,8 @@ export class NodeComponent implements OnInit {
     public database: DatabaseService,
     public activeStory: ActiveStoryService,
     private apis: ApisService,
-    private storage: StorageService
+    private storage: StorageService,
+    private storyEditor: StoryEditorService
   ) {}
 
   async ngOnInit() {
@@ -136,7 +152,7 @@ export class NodeComponent implements OnInit {
     )
 
     if (uploadedImage) {
-      this.activeStory.addImageToNode(this.nodeId, imagePath)
+      this.storyEditor.addImageToNode(this.nodeId, imagePath)
     } else {
       console.log('Not possible to upload image')
       this.loadingMessage = 'Error uploading the image'
@@ -154,65 +170,65 @@ export class NodeComponent implements OnInit {
     if (error) {
       console.log(error)
     } else {
-      this.activeStory.removeImageFromNode(this.nodeId)
+      this.storyEditor.removeImageFromNode(this.nodeId)
     }
   }
 
   updateShareOptions() {
-    this.activeStory.updateNodeShareOptions(this.nodeId, this.shareOptions)
+    this.storyEditor.updateNodeShareOptions(this.nodeId, this.shareOptions)
   }
 
   addAnswer() {
     const newId = generateIDForNewAnswer(this.nodeId, this.answers)
-    this.activeStory.createNodeAnswer(this.nodeId, newId)
+    this.storyEditor.createNodeAnswer(this.nodeId, newId)
   }
 
   addCondition() {
     const newId = generateIDForNewCondition(this.nodeId, this.conditions)
-    this.activeStory.createNodeCondition(this.nodeId, newId)
+    this.storyEditor.createNodeCondition(this.nodeId, newId)
   }
 
   // Need to do this way because empty links are not saved
   addExternalLink() {
-    this.links.push({ name: '', url: '' })
+    this.links = [...this.links, { name: '', url: '' }]
   }
 
   updateLinks() {
-    this.activeStory.updateNodeLinks(this.nodeId, this.links)
+    this.storyEditor.updateNodeLinks(this.nodeId, this.links)
   }
 
   removeAnswer(id: string) {
-    this.activeStory.removeAnswer(this.nodeId, id)
+    this.storyEditor.removeAnswer(this.nodeId, id)
     // TODO - Redibujar joins
   }
 
   removeCondition(id: string) {
-    this.activeStory.removeCondition(this.nodeId, id)
+    this.storyEditor.removeCondition(this.nodeId, id)
   }
 
   saveNodeText(e: any) {
     const newText = e.target.value
-    this.activeStory.updateNodeText(this.nodeId, newText)
+    this.storyEditor.updateNodeText(this.nodeId, newText)
   }
 
   saveProperty(event: any) {
     const newProperty = event.target.value
-    this.activeStory.updateNodeProperty(this.nodeId, newProperty)
+    this.storyEditor.updateNodeProperty(this.nodeId, newProperty)
   }
 
   savePlaceholder(event: any) {
     const newPlaceholder = event.target.value
-    this.activeStory.updateNodePlaceholder(this.nodeId, newPlaceholder)
+    this.storyEditor.updateNodePlaceholder(this.nodeId, newPlaceholder)
   }
 
   saveDescription(event: any) {
     const newDescription = event.target.value
-    this.activeStory.updateNodeDescription(this.nodeId, newDescription)
+    this.storyEditor.updateNodeDescription(this.nodeId, newDescription)
   }
 
   saveButtonText(event: any) {
     const newButtonText = event.target.value
-    this.activeStory.updateNodeButtonText(this.nodeId, newButtonText)
+    this.storyEditor.updateNodeButtonText(this.nodeId, newButtonText)
   }
 
   onDuplicateNode() {

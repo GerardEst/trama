@@ -96,9 +96,9 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     this.checkLoggedUser()
 
     // Initializes the example tree
-    this.activeStory.entireTree.set(this.exampleTree)
+    this.activeStory.load('', 'Trama', this.exampleTree)
     this.board?.centerToNode(this.activeStory.entireTree().nodes[1])
-    setTimeout(() => this.activeStory.activateTreeChangeEffects(), 0)
+    setTimeout(() => this.board?.refreshFlows(), 0)
   }
 
   selectUseCase(useCase: 'brands' | 'schools' | 'creatives') {

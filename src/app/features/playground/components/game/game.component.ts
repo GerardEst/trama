@@ -64,7 +64,9 @@ export class GameComponent {
     public activeStory: ActiveStoryService
   ) {
     effect(() => {
-      if (this.activeStory.entireTree().nodes) this.initializeGame()
+      if (this.activeStory.entireTree().nodes.length > 0) {
+        this.initializeGame()
+      }
     })
   }
 
@@ -77,9 +79,9 @@ export class GameComponent {
   }
 
   selectAnswer(answer: node_answer) {
-    this.gameEngine.applyEvents(answer.events)
+    this.gameEngine.applyEvents(answer.events ?? [])
     this.registerAnswer(answer)
-    this.nextStep(answer.join)
+    this.nextStep(answer.join ?? [])
   }
 
   continueFlow(continueInfo: any) {
@@ -93,7 +95,8 @@ export class GameComponent {
     const randomlyChoosedJoin = this.gameEngine.getRandomJoin(possibleJoins)
     console.log('Choosed next step:', randomlyChoosedJoin)
 
-    const activeNode = this.gameEngine.buildNextNodeFromJoin(randomlyChoosedJoin)
+    const activeNode =
+      this.gameEngine.buildNextNodeFromJoin(randomlyChoosedJoin)
     const isDistributor = activeNode.type === 'distributor'
     const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
 
@@ -118,7 +121,9 @@ export class GameComponent {
 
       this.registerNodeEvents(activeNode)
 
-      if (isNonInteractableNode) this.nextStep(activeNode.join, true)
+      if (isNonInteractableNode) {
+        this.nextStep(activeNode.join ?? [], true)
+      }
     }, this.TIME_BETWEEN_NODES + 500)
   }
 
