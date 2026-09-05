@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 import { ConditionComponent } from './condition.component'
+import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 
 describe('ConditionComponent', () => {
   let component: ConditionComponent
@@ -11,6 +12,7 @@ describe('ConditionComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ConditionComponent],
       providers: [
+        BoardAnchorRegistryService,
         {
           provide: ActiveStoryService,
           useValue: { entireTree: () => ({ refs: {} }) },

@@ -1,6 +1,14 @@
-<div class="node">
+<div
+  class="node"
+  [attr.data-board-join-node]="nodeId"
+  [attr.data-board-join-anchor]="nodeId + '_joiner'"
+  data-board-join-to-answers="false"
+>
   <header>
-    <span id="{{ nodeId + '_joiner' }}" class="joiner"></span>
+    <span
+      class="joiner"
+      [poloBoardAnchor]="nodeId + '_joiner'"
+    ></span>
     <ng-content select="dragHandle"> </ng-content>
 
     <polo-basic-button
@@ -31,7 +39,7 @@
         <div class="node__answers">
           @for (condition of conditions; track condition.id) {
             <polo-condition
-              id="{{ condition.id }}"
+              [conditionId]="condition.id"
               [selectedRef]="condition.ref || ''"
               [comparator]="condition.comparator || ''"
               [value]="condition.value ?? 0"
@@ -42,17 +50,18 @@
         </div>
       }
       <polo-condition
-        id="{{ 'condition_' + nodeId.split('_')[1] + '_fallback' }}"
+        [conditionId]="'condition_' + nodeId.split('_')[1] + '_fallback'"
         [fallback]="true"
+        [hasJoin]="!!(fallbackCondition && fallbackCondition.join && fallbackCondition.join.length)"
         (onRemoveCondition)="removeCondition($event)"
       ></polo-condition>
     } @else if (type === 'end') {
-      @if (image || loading) {
+      @if (image || loading() || loadingMessage()) {
         <polo-image
           (onRemoveImage)="removeNodeImage()"
           [storageRoute]="image"
-          [loading]="loading"
-          [loadingMessage]="loadingMessage"
+          [loading]="loading()"
+          [loadingMessage]="loadingMessage()"
           [canDelete]="true"
         ></polo-image>
       }
@@ -111,29 +120,38 @@
         </div>
       }
     } @else if (type === 'content') {
-      @if (image || loading) {
+      @if (image || loading() || loadingMessage()) {
         <polo-image
           (onRemoveImage)="removeNodeImage()"
           [storageRoute]="image"
-          [loading]="loading"
-          [loadingMessage]="loadingMessage"
+          [loading]="loading()"
+          [loadingMessage]="loadingMessage()"
           [canDelete]="true"
         ></polo-image>
       }
       @if (!answers || answers.length === 0) {
         <div
-          id="{{ nodeId + '_join' }}"
           class="union_point"
+          [attr.data-board-origin]="nodeId"
+          [poloBoardAnchor]="nodeId + '_join'"
           [class.union_point--hasJoin]="join && join.length > 0"
         ></div>
       }
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
       @if (answers && answers.length > 0) {
-        <div class="node__answers">
-          <span id="{{ nodeId + '_joiner--answers' }}" class="joiner joiner--answers"></span>
+        <div
+          class="node__answers"
+          [attr.data-board-join-node]="nodeId"
+          [attr.data-board-join-anchor]="nodeId + '_joiner--answers'"
+          data-board-join-to-answers="true"
+        >
+          <span
+            class="joiner joiner--answers"
+            [poloBoardAnchor]="nodeId + '_joiner--answers'"
+          ></span>
           @for (answer of answers; track answer.id) {
             <polo-answer
-              id="{{ answer.id }}"
+              [answerId]="answer.id"
               [text]="answer.text || ''"
               [hasJoin]="!!(answer.join && answer.join.length > 0)"
               (onRemoveAnswer)="removeAnswer($event)"
@@ -142,18 +160,19 @@
         </div>
       }
     } @else if (type === 'text') {
-      @if (image || loading) {
+      @if (image || loading() || loadingMessage()) {
         <polo-image
           (onRemoveImage)="removeNodeImage()"
           [storageRoute]="image"
-          [loading]="loading"
-          [loadingMessage]="loadingMessage"
+          [loading]="loading()"
+          [loadingMessage]="loadingMessage()"
           [canDelete]="true"
         ></polo-image>
       }
       <div
-        id="{{ nodeId + '_join' }}"
         class="union_point"
+        [attr.data-board-origin]="nodeId"
+        [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
       <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>

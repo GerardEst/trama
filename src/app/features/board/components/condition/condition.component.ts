@@ -1,6 +1,6 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -12,38 +12,38 @@ import { StoryEditorService } from '../../services/story-editor.service'
 import { StoryReferencesService } from '../../services/story-references.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ref } from 'src/app/core/interfaces/interfaces'
+import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 
 @Component({
   selector: 'polo-condition',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, BoardAnchorDirective],
   templateUrl: './condition.component.html',
   styleUrl: './condition.component.sass',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConditionComponent implements OnInit {
-  id: string = ''
   refOptions: ref[] = []
   refType: 'stat' | 'condition' | 'property' = 'stat'
 
   // Inputs to start with
+  @Input() conditionId: string = ''
   @Input() fallback: boolean = false
   @Input() selectedRef: string = ''
   @Input() comparator: string = ''
   @Input() value: number = 0
   @Input() hasJoin: boolean = false
 
-  @Output() onRemoveCondition: EventEmitter<any> = new EventEmitter()
+  @Output() onRemoveCondition = new EventEmitter<string>()
   @ViewChild('optionsContainer', { read: ViewContainerRef })
   optionsContainer?: ViewContainerRef
 
   constructor(
-    public elementRef: ElementRef,
     private storyEditor: StoryEditorService,
     private storyReferences: StoryReferencesService
   ) {}
 
   ngOnInit() {
-    this.id = this.elementRef.nativeElement.id
     this.refOptions = Object.entries(this.storyReferences.getAll()).map(
       ([id, storyRef]) => ({ id, ...storyRef })
     )
@@ -62,8 +62,8 @@ export class ConditionComponent implements OnInit {
       this.value = event.target.value
     }
 
-    this.storyEditor.updateConditionValues(this.id, {
-      id: this.id,
+    this.storyEditor.updateConditionValues(this.conditionId, {
+      id: this.conditionId,
       ref: this.selectedRef,
       comparator: this.comparator,
       value: this.value,
@@ -71,6 +71,6 @@ export class ConditionComponent implements OnInit {
   }
 
   removeCondition() {
-    this.onRemoveCondition.emit(this.id)
+    this.onRemoveCondition.emit(this.conditionId)
   }
 }

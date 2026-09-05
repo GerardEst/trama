@@ -1,6 +1,6 @@
 @if (showContextMenuCursor) {
 <div #openContextCursor class="openContextCursor">
-  <img width="10px" src="/assets/icons/plus.svg" />
+  <img width="10px" src="/assets/icons/plus.svg" alt="" />
 </div>
 } @if(showJoinContextMenu){
 <div class="overlay" (click)="showJoinContextMenu = false"></div>
@@ -27,9 +27,9 @@
   preserveAspectRatio="none"
   [class.hideCursor]="showContextMenuCursor"
 >
-  @if (drawingFrom) {
+  @if (drawingStroke) {
   <path
-    [attr.d]="getDrawingPath(drawingFrom, drawingTo)"
+    [attr.d]="createPath(drawingStroke.from, drawingStroke.to)"
     stroke-dasharray="4"
     stroke-width="1"
     stroke="#cccccc"

@@ -27,7 +27,8 @@
   }
 }
 <div
-  id="{{ this.elementRef.nativeElement.id + '_join' }}"
   class="union_point"
+  [attr.data-board-origin]="conditionId"
+  [poloBoardAnchor]="conditionId + '_join'"
   [class.union_point--hasJoin]="hasJoin"
 ></div>

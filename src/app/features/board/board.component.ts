@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Input,
@@ -6,24 +7,38 @@ import {
   HostListener,
   OnInit,
   AfterViewInit,
+  OnDestroy,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { NodeComponent } from './components/node/node.component'
-import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop'
+import {
+  CdkDrag,
+  CdkDragEnd,
+  CdkDragHandle,
+  CdkDragStart,
+  DragRef,
+  Point,
+} from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from './components/board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { combineTransforms } from 'src/app/features/dashboard/utils/operations'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
-import { DatabaseService } from 'src/app/core/services/database.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
+import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
+import { BoardPreferencesService } from './services/board-preferences.service'
+import { StorageService } from 'src/app/shared/services/storage.service'
+import { BoardJoinStroke, BoardPoint } from './board-interactions'
+
+interface BoardJoinTarget {
+  nodeId: string
+  toAnswer: boolean
+  anchor: HTMLElement
+}
 
 @Component({
   selector: 'polo-board',
   standalone: true,
   imports: [
-    CommonModule,
     NodeComponent,
     CdkDrag,
     CdkDragHandle,
@@ -31,9 +46,11 @@ import { StoryEditorService } from './services/story-editor.service'
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [PanzoomService, BoardAnchorRegistryService],
 })
-export class BoardComponent implements OnInit, AfterViewInit {
-  @ViewChild('board') boardElement?: ElementRef
+export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('board') boardElement?: ElementRef<HTMLElement>
   @ViewChild(BoardFlowsComponent) boardFlows?: BoardFlowsComponent
 
   @Input() grid?: boolean
@@ -42,24 +59,38 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @Input() initialPosition: { x: number; y: number } = { x: 0, y: 0 }
   @Input() zoomable: boolean = true
 
-  nodeDragThrottle: any = null
-
   // Context menu
   contextMenuPosition = { x: 0, y: 0 }
   contextMenuActive = false
-  @ViewChild('contextMenu', { static: true }) contextMenu!: ElementRef
-
   // Drags to join
-  isMouseDown: boolean = false
-  isDrawingJoin?: boolean = false
-  throttled: any
-  dragStartedOn?: any
-  dragMouseOn?: any
+  joinStroke?: BoardJoinStroke
+  private joinPointerId?: number
 
-  @HostListener('keydown.escape', ['$event'])
-  handleEscape(event: KeyboardEvent) {
+  get isDrawingJoin() {
+    return !!this.joinStroke
+  }
+
+  readonly constrainNodePosition = (
+    pointerPosition: Point,
+    _dragRef: DragRef,
+    dimensions: DOMRect,
+    pickupPosition: Point
+  ): Point => {
+    const scale = this.panzoom.getScale()
+    const initialPointerX = dimensions.left + pickupPosition.x
+    const initialPointerY = dimensions.top + pickupPosition.y
+
+    return {
+      x: dimensions.left + (pointerPosition.x - initialPointerX) / scale,
+      y: dimensions.top + (pointerPosition.y - initialPointerY) / scale,
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape() {
     if (this.isDrawingJoin) {
       this.stopDragging()
+      this.panzoom.resumeDrag()
     }
   }
 
@@ -72,6 +103,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       event.preventDefault() // Prevent the default context menu from appearing
       if (this.isDrawingJoin) {
         this.stopDragging()
+        this.panzoom.resumeDrag()
       } else {
         this.openContextMenu(event)
       }
@@ -81,8 +113,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
   constructor(
     public panzoom: PanzoomService,
     public activeStory: ActiveStoryService,
-    private database: DatabaseService,
-    private storyEditor: StoryEditorService
+    private storyEditor: StoryEditorService,
+    private preferences: BoardPreferencesService,
+    private storage: StorageService,
+    private anchorRegistry: BoardAnchorRegistryService
   ) {}
 
   ngOnInit() {
@@ -98,7 +132,11 @@ export class BoardComponent implements OnInit, AfterViewInit {
     })
   }
 
-  public centerToNode(node: any) {
+  ngOnDestroy() {
+    this.panzoom.destroy()
+  }
+
+  public centerToNode(node: node | undefined) {
     if (!node) return
 
     this.panzoom.centerToNode(node)
@@ -109,14 +147,13 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   public refreshFlows() {
-    this.boardFlows?.refreshPaths()
+    this.boardFlows?.scheduleRefresh()
   }
 
   openContextMenu(event: MouseEvent) {
     event.preventDefault()
 
-    this.contextMenuPosition.x = event.offsetX
-    this.contextMenuPosition.y = event.offsetY
+    this.contextMenuPosition = this.getBoardPosition(event)
 
     this.contextMenuActive = true
   }
@@ -125,116 +162,128 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.contextMenuActive = false
   }
 
-  checkDragStart(event: any) {
-    this.isMouseDown = true
-
-    // Mirem si ha començat dins un joiner
-    const join = event.target.classList.contains('union_point')
-
-    if (join) {
-      this.isDrawingJoin = true
-      this.dragStartedOn = event.target
-    }
-  }
-
-  checkDrag(event: any) {
-    if (this.isMouseDown && this.dragStartedOn) {
-      // Mira si estem passant per sobre un node o les seves answers
-      const hoverOnNodePart =
-        event.target.closest('.node__answers') || event.target.closest('.node')
-      const joinerOnPart = hoverOnNodePart?.querySelector('.joiner')
-
-      // Si no estem sobre la part d'un node, passem la posició del ratolí
-      this.dragMouseOn = joinerOnPart || event
-    }
-  }
-
-  checkDragStop(event: any) {
-    // Ignore if it's not the left mouse button
+  checkDragStart(event: PointerEvent) {
     if (event.button !== 0) return
 
-    this.isMouseDown = false
+    const target = event.target
+    if (!(target instanceof HTMLElement)) return
 
-    const isNotInTheSamePlaceItStarted = event.target !== this.dragStartedOn
+    const origin = target.closest<HTMLElement>('[data-board-origin]')
+    const originId = origin?.dataset['boardOrigin']
+    const board = this.boardElement?.nativeElement
+    if (!origin || !originId || !board?.contains(origin)) return
 
-    if (this.isDrawingJoin && isNotInTheSamePlaceItStarted) {
-      if (this.dragMouseOn instanceof HTMLElement) {
-        const nodeId = this.dragMouseOn.closest('polo-node')?.id
-        if (!nodeId) return
+    this.joinStroke = {
+      originId,
+      from: origin,
+      to: { x: event.clientX, y: event.clientY },
+    }
+    this.joinPointerId = event.pointerId
+    board.setPointerCapture(event.pointerId)
+    this.panzoom.pauseDrag()
+  }
 
-        const originId =
-          this.dragStartedOn.closest('polo-answer')?.id ||
-          this.dragStartedOn.closest('polo-condition')?.id ||
-          this.dragStartedOn.closest('polo-node')?.id
+  checkDrag(event: PointerEvent) {
+    if (!this.joinStroke || event.pointerId !== this.joinPointerId) return
 
+    const joinTarget = this.getJoinTarget(event)
+    const to = joinTarget
+      ? this.getElementCenter(joinTarget.anchor)
+      : { x: event.clientX, y: event.clientY }
+
+    this.joinStroke = { ...this.joinStroke, to }
+  }
+
+  checkDragStop(event: PointerEvent) {
+    if (event.button !== 0) return
+
+    const stroke = this.joinStroke
+    if (!stroke || event.pointerId !== this.joinPointerId) {
+      this.panzoom.resumeDrag()
+      return
+    }
+
+    const elementAtPointer = this.getElementAtPointer(event)
+    const returnedToOrigin = elementAtPointer === stroke.from
+
+    if (!returnedToOrigin) {
+      const joinTarget = this.getJoinTarget(event)
+      if (joinTarget) {
         this.storyEditor.updateJoinOfOption(
-          originId,
-          nodeId,
-          this.dragMouseOn.classList.contains('joiner--answers')
+          stroke.originId,
+          joinTarget.nodeId,
+          joinTarget.toAnswer
         )
-      } else {
+      } else if (this.isInsideBoard(elementAtPointer)) {
         this.addNode(event, 'content')
       }
     }
 
     this.stopDragging()
+    this.panzoom.resumeDrag()
+  }
 
+  cancelJoin(event: PointerEvent) {
+    if (event.pointerId !== this.joinPointerId) return
+
+    this.stopDragging()
     this.panzoom.resumeDrag()
   }
 
   stopDragging() {
-    this.dragStartedOn = undefined
-    this.dragMouseOn = undefined
-    this.isDrawingJoin = false
-  }
+    const board = this.boardElement?.nativeElement
+    const pointerId = this.joinPointerId
 
-  focusNode(event: any) {
-    if (event.target) event.target.style.zIndex = 1
-  }
-  blurNode(event: any) {
-    if (event.target) event.target.style.zIndex = 0
-  }
-  nodeDragStarted(event: any) {
-    this.focusNode(event.source.element.nativeElement)
-  }
-  nodeDragReleased(event: any) {
-    const currentTransform = event.source.getRootElement().style.transform
-    const finalTransform = combineTransforms(currentTransform)
+    this.joinStroke = undefined
+    this.joinPointerId = undefined
 
-    event.source.getRootElement().style.transform = `translate3d(${finalTransform.x}px, ${finalTransform.y}px, 0}px)`
-
-    this.storyEditor.updateNodePosition(
-      event.source.getRootElement().id,
-      finalTransform.x,
-      finalTransform.y
-    )
-  }
-  nodeDragCheck() {
-    if (!this.nodeDragThrottle) {
-      this.nodeDragThrottle = setTimeout(() => {
-        this.boardFlows?.refreshPaths()
-        this.nodeDragThrottle = null
-      }, 10)
+    if (
+      board &&
+      pointerId !== undefined &&
+      board.hasPointerCapture(pointerId)
+    ) {
+      board.releasePointerCapture(pointerId)
     }
   }
 
-  setActiveNode(nodeId: string, storyId: string) {
-    const storedActiveNodes = localStorage.getItem('polo-activeNodes')
-    const activeNodes =
-      (storedActiveNodes && JSON.parse(storedActiveNodes)) || {}
-
-    activeNodes[storyId] = nodeId
-
-    localStorage.setItem('polo-activeNodes', JSON.stringify(activeNodes))
+  focusNode(event: MouseEvent) {
+    this.setNodeZIndex(event.currentTarget, 1)
+  }
+  blurNode(event: MouseEvent) {
+    this.setNodeZIndex(event.currentTarget, 0)
+  }
+  nodeDragStarted(event: CdkDragStart) {
+    this.setNodeZIndex(event.source.element.nativeElement, 1)
+  }
+  nodeDragEnded(event: CdkDragEnd, storyNode: node) {
+    const dragPosition = event.source.getFreeDragPosition()
+    event.source.reset()
+    this.storyEditor.updateNodePosition(
+      storyNode.id,
+      Number(storyNode.left) + dragPosition.x,
+      Number(storyNode.top) + dragPosition.y
+    )
+    this.panzoom.resumeDrag()
+    this.boardFlows?.scheduleRefresh()
+  }
+  nodeDragCheck() {
+    this.boardFlows?.scheduleRefresh()
   }
 
-  addNode(event: any, type: 'text' | 'content' | 'distributor' | 'end'): void {
+  setActiveNode(nodeId: string, storyId: string) {
+    this.preferences.setActiveNode(storyId, nodeId)
+  }
+
+  addNode(
+    event: MouseEvent,
+    type: 'text' | 'content' | 'distributor' | 'end'
+  ): void {
     if (this.contextMenuActive) {
       this.contextMenuActive = false
       this.createNode(
         {
-          top: this.contextMenu.nativeElement.style.top.slice(0, -2),
-          left: this.contextMenu.nativeElement.style.left.slice(0, -2),
+          top: this.contextMenuPosition.y,
+          left: this.contextMenuPosition.x,
         },
         type
       )
@@ -242,23 +291,22 @@ export class BoardComponent implements OnInit, AfterViewInit {
       return
     }
 
-    if (this.dragStartedOn) {
+    if (this.joinStroke) {
+      const position = this.getBoardPosition(event)
       const newNodeInfo = this.createNode(
-        { top: event.offsetY, left: event.offsetX },
+        { top: position.y, left: position.x },
         type
       )
 
-      const originId =
-        this.dragStartedOn.closest('polo-answer')?.id ||
-        this.dragStartedOn.closest('polo-condition')?.id ||
-        this.dragStartedOn.closest('polo-node')?.id
-
-      this.storyEditor.updateJoinOfOption(originId, newNodeInfo.id)
+      this.storyEditor.updateJoinOfOption(
+        this.joinStroke.originId,
+        newNodeInfo.id
+      )
     }
   }
 
   createNode(
-    position: { top: string; left: string },
+    position: { top: string | number; left: string | number },
     type: 'text' | 'content' | 'distributor' | 'end'
   ) {
     const newNodeInfo: node = {
@@ -272,34 +320,80 @@ export class BoardComponent implements OnInit, AfterViewInit {
     return newNodeInfo
   }
 
-  async duplicateNode(event: any) {
+  duplicateNode(nodeId: string) {
     const idForNewNode = generateIDForNewNode(
       this.activeStory.entireTree().nodes
     )
-    this.storyEditor.duplicateNode(event, idForNewNode)
+    this.storyEditor.duplicateNode(nodeId, idForNewNode)
   }
 
-  async removeNode(event: any) {
-    // Remove node image from db
+  async removeNode(event: { nodeId: string }) {
     const image = this.storyEditor.getImageFromNode(event.nodeId)
-    if (image) {
-      const { data, error } = await this.database.supabase.storage
-        .from('images')
-        .remove([image.path])
-      if (error) console.log(error)
-    }
+    if (image) await this.storage.removeImage(image.path)
 
-    // remove node from tree
     this.storyEditor.removeNode(event.nodeId)
 
-    // change active node from localstorage
-    const currentActiveNodes = localStorage.getItem('polo-activeNodes')
-    if (currentActiveNodes) {
-      const currentActiveNode =
-        JSON.parse(currentActiveNodes)[this.activeStory.storyId()]
-      if (currentActiveNode === event.nodeId) {
-        this.setActiveNode('node_0', this.activeStory.storyId())
-      }
+    const storyId = this.activeStory.storyId()
+    if (this.preferences.getActiveNode(storyId) === event.nodeId) {
+      this.preferences.setActiveNode(storyId, 'node_0')
     }
+  }
+
+  private getBoardPosition(event: BoardPoint) {
+    const boardElement = this.boardElement?.nativeElement
+    if (!boardElement) return { x: 0, y: 0 }
+
+    const boardRect = boardElement.getBoundingClientRect()
+    const scale = boardRect.width / boardElement.offsetWidth || 1
+    return {
+      x: (event.x - boardRect.left) / scale,
+      y: (event.y - boardRect.top) / scale,
+    }
+  }
+
+  private isInsideBoard(target: EventTarget | null | undefined) {
+    return (
+      target instanceof Node &&
+      !!this.boardElement?.nativeElement.contains(target)
+    )
+  }
+
+  private getJoinTarget(event: PointerEvent): BoardJoinTarget | undefined {
+    const elementAtPointer = this.getElementAtPointer(event)
+    const targetArea = elementAtPointer?.closest<HTMLElement>(
+      '[data-board-join-node]'
+    )
+    const board = this.boardElement?.nativeElement
+    if (!targetArea || !board?.contains(targetArea)) return undefined
+
+    const nodeId = targetArea.dataset['boardJoinNode']
+    const anchorId = targetArea.dataset['boardJoinAnchor']
+    if (!nodeId || !anchorId) return undefined
+
+    const anchor = this.anchorRegistry.get(anchorId)
+    if (!anchor) return undefined
+
+    return {
+      nodeId,
+      toAnswer: targetArea.dataset['boardJoinToAnswers'] === 'true',
+      anchor,
+    }
+  }
+
+  private getElementAtPointer(event: BoardPoint) {
+    const element = document.elementFromPoint(event.x, event.y)
+    return element ?? undefined
+  }
+
+  private getElementCenter(element: HTMLElement): BoardPoint {
+    const rect = element.getBoundingClientRect()
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    }
+  }
+
+  private setNodeZIndex(target: EventTarget | null, zIndex: number) {
+    if (target instanceof HTMLElement) target.style.zIndex = String(zIndex)
   }
 }

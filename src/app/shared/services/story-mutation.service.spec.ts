@@ -56,7 +56,7 @@ describe('StoryMutationService', () => {
     expect(database.saveTreeToDB).not.toHaveBeenCalled()
   }))
 
-  it('persists snapshots in mutation order', fakeAsync(() => {
+  it('persists the active save and coalesces queued mutations to the latest snapshot', fakeAsync(() => {
     let saveNumber = 0
     let resolveFirstSave: (saved: boolean) => void = () => undefined
 
@@ -86,6 +86,14 @@ describe('StoryMutationService', () => {
         type: 'end',
       })
     })
+    mutations.update((tree) => {
+      tree.nodes.push({
+        id: 'node_2',
+        top: 200,
+        left: 200,
+        type: 'end',
+      })
+    })
 
     flushMicrotasks()
     expect(database.saveTreeToDB).toHaveBeenCalledTimes(1)
@@ -94,6 +102,6 @@ describe('StoryMutationService', () => {
     resolveFirstSave(true)
     flushMicrotasks()
     expect(database.saveTreeToDB).toHaveBeenCalledTimes(2)
-    expect(database.saveTreeToDB.calls.argsFor(1)[1].nodes.length).toBe(2)
+    expect(database.saveTreeToDB.calls.argsFor(1)[1].nodes.length).toBe(3)
   }))
 })

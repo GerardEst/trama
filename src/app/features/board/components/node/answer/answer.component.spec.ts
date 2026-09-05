@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { StoryEditorService } from '../../../services/story-editor.service'
 
 import { AnswerComponent } from './answer.component'
+import { BoardAnchorRegistryService } from '../../../services/board-anchor-registry.service'
+import { PanzoomService } from '../../../services/panzoom.service'
 
 describe('AnswerComponent', () => {
   let component: AnswerComponent
@@ -11,6 +13,8 @@ describe('AnswerComponent', () => {
     TestBed.configureTestingModule({
       imports: [AnswerComponent],
       providers: [
+        BoardAnchorRegistryService,
+        PanzoomService,
         {
           provide: StoryEditorService,
           useValue: {

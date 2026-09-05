@@ -8,6 +8,7 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { MenuTreeLegendComponent } from './components/menu-tree-legend/menu-tree-legend.component'
 import { findNodeInTree } from 'src/app/shared/utils/tree-searching'
 import { StatisticsService } from 'src/app/shared/services/statistics.service'
+import { BoardPreferencesService } from '../board/services/board-preferences.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -33,7 +34,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private db: DatabaseService,
     public activeStory: ActiveStoryService,
-    private stadistics: StatisticsService
+    private stadistics: StatisticsService,
+    private boardPreferences: BoardPreferencesService
   ) {}
 
   ngOnInit(): void {
@@ -71,8 +73,7 @@ export class DashboardComponent implements OnInit {
   setInitialBoardPositionFor(storyId: string) {
     console.log('Setting initial board position for story:', storyId)
 
-    const activeNodes = localStorage.getItem('polo-activeNodes')
-    const activeNodeId = activeNodes && JSON.parse(activeNodes)[storyId]
+    const activeNodeId = this.boardPreferences.getActiveNode(storyId)
     if (activeNodeId) {
       const activeNode = findNodeInTree(
         activeNodeId,

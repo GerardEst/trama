@@ -15,9 +15,22 @@ export class StorageService {
         upsert: true,
       })
     if (error) {
-      console.log('error uploading:', error)
+      console.error('Error uploading image', error)
       return false
     }
     return data
+  }
+
+  async removeImage(imagePath: string) {
+    const { error } = await this.database.supabase.storage
+      .from('images')
+      .remove([imagePath])
+
+    if (error) {
+      console.error('Error removing image', error)
+      return false
+    }
+
+    return true
   }
 }

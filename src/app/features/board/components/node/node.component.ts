@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   ElementRef,
@@ -6,6 +7,7 @@ import {
   EventEmitter,
   ViewChild,
   OnInit,
+  signal,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { AnswerComponent } from './answer/answer.component'
@@ -21,6 +23,7 @@ import {
   shareOptions,
   node_answer,
   node_conditions,
+  node_fallbackCondition,
   node_userTextOptions,
   event,
   join,
@@ -33,6 +36,7 @@ import { ApisService } from 'src/app/core/services/apis.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 import { NodeOptionsComponent } from './context-menus/node-options/node-options.component'
 import { NodeEventsComponent } from './node-events/node-events.component'
+import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
 
 @Component({
@@ -47,9 +51,11 @@ import { StoryEditorService } from '../../services/story-editor.service'
     ImageComponent,
     NodeOptionsComponent,
     NodeEventsComponent,
+    BoardAnchorDirective,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 /**
@@ -69,6 +75,7 @@ export class NodeComponent implements OnInit {
   @Input() answers?: Array<node_answer>
   // Distributor nodes
   @Input() conditions?: Array<node_conditions>
+  @Input() fallbackCondition?: node_fallbackCondition
   // End nodes
   private nodeLinks: link[] = []
   private nodeShareOptions: shareOptions = {}
@@ -92,19 +99,20 @@ export class NodeComponent implements OnInit {
   @Input() userTextOptions?: node_userTextOptions
 
   openedShareOptions: boolean = false
-  loading: boolean = false
-  loadingMessage?: string
+  readonly loading = signal(false)
+  readonly loadingMessage = signal<string | undefined>(undefined)
   optionsOpen: boolean = false
 
   @Input() type: 'text' | 'content' | 'distributor' | 'end' = 'content'
-  @Output() duplicateNode: EventEmitter<any> = new EventEmitter()
-  @Output() removeNode: EventEmitter<any> = new EventEmitter()
+  @Output() duplicateNode = new EventEmitter<string>()
+  @Output() removeNode = new EventEmitter<{
+    nodeId: string
+    answers?: string[]
+  }>()
 
-  @ViewChild('textarea') textarea?: ElementRef
-  @ViewChild('imageInput') imageInput?: ElementRef
+  @ViewChild('textarea') textarea?: ElementRef<HTMLTextAreaElement>
 
   constructor(
-    public elementRef: ElementRef,
     private panzoom: PanzoomService,
     public database: DatabaseService,
     public activeStory: ActiveStoryService,
@@ -121,55 +129,62 @@ export class NodeComponent implements OnInit {
     }
   }
 
-  async onAddImage(event: any) {
-    const {
-      data: { user },
-    } = await this.database.supabase.auth.getUser()
-    if (!user) return
+  async onAddImage(event: Event) {
+    const imageInput = event.target as HTMLInputElement
+    const imageFile = imageInput.files?.[0]
+    if (!imageFile) return
 
-    const randomStr = Math.random().toString(36).substring(2, 10)
-    const imagePath = `${user.id}/${this.activeStory.storyId()}/${
-      this.nodeId
-    }-${randomStr}`
+    this.loading.set(true)
+    this.loadingMessage.set('Optimizing image')
 
-    this.loading = true
-    this.loadingMessage = 'Optimizing image'
+    try {
+      const {
+        data: { user },
+      } = await this.database.supabase.auth.getUser()
+      if (!user) {
+        this.loadingMessage.set(undefined)
+        return
+      }
 
-    const optimizedImageBlob = await this.apis.getOptimizedImage(
-      event.target.files[0]
-    )
-    if (!optimizedImageBlob) {
-      console.log('Error obtaining optimized image')
-      this.loadingMessage =
-        'The image is too big\nTry again with a smaller image.'
-      this.imageInput?.nativeElement.reset()
-      return
+      const randomStr = Math.random().toString(36).substring(2, 10)
+      const imagePath = `${user.id}/${this.activeStory.storyId()}/${
+        this.nodeId
+      }-${randomStr}`
+      const optimizedImageBlob = await this.apis.getOptimizedImage(
+        imageFile
+      )
+      if (!optimizedImageBlob) {
+        console.error('Error obtaining optimized image')
+        this.loadingMessage.set(
+          'The image is too big\nTry again with a smaller image.'
+        )
+        imageInput.value = ''
+        return
+      }
+
+      const uploadedImage = await this.storage.uploadImage(
+        imagePath,
+        optimizedImageBlob
+      )
+
+      if (uploadedImage) {
+        this.storyEditor.addImageToNode(this.nodeId, imagePath)
+        this.loadingMessage.set(undefined)
+      } else {
+        console.error('Not possible to upload image')
+        this.loadingMessage.set('Error uploading the image')
+      }
+    } catch (error) {
+      console.error('Not possible to upload image', error)
+      this.loadingMessage.set('Error uploading the image')
+    } finally {
+      this.loading.set(false)
     }
-
-    const uploadedImage = await this.storage.uploadImage(
-      imagePath,
-      optimizedImageBlob
-    )
-
-    if (uploadedImage) {
-      this.storyEditor.addImageToNode(this.nodeId, imagePath)
-    } else {
-      console.log('Not possible to upload image')
-      this.loadingMessage = 'Error uploading the image'
-    }
-
-    this.loadingMessage = undefined
-    this.loading = false
   }
 
   async removeNodeImage() {
     if (!this.image) return
-    const { data, error } = await this.database.supabase.storage
-      .from('images')
-      .remove([this.image])
-    if (error) {
-      console.log(error)
-    } else {
+    if (await this.storage.removeImage(this.image)) {
       this.storyEditor.removeImageFromNode(this.nodeId)
     }
   }
@@ -206,28 +221,28 @@ export class NodeComponent implements OnInit {
     this.storyEditor.removeCondition(this.nodeId, id)
   }
 
-  saveNodeText(e: any) {
-    const newText = e.target.value
+  saveNodeText(event: Event) {
+    const newText = this.getControlValue(event)
     this.storyEditor.updateNodeText(this.nodeId, newText)
   }
 
-  saveProperty(event: any) {
-    const newProperty = event.target.value
+  saveProperty(event: Event) {
+    const newProperty = this.getControlValue(event)
     this.storyEditor.updateNodeProperty(this.nodeId, newProperty)
   }
 
-  savePlaceholder(event: any) {
-    const newPlaceholder = event.target.value
+  savePlaceholder(event: Event) {
+    const newPlaceholder = this.getControlValue(event)
     this.storyEditor.updateNodePlaceholder(this.nodeId, newPlaceholder)
   }
 
-  saveDescription(event: any) {
-    const newDescription = event.target.value
+  saveDescription(event: Event) {
+    const newDescription = this.getControlValue(event)
     this.storyEditor.updateNodeDescription(this.nodeId, newDescription)
   }
 
-  saveButtonText(event: any) {
-    const newButtonText = event.target.value
+  saveButtonText(event: Event) {
+    const newButtonText = this.getControlValue(event)
     this.storyEditor.updateNodeButtonText(this.nodeId, newButtonText)
   }
 
@@ -247,5 +262,9 @@ export class NodeComponent implements OnInit {
     this.removeNode.emit(data)
 
     this.panzoom.resumeDrag()
+  }
+
+  private getControlValue(event: Event) {
+    return (event.target as HTMLInputElement | HTMLTextAreaElement).value
   }
 }

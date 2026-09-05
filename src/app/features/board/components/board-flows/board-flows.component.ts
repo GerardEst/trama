@@ -1,61 +1,87 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  ViewChild,
   ElementRef,
-  Signal,
-  computed,
   Input,
-  signal,
+  Signal,
+  ViewChild,
+  computed,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { node } from 'src/app/core/interfaces/interfaces'
+import { join, node } from 'src/app/core/interfaces/interfaces'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { StoryEditorService } from '../../services/story-editor.service'
+import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
+import { BoardJoinStroke, BoardPoint } from '../../board-interactions'
+
+interface Point {
+  left: number
+  top: number
+}
+
+interface CoordinateContext {
+  svg: SVGSVGElement
+  inverseMatrix: DOMMatrix
+}
+
+interface JoinOrigin {
+  id: string
+  join?: join[]
+}
+
+interface BoardFlowPath {
+  id: string
+  origin: string
+  destiny: string
+  toAnswer: boolean
+  svgPath: string
+}
+
+interface JoinContextMenuInfo {
+  origin?: string
+  destiny?: string
+  toAnswer?: boolean
+}
 
 @Component({
   selector: 'polo-board-flows',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent],
+  imports: [BasicButtonComponent],
   templateUrl: './board-flows.component.html',
   styleUrls: ['./board-flows.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardFlowsComponent {
-  @Input() drawingFrom?: any
-  @Input() drawingTo?: any
+  @Input() drawingStroke?: BoardJoinStroke
 
-  @ViewChild('svg') svg?: ElementRef
-  @ViewChild('openContextCursor') openContextCursor?: ElementRef
-  @ViewChild('joinContextMenu') joinContextMenu?: ElementRef
+  @ViewChild('svg') svg?: ElementRef<SVGSVGElement>
+  @ViewChild('openContextCursor')
+  openContextCursor?: ElementRef<HTMLElement>
+  @ViewChild('joinContextMenu') joinContextMenu?: ElementRef<HTMLElement>
 
-  showContextMenuCursor: boolean = false
-  showJoinContextMenu: boolean = false
+  showContextMenuCursor = false
+  showJoinContextMenu = false
 
-  flowOptions: any = {
-    pcurvature: 30,
-    ncurvature: -30,
+  readonly flowOptions = {
+    positiveCurvature: 30,
+    negativeCurvature: -30,
   }
 
-  joinContextMenuInfo: any = {
-    origin: undefined,
-    destiny: undefined,
-    toAnswer: undefined,
-  }
+  joinContextMenuInfo: JoinContextMenuInfo = {}
 
-  private readonly layoutVersion = signal(0)
-
-  paths: Signal<any> = computed(() => {
-    this.layoutVersion()
+  readonly paths: Signal<BoardFlowPath[]> = computed(() => {
+    this.anchorRegistry.version()
     return this.calculatePaths(this.activeStory.entireTree().nodes)
   })
 
   constructor(
     public activeStory: ActiveStoryService,
-    private storyEditor: StoryEditorService
+    private storyEditor: StoryEditorService,
+    private anchorRegistry: BoardAnchorRegistryService
   ) {}
 
-  refreshPaths() {
-    this.layoutVersion.update((version) => version + 1)
+  scheduleRefresh() {
+    this.anchorRegistry.invalidate()
   }
 
   changeCursorStyle(state: boolean) {
@@ -76,9 +102,7 @@ export class BoardFlowsComponent {
     toAnswer: boolean
   ) {
     this.showJoinContextMenu = true
-    this.joinContextMenuInfo.origin = origin
-    this.joinContextMenuInfo.destiny = destiny
-    this.joinContextMenuInfo.toAnswer = toAnswer
+    this.joinContextMenuInfo = { origin, destiny, toAnswer }
 
     if (!this.joinContextMenu) return
     this.joinContextMenu.nativeElement.style.top = event.offsetY - 11 + 'px'
@@ -86,11 +110,10 @@ export class BoardFlowsComponent {
   }
 
   deleteJoin() {
-    const removed = this.storyEditor.removeJoin(
-      this.joinContextMenuInfo.origin,
-      this.joinContextMenuInfo.destiny,
-      this.joinContextMenuInfo.toAnswer
-    )
+    const { origin, destiny, toAnswer } = this.joinContextMenuInfo
+    if (!origin || !destiny) return
+
+    const removed = this.storyEditor.removeJoin(origin, destiny, toAnswer)
     if (!removed) {
       console.warn('Impossible to delete the join')
       return
@@ -98,136 +121,134 @@ export class BoardFlowsComponent {
     this.showJoinContextMenu = false
   }
 
-  getDrawingPath(
-    initialElement: string,
-    finalPosition: HTMLElement | MouseEvent
-  ) {
-    if (!finalPosition) return
+  createPath(initialElement: HTMLElement, finalPosition: BoardPoint) {
+    const context = this.createCoordinateContext()
+    if (!context) return undefined
 
-    if (finalPosition instanceof HTMLElement) {
-      return this.calculatePath(initialElement, finalPosition)
-    }
+    const startPosition = this.getPositionOfElement(initialElement, context)
+    const endPosition = this.convertScreenCoordinatesToSVGCoordinates(
+      context,
+      finalPosition.x,
+      finalPosition.y
+    )
 
-    const startDivPosition = this.getPositionOfElement(initialElement)
-
-    const path = `M${startDivPosition?.left},${startDivPosition?.top} C${
-      startDivPosition?.left + this.flowOptions.pcurvature
-    },${startDivPosition?.top} ${
-      finalPosition?.offsetX + this.flowOptions.ncurvature
-    },${finalPosition?.offsetY} ${finalPosition?.offsetX},${
-      finalPosition?.offsetY
-    }`
-
-    return path
+    if (!startPosition || !endPosition) return undefined
+    return this.createCurvePath(startPosition, endPosition)
   }
 
-  // Builds all the paths needed
   calculatePaths(nodes: node[]) {
-    console.warn('Calculating paths')
+    const context = this.createCoordinateContext()
+    if (!context) return []
 
-    const paths: any = []
-    if (!nodes) return paths
+    const positions = new Map<string, Point>()
+    const paths: BoardFlowPath[] = []
 
-    for (const node of nodes) {
-      if (node.join) {
-        for (const join of node.join) {
-          paths.push(this.getPath(node, join))
-        }
-      }
-      if (node.answers) {
-        for (const answer of node.answers) {
-          if (answer.join) {
-            for (const join of answer.join) {
-              paths.push(this.getPath(answer, join))
-            }
-          }
-        }
-      }
-      if (node.conditions) {
-        for (const condition of node.conditions) {
-          if (condition.join) {
-            for (const join of condition.join) {
-              paths.push(this.getPath(condition, join))
-            }
-          }
-        }
-      }
-      if (node.fallbackCondition?.join) {
-        for (const join of node.fallbackCondition.join) {
-          paths.push(this.getPath(node.fallbackCondition, join))
-        }
+    for (const origin of this.getJoinOrigins(nodes)) {
+      for (const storyJoin of origin.join ?? []) {
+        const path = this.getPath(origin, storyJoin, context, positions)
+        if (path) paths.push(path)
       }
     }
 
     return paths
   }
 
-  getPath(origin: any, destiny: any) {
+  private getPath(
+    origin: JoinOrigin,
+    destiny: join,
+    context: CoordinateContext,
+    positions: Map<string, Point>
+  ): BoardFlowPath | undefined {
+    const toAnswer = !!destiny.toAnswer
+    const initialAnchor = `${origin.id}_join`
+    const finalAnchor = `${destiny.node}_joiner${toAnswer ? '--answers' : ''}`
+    const startPosition = this.getCachedPosition(
+      initialAnchor,
+      context,
+      positions
+    )
+    const endPosition = this.getCachedPosition(finalAnchor, context, positions)
+    if (!startPosition || !endPosition) return undefined
+
     return {
-      id: origin.id + destiny.node,
+      id: `${origin.id}::${destiny.node}::${toAnswer ? 'answers' : 'node'}`,
       origin: origin.id,
       destiny: destiny.node,
-      toAnswer: destiny.toAnswer,
-      svgPath: this.calculatePath(
-        origin.id + '_join',
-        destiny.node + `_joiner${destiny.toAnswer ? '--answers' : ''}`
-      ),
+      toAnswer,
+      svgPath: this.createCurvePath(startPosition, endPosition),
     }
   }
 
-  calculatePath(initialElement: string, finalElement: string | HTMLElement) {
-    const startDivPosition = this.getPositionOfElement(initialElement)
-    const endDivPosition = this.getPositionOfElement(finalElement)
+  private getCachedPosition(
+    anchorId: string,
+    context: CoordinateContext,
+    positions: Map<string, Point>
+  ) {
+    const cachedPosition = positions.get(anchorId)
+    if (cachedPosition) return cachedPosition
 
-    if (!startDivPosition || !endDivPosition) {
-      console.warn('Cannot get the path of non-existent element', {
-        initialElement,
-        finalElement,
-      })
-      return
-    }
-
-    const path = `M${startDivPosition.left},${startDivPosition.top} C${
-      startDivPosition.left + this.flowOptions.pcurvature
-    },${startDivPosition.top} ${
-      endDivPosition.left + this.flowOptions.ncurvature
-    },${endDivPosition.top} ${endDivPosition.left},${endDivPosition.top}`
-
-    return path
+    const position = this.getPositionOfElement(anchorId, context)
+    if (position) positions.set(anchorId, position)
+    return position
   }
 
-  getPositionOfElement(element: any) {
+  private getPositionOfElement(
+    element: string | HTMLElement,
+    context: CoordinateContext
+  ): Point | undefined {
     const childElement =
-      typeof element === 'string' ? document.getElementById(element) : element
-    if (!childElement || !this.svg) return null
+      typeof element === 'string' ? this.anchorRegistry.get(element) : element
+    if (!childElement) return undefined
 
     const childRect = childElement.getBoundingClientRect()
-
-    const centerX = childRect.left + childRect.width / 2
-    const centerY = childRect.top + childRect.height / 2
-
-    const svgPosition = this.convertScreenCoordinatesToSVGCoordinates(
-      this.svg.nativeElement,
-      centerX,
-      centerY
+    return this.convertScreenCoordinatesToSVGCoordinates(
+      context,
+      childRect.left + childRect.width / 2,
+      childRect.top + childRect.height / 2
     )
+  }
 
-    return {
-      left: svgPosition.x,
-      top: svgPosition.y,
+  private createCoordinateContext(): CoordinateContext | undefined {
+    const svg = this.svg?.nativeElement
+    const screenMatrix = svg?.getScreenCTM()
+    if (!svg || !screenMatrix) return undefined
+
+    return { svg, inverseMatrix: screenMatrix.inverse() }
+  }
+
+  private convertScreenCoordinatesToSVGCoordinates(
+    context: CoordinateContext,
+    x: number,
+    y: number
+  ): Point {
+    const point = context.svg.createSVGPoint()
+    point.x = x
+    point.y = y
+    const transformedPoint = point.matrixTransform(context.inverseMatrix)
+
+    return { left: transformedPoint.x, top: transformedPoint.y }
+  }
+
+  private createCurvePath(start: Point, end: Point) {
+    return `M${start.left},${start.top} C${
+      start.left + this.flowOptions.positiveCurvature
+    },${start.top} ${end.left + this.flowOptions.negativeCurvature},${
+      end.top
+    } ${end.left},${end.top}`
+  }
+
+  private *getJoinOrigins(nodes: node[]): Generator<JoinOrigin> {
+    for (const storyNode of nodes) {
+      yield storyNode
+      yield* this.getNestedJoinOrigins(storyNode.answers)
+      yield* this.getNestedJoinOrigins(storyNode.conditions)
+      if (storyNode.fallbackCondition) yield storyNode.fallbackCondition
     }
   }
 
-  convertScreenCoordinatesToSVGCoordinates(svgElement: any, x: any, y: any) {
-    const point = svgElement.createSVGPoint()
-    point.x = x
-    point.y = y
-
-    // Convert to SVG space using the current transformation matrix
-    const transformedPoint = point.matrixTransform(
-      svgElement.getScreenCTM().inverse()
-    )
-
-    return transformedPoint
+  private *getNestedJoinOrigins(
+    origins: readonly JoinOrigin[] | undefined
+  ): Generator<JoinOrigin> {
+    for (const origin of origins ?? []) yield origin
   }
 }

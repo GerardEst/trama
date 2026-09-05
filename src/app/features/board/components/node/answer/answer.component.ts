@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -7,46 +8,45 @@ import {
   ViewChild,
   OnInit,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { answer_requirement, event } from 'src/app/core/interfaces/interfaces'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { NodeEventsComponent } from '../node-events/node-events.component'
 import { NodeRequirementsComponent } from '../node-requirements/node-requirements.component'
 import { StoryEditorService } from '../../../services/story-editor.service'
+import { BoardAnchorDirective } from '../../../directives/board-anchor.directive'
 
 @Component({
   selector: 'polo-answer',
   standalone: true,
   imports: [
-    CommonModule,
     NodeEventsComponent,
     BasicButtonComponent,
     NodeRequirementsComponent,
+    BoardAnchorDirective,
   ],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerComponent implements OnInit {
-  id: string = ''
   events: Array<event> = []
   requirements: answer_requirement[] = []
 
+  @Input() answerId: string = ''
   @Input() text: string = ''
   @Input() hasJoin: boolean = false
-  @Output() onRemoveAnswer: EventEmitter<any> = new EventEmitter()
-  @ViewChild('textarea') textarea?: ElementRef
+  @Output() onRemoveAnswer = new EventEmitter<string>()
+  @ViewChild('textarea') textarea?: ElementRef<HTMLTextAreaElement>
 
   constructor(
     private storyEditor: StoryEditorService,
-    public elementRef: ElementRef,
     private panzoom: PanzoomService
   ) {}
 
   ngOnInit() {
-    this.id = this.elementRef.nativeElement.id
-    this.events = this.storyEditor.getEventsOfAnswer(this.id)
-    this.requirements = this.storyEditor.getRequirementsOfAnswer(this.id)
+    this.events = this.storyEditor.getEventsOfAnswer(this.answerId)
+    this.requirements = this.storyEditor.getRequirementsOfAnswer(this.answerId)
 
     if (this.panzoom.focusElements) {
       setTimeout(() => {
@@ -56,12 +56,12 @@ export class AnswerComponent implements OnInit {
     }
   }
 
-  saveAnswerText(e: any) {
-    const text = e.target.value
-    this.storyEditor.updateAnswerText(this.id, text)
+  saveAnswerText(event: Event) {
+    const text = (event.target as HTMLTextAreaElement).value
+    this.storyEditor.updateAnswerText(this.answerId, text)
   }
 
   removeAnswer() {
-    this.onRemoveAnswer.emit(this.id)
+    this.onRemoveAnswer.emit(this.answerId)
   }
 }
