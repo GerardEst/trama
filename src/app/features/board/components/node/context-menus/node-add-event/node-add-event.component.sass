@@ -9,10 +9,10 @@
   z-index: 20
   width: min(32rem, calc(100vw - 2rem))
   overflow: visible
-  background: #ffffff
-  border: 1px solid #dfe5ee
+  background: var(--polo-color-surface)
+  border: 1px solid var(--polo-color-border)
   border-radius: 1rem
-  box-shadow: 0 18px 48px rgba(31, 42, 68, 0.16), 0 3px 10px rgba(31, 42, 68, 0.08)
+  box-shadow: var(--polo-shadow-floating)
   color: var(--text-color)
 
   &::before
@@ -22,9 +22,9 @@
     width: 0.8rem
     height: 0.8rem
     content: ''
-    background: #ffffff
-    border-top: 1px solid #dfe5ee
-    border-left: 1px solid #dfe5ee
+    background: var(--polo-color-surface)
+    border-top: 1px solid var(--polo-color-border)
+    border-left: 1px solid var(--polo-color-border)
     transform: rotate(45deg)
 
   &__header
@@ -33,17 +33,17 @@
     justify-content: space-between
     gap: 1.5rem
     padding: 1.5rem 1.5rem 1.25rem
-    border-bottom: 1px solid #edf0f4
+    border-bottom: 1px solid var(--polo-color-surface-muted)
 
     h2
       margin-top: 0.15rem
-      color: #273248
+      color: var(--polo-color-text-strong)
       font-size: 1.5rem
       font-weight: 700
       line-height: 1.2
 
   &__eyebrow
-    color: var(--important-color-shade)
+    color: var(--polo-color-action)
     font-size: 0.75rem
     font-weight: 700
     letter-spacing: 0.09em
@@ -53,7 +53,7 @@
   &__description
     max-width: 24rem
     margin-top: 0.45rem
-    color: #697386
+    color: var(--polo-color-text-secondary)
     font-size: 0.92rem
     line-height: 1.45
 
@@ -78,13 +78,13 @@
       opacity: 0.65
 
     &:hover
-      background: var(--medium-gray)
+      background: var(--polo-color-surface-muted)
 
     &:active
       transform: scale(0.96)
 
     &:focus-visible
-      outline: 2px solid var(--important-color)
+      outline: 2px solid var(--polo-color-focus)
       outline-offset: 2px
 
   &__body
@@ -95,7 +95,7 @@
 
   &__label
     margin-bottom: 0.65rem
-    color: #38445a
+    color: var(--polo-color-text)
     font-size: 0.9rem
     font-weight: 700
 
@@ -113,8 +113,8 @@
     align-items: center
     gap: 0.65rem
     padding: 1rem 1.5rem
-    background: #fafbfc
-    border-top: 1px solid #edf0f4
+    background: var(--polo-color-surface-subtle)
+    border-top: 1px solid var(--polo-color-surface-muted)
     border-radius: 0 0 1rem 1rem
 
   &__actionsSpacer
@@ -122,7 +122,7 @@
 
   &__deletePrompt
     margin-right: auto
-    color: #8f2e2e
+    color: var(--polo-color-danger-text-strong)
     font-size: 0.9rem
     font-weight: 700
 
@@ -149,7 +149,7 @@
       transform: scale(0.97)
 
     &:focus-visible
-      outline: 2px solid var(--important-color)
+      outline: 2px solid var(--polo-color-focus)
       outline-offset: 2px
 
     &:disabled
@@ -157,38 +157,38 @@
       opacity: 0.45
 
     &--secondary
-      color: #4e596c
-      background: #ffffff
-      border-color: #d7dde7
+      color: var(--polo-color-text-secondary)
+      background: var(--polo-color-surface)
+      border-color: var(--polo-color-border-strong)
 
       &:hover
-        background: var(--medium-gray)
+        background: var(--polo-color-surface-muted)
 
     &--primary
       min-width: 8.5rem
-      color: #ffffff
-      background: var(--important-color-shade)
-      border-color: var(--important-color-shade)
+      color: var(--polo-color-text-on-action)
+      background: var(--polo-color-action)
+      border-color: var(--polo-color-action)
 
       &:hover:not(:disabled)
-        background: #304c7c
-        border-color: #304c7c
+        background: var(--polo-color-action-hover)
+        border-color: var(--polo-color-action-hover)
 
     &--delete
-      color: #a23636
+      color: var(--polo-color-danger-text)
 
       &:hover
-        background: var(--danger-light)
-        border-color: #ffcaca
+        background: var(--polo-color-danger-soft)
+        border-color: var(--polo-color-danger-border)
 
     &--confirmDelete
-      color: #ffffff
-      background: #b83a3a
-      border-color: #b83a3a
+      color: var(--polo-color-text-on-action)
+      background: var(--polo-color-danger)
+      border-color: var(--polo-color-danger)
 
       &:hover
-        background: #9f2f2f
-        border-color: #9f2f2f
+        background: var(--polo-color-danger-hover)
+        border-color: var(--polo-color-danger-hover)
 
 @media (max-width: 520px)
   .addEvent

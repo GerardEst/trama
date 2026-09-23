@@ -1,0 +1,109 @@
+:host
+  display: block
+  min-height: 100vh
+  background: var(--polo-color-canvas)
+
+.colorTokens
+  display: flex
+  max-width: 96rem
+  flex-direction: column
+  gap: 3rem
+  box-sizing: border-box
+  margin: 0 auto
+  padding: 4rem
+  color: var(--polo-color-text)
+
+  &__header
+    max-width: 58rem
+
+    h1
+      margin-top: 0.3rem
+      color: var(--polo-color-text-strong)
+      font-size: 2.5rem
+      font-weight: 700
+      line-height: 1.2
+
+    > p:last-child
+      margin-top: 0.75rem
+      color: var(--polo-color-text-secondary)
+      font-size: 1.1rem
+      line-height: 1.55
+
+  &__eyebrow
+    color: var(--polo-color-action)
+    font-size: 0.78rem
+    font-weight: 700
+    letter-spacing: 0.1em
+    text-transform: uppercase
+
+  &__group
+    display: grid
+    grid-template-columns: minmax(16rem, 0.32fr) minmax(0, 1fr)
+    gap: 2rem
+    padding-top: 2rem
+    border-top: 1px solid var(--polo-color-border)
+
+  &__groupHeader
+    h2
+      color: var(--polo-color-text-strong)
+      font-size: 1.35rem
+      font-weight: 700
+
+    p
+      max-width: 28rem
+      margin-top: 0.5rem
+      color: var(--polo-color-text-secondary)
+      line-height: 1.5
+
+  &__grid
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr))
+    gap: 1rem
+
+  &__card
+    overflow: hidden
+    background: var(--polo-color-surface)
+    border: 1px solid var(--polo-color-border)
+    border-radius: 0.8rem
+    box-shadow: var(--shadow-elevation-low)
+
+  &__swatch
+    height: 6.5rem
+    border-bottom: 1px solid var(--polo-color-border)
+
+  &__details
+    display: flex
+    min-height: 10rem
+    flex-direction: column
+    align-items: flex-start
+    padding: 1rem
+
+    strong
+      color: var(--polo-color-text-strong)
+      font-size: 0.95rem
+
+    code
+      margin-top: 0.4rem
+      color: var(--polo-color-action)
+      font-family: monospace
+      font-size: 0.76rem
+
+    span
+      margin-top: 0.35rem
+      color: var(--polo-color-text-muted)
+      font-family: monospace
+      font-size: 0.72rem
+
+    p
+      margin-top: auto
+      padding-top: 1rem
+      color: var(--polo-color-text-secondary)
+      font-size: 0.78rem
+      line-height: 1.4
+
+@media (max-width: 760px)
+  .colorTokens
+    padding: 2rem
+
+    &__group
+      grid-template-columns: 1fr

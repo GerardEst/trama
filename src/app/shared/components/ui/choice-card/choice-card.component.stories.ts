@@ -10,7 +10,7 @@ const meta: Meta<ChoiceCardComponent> = {
   decorators: [
     componentWrapperDecorator(
       (story) => `
-        <div style="width: 18rem; padding: 3rem; background: #f4f6f9;">
+        <div style="width: 18rem; padding: 3rem; background: var(--polo-color-canvas);">
           ${story}
         </div>
       `

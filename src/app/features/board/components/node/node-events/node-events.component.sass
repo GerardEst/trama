@@ -15,8 +15,8 @@
   justify-content: center
   gap: 0.45rem
   padding: 0.45rem 0.7rem
-  background-color: #ffffff
-  border: 1px dashed #aeb8c7
+  background-color: var(--polo-color-surface)
+  border: 1px dashed var(--polo-color-border-hover)
   border-radius: 0.65rem
   cursor: pointer
   touch-action: manipulation
@@ -28,19 +28,19 @@
     opacity: 0.72
 
   p
-    color: #596579
+    color: var(--polo-color-text-secondary)
     font-size: 0.82rem
     font-weight: 600
 
   &:hover
-    background-color: var(--important-color-tint)
-    border-color: var(--important-color)
+    background-color: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
 
   &:active
     transform: scale(0.96)
 
   &:focus-visible
-    outline: 2px solid var(--important-color)
+    outline: 2px solid var(--polo-color-focus)
     outline-offset: 2px
 
 .node__addEvent

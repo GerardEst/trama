@@ -67,7 +67,7 @@ const meta: Meta<NodeAddEventComponent> = {
     }),
     componentWrapperDecorator(
       (story) => `
-        <div style="min-height: 48rem; padding: 3rem; background: #f4f6f9; box-sizing: border-box;">
+        <div style="min-height: 48rem; padding: 3rem; background: var(--polo-color-canvas); box-sizing: border-box;">
           <div style="position: relative; width: min(32rem, calc(100vw - 6rem));">
             ${story}
           </div>

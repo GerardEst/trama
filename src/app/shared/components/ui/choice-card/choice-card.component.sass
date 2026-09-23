@@ -10,8 +10,8 @@
   gap: 0.7rem
   padding: 0.8rem
   text-align: left
-  background: #fafbfc
-  border: 1px solid #dfe5ee
+  background: var(--polo-color-surface-subtle)
+  border: 1px solid var(--polo-color-border)
   border-radius: 0.75rem
   cursor: pointer
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease
@@ -29,24 +29,24 @@
     gap: 0.15rem
 
   &__label
-    color: #38445a
+    color: var(--polo-color-text)
     font-size: 0.9rem
     line-height: 1.2
 
   &__description
-    color: #7c8799
+    color: var(--polo-color-text-muted)
     font-size: 0.72rem
     line-height: 1.25
 
   &:hover:not(:disabled)
-    border-color: #aeb9ca
-    background: #ffffff
+    border-color: var(--polo-color-border-hover)
+    background: var(--polo-color-surface)
 
   &:active:not(:disabled)
     transform: scale(0.98)
 
   &:focus-visible
-    outline: 2px solid var(--important-color)
+    outline: 2px solid var(--polo-color-focus)
     outline-offset: 2px
 
   &:disabled
@@ -54,15 +54,15 @@
     opacity: 0.48
 
   &--selected
-    background: var(--important-color-tint)
-    border-color: var(--important-color)
-    box-shadow: inset 0 0 0 1px var(--important-color)
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+    box-shadow: inset 0 0 0 1px var(--polo-color-focus)
 
     .choiceCard__icon
       opacity: 1
 
     .choiceCard__label
-      color: var(--important-color-shade)
+      color: var(--polo-color-action)
 
 @media (prefers-reduced-motion: reduce)
   .choiceCard
