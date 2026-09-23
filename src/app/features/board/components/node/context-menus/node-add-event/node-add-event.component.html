@@ -30,48 +30,30 @@
     <div class="addEvent__type" role="group" aria-label="Event type">
       <p class="addEvent__label">What should change?</p>
       <div class="addEvent__typeOptions">
-        <button
+        <polo-choice-card
           #typeOption
-          type="button"
-          class="addEvent__typeOption"
-          [class.active]="type === 'stat'"
-          [attr.aria-pressed]="type === 'stat'"
-          (click)="selectType('stat')"
-        >
-          <img src="/assets/icons/stat.svg" alt="" />
-          <span>
-            <strong>Stat</strong>
-            <small>Adjust a number</small>
-          </span>
-        </button>
-        <button
+          icon="/assets/icons/stat.svg"
+          label="Stat"
+          description="Adjust a number"
+          [selected]="type === 'stat'"
+          (chosen)="selectType('stat')"
+        ></polo-choice-card>
+        <polo-choice-card
           #typeOption
-          type="button"
-          class="addEvent__typeOption"
-          [class.active]="type === 'condition'"
-          [attr.aria-pressed]="type === 'condition'"
-          (click)="selectType('condition')"
-        >
-          <img src="/assets/icons/condition.svg" alt="" />
-          <span>
-            <strong>Condition</strong>
-            <small>Grant or remove</small>
-          </span>
-        </button>
-        <button
+          icon="/assets/icons/condition.svg"
+          label="Condition"
+          description="Grant or remove"
+          [selected]="type === 'condition'"
+          (chosen)="selectType('condition')"
+        ></polo-choice-card>
+        <polo-choice-card
           #typeOption
-          type="button"
-          class="addEvent__typeOption"
-          [class.active]="type === 'property'"
-          [attr.aria-pressed]="type === 'property'"
-          (click)="selectType('property')"
-        >
-          <img src="/assets/icons/tag.svg" alt="" />
-          <span>
-            <strong>Property</strong>
-            <small>Set a text value</small>
-          </span>
-        </button>
+          icon="/assets/icons/tag.svg"
+          label="Property"
+          description="Set a text value"
+          [selected]="type === 'property'"
+          (chosen)="selectType('property')"
+        ></polo-choice-card>
       </div>
     </div>
 

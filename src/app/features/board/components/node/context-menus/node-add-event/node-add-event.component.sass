@@ -104,68 +104,6 @@
     grid-template-columns: repeat(3, minmax(0, 1fr))
     gap: 0.65rem
 
-  &__typeOption
-    display: flex
-    min-width: 0
-    min-height: 5rem
-    align-items: center
-    gap: 0.7rem
-    padding: 0.8rem
-    text-align: left
-    background: #fafbfc
-    border: 1px solid #dfe5ee
-    border-radius: 0.75rem
-    cursor: pointer
-    touch-action: manipulation
-    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease
-
-    img
-      flex: 0 0 auto
-      width: 1.7rem
-      height: 1.7rem
-      opacity: 0.7
-
-    span
-      display: flex
-      min-width: 0
-      flex-direction: column
-      gap: 0.15rem
-
-    strong
-      color: #38445a
-      font-size: 0.9rem
-      line-height: 1.2
-
-    small
-      overflow: hidden
-      color: #7c8799
-      font-size: 0.72rem
-      line-height: 1.2
-      text-overflow: ellipsis
-      white-space: nowrap
-
-    &:hover
-      border-color: #aeb9ca
-      background: #ffffff
-
-    &:active
-      transform: scale(0.98)
-
-    &:focus-visible
-      outline: 2px solid var(--important-color)
-      outline-offset: 2px
-
-    &.active
-      background: var(--important-color-tint)
-      border-color: var(--important-color)
-      box-shadow: inset 0 0 0 1px var(--important-color)
-
-      img
-        opacity: 1
-
-      strong
-        color: var(--important-color-shade)
-
   &__content
     min-width: 0
 
@@ -263,12 +201,6 @@
     &__typeOptions
       grid-template-columns: 1fr
 
-    &__typeOption
-      min-height: 4.5rem
-
-      small
-        white-space: normal
-
     &__actions
       flex-wrap: wrap
       padding: 1rem 1.25rem
@@ -285,6 +217,5 @@
 
 @media (prefers-reduced-motion: reduce)
   .addEvent__close,
-  .addEvent__typeOption,
   .addEvent__button
     transition: none

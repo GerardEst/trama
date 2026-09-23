@@ -1,0 +1,16 @@
+<button
+  class="choiceCard"
+  type="button"
+  [class.choiceCard--selected]="selected"
+  [disabled]="disabled"
+  [attr.aria-pressed]="selected"
+  (click)="chosen.emit()"
+>
+  @if (icon) {
+    <img class="choiceCard__icon" [src]="icon" alt="" />
+  }
+  <span class="choiceCard__content">
+    <strong class="choiceCard__label">{{ label }}</strong>
+    <small class="choiceCard__description">{{ description }}</small>
+  </span>
+</button>

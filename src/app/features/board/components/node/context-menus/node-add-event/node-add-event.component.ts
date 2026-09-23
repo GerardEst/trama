@@ -9,13 +9,14 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core'
+import { ChoiceCardComponent } from 'src/app/shared/components/ui/choice-card/choice-card.component'
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
 import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modify-ref.component'
 
 @Component({
   selector: 'polo-node-add-event',
   standalone: true,
-  imports: [NodeAddModifyRefComponent],
+  imports: [ChoiceCardComponent, NodeAddModifyRefComponent],
   templateUrl: './node-add-event.component.html',
   styleUrl: './node-add-event.component.sass',
 })
@@ -36,8 +37,8 @@ export class NodeAddEventComponent
   @Input() property?: string
   @Input() amount?: string | number
 
-  @ViewChildren('typeOption') typeOptions?: QueryList<
-    ElementRef<HTMLButtonElement>
+  @ViewChildren('typeOption', { read: ElementRef }) typeOptions?: QueryList<
+    ElementRef<HTMLElement>
   >
 
   confirmingDelete = false
@@ -58,7 +59,10 @@ export class NodeAddEventComponent
       this.type
     )
     setTimeout(() =>
-      this.typeOptions?.get(selectedTypeIndex)?.nativeElement.focus()
+      this.typeOptions
+        ?.get(selectedTypeIndex)
+        ?.nativeElement.querySelector('button')
+        ?.focus()
     )
   }
 
