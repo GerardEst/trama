@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  QueryList,
+  ViewChildren,
+} from '@angular/core'
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
 import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modify-ref.component'
 
@@ -9,7 +19,10 @@ import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modif
   templateUrl: './node-add-event.component.html',
   styleUrl: './node-add-event.component.sass',
 })
-export class NodeAddEventComponent extends PopupBaseComponent {
+export class NodeAddEventComponent
+  extends PopupBaseComponent
+  implements AfterViewInit
+{
   // El popup per configurar l'event
   // S'obre al crear i modificar events
 
@@ -21,21 +34,69 @@ export class NodeAddEventComponent extends PopupBaseComponent {
   @Input() target: string = ''
   @Input() type: 'stat' | 'condition' | 'property' = 'stat'
   @Input() property?: string
-  @Input() amount?: string
+  @Input() amount?: string | number
 
-  onChangeTarget(event: any) {
+  @ViewChildren('typeOption') typeOptions?: QueryList<
+    ElementRef<HTMLButtonElement>
+  >
+
+  confirmingDelete = false
+
+  get canSave() {
+    if (!this.target) return false
+    if (this.type !== 'stat') return true
+
+    return (
+      this.amount !== undefined &&
+      this.amount !== '' &&
+      Number.isFinite(Number(this.amount))
+    )
+  }
+
+  ngAfterViewInit() {
+    const selectedTypeIndex = ['stat', 'condition', 'property'].indexOf(
+      this.type
+    )
+    setTimeout(() =>
+      this.typeOptions?.get(selectedTypeIndex)?.nativeElement.focus()
+    )
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.confirmingDelete) {
+      this.confirmingDelete = false
+      return
+    }
+
+    this.onCancel()
+  }
+
+  selectType(type: 'stat' | 'condition' | 'property') {
+    if (type === this.type) return
+
+    this.type = type
+    this.target = ''
+    this.amount = type === 'condition' ? 0 : undefined
+    this.property = undefined
+    this.confirmingDelete = false
+  }
+
+  onChangeTarget(event: { value: string }) {
     this.target = event.value
   }
 
-  onChangeAmount(event: any) {
+  onChangeAmount(event: { value: string | number }) {
     this.amount = event.value
   }
 
-  onChangeProperty(event: any) {
+  onChangeProperty(event: { value: string }) {
     this.property = event.value
   }
 
   saveEvent() {
+    if (!this.canSave) return
+
     this.onSaveEvent.emit({
       target: this.target,
       amount: this.amount,
@@ -43,6 +104,10 @@ export class NodeAddEventComponent extends PopupBaseComponent {
       property: this.property,
     })
     this.onClose.emit()
+  }
+
+  requestDelete() {
+    this.confirmingDelete = true
   }
 
   onCancel() {

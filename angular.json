@@ -93,6 +93,24 @@
             "styles": ["src/styles.sass"],
             "scripts": []
           }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "polo-angular:build",
+            "compodoc": false,
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "polo-angular:build",
+            "compodoc": false,
+            "outputDir": "storybook-static"
+          }
         }
       }
     }

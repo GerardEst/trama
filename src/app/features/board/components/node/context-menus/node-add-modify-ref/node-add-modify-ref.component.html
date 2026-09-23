@@ -1,28 +1,96 @@
 <div class="eventDetail">
-  @if (selectedOption) {
-    <p (click)="selectorOpen = true">{{ selectedOption }}</p>
-  } @else {
-    <p (click)="selectorOpen = true">Choose a {{ type }}</p>
-  }
+  <div class="eventDetail__field">
+    <label class="eventDetail__label" for="event-target">
+      {{ typeLabel }}
+      <span>Required</span>
+    </label>
+    <button
+      id="event-target"
+      class="eventDetail__selector"
+      type="button"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="selectorOpen"
+      (click)="selectorOpen = !selectorOpen"
+    >
+      <span [class.eventDetail__placeholder]="!selectedOption">
+        {{ selectedOptionName || 'Choose or create a ' + type }}
+      </span>
+      <img src="/assets/icons/chevron-down.svg" alt="" />
+    </button>
+    <p class="eventDetail__help">
+      Select an existing {{ type }} or create one without leaving this event.
+    </p>
+
+    @if (selectorOpen) {
+      <polo-select-or-create
+        [options]="options"
+        [message]="message"
+        [selectedOption]="selectedOption"
+        (onNewOption)="onNewOption($event)"
+        (onSelectOption)="onSelectOption($event)"
+        (onClose)="selectorOpen = false"
+      ></polo-select-or-create>
+    }
+  </div>
+
   @if (type === 'stat') {
-    <input type="number" (change)="changeAmount($event)" value="{{ amount }}" />
+    <div class="eventDetail__field">
+      <label class="eventDetail__label" for="event-amount">
+        Change by
+        <span>Required</span>
+      </label>
+      <input
+        id="event-amount"
+        class="eventDetail__input"
+        type="number"
+        inputmode="numeric"
+        placeholder="e.g. 5 or -2"
+        [value]="amount ?? ''"
+        (input)="changeAmount($event)"
+      />
+      <p class="eventDetail__help">
+        Use a positive number to increase it, or a negative one to decrease it.
+      </p>
+    </div>
   } @else if (type === 'condition') {
-    <input
-      type="checkbox"
-      [checked]="amount"
-      (change)="changeCheckbox($event)"
-      value="{{ amount }}"
-    />
-  } @else if (type === 'property') {
-    <input type="text" (change)="changeProperty($event)" value="{{ property }}" />
+    <div class="eventDetail__field">
+      <p class="eventDetail__label">Condition state</p>
+      <label class="eventDetail__switchRow" for="event-condition-active">
+        <span>
+          <strong>Active after this event</strong>
+          <small>Turn this off to remove the condition.</small>
+        </span>
+        <input
+          id="event-condition-active"
+          type="checkbox"
+          [checked]="isConditionActive"
+          (change)="changeCheckbox($event)"
+        />
+      </label>
+    </div>
+  } @else {
+    <div class="eventDetail__field">
+      <label class="eventDetail__label" for="event-property">
+        New value
+      </label>
+      <input
+        id="event-property"
+        class="eventDetail__input"
+        type="text"
+        placeholder="Enter a value"
+        [value]="property ?? ''"
+        (input)="changeProperty($event)"
+      />
+      <p class="eventDetail__help">
+        This replaces the property's current value. Leave empty to clear it.
+      </p>
+    </div>
   }
-  @if (selectorOpen) {
-    <polo-select-or-create
-      [options]="options"
-      [message]="message"
-      [selectedOption]="selectedOption"
-      (onNewOption)="onNewOption($event)"
-      (onSelectOption)="onSelectOption($event)"
-    ></polo-select-or-create>
+
+  @if (selectedOption) {
+    <div class="eventDetail__summary" aria-live="polite">
+      <span aria-hidden="true">→</span>
+      <p>{{ eventSummary }}</p>
+    </div>
   }
 </div>

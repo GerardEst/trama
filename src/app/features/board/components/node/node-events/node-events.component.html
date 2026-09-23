@@ -1,6 +1,14 @@
 <div class="node__events">
-  <button class="node__addEventButton" (click)="openAddEvent = true">
-    <img src="/assets/icons/plus.svg" alt="Add event" />
+  <button
+    class="node__addEventButton"
+    type="button"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="openAddEvent"
+    aria-label="Add event"
+    title="Add event"
+    (click)="openAddEvent = true"
+  >
+    <img src="/assets/icons/plus.svg" alt="" />
     @if (!events || events.length === 0) {
       <p>Add event</p>
     }

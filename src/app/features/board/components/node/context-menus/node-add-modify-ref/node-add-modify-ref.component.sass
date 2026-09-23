@@ -3,10 +3,209 @@
   display: block
 
 .eventDetail
-  display: flex
-  gap: 5px
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr)
+  gap: 1.25rem
+
+  &__field
+    position: relative
+    min-width: 0
+
+  &__label
+    display: flex
+    min-height: 1.5rem
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 0.5rem
+    color: #38445a
+    font-size: 0.9rem
+    font-weight: 700
+
+    span
+      color: #8892a2
+      font-size: 0.68rem
+      font-weight: 600
+      letter-spacing: 0.04em
+      text-transform: uppercase
+
+  &__selector
+    display: flex
+    width: 100%
+    min-height: 3.75rem
+    align-items: center
+    justify-content: space-between
+    gap: 0.75rem
+    padding: 0.75rem 1rem
+    text-align: left
+    background: #ffffff
+    border: 1px solid #cfd6e1
+    border-radius: 0.65rem
+    cursor: pointer
+    touch-action: manipulation
+    transition: border-color 160ms ease, box-shadow 160ms ease
+
+    span
+      overflow: hidden
+      color: #323d52
+      font-weight: 600
+      text-overflow: ellipsis
+      white-space: nowrap
+
+    img
+      flex: 0 0 auto
+      width: 1.2rem
+      height: 1.2rem
+      opacity: 0.55
+      transition: transform 160ms ease
+
+    &[aria-expanded='true']
+      border-color: var(--important-color)
+      box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.18)
+
+      img
+        transform: rotate(180deg)
+
+    &:hover
+      border-color: #9ba7b8
+
+    &:focus-visible
+      outline: 2px solid var(--important-color)
+      outline-offset: 2px
+
+  &__placeholder
+    color: #788395 !important
+    font-weight: 500 !important
+
+  input.eventDetail__input
+    width: 100%
+    min-height: 3.75rem
+    padding: 0.75rem 1rem
+    color: #323d52
+    background: #ffffff
+    border: 1px solid #cfd6e1
+    border-radius: 0.65rem
+    font-size: 1rem
+    transition: border-color 160ms ease, box-shadow 160ms ease
+
+    &::placeholder
+      color: #9aa3b1
+
+    &:hover
+      border-color: #9ba7b8
+
+    &:focus
+      border-color: var(--important-color)
+      outline: none
+      box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.18)
+
+  &__help
+    margin-top: 0.45rem
+    color: #778294
+    font-size: 0.75rem
+    line-height: 1.35
+
+  &__switchRow
+    display: flex
+    min-height: 3.75rem
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    padding: 0.7rem 0.8rem 0.7rem 1rem
+    background: #fafbfc
+    border: 1px solid #dfe5ee
+    border-radius: 0.65rem
+    cursor: pointer
+
+    span
+      display: flex
+      min-width: 0
+      flex-direction: column
+      gap: 0.15rem
+
+    strong
+      color: #38445a
+      font-size: 0.85rem
+
+    small
+      color: #778294
+      font-size: 0.7rem
+      line-height: 1.3
+
+    input[type='checkbox']
+      position: relative
+      flex: 0 0 auto
+      width: 3.2rem
+      height: 1.8rem
+      margin: 0
+      padding: 0
+      appearance: none
+      background: #c5ccd7
+      border: 0
+      border-radius: 999px
+      cursor: pointer
+      transition: background-color 160ms ease
+
+      &::after
+        position: absolute
+        top: 0.25rem
+        left: 0.25rem
+        width: 1.3rem
+        height: 1.3rem
+        content: ''
+        background: #ffffff
+        border-radius: 50%
+        box-shadow: 0 1px 3px rgba(31, 42, 68, 0.25)
+        transition: transform 160ms ease
+
+      &:checked
+        background: var(--important-color-shade)
+
+        &::after
+          transform: translateX(1.4rem)
+
+      &:focus-visible
+        outline: 2px solid var(--important-color)
+        outline-offset: 2px
+
+  &__summary
+    display: flex
+    grid-column: 1 / -1
+    align-items: flex-start
+    gap: 0.65rem
+    padding: 0.8rem 1rem
+    color: #44516a
+    background: #f3f7fd
+    border-left: 3px solid var(--important-color)
+    border-radius: 0.25rem 0.65rem 0.65rem 0.25rem
+
+    span
+      color: var(--important-color-shade)
+      font-size: 1.1rem
+      font-weight: 700
+      line-height: 1.2
+
+    p
+      font-size: 0.82rem
+      line-height: 1.45
 
 polo-select-or-create
   position: absolute
-  top: 100%
+  top: calc(100% + 0.5rem)
   left: 0
+  z-index: 30
+  width: 100%
+
+@media (max-width: 520px)
+  .eventDetail
+    grid-template-columns: 1fr
+
+    &__summary
+      grid-column: 1
+
+@media (prefers-reduced-motion: reduce)
+  .eventDetail__selector,
+  .eventDetail__selector img,
+  .eventDetail__input,
+  .eventDetail__switchRow input,
+  .eventDetail__switchRow input::after
+    transition: none

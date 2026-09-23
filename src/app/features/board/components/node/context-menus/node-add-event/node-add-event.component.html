@@ -1,39 +1,140 @@
-<div class="addEvent">
-  <div class="addEvent__type">
-    <div class="addEvent__type__item" [class.active]="type === 'stat'" (click)="type = 'stat'">
-      <p>Stat</p>
+<section
+  class="addEvent"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="event-dialog-title"
+  aria-describedby="event-dialog-description"
+>
+  <header class="addEvent__header">
+    <div>
+      <p class="addEvent__eyebrow">Player state</p>
+      <h2 id="event-dialog-title">
+        {{ canBeDeleted ? 'Edit event' : 'Add event' }}
+      </h2>
+      <p id="event-dialog-description" class="addEvent__description">
+        Update the player when this part of the story is reached.
+      </p>
     </div>
-    <div
-      class="addEvent__type__item"
-      [class.active]="type === 'condition'"
-      (click)="type = 'condition'"
+    <button
+      class="addEvent__close"
+      type="button"
+      aria-label="Close event editor"
+      title="Close"
+      (click)="onCancel()"
     >
-      <p>Condition</p>
+      <img src="/assets/icons/close.svg" alt="" />
+    </button>
+  </header>
+
+  <div class="addEvent__body">
+    <div class="addEvent__type" role="group" aria-label="Event type">
+      <p class="addEvent__label">What should change?</p>
+      <div class="addEvent__typeOptions">
+        <button
+          #typeOption
+          type="button"
+          class="addEvent__typeOption"
+          [class.active]="type === 'stat'"
+          [attr.aria-pressed]="type === 'stat'"
+          (click)="selectType('stat')"
+        >
+          <img src="/assets/icons/stat.svg" alt="" />
+          <span>
+            <strong>Stat</strong>
+            <small>Adjust a number</small>
+          </span>
+        </button>
+        <button
+          #typeOption
+          type="button"
+          class="addEvent__typeOption"
+          [class.active]="type === 'condition'"
+          [attr.aria-pressed]="type === 'condition'"
+          (click)="selectType('condition')"
+        >
+          <img src="/assets/icons/condition.svg" alt="" />
+          <span>
+            <strong>Condition</strong>
+            <small>Grant or remove</small>
+          </span>
+        </button>
+        <button
+          #typeOption
+          type="button"
+          class="addEvent__typeOption"
+          [class.active]="type === 'property'"
+          [attr.aria-pressed]="type === 'property'"
+          (click)="selectType('property')"
+        >
+          <img src="/assets/icons/tag.svg" alt="" />
+          <span>
+            <strong>Property</strong>
+            <small>Set a text value</small>
+          </span>
+        </button>
+      </div>
     </div>
-    <div
-      class="addEvent__type__item"
-      [class.active]="type === 'property'"
-      (click)="type = 'property'"
-    >
-      <p>Property</p>
+
+    <div class="addEvent__content">
+      <polo-node-add-modify-ref
+        [type]="type"
+        [selectedOption]="target"
+        [amount]="amount"
+        [property]="property"
+        (onChangeTarget)="onChangeTarget($event)"
+        (onChangeAmount)="onChangeAmount($event)"
+        (onChangeProperty)="onChangeProperty($event)"
+      ></polo-node-add-modify-ref>
     </div>
   </div>
-  <div class="addEvent__content">
-    <polo-node-add-modify-ref
-      [type]="type"
-      [selectedOption]="target"
-      [amount]="amount"
-      [property]="property"
-      (onChangeTarget)="onChangeTarget($event)"
-      (onChangeAmount)="onChangeAmount($event)"
-      (onChangeProperty)="onChangeProperty($event)"
-    ></polo-node-add-modify-ref>
-  </div>
-  <div class="addEvent__actions">
-    @if (canBeDeleted) {
-      <button class="addEvent__actions__button" (click)="deleteEvent()">Delete</button>
+
+  <footer class="addEvent__actions">
+    @if (confirmingDelete) {
+      <p class="addEvent__deletePrompt" aria-live="polite">
+        Delete this event?
+      </p>
+      <button
+        class="addEvent__button addEvent__button--secondary"
+        type="button"
+        (click)="confirmingDelete = false"
+      >
+        Keep event
+      </button>
+      <button
+        class="addEvent__button addEvent__button--confirmDelete"
+        type="button"
+        (click)="deleteEvent()"
+      >
+        Delete
+      </button>
+    } @else {
+      @if (canBeDeleted) {
+        <button
+          class="addEvent__button addEvent__button--delete"
+          type="button"
+          (click)="requestDelete()"
+        >
+          <img src="/assets/icons/trash.svg" alt="" />
+          Delete
+        </button>
+      }
+      <span class="addEvent__actionsSpacer"></span>
+      <button
+        class="addEvent__button addEvent__button--secondary"
+        type="button"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        class="addEvent__button addEvent__button--primary"
+        type="button"
+        [disabled]="!canSave"
+        [attr.title]="canSave ? null : 'Choose a target and complete the event details'"
+        (click)="saveEvent()"
+      >
+        {{ canBeDeleted ? 'Save changes' : 'Add event' }}
+      </button>
     }
-    <button class="addEvent__actions__button" (click)="onCancel()">Cancel</button>
-    <button class="addEvent__actions__button" (click)="saveEvent()">Ok</button>
-  </div>
-</div>
+  </footer>
+</section>

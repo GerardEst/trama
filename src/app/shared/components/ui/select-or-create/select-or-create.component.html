@@ -1,23 +1,52 @@
-<div class="dropdown">
+<div class="dropdown" role="dialog" aria-label="Choose or create an option">
+  <div class="dropdown__header">
+    <label for="option-search">Find or create</label>
+    @if (message) {
+      <p id="option-search-help">{{ message }}</p>
+    }
+  </div>
+
   <input
     #search
-    type="text"
+    id="option-search"
+    class="dropdown__search"
+    type="search"
+    autocomplete="off"
+    aria-describedby="option-search-help"
     (input)="filterOptions($event)"
-    placeholder="Search"
+    (keydown.enter)="submitSearch()"
+    placeholder="Type a name…"
   />
-  <p class="message">{{ message }}</p>
+
   @if (newOption) {
-    <polo-basic-button
+    <button
+      class="dropdown__create"
+      type="button"
       (click)="createOption(newOption)"
-      *ngIf="newOption"
-      text="Create {{ newOption }}"
     >
-    </polo-basic-button>
+      <img src="/assets/icons/plus.svg" alt="" />
+      <span>Create <strong>“{{ newOption }}”</strong></span>
+    </button>
   }
 
-  <div class="dropdown__options">
-    <li (click)="selectOption(option)" *ngFor="let option of searchedOptions">
-      {{ option.name }}
-    </li>
+  <div class="dropdown__options" role="listbox" aria-label="Available options">
+    @for (option of searchedOptions; track option.id) {
+      <button
+        class="dropdown__option"
+        type="button"
+        role="option"
+        [attr.aria-selected]="option.id === selectedOption"
+        (click)="selectOption(option)"
+      >
+        <span>{{ option.name }}</span>
+        @if (option.id === selectedOption) {
+          <img src="/assets/icons/tick.svg" alt="" />
+        }
+      </button>
+    } @empty {
+      @if (!newOption) {
+        <p class="dropdown__empty">No matching options</p>
+      }
+    }
   </div>
 </div>

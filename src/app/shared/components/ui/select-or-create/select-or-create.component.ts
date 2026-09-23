@@ -7,14 +7,12 @@ import {
   ElementRef,
   OnInit,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { PopupBaseComponent } from '../popup-base/popup-base.component'
 
 @Component({
   selector: 'polo-select-or-create',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent],
+  imports: [],
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
 })
@@ -22,16 +20,18 @@ export class SelectOrCreateComponent
   extends PopupBaseComponent
   implements OnInit
 {
-  @Input() options: Array<any> = []
+  @Input() options: Array<{ id: string; name: string }> = []
   @Input() message?: string
   @Input() selectedOption?: string
-  @Output() onNewOption: EventEmitter<any> = new EventEmitter()
-  @Output() onSelectOption: EventEmitter<any> = new EventEmitter()
+  @Output() onNewOption = new EventEmitter<string>()
+  @Output() onSelectOption = new EventEmitter<{
+    value: string
+    previousValue?: string
+  }>()
   @ViewChild('search') search?: ElementRef
 
-  searchedOptions: Array<any> = []
+  searchedOptions: Array<{ id: string; name: string }> = []
   newOption?: string
-  optionsOpened: boolean = false
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -40,26 +40,43 @@ export class SelectOrCreateComponent
     this.searchedOptions = this.options
   }
 
-  selectOption(option: any) {
+  selectOption(option: { id: string; name: string }) {
     const previousValue = this.selectedOption
-    this.selectedOption = option
+    this.selectedOption = option.id
     this.onSelectOption.emit({
       value: option.id,
       previousValue: previousValue,
     })
   }
 
-  createOption(newOption: string) {
-    this.onNewOption.emit(newOption)
+  createOption(newOption: string | undefined) {
+    const trimmedOption = newOption?.trim()
+    if (!trimmedOption) return
+
+    this.onNewOption.emit(trimmedOption)
   }
 
-  filterOptions(event: any) {
-    const value = event.target.value
+  filterOptions(event: Event) {
+    const value = (event.target as HTMLInputElement).value.trim()
+    const normalizedValue = value.toLowerCase()
 
     this.searchedOptions = this.options.filter((option) =>
-      option.name.toLowerCase().includes(value.toLowerCase())
+      option.name.toLowerCase().includes(normalizedValue)
     )
 
-    this.newOption = this.searchedOptions[0]?.name != value ? value : undefined
+    const exactMatch = this.options.some(
+      (option) => option.name.toLowerCase() === normalizedValue
+    )
+    this.newOption = value && !exactMatch ? value : undefined
+  }
+
+  submitSearch() {
+    if (this.newOption) {
+      this.createOption(this.newOption)
+      return
+    }
+
+    const firstOption = this.searchedOptions[0]
+    if (firstOption) this.selectOption(firstOption)
   }
 }

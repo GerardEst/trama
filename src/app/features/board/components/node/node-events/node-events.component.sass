@@ -4,23 +4,51 @@
 .node__events
   display: flex
   flex-wrap: wrap
-  gap: 5px
-  padding: 2px
+  gap: 0.4rem
+  padding: 0.2rem
 
 .node__addEventButton
-  display: flex
+  display: inline-flex
+  min-width: 3rem
+  min-height: 3rem
   align-items: center
-  gap: 5px
-  background-color: var(--medium-gray)
-  border-radius: 10px
-  padding: 2px 5px
+  justify-content: center
+  gap: 0.45rem
+  padding: 0.45rem 0.7rem
+  background-color: #ffffff
+  border: 1px dashed #aeb8c7
+  border-radius: 0.65rem
   cursor: pointer
-  border: 1px solid var(--dark-gray)
+  touch-action: manipulation
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease
+
   img
-    width: 10px
-    height: 10px
+    width: 1rem
+    height: 1rem
+    opacity: 0.72
+
+  p
+    color: #596579
+    font-size: 0.82rem
+    font-weight: 600
+
+  &:hover
+    background-color: var(--important-color-tint)
+    border-color: var(--important-color)
+
+  &:active
+    transform: scale(0.96)
+
+  &:focus-visible
+    outline: 2px solid var(--important-color)
+    outline-offset: 2px
 
 .node__addEvent
   position: absolute
   bottom: 0
   left: 0
+  z-index: 20
+
+@media (prefers-reduced-motion: reduce)
+  .node__addEventButton
+    transition: none
