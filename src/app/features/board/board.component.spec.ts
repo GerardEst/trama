@@ -1,6 +1,8 @@
 import { CdkDrag, CdkDragEnd, DragRef } from '@angular/cdk/drag-drop'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
+import { DatabaseService } from 'src/app/core/services/database.service'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardComponent } from './board.component'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
@@ -23,6 +25,47 @@ describe('BoardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('removes a node event from the rendered board, tree and queued save', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    const database = TestBed.inject(DatabaseService)
+    const save = spyOn(database, 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        {
+          id: 'node_0',
+          type: 'content',
+          left: 0,
+          top: 0,
+          events: [
+            {
+              id: 'event_1',
+              target: 'condition_1',
+              type: 'condition',
+              amount: '1',
+              action: 'alterCondition',
+            },
+          ],
+        },
+      ],
+      refs: { condition_1: { name: 'key', type: 'condition' } },
+    })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('.node__event')!.click()
+    fixture.detectChanges()
+    host.querySelector<HTMLButtonElement>('.addEvent__button--delete')!.click()
+    fixture.detectChanges()
+    host
+      .querySelector<HTMLButtonElement>('.addEvent__button--confirmDelete')!
+      .click()
+    fixture.detectChanges()
+
+    expect(activeStory.entireTree().nodes[0].events).toEqual([])
+    expect(host.querySelector('.node__event')).toBeNull()
+    expect(save.calls.mostRecent().args[0]).toBe('story-1')
+    expect(save.calls.mostRecent().args[1].nodes[0].events).toEqual([])
   })
 
   it('provides isolated panzoom state to every board', () => {

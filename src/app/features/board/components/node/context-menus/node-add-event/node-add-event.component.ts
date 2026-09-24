@@ -33,6 +33,7 @@ export class NodeAddEventComponent
   @Input() canBeDeleted: boolean = false
   @Input() eventId: string = ''
   @Input() target: string = ''
+  @Input() originalTarget?: string
   @Input() type: 'stat' | 'condition' | 'property' = 'stat'
   @Input() property?: string
   @Input() amount?: string | number
@@ -103,6 +104,7 @@ export class NodeAddEventComponent
 
     this.onSaveEvent.emit({
       target: this.target,
+      previousTarget: this.originalTarget,
       amount: this.amount,
       type: this.type,
       property: this.property,
@@ -120,7 +122,7 @@ export class NodeAddEventComponent
 
   deleteEvent() {
     this.onDeleteEvent.emit({
-      target: this.target,
+      target: this.originalTarget ?? this.target,
       amount: this.amount,
       type: this.type,
       property: this.property,

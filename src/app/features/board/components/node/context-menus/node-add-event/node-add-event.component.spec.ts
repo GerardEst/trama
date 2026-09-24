@@ -52,11 +52,24 @@ describe('NodeAddEventComponent', () => {
 
     expect(component.onSaveEvent.emit).toHaveBeenCalledWith({
       target: 'stat_health',
+      previousTarget: undefined,
       amount: '5',
       type: 'stat',
       property: undefined,
     })
     expect(component.onClose.emit).toHaveBeenCalled()
+  })
+
+  it('deletes the original event even if the target was changed in the editor', () => {
+    component.originalTarget = 'condition_old'
+    component.target = 'condition_new'
+    spyOn(component.onDeleteEvent, 'emit')
+
+    component.deleteEvent()
+
+    expect(component.onDeleteEvent.emit).toHaveBeenCalledWith(
+      jasmine.objectContaining({ target: 'condition_old' })
+    )
   })
 
   it('requires confirmation before deleting an event', () => {

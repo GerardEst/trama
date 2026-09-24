@@ -31,6 +31,7 @@ export class NodeAddRequirementComponent extends PopupBaseComponent {
   @Input() canBeDeleted: boolean = false
   @Input() eventId: string = ''
   @Input() target: string = ''
+  @Input() originalTarget?: string
   @Input() type: 'stat' | 'condition' = 'stat'
   @Input() property?: string
   @Input() amount?: string | number
@@ -92,7 +93,7 @@ export class NodeAddRequirementComponent extends PopupBaseComponent {
 
   deleteRequirement() {
     this.onDeleteRequirement.emit({
-      target: this.target,
+      target: this.originalTarget ?? this.target,
       amount: this.amount ?? 0,
       type: this.type,
     })

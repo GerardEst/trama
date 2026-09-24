@@ -21,7 +21,7 @@ export class NodeEventsComponent {
   set events(events: event[] | undefined) {
     this.storyEvents = structuredClone(events ?? [])
   }
-  get events() {
+  get events(): event[] {
     return this.storyEvents
   }
 
@@ -29,22 +29,40 @@ export class NodeEventsComponent {
 
   constructor(private storyEditor: StoryEditorService) {}
 
-  saveEvent(changedEvent: event) {
-    const eventToSave: event = {
-      ...changedEvent,
-      action: changedEvent.type === 'stat' ? 'alterStat' : 'alterCondition',
-    }
-    const eventIndex = this.storyEvents.findIndex(
-      (storyEvent) => storyEvent.target === eventToSave.target
+  saveEvent(changedEvent: {
+    target: string
+    previousTarget?: string
+    type: event['type']
+    amount?: string | number
+    property?: string
+  }) {
+    const previousTarget = changedEvent.previousTarget ?? changedEvent.target
+    const existing = this.storyEvents.find(
+      (storyEvent) => storyEvent.target === previousTarget
     )
+    const eventToSave: event = {
+      id: existing?.id ?? `event_${changedEvent.target}`,
+      target: changedEvent.target,
+      type: changedEvent.type,
+      amount: String(changedEvent.amount ?? ''),
+      property: changedEvent.property,
+      action:
+        changedEvent.type === 'stat'
+          ? 'alterStat'
+          : changedEvent.type === 'condition'
+            ? 'alterCondition'
+            : 'alterProperty',
+    }
 
-    this.storyEvents =
-      eventIndex === -1
-        ? [...this.storyEvents, eventToSave]
-        : this.storyEvents.map((storyEvent, index) =>
-            index === eventIndex ? eventToSave : storyEvent
-          )
-
+    // An edited target replaces the old event; a target can only have one event.
+    this.storyEvents = [
+      ...this.storyEvents.filter(
+        (storyEvent) =>
+          storyEvent.target !== previousTarget &&
+          storyEvent.target !== eventToSave.target
+      ),
+      eventToSave,
+    ]
     this.persistEvents()
   }
 

@@ -115,10 +115,12 @@ describe('GameEngineService', () => {
       ]
       const storedNode = structuredClone(tree.nodes[0])
 
-      const result: any = engine.buildNextNodeFromJoin({
+      const playable = engine.buildNextNodeFromJoin({
         node: 'node_1',
         toAnswer: true,
       })
+      engine.filterAvailableAnswers(playable)
+      const result: any = engine.interpolateNodeTexts(playable)
 
       expect(result).toEqual(
         jasmine.objectContaining({
@@ -164,6 +166,28 @@ describe('GameEngineService', () => {
         [statRequirement('gold', 5)]
       )
       expect(result).toBe(false)
+    })
+
+    it('accepts a zero threshold when the player has no stat', () => {
+      expect(
+        engine.playerHasAnswerRequirements(
+          {},
+          [],
+          [],
+          [statRequirement('gold', 0)]
+        )
+      ).toBe(true)
+    })
+
+    it('rejects an invalid threshold rather than unlocking an answer', () => {
+      expect(
+        engine.playerHasAnswerRequirements(
+          {},
+          [],
+          [],
+          [statRequirement('gold', NaN)]
+        )
+      ).toBe(false)
     })
 
     it('fails a stat requirement when the player lacks the stat', () => {
@@ -325,6 +349,11 @@ describe('GameEngineService', () => {
       expect(player.playerStats()).toEqual([{ id: 'gold', amount: 3 }])
     })
 
+    it('preserves fractional stat amounts accepted by the editor', () => {
+      engine.applyEvents([statEvent('gold', '1.5')])
+      expect(player.playerStats()).toEqual([{ id: 'gold', amount: 1.5 }])
+    })
+
     it('increments an existing stat', () => {
       player.playerStats.set([{ id: 'gold', amount: 4 }])
       engine.applyEvents([statEvent('gold', '2')])
@@ -346,6 +375,50 @@ describe('GameEngineService', () => {
       player.playerConditions.set([{ id: 'hasKey' }])
       engine.applyEvents([conditionEvent('hasKey', '1')])
       expect(player.playerConditions()).toEqual([{ id: 'hasKey' }])
+    })
+
+    it('removes a condition at index zero without removing an unrelated one', () => {
+      player.playerConditions.set([{ id: 'hasKey' }, { id: 'other' }])
+      engine.applyEvents([conditionEvent('hasKey', '0')])
+      expect(player.playerConditions()).toEqual([{ id: 'other' }])
+      engine.applyEvents([conditionEvent('missing', '0')])
+      expect(player.playerConditions()).toEqual([{ id: 'other' }])
+    })
+
+    it('applies property events, including ones saved with the legacy action', () => {
+      engine.applyEvents([
+        {
+          id: 'event_1',
+          target: 'property_name',
+          type: 'property',
+          amount: '',
+          property: 'Ada',
+          action: 'alterCondition',
+        },
+      ])
+      expect(player.playerProperties()).toEqual({ property_name: 'Ada' })
+    })
+
+    it('checks answers against node events after they are applied', () => {
+      const storyNode: node = {
+        id: 'node_1',
+        type: 'content',
+        top: 0,
+        left: 0,
+        events: [conditionEvent('hasKey', '1')],
+        answers: [
+          { id: 'yes', requirements: [conditionRequirement('hasKey', 1)] },
+          { id: 'no', requirements: [conditionRequirement('hasKey', 0)] },
+        ],
+      }
+      tree.nodes = [storyNode]
+      const playable = engine.buildNextNodeFromJoin({ node: 'node_1' })
+      engine.applyEvents(playable.events ?? [])
+      engine.filterAvailableAnswers(playable)
+      expect(playable.answers?.map((answer) => answer.id)).toEqual(['yes'])
+      expect(
+        engine.interpolateNodeTexts({ ...playable, text: '#hasKey' }).text
+      ).toBe('true')
     })
 
     it('sets a player property via alterProperty', () => {

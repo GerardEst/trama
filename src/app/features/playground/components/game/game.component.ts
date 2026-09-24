@@ -72,7 +72,6 @@ export class GameComponent {
 
   initializeGame() {
     if (!this.gameInitialized) {
-      console.log('Game initialized. Enjoy!')
       this.gameInitialized = true
       this.nextStep([{ node: 'node_0' }])
     }
@@ -91,11 +90,9 @@ export class GameComponent {
 
   // Each step can contain multiple nodes
   nextStep(possibleJoins: Array<join>, addToCurrentStep: boolean = false) {
-    console.log('Choosing next step from possible joins:', possibleJoins)
     const randomlyChoosedJoin = this.gameEngine.getRandomJoin(possibleJoins)
-    console.log('Choosed next step:', randomlyChoosedJoin)
 
-    const activeNode =
+    let activeNode =
       this.gameEngine.buildNextNodeFromJoin(randomlyChoosedJoin)
     const isDistributor = activeNode.type === 'distributor'
     const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
@@ -116,10 +113,12 @@ export class GameComponent {
     }, this.TIME_BETWEEN_NODES)
 
     setTimeout(() => {
+      this.gameEngine.applyEvents(activeNode.events ?? [])
+      this.gameEngine.filterAvailableAnswers(activeNode)
+      activeNode = this.gameEngine.interpolateNodeTexts(activeNode)
       this.activeNodes.push(activeNode)
       if (this.activeNodes.length === 1) this.scrollToNewNode()
-
-      this.registerNodeEvents(activeNode)
+      this.notifyNodeDrawn(activeNode)
 
       if (isNonInteractableNode) {
         this.nextStep(activeNode.join ?? [], true)
@@ -146,12 +145,7 @@ export class GameComponent {
           text: shareText,
           url: window.location.href,
         })
-        .then(() => {
-          console.log('Successful share')
-        })
-        .catch((error) => console.log('Error sharing', error))
-    } else {
-      console.log('Web Share API is not supported in your browser.')
+        .catch((error) => console.warn('Error sharing', error))
     }
   }
 
@@ -163,9 +157,7 @@ export class GameComponent {
     this.onSelectAnswer.emit(answer)
   }
 
-  registerNodeEvents(node: node) {
-    console.log('Registering node events:', node)
-    if (node.events) this.gameEngine.applyEvents(node.events)
+  notifyNodeDrawn(node: node) {
     if (node.type !== 'distributor') this.onDrawNode.emit(node)
     if (node.type === 'end') this.onEndGame.emit()
   }

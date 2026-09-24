@@ -46,27 +46,25 @@ export class GameEngineService {
   }
 
   buildNextNodeFromJoin(originJoin: join) {
-    console.log('Building next node')
-
     const storedNode = this.activeStory
       .entireTree()
       .nodes.find((storyNode) => storyNode.id === originJoin.node)
     if (!storedNode) throw new Error('Next node not found')
 
     // The runtime copy can be enriched without changing the authored story.
-    let nextNode = structuredClone(storedNode) as playableNode
+    const nextNode = structuredClone(storedNode) as playableNode
 
     // Li afegim el valor de toAnswer, que farem servir per saltar-nos o no el text quan el pintem
     nextNode.jumpToAnswers = originJoin.toAnswer
 
-    // Substituim tots els textos per els finals amb interpolacions
-    nextNode = this.interpolateNodeTexts(nextNode)
-
     // Afegim un valor random per obligar el track del @for a repintar encara que repetim node
     nextNode.key = Date.now() + Math.random()
 
-    // Treiem totes les respostes que no pot triar l'usuari per falta de requirements
-    nextNode.answers &&= nextNode.answers?.filter((answer: node_answer) =>
+    return nextNode
+  }
+
+  filterAvailableAnswers(storyNode: node) {
+    storyNode.answers = storyNode.answers?.filter((answer: node_answer) =>
       this.playerHasAnswerRequirements(
         this.player.playerProperties(),
         this.player.playerStats(),
@@ -74,8 +72,6 @@ export class GameEngineService {
         answer.requirements
       )
     )
-
-    return nextNode
   }
 
   interpolateNodeTexts(node: node) {
@@ -201,11 +197,9 @@ export class GameEngineService {
 
     // If reached this point, no condition was met, we use the fallback condition
     if (!node.fallbackCondition) {
-      console.log('Distributor node with no fallback condition')
       return []
     }
     if (node.fallbackCondition.join) {
-      console.log('Using fallback join')
       return node.fallbackCondition.join
     }
 
@@ -216,28 +210,22 @@ export class GameEngineService {
   // Requirements
 
   playerHasAnswerRequirements(
-    playerProperties: property,
+    _playerProperties: property,
     playerStats: Array<stat>,
     playerConditions: Array<condition>,
     requirements?: Array<answer_requirement>
   ) {
     if (!requirements || requirements.length === 0) return true
 
-    console.log('Checking player requirements:', requirements)
-    console.log('Using player data:', {
-      properties: playerProperties,
-      stats: playerStats,
-      conditions: playerConditions,
-    })
-
     for (const requirement of requirements) {
       const refId = getRequirementRefId(requirement)
       if (!refId) return false
 
       const requiredAmount = Number(requirement.amount)
+      if (!Number.isFinite(requiredAmount)) return false
       if (requirement.type === 'stat') {
         const playerStat = playerStats.find((stat) => stat.id === refId)
-        if (!playerStat || playerStat.amount < requiredAmount) return false
+        if ((playerStat?.amount ?? 0) < requiredAmount) return false
       }
 
       if (requirement.type === 'condition') {
@@ -255,12 +243,16 @@ export class GameEngineService {
   // Events / player state mutation
 
   applyEvents(events: Array<event>) {
-    console.log('Applying events:', events)
     events?.forEach((event) => {
-      if (event.action === 'alterStat') this.alterStat(event)
-      if (event.action === 'alterCondition') this.alterCondition(event)
+      // Older property events were saved with alterCondition as their action.
+      if (event.type === 'property') {
+        this.alterProperty(event.target, event.property ?? '')
+      } else if (event.action === 'alterStat') {
+        this.alterStat(event)
+      } else if (event.action === 'alterCondition') {
+        this.alterCondition(event)
+      }
     })
-    console.log('Player stats after events:', this.player.playerStats())
   }
 
   alterProperty(property: string, value: string) {
@@ -271,7 +263,8 @@ export class GameEngineService {
   }
 
   private alterStat(event: event) {
-    const amount = parseInt(event.amount)
+    const amount = Number(event.amount)
+    if (!Number.isFinite(amount)) return
 
     const statIndex = this.player
       .playerStats()
@@ -291,18 +284,19 @@ export class GameEngineService {
   }
 
   private alterCondition(event: event) {
-    if (event.amount) {
+    if (Number(event.amount) === 1) {
       const condition = this.player
         .playerConditions()
         .find((element: condition) => element.id === event.target)
 
       if (!condition) this.player.playerConditions().push({ id: event.target })
     } else {
-      const condition = this.player
+      const conditionIndex = this.player
         .playerConditions()
         .findIndex((condition: condition) => condition.id === event.target)
 
-      if (condition) this.player.playerConditions().splice(condition, 1)
+      if (conditionIndex !== -1)
+        this.player.playerConditions().splice(conditionIndex, 1)
     }
   }
 

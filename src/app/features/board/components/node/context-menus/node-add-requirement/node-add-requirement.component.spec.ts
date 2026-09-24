@@ -42,6 +42,18 @@ describe('NodeAddRequirementComponent', () => {
     expect(component.amount).toBe(1)
   })
 
+  it('deletes the original requirement after selecting another target', () => {
+    component.originalTarget = 'condition_old'
+    component.target = 'condition_new'
+    spyOn(component.onDeleteRequirement, 'emit')
+
+    component.deleteRequirement()
+
+    expect(component.onDeleteRequirement.emit).toHaveBeenCalledWith(
+      jasmine.objectContaining({ target: 'condition_old' })
+    )
+  })
+
   it('emits a complete requirement when saving', () => {
     spyOn(component.onSaveRequirement, 'emit')
     component.type = 'condition'

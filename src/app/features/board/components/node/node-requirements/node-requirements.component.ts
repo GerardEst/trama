@@ -31,17 +31,26 @@ export class NodeRequirementsComponent {
       type: element.type,
       amount: Number(element.amount),
     }
+    const previousTarget = element.previousValue ?? element.target
     const existingIndex = this.requirements.findIndex(
-      (requirement) =>
-        getRequirementRefId(requirement) === element.previousValue
+      (requirement) => getRequirementRefId(requirement) === previousTarget
     )
 
-    this.requirements =
-      existingIndex === -1
-        ? [...this.requirements, updatedRequirement]
-        : this.requirements.map((requirement, index) =>
-            index === existingIndex ? updatedRequirement : requirement
-          )
+    this.requirements = this.requirements
+      .filter(
+        (requirement, index) =>
+          index === existingIndex ||
+          (getRequirementRefId(requirement) !== previousTarget &&
+            getRequirementRefId(requirement) !== element.target)
+      )
+      .map((requirement) =>
+        existingIndex !== -1 &&
+        getRequirementRefId(requirement) === previousTarget
+          ? updatedRequirement
+          : requirement
+      )
+    if (existingIndex === -1)
+      this.requirements = [...this.requirements, updatedRequirement]
 
     this.storyEditor.saveAnswerRequirements(this.answerId, this.requirements)
   }
