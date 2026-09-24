@@ -2,38 +2,80 @@
   position: relative
   display: flex
   flex-direction: column
-  border: 1px solid var(--medium-gray)
-  border-radius: 1rem
-:host:hover .delete-answer
-  opacity: 1
-  mouse-events: auto
+  gap: 0.55rem
+  padding: 0.65rem
+  background: var(--polo-color-surface)
+  border: 1px solid var(--polo-color-border)
+  border-radius: 0.8rem
+  transition: border-color 160ms ease, box-shadow 160ms ease
+
+  &:hover
+    border-color: var(--polo-color-border-hover)
+    box-shadow: var(--polo-shadow-control)
+
+  &:hover .delete-answer,
+  &:focus-within .delete-answer
+    opacity: 1
+    pointer-events: auto
+
 :host.highlighted
-  outline: 2px solid #2ECC71
+  outline: 2px solid var(--polo-color-success)
+  outline-offset: 2px
 
 .delete-answer
-  mouse-events: none
   opacity: 0
+  pointer-events: none
+  transition: opacity 160ms ease
+
 .top-bar
   display: flex
-  align-items: center
+  min-height: 2.75rem
+  align-items: flex-start
   justify-content: space-between
+  gap: 0.5rem
+
 textarea
-  border: none
-  min-height: 0
-  field-sizing: content
-  resize: none
-.union_point
-  width: 1.5rem
-  height: 1rem
-  background-color: white
-  border: 1px solid var(--dark-gray)
+  width: 100%
+  min-height: 4.5rem
+  box-sizing: border-box
+  padding: 0.65rem 0.7rem
+  color: var(--polo-color-text)
+  background: var(--polo-color-surface-subtle)
+  border: 1px solid transparent
   border-radius: 0.6rem
-  align-self: center
-  cursor: crosshair
+  field-sizing: content
+  line-height: 1.45
+  resize: vertical
+
+  &::placeholder
+    color: var(--polo-color-placeholder)
+
+  &:focus
+    background: var(--polo-color-surface)
+    border-color: var(--polo-color-focus)
+    outline: none
+    box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
+
+.union_point
   position: absolute
+  top: 50%
   right: 0
-  transform: translateX(73%)
-  &--hasJoin
-    background-color: var(--medium-gray)
-.union_point:hover
-  background-color: var(--medium-gray)
+  width: 1.75rem
+  height: 1.15rem
+  background: var(--polo-color-surface)
+  border: 1px solid var(--polo-color-border-hover)
+  border-radius: 999px
+  cursor: crosshair
+  transform: translate(62%, -50%)
+  transition: background-color 160ms ease, border-color 160ms ease
+
+  &--hasJoin,
+  &:hover
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+
+@media (prefers-reduced-motion: reduce)
+  :host,
+  .delete-answer,
+  .union_point
+    transition: none

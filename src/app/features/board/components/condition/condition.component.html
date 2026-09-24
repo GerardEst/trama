@@ -1,31 +1,49 @@
-@if (fallback === true) {
-  <p>Fallback</p>
-} @else {
-  <polo-basic-button
-    icon="/assets/icons/trash.svg"
-    (click)="removeCondition()"
-    title="Remove condition"
-  ></polo-basic-button>
-  <select id="ref" (change)="saveCondition($event)">
-    <option selected>None</option>
-    @for (ref of refOptions; track $index) {
-      <option [selected]="selectedRef === ref.id" id="{{ ref.id }}">
-        {{ ref.name }}
-      </option>
-    }
-  </select>
-  <select id="comparator" (change)="saveCondition($event)">
-    <option selected>None</option>
-    <option [selected]="comparator === 'equalto'" id="equalto">equal to</option>
-    <option [selected]="comparator === 'lessthan'" id="lessthan">less than</option>
-    <option [selected]="comparator === 'morethan'" id="morethan">more than</option>
-  </select>
-  @if (refType === 'property') {
-    <input id="value" (change)="saveCondition($event)" type="text" value="{{ value }}" />
+<div class="condition" [class.condition--fallback]="fallback">
+  @if (fallback === true) {
+    <span class="condition__fallbackIcon" aria-hidden="true">↳</span>
+    <div class="condition__fallbackCopy">
+      <strong>Fallback path</strong>
+      <span>Used when no condition matches</span>
+    </div>
   } @else {
-    <input id="value" (change)="saveCondition($event)" type="number" value="{{ value }}" />
+    <polo-basic-button
+      class="condition__delete"
+      size="s"
+      [transparent]="true"
+      icon="/assets/icons/trash.svg"
+      (click)="removeCondition()"
+      title="Remove condition"
+    ></polo-basic-button>
+    <label class="condition__field">
+      <span>Reference</span>
+      <select id="ref" aria-label="Condition reference" (change)="saveCondition($event)">
+        <option selected>None</option>
+        @for (ref of refOptions; track $index) {
+          <option [selected]="selectedRef === ref.id" id="{{ ref.id }}">
+            {{ ref.name }}
+          </option>
+        }
+      </select>
+    </label>
+    <label class="condition__field condition__field--comparator">
+      <span>Rule</span>
+      <select id="comparator" aria-label="Condition comparator" (change)="saveCondition($event)">
+        <option selected>None</option>
+        <option [selected]="comparator === 'equalto'" id="equalto">equal to</option>
+        <option [selected]="comparator === 'lessthan'" id="lessthan">less than</option>
+        <option [selected]="comparator === 'morethan'" id="morethan">more than</option>
+      </select>
+    </label>
+    <div class="condition__field condition__field--value">
+      <span>Value</span>
+      @if (refType === 'property') {
+        <input id="value" aria-label="Condition value" (change)="saveCondition($event)" type="text" value="{{ value }}" />
+      } @else {
+        <input id="value" aria-label="Condition value" (change)="saveCondition($event)" type="number" value="{{ value }}" />
+      }
+    </div>
   }
-}
+</div>
 <div
   class="union_point"
   [attr.data-board-origin]="conditionId"

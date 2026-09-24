@@ -12,12 +12,26 @@ export class NodeRequirementComponent {
   @Output() onSaveRequirement: EventEmitter<any> = new EventEmitter()
   @Output() onDeleteRequirement: EventEmitter<any> = new EventEmitter()
 
-  @Input() type: 'stat' | 'condition' | 'property' = 'stat'
+  @Input() type: 'stat' | 'condition' = 'stat'
   @Input() amount!: string
   @Input() target!: string
-  @Input() property?: string
 
   openModifyRequirement: boolean = false
+
+  get displayTarget() {
+    return (this.target || '')
+      .replace(/^(stat|condition|property)_/, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/^\w/, (letter) => letter.toUpperCase())
+  }
+
+  get displayValue() {
+    if (this.type === 'condition') {
+      return Number(this.amount) ? 'Required' : 'Must be off'
+    }
+
+    return `≥ ${this.amount}`
+  }
 
   saveRequirement(event: any) {
     this.onSaveRequirement.emit({

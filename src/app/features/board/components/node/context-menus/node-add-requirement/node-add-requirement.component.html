@@ -1,36 +1,111 @@
-<div class="addRequirement">
-  <div class="addRequirement__type">
-    <div
-      class="addRequirement__type__item"
-      [class.active]="type === 'stat'"
-      (click)="type = 'stat'"
-    >
-      <p>Stat</p>
+<section
+  class="addRequirement"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="requirement-dialog-title"
+  aria-describedby="requirement-dialog-description"
+>
+  <header class="addRequirement__header">
+    <div>
+      <p class="addRequirement__eyebrow">Answer access</p>
+      <h2 id="requirement-dialog-title">
+        {{ canBeDeleted ? 'Edit requirement' : 'Add requirement' }}
+      </h2>
+      <p id="requirement-dialog-description" class="addRequirement__description">
+        Decide what the player needs before this answer is available.
+      </p>
     </div>
-    <div
-      class="addRequirement__type__item"
-      [class.active]="type === 'condition'"
-      (click)="type = 'condition'"
+    <button
+      class="addRequirement__close"
+      type="button"
+      aria-label="Close requirement editor"
+      title="Close"
+      (click)="onCancel()"
     >
-      <p>Condition</p>
+      <img src="/assets/icons/close.svg" alt="" />
+    </button>
+  </header>
+
+  <div class="addRequirement__body">
+    <div class="addRequirement__type" role="group" aria-label="Requirement type">
+      <p class="addRequirement__label">What does the player need?</p>
+      <div class="addRequirement__typeOptions">
+        <polo-choice-card
+          icon="/assets/icons/stat.svg"
+          label="Stat threshold"
+          description="Require a minimum value"
+          [selected]="type === 'stat'"
+          (chosen)="selectType('stat')"
+        ></polo-choice-card>
+        <polo-choice-card
+          icon="/assets/icons/condition.svg"
+          label="Condition"
+          description="Require an active state"
+          [selected]="type === 'condition'"
+          (chosen)="selectType('condition')"
+        ></polo-choice-card>
+      </div>
+    </div>
+
+    <div class="addRequirement__content">
+      <polo-node-add-modify-ref
+        mode="requirement"
+        [type]="type"
+        [selectedOption]="target"
+        [amount]="amount"
+        (onChangeTarget)="onChangeTarget($event)"
+        (onChangeAmount)="onChangeAmount($event)"
+      ></polo-node-add-modify-ref>
     </div>
   </div>
-  <div class="addRequirement__content">
-    <polo-node-add-modify-ref
-      [type]="type"
-      [selectedOption]="target"
-      [amount]="amount"
-      [property]="property"
-      (onChangeTarget)="onChangeTarget($event)"
-      (onChangeAmount)="onChangeAmount($event)"
-      (onChangeProperty)="onChangeProperty($event)"
-    ></polo-node-add-modify-ref>
-  </div>
-  <div class="addRequirement__actions">
-    @if (canBeDeleted) {
-      <button class="addRequirement__actions__button" (click)="deleteRequirement()">Delete</button>
+
+  <footer class="addRequirement__actions">
+    @if (confirmingDelete) {
+      <p class="addRequirement__deletePrompt" aria-live="polite">
+        Delete this requirement?
+      </p>
+      <button
+        class="addRequirement__button addRequirement__button--secondary"
+        type="button"
+        (click)="confirmingDelete = false"
+      >
+        Keep requirement
+      </button>
+      <button
+        class="addRequirement__button addRequirement__button--confirmDelete"
+        type="button"
+        (click)="deleteRequirement()"
+      >
+        Delete
+      </button>
+    } @else {
+      @if (canBeDeleted) {
+        <button
+          class="addRequirement__button addRequirement__button--delete"
+          type="button"
+          (click)="confirmingDelete = true"
+        >
+          <img src="/assets/icons/trash.svg" alt="" />
+          Delete
+        </button>
+      }
+      <span class="addRequirement__actionsSpacer"></span>
+      <button
+        class="addRequirement__button addRequirement__button--secondary"
+        type="button"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        class="addRequirement__button addRequirement__button--primary"
+        type="button"
+        [disabled]="!canSave"
+        [attr.title]="canSave ? null : 'Choose a target and complete the requirement details'"
+        (click)="saveRequirement()"
+      >
+        {{ canBeDeleted ? 'Save changes' : 'Add requirement' }}
+      </button>
     }
-    <button class="addRequirement__actions__button" (click)="onCancel()">Cancel</button>
-    <button class="addRequirement__actions__button" (click)="saveRequirement()">Ok</button>
-  </div>
-</div>
+  </footer>
+</section>

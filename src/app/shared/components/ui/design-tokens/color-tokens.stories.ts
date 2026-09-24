@@ -218,7 +218,7 @@ class ColorTokensStoryComponent implements OnInit {
 }
 
 const meta: Meta<ColorTokensStoryComponent> = {
-  title: 'Design System/Tokens/Colors',
+  title: 'Design System/Foundations/Colors',
   component: ColorTokensStoryComponent,
   parameters: {
     layout: 'fullscreen',

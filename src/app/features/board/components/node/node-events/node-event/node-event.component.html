@@ -1,11 +1,19 @@
-<div
+<button
   class="node__event"
+  type="button"
+  [class.node__event--negative]="isNegative"
+  [class.node__event--condition]="type === 'condition'"
+  [class.node__event--property]="type === 'property'"
+  [attr.aria-label]="'Edit event ' + displayTarget + ', ' + displayValue"
   (click)="openModifyEvent = true"
-  [style.background-color]="isNegative ? 'var(--danger-light)' : 'var(--success-light)'"
-  [style.border-color]="isNegative ? 'var(--danger)' : 'var(--success)'"
 >
-  <p>{{ target }} {{ amount }}</p>
-</div>
+  <img
+    [src]="type === 'stat' ? '/assets/icons/stat.svg' : type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/tag.svg'"
+    alt=""
+  />
+  <span>{{ displayTarget }}</span>
+  <strong>{{ displayValue }}</strong>
+</button>
 
 @if (openModifyEvent) {
   <div class="node__modifyEvent">

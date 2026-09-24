@@ -9,6 +9,27 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        order: [
+          'Design System',
+          [
+            'Overview',
+            'Foundations',
+            ['*'],
+            'Atoms',
+            ['*'],
+            'Molecules',
+            ['*'],
+            'Organisms',
+            ['*'],
+          ],
+          'Board',
+          ['Molecules', ['*'], 'Organisms', ['*']],
+          '*',
+        ],
+      },
+    },
   },
 }
 

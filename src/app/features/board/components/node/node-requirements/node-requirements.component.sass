@@ -1,26 +1,56 @@
 :host
   position: relative
+  display: block
+  width: 100%
 
 .node__requirements
   display: flex
   flex-wrap: wrap
-  gap: 5px
-  padding: 2px
+  align-items: center
+  gap: 0.4rem
 
 .node__addRequirementButton
-  display: flex
+  display: inline-flex
+  min-width: 2.5rem
+  min-height: 2.5rem
   align-items: center
-  gap: 5px
-  background-color: var(--medium-gray)
-  border-radius: 10px
-  padding: 2px 5px
+  justify-content: center
+  gap: 0.4rem
+  padding: 0.4rem 0.6rem
+  color: var(--polo-color-text-secondary)
+  background: var(--polo-color-surface)
+  border: 1px dashed var(--polo-color-border-hover)
+  border-radius: 999px
   cursor: pointer
-  border: 1px solid var(--dark-gray)
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease
+
   img
-    width: 10px
-    height: 10px
+    width: 0.85rem
+    height: 0.85rem
+    opacity: 0.72
+
+  p
+    color: var(--polo-color-text-secondary)
+    font-size: 0.74rem
+    font-weight: 700
+
+  &:hover
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+
+  &:active
+    transform: scale(0.96)
+
+  &:focus-visible
+    outline: 2px solid var(--polo-color-focus)
+    outline-offset: 2px
 
 .node__addRequirement
   position: absolute
-  bottom: 0
+  top: calc(100% + 0.5rem)
   left: 0
+  z-index: 40
+
+@media (prefers-reduced-motion: reduce)
+  .node__addRequirementButton
+    transition: none

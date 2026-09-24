@@ -1,6 +1,14 @@
 <div class="node__requirements">
-  <button class="node__addRequirementButton" (click)="openAddRequirement = true">
-    <img src="/assets/icons/plus.svg" alt="Add requirement" />
+  <button
+    class="node__addRequirementButton"
+    type="button"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="openAddRequirement"
+    aria-label="Add requirement"
+    title="Add requirement"
+    (click)="openAddRequirement = true"
+  >
+    <img src="/assets/icons/plus.svg" alt="" />
     @if (!requirements || requirements.length === 0) {
       <p>Add requirement</p>
     }

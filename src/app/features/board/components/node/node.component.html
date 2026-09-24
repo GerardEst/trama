@@ -1,10 +1,14 @@
 <div
   class="node"
+  [class.node--text]="type === 'text'"
+  [class.node--content]="type === 'content'"
+  [class.node--distributor]="type === 'distributor'"
+  [class.node--end]="type === 'end'"
   [attr.data-board-join-node]="nodeId"
   [attr.data-board-join-anchor]="nodeId + '_joiner'"
   data-board-join-to-answers="false"
 >
-  <header>
+  <header class="node__header">
     <span
       class="joiner"
       [poloBoardAnchor]="nodeId + '_joiner'"
@@ -12,8 +16,10 @@
     <ng-content select="dragHandle"> </ng-content>
 
     <polo-basic-button
+      class="node__menuButton"
+      size="s"
       [transparent]="true"
-      title="Duplicate node"
+      title="Node options"
       icon="/assets/icons/hamburger-menu.svg"
       (click)="optionsOpen = true"
     ></polo-basic-button>
@@ -33,7 +39,7 @@
   <div class="node__events">
     <polo-node-events [events]="events" [nodeId]="nodeId"></polo-node-events>
   </div>
-  <main>
+  <main class="node__body">
     @if (type === 'distributor') {
       @if (conditions && conditions.length > 0) {
         <div class="node__answers">
@@ -65,7 +71,13 @@
           [canDelete]="true"
         ></polo-image>
       }
-      <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+      <textarea
+        #textarea
+        class="node__text"
+        aria-label="End node text"
+        placeholder="Write the ending…"
+        (change)="saveNodeText($event)"
+      >{{ text }}</textarea>
       <div class="node__linkoptions">
         @if (database.user()?.profile?.subscription_status === 'active') {
           <div class="node__linkoptions__header">
@@ -137,7 +149,13 @@
           [class.union_point--hasJoin]="join && join.length > 0"
         ></div>
       }
-      <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
+      <textarea
+        #textarea
+        class="node__text"
+        aria-label="Node text"
+        placeholder="Write the passage…"
+        (change)="saveNodeText($event)"
+      >{{ text }}</textarea>
       @if (answers && answers.length > 0) {
         <div
           class="node__answers"
@@ -175,8 +193,14 @@
         [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
-      <textarea #textarea (change)="saveNodeText($event)">{{ text }}</textarea>
-      <label>
+      <textarea
+        #textarea
+        class="node__text"
+        aria-label="Prompt text"
+        placeholder="Ask the player something…"
+        (change)="saveNodeText($event)"
+      >{{ text }}</textarea>
+      <label class="node__field">
         <p>Property</p>
         <input
           type="text"
@@ -185,7 +209,7 @@
           value="{{ userTextOptions?.property }}"
         />
       </label>
-      <label>
+      <label class="node__field">
         <p>Placeholder</p>
         <input
           type="text"
@@ -194,7 +218,7 @@
           value="{{ userTextOptions?.placeholder }}"
         />
       </label>
-      <label>
+      <label class="node__field">
         <p>Button text</p>
         <input
           type="text"
@@ -203,7 +227,7 @@
           value="{{ userTextOptions?.buttonText }}"
         />
       </label>
-      <label>
+      <label class="node__field">
         <p>Description</p>
         <textarea
           (change)="saveDescription($event)"
@@ -213,7 +237,7 @@
       </label>
     }
   </main>
-  <footer>
+  <footer class="node__footer">
     <p>{{ nodeId }}</p>
     @if (type === 'distributor') {
       <polo-basic-button (click)="addCondition()" text="Add condition"></polo-basic-button>

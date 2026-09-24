@@ -7,74 +7,8 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr)
   gap: 1.25rem
 
-  &__field
-    position: relative
+  polo-form-field
     min-width: 0
-
-  &__label
-    display: flex
-    min-height: 1.5rem
-    align-items: center
-    justify-content: space-between
-    margin-bottom: 0.5rem
-    color: var(--polo-color-text)
-    font-size: 0.9rem
-    font-weight: 700
-
-    span
-      color: var(--polo-color-text-muted)
-      font-size: 0.68rem
-      font-weight: 600
-      letter-spacing: 0.04em
-      text-transform: uppercase
-
-  &__selector
-    display: flex
-    width: 100%
-    min-height: 3.75rem
-    align-items: center
-    justify-content: space-between
-    gap: 0.75rem
-    padding: 0.75rem 1rem
-    text-align: left
-    background: var(--polo-color-surface)
-    border: 1px solid var(--polo-color-border-strong)
-    border-radius: 0.65rem
-    cursor: pointer
-    touch-action: manipulation
-    transition: border-color 160ms ease, box-shadow 160ms ease
-
-    span
-      overflow: hidden
-      color: var(--polo-color-text)
-      font-weight: 600
-      text-overflow: ellipsis
-      white-space: nowrap
-
-    img
-      flex: 0 0 auto
-      width: 1.2rem
-      height: 1.2rem
-      opacity: 0.55
-      transition: transform 160ms ease
-
-    &[aria-expanded='true']
-      border-color: var(--polo-color-focus)
-      box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
-
-      img
-        transform: rotate(180deg)
-
-    &:hover
-      border-color: var(--polo-color-border-hover)
-
-    &:focus-visible
-      outline: 2px solid var(--polo-color-focus)
-      outline-offset: 2px
-
-  &__placeholder
-    color: var(--polo-color-text-muted) !important
-    font-weight: 500 !important
 
   input.eventDetail__input
     width: 100%
@@ -97,12 +31,6 @@
       border-color: var(--polo-color-focus)
       outline: none
       box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
-
-  &__help
-    margin-top: 0.45rem
-    color: var(--polo-color-text-muted)
-    font-size: 0.75rem
-    line-height: 1.35
 
   &__switchRow
     display: flex
@@ -133,9 +61,9 @@
 
     input[type='checkbox']
       position: relative
-      flex: 0 0 auto
       width: 3.2rem
       height: 1.8rem
+      flex: 0 0 auto
       margin: 0
       padding: 0
       appearance: none
@@ -188,13 +116,6 @@
       font-size: 0.82rem
       line-height: 1.45
 
-polo-select-or-create
-  position: absolute
-  top: calc(100% + 0.5rem)
-  left: 0
-  z-index: 30
-  width: 100%
-
 @media (max-width: 520px)
   .eventDetail
     grid-template-columns: 1fr
@@ -203,8 +124,6 @@ polo-select-or-create
       grid-column: 1
 
 @media (prefers-reduced-motion: reduce)
-  .eventDetail__selector,
-  .eventDetail__selector img,
   .eventDetail__input,
   .eventDetail__switchRow input,
   .eventDetail__switchRow input::after

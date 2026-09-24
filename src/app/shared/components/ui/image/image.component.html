@@ -1,13 +1,25 @@
-<div class="image">
-  @if(loading){
-  <img width="30px" src="/assets/icons/loading.svg" />
+<figure class="image" [class.image--loading]="loading || loadingMessage">
+  @if (loading) {
+    <img class="image__spinner" src="/assets/icons/loading.svg" alt="" />
   }
-  @if(loadingMessage){
-  <p class="txt-white">{{loadingMessage}}</p>
-  }@else {
-  <img width="100%"
-    [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + storageRoute" />
-  <polo-basic-button class="image__remove" text="Delete image" title="Delete image"
-    (click)="onRemoveImage.emit()"></polo-basic-button>
+  @if (loadingMessage) {
+    <figcaption class="image__message">{{ loadingMessage }}</figcaption>
+  } @else if (storageRoute) {
+    <img
+      class="image__preview"
+      [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + storageRoute"
+      alt="Node illustration"
+    />
+    @if (canDelete) {
+      <polo-basic-button
+        class="image__remove"
+        size="s"
+        type="danger"
+        icon="/assets/icons/trash.svg"
+        text="Remove"
+        title="Remove image"
+        (click)="onRemoveImage.emit()"
+      ></polo-basic-button>
+    }
   }
-</div>
+</figure>

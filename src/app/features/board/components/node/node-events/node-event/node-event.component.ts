@@ -28,6 +28,21 @@ export class NodeEventComponent implements OnInit, OnChanges {
   isNegative: boolean = false
   openModifyEvent: boolean = false
 
+  get displayTarget() {
+    return (this.target || '')
+      .replace(/^(stat|condition|property)_/, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/^\w/, (letter) => letter.toUpperCase())
+  }
+
+  get displayValue() {
+    if (this.type === 'condition') return Number(this.amount) ? 'On' : 'Off'
+    if (this.type === 'property') return this.property || 'Cleared'
+
+    const numericAmount = Number(this.amount)
+    return numericAmount > 0 ? `+${this.amount}` : `${this.amount}`
+  }
+
   ngOnInit() {
     if (!this.amount) return
     this.isNegative = this.getIsNegative(this.amount)

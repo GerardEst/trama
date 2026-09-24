@@ -3,16 +3,65 @@
   display: block
 
 .node__event
-  display: flex
+  display: inline-flex
+  min-height: 2.5rem
+  max-width: 12rem
   align-items: center
-  justify-content: center
-  border-radius: 10px
-  padding: 2px 5px
-  background-color: var(--medium-gray)
-  border: 1px solid var(--dark-gray)
+  gap: 0.35rem
+  padding: 0.4rem 0.55rem
+  color: var(--polo-color-text)
+  background: var(--polo-color-success-soft)
+  border: 1px solid var(--polo-color-success)
+  border-radius: 999px
   cursor: pointer
+  transition: filter 160ms ease, transform 160ms ease
+
+  img
+    width: 0.9rem
+    height: 0.9rem
+    opacity: 0.72
+
+  span
+    overflow: hidden
+    font-size: 0.74rem
+    font-weight: 650
+    text-overflow: ellipsis
+    white-space: nowrap
+
+  strong
+    color: var(--polo-color-text-strong)
+    font-size: 0.72rem
+    white-space: nowrap
+
+  &:hover
+    filter: saturate(1.15) brightness(0.98)
+
+  &:active
+    transform: scale(0.97)
+
+  &:focus-visible
+    outline: 2px solid var(--polo-color-focus)
+    outline-offset: 2px
+
+  &--negative
+    color: var(--polo-color-danger-text)
+    background: var(--polo-color-danger-soft)
+    border-color: var(--polo-color-danger-border)
+
+  &--condition
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+
+  &--property
+    background: var(--polo-color-surface-muted)
+    border-color: var(--polo-color-border-hover)
 
 .node__modifyEvent
   position: absolute
-  bottom: 0
+  top: calc(100% + 0.5rem)
   left: 0
+  z-index: 40
+
+@media (prefers-reduced-motion: reduce)
+  .node__event
+    transition: none

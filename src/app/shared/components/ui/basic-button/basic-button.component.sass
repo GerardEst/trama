@@ -1,55 +1,97 @@
+:host
+  display: inline-flex
+
 button
-  display: flex
-  align-items: center
-  gap: 0.3rem
-  background: var(--medium-gray)
-  border: none
-  padding: 0 10px
-  min-height: 30px
-  text-align: center
-  justify-content: center
-  cursor: pointer
-  border-radius: 6px
+  display: inline-flex
   width: 100%
-  &[disabled]
-    pointer-events: none
-    opacity: 0.5
+  min-height: 3.25rem
+  align-items: center
+  justify-content: center
+  gap: 0.5rem
+  padding: 0.65rem 1rem
+  color: var(--polo-color-text)
+  font-weight: 650
+  background: var(--polo-color-surface-muted)
+  border: 1px solid transparent
+  border-radius: 0.65rem
+  cursor: pointer
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease
+
+  img
+    flex: 0 0 auto
+
+  &:hover:not(:disabled)
+    background: var(--polo-color-border)
+
+  &:active:not(:disabled)
+    transform: scale(0.97)
+
+  &:focus-visible
+    outline: 2px solid var(--polo-color-focus)
+    outline-offset: 2px
+
+  &:disabled
+    cursor: not-allowed
+    opacity: 0.48
+
   &.danger
-    border: 1px solid var(--danger)
-    background: var(--danger-light)
+    color: var(--polo-color-danger-text)
+    background: var(--polo-color-danger-soft)
+    border-color: var(--polo-color-danger-border)
+
   &.success
-    background-color: var(--success)
-    color: white
+    color: var(--polo-color-text-on-action)
+    background: var(--polo-color-success)
+
   &.transparent
-    background: none
+    background: transparent
+
+    &:hover:not(:disabled)
+      background: var(--polo-color-surface-muted)
+
   &.sizeS
-    padding: 6px
+    min-height: 2.75rem
+    padding: 0.5rem 0.65rem
+
     img
-      width: 12px
-    &.onlyIcon
-      width: 20px
-  &:hover
-    background-color: var(--dark-gray)
-  &.selected
-    background-color: var(--dark-gray)
-    pointer-events: none
-  &.transparent
-    background: none
-    &:hover
-      background-color: var(--medium-gray)
+      width: 1rem
+
   &.onlyIcon
-    padding: unset
+    width: 3.25rem
+    padding: 0.65rem
     aspect-ratio: 1
-    display: grid
-    width: 30px
-    place-items: center
-  & .waitingIcon
-    height: 15px
+
+    &.sizeS
+      width: 2.75rem
+      padding: 0.55rem
+
+  &.selected
+    color: var(--polo-color-action)
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+
   &.border
-    border: 1px solid var(--dark-gray)
+    background: var(--polo-color-surface)
+    border-color: var(--polo-color-border-strong)
+
   &.alignLeft
     justify-content: flex-start
+
   &.alignRight
     justify-content: flex-end
-  &.alignCenter
-    justify-content: center
+
+.waitingIcon
+  height: 1.25rem
+
+.visuallyHidden
+  position: absolute
+  width: 1px
+  height: 1px
+  overflow: hidden
+  clip: rect(0 0 0 0)
+  white-space: nowrap
+  clip-path: inset(50%)
+
+@media (prefers-reduced-motion: reduce)
+  button
+    transition: none

@@ -1,0 +1,25 @@
+<div class="formField">
+  <div class="formField__header">
+    @if (controlId) {
+      <label class="formField__label" [for]="controlId">{{ label }}</label>
+    } @else {
+      <p class="formField__label">{{ label }}</p>
+    }
+
+    @if (required) {
+      <span class="formField__requirement">Required</span>
+    } @else if (showOptional) {
+      <span class="formField__requirement">Optional</span>
+    }
+  </div>
+
+  <div class="formField__control">
+    <ng-content></ng-content>
+  </div>
+
+  @if (description) {
+    <p class="formField__description" [id]="descriptionId">
+      {{ description }}
+    </p>
+  }
+</div>

@@ -1,90 +1,86 @@
 <div class="eventDetail">
-  <div class="eventDetail__field">
-    <label class="eventDetail__label" for="event-target">
-      {{ typeLabel }}
-      <span>Required</span>
-    </label>
-    <button
-      id="event-target"
-      class="eventDetail__selector"
-      type="button"
-      aria-haspopup="dialog"
-      [attr.aria-expanded]="selectorOpen"
-      (click)="selectorOpen = !selectorOpen"
-    >
-      <span [class.eventDetail__placeholder]="!selectedOption">
-        {{ selectedOptionName || 'Choose or create a ' + type }}
-      </span>
-      <img src="/assets/icons/chevron-down.svg" alt="" />
-    </button>
-    <p class="eventDetail__help">
-      Select an existing {{ type }} or create one without leaving this event.
-    </p>
-
-    @if (selectorOpen) {
-      <polo-select-or-create
-        [options]="options"
-        [message]="message"
-        [selectedOption]="selectedOption"
-        (onNewOption)="onNewOption($event)"
-        (onSelectOption)="onSelectOption($event)"
-        (onClose)="selectorOpen = false"
-      ></polo-select-or-create>
-    }
-  </div>
+  <polo-form-field
+    #targetField
+    [label]="typeLabel"
+    [controlId]="controlIdPrefix + '-target'"
+    [required]="true"
+    [description]="'Select an existing ' + type + ' or create one without leaving this ' + mode + '.'"
+  >
+    <polo-selector
+      [controlId]="controlIdPrefix + '-target'"
+      [describedBy]="targetField.descriptionId"
+      [required]="true"
+      [options]="options"
+      [message]="message"
+      [selected]="selectedOption"
+      [placeholder]="'Choose or create a ' + type"
+      (optionCreated)="onNewOption($event)"
+      (selectionChanged)="onSelectOption($event)"
+    ></polo-selector>
+  </polo-form-field>
 
   @if (type === 'stat') {
-    <div class="eventDetail__field">
-      <label class="eventDetail__label" for="event-amount">
-        Change by
-        <span>Required</span>
-      </label>
+    <polo-form-field
+      #amountField
+      [label]="mode === 'requirement' ? 'Minimum value' : 'Change by'"
+      [controlId]="controlIdPrefix + '-amount'"
+      [required]="true"
+      [description]="mode === 'requirement'
+        ? 'The answer is available when the player has at least this value.'
+        : 'Use a positive number to increase it, or a negative one to decrease it.'"
+    >
       <input
-        id="event-amount"
         class="eventDetail__input"
+        [id]="controlIdPrefix + '-amount'"
+        [attr.aria-describedby]="amountField.descriptionId"
         type="number"
         inputmode="numeric"
-        placeholder="e.g. 5 or -2"
+        required
+        [placeholder]="mode === 'requirement' ? 'e.g. 5' : 'e.g. 5 or -2'"
         [value]="amount ?? ''"
         (input)="changeAmount($event)"
       />
-      <p class="eventDetail__help">
-        Use a positive number to increase it, or a negative one to decrease it.
-      </p>
-    </div>
+    </polo-form-field>
   } @else if (type === 'condition') {
-    <div class="eventDetail__field">
-      <p class="eventDetail__label">Condition state</p>
-      <label class="eventDetail__switchRow" for="event-condition-active">
+    <polo-form-field
+      label="Condition state"
+      [required]="true"
+      [showOptional]="false"
+    >
+      <label class="eventDetail__switchRow" [for]="controlIdPrefix + '-condition-active'">
         <span>
-          <strong>Active after this event</strong>
-          <small>Turn this off to remove the condition.</small>
+          <strong>{{ mode === 'requirement' ? 'Must be active' : 'Active after this event' }}</strong>
+          <small>
+            {{ mode === 'requirement'
+              ? 'Turn this off to require the condition to be inactive.'
+              : 'Turn this off to remove the condition.' }}
+          </small>
         </span>
         <input
-          id="event-condition-active"
+          [id]="controlIdPrefix + '-condition-active'"
           type="checkbox"
           [checked]="isConditionActive"
           (change)="changeCheckbox($event)"
         />
       </label>
-    </div>
+    </polo-form-field>
   } @else {
-    <div class="eventDetail__field">
-      <label class="eventDetail__label" for="event-property">
-        New value
-      </label>
+    <polo-form-field
+      #propertyField
+      label="New value"
+      [controlId]="controlIdPrefix + '-property'"
+      description="This replaces the property's current value. Leave empty to clear it."
+    >
       <input
-        id="event-property"
         class="eventDetail__input"
+        [id]="controlIdPrefix + '-property'"
+        [attr.aria-describedby]="propertyField.descriptionId"
         type="text"
         placeholder="Enter a value"
         [value]="property ?? ''"
         (input)="changeProperty($event)"
       />
-      <p class="eventDetail__help">
-        This replaces the property's current value. Leave empty to clear it.
-      </p>
-    </div>
+    </polo-form-field>
   }
 
   @if (selectedOption) {

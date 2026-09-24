@@ -1,6 +1,8 @@
-<div class="options">
+<div class="options" role="menu" aria-label="Node actions">
+  <p class="options__title">Node actions</p>
   <polo-basic-button
     [transparent]="true"
+    size="s"
     title="Duplicate node"
     text="Duplicate"
     icon="/assets/icons/duplicate.svg"
@@ -8,13 +10,15 @@
     align="left"
   ></polo-basic-button>
   @if (type !== 'distributor') {
-    <form #imageInput>
-      <label class="simulateButton options__addImage">
+    <form>
+      <label class="options__addImage" role="menuitem">
+        <img src="/assets/icons/camera.svg" alt="" />
+        <span>Add image</span>
         <input
           type="file"
-          id="image"
           name="image"
           accept="image/*"
+          aria-label="Add image"
           (change)="onAddImage.emit($event)"
         />
       </label>
@@ -23,6 +27,8 @@
   @if (nodeId !== 'node_0') {
     <polo-basic-button
       [transparent]="true"
+      size="s"
+      type="danger"
       title="Delete node"
       text="Delete"
       icon="/assets/icons/trash.svg"

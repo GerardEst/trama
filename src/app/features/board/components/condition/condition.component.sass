@@ -1,39 +1,109 @@
 :host
   position: relative
-  display: flex
+  display: block
+
+.condition
+  display: grid
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) 5rem
+  align-items: end
   gap: 0.5rem
-:host:hover .answer__options
-  display: flex
+  padding: 0.65rem
+  background: var(--polo-color-surface)
+  border: 1px solid var(--polo-color-border)
+  border-radius: 0.8rem
+
+  &--fallback
+    display: flex
+    align-items: center
+    gap: 0.65rem
+    min-height: 4.25rem
+    background: var(--polo-color-surface-subtle)
+    border-style: dashed
+
+  &__fallbackIcon
+    display: grid
+    width: 2rem
+    height: 2rem
+    flex: 0 0 auto
+    place-items: center
+    color: var(--polo-color-action)
+    background: var(--polo-color-action-soft)
+    border-radius: 50%
+    font-size: 1.1rem
+    font-weight: 800
+
+  &__fallbackCopy
+    display: flex
+    flex-direction: column
+    gap: 0.15rem
+
+    strong
+      color: var(--polo-color-text)
+      font-size: 0.82rem
+
+    span
+      color: var(--polo-color-text-muted)
+      font-size: 0.7rem
+
+  &__delete
+    align-self: end
+
+  &__field
+    display: flex
+    min-width: 0
+    flex-direction: column
+    gap: 0.3rem
+
+    > span
+      color: var(--polo-color-text-muted)
+      font-size: 0.66rem
+      font-weight: 700
+      letter-spacing: 0.04em
+      text-transform: uppercase
+
+    select,
+    input
+      width: 100%
+      min-width: 0
+      height: 2.75rem
+      padding: 0 0.55rem
+      color: var(--polo-color-text)
+      background: var(--polo-color-surface-subtle)
+      border: 1px solid var(--polo-color-border-strong)
+      border-radius: 0.55rem
+      font-size: 0.75rem
+
+      &:focus
+        border-color: var(--polo-color-focus)
+        outline: none
+        box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
 
 .union_point
-  width: 1.5rem
-  height: 1rem
-  background-color: white
-  border: 1px solid var(--dark-gray)
-  border-radius: 0.6rem
-  align-self: center
-  cursor: crosshair
   position: absolute
+  top: 50%
   right: 0
-  transform: translateX(73%)
-  &--hasJoin
-    background-color: var(--medium-gray)
-.union_point:hover
-  background-color: var(--medium-gray)
-.options
-  display: flex
-  gap: 0.5rem
-.options__more
-  width: 1.3rem
-  height: 1.1rem
-  border-radius: 5px
-  cursor: pointer
-  background: var(--medium-gray) url("/assets/icons/more-options.svg") no-repeat center/0.9rem
-.removeCondition
-  padding: 0.9rem 1.2rem
-  background-image: url("/assets/icons/trash.svg")
-  background-repeat: no-repeat
-  background-position: center
-  background-size: 0.9rem
-select
-  width: 85px
+  width: 1.75rem
+  height: 1.15rem
+  background: var(--polo-color-surface)
+  border: 1px solid var(--polo-color-border-hover)
+  border-radius: 999px
+  cursor: crosshair
+  transform: translate(62%, -50%)
+  transition: background-color 160ms ease, border-color 160ms ease
+
+  &--hasJoin,
+  &:hover
+    background: var(--polo-color-action-soft)
+    border-color: var(--polo-color-focus)
+
+@media (max-width: 28rem)
+  .condition
+    grid-template-columns: auto 1fr
+
+    &__field--value,
+    &__field--comparator
+      grid-column: 2
+
+@media (prefers-reduced-motion: reduce)
+  .union_point
+    transition: none

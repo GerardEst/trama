@@ -6,17 +6,22 @@ import {
   SimpleChanges,
   OnChanges,
 } from '@angular/core'
-import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
+import { FormFieldComponent } from 'src/app/shared/components/ui/form-field/form-field.component'
+import { SelectorComponent } from 'src/app/shared/components/ui/selector/selector.component'
 import { StoryReferencesService } from '../../../../services/story-references.service'
+
+let nextReferenceEditorId = 0
 
 @Component({
   selector: 'polo-node-add-modify-ref',
   standalone: true,
-  imports: [SelectOrCreateComponent],
+  imports: [FormFieldComponent, SelectorComponent],
   templateUrl: './node-add-modify-ref.component.html',
   styleUrl: './node-add-modify-ref.component.sass',
 })
 export class NodeAddModifyRefComponent implements OnChanges {
+  readonly controlIdPrefix = `reference-editor-${nextReferenceEditorId++}`
+
   // Els inputs per configurar l'event depenent de si és stat o condition
 
   @Output() onChangeTarget = new EventEmitter<{
@@ -33,11 +38,11 @@ export class NodeAddModifyRefComponent implements OnChanges {
   @Input() amount?: string | number
   @Input() property?: string
   @Input() type: 'stat' | 'condition' | 'property' = 'stat'
+  @Input() mode: 'event' | 'requirement' = 'event'
   @Input() selectedOption?: string
 
   options: Array<{ id: string; name: string }> = []
   message?: string
-  selectorOpen: boolean = false
 
   constructor(private storyReferences: StoryReferencesService) {}
 
@@ -66,6 +71,20 @@ export class NodeAddModifyRefComponent implements OnChanges {
   get eventSummary() {
     const targetName = this.selectedOptionName
     if (!targetName) return ''
+
+    if (this.mode === 'requirement') {
+      if (this.type === 'condition') {
+        return this.isConditionActive
+          ? `Show this answer when “${targetName}” is active.`
+          : `Show this answer when “${targetName}” is inactive.`
+      }
+
+      if (this.amount === undefined || this.amount === '') {
+        return `Enter the minimum value for “${targetName}”.`
+      }
+
+      return `Show this answer when “${targetName}” is at least ${this.amount}.`
+    }
 
     if (this.type === 'condition') {
       return this.isConditionActive
@@ -100,10 +119,6 @@ export class NodeAddModifyRefComponent implements OnChanges {
         previousValue,
       })
     }
-
-    setTimeout(() => {
-      this.selectorOpen = false
-    }, 0)
   }
 
   onSelectOption(option: { value: string }) {
@@ -113,10 +128,6 @@ export class NodeAddModifyRefComponent implements OnChanges {
       value: this.selectedOption,
       previousValue,
     })
-
-    setTimeout(() => {
-      this.selectorOpen = false
-    }, 0)
   }
 
   changeAmount(event: Event) {

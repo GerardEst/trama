@@ -1,0 +1,34 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Design System/Overview" />
+
+# Arquitectura de components
+
+Storybook separa els components reutilitzables del producte dels components que coneixen el domini de Trama.
+
+## Design System
+
+Els components d'aquesta secció no depenen del model d'històries, dels serveis del board ni de la persistència.
+
+- **Foundations**: tokens visuals compartits, com colors i elevacions.
+- **Atoms**: controls indivisibles, com un botó.
+- **Molecules**: combinacions petites d'atoms amb una única responsabilitat, com un form field o una choice card.
+- **Organisms**: controls compostos amb estat i interaccions pròpies, com el selector amb cerca i creació.
+
+## Seccions de producte
+
+`Board` i les futures seccions només han de contenir molecules i organisms específics del seu domini.
+Un component es manté aquí quan coneix conceptes com nodes, events, requirements, referències o joins, o quan necessita serveis del board.
+
+### Exemples de classificació
+
+- **Button — Design System / Atom:** acció genèrica sense domini.
+- **Form field — Design System / Molecule:** estructura reutilitzable de formulari.
+- **Selector — Design System / Organism:** trigger, popup, cerca, selecció i creació.
+- **Reference fields — Board / Molecule:** coneix els tipus de referència de la història.
+- **Event editor — Board / Organism:** edita estat del jugador i persisteix events.
+- **Node — Board / Organism:** agrega tota l'edició d'un node.
+
+## Regla per a components nous
+
+Un component nou entra al **Design System** si es pot demostrar sense mocks de serveis de negoci i el seu API no utilitza tipus del domini. Si no compleix aquesta regla, es documenta dins de la secció funcional corresponent.

@@ -4,7 +4,7 @@ import { fn } from '@storybook/test'
 import { ChoiceCardComponent } from './choice-card.component'
 
 const meta: Meta<ChoiceCardComponent> = {
-  title: 'Design System/Selection/Choice card',
+  title: 'Design System/Molecules/Choice card',
   component: ChoiceCardComponent,
   tags: ['autodocs'],
   decorators: [

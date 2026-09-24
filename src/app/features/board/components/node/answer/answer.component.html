@@ -5,12 +5,19 @@
   ></polo-node-requirements>
   <polo-basic-button
     class="delete-answer"
+    size="s"
+    title="Delete answer"
     (click)="removeAnswer()"
     icon="/assets/icons/trash.svg"
     [transparent]="true"
   ></polo-basic-button>
 </div>
-<textarea #textarea (change)="saveAnswerText($event)">{{ text }}</textarea>
+<textarea
+  #textarea
+  aria-label="Answer text"
+  placeholder="Write an answer…"
+  (change)="saveAnswerText($event)"
+>{{ text }}</textarea>
 <polo-node-events [events]="events" [answerId]="answerId"></polo-node-events>
 <div
   class="union_point"

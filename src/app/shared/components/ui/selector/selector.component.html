@@ -1,31 +1,29 @@
-<polo-basic-button
+<button
+  class="selector"
+  type="button"
+  [id]="controlId"
+  aria-haspopup="dialog"
+  [attr.aria-expanded]="optionsOpened"
+  [attr.aria-describedby]="describedBy"
+  [attr.aria-required]="required"
+  [disabled]="disabled"
   (click)="toggleOptions()"
-  text="{{ selectedOption?.name }}"
-></polo-basic-button>
-<div
-  class="dropdown"
-  *ngIf="optionsOpened"
-  [class.dropdown--onTop]="onTop"
-  [class.dropdown--onLeft]="onLeft"
 >
-  <input
-    #search
-    type="text"
-    (input)="filterOptions($event)"
-    placeholder="Search"
-  />
-  <p class="message">{{ message }}</p>
-  @if (newOption) {
-    <polo-basic-button
-      (click)="createOption(newOption)"
-      text="Create {{ newOption }}"
-    >
-    </polo-basic-button>
-  }
+  <span [class.selector__placeholder]="!selectedOptionName">
+    {{ selectedOptionName || placeholder }}
+  </span>
+  <img src="/assets/icons/chevron-down.svg" alt="" />
+</button>
 
-  <div class="dropdown__options">
-    <li (click)="selectOption(option)" *ngFor="let option of searchedOptions">
-      {{ option.name }}
-    </li>
+@if (optionsOpened) {
+  <div class="selector__popover">
+    <polo-select-or-create
+      [options]="options"
+      [message]="message"
+      [selectedOption]="selected"
+      (onNewOption)="createOption($event)"
+      (onSelectOption)="selectOption($event)"
+      (onClose)="closeOptions()"
+    ></polo-select-or-create>
   </div>
-</div>
+}

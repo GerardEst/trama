@@ -53,7 +53,7 @@ const storyReferences = {
 }
 
 const meta: Meta<NodeAddEventComponent> = {
-  title: 'Board/Node/Add event',
+  title: 'Board/Organisms/Event editor',
   component: NodeAddEventComponent,
   tags: ['autodocs'],
   decorators: [

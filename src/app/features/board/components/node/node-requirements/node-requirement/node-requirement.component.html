@@ -1,6 +1,17 @@
-<div class="node__requirement" (click)="openModifyRequirement = true">
-  <p>{{ target }} {{ amount }}</p>
-</div>
+<button
+  class="node__requirement"
+  type="button"
+  [class.node__requirement--condition]="type === 'condition'"
+  [attr.aria-label]="'Edit requirement ' + displayTarget + ', ' + displayValue"
+  (click)="openModifyRequirement = true"
+>
+  <img
+    [src]="type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/stat.svg'"
+    alt=""
+  />
+  <span>{{ displayTarget }}</span>
+  <strong>{{ displayValue }}</strong>
+</button>
 
 @if (openModifyRequirement) {
   <div class="node__modifyRequirement">
@@ -8,7 +19,6 @@
       [amount]="amount"
       [type]="type"
       [target]="target"
-      [property]="property"
       (onSaveRequirement)="saveRequirement($event)"
       (onClose)="openModifyRequirement = false"
       (onDeleteRequirement)="deleteRequirement($event)"
