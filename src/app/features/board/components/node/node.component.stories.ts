@@ -15,7 +15,7 @@ const meta: Meta<NodeComponent> = {
     template: `
       <div style="position: relative; min-height: 48rem; padding: 3rem; background: var(--polo-color-canvas);">
         <polo-node ${argsToTemplate(args)}>
-          <dragHandle><p><span style="text-transform: capitalize">{{ type }}</span> node</p></dragHandle>
+          <div class="dragHandle"><p><span style="text-transform: capitalize">{{ type }}</span> node</p></div>
         </polo-node>
       </div>
     `,

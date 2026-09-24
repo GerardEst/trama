@@ -63,27 +63,24 @@ describe('BoardComponent', () => {
     expect(component.panzoom.resumeDrag).toHaveBeenCalled()
   })
 
-  it('commits the CDK drag position without parsing CSS transforms', () => {
+  it('commits the CDK free drag position without resetting placement', () => {
     const storyNode: node = {
       id: 'node_0',
       left: 12.5,
       top: 20.25,
       type: 'content',
     }
-    const reset = jasmine.createSpy('reset')
     const source = {
       getFreeDragPosition: () => ({ x: 7.25, y: -5.5 }),
-      reset,
     } as unknown as CdkDrag
     spyOn(storyEditor, 'updateNodePosition')
 
     component.nodeDragEnded({ source } as CdkDragEnd, storyNode)
 
-    expect(reset).toHaveBeenCalled()
     expect(storyEditor.updateNodePosition).toHaveBeenCalledWith(
       'node_0',
-      19.75,
-      14.75
+      7.25,
+      -5.5
     )
   })
 

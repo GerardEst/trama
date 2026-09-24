@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { AnswerComponent } from './answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { FormsModule } from '@angular/forms'
@@ -52,6 +53,7 @@ import { StoryEditorService } from '../../services/story-editor.service'
     NodeOptionsComponent,
     NodeEventsComponent,
     BoardAnchorDirective,
+    CdkDragHandle,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],

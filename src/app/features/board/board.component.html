@@ -32,6 +32,7 @@
           #node
           cdkDrag
           [cdkDragConstrainPosition]="constrainNodePosition"
+          [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
           [nodeId]="node.id"
           [type]="node.type || 'content'"
           (click)="setActiveNode(node.id, activeStory.storyId())"
@@ -43,7 +44,6 @@
           (cdkDragStarted)="nodeDragStarted($event)"
           (cdkDragEnded)="nodeDragEnded($event, node)"
           (cdkDragMoved)="nodeDragCheck()"
-          [style.transform]="'translate3d(' + node.left + 'px, ' + node.top + 'px, 0px)'"
           [join]="node.join || []"
           [text]="node.text || ''"
           [events]="node.events"
@@ -55,12 +55,12 @@
           [image]="node.image?.path"
           [links]="node.links || []"
         >
-          <dragHandle cdkDragHandle>
+          <div class="dragHandle">
             <p>
               <span style="text-transform: capitalize">{{ node.type || 'content' }}</span>
               node
             </p>
-          </dragHandle>
+          </div>
         </polo-node>
       }
     </ng-container>

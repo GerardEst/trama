@@ -13,7 +13,6 @@ import { NodeComponent } from './components/node/node.component'
 import {
   CdkDrag,
   CdkDragEnd,
-  CdkDragHandle,
   CdkDragStart,
   DragRef,
   Point,
@@ -41,7 +40,6 @@ interface BoardJoinTarget {
   imports: [
     NodeComponent,
     CdkDrag,
-    CdkDragHandle,
     BoardFlowsComponent,
   ],
   templateUrl: './board.component.html',
@@ -65,6 +63,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   // Drags to join
   joinStroke?: BoardJoinStroke
   private joinPointerId?: number
+  private readonly nodeDragPositions = new Map<
+    string,
+    { left: number; top: number; position: Point }
+  >()
 
   get isDrawingJoin() {
     return !!this.joinStroke
@@ -257,17 +259,31 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   nodeDragEnded(event: CdkDragEnd, storyNode: node) {
     const dragPosition = event.source.getFreeDragPosition()
-    event.source.reset()
     this.storyEditor.updateNodePosition(
       storyNode.id,
-      Number(storyNode.left) + dragPosition.x,
-      Number(storyNode.top) + dragPosition.y
+      dragPosition.x,
+      dragPosition.y
     )
     this.panzoom.resumeDrag()
     this.boardFlows?.scheduleRefresh()
   }
   nodeDragCheck() {
     this.boardFlows?.scheduleRefresh()
+  }
+
+  getNodeDragPosition(storyNode: node): Point {
+    const left = Number(storyNode.left) || 0
+    const top = Number(storyNode.top) || 0
+    const cached = this.nodeDragPositions.get(storyNode.id)
+
+    if (cached && cached.left === left && cached.top === top) {
+      return cached.position
+    }
+
+    const position = { x: left, y: top }
+    this.nodeDragPositions.set(storyNode.id, { left, top, position })
+
+    return position
   }
 
   setActiveNode(nodeId: string, storyId: string) {

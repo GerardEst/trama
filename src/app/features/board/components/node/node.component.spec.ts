@@ -24,6 +24,26 @@ describe('NodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('keeps the options menu out of the header drag handle', () => {
+    const host = fixture.nativeElement as HTMLElement
+    host.querySelector('.node__menuButton')!.dispatchEvent(
+      new MouseEvent('click', { bubbles: true })
+    )
+    fixture.detectChanges()
+    const pointerDown = jasmine.createSpy('pointerDown')
+    host.addEventListener('pointerdown', pointerDown)
+
+    host.querySelector('.node__header')!.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true })
+    )
+    expect(pointerDown).toHaveBeenCalledTimes(1)
+
+    host.querySelector('.node__options polo-basic-button')!.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true })
+    )
+    expect(pointerDown).toHaveBeenCalledTimes(1)
+  })
+
   it('updates OnPush upload state and resets the selected input on optimization failure', async () => {
     const database = TestBed.inject(DatabaseService)
     const apis = TestBed.inject(ApisService)

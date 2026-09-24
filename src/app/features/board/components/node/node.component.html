@@ -8,12 +8,12 @@
   [attr.data-board-join-anchor]="nodeId + '_joiner'"
   data-board-join-to-answers="false"
 >
-  <header class="node__header">
+  <header class="node__header" cdkDragHandle>
     <span
       class="joiner"
       [poloBoardAnchor]="nodeId + '_joiner'"
     ></span>
-    <ng-content select="dragHandle"> </ng-content>
+    <ng-content select=".dragHandle"> </ng-content>
 
     <polo-basic-button
       class="node__menuButton"
@@ -21,10 +21,11 @@
       [transparent]="true"
       title="Node options"
       icon="/assets/icons/hamburger-menu.svg"
+      (pointerdown)="$event.stopPropagation()"
       (click)="optionsOpen = true"
     ></polo-basic-button>
     @if (optionsOpen) {
-      <div class="node__options">
+      <div class="node__options" (pointerdown)="$event.stopPropagation()">
         <polo-node-options
           [type]="type"
           [nodeId]="nodeId"
