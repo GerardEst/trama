@@ -32,6 +32,45 @@ describe('NodeEventsComponent', () => {
     fixture.detectChanges()
   })
 
+  it('keeps the confirmation open when the clicked button is replaced', () => {
+    component.events = [conditionEvent]
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('button.node__event')!.click()
+    fixture.detectChanges()
+
+    // The opening click is observed by the popup's document listener in the app.
+    host.querySelector<HTMLElement>('.addEvent__header')!.click()
+    const deleteButton = host.querySelector<HTMLButtonElement>(
+      '.addEvent__button--delete'
+    )!
+    // Change detection can remove the clicked button before the click reaches document.
+    deleteButton.addEventListener('click', () => fixture.detectChanges())
+    deleteButton.click()
+    fixture.detectChanges()
+
+    expect(host.textContent).toContain('Delete this event?')
+    expect(
+      host.querySelector('.addEvent__button--confirmDelete')
+    ).not.toBeNull()
+    expect(storyEditor.saveNodeEvents).not.toHaveBeenCalled()
+  })
+
+  it('still closes the editor when clicking outside', () => {
+    component.events = [conditionEvent]
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('button.node__event')!.click()
+    fixture.detectChanges()
+    host.querySelector<HTMLElement>('.addEvent__header')!.click()
+
+    document.body.click()
+    fixture.detectChanges()
+
+    expect(host.querySelector('.addEvent')).toBeNull()
+    expect(storyEditor.saveNodeEvents).not.toHaveBeenCalled()
+  })
+
   it('deletes a node event through the editor and persists it', () => {
     component.events = [conditionEvent]
     fixture.detectChanges()

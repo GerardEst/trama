@@ -26,7 +26,10 @@ export class PopupBaseComponent {
       return
     }
 
-    if (!this.elementRef.nativeElement.contains(event.target)) {
+    // The clicked control may be replaced before this document listener runs
+    // (e.g. Delete becomes a confirmation). The event path still contains the
+    // popup even when its original target is no longer attached to the DOM.
+    if (!event.composedPath().includes(this.elementRef.nativeElement)) {
       this.closePopup()
     }
   }
