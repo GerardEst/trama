@@ -38,7 +38,18 @@
       flex: 1
       align-items: center
       padding-left: 1.5rem
-      background: url('/assets/icons/drag.svg') no-repeat left center/1rem
+      position: relative
+
+      &::before
+        content: ''
+        position: absolute
+        left: 0
+        top: 50%
+        width: 1rem
+        height: 1rem
+        transform: translateY(-50%)
+        background: var(--polo-icon-drag, url('/assets/icons/drag.svg')) no-repeat center/contain
+        pointer-events: none
 
       p
         overflow: hidden

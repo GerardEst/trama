@@ -43,6 +43,7 @@
     "@playwright/test": "^1.44.1",
     "@storybook/addon-a11y": "^8.6.18",
     "@storybook/addon-docs": "^8.6.18",
+    "@storybook/addon-toolbars": "^8.6.18",
     "@storybook/angular": "^8.6.18",
     "@storybook/test": "^8.6.18",
     "@types/jasmine": "~4.3.0",

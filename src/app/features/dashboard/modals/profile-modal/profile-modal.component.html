@@ -11,6 +11,17 @@
             <p class="txt-weight-bold">Name</p>
             <p>{{ user.user_metadata['user_name'] }}</p>
           </div>
+          <div class="themePreference">
+            <label for="night-mode">Night mode</label>
+            <input
+              id="night-mode"
+              #nightMode
+              type="checkbox"
+              role="switch"
+              [checked]="theme.dark()"
+              (change)="theme.setDark(nightMode.checked)"
+            />
+          </div>
           <div class="profileOptions">
             @if (user.app_metadata.provider === 'email') {
               <polo-basic-button

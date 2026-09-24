@@ -92,6 +92,27 @@ input[type="checkbox"]
   align-self: center
   &:focus
     outline: none
+img[src^='/assets/icons/'], .tag__type, .tag__delete
+  filter: var(--polo-icon-filter, none)
+
+=dark-authoring-controls
+  input:not([type='checkbox']), textarea, select
+    color: var(--polo-color-text)
+    background-color: var(--polo-color-surface)
+    border-color: var(--polo-color-border-strong)
+    &:focus
+      outline-color: var(--polo-color-focus)
+
+@media (prefers-color-scheme: dark)
+  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+    +dark-authoring-controls
+
+:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+  +dark-authoring-controls
+
+:root[data-storybook-theme='dark']
+  +dark-authoring-controls
+
 textarea
   width: 100%
   max-width: 100%

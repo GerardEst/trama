@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterOutlet } from '@angular/router'
 import { ActiveStoryTitleService } from './shared/services/active-story-title.service'
+import { ThemeService } from './shared/services/theme.service'
 
 @Component({
   selector: 'polo-root',
@@ -13,5 +14,6 @@ import { ActiveStoryTitleService } from './shared/services/active-story-title.se
 export class AppComponent {
   constructor() {
     inject(ActiveStoryTitleService)
+    inject(ThemeService)
   }
 }

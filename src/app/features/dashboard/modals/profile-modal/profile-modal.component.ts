@@ -7,6 +7,7 @@ import { PricingComponent } from 'src/app/shared/components/pricing/pricing.comp
 import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/billing-cycle.component'
 import { SeparatorComponent } from '../../../../shared/components/ui/separator/separator.component'
 import { AuthService } from 'src/app/core/services/auth.service'
+import { ThemeService } from 'src/app/shared/services/theme.service'
 
 @Component({
   selector: 'polo-profile-modal',
@@ -27,7 +28,8 @@ export class ProfileModalComponent {
   constructor(
     public db: DatabaseService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public theme: ThemeService
   ) {}
 
   changePassword() {

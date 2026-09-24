@@ -86,3 +86,70 @@
   --danger-light: var(--polo-color-danger-soft)
   --success: var(--polo-color-success)
   --success-light: var(--polo-color-success-soft)
+
+// The editor and statistics follow the OS theme. Public stories and marketing
+// keep their own palettes rather than inheriting colors meant for authoring UI.
+=dark-authoring-theme
+  color-scheme: dark
+  --polo-color-canvas: #161d2a
+  --polo-color-surface: #232d3d
+  --polo-color-surface-subtle: #283447
+  --polo-color-surface-muted: #303d50
+  --polo-color-surface-accent: #2b3e5b
+
+  --polo-color-text-strong: #f4f6f9
+  --polo-color-text: #e3eaf4
+  --polo-color-text-secondary: #c2ccdc
+  --polo-color-text-muted: #aebbd0
+  --polo-color-text-on-action: #161d2a
+
+  --polo-color-border: #405069
+  --polo-color-border-strong: #53647d
+  --polo-color-border-hover: #7587a0
+
+  --polo-color-action: #a6c5ff
+  --polo-color-action-hover: #c0d7ff
+  --polo-color-action-soft: #2b3e5b
+  --polo-color-action-soft-hover: #354d70
+  --polo-color-focus: #a6c5ff
+  --polo-color-focus-ring: rgba(166, 197, 255, 0.3)
+
+  --polo-color-danger: #ff9090
+  --polo-color-danger-hover: #ffb2b2
+  --polo-color-danger-text: #ffb2b2
+  --polo-color-danger-text-strong: #ffd0d0
+  --polo-color-danger-soft: #503038
+  --polo-color-danger-border: #8c505a
+  --polo-color-success: #8bd79e
+  --polo-color-success-soft: #254632
+  --polo-color-control-disabled: #64748b
+  --polo-color-placeholder: #aebbd0
+
+  --polo-shadow-floating: 0 18px 48px rgba(0, 0, 0, 0.4), 0 3px 10px rgba(0, 0, 0, 0.25)
+  --polo-shadow-popover: 0 14px 36px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.25)
+
+  --text-color: var(--polo-color-text)
+  --grid-color: var(--polo-color-border)
+  --light-gray: var(--polo-color-surface)
+  --medium-gray: var(--polo-color-surface-muted)
+  --dark-gray: var(--polo-color-border-strong)
+  --light-text: var(--polo-color-text-muted)
+  --shadow-color: #00000033
+  --shadow-color-light: #00000022
+  --polo-icon-filter: brightness(0) invert(1)
+  --polo-icon-edit: url('/assets/icons/edit-white.svg')
+  --polo-icon-play: url('/assets/icons/play-white.svg')
+  --polo-icon-drag: url('/assets/icons/drag-white.svg')
+
+@media (prefers-color-scheme: dark)
+  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+    +dark-authoring-theme
+
+:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+  +dark-authoring-theme
+
+:root[data-storybook-theme='dark']
+  +dark-authoring-theme
+
+:root[data-storybook-theme] body.sb-show-main
+  background: var(--polo-color-canvas)
