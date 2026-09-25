@@ -42,6 +42,13 @@ export class PanzoomService {
       zoomDoubleClickSpeed: 1,
     })
 
+    // Let open popovers distinguish a completed board pan from an outside click.
+    this.boardReference.on('panstart', () => {
+      this.boardElement?.dispatchEvent(
+        new CustomEvent('poloBoardPanStart', { bubbles: true })
+      )
+    })
+
     this.initialPositionTimer = setTimeout(() => {
       this.boardReference?.moveTo(
         -options.initialPosition.x,

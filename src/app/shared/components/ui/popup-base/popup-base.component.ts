@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  Input,
   Output,
 } from '@angular/core'
 
@@ -14,6 +15,9 @@ import {
 export class PopupBaseComponent {
   private isInitialized = false
 
+  // Anchored containers own outside-click dismissal for their projected editors.
+  @Input() closeOnOutsideClick = true
+
   @Output() onClose = new EventEmitter<void>()
 
   constructor(private elementRef: ElementRef) {}
@@ -21,6 +25,8 @@ export class PopupBaseComponent {
   // Close when clicking outside
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
+    if (!this.closeOnOutsideClick) return
+
     if (!this.isInitialized) {
       this.isInitialized = true
       return

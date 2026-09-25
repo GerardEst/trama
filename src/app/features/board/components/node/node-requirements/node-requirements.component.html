@@ -18,6 +18,7 @@
     <ng-template poloPopoverContent>
       <polo-node-add-requirement
         class="anchoredAddRequirement"
+        [closeOnOutsideClick]="false"
         (onSaveRequirement)="saveRequirement($event)"
         (onClose)="addRequirementPopover.close()"
       ></polo-node-add-requirement>

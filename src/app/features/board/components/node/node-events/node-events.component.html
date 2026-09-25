@@ -18,6 +18,7 @@
     <ng-template poloPopoverContent>
       <polo-node-add-event
         class="anchoredAddEvent"
+        [closeOnOutsideClick]="false"
         (onSaveEvent)="saveEvent($event)"
         (onClose)="addEventPopover.close()"
       ></polo-node-add-event>

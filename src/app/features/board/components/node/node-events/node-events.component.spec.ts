@@ -47,6 +47,27 @@ describe('NodeEventsComponent', () => {
     expect(host.querySelector('.node__addEventButton')?.getAttribute('aria-expanded')).toBe('true')
   })
 
+  it('lets the selector dropdown extend beyond the editor without scrolling the popover', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    document.body.appendChild(host)
+    host.querySelector<HTMLButtonElement>('.node__addEventButton')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+
+    const selector = host.querySelector<HTMLElement>('polo-selector')!
+    selector.style.cssText = 'position: fixed; bottom: 1rem; left: 1rem; width: 25rem'
+    selector.querySelector<HTMLButtonElement>('.selector')!.click()
+    fixture.detectChanges()
+
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+    const dropdown = selector.querySelector<HTMLElement>('.selector__popover')!
+    expect(dropdown.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      selector.querySelector('.selector')!.getBoundingClientRect().top
+    )
+    expect(getComputedStyle(panel).overflow).toBe('visible')
+    expect(getComputedStyle(dropdown.querySelector('.dropdown__options')!).overflowY).toBe('auto')
+  })
+
   it('keeps the confirmation open when the clicked button is replaced', () => {
     component.events = [conditionEvent]
     fixture.detectChanges()

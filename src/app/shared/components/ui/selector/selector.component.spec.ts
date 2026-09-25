@@ -18,6 +18,8 @@ describe('SelectorComponent', () => {
     fixture.detectChanges()
   })
 
+  afterEach(() => fixture.nativeElement.remove())
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })
@@ -27,6 +29,54 @@ describe('SelectorComponent', () => {
     fixture.detectChanges()
 
     expect(fixture.nativeElement.textContent).toContain('Courage')
+  })
+
+  it('places the dropdown above the selector when there is no room below', () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.style.cssText = 'position: fixed; bottom: 1rem; left: 1rem; width: 25rem'
+    document.body.appendChild(host)
+
+    host.querySelector<HTMLButtonElement>('.selector')!.click()
+    fixture.detectChanges()
+
+    const trigger = host.querySelector('.selector')!.getBoundingClientRect()
+    const dropdown = host.querySelector('.selector__popover')!.getBoundingClientRect()
+    expect(dropdown.bottom).toBeLessThanOrEqual(trigger.top)
+    expect(dropdown.top).toBeGreaterThanOrEqual(0)
+  })
+
+  it('keeps a long dropdown within the available space above the selector', () => {
+    const host: HTMLElement = fixture.nativeElement
+    fixture.componentRef.setInput('options', Array.from({ length: 20 }, (_, index) => ({
+      id: `option_${index}`,
+      name: `Option ${index}`,
+    })))
+    host.style.cssText = 'position: fixed; bottom: 40vh; left: 1rem; width: 25rem'
+    document.body.appendChild(host)
+    fixture.detectChanges()
+
+    host.querySelector<HTMLButtonElement>('.selector')!.click()
+    fixture.detectChanges()
+
+    const trigger = host.querySelector('.selector')!.getBoundingClientRect()
+    const dropdown = host.querySelector('.selector__popover')!.getBoundingClientRect()
+    expect(dropdown.bottom).toBeLessThanOrEqual(trigger.top)
+    expect(dropdown.top).toBeGreaterThanOrEqual(0)
+    const options = host.querySelector<HTMLElement>('.dropdown__options')!
+    expect(options.scrollHeight).toBeGreaterThan(options.clientHeight)
+  })
+
+  it('keeps the dropdown below the selector when there is room', () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.style.cssText = 'position: fixed; top: 1rem; left: 1rem; width: 25rem'
+    document.body.appendChild(host)
+
+    host.querySelector<HTMLButtonElement>('.selector')!.click()
+    fixture.detectChanges()
+
+    const trigger = host.querySelector('.selector')!.getBoundingClientRect()
+    const dropdown = host.querySelector('.selector__popover')!.getBoundingClientRect()
+    expect(dropdown.top).toBeGreaterThanOrEqual(trigger.bottom)
   })
 
   it('emits typed selection changes and closes the options', () => {

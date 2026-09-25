@@ -21,7 +21,10 @@ describe('BoardComponent', () => {
     storyEditor = fixture.debugElement.injector.get(StoryEditorService)
   })
 
-  afterEach(() => fixture.destroy())
+  afterEach(() => {
+    fixture.nativeElement.remove()
+    fixture.destroy()
+  })
 
   it('should create', () => {
     expect(component).toBeTruthy()
@@ -66,6 +69,68 @@ describe('BoardComponent', () => {
     expect(host.querySelector('.node__event')).toBeNull()
     expect(save.calls.mostRecent().args[0]).toBe('story-1')
     expect(save.calls.mostRecent().args[1].nodes[0].events).toEqual([])
+  })
+
+  it('keeps anchored editors open across repeated board pans after interacting inside', async () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('story-pan', 'Story', {
+      nodes: [
+        {
+          id: 'node_0',
+          type: 'content',
+          left: 0,
+          top: 0,
+          answers: [{ id: 'answer_0_0', text: 'Continue' }],
+          events: [
+            {
+              id: 'event_1',
+              target: 'condition_1',
+              type: 'condition',
+              amount: '1',
+              action: 'alterCondition',
+            },
+          ],
+        },
+      ],
+      refs: { condition_1: { name: 'key', type: 'condition' } },
+    })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    document.body.appendChild(host)
+    const board = component.boardElement!.nativeElement
+    for (const trigger of ['.node__event', '.node__addEventButton', '.node__addRequirementButton']) {
+      host.querySelector<HTMLButtonElement>(trigger)!.click()
+      fixture.detectChanges()
+      await new Promise<void>((resolve) => setTimeout(resolve, 0))
+
+      const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+      // The inherited PopupBase listener skips its first click. Exercise it before panning.
+      panel.querySelector<HTMLElement>('header')!.click()
+      fixture.detectChanges()
+
+      for (let pan = 0; pan < 2; pan++) {
+        board.dispatchEvent(new MouseEvent('mousedown', {
+          bubbles: true, button: 0, clientX: 20, clientY: 20,
+        }))
+        document.dispatchEvent(new MouseEvent('mousemove', {
+          bubbles: true, clientX: 80, clientY: 50,
+        }))
+        document.dispatchEvent(new MouseEvent('mouseup', {
+          bubbles: true, button: 0, clientX: 80, clientY: 50,
+        }))
+        board.dispatchEvent(new MouseEvent('click', {
+          bubbles: true, clientX: 80, clientY: 50,
+        }))
+        fixture.detectChanges()
+
+        expect(host.querySelector('.anchoredPopover__panel'))
+          .withContext(`${trigger}, pan ${pan + 1}`).toBe(panel)
+      }
+
+      board.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      fixture.detectChanges()
+      expect(host.querySelector('.anchoredPopover__panel')).withContext(trigger).toBeNull()
+    }
   })
 
   it('provides isolated panzoom state to every board', () => {

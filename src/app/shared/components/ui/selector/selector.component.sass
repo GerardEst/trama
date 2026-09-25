@@ -3,6 +3,7 @@
   display: block
   width: 100%
   min-width: 0
+  anchor-scope: --selector-trigger
 
 .selector
   display: flex
@@ -20,6 +21,7 @@
   cursor: pointer
   touch-action: manipulation
   transition: border-color 160ms ease, box-shadow 160ms ease
+  anchor-name: --selector-trigger
 
   span
     overflow: hidden
@@ -57,11 +59,14 @@
     font-weight: 500 !important
 
   &__popover
-    position: absolute
-    top: calc(100% + 0.5rem)
-    left: 0
+    position: fixed
+    inset: auto
+    top: calc(anchor(bottom) + 0.5rem)
+    left: anchor(left)
+    position-anchor: --selector-trigger
+    position-try-fallbacks: flip-block
     z-index: 30
-    width: 100%
+    width: anchor-size(width)
 
 @media (prefers-reduced-motion: reduce)
   .selector,

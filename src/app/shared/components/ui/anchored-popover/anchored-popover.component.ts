@@ -25,6 +25,8 @@ export class AnchoredPopoverComponent {
   popoverContent?: AnchoredPopoverContentDirective
 
   private panelElement?: HTMLElement
+  private pointerStart?: { x: number; y: number }
+  private boardPanned = false
 
   @ViewChild('panel')
   set panel(element: ElementRef<HTMLElement> | undefined) {
@@ -56,6 +58,8 @@ export class AnchoredPopoverComponent {
 
   close() {
     const focusWasInside = this.panelElement?.contains(document.activeElement)
+    this.pointerStart = undefined
+    this.boardPanned = false
     this.isOpen = false
     if (focusWasInside) this.focusTrigger()
   }
@@ -66,8 +70,42 @@ export class AnchoredPopoverComponent {
       ?.focus()
   }
 
+  @HostListener('document:pointerdown', ['$event'])
+  onPointerDown(event: PointerEvent) {
+    if (this.isOpen) {
+      this.boardPanned = false
+      this.pointerStart = { x: event.clientX, y: event.clientY }
+    }
+  }
+
+  @HostListener('document:poloBoardPanStart')
+  onBoardPanStart() {
+    if (this.isOpen) this.boardPanned = true
+  }
+
+  @HostListener('document:pointercancel')
+  onPointerCancel() {
+    this.pointerStart = undefined
+  }
+
+  @HostListener('document:keydown')
+  onKeyDown() {
+    this.pointerStart = undefined
+    this.boardPanned = false
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
+    const start = this.pointerStart
+    const boardPanned = this.boardPanned
+    this.pointerStart = undefined
+    this.boardPanned = false
+    // Panzoom can swallow the initial pointer event, so use its panstart signal too.
+    if (
+      boardPanned ||
+      (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5)
+    ) return
+
     if (
       this.isOpen &&
       !event.composedPath().includes(this.elementRef.nativeElement)

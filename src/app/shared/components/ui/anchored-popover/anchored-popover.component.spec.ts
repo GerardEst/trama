@@ -66,6 +66,61 @@ describe('AnchoredPopoverComponent', () => {
     outside.remove()
   })
 
+  it('stays open after dragging outside but closes on the next outside click', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('[popoverTrigger]')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+
+    const board = document.createElement('div')
+    document.body.appendChild(board)
+    board.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true, clientX: 20, clientY: 20, pointerId: 1,
+    }))
+    board.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, clientX: 80, clientY: 50, pointerId: 1,
+    }))
+    board.dispatchEvent(new PointerEvent('pointerup', {
+      bubbles: true, clientX: 80, clientY: 50, pointerId: 1,
+    }))
+    board.dispatchEvent(new MouseEvent('click', {
+      bubbles: true, clientX: 80, clientY: 50,
+    }))
+    fixture.detectChanges()
+
+    expect(host.querySelector('.anchoredPopover__panel')).not.toBeNull()
+
+    board.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true, clientX: 80, clientY: 50, pointerId: 1,
+    }))
+    board.dispatchEvent(new MouseEvent('click', {
+      bubbles: true, clientX: 80, clientY: 50,
+    }))
+    fixture.detectChanges()
+
+    expect(host.querySelector('.anchoredPopover__panel')).toBeNull()
+    board.remove()
+  })
+
+  it('still closes on an outside click with slight pointer movement', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('[popoverTrigger]')!.click()
+    fixture.detectChanges()
+
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    outside.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true, clientX: 20, clientY: 20,
+    }))
+    outside.dispatchEvent(new MouseEvent('click', {
+      bubbles: true, clientX: 22, clientY: 21,
+    }))
+    fixture.detectChanges()
+
+    expect(host.querySelector('.anchoredPopover__panel')).toBeNull()
+    outside.remove()
+  })
+
   it('restores focus to the trigger after closing from inside', async () => {
     const host: HTMLElement = fixture.nativeElement
     const trigger = host.querySelector<HTMLButtonElement>('[popoverTrigger]')!
