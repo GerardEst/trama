@@ -41,6 +41,30 @@ describe('NodeRequirementComponent', () => {
       .toContain('Ancient key')
   })
 
+  it('opens the Edit requirement editor in an anchored popover', async () => {
+    component.type = 'condition'
+    component.target = 'condition_12'
+    component.amount = '1'
+    fixture.detectChanges()
+
+    const host: HTMLElement = fixture.nativeElement
+    document.body.appendChild(host)
+    host.querySelector<HTMLButtonElement>('.node__requirement')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+    expect(panel.matches(':popover-open')).toBeTrue()
+    expect(panel.querySelector('[role="dialog"]')).not.toBeNull()
+
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+    outside.click()
+    fixture.detectChanges()
+    expect(host.querySelector('.anchoredPopover__panel')).toBeNull()
+    outside.remove()
+  })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })

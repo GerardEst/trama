@@ -6,18 +6,14 @@
   display: inline-flex
   anchor-name: --context-popover
 
-@position-try --popover-in-viewport
-  inset: auto
-  top: 1rem
-  left: max(1rem, calc((100vw - var(--polo-popover-width, 32rem)) / 2))
-
 .anchoredPopover__panel
   position: fixed
   inset: auto
   top: max(1rem, anchor(top))
   left: max(1rem, calc(anchor(right) + 0.75rem))
   position-anchor: --context-popover
-  position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block, --popover-in-viewport
+  position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block
+  position-try-order: most-height
   width: min(var(--polo-popover-width, 32rem), calc(100vw - 2rem))
   max-height: calc(100dvh - 2rem)
   margin: 0

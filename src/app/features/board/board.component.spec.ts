@@ -80,7 +80,15 @@ describe('BoardComponent', () => {
           type: 'content',
           left: 0,
           top: 0,
-          answers: [{ id: 'answer_0_0', text: 'Continue' }],
+          answers: [{
+            id: 'answer_0_0',
+            text: 'Continue',
+            requirements: [{
+              target: 'condition_1',
+              type: 'condition',
+              amount: 1,
+            }],
+          }],
           events: [
             {
               id: 'event_1',
@@ -98,7 +106,12 @@ describe('BoardComponent', () => {
     const host: HTMLElement = fixture.nativeElement
     document.body.appendChild(host)
     const board = component.boardElement!.nativeElement
-    for (const trigger of ['.node__event', '.node__addEventButton', '.node__addRequirementButton']) {
+    for (const trigger of [
+      '.node > .node__events .node__event',
+      'polo-answer .node__addEventButton',
+      'polo-answer .node__addRequirementButton',
+      'polo-answer .node__requirement',
+    ]) {
       host.querySelector<HTMLButtonElement>(trigger)!.click()
       fixture.detectChanges()
       await new Promise<void>((resolve) => setTimeout(resolve, 0))

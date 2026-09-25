@@ -1,11 +1,17 @@
 import { Component, Output, Input, EventEmitter } from '@angular/core'
 import { NodeAddRequirementComponent } from '../../context-menus/node-add-requirement/node-add-requirement.component'
+import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
+import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 
 @Component({
   selector: 'polo-node-requirement',
   standalone: true,
-  imports: [NodeAddRequirementComponent],
+  imports: [
+    AnchoredPopoverComponent,
+    AnchoredPopoverContentDirective,
+    NodeAddRequirementComponent,
+  ],
   templateUrl: './node-requirement.component.html',
   styleUrl: './node-requirement.component.sass',
 })

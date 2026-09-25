@@ -162,8 +162,9 @@ describe('AnchoredPopoverComponent', () => {
     const style = getComputedStyle(panel)
     expect(style.getPropertyValue('position-anchor')).toBe('--context-popover')
     expect(style.getPropertyValue('position-try-fallbacks')).toBe(
-      'flip-inline, flip-block, flip-inline flip-block, --popover-in-viewport'
+      'flip-inline, flip-block, flip-inline flip-block'
     )
+    expect(style.getPropertyValue('position-try-order')).toBe('most-height')
     expect(parseFloat(style.maxHeight)).toBeLessThan(window.innerHeight)
   })
 })

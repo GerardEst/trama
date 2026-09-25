@@ -1,29 +1,33 @@
-<button
-  class="node__requirement"
-  type="button"
-  [class.node__requirement--condition]="type === 'condition'"
-  [attr.aria-label]="'Edit requirement ' + displayTarget + ', ' + displayValue"
-  (click)="openModifyRequirement = true"
->
-  <img
-    [src]="type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/stat.svg'"
-    alt=""
-  />
-  <span>{{ displayTarget }}</span>
-  <strong>{{ displayValue }}</strong>
-</button>
-
-@if (openModifyRequirement) {
-  <div class="node__modifyRequirement">
+<polo-anchored-popover #editRequirementPopover [closeOnEscape]="false">
+  <button
+    popoverTrigger
+    class="node__requirement"
+    type="button"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="editRequirementPopover.isOpen"
+    [class.node__requirement--condition]="type === 'condition'"
+    [attr.aria-label]="'Edit requirement ' + displayTarget + ', ' + displayValue"
+    (click)="editRequirementPopover.open()"
+  >
+    <img
+      [src]="type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/stat.svg'"
+      alt=""
+    />
+    <span>{{ displayTarget }}</span>
+    <strong>{{ displayValue }}</strong>
+  </button>
+  <ng-template poloPopoverContent>
     <polo-node-add-requirement
+      class="anchoredAddRequirement"
+      [closeOnOutsideClick]="false"
       [amount]="amount"
       [type]="type"
       [target]="target"
       [originalTarget]="target"
       (onSaveRequirement)="saveRequirement($event)"
-      (onClose)="openModifyRequirement = false"
+      (onClose)="editRequirementPopover.close()"
       (onDeleteRequirement)="deleteRequirement($event)"
       [canBeDeleted]="true"
     ></polo-node-add-requirement>
-  </div>
-}
+  </ng-template>
+</polo-anchored-popover>
