@@ -6,7 +6,7 @@ import {
   link,
   node,
   node_answer,
-  node_conditions,
+  node_condition_rule,
   shareOptions,
   tree,
 } from 'src/app/core/interfaces/interfaces'
@@ -188,17 +188,74 @@ export class StoryEditorService {
     })
   }
 
-  updateConditionValues(conditionId: string, values: node_conditions) {
+  updateConditionValues(
+    conditionId: string,
+    values: node_condition_rule,
+    ruleIndex = 0
+  ) {
     const nodeId = `node_${conditionId.split('_')[1]}`
     this.withNode(nodeId, (storyNode) => {
-      const condition = storyNode.conditions?.find(
+      const route = storyNode.conditions?.find(
         (candidate) => candidate.id === conditionId
       )
-      if (!condition) return
+      if (!route) return
 
-      condition.ref = values.ref
-      condition.comparator = values.comparator
-      condition.value = Number(values.value ?? 0)
+      const rule = route.rules
+        ? route.rules[ruleIndex]
+        : ruleIndex === 0
+          ? route
+          : undefined
+      if (!rule) return
+
+      rule.ref = values.ref
+      rule.comparator = values.comparator
+      rule.value = Number(values.value ?? 0)
+    })
+  }
+
+  addConditionRule(conditionId: string) {
+    const nodeId = `node_${conditionId.split('_')[1]}`
+    this.withNode(nodeId, (storyNode) => {
+      const route = storyNode.conditions?.find(
+        (candidate) => candidate.id === conditionId
+      )
+      if (!route) return
+
+      if (!route.rules) {
+        route.rules = [
+          { ref: route.ref, comparator: route.comparator, value: route.value },
+        ]
+        delete route.ref
+        delete route.comparator
+        delete route.value
+      }
+      route.rules.push({})
+    })
+  }
+
+  removeConditionRule(conditionId: string, ruleIndex: number) {
+    const nodeId = `node_${conditionId.split('_')[1]}`
+    this.withNode(nodeId, (storyNode) => {
+      const route = storyNode.conditions?.find(
+        (candidate) => candidate.id === conditionId
+      )
+      if (!route?.rules || route.rules.length <= 1) return
+      route.rules.splice(ruleIndex, 1)
+    })
+  }
+
+  moveCondition(nodeId: string, conditionId: string, direction: -1 | 1) {
+    this.withNode(nodeId, (storyNode) => {
+      const routes = storyNode.conditions
+      const index = routes?.findIndex((route) => route.id === conditionId) ?? -1
+      if (
+        !routes ||
+        index < 0 ||
+        index + direction < 0 ||
+        index + direction >= routes.length
+      ) return
+      const [route] = routes.splice(index, 1)
+      routes.splice(index + direction, 0, route)
     })
   }
 

@@ -109,6 +109,44 @@ describe('ActiveStoryService', () => {
     ])
   })
 
+  it('counts legacy and multi-rule distributor references as used', () => {
+    service.load('story-1', 'Story', {
+      refs: {
+        stat_1: { name: 'Gold', type: 'stat' },
+        condition_1: { name: 'Has key', type: 'condition' },
+      },
+      nodes: [
+        {
+          id: 'node_0',
+          top: 0,
+          left: 0,
+          type: 'distributor',
+          conditions: [
+            {
+              id: 'condition_0_0',
+              ref: 'stat_1',
+              comparator: 'morethan',
+              value: 5,
+            },
+            {
+              id: 'condition_0_1',
+              rules: [
+                { ref: 'stat_1', comparator: 'lessthan', value: 2 },
+                { ref: 'condition_1', comparator: 'equalto', value: 1 },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    expect(service.referenceUsages().map((usage) => usage.id)).toEqual([
+      'stat_1',
+      'stat_1',
+      'condition_1',
+    ])
+  })
+
   it('updates configuration without mutating the previous value', () => {
     const previousConfiguration = service.storyConfiguration()
 

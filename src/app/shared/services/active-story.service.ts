@@ -115,6 +115,14 @@ export class ActiveStoryService {
     for (const node of storyTree.nodes) {
       this.addEventUsages(usages, storyTree, node.id, node.events)
 
+      for (const route of node.conditions ?? []) {
+        for (const rule of route.rules ?? [route]) {
+          if (rule.ref) {
+            this.addUsage(usages, storyTree, rule.ref, node.id, 'requirement')
+          }
+        }
+      }
+
       for (const answer of node.answers ?? []) {
         for (const requirement of answer.requirements ?? []) {
           const refId = getRequirementRefId(requirement)

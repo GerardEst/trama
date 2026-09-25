@@ -70,12 +70,17 @@ export interface node_answer {
   requirements?: Array<answer_requirement>
 }
 
-export interface node_conditions {
-  id: string
-  join?: Array<join>
+export interface node_condition_rule {
   ref?: string
   comparator?: string
   value?: number
+}
+
+export interface node_conditions extends node_condition_rule {
+  id: string
+  join?: Array<join>
+  /** Multiple rules on one route are combined with AND. Legacy routes use ref/comparator/value. */
+  rules?: node_condition_rule[]
 }
 export interface node_userTextOptions {
   property: string

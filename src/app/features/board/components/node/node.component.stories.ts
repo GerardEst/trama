@@ -89,6 +89,31 @@ export const Distributor: Story = {
   },
 }
 
+export const DistributorMultipleRules: Story = {
+  args: {
+    nodeId: 'node_18',
+    type: 'distributor',
+    conditions: [
+      {
+        id: 'condition_18_0',
+        rules: [
+          { ref: 'stat_courage', comparator: 'morethan', value: 4 },
+          { ref: 'condition_key', comparator: 'equalto', value: 1 },
+        ],
+        join: [],
+      },
+      {
+        id: 'condition_18_1',
+        ref: 'stat_reputation',
+        comparator: 'lessthan',
+        value: 2,
+        join: [],
+      },
+    ],
+    fallbackCondition: { id: 'condition_18_fallback', join: [] },
+  },
+}
+
 export const Ending: Story = {
   args: {
     nodeId: 'node_24',

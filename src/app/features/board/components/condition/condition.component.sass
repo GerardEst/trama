@@ -3,35 +3,33 @@
   display: block
 
 .condition
-  display: grid
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) 5rem
-  align-items: end
-  gap: 0.5rem
-  padding: 0.65rem
+  display: flex
+  flex-direction: column
+  gap: 0.7rem
+  padding: 0.7rem
   background: var(--polo-color-surface)
   border: 1px solid var(--polo-color-border)
   border-radius: 0.8rem
 
   &--fallback
-    display: flex
+    flex-direction: row
     align-items: center
     gap: 0.65rem
     min-height: 4.25rem
     background: var(--polo-color-surface-subtle)
     border-style: dashed
 
-  &__fallbackIcon
-    display: grid
-    width: 2rem
-    height: 2rem
-    flex: 0 0 auto
-    place-items: center
-    color: var(--polo-color-action)
-    background: var(--polo-color-action-soft)
-    border-radius: 50%
-    font-size: 1.1rem
-    font-weight: 800
+  &__header,
+  &__actions,
+  &__comparison
+    display: flex
+    align-items: center
+    gap: 0.35rem
 
+  &__header
+    justify-content: space-between
+
+  &__heading,
   &__fallbackCopy
     display: flex
     flex-direction: column
@@ -45,8 +43,35 @@
       color: var(--polo-color-text-muted)
       font-size: 0.7rem
 
-  &__delete
-    align-self: end
+  &__rules
+    display: flex
+    flex-direction: column
+    gap: 0.4rem
+
+  &__rule
+    display: flex
+    flex-direction: column
+    gap: 0.4rem
+    padding: 0.55rem
+    background: var(--polo-color-surface-subtle)
+    border: 1px solid var(--polo-color-border)
+    border-radius: 0.65rem
+
+  &__comparison
+    align-items: end
+
+    .condition__field
+      flex: 1
+
+    .condition__field--value
+      flex: 0 0 5rem
+
+  &__and
+    align-self: center
+    color: var(--polo-color-text-muted)
+    font-size: 0.72rem
+    font-weight: 700
+    letter-spacing: 0.04em
 
   &__field
     display: flex
@@ -68,7 +93,7 @@
       height: 2.75rem
       padding: 0 0.55rem
       color: var(--polo-color-text)
-      background: var(--polo-color-surface-subtle)
+      background: var(--polo-color-surface)
       border: 1px solid var(--polo-color-border-strong)
       border-radius: 0.55rem
       font-size: 0.75rem
@@ -78,9 +103,27 @@
         outline: none
         box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
 
+  &__deleteRule
+    align-self: end
+
+  &__addRule
+    align-self: flex-start
+
+  &__fallbackIcon
+    display: grid
+    width: 2rem
+    height: 2rem
+    flex: 0 0 auto
+    place-items: center
+    color: var(--polo-color-action)
+    background: var(--polo-color-action-soft)
+    border-radius: 50%
+    font-size: 1.1rem
+    font-weight: 800
+
 .union_point
   position: absolute
-  top: 50%
+  top: 1.35rem
   right: 0
   width: 1.75rem
   height: 1.15rem
@@ -96,13 +139,8 @@
     background: var(--polo-color-action-soft)
     border-color: var(--polo-color-focus)
 
-@media (max-width: 28rem)
-  .condition
-    grid-template-columns: auto 1fr
-
-    &__field--value,
-    &__field--comparator
-      grid-column: 2
+.condition--fallback + .union_point
+  top: 50%
 
 @media (prefers-reduced-motion: reduce)
   .union_point

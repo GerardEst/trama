@@ -225,6 +225,10 @@ export class NodeComponent implements OnInit {
     this.storyEditor.removeCondition(this.nodeId, id)
   }
 
+  moveCondition(id: string, direction: -1 | 1) {
+    this.storyEditor.moveCondition(this.nodeId, id, direction)
+  }
+
   saveNodeText(event: Event) {
     const newText = this.getControlValue(event)
     this.storyEditor.updateNodeText(this.nodeId, newText)

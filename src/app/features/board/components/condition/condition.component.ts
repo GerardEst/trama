@@ -4,14 +4,12 @@ import {
   EventEmitter,
   Input,
   Output,
-  ViewChild,
-  ViewContainerRef,
   OnInit,
 } from '@angular/core'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { StoryReferencesService } from '../../services/story-references.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
-import { ref } from 'src/app/core/interfaces/interfaces'
+import { node_condition_rule, ref } from 'src/app/core/interfaces/interfaces'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 
 @Component({
@@ -24,19 +22,19 @@ import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 })
 export class ConditionComponent implements OnInit {
   refOptions: ref[] = []
-  refType: 'stat' | 'condition' | 'property' = 'stat'
 
-  // Inputs to start with
   @Input() conditionId: string = ''
   @Input() fallback: boolean = false
   @Input() selectedRef: string = ''
   @Input() comparator: string = ''
   @Input() value: number = 0
+  @Input() rules?: node_condition_rule[]
+  @Input() routeNumber: number = 1
+  @Input() routeCount: number = 1
   @Input() hasJoin: boolean = false
 
   @Output() onRemoveCondition = new EventEmitter<string>()
-  @ViewChild('optionsContainer', { read: ViewContainerRef })
-  optionsContainer?: ViewContainerRef
+  @Output() moveRoute = new EventEmitter<-1 | 1>()
 
   constructor(
     private storyEditor: StoryEditorService,
@@ -47,27 +45,46 @@ export class ConditionComponent implements OnInit {
     this.refOptions = Object.entries(this.storyReferences.getAll()).map(
       ([id, storyRef]) => ({ id, ...storyRef })
     )
-    this.refType = this.refOptions.find((ref) => ref.id === this.selectedRef)
-      ?.type as 'stat' | 'condition' | 'property'
   }
-  saveCondition(event: any) {
-    if (event.target.id === 'ref') {
-      this.refType = this.refOptions.find(
-        (ref) => ref.id === event.target.selectedOptions[0].id
-      )?.type as 'stat' | 'condition' | 'property'
-      this.selectedRef = event.target.selectedOptions[0].id
-    } else if (event.target.id === 'comparator') {
-      this.comparator = event.target.selectedOptions[0].id
-    } else if (event.target.id === 'value') {
-      this.value = event.target.value
-    }
 
-    this.storyEditor.updateConditionValues(this.conditionId, {
-      id: this.conditionId,
-      ref: this.selectedRef,
-      comparator: this.comparator,
-      value: this.value,
-    })
+  get displayedRules(): node_condition_rule[] {
+    return (
+      this.rules ?? [
+        {
+          ref: this.selectedRef,
+          comparator: this.comparator,
+          value: this.value,
+        },
+      ]
+    )
+  }
+
+  isProperty(refId?: string) {
+    return this.refOptions.some(
+      (ref) => ref.id === refId && ref.type === 'property'
+    )
+  }
+
+  saveCondition(event: Event, rule: node_condition_rule, ruleIndex: number) {
+    const target = event.target as HTMLSelectElement | HTMLInputElement
+    const values = { ...rule }
+    if (target.id === 'ref') {
+      values.ref = (target as HTMLSelectElement).selectedOptions[0].id
+    }
+    if (target.id === 'comparator') {
+      values.comparator = (target as HTMLSelectElement).selectedOptions[0].id
+    }
+    if (target.id === 'value') values.value = Number(target.value)
+
+    this.storyEditor.updateConditionValues(this.conditionId, values, ruleIndex)
+  }
+
+  addRule() {
+    this.storyEditor.addConditionRule(this.conditionId)
+  }
+
+  removeRule(index: number) {
+    this.storyEditor.removeConditionRule(this.conditionId, index)
   }
 
   removeCondition() {

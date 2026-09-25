@@ -97,6 +97,76 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('adds AND rules to a legacy route without changing its connection', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        {
+          id: 'node_0',
+          top: 0,
+          left: 0,
+          type: 'distributor',
+          conditions: [
+            {
+              id: 'condition_0_0',
+              ref: 'stat_gold',
+              comparator: 'morethan',
+              value: 3,
+              join: [{ node: 'node_1' }],
+            },
+          ],
+        },
+        { id: 'node_1', top: 0, left: 0, type: 'end' },
+      ],
+    })
+
+    editor.addConditionRule('condition_0_0')
+    editor.updateConditionValues(
+      'condition_0_0',
+      { ref: 'condition_key', comparator: 'equalto', value: 1 },
+      1
+    )
+
+    expect(activeStory.entireTree().nodes[0].conditions?.[0]).toEqual({
+      id: 'condition_0_0',
+      join: [{ node: 'node_1' }],
+      rules: [
+        { ref: 'stat_gold', comparator: 'morethan', value: 3 },
+        { ref: 'condition_key', comparator: 'equalto', value: 1 },
+      ],
+    })
+
+    editor.removeConditionRule('condition_0_0', 0)
+    expect(activeStory.entireTree().nodes[0].conditions?.[0].rules).toEqual([
+      { ref: 'condition_key', comparator: 'equalto', value: 1 },
+    ])
+  })
+
+  it('reorders routes while retaining their connections', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        {
+          id: 'node_0',
+          top: 0,
+          left: 0,
+          type: 'distributor',
+          conditions: [
+            { id: 'condition_0_0', join: [{ node: 'node_1' }] },
+            { id: 'condition_0_1', join: [{ node: 'node_2' }] },
+          ],
+        },
+      ],
+    })
+
+    editor.moveCondition('node_0', 'condition_0_1', -1)
+
+    expect(
+      activeStory.entireTree().nodes[0].conditions?.map((route) => route.id)
+    ).toEqual(['condition_0_1', 'condition_0_0'])
+    expect(activeStory.entireTree().nodes[0].conditions?.[0].join).toEqual([
+      { node: 'node_2' },
+    ])
+  })
+
   it('does not replace the tree for a duplicate join', () => {
     const currentTree = activeStory.entireTree()
 

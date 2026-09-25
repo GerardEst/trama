@@ -6,6 +6,7 @@ import {
   join,
   node,
   node_answer,
+  node_condition_rule,
   property,
   stat,
 } from 'src/app/core/interfaces/interfaces'
@@ -152,50 +153,14 @@ export class GameEngineService {
   }
 
   distributeNode(node: node) {
-    if (node.conditions) {
-      for (const distributorCondition of node.conditions) {
-        if (!distributorCondition.ref) continue
-        const distributorConditionType = distributorCondition.ref.split('_')[0]
-        const requiredValue = Number(distributorCondition.value ?? 0)
-        if (distributorConditionType === 'stat') {
-          // If it's a stat, we find this stat in the player object
-          const playerStat = this.player
-            .playerStats()
-            .find((stat: any) => stat.id === distributorCondition.ref)
-          // If the player doesn't have the stat, the amount is 0
-          const playerStatAmount = playerStat ? playerStat.amount : 0
-          // Then we check the comparator, if it's correct we can go to next node
-          if (
-            (distributorCondition.comparator === 'equalto' &&
-              playerStatAmount === requiredValue) ||
-            (distributorCondition.comparator === 'lessthan' &&
-              playerStatAmount < requiredValue) ||
-            (distributorCondition.comparator === 'morethan' &&
-              playerStatAmount > requiredValue)
-          ) {
-            return distributorCondition.join || []
-          }
-        }
-        if (distributorConditionType === 'condition') {
-          // If it's a condition, we find this condition in the player object
-          const playerCondition = this.player
-            .playerConditions()
-            .find((condition: any) => condition.id === distributorCondition.ref)
-
-          // We check the comparator
-          // If the player has the condition and the requirement is 1, we can go to next node
-          // If the player doesn't have the condition and the requirement is 0, we can go to next node too
-          if (
-            (requiredValue === 1 && playerCondition) ||
-            (requiredValue === 0 && !playerCondition)
-          ) {
-            return distributorCondition.join || []
-          }
-        }
+    for (const route of node.conditions ?? []) {
+      const rules = route.rules ?? [route]
+      if (rules.length > 0 && rules.every((rule) => this.matchesRule(rule))) {
+        return route.join ?? []
       }
     }
 
-    // If reached this point, no condition was met, we use the fallback condition
+    // If reached this point, no route was met, we use the fallback condition
     if (!node.fallbackCondition) {
       return []
     }
@@ -205,6 +170,34 @@ export class GameEngineService {
 
     console.warn('No join possible', node)
     return []
+  }
+
+  private matchesRule(rule: node_condition_rule): boolean {
+    if (!rule.ref) return false
+    const requiredValue = Number(rule.value ?? 0)
+    const type = rule.ref.split('_')[0]
+
+    if (type === 'stat') {
+      const amount =
+        this.player.playerStats().find((stat) => stat.id === rule.ref)?.amount ?? 0
+      return (
+        (rule.comparator === 'equalto' && amount === requiredValue) ||
+        (rule.comparator === 'lessthan' && amount < requiredValue) ||
+        (rule.comparator === 'morethan' && amount > requiredValue)
+      )
+    }
+
+    if (type === 'condition') {
+      const hasCondition = this.player.playerConditions().some(
+        (condition) => condition.id === rule.ref
+      )
+      return (
+        (requiredValue === 1 && hasCondition) ||
+        (requiredValue === 0 && !hasCondition)
+      )
+    }
+
+    return false
   }
 
   // Requirements

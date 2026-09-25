@@ -315,6 +315,65 @@ describe('GameEngineService', () => {
       expect(result).toBe(matchJoin)
     })
 
+    it('requires every rule in a route and tries the next route in order', () => {
+      player.playerStats.set([{ id: 'stat_gold', amount: 10 }])
+      const nextJoin = [{ node: 'node_second' }]
+
+      const result = engine.distributeNode(
+        distributor({
+          conditions: [
+            {
+              id: 'condition_1_0',
+              join: [{ node: 'node_first' }],
+              rules: [
+                { ref: 'stat_gold', comparator: 'morethan', value: 5 },
+                { ref: 'condition_key', comparator: 'equalto', value: 1 },
+              ],
+            },
+            {
+              id: 'condition_1_1',
+              ref: 'stat_gold',
+              comparator: 'morethan',
+              value: 5,
+              join: nextJoin,
+            },
+          ],
+        })
+      )
+
+      expect(result).toBe(nextJoin)
+    })
+
+    it('selects the first route when all of its rules match', () => {
+      player.playerStats.set([{ id: 'stat_gold', amount: 10 }])
+      player.playerConditions.set([{ id: 'condition_key' }])
+      const firstJoin = [{ node: 'node_first' }]
+
+      const result = engine.distributeNode(
+        distributor({
+          conditions: [
+            {
+              id: 'condition_1_0',
+              join: firstJoin,
+              rules: [
+                { ref: 'stat_gold', comparator: 'morethan', value: 5 },
+                { ref: 'condition_key', comparator: 'equalto', value: 1 },
+              ],
+            },
+            {
+              id: 'condition_1_1',
+              ref: 'stat_gold',
+              comparator: 'morethan',
+              value: 5,
+              join: [{ node: 'node_second' }],
+            },
+          ],
+        })
+      )
+
+      expect(result).toBe(firstJoin)
+    })
+
     it('falls back when no condition is met', () => {
       player.playerStats.set([{ id: 'stat_gold', amount: 1 }])
       const fallbackJoin = [{ node: 'node_poor' }]

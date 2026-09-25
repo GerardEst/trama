@@ -44,14 +44,18 @@
     @if (type === 'distributor') {
       @if (conditions && conditions.length > 0) {
         <div class="node__answers">
-          @for (condition of conditions; track condition.id) {
+          @for (condition of conditions; track condition.id; let i = $index) {
             <polo-condition
               [conditionId]="condition.id"
               [selectedRef]="condition.ref || ''"
               [comparator]="condition.comparator || ''"
               [value]="condition.value ?? 0"
+              [rules]="condition.rules"
+              [routeNumber]="i + 1"
+              [routeCount]="conditions.length"
               [hasJoin]="!!(condition.join && condition.join.length > 0)"
               (onRemoveCondition)="removeCondition($event)"
+              (moveRoute)="moveCondition(condition.id, $event)"
             ></polo-condition>
           }
         </div>
@@ -275,7 +279,7 @@
   <footer class="node__footer">
     <p>{{ nodeId }}</p>
     @if (type === 'distributor') {
-      <polo-basic-button (click)="addCondition()" text="Add condition"></polo-basic-button>
+      <polo-basic-button (click)="addCondition()" text="Add route"></polo-basic-button>
     } @else if (type === 'content') {
       <polo-basic-button (click)="addAnswer()" text="Add answer"></polo-basic-button>
     }
