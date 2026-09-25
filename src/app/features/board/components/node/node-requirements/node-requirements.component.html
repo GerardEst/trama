@@ -1,18 +1,28 @@
 <div class="node__requirements">
-  <button
-    class="node__addRequirementButton"
-    type="button"
-    aria-haspopup="dialog"
-    [attr.aria-expanded]="openAddRequirement"
-    aria-label="Add requirement"
-    title="Add requirement"
-    (click)="openAddRequirement = true"
-  >
-    <img src="/assets/icons/plus.svg" alt="" />
-    @if (!requirements || requirements.length === 0) {
-      <p>Add requirement</p>
-    }
-  </button>
+  <polo-anchored-popover #addRequirementPopover [closeOnEscape]="false">
+    <button
+      popoverTrigger
+      class="node__addRequirementButton"
+      type="button"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="addRequirementPopover.isOpen"
+      aria-label="Add requirement"
+      title="Add requirement"
+      (click)="addRequirementPopover.open()"
+    >
+      <img src="/assets/icons/plus.svg" alt="" />
+      @if (!requirements || requirements.length === 0) {
+        <p>Add requirement</p>
+      }
+    </button>
+    <ng-template poloPopoverContent>
+      <polo-node-add-requirement
+        class="anchoredAddRequirement"
+        (onSaveRequirement)="saveRequirement($event)"
+        (onClose)="addRequirementPopover.close()"
+      ></polo-node-add-requirement>
+    </ng-template>
+  </polo-anchored-popover>
   @for (requirement of requirements; track getRefId(requirement)) {
     <polo-node-requirement
       [type]="requirement.type"
@@ -21,13 +31,5 @@
       (onSaveRequirement)="saveRequirement($event)"
       (onDeleteRequirement)="deleteRequirement($event)"
     ></polo-node-requirement>
-  }
-  @if (openAddRequirement) {
-    <div class="node__addRequirement">
-      <polo-node-add-requirement
-        (onSaveRequirement)="saveRequirement($event)"
-        (onClose)="openAddRequirement = false"
-      ></polo-node-add-requirement>
-    </div>
   }
 </div>

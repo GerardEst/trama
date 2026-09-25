@@ -1,4 +1,6 @@
 import { Input, Component } from '@angular/core'
+import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
+import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 import { NodeRequirementComponent } from './node-requirement/node-requirement.component'
 import { NodeAddRequirementComponent } from '../context-menus/node-add-requirement/node-add-requirement.component'
 import { answer_requirement } from 'src/app/core/interfaces/interfaces'
@@ -8,15 +10,13 @@ import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 @Component({
   selector: 'polo-node-requirements',
   standalone: true,
-  imports: [NodeRequirementComponent, NodeAddRequirementComponent],
+  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent],
   templateUrl: './node-requirements.component.html',
   styleUrl: './node-requirements.component.sass',
 })
 export class NodeRequirementsComponent {
   @Input() answerId: string = ''
   @Input() requirements: answer_requirement[] = []
-
-  openAddRequirement: boolean = false
 
   constructor(private storyEditor: StoryEditorService) {}
 

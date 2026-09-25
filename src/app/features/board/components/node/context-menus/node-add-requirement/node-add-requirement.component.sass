@@ -188,6 +188,16 @@
         background: var(--polo-color-danger-hover)
         border-color: var(--polo-color-danger-hover)
 
+:host(.anchoredAddRequirement) .addRequirement
+  position: relative
+  top: auto
+  left: auto
+  box-sizing: border-box
+  width: 100%
+
+  &::before
+    display: none
+
 @media (max-width: 520px)
   .addRequirement
     width: min(29rem, calc(100vw - 1rem))

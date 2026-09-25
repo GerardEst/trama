@@ -1,0 +1,8 @@
+<span class="anchoredPopover__trigger">
+  <ng-content select="[popoverTrigger]"></ng-content>
+</span>
+@if (isOpen && popoverContent) {
+  <div #panel class="anchoredPopover__panel" popover="manual" tabindex="-1">
+    <ng-container [ngTemplateOutlet]="popoverContent.template"></ng-container>
+  </div>
+}

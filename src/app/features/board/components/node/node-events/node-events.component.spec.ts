@@ -32,6 +32,21 @@ describe('NodeEventsComponent', () => {
     fixture.detectChanges()
   })
 
+  afterEach(() => fixture.nativeElement.remove())
+
+  it('opens the Add event panel as an anchored popover', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    document.body.appendChild(host)
+    host.querySelector<HTMLButtonElement>('.node__addEventButton')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 50))
+
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+    expect(panel.matches(':popover-open')).toBeTrue()
+    expect(panel.querySelector('.addEvent')).not.toBeNull()
+    expect(host.querySelector('.node__addEventButton')?.getAttribute('aria-expanded')).toBe('true')
+  })
+
   it('keeps the confirmation open when the clicked button is replaced', () => {
     component.events = [conditionEvent]
     fixture.detectChanges()

@@ -1,18 +1,28 @@
 <div class="node__events">
-  <button
-    class="node__addEventButton"
-    type="button"
-    aria-haspopup="dialog"
-    [attr.aria-expanded]="openAddEvent"
-    aria-label="Add event"
-    title="Add event"
-    (click)="openAddEvent = true"
-  >
-    <img src="/assets/icons/plus.svg" alt="" />
-    @if (!events || events.length === 0) {
-      <p>Add event</p>
-    }
-  </button>
+  <polo-anchored-popover #addEventPopover [closeOnEscape]="false">
+    <button
+      popoverTrigger
+      class="node__addEventButton"
+      type="button"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="addEventPopover.isOpen"
+      aria-label="Add event"
+      title="Add event"
+      (click)="addEventPopover.open()"
+    >
+      <img src="/assets/icons/plus.svg" alt="" />
+      @if (!events || events.length === 0) {
+        <p>Add event</p>
+      }
+    </button>
+    <ng-template poloPopoverContent>
+      <polo-node-add-event
+        class="anchoredAddEvent"
+        (onSaveEvent)="saveEvent($event)"
+        (onClose)="addEventPopover.close()"
+      ></polo-node-add-event>
+    </ng-template>
+  </polo-anchored-popover>
   @for (event of events; track event.target) {
     <polo-node-event
       [type]="event.type"
@@ -22,13 +32,5 @@
       (onSaveEvent)="saveEvent($event)"
       (onDeleteEvent)="deleteEvent($event)"
     ></polo-node-event>
-  }
-  @if (openAddEvent) {
-    <div class="node__addEvent">
-      <polo-node-add-event
-        (onSaveEvent)="saveEvent($event)"
-        (onClose)="openAddEvent = false"
-      ></polo-node-add-event>
-    </div>
   }
 </div>

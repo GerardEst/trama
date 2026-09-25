@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core'
+import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
+import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 import { NodeAddEventComponent } from '../context-menus/node-add-event/node-add-event.component'
 import { event } from 'src/app/core/interfaces/interfaces'
 import { StoryEditorService } from '../../../services/story-editor.service'
@@ -7,7 +9,7 @@ import { NodeEventComponent } from './node-event/node-event.component'
 @Component({
   selector: 'polo-node-events',
   standalone: true,
-  imports: [NodeAddEventComponent, NodeEventComponent],
+  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent],
   templateUrl: './node-events.component.html',
   styleUrl: './node-events.component.sass',
 })
@@ -24,8 +26,6 @@ export class NodeEventsComponent {
   get events(): event[] {
     return this.storyEvents
   }
-
-  openAddEvent: boolean = false
 
   constructor(private storyEditor: StoryEditorService) {}
 

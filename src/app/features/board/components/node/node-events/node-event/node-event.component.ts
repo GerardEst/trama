@@ -8,11 +8,13 @@ import {
   OnChanges,
 } from '@angular/core'
 import { NodeAddEventComponent } from '../../context-menus/node-add-event/node-add-event.component'
+import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
+import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 
 @Component({
   selector: 'polo-node-event',
   standalone: true,
-  imports: [NodeAddEventComponent],
+  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent],
   templateUrl: './node-event.component.html',
   styleUrl: './node-event.component.sass',
 })
@@ -26,7 +28,6 @@ export class NodeEventComponent implements OnInit, OnChanges {
   @Input() property?: string
 
   isNegative: boolean = false
-  openModifyEvent: boolean = false
 
   get displayTarget() {
     return (this.target || '')

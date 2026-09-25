@@ -1,32 +1,35 @@
-<button
-  class="node__event"
-  type="button"
-  [class.node__event--negative]="isNegative"
-  [class.node__event--condition]="type === 'condition'"
-  [class.node__event--property]="type === 'property'"
-  [attr.aria-label]="'Edit event ' + displayTarget + ', ' + displayValue"
-  (click)="openModifyEvent = true"
->
-  <img
-    [src]="type === 'stat' ? '/assets/icons/stat.svg' : type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/tag.svg'"
-    alt=""
-  />
-  <span>{{ displayTarget }}</span>
-  <strong>{{ displayValue }}</strong>
-</button>
-
-@if (openModifyEvent) {
-  <div class="node__modifyEvent">
+<polo-anchored-popover #editEventPopover [closeOnEscape]="false">
+  <button
+    popoverTrigger
+    class="node__event"
+    type="button"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="editEventPopover.isOpen"
+    [class.node__event--negative]="isNegative"
+    [class.node__event--condition]="type === 'condition'"
+    [class.node__event--property]="type === 'property'"
+    [attr.aria-label]="'Edit event ' + displayTarget + ', ' + displayValue"
+    (click)="editEventPopover.open()"
+  >
+    <img
+      [src]="type === 'stat' ? '/assets/icons/stat.svg' : type === 'condition' ? '/assets/icons/condition.svg' : '/assets/icons/tag.svg'"
+      alt=""
+    />
+    <span>{{ displayTarget }}</span>
+    <strong>{{ displayValue }}</strong>
+  </button>
+  <ng-template poloPopoverContent>
     <polo-node-add-event
+      class="anchoredAddEvent"
       [amount]="amount"
       [type]="type"
       [target]="target"
       [originalTarget]="target"
       [property]="property"
-      (onSaveEvent)="saveEvent($event)"
-      (onClose)="openModifyEvent = false"
-      (onDeleteEvent)="deleteEvent($event)"
       [canBeDeleted]="true"
+      (onSaveEvent)="saveEvent($event)"
+      (onClose)="editEventPopover.close()"
+      (onDeleteEvent)="deleteEvent($event)"
     ></polo-node-add-event>
-  </div>
-}
+  </ng-template>
+</polo-anchored-popover>
