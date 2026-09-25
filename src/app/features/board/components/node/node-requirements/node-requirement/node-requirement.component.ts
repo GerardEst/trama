@@ -1,5 +1,6 @@
 import { Component, Output, Input, EventEmitter } from '@angular/core'
 import { NodeAddRequirementComponent } from '../../context-menus/node-add-requirement/node-add-requirement.component'
+import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 
 @Component({
   selector: 'polo-node-requirement',
@@ -9,6 +10,8 @@ import { NodeAddRequirementComponent } from '../../context-menus/node-add-requir
   styleUrl: './node-requirement.component.sass',
 })
 export class NodeRequirementComponent {
+  constructor(private storyReferences: StoryReferencesService) {}
+
   @Output() onSaveRequirement: EventEmitter<any> = new EventEmitter()
   @Output() onDeleteRequirement: EventEmitter<any> = new EventEmitter()
 
@@ -19,6 +22,9 @@ export class NodeRequirementComponent {
   openModifyRequirement: boolean = false
 
   get displayTarget() {
+    const referenceName = this.storyReferences.getName(this.target)
+    if (referenceName) return referenceName
+
     return (this.target || '')
       .replace(/^(stat|condition|property)_/, '')
       .replace(/[_-]+/g, ' ')

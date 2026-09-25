@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { NodeEventComponent } from './node-event.component'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 describe('NodeEventComponent', () => {
   let component: NodeEventComponent
@@ -17,6 +18,21 @@ describe('NodeEventComponent', () => {
   })
 
   afterEach(() => fixture.nativeElement.remove())
+
+  it('shows the referenced name instead of the event target ID', () => {
+    TestBed.inject(ActiveStoryService).load('story-1', 'Story', {
+      refs: { condition_12: { name: 'Ancient key', type: 'condition' } },
+      nodes: [],
+    })
+    component.type = 'condition'
+    component.target = 'condition_12'
+    component.amount = '1'
+    fixture.detectChanges()
+
+    const pill = fixture.nativeElement.querySelector('.node__event')
+    expect(pill.textContent).toContain('Ancient key')
+    expect(pill.textContent).not.toContain('12')
+  })
 
   it('opens the Edit event dialog in an anchored popover', async () => {
     component.type = 'stat'

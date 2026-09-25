@@ -10,6 +10,7 @@ import {
 import { NodeAddEventComponent } from '../../context-menus/node-add-event/node-add-event.component'
 import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
 import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
+import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 
 @Component({
   selector: 'polo-node-event',
@@ -19,6 +20,8 @@ import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/an
   styleUrl: './node-event.component.sass',
 })
 export class NodeEventComponent implements OnInit, OnChanges {
+  constructor(private storyReferences: StoryReferencesService) {}
+
   @Output() onSaveEvent: EventEmitter<any> = new EventEmitter()
   @Output() onDeleteEvent: EventEmitter<any> = new EventEmitter()
 
@@ -30,6 +33,9 @@ export class NodeEventComponent implements OnInit, OnChanges {
   isNegative: boolean = false
 
   get displayTarget() {
+    const referenceName = this.storyReferences.getName(this.target)
+    if (referenceName) return referenceName
+
     return (this.target || '')
       .replace(/^(stat|condition|property)_/, '')
       .replace(/[_-]+/g, ' ')
