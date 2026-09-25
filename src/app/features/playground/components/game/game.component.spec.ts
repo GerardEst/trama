@@ -6,6 +6,7 @@ import {
   tick,
 } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
+import { PlayerService } from 'src/app/features/playground/services/player.service'
 
 import { GameComponent } from './game.component'
 
@@ -50,6 +51,57 @@ describe('GameComponent', () => {
     expect(apply).toHaveBeenCalledOnceWith(answer.events)
     expect(nextStep).toHaveBeenCalledWith(answer.join)
   })
+
+  it('applies distributor events before choosing a condition branch', fakeAsync(() => {
+    const player = TestBed.inject(PlayerService)
+    player.playerStats.set([])
+
+    const distributor: node = {
+      id: 'node_1',
+      type: 'distributor',
+      top: 0,
+      left: 0,
+      events: [
+        {
+          id: 'event_gold',
+          target: 'stat_gold',
+          type: 'stat',
+          amount: '1',
+          action: 'alterStat',
+        },
+      ],
+      conditions: [
+        {
+          id: 'condition_1_0',
+          ref: 'stat_gold',
+          comparator: 'equalto',
+          value: 1,
+          join: [{ node: 'node_2' }],
+        },
+      ],
+      fallbackCondition: {
+        id: 'condition_1_fallback',
+        join: [{ node: 'node_3' }],
+      },
+    }
+    const matchedNode: node = { id: 'node_2', type: 'end', top: 0, left: 0 }
+    const fallbackNode: node = { id: 'node_3', type: 'end', top: 0, left: 0 }
+    spyOn(component.gameEngine, 'buildNextNodeFromJoin').and.callFake(
+      (storyJoin) => {
+        if (storyJoin.node === 'node_1') return distributor
+        return storyJoin.node === 'node_2' ? matchedNode : fallbackNode
+      }
+    )
+
+    component.nextStep([{ node: 'node_1' }])
+    tick(1200)
+
+    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 1 }])
+    expect(
+      component.activeNodes.map((activeNode: node) => activeNode.id)
+    ).toEqual(['node_2'])
+    flush()
+  }))
 
   it('applies the arrival event before showing and interpolating answers', fakeAsync(() => {
     const storyNode: node = {

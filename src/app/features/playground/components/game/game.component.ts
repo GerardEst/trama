@@ -98,6 +98,7 @@ export class GameComponent {
     const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
 
     if (isDistributor) {
+      this.gameEngine.applyEvents(activeNode.events ?? [])
       this.nextStep(
         this.gameEngine.distributeNode(activeNode),
         addToCurrentStep
