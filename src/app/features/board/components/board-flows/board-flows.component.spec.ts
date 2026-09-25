@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 import { BoardFlowsComponent } from './board-flows.component'
@@ -58,6 +58,31 @@ describe('BoardFlowsComponent', () => {
     expect(source.getBoundingClientRect).toHaveBeenCalledTimes(1)
     expect(globalLookup).not.toHaveBeenCalled()
   })
+
+  it('keeps visible connector strokes one screen pixel wide when zoomed', fakeAsync(() => {
+    spyOn(component, 'calculatePaths').and.returnValue([{
+      id: 'node_0::node_1::node',
+      origin: 'node_0',
+      destiny: 'node_1',
+      toAnswer: false,
+      svgPath: 'M0,0 L10,10',
+    }])
+    spyOn(component, 'createPath').and.returnValue('M0,0 L10,10')
+    fixture.componentRef.setInput('drawingStroke', {
+      originId: 'node_0',
+      from: document.createElement('div'),
+      to: { x: 10, y: 10 },
+    })
+    anchors.invalidate()
+    tick(16)
+    fixture.detectChanges()
+
+    const strokes = fixture.nativeElement.querySelectorAll('path[stroke="#cccccc"]')
+    expect(strokes.length).toBe(2)
+    strokes.forEach((stroke: SVGPathElement) => {
+      expect(stroke.getAttribute('vector-effect')).toBe('non-scaling-stroke')
+    })
+  }))
 
   it('coalesces repeated refresh requests into one animation frame', () => {
     const animationFrame = spyOn(window, 'requestAnimationFrame').and.returnValue(1)
