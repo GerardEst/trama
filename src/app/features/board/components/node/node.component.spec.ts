@@ -5,6 +5,7 @@ import { BoardAnchorRegistryService } from '../../services/board-anchor-registry
 import { PanzoomService } from '../../services/panzoom.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ApisService } from 'src/app/core/services/apis.service'
+import { StoryEditorService } from '../../services/story-editor.service'
 
 describe('NodeComponent', () => {
   let component: NodeComponent
@@ -42,6 +43,48 @@ describe('NodeComponent', () => {
       new PointerEvent('pointerdown', { bubbles: true })
     )
     expect(pointerDown).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses labeled form fields for text node settings and saves changes', () => {
+    const editor = TestBed.inject(StoryEditorService)
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('type', 'text')
+    fixture.componentRef.setInput('text', 'What is your name?')
+    fixture.componentRef.setInput('userTextOptions', {
+      property: 'name',
+      placeholder: 'Your name',
+      buttonText: 'Continue',
+      description: 'Enter a name',
+    })
+    fixture.detectChanges()
+
+    const fields = [
+      { label: 'Prompt', id: 'prompt', value: 'New prompt', method: 'updateNodeText' },
+      { label: 'Property', id: 'property', value: 'alias', method: 'updateNodeProperty' },
+      {
+        label: 'Placeholder', id: 'placeholder', value: 'Your alias', method: 'updateNodePlaceholder',
+      },
+      { label: 'Button text', id: 'buttonText', value: 'Next', method: 'updateNodeButtonText' },
+      {
+        label: 'Description', id: 'description', value: 'A short hint', method: 'updateNodeDescription',
+      },
+    ] as const
+
+    for (const field of fields) {
+      const control = fixture.nativeElement.querySelector(
+        `#node_7-${field.id}`
+      ) as HTMLInputElement | HTMLTextAreaElement
+      const label = fixture.nativeElement.querySelector(
+        `label[for="node_7-${field.id}"]`
+      ) as HTMLLabelElement
+      expect(control).withContext(field.label).not.toBeNull()
+      expect(label.textContent?.trim()).toBe(field.label)
+
+      const update = spyOn(editor, field.method)
+      control.value = field.value
+      control.dispatchEvent(new Event('change'))
+      expect(update).toHaveBeenCalledOnceWith('node_7', field.value)
+    }
   })
 
   it('updates OnPush upload state and resets the selected input on optimization failure', async () => {

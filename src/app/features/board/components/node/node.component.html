@@ -194,48 +194,66 @@
         [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
-      <textarea
-        #textarea
-        class="node__text"
-        aria-label="Prompt text"
-        placeholder="Ask the player something…"
-        (change)="saveNodeText($event)"
-      >{{ text }}</textarea>
-      <label class="node__field">
-        <p>Property</p>
+      <polo-form-field label="Prompt" [controlId]="nodeId + '-prompt'" [showOptional]="false">
+        <textarea
+          #textarea
+          class="node__text"
+          [id]="nodeId + '-prompt'"
+          placeholder="Ask the player something…"
+          (change)="saveNodeText($event)"
+        >{{ text }}</textarea>
+      </polo-form-field>
+      <polo-form-field label="Property" [controlId]="nodeId + '-property'" [showOptional]="false">
         <input
+          class="node__fieldControl"
+          [id]="nodeId + '-property'"
           type="text"
           (change)="saveProperty($event)"
           name="property"
           value="{{ userTextOptions?.property }}"
         />
-      </label>
-      <label class="node__field">
-        <p>Placeholder</p>
+      </polo-form-field>
+      <polo-form-field
+        label="Placeholder"
+        [controlId]="nodeId + '-placeholder'"
+        [showOptional]="false"
+      >
         <input
+          class="node__fieldControl"
+          [id]="nodeId + '-placeholder'"
           type="text"
           (change)="savePlaceholder($event)"
           name="placeholder"
           value="{{ userTextOptions?.placeholder }}"
         />
-      </label>
-      <label class="node__field">
-        <p>Button text</p>
+      </polo-form-field>
+      <polo-form-field
+        label="Button text"
+        [controlId]="nodeId + '-buttonText'"
+        [showOptional]="false"
+      >
         <input
+          class="node__fieldControl"
+          [id]="nodeId + '-buttonText'"
           type="text"
           (change)="saveButtonText($event)"
           name="buttonText"
           value="{{ userTextOptions?.buttonText }}"
         />
-      </label>
-      <label class="node__field">
-        <p>Description</p>
+      </polo-form-field>
+      <polo-form-field
+        label="Description"
+        [controlId]="nodeId + '-description'"
+        [showOptional]="false"
+      >
         <textarea
+          class="node__fieldControl"
+          [id]="nodeId + '-description'"
           (change)="saveDescription($event)"
           name="description"
           value="{{ userTextOptions?.description }}"
         ></textarea>
-      </label>
+      </polo-form-field>
     }
   </main>
   <footer class="node__footer">

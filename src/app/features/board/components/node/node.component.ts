@@ -19,6 +19,7 @@ import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ImageComponent } from 'src/app/shared/components/ui/image/image.component'
+import { FormFieldComponent } from 'src/app/shared/components/ui/form-field/form-field.component'
 import {
   link,
   shareOptions,
@@ -50,6 +51,7 @@ import { StoryEditorService } from '../../services/story-editor.service'
     FormsModule,
     BasicButtonComponent,
     ImageComponent,
+    FormFieldComponent,
     NodeOptionsComponent,
     NodeEventsComponent,
     BoardAnchorDirective,

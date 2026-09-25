@@ -116,30 +116,20 @@
     flex-direction: column
     gap: 0.65rem
 
-  &__field
-    display: flex
-    flex-direction: column
-    gap: 0.45rem
+  &__fieldControl
+    box-sizing: border-box
+    width: 100%
+    min-height: 3.5rem
+    padding: 0.7rem 0.8rem
+    color: var(--polo-color-text)
+    background: var(--polo-color-surface)
+    border: 1px solid var(--polo-color-border-strong)
+    border-radius: 0.65rem
 
-    p
-      color: var(--polo-color-text-secondary)
-      font-size: 0.78rem
-      font-weight: 700
-
-    input,
-    textarea
-      width: 100%
-      min-height: 3.5rem
-      padding: 0.7rem 0.8rem
-      color: var(--polo-color-text)
-      background: var(--polo-color-surface)
-      border: 1px solid var(--polo-color-border-strong)
-      border-radius: 0.65rem
-
-      &:focus
-        border-color: var(--polo-color-focus)
-        outline: none
-        box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
+    &:focus
+      border-color: var(--polo-color-focus)
+      outline: none
+      box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
 
   &__shareoptions,
   &__linkoptions
