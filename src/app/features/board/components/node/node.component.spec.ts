@@ -70,6 +70,13 @@ describe('NodeComponent', () => {
       },
     ] as const
 
+    const descriptions: Record<string, string> = {
+      property: "Stores the player's answer under this property for use later in the story.",
+      placeholder: "Shown inside the player's text box before they type.",
+      buttonText: 'Saved for this node, but the playground currently uses a fixed Continue button.',
+      description: 'Saved as extra guidance for this input; not currently shown in the playground.',
+    }
+
     for (const field of fields) {
       const control = fixture.nativeElement.querySelector(
         `#node_7-${field.id}`
@@ -79,6 +86,12 @@ describe('NodeComponent', () => {
       ) as HTMLLabelElement
       expect(control).withContext(field.label).not.toBeNull()
       expect(label.textContent?.trim()).toBe(field.label)
+      if (field.id in descriptions) {
+        const descriptionId = control.getAttribute('aria-describedby')
+        expect(descriptionId).toBeTruthy()
+        const hint = fixture.nativeElement.querySelector(`#${descriptionId}`) as HTMLElement
+        expect(hint?.textContent?.trim()).toBe(descriptions[field.id])
+      }
 
       const update = spyOn(editor, field.method)
       control.value = field.value

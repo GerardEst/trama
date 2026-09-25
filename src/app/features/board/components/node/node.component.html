@@ -203,10 +203,17 @@
           (change)="saveNodeText($event)"
         >{{ text }}</textarea>
       </polo-form-field>
-      <polo-form-field label="Property" [controlId]="nodeId + '-property'" [showOptional]="false">
+      <polo-form-field
+        #propertyField
+        label="Property"
+        [controlId]="nodeId + '-property'"
+        [showOptional]="false"
+        description="Stores the player's answer under this property for use later in the story."
+      >
         <input
           class="node__fieldControl"
           [id]="nodeId + '-property'"
+          [attr.aria-describedby]="propertyField.descriptionId"
           type="text"
           (change)="saveProperty($event)"
           name="property"
@@ -214,13 +221,16 @@
         />
       </polo-form-field>
       <polo-form-field
+        #placeholderField
         label="Placeholder"
         [controlId]="nodeId + '-placeholder'"
         [showOptional]="false"
+        description="Shown inside the player's text box before they type."
       >
         <input
           class="node__fieldControl"
           [id]="nodeId + '-placeholder'"
+          [attr.aria-describedby]="placeholderField.descriptionId"
           type="text"
           (change)="savePlaceholder($event)"
           name="placeholder"
@@ -228,13 +238,16 @@
         />
       </polo-form-field>
       <polo-form-field
+        #buttonTextField
         label="Button text"
         [controlId]="nodeId + '-buttonText'"
         [showOptional]="false"
+        description="Saved for this node, but the playground currently uses a fixed Continue button."
       >
         <input
           class="node__fieldControl"
           [id]="nodeId + '-buttonText'"
+          [attr.aria-describedby]="buttonTextField.descriptionId"
           type="text"
           (change)="saveButtonText($event)"
           name="buttonText"
@@ -242,13 +255,16 @@
         />
       </polo-form-field>
       <polo-form-field
+        #descriptionField
         label="Description"
         [controlId]="nodeId + '-description'"
         [showOptional]="false"
+        description="Saved as extra guidance for this input; not currently shown in the playground."
       >
         <textarea
           class="node__fieldControl"
           [id]="nodeId + '-description'"
+          [attr.aria-describedby]="descriptionField.descriptionId"
           (change)="saveDescription($event)"
           name="description"
           value="{{ userTextOptions?.description }}"
