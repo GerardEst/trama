@@ -1,6 +1,7 @@
 *
   user-select: none
 .board
+  position: relative
   width: 20000px
   height: 10000px
 
@@ -13,6 +14,13 @@
     background-image: radial-gradient(var(--grid-color) 5%, transparent 5%)
   &.isJoining
     cursor: crosshair
+.selectionBox
+  position: absolute
+  z-index: 2
+  box-sizing: border-box
+  border: 1px dashed var(--polo-color-border-hover)
+  background: color-mix(in srgb, var(--polo-color-border-hover) 12%, transparent)
+  pointer-events: none
 .dragHandle
     width: 100%
     cursor: grab

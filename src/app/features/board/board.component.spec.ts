@@ -1,4 +1,10 @@
-import { CdkDrag, CdkDragEnd, DragRef } from '@angular/cdk/drag-drop'
+import {
+  CdkDrag,
+  CdkDragEnd,
+  CdkDragMove,
+  CdkDragStart,
+  DragRef,
+} from '@angular/cdk/drag-drop'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -182,6 +188,168 @@ describe('BoardComponent', () => {
     expect(component.isDrawingJoin).toBeFalse()
     expect(component.joinStroke).toBeUndefined()
     expect(component.panzoom.resumeDrag).toHaveBeenCalled()
+  })
+
+  it('selects intersecting nodes with a Ctrl-marquee at half zoom without panning', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('selection', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'content', left: 200, top: 0 },
+        { id: 'node_2', type: 'content', left: 400, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const nodes = Array.from(board.querySelectorAll<HTMLElement>('polo-node'))
+    spyOn(board, 'getBoundingClientRect').and.returnValue(
+      new DOMRect(100, 200, board.offsetWidth / 2, 5000)
+    )
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(false)
+    spyOn(component.panzoom, 'pauseDrag')
+    spyOn(component.panzoom, 'resumeDrag')
+    spyOn(nodes[0], 'getBoundingClientRect').and.returnValue(
+      new DOMRect(145, 245, 30, 30)
+    )
+    spyOn(nodes[1], 'getBoundingClientRect').and.returnValue(
+      new DOMRect(225, 275, 30, 30)
+    )
+    spyOn(nodes[2], 'getBoundingClientRect').and.returnValue(
+      new DOMRect(400, 400, 30, 30)
+    )
+
+    board.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true, button: 0, ctrlKey: true, pointerId: 3,
+      clientX: 150, clientY: 250,
+    }))
+    board.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, pointerId: 3, clientX: 240, clientY: 290,
+    }))
+    fixture.detectChanges()
+
+    expect(component.selectionBox).toEqual({
+      left: 100, top: 100, width: 180, height: 80,
+    })
+    expect(board.querySelector('.selectionBox')).not.toBeNull()
+    expect(nodes[0].classList.contains('node--selected')).toBeTrue()
+    expect(nodes[1].classList.contains('node--selected')).toBeTrue()
+    expect(nodes[2].classList.contains('node--selected')).toBeFalse()
+    expect(component.panzoom.pauseDrag).toHaveBeenCalled()
+
+    board.dispatchEvent(new PointerEvent('pointerup', {
+      bubbles: true, button: 0, pointerId: 3, clientX: 240, clientY: 290,
+    }))
+    fixture.detectChanges()
+    expect(board.querySelector('.selectionBox')).toBeNull()
+    expect(component.selectedNodeIds.size).toBe(2)
+    expect(component.panzoom.resumeDrag).toHaveBeenCalled()
+  })
+
+  it('moves selected nodes together and saves their positions in one mutation', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('group', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 10, top: 20 },
+        { id: 'node_1', type: 'content', left: 200, top: 100 },
+        { id: 'node_2', type: 'content', left: 400, top: 300 },
+      ],
+    })
+    fixture.detectChanges()
+    const drags = component.nodeDrags!.toArray()
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    const sourcePosition = spyOn(drags[0], 'getFreeDragPosition')
+      .and.returnValue({ x: 0, y: 0 })
+    const moveFollower = spyOn(drags[1], 'setFreeDragPosition')
+    const moveUnselected = spyOn(drags[2], 'setFreeDragPosition')
+    spyOn(storyEditor, 'updateNodePositions').and.callThrough()
+    spyOn(storyEditor, 'updateNodePosition')
+
+    component.nodeDragStarted({ source: drags[0] } as CdkDragStart<string>)
+    sourcePosition.and.returnValue({ x: 30, y: -10 })
+    component.nodeDragCheck({ source: drags[0] } as CdkDragMove<string>)
+    expect(moveFollower).toHaveBeenCalledWith({ x: 220, y: 70 })
+    expect(moveUnselected).not.toHaveBeenCalled()
+    expect(storyEditor.updateNodePositions).not.toHaveBeenCalled()
+
+    component.nodeDragEnded(
+      { source: drags[0] } as CdkDragEnd<string>,
+      activeStory.entireTree().nodes[0]
+    )
+    expect(storyEditor.updateNodePositions).toHaveBeenCalledTimes(1)
+    expect(storyEditor.updateNodePosition).not.toHaveBeenCalled()
+    expect(activeStory.entireTree().nodes.map((node) => [node.left, node.top])).toEqual([
+      [30, -10], [220, 70], [400, 300],
+    ])
+  })
+
+  it('drags an unselected node independently and clears the old selection', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('group', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 10, top: 20 },
+        { id: 'node_1', type: 'content', left: 200, top: 100 },
+      ],
+    })
+    fixture.detectChanges()
+    const drags = component.nodeDrags!.toArray()
+    component.selectedNodeIds = new Set(['node_0'])
+    component.nodePointerDown('node_1')
+    spyOn(drags[0], 'setFreeDragPosition')
+    spyOn(drags[1], 'getFreeDragPosition').and.returnValue({ x: 230, y: 110 })
+    spyOn(storyEditor, 'updateNodePositions')
+    spyOn(storyEditor, 'updateNodePosition')
+
+    component.nodeDragStarted({ source: drags[1] } as CdkDragStart<string>)
+    component.nodeDragCheck({ source: drags[1] } as CdkDragMove<string>)
+    component.nodeDragEnded(
+      { source: drags[1] } as CdkDragEnd<string>,
+      activeStory.entireTree().nodes[1]
+    )
+
+    expect(component.selectedNodeIds.size).toBe(0)
+    expect(drags[0].setFreeDragPosition).not.toHaveBeenCalled()
+    expect(storyEditor.updateNodePositions).not.toHaveBeenCalled()
+    expect(storyEditor.updateNodePosition).toHaveBeenCalledWith(
+      'node_1', 230, 110
+    )
+  })
+
+  it('cancels an in-progress marquee without leaving pan disabled', () => {
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(true)
+    const release = spyOn(board, 'releasePointerCapture')
+    const resume = spyOn(component.panzoom, 'resumeDrag')
+    component.checkDragStart({
+      button: 0, target: board, ctrlKey: true, pointerId: 7,
+      x: 20, y: 30, clientX: 20, clientY: 30,
+      preventDefault: () => {},
+    } as unknown as PointerEvent)
+    component.selectedNodeIds = new Set(['node_0'])
+
+    component.cancelJoin({ pointerId: 7 } as PointerEvent)
+
+    expect(component.selectionBox).toBeUndefined()
+    expect(component.selectedNodeIds.size).toBe(0)
+    expect(release).toHaveBeenCalledWith(7)
+    expect(resume).toHaveBeenCalled()
+  })
+
+  it('clears selection on a plain background click or Escape', () => {
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    component.selectedNodeIds = new Set(['node_0'])
+
+    component.checkDragStart({
+      button: 0, target: board, ctrlKey: false,
+    } as unknown as PointerEvent)
+    expect(component.selectedNodeIds.size).toBe(0)
+
+    component.selectedNodeIds = new Set(['node_0'])
+    component.handleEscape()
+    expect(component.selectedNodeIds.size).toBe(0)
   })
 
   it('commits the CDK free drag position without resetting placement', () => {

@@ -50,6 +50,27 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('updates several node positions in one tree change and queued save', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    const previousTree = activeStory.entireTree()
+
+    editor.updateNodePositions(new Map([
+      ['node_0', { x: 25, y: -10 }],
+      ['node_1', { x: 125, y: 90 }],
+    ]))
+
+    expect(activeStory.entireTree()).not.toBe(previousTree)
+    expect(
+      activeStory.entireTree().nodes.map((node) => [node.left, node.top])
+    ).toEqual([[25, -10], [125, 90]])
+    expect(save).toHaveBeenCalledTimes(1)
+    expect(
+      save.calls.mostRecent().args[1].nodes.map(
+        (node: { left: number; top: number }) => [node.left, node.top]
+      )
+    ).toEqual([[25, -10], [125, 90]])
+  })
+
   it('replaces the tree instead of mutating the current snapshot', () => {
     const previousTree = activeStory.entireTree()
 

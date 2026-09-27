@@ -4,6 +4,8 @@ import {
   ElementRef,
   Input,
   ViewChild,
+  ViewChildren,
+  QueryList,
   HostListener,
   OnInit,
   AfterViewInit,
@@ -13,6 +15,7 @@ import { NodeComponent } from './components/node/node.component'
 import {
   CdkDrag,
   CdkDragEnd,
+  CdkDragMove,
   CdkDragStart,
   DragRef,
   Point,
@@ -50,6 +53,7 @@ interface BoardJoinTarget {
 export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('board') boardElement?: ElementRef<HTMLElement>
   @ViewChild(BoardFlowsComponent) boardFlows?: BoardFlowsComponent
+  @ViewChildren(CdkDrag) nodeDrags?: QueryList<CdkDrag<string>>
 
   @Input() grid?: boolean
   @Input() initialZoom?: number
@@ -63,6 +67,15 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   // Drags to join
   joinStroke?: BoardJoinStroke
   private joinPointerId?: number
+  selectedNodeIds = new Set<string>()
+  selectionBox?: { left: number; top: number; width: number; height: number }
+  private selectionPointerId?: number
+  private selectionStart?: BoardPoint
+  private selectionScreenStart?: BoardPoint
+  private groupDrag?: {
+    sourceId: string
+    positions: Map<string, Point>
+  }
   private readonly nodeDragPositions = new Map<
     string,
     { left: number; top: number; position: Point }
@@ -90,10 +103,11 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('document:keydown.escape')
   handleEscape() {
-    if (this.isDrawingJoin) {
-      this.stopDragging()
-      this.panzoom.resumeDrag()
-    }
+    const wasInteracting = this.isDrawingJoin || this.selectionPointerId !== undefined
+    if (this.isDrawingJoin) this.stopDragging()
+    if (this.selectionPointerId !== undefined) this.stopSelection()
+    if (wasInteracting) this.panzoom.resumeDrag()
+    this.selectedNodeIds = new Set()
   }
 
   @HostListener('contextmenu', ['$event'])
@@ -167,12 +181,33 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   checkDragStart(event: PointerEvent) {
     if (event.button !== 0) return
 
+    const board = this.boardElement?.nativeElement
+    if (event.target === board) {
+      if (event.ctrlKey) {
+        this.selectionPointerId = event.pointerId
+        this.selectionStart = this.getBoardPosition(event)
+        this.selectionScreenStart = { x: event.clientX, y: event.clientY }
+        this.selectedNodeIds = new Set()
+        this.selectionBox = {
+          left: this.selectionStart.x,
+          top: this.selectionStart.y,
+          width: 0,
+          height: 0,
+        }
+        board.setPointerCapture(event.pointerId)
+        this.panzoom.pauseDrag()
+        event.preventDefault()
+      } else {
+        this.selectedNodeIds = new Set()
+      }
+      return
+    }
+
     const target = event.target
     if (!(target instanceof HTMLElement)) return
 
     const origin = target.closest<HTMLElement>('[data-board-origin]')
     const originId = origin?.dataset['boardOrigin']
-    const board = this.boardElement?.nativeElement
     if (!origin || !originId || !board?.contains(origin)) return
 
     this.joinStroke = {
@@ -186,6 +221,17 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkDrag(event: PointerEvent) {
+    if (event.pointerId === this.selectionPointerId && this.selectionStart) {
+      const position = this.getBoardPosition(event)
+      this.selectionBox = {
+        left: Math.min(this.selectionStart.x, position.x),
+        top: Math.min(this.selectionStart.y, position.y),
+        width: Math.abs(position.x - this.selectionStart.x),
+        height: Math.abs(position.y - this.selectionStart.y),
+      }
+      this.updateSelection(event)
+      return
+    }
     if (!this.joinStroke || event.pointerId !== this.joinPointerId) return
 
     const joinTarget = this.getJoinTarget(event)
@@ -197,6 +243,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkDragStop(event: PointerEvent) {
+    if (event.pointerId === this.selectionPointerId) {
+      this.checkDrag(event)
+      this.stopSelection()
+      this.panzoom.resumeDrag()
+      return
+    }
     if (event.button !== 0) return
 
     const stroke = this.joinStroke
@@ -226,6 +278,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cancelJoin(event: PointerEvent) {
+    if (event.pointerId === this.selectionPointerId) {
+      this.stopSelection()
+      this.selectedNodeIds = new Set()
+      this.panzoom.resumeDrag()
+      return
+    }
     if (event.pointerId !== this.joinPointerId) return
 
     this.stopDragging()
@@ -248,26 +306,114 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private stopSelection() {
+    const board = this.boardElement?.nativeElement
+    const pointerId = this.selectionPointerId
+    this.selectionPointerId = undefined
+    this.selectionStart = undefined
+    this.selectionScreenStart = undefined
+    this.selectionBox = undefined
+    if (
+      board &&
+      pointerId !== undefined &&
+      board.hasPointerCapture(pointerId)
+    ) {
+      board.releasePointerCapture(pointerId)
+    }
+  }
+
+  private updateSelection(event: PointerEvent) {
+    const start = this.selectionScreenStart
+    if (!start) return
+    const left = Math.min(start.x, event.clientX)
+    const right = Math.max(start.x, event.clientX)
+    const top = Math.min(start.y, event.clientY)
+    const bottom = Math.max(start.y, event.clientY)
+    const selected = new Set<string>()
+
+    for (const drag of this.nodeDrags ?? []) {
+      const rect = drag.element.nativeElement.getBoundingClientRect()
+      if (
+        rect.left <= right &&
+        rect.right >= left &&
+        rect.top <= bottom &&
+        rect.bottom >= top
+      ) {
+        selected.add(drag.data)
+      }
+    }
+    this.selectedNodeIds = selected
+  }
+
+  nodePointerDown(nodeId: string) {
+    if (!this.selectedNodeIds.has(nodeId)) this.selectedNodeIds = new Set()
+    this.panzoom.pauseDrag()
+  }
+
   focusNode(event: MouseEvent) {
     this.setNodeZIndex(event.currentTarget, 1)
   }
   blurNode(event: MouseEvent) {
     this.setNodeZIndex(event.currentTarget, 0)
   }
-  nodeDragStarted(event: CdkDragStart) {
+  nodeDragStarted(event: CdkDragStart<string>) {
     this.setNodeZIndex(event.source.element.nativeElement, 1)
-  }
-  nodeDragEnded(event: CdkDragEnd, storyNode: node) {
-    const dragPosition = event.source.getFreeDragPosition()
-    this.storyEditor.updateNodePosition(
-      storyNode.id,
-      dragPosition.x,
-      dragPosition.y
+    if (
+      !this.selectedNodeIds.has(event.source.data) ||
+      this.selectedNodeIds.size < 2
+    ) return
+
+    const positions = new Map<string, Point>()
+    const storyNodes = new Map(
+      this.activeStory.entireTree().nodes.map((node) => [node.id, node])
     )
+    for (const drag of this.nodeDrags ?? []) {
+      const storyNode = storyNodes.get(drag.data)
+      if (storyNode && this.selectedNodeIds.has(drag.data)) {
+        positions.set(drag.data, {
+          x: Number(storyNode.left) || 0,
+          y: Number(storyNode.top) || 0,
+        })
+      }
+    }
+    if (positions.size > 1) {
+      this.groupDrag = { sourceId: event.source.data, positions }
+    }
+  }
+  nodeDragEnded(event: CdkDragEnd<string>, storyNode: node) {
+    const dragPosition = event.source.getFreeDragPosition()
+    if (this.groupDrag?.sourceId === storyNode.id) {
+      const initial = this.groupDrag.positions.get(storyNode.id)!
+      const dx = dragPosition.x - initial.x
+      const dy = dragPosition.y - initial.y
+      const positions = new Map<string, Point>()
+      for (const [id, position] of this.groupDrag.positions) {
+        positions.set(id, { x: position.x + dx, y: position.y + dy })
+      }
+      this.storyEditor.updateNodePositions(positions)
+    } else {
+      this.storyEditor.updateNodePosition(
+        storyNode.id,
+        dragPosition.x,
+        dragPosition.y
+      )
+    }
+    this.groupDrag = undefined
     this.panzoom.resumeDrag()
     this.boardFlows?.scheduleRefresh()
   }
-  nodeDragCheck() {
+  nodeDragCheck(event: CdkDragMove<string>) {
+    if (this.groupDrag?.sourceId === event.source.data) {
+      const sourceStart = this.groupDrag.positions.get(event.source.data)!
+      const current = event.source.getFreeDragPosition()
+      const dx = current.x - sourceStart.x
+      const dy = current.y - sourceStart.y
+      for (const drag of this.nodeDrags ?? []) {
+        if (drag === event.source) continue
+        const start = this.groupDrag.positions.get(drag.data)
+        if (start) drag.setFreeDragPosition({ x: start.x + dx, y: start.y + dy })
+      }
+    }
     this.boardFlows?.scheduleRefresh()
   }
 
@@ -348,6 +494,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (image) await this.storage.removeImage(image.path)
 
     this.storyEditor.removeNode(event.nodeId)
+    this.selectedNodeIds.delete(event.nodeId)
 
     const storyId = this.activeStory.storyId()
     if (this.preferences.getActiveNode(storyId) === event.nodeId) {

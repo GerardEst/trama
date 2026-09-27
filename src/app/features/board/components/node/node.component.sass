@@ -11,11 +11,9 @@
   border: 1px solid var(--polo-color-border)
   border-radius: 1rem
   box-shadow: var(--shadow-elevation-medium-light)
-  transition: border-color 160ms ease, box-shadow 160ms ease
-
-  &:hover
-    border-color: var(--polo-color-border-hover)
-    box-shadow: var(--shadow-elevation-medium)
+  outline: 2px solid transparent
+  outline-offset: 2px
+  transition: border-color 160ms ease, box-shadow 160ms ease, outline-color 160ms ease
 
   &__header
     display: flex
@@ -27,6 +25,7 @@
     border-bottom: 1px solid var(--polo-color-surface-muted)
     border-radius: 1rem 1rem 0 0
     cursor: grab
+    transition: background-color 160ms ease
 
     &:active
       cursor: grabbing
@@ -199,6 +198,16 @@
     &--answers
       left: -1.5rem
 
+:host(.node--selected) .node,
+.node:hover
+  border-color: var(--polo-color-focus)
+  outline-color: var(--polo-color-focus)
+  box-shadow: 0 0 0 5px var(--polo-color-focus-ring), var(--shadow-elevation-high)
+
+:host(.node--selected) .node__header,
+.node:hover .node__header
+  background: var(--polo-color-surface-accent)
+
 :host.highlighted .node
   outline: 2px solid var(--polo-color-success)
   outline-offset: 2px
@@ -223,5 +232,6 @@
 
 @media (prefers-reduced-motion: reduce)
   .node,
+  .node__header,
   .union_point
     transition: none

@@ -156,6 +156,20 @@ export class StoryEditorService {
     })
   }
 
+  updateNodePositions(positions: ReadonlyMap<string, { x: number; y: number }>) {
+    this.mutations.update((tree) => {
+      let changed = false
+      for (const storyNode of tree.nodes) {
+        const position = positions.get(storyNode.id)
+        if (!position) continue
+        storyNode.left = position.x
+        storyNode.top = position.y
+        changed = true
+      }
+      return changed
+    })
+  }
+
   updateNodeShareOptions(nodeId: string, options: shareOptions) {
     this.withNode(
       nodeId,
