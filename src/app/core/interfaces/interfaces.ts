@@ -49,13 +49,15 @@ export interface node {
   id: string
   top: string | number
   left: string | number
+  /** Editor-only container. Omitted for nodes on the main board. */
+  groupId?: string
   join?: Array<join>
   image?: { path: string }
   answers?: Array<node_answer>
   conditions?: Array<node_conditions>
   fallbackCondition?: node_fallbackCondition
   text?: string
-  type: 'text' | 'content' | 'distributor' | 'end'
+  type: 'text' | 'content' | 'distributor' | 'end' | 'group'
   share?: shareOptions
   links?: link[]
   userTextOptions?: node_userTextOptions

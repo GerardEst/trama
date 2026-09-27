@@ -50,6 +50,59 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('groups nodes without rewriting links, then ungroups them', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', top: 0, left: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'content', top: 20, left: 30, join: [{ node: 'node_2' }] },
+        { id: 'node_2', type: 'end', top: 40, left: 50 },
+      ],
+    })
+    const groupId = editor.groupNodes(new Set(['node_1', 'node_2']))
+    const nodes = activeStory.entireTree().nodes
+
+    expect(groupId).toBe('node_3')
+    expect(nodes.find((storyNode) => storyNode.id === groupId)).toEqual({
+      id: 'node_3', type: 'group', text: 'Group', top: 20, left: 30,
+      groupId: undefined,
+    })
+    expect(nodes.find((storyNode) => storyNode.id === 'node_1')?.groupId).toBe(groupId)
+    expect(nodes.find((storyNode) => storyNode.id === 'node_0')?.join).toEqual([{ node: 'node_1' }])
+    expect(save).toHaveBeenCalledTimes(1)
+
+    editor.ungroupNodes(groupId!)
+    expect(activeStory.entireTree().nodes).toHaveSize(3)
+    expect(activeStory.entireTree().nodes[1].groupId).toBeUndefined()
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+  })
+
+  it('does not group the starting node or nodes from different levels', () => {
+    const before = activeStory.entireTree()
+    expect(editor.groupNodes(new Set(['node_0', 'node_1']))).toBeUndefined()
+    expect(activeStory.entireTree()).toBe(before)
+  })
+
+  it('moves group descendants with the group and dissolves a deleted group', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', top: 0, left: 0 },
+        { id: 'node_1', type: 'content', top: 20, left: 30 },
+        { id: 'node_2', type: 'end', top: 40, left: 50 },
+      ],
+    })
+    const groupId = editor.groupNodes(new Set(['node_1', 'node_2']))!
+    editor.updateNodePosition(groupId, 130, 120)
+    expect(activeStory.entireTree().nodes[1].left).toBe(130)
+    expect(activeStory.entireTree().nodes[2].top).toBe(140)
+
+    editor.removeNode(groupId)
+    expect(activeStory.entireTree().nodes.map((storyNode) => storyNode.id)).toEqual([
+      'node_0', 'node_1', 'node_2',
+    ])
+    expect(activeStory.entireTree().nodes[1].groupId).toBeUndefined()
+  })
+
   it('updates several node positions in one tree change and queued save', () => {
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
     const previousTree = activeStory.entireTree()

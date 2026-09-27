@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { projectBoardJoins } from '../../board-join-projection'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
+import { StoryEditorService } from '../../services/story-editor.service'
 import { BoardFlowsComponent } from './board-flows.component'
 
 describe('BoardFlowsComponent', () => {
@@ -47,6 +50,7 @@ describe('BoardFlowsComponent', () => {
           { node: 'node_1', toAnswer: true },
         ],
       },
+      { id: 'node_1', left: 100, top: 40, type: 'content' },
     ]
 
     const paths = component.calculatePaths(nodes)
@@ -57,6 +61,53 @@ describe('BoardFlowsComponent', () => {
     ])
     expect(source.getBoundingClientRect).toHaveBeenCalledTimes(1)
     expect(globalLookup).not.toHaveBeenCalled()
+  })
+
+  it('projects joins through group ports and boundary ports without modifying the story', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('story', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'content', left: 100, top: 0, groupId: 'node_3', join: [{ node: 'node_2' }] },
+        { id: 'node_2', type: 'content', left: 200, top: 0, groupId: 'node_3', join: [{ node: 'node_4' }] },
+        { id: 'node_3', type: 'group', left: 100, top: 0 },
+        { id: 'node_4', type: 'end', left: 400, top: 0 },
+      ],
+    })
+    const svg = component.svg!.nativeElement
+    spyOn(svg, 'getScreenCTM').and.returnValue(svg.createSVGMatrix())
+    anchors.register('node_0_join', createAnchor(0, 0))
+    anchors.register('node_1_joiner', createAnchor(100, 0))
+    anchors.register('node_1_join', createAnchor(100, 0))
+    anchors.register('node_2_joiner', createAnchor(200, 0))
+    anchors.register('node_2_join', createAnchor(200, 0))
+    anchors.register('node_3_group-entry', createAnchor(100, 0))
+    anchors.register('node_3_group-exit', createAnchor(200, 0))
+    anchors.register('node_4_joiner', createAnchor(400, 0))
+    anchors.register('node_3_boundary-in', createAnchor(0, 0))
+    anchors.register('node_3_boundary-out', createAnchor(400, 0))
+
+    expect(component.paths().map((path) => path.id)).toEqual([
+      'node_0::node_1::node', 'node_2::node_4::node',
+    ])
+    fixture.componentRef.setInput('projectedJoins', [])
+    fixture.detectChanges()
+    expect(component.paths()).toEqual([])
+    fixture.componentRef.setInput(
+      'projectedJoins', projectBoardJoins(activeStory.entireTree().nodes, 'node_3')
+    )
+    fixture.componentRef.setInput('groupId', 'node_3')
+    fixture.detectChanges()
+    expect(component.paths().map((path) => path.id)).toEqual([
+      'node_0::node_1::node', 'node_1::node_2::node', 'node_2::node_4::node',
+    ])
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    expect(activeStory.entireTree().nodes[2].join).toEqual([{ node: 'node_4' }])
+
+    const removeJoin = spyOn(TestBed.inject(StoryEditorService), 'removeJoin').and.returnValue(true)
+    component.joinContextMenuInfo = component.paths()[0]
+    component.deleteJoin()
+    expect(removeJoin).toHaveBeenCalledWith('node_0', 'node_1', false)
   })
 
   it('keeps visible connector strokes one screen pixel wide when zoomed', fakeAsync(() => {

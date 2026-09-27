@@ -10,6 +10,8 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  computed,
+  signal,
 } from '@angular/core'
 import { NodeComponent } from './components/node/node.component'
 import {
@@ -30,6 +32,15 @@ import { BoardAnchorRegistryService } from './services/board-anchor-registry.ser
 import { BoardPreferencesService } from './services/board-preferences.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 import { BoardJoinStroke, BoardPoint } from './board-interactions'
+import { projectBoardJoins } from './board-join-projection'
+import { BoardAnchorDirective } from './directives/board-anchor.directive'
+
+interface JoinCounts {
+  incoming: number
+  outgoing: number
+}
+
+const EMPTY_JOIN_COUNTS: JoinCounts = { incoming: 0, outgoing: 0 }
 
 interface BoardJoinTarget {
   nodeId: string
@@ -44,6 +55,7 @@ interface BoardJoinTarget {
     NodeComponent,
     CdkDrag,
     BoardFlowsComponent,
+    BoardAnchorDirective,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
@@ -56,6 +68,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(CdkDrag) nodeDrags?: QueryList<CdkDrag<string>>
 
   @Input() grid?: boolean
+  @Input() groupControls = false
   @Input() initialZoom?: number
   @Input() focusElements: boolean = true
   @Input() initialPosition: { x: number; y: number } = { x: 0, y: 0 }
@@ -67,6 +80,72 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   // Drags to join
   joinStroke?: BoardJoinStroke
   private joinPointerId?: number
+  private readonly groupNavigation = signal<
+    { storyId: string; groupId?: string } | undefined
+  >(undefined)
+  get currentGroupId(): string | undefined {
+    const navigation = this.groupNavigation()
+    return navigation?.storyId === this.activeStory.storyId()
+      ? navigation.groupId
+      : undefined
+  }
+  set currentGroupId(groupId: string | undefined) {
+    this.groupNavigation.set({ storyId: this.activeStory.storyId(), groupId })
+  }
+
+  readonly projectedJoins = computed(() =>
+    projectBoardJoins(this.activeStory.entireTree().nodes, this.currentGroupId)
+  )
+
+  private readonly visibleBoardNodes = computed(() =>
+    this.activeStory.entireTree().nodes.filter(
+      (storyNode) => storyNode.groupId === this.currentGroupId
+    )
+  )
+
+  private readonly boundaryPositions = computed(() => {
+    const nodes = this.visibleBoardNodes()
+    const group = this.currentGroup()
+    const lefts = nodes.map((storyNode) => Number(storyNode.left) || 0)
+    const tops = nodes.map((storyNode) => Number(storyNode.top) || 0)
+    const top = Math.min(...tops, Number(group?.top) || 0)
+    return {
+      in: { left: Math.min(...lefts, Number(group?.left) || 0) - 280, top },
+      out: { left: Math.max(...lefts, Number(group?.left) || 0) + 380, top },
+    }
+  })
+
+  private readonly childCounts = computed(() => {
+    const counts = new Map<string, number>()
+    for (const storyNode of this.activeStory.entireTree().nodes) {
+      if (storyNode.groupId) {
+        counts.set(storyNode.groupId, (counts.get(storyNode.groupId) ?? 0) + 1)
+      }
+    }
+    return counts
+  })
+
+  readonly joinCounts = computed(() => {
+    const groups = new Map<string, JoinCounts>()
+    const boundary: JoinCounts = { incoming: 0, outgoing: 0 }
+    for (const storyJoin of this.projectedJoins()) {
+      if (storyJoin.fromBoundary) boundary.incoming++
+      if (storyJoin.toBoundary) boundary.outgoing++
+      if (storyJoin.toAnchor.endsWith('_group-entry')) {
+        const groupId = storyJoin.toAnchor.slice(0, -'_group-entry'.length)
+        const counts = groups.get(groupId) ?? { incoming: 0, outgoing: 0 }
+        counts.incoming++
+        groups.set(groupId, counts)
+      }
+      if (storyJoin.fromAnchor.endsWith('_group-exit')) {
+        const groupId = storyJoin.fromAnchor.slice(0, -'_group-exit'.length)
+        const counts = groups.get(groupId) ?? { incoming: 0, outgoing: 0 }
+        counts.outgoing++
+        groups.set(groupId, counts)
+      }
+    }
+    return { groups, boundary }
+  })
   selectedNodeIds = new Set<string>()
   selectionBox?: { left: number; top: number; width: number; height: number }
   private selectionPointerId?: number
@@ -155,6 +234,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   public centerToNode(node: node | undefined) {
     if (!node) return
 
+    this.currentGroupId = node.groupId
+    this.selectedNodeIds = new Set()
     this.panzoom.centerToNode(node)
   }
 
@@ -164,6 +245,85 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public refreshFlows() {
     this.boardFlows?.scheduleRefresh()
+  }
+
+  visibleNodes(): node[] {
+    return this.visibleBoardNodes()
+  }
+
+  boundaryPosition(side: 'in' | 'out') {
+    return this.boundaryPositions()[side]
+  }
+
+  groupPortCounts(groupId: string): JoinCounts {
+    return this.joinCounts().groups.get(groupId) ?? EMPTY_JOIN_COUNTS
+  }
+
+  nodeChildCount(groupId: string): number {
+    return this.childCounts().get(groupId) ?? 0
+  }
+
+  currentGroup(): node | undefined {
+    return this.activeStory.entireTree().nodes.find(
+      (storyNode) =>
+        storyNode.id === this.currentGroupId && storyNode.type === 'group'
+    )
+  }
+
+  canGroupSelection(): boolean {
+    return (
+      this.selectedNodeIds.size >= 2 &&
+      !this.selectedNodeIds.has('node_0') &&
+      this.visibleNodes().filter((storyNode) => this.selectedNodeIds.has(storyNode.id))
+        .length === this.selectedNodeIds.size
+    )
+  }
+
+  groupSelection() {
+    if (!this.canGroupSelection()) return
+    const groupId = this.storyEditor.groupNodes(
+      this.selectedNodeIds,
+      this.currentGroupId
+    )
+    if (groupId) {
+      this.selectedNodeIds = new Set()
+      this.closeContextMenu()
+      this.refreshFlows()
+    }
+  }
+
+  enterGroup(groupId: string) {
+    const group = this.visibleNodes().find(
+      (storyNode) => storyNode.id === groupId && storyNode.type === 'group'
+    )
+    if (!group) return
+    this.currentGroupId = groupId
+    this.selectedNodeIds = new Set()
+    this.closeContextMenu()
+    const first = this.visibleNodes()[0]
+    if (first) this.panzoom.centerToNode(first)
+    this.refreshFlows()
+  }
+
+  leaveGroup() {
+    const group = this.currentGroup()
+    if (!group) return
+    this.currentGroupId = group.groupId
+    this.selectedNodeIds = new Set()
+    this.closeContextMenu()
+    this.panzoom.centerToNode(group)
+    this.refreshFlows()
+  }
+
+  ungroup(groupId: string) {
+    this.storyEditor.ungroupNodes(groupId)
+    this.selectedNodeIds = new Set()
+    this.refreshFlows()
+  }
+
+  renameGroup(groupId: string, event: Event) {
+    const name = (event.target as HTMLInputElement).value.trim()
+    this.storyEditor.updateNodeText(groupId, name || 'Group')
   }
 
   openContextMenu(event: MouseEvent) {
@@ -268,7 +428,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
           joinTarget.nodeId,
           joinTarget.toAnswer
         )
-      } else if (this.isInsideBoard(elementAtPointer)) {
+      } else if (
+        this.isInsideBoard(elementAtPointer) &&
+        !elementAtPointer?.closest('.groupNode, .boundaryNode')
+      ) {
         this.addNode(event, 'content')
       }
     }
@@ -365,7 +528,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const positions = new Map<string, Point>()
     const storyNodes = new Map(
-      this.activeStory.entireTree().nodes.map((node) => [node.id, node])
+      this.visibleNodes().map((node) => [node.id, node])
     )
     for (const drag of this.nodeDrags ?? []) {
       const storyNode = storyNodes.get(drag.data)
@@ -476,6 +639,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       type,
       top: position.top,
       left: position.left,
+      groupId: this.currentGroupId,
     }
     this.storyEditor.createNode(newNodeInfo)
 

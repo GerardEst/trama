@@ -246,6 +246,122 @@ describe('BoardComponent', () => {
     expect(component.panzoom.resumeDrag).toHaveBeenCalled()
   })
 
+  it('shows a disabled group button on dashboard boards until selection is valid', () => {
+    component.groupControls = true
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    const button = host.querySelector<HTMLButtonElement>(
+      '.groupToolbar button'
+    )!
+    expect(button).not.toBeNull()
+    expect(button.disabled).toBeTrue()
+    expect(fixture.nativeElement.textContent).toContain('Ctrl + drag')
+  })
+
+  it('groups selected nodes and navigates between board levels', () => {
+    component.groupControls = true
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('grouping', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'content', left: 200, top: 0 },
+        { id: 'node_2', type: 'content', left: 400, top: 0, join: [{ node: 'node_0' }] },
+      ],
+    })
+    fixture.detectChanges()
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
+    const disabledButton = (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.groupToolbar button')!
+    expect(disabledButton.disabled).toBeTrue()
+    expect(fixture.nativeElement.textContent).toContain('start node cannot be grouped')
+    component.selectedNodeIds = new Set(['node_1', 'node_2'])
+    component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    const groupButton = host.querySelector<HTMLButtonElement>('.groupToolbar button')!
+    expect(groupButton.disabled).toBeFalse()
+    groupButton.click()
+    fixture.detectChanges()
+
+    expect(host.querySelectorAll('polo-node').length).toBe(1)
+    expect(host.querySelectorAll('.groupNode').length).toBe(1)
+    expect(host.querySelectorAll('.groupNode__port').length).toBe(2)
+    host.querySelector<HTMLButtonElement>('.groupNode__actions button')!.click()
+    fixture.detectChanges()
+    expect(component.currentGroupId).toBe('node_3')
+    expect(host.querySelectorAll('polo-node').length).toBe(2)
+    expect(host.querySelectorAll('.boundaryNode').length).toBe(2)
+    expect(host.querySelector('.groupNode')).toBeNull()
+
+    host.querySelector<HTMLButtonElement>('.groupToolbar button')!.click()
+    fixture.detectChanges()
+    expect(component.currentGroupId).toBeUndefined()
+    host.querySelectorAll<HTMLButtonElement>('.groupNode__actions button')[1].click()
+    fixture.detectChanges()
+    expect(host.querySelectorAll('polo-node').length).toBe(3)
+    expect(host.querySelector('.groupNode')).toBeNull()
+  })
+
+  it('counts joins for all visible groups once per tree and level', () => {
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('group-counts', 'Story', {
+      nodes: [
+        {
+          id: 'node_0', type: 'content', left: 0, top: 0,
+          join: [{ node: 'node_1' }, { node: 'node_3' }],
+        },
+        { id: 'node_1', type: 'content', left: 10, top: 0, groupId: 'node_2', join: [{ node: 'node_0' }] },
+        { id: 'node_2', type: 'group', left: 10, top: 0 },
+        { id: 'node_3', type: 'content', left: 20, top: 0, groupId: 'node_4', join: [{ node: 'node_0' }] },
+        { id: 'node_4', type: 'group', left: 20, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+
+    const projection = component.projectedJoins()
+    const counts = component.joinCounts()
+    expect(component.groupPortCounts('node_2')).toEqual({ incoming: 1, outgoing: 1 })
+    expect(component.groupPortCounts('node_4')).toEqual({ incoming: 1, outgoing: 1 })
+    fixture.detectChanges()
+    expect(component.projectedJoins()).toBe(projection)
+    expect(component.joinCounts()).toBe(counts)
+
+    component.currentGroupId = 'node_2'
+    expect(component.projectedJoins()).not.toBe(projection)
+    expect(component.joinCounts().boundary).toEqual({ incoming: 1, outgoing: 1 })
+    component.currentGroupId = undefined
+    storyEditor.removeJoin('node_0', 'node_3', false)
+    expect(component.groupPortCounts('node_4')).toEqual({ incoming: 0, outgoing: 1 })
+    expect(component.joinCounts()).not.toBe(counts)
+  })
+
+  it('restores the correct level for a focused node and resets on story change', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('first', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'content', left: 10, top: 0, groupId: 'node_2' },
+        { id: 'node_2', type: 'group', left: 10, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    component.centerToNode(activeStory.entireTree().nodes[1])
+    fixture.detectChanges()
+    expect(component.currentGroupId).toBe('node_2')
+    expect(component.visibleNodes().map((storyNode) => storyNode.id)).toEqual(['node_1'])
+
+    activeStory.load('second', 'Other story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }],
+    })
+    fixture.detectChanges()
+    expect(component.currentGroupId).toBeUndefined()
+    expect(component.visibleNodes().map((storyNode) => storyNode.id)).toEqual(['node_0'])
+  })
+
   it('moves selected nodes together and saves their positions in one mutation', () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     activeStory.load('group', 'Story', {
@@ -428,6 +544,28 @@ describe('BoardComponent', () => {
       'node_1',
       true
     )
+  })
+
+  it('does not create a narrative node when a join is dropped on a group port', () => {
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const origin = document.createElement('div')
+    origin.dataset['boardOrigin'] = 'node_0'
+    const group = document.createElement('div')
+    group.className = 'groupNode'
+    const port = document.createElement('span')
+    group.append(port)
+    board.append(origin, group)
+    spyOn(board, 'setPointerCapture')
+    spyOn(document, 'elementFromPoint').and.returnValue(port)
+    const create = spyOn(component, 'addNode')
+
+    component.checkDragStart({
+      button: 0, target: origin, pointerId: 4, clientX: 0, clientY: 0,
+    } as unknown as PointerEvent)
+    component.checkDragStop({ button: 0, pointerId: 4, x: 0, y: 0 } as PointerEvent)
+
+    expect(create).not.toHaveBeenCalled()
   })
 
   it('compensates node dragging for the board zoom', () => {

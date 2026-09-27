@@ -18,4 +18,12 @@ describe('DashboardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy()
   })
+
+  it('shows the grouping control before any nodes are selected', () => {
+    const button: HTMLButtonElement | null = fixture.nativeElement.querySelector(
+      '.groupToolbar button'
+    )
+    expect(button).not.toBeNull()
+    expect(button?.disabled).toBeTrue()
+  })
 })

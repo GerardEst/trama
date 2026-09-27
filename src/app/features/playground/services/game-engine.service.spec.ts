@@ -136,6 +136,16 @@ describe('GameEngineService', () => {
       expect(result).not.toBe(tree.nodes[0])
     })
 
+    it('follows a join into a grouped node without executing its container', () => {
+      tree.nodes = [
+        { id: 'node_1', type: 'content', groupId: 'node_3', top: 0, left: 0 },
+        { id: 'node_3', type: 'group', top: 0, left: 0 },
+      ]
+      expect(engine.buildNextNodeFromJoin({ node: 'node_1' }).id).toBe('node_1')
+      expect(() => engine.buildNextNodeFromJoin({ node: 'node_3' }))
+        .toThrowError('Next node not found')
+    })
+
     it('throws when the joined node does not exist', () => {
       expect(() =>
         engine.buildNextNodeFromJoin({ node: 'missing-node' })

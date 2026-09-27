@@ -50,7 +50,7 @@ export class GameEngineService {
     const storedNode = this.activeStory
       .entireTree()
       .nodes.find((storyNode) => storyNode.id === originJoin.node)
-    if (!storedNode) throw new Error('Next node not found')
+    if (!storedNode || storedNode.type === 'group') throw new Error('Next node not found')
 
     // The runtime copy can be enriched without changing the authored story.
     const nextNode = structuredClone(storedNode) as playableNode

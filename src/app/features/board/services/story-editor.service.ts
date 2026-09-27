@@ -16,6 +16,7 @@ import {
   findAnswerInTree,
   findConditionsInTree,
   findNodeInTree,
+  generateIDForNewNode,
 } from 'src/app/shared/utils/tree-searching'
 
 interface Joinable {
@@ -35,7 +36,7 @@ export class StoryEditorService {
   duplicateNode(nodeId: string, newNodeId: string) {
     this.mutations.update((tree) => {
       const source = findNodeInTree(nodeId, tree)
-      if (!source) return false
+      if (!source || source.type === 'group') return false
 
       const duplicatedNode = structuredClone(source)
       duplicatedNode.id = newNodeId
@@ -85,8 +86,13 @@ export class StoryEditorService {
 
   removeNode(nodeId: string) {
     this.mutations.update((tree) => {
-      const nodeExists = tree.nodes.some((storyNode) => storyNode.id === nodeId)
-      if (!nodeExists) return false
+      const existing = findNodeInTree(nodeId, tree)
+      if (!existing || nodeId === 'node_0') return false
+      if (existing.type === 'group') {
+        for (const child of tree.nodes) {
+          if (child.groupId === nodeId) child.groupId = existing.groupId
+        }
+      }
 
       tree.nodes = tree.nodes.filter((storyNode) => storyNode.id !== nodeId)
 
@@ -103,6 +109,57 @@ export class StoryEditorService {
         }
       }
 
+      return true
+    })
+  }
+
+  groupNodes(
+    nodeIds: ReadonlySet<string>,
+    parentGroupId?: string
+  ): string | undefined {
+    const nodes = this.activeStory.entireTree().nodes
+    const selected = nodes.filter((storyNode) => nodeIds.has(storyNode.id))
+    if (
+      selected.length < 2 ||
+      selected.length !== nodeIds.size ||
+      selected.some(
+        (storyNode) =>
+          storyNode.id === 'node_0' || storyNode.groupId !== parentGroupId
+      ) ||
+      (parentGroupId &&
+        !nodes.some(
+          (storyNode) =>
+            storyNode.id === parentGroupId && storyNode.type === 'group'
+        ))
+    ) return undefined
+
+    const groupId = generateIDForNewNode(nodes)
+    const left = Math.min(...selected.map((storyNode) => Number(storyNode.left) || 0))
+    const top = Math.min(...selected.map((storyNode) => Number(storyNode.top) || 0))
+    this.mutations.update((tree) => {
+      for (const storyNode of tree.nodes) {
+        if (nodeIds.has(storyNode.id)) storyNode.groupId = groupId
+      }
+      tree.nodes.push({
+        id: groupId,
+        type: 'group',
+        text: 'Group',
+        left,
+        top,
+        groupId: parentGroupId,
+      })
+    })
+    return groupId
+  }
+
+  ungroupNodes(groupId: string) {
+    this.mutations.update((tree) => {
+      const group = findNodeInTree(groupId, tree)
+      if (!group || group.type !== 'group') return false
+      for (const child of tree.nodes) {
+        if (child.groupId === groupId) child.groupId = group.groupId
+      }
+      tree.nodes = tree.nodes.filter((storyNode) => storyNode.id !== groupId)
       return true
     })
   }
@@ -150,21 +207,40 @@ export class StoryEditorService {
   }
 
   updateNodePosition(nodeId: string, left: number, top: number) {
-    this.withNode(nodeId, (storyNode) => {
-      storyNode.left = left
-      storyNode.top = top
-    })
+    this.updateNodePositions(new Map([[nodeId, { x: left, y: top }]]))
   }
 
   updateNodePositions(positions: ReadonlyMap<string, { x: number; y: number }>) {
     this.mutations.update((tree) => {
       let changed = false
+      const offsets = new Map<string, { x: number; y: number }>()
       for (const storyNode of tree.nodes) {
         const position = positions.get(storyNode.id)
         if (!position) continue
+        if (storyNode.type === 'group') {
+          offsets.set(storyNode.id, {
+            x: position.x - Number(storyNode.left),
+            y: position.y - Number(storyNode.top),
+          })
+        }
         storyNode.left = position.x
         storyNode.top = position.y
         changed = true
+      }
+      if (offsets.size) {
+        const byId = new Map(tree.nodes.map((storyNode) => [storyNode.id, storyNode]))
+        for (const storyNode of tree.nodes) {
+          if (positions.has(storyNode.id)) continue
+          let ancestor = storyNode.groupId
+          while (ancestor) {
+            const offset = offsets.get(ancestor)
+            if (offset) {
+              storyNode.left = Number(storyNode.left) + offset.x
+              storyNode.top = Number(storyNode.top) + offset.y
+            }
+            ancestor = byId.get(ancestor)?.groupId
+          }
+        }
       }
       return changed
     })

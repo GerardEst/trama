@@ -6,9 +6,11 @@ import {
   Signal,
   ViewChild,
   computed,
+  signal,
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { join, node } from 'src/app/core/interfaces/interfaces'
+import { node } from 'src/app/core/interfaces/interfaces'
+import { projectBoardJoins, ProjectedBoardJoin } from '../../board-join-projection'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
@@ -22,11 +24,6 @@ interface Point {
 interface CoordinateContext {
   svg: SVGSVGElement
   inverseMatrix: DOMMatrix
-}
-
-interface JoinOrigin {
-  id: string
-  join?: join[]
 }
 
 interface BoardFlowPath {
@@ -53,6 +50,16 @@ interface JoinContextMenuInfo {
 })
 export class BoardFlowsComponent {
   @Input() drawingStroke?: BoardJoinStroke
+  private readonly inputProjectedJoins = signal<
+    ProjectedBoardJoin[] | undefined
+  >(undefined)
+  @Input() set projectedJoins(value: ProjectedBoardJoin[] | undefined) {
+    this.inputProjectedJoins.set(value)
+  }
+  private readonly currentGroupId = signal<string | undefined>(undefined)
+  @Input() set groupId(value: string | undefined) {
+    this.currentGroupId.set(value)
+  }
 
   @ViewChild('svg') svg?: ElementRef<SVGSVGElement>
   @ViewChild('openContextCursor')
@@ -71,7 +78,11 @@ export class BoardFlowsComponent {
 
   readonly paths: Signal<BoardFlowPath[]> = computed(() => {
     this.anchorRegistry.version()
-    return this.calculatePaths(this.activeStory.entireTree().nodes)
+    return this.calculatePaths(
+      this.activeStory.entireTree().nodes,
+      this.currentGroupId(),
+      this.inputProjectedJoins()
+    )
   })
 
   constructor(
@@ -136,47 +147,35 @@ export class BoardFlowsComponent {
     return this.createCurvePath(startPosition, endPosition)
   }
 
-  calculatePaths(nodes: node[]) {
+  calculatePaths(
+    nodes: node[],
+    groupId?: string,
+    projectedJoins = projectBoardJoins(nodes, groupId)
+  ) {
     const context = this.createCoordinateContext()
     if (!context) return []
 
     const positions = new Map<string, Point>()
     const paths: BoardFlowPath[] = []
 
-    for (const origin of this.getJoinOrigins(nodes)) {
-      for (const storyJoin of origin.join ?? []) {
-        const path = this.getPath(origin, storyJoin, context, positions)
-        if (path) paths.push(path)
-      }
+    for (const storyJoin of projectedJoins) {
+      const startPosition = this.getCachedPosition(
+        storyJoin.fromAnchor, context, positions
+      )
+      const endPosition = this.getCachedPosition(
+        storyJoin.toAnchor, context, positions
+      )
+      if (!startPosition || !endPosition) continue
+      paths.push({
+        id: storyJoin.id,
+        origin: storyJoin.origin,
+        destiny: storyJoin.destiny,
+        toAnswer: storyJoin.toAnswer,
+        svgPath: this.createCurvePath(startPosition, endPosition),
+      })
     }
 
     return paths
-  }
-
-  private getPath(
-    origin: JoinOrigin,
-    destiny: join,
-    context: CoordinateContext,
-    positions: Map<string, Point>
-  ): BoardFlowPath | undefined {
-    const toAnswer = !!destiny.toAnswer
-    const initialAnchor = `${origin.id}_join`
-    const finalAnchor = `${destiny.node}_joiner${toAnswer ? '--answers' : ''}`
-    const startPosition = this.getCachedPosition(
-      initialAnchor,
-      context,
-      positions
-    )
-    const endPosition = this.getCachedPosition(finalAnchor, context, positions)
-    if (!startPosition || !endPosition) return undefined
-
-    return {
-      id: `${origin.id}::${destiny.node}::${toAnswer ? 'answers' : 'node'}`,
-      origin: origin.id,
-      destiny: destiny.node,
-      toAnswer,
-      svgPath: this.createCurvePath(startPosition, endPosition),
-    }
   }
 
   private getCachedPosition(
@@ -235,20 +234,5 @@ export class BoardFlowsComponent {
     },${start.top} ${end.left + this.flowOptions.negativeCurvature},${
       end.top
     } ${end.left},${end.top}`
-  }
-
-  private *getJoinOrigins(nodes: node[]): Generator<JoinOrigin> {
-    for (const storyNode of nodes) {
-      yield storyNode
-      yield* this.getNestedJoinOrigins(storyNode.answers)
-      yield* this.getNestedJoinOrigins(storyNode.conditions)
-      if (storyNode.fallbackCondition) yield storyNode.fallbackCondition
-    }
-  }
-
-  private *getNestedJoinOrigins(
-    origins: readonly JoinOrigin[] | undefined
-  ): Generator<JoinOrigin> {
-    for (const origin of origins ?? []) yield origin
   }
 }
