@@ -20,6 +20,8 @@ export interface tree {
   refs: Record<string, ref>
   nodes: Array<node>
   categories: Array<refCategory>
+  /** Editor-only visual frames; older stories may not have any. */
+  frames?: boardFrame[]
 }
 
 export interface storyFooter {
@@ -43,6 +45,14 @@ export interface storyReferenceUsage extends ref {
   node: string
   answer?: string
   on: 'event' | 'requirement'
+}
+
+export interface boardFrame {
+  id: string
+  name: string
+  nodeIds: string[]
+  /** Board level containing the framed nodes. */
+  groupId?: string
 }
 
 export interface node {

@@ -17,6 +17,7 @@ import { NodeComponent } from './components/node/node.component'
 import {
   CdkDrag,
   CdkDragEnd,
+  CdkDragHandle,
   CdkDragMove,
   CdkDragStart,
   DragRef,
@@ -24,7 +25,7 @@ import {
 } from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from './components/board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { node } from 'src/app/core/interfaces/interfaces'
+import { boardFrame, node } from 'src/app/core/interfaces/interfaces'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
@@ -54,6 +55,7 @@ interface BoardJoinTarget {
   imports: [
     NodeComponent,
     CdkDrag,
+    CdkDragHandle,
     BoardFlowsComponent,
     BoardAnchorDirective,
   ],
@@ -65,7 +67,7 @@ interface BoardJoinTarget {
 export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('board') boardElement?: ElementRef<HTMLElement>
   @ViewChild(BoardFlowsComponent) boardFlows?: BoardFlowsComponent
-  @ViewChildren(CdkDrag) nodeDrags?: QueryList<CdkDrag<string>>
+  @ViewChildren('nodeDrag') nodeDrags?: QueryList<CdkDrag<string>>
 
   @Input() grid?: boolean
   @Input() groupControls = false
@@ -96,6 +98,14 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly projectedJoins = computed(() =>
     projectBoardJoins(this.activeStory.entireTree().nodes, this.currentGroupId)
   )
+
+  readonly visibleFrames = computed(() => {
+    const visibleIds = new Set(this.visibleBoardNodes().map((node) => node.id))
+    return (this.activeStory.entireTree().frames ?? []).filter(
+      (frame) => frame.groupId === this.currentGroupId &&
+        frame.nodeIds.some((id) => visibleIds.has(id))
+    )
+  })
 
   private readonly visibleBoardNodes = computed(() =>
     this.activeStory.entireTree().nodes.filter(
@@ -154,7 +164,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   private groupDrag?: {
     sourceId: string
     positions: Map<string, Point>
+    origin: Point
   }
+  private readonly frameDragPositions = new Map<
+    string,
+    { x: number; y: number; position: Point }
+  >()
   private readonly nodeDragPositions = new Map<
     string,
     { left: number; top: number; position: Point }
@@ -268,6 +283,56 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       (storyNode) =>
         storyNode.id === this.currentGroupId && storyNode.type === 'group'
     )
+  }
+
+  canFrameSelection(): boolean {
+    return (
+      this.selectedNodeIds.size >= 2 &&
+      this.visibleNodes().filter((storyNode) => this.selectedNodeIds.has(storyNode.id))
+        .length === this.selectedNodeIds.size
+    )
+  }
+
+  frameSelection() {
+    if (!this.canFrameSelection()) return
+    if (this.storyEditor.frameNodes(this.selectedNodeIds, this.currentGroupId)) {
+      this.selectedNodeIds = new Set()
+      this.closeContextMenu()
+    }
+  }
+
+  renameFrame(frameId: string, event: Event) {
+    this.storyEditor.renameFrame(frameId, (event.target as HTMLInputElement).value)
+  }
+
+  removeFrame(frameId: string) {
+    this.storyEditor.removeFrame(frameId)
+  }
+
+  frameBounds(frame: boardFrame) {
+    const members = new Set(frame.nodeIds)
+    const nodes = this.visibleNodes().filter((storyNode) => members.has(storyNode.id))
+    const drags = new Map(
+      (this.nodeDrags?.toArray() ?? []).map((drag) => [drag.data, drag])
+    )
+    const left = Math.min(...nodes.map((node) => Number(node.left) || 0)) - 32
+    const top = Math.min(...nodes.map((node) => Number(node.top) || 0)) - 56
+    const right = Math.max(...nodes.map((node) =>
+      (Number(node.left) || 0) + (drags.get(node.id)?.element.nativeElement.offsetWidth || 260)
+    )) + 32
+    const bottom = Math.max(...nodes.map((node) =>
+      (Number(node.top) || 0) + (drags.get(node.id)?.element.nativeElement.offsetHeight || 160)
+    )) + 32
+    return { left, top, width: right - left, height: bottom - top }
+  }
+
+  getFrameDragPosition(frame: boardFrame): Point {
+    const { left: x, top: y } = this.frameBounds(frame)
+    const cached = this.frameDragPositions.get(frame.id)
+    if (cached?.x === x && cached.y === y) return cached.position
+    const position = { x, y }
+    this.frameDragPositions.set(frame.id, { x, y, position })
+    return position
   }
 
   canGroupSelection(): boolean {
@@ -540,26 +605,84 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     if (positions.size > 1) {
-      this.groupDrag = { sourceId: event.source.data, positions }
+      this.groupDrag = {
+        sourceId: event.source.data,
+        positions,
+        origin: positions.get(event.source.data)!,
+      }
     }
   }
+
+  frameDragStarted(event: CdkDragStart<string>, frame: boardFrame) {
+    this.panzoom.pauseDrag()
+    const members = new Set(frame.nodeIds)
+    const positions = new Map<string, Point>()
+    for (const storyNode of this.visibleNodes()) {
+      if (members.has(storyNode.id)) {
+        positions.set(storyNode.id, {
+          x: Number(storyNode.left) || 0,
+          y: Number(storyNode.top) || 0,
+        })
+      }
+    }
+    this.groupDrag = {
+      sourceId: event.source.data,
+      positions,
+      origin: this.getFrameDragPosition(frame),
+    }
+  }
+
+  frameDragEnded(event: CdkDragEnd<string>) {
+    this.commitGroupDrag(event.source)
+    this.groupDrag = undefined
+    this.panzoom.resumeDrag()
+    this.refreshFlows()
+  }
+
+  private frameAtDropPoint(dropPoint?: Point): boardFrame | undefined {
+    if (!dropPoint || !this.boardElement) return undefined
+    const point = this.getBoardPosition(dropPoint)
+    // Frames later in the tree are painted above earlier frames.
+    return [...this.visibleFrames()].reverse().find((frame) => {
+      const bounds = this.frameBounds(frame)
+      return point.x >= bounds.left && point.x <= bounds.left + bounds.width &&
+        point.y >= bounds.top && point.y <= bounds.top + bounds.height
+    })
+  }
+
+  private commitGroupDrag(source: CdkDrag<string>, frameId?: string) {
+    const drag = this.groupDrag
+    if (!drag || drag.sourceId !== source.data) return false
+    const current = source.getFreeDragPosition()
+    const dx = current.x - drag.origin.x
+    const dy = current.y - drag.origin.y
+    const positions = new Map<string, Point>()
+    for (const [id, position] of drag.positions) {
+      positions.set(id, { x: position.x + dx, y: position.y + dy })
+    }
+    this.storyEditor.updateNodePositions(
+      positions,
+      frameId ? { frameId, nodeIds: new Set(positions.keys()) } : undefined
+    )
+    return true
+  }
+
   nodeDragEnded(event: CdkDragEnd<string>, storyNode: node) {
     const dragPosition = event.source.getFreeDragPosition()
-    if (this.groupDrag?.sourceId === storyNode.id) {
-      const initial = this.groupDrag.positions.get(storyNode.id)!
-      const dx = dragPosition.x - initial.x
-      const dy = dragPosition.y - initial.y
-      const positions = new Map<string, Point>()
-      for (const [id, position] of this.groupDrag.positions) {
-        positions.set(id, { x: position.x + dx, y: position.y + dy })
+    const frame = this.frameAtDropPoint(event.dropPoint)
+    if (!this.commitGroupDrag(event.source, frame?.id)) {
+      if (frame) {
+        this.storyEditor.updateNodePositions(
+          new Map([[storyNode.id, dragPosition]]),
+          { frameId: frame.id, nodeIds: new Set([storyNode.id]) }
+        )
+      } else {
+        this.storyEditor.updateNodePosition(
+          storyNode.id,
+          dragPosition.x,
+          dragPosition.y
+        )
       }
-      this.storyEditor.updateNodePositions(positions)
-    } else {
-      this.storyEditor.updateNodePosition(
-        storyNode.id,
-        dragPosition.x,
-        dragPosition.y
-      )
     }
     this.groupDrag = undefined
     this.panzoom.resumeDrag()
@@ -567,10 +690,9 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   nodeDragCheck(event: CdkDragMove<string>) {
     if (this.groupDrag?.sourceId === event.source.data) {
-      const sourceStart = this.groupDrag.positions.get(event.source.data)!
       const current = event.source.getFreeDragPosition()
-      const dx = current.x - sourceStart.x
-      const dy = current.y - sourceStart.y
+      const dx = current.x - this.groupDrag.origin.x
+      const dy = current.y - this.groupDrag.origin.y
       for (const drag of this.nodeDrags ?? []) {
         if (drag === event.source) continue
         const start = this.groupDrag.positions.get(drag.data)

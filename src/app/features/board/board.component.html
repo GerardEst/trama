@@ -8,6 +8,9 @@
     <button type="button" [disabled]="!canGroupSelection()" (click)="groupSelection()">
       Group selected nodes
     </button>
+    <button type="button" [disabled]="!canFrameSelection()" (click)="frameSelection()">
+      Frame selected nodes
+    </button>
     @if (!canGroupSelection()) {
       <span>
         {{ selectedNodeIds.has('node_0') ? 'The start node cannot be grouped' : 'Ctrl + drag to select at least 2 nodes' }}
@@ -41,6 +44,35 @@
     <li (click)="addNode($event, 'end')">End node</li>
   </div>
 
+  @for (frame of visibleFrames(); track frame.id) {
+    @if (frameBounds(frame); as bounds) {
+      <div
+        class="boardFrame"
+        cdkDrag
+        [cdkDragData]="frame.id"
+        [cdkDragConstrainPosition]="constrainNodePosition"
+        [cdkDragFreeDragPosition]="getFrameDragPosition(frame)"
+        [style.width.px]="bounds.width"
+        [style.height.px]="bounds.height"
+        (cdkDragStarted)="frameDragStarted($event, frame)"
+        (cdkDragMoved)="nodeDragCheck($event)"
+        (cdkDragEnded)="frameDragEnded($event)"
+      >
+        <div class="boardFrame__header" cdkDragHandle (pointerdown)="panzoom.pauseDrag()">
+          <span class="boardFrame__grip" aria-hidden="true">⠿</span>
+          <input
+            aria-label="Frame name"
+            [value]="frame.name"
+            (pointerdown)="$event.stopPropagation()"
+            (change)="renameFrame(frame.id, $event)"
+          />
+          <span class="boardFrame__count">{{ frame.nodeIds.length }} nodes</span>
+          <button type="button" aria-label="Remove frame" title="Remove frame (keep nodes)"
+            (pointerdown)="$event.stopPropagation()" (click)="removeFrame(frame.id)">×</button>
+        </div>
+      </div>
+    }
+  }
   <polo-board-flows
     [drawingStroke]="joinStroke"
     [groupId]="currentGroupId"
@@ -88,6 +120,7 @@
           <div
             class="groupNode"
             cdkDrag
+            #nodeDrag="cdkDrag"
             [cdkDragData]="node.id"
             [class.node--selected]="selectedNodeIds.has(node.id)"
             [cdkDragConstrainPosition]="constrainNodePosition"
@@ -122,6 +155,7 @@
         } @else {
           <polo-node
             cdkDrag
+            #nodeDrag="cdkDrag"
             [cdkDragData]="node.id"
             [class.node--selected]="selectedNodeIds.has(node.id)"
             [cdkDragConstrainPosition]="constrainNodePosition"

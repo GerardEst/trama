@@ -88,13 +88,18 @@ export class StoryEditorService {
     this.mutations.update((tree) => {
       const existing = findNodeInTree(nodeId, tree)
       if (!existing || nodeId === 'node_0') return false
+      const moved = new Set<string>([nodeId])
       if (existing.type === 'group') {
         for (const child of tree.nodes) {
-          if (child.groupId === nodeId) child.groupId = existing.groupId
+          if (child.groupId === nodeId) {
+            child.groupId = existing.groupId
+            moved.add(child.id)
+          }
         }
       }
 
       tree.nodes = tree.nodes.filter((storyNode) => storyNode.id !== nodeId)
+      this.detachFromFrames(tree, moved)
 
       for (const storyNode of tree.nodes) {
         this.removeJoinsTo(storyNode, nodeId)
@@ -140,6 +145,7 @@ export class StoryEditorService {
       for (const storyNode of tree.nodes) {
         if (nodeIds.has(storyNode.id)) storyNode.groupId = groupId
       }
+      this.detachFromFrames(tree, nodeIds)
       tree.nodes.push({
         id: groupId,
         type: 'group',
@@ -156,10 +162,58 @@ export class StoryEditorService {
     this.mutations.update((tree) => {
       const group = findNodeInTree(groupId, tree)
       if (!group || group.type !== 'group') return false
+      const moved = new Set<string>([groupId])
       for (const child of tree.nodes) {
-        if (child.groupId === groupId) child.groupId = group.groupId
+        if (child.groupId === groupId) {
+          child.groupId = group.groupId
+          moved.add(child.id)
+        }
       }
+      this.detachFromFrames(tree, moved)
       tree.nodes = tree.nodes.filter((storyNode) => storyNode.id !== groupId)
+      return true
+    })
+  }
+
+  private detachFromFrames(story: tree, nodeIds: ReadonlySet<string>) {
+    for (const frame of story.frames ?? []) {
+      frame.nodeIds = frame.nodeIds.filter((id) => !nodeIds.has(id))
+    }
+    story.frames = story.frames?.filter((frame) => frame.nodeIds.length > 0)
+  }
+
+  frameNodes(nodeIds: ReadonlySet<string>, groupId?: string): string | undefined {
+    const story = this.activeStory.entireTree()
+    const selected = story.nodes.filter((storyNode) => nodeIds.has(storyNode.id))
+    if (
+      selected.length < 2 || selected.length !== nodeIds.size ||
+      selected.some((storyNode) => storyNode.groupId !== groupId) ||
+      (groupId && !story.nodes.some((storyNode) => storyNode.id === groupId && storyNode.type === 'group'))
+    ) return undefined
+
+    const id = crypto.randomUUID()
+    this.mutations.update((tree) => {
+      // A node belongs to at most one visual frame at a given level.
+      this.detachFromFrames(tree, nodeIds)
+      tree.frames ??= []
+      tree.frames.push({ id, name: 'Frame', nodeIds: [...nodeIds], groupId })
+    })
+    return id
+  }
+
+  renameFrame(frameId: string, name: string) {
+    this.mutations.update((tree) => {
+      const frame = tree.frames?.find((item) => item.id === frameId)
+      if (!frame) return false
+      frame.name = name.trim() || 'Frame'
+      return true
+    })
+  }
+
+  removeFrame(frameId: string) {
+    this.mutations.update((tree) => {
+      if (!tree.frames?.some((frame) => frame.id === frameId)) return false
+      tree.frames = tree.frames.filter((frame) => frame.id !== frameId)
       return true
     })
   }
@@ -210,7 +264,10 @@ export class StoryEditorService {
     this.updateNodePositions(new Map([[nodeId, { x: left, y: top }]]))
   }
 
-  updateNodePositions(positions: ReadonlyMap<string, { x: number; y: number }>) {
+  updateNodePositions(
+    positions: ReadonlyMap<string, { x: number; y: number }>,
+    frameAssignment?: { frameId: string; nodeIds: ReadonlySet<string> }
+  ) {
     this.mutations.update((tree) => {
       let changed = false
       const offsets = new Map<string, { x: number; y: number }>()
@@ -239,6 +296,24 @@ export class StoryEditorService {
               storyNode.top = Number(storyNode.top) + offset.y
             }
             ancestor = byId.get(ancestor)?.groupId
+          }
+        }
+      }
+      if (frameAssignment) {
+        const frame = tree.frames?.find((item) => item.id === frameAssignment.frameId)
+        const members = tree.nodes.filter((node) => frameAssignment.nodeIds.has(node.id))
+        if (
+          frame && members.length > 0 && members.length === frameAssignment.nodeIds.size &&
+          members.every((node) => node.groupId === frame.groupId && positions.has(node.id))
+        ) {
+          for (const other of tree.frames ?? []) {
+            if (other.id !== frame.id) {
+              other.nodeIds = other.nodeIds.filter((id) => !frameAssignment.nodeIds.has(id))
+            }
+          }
+          tree.frames = tree.frames?.filter((item) => item.id === frame.id || item.nodeIds.length > 0)
+          for (const member of members) {
+            if (!frame.nodeIds.includes(member.id)) frame.nodeIds.push(member.id)
           }
         }
       }

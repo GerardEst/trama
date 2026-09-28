@@ -6,6 +6,7 @@ import {
   DragRef,
 } from '@angular/cdk/drag-drop'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -303,6 +304,104 @@ describe('BoardComponent', () => {
     fixture.detectChanges()
     expect(host.querySelectorAll('polo-node').length).toBe(3)
     expect(host.querySelector('.groupNode')).toBeNull()
+  })
+
+  it('frames nodes in place, edits the label and drags all members in one save', () => {
+    component.groupControls = true
+    const database = TestBed.inject(DatabaseService)
+    const save = spyOn(database, 'saveTreeToDB').and.resolveTo(true)
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('frame-story', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 10, top: 20, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'end', left: 300, top: 100 },
+        { id: 'node_2', type: 'end', left: 600, top: 200 },
+      ],
+    })
+    fixture.detectChanges()
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    expect(component.canFrameSelection()).toBeTrue()
+    expect(host.querySelectorAll<HTMLButtonElement>('.groupToolbar button')[1].disabled).toBeFalse()
+    host.querySelectorAll<HTMLButtonElement>('.groupToolbar button')[1].click()
+    expect(activeStory.entireTree().frames?.length).toBe(1)
+    expect(component.visibleFrames().length).toBe(1)
+    fixture.detectChanges()
+
+    expect(host.querySelectorAll('polo-node').length).toBe(3)
+    expect(host.querySelector('.boardFrame')).not.toBeNull()
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    const frame = activeStory.entireTree().frames![0]
+    const label = host.querySelector<HTMLInputElement>('.boardFrame input')!
+    label.value = 'Act one'
+    label.dispatchEvent(new Event('change'))
+    fixture.detectChanges()
+    expect(activeStory.entireTree().frames![0].name).toBe('Act one')
+
+    const frameDrag = fixture.debugElement.query(By.css('.boardFrame'))
+      .injector.get(CdkDrag) as CdkDrag<string>
+    const start = component.getFrameDragPosition(frame)
+    const moved = spyOn(frameDrag, 'getFreeDragPosition').and.returnValue(start)
+    const followers = component.nodeDrags!.toArray()
+    const firstMove = spyOn(followers[0], 'setFreeDragPosition')
+    const secondMove = spyOn(followers[1], 'setFreeDragPosition')
+    const thirdMove = spyOn(followers[2], 'setFreeDragPosition')
+    spyOn(storyEditor, 'updateNodePositions').and.callThrough()
+    component.frameDragStarted({ source: frameDrag } as CdkDragStart<string>, frame)
+    moved.and.returnValue({ x: start.x + 50, y: start.y - 25 })
+    component.nodeDragCheck({ source: frameDrag } as CdkDragMove<string>)
+    expect(firstMove).toHaveBeenCalledWith({ x: 60, y: -5 })
+    expect(secondMove).toHaveBeenCalledWith({ x: 350, y: 75 })
+    expect(thirdMove).not.toHaveBeenCalled()
+    component.frameDragEnded({ source: frameDrag } as CdkDragEnd<string>)
+    expect(storyEditor.updateNodePositions).toHaveBeenCalledTimes(1)
+    expect(activeStory.entireTree().nodes.map((node) => [node.left, node.top])).toEqual([
+      [60, -5], [350, 75], [600, 200],
+    ])
+    expect(save).toHaveBeenCalled()
+    fixture.detectChanges()
+    host.querySelector<HTMLButtonElement>('.boardFrame button')!.click()
+    fixture.detectChanges()
+    expect(activeStory.entireTree().frames).toEqual([])
+    expect(host.querySelectorAll('polo-node').length).toBe(3)
+  })
+
+  it('adds a dragged node to a frame when its header is dropped inside at half zoom', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('drop-frame', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'content', left: 100, top: 100 },
+        { id: 'node_2', type: 'end', left: 300, top: 100 },
+        { id: 'node_3', type: 'end', left: 800, top: 100 },
+      ],
+    })
+    const frameId = storyEditor.frameNodes(new Set(['node_1', 'node_2']))!
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    spyOn(board, 'getBoundingClientRect').and.returnValue(
+      new DOMRect(100, 200, board.offsetWidth / 2, board.offsetHeight / 2)
+    )
+    const drag = component.nodeDrags!.toArray()[3]
+    spyOn(drag, 'getFreeDragPosition').and.returnValue({ x: 250, y: 120 })
+    spyOn(storyEditor, 'updateNodePositions').and.callThrough()
+    component.nodeDragEnded({ source: drag, dropPoint: { x: 300, y: 280 } } as CdkDragEnd<string>, activeStory.entireTree().nodes[3])
+
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_1', 'node_2', 'node_3'])
+    expect(activeStory.entireTree().nodes[3].left).toBe(250)
+    expect(storyEditor.updateNodePositions).toHaveBeenCalledTimes(1)
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('.boardFrame__count').textContent).toContain('3 nodes')
+
+    // Releasing outside keeps the node in its current frame and does not enroll others.
+    const outsider = component.nodeDrags!.toArray()[0]
+    spyOn(outsider, 'getFreeDragPosition').and.returnValue({ x: -50, y: 0 })
+    component.nodeDragEnded({ source: outsider, dropPoint: { x: 800, y: 700 } } as CdkDragEnd<string>, activeStory.entireTree().nodes[0])
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_1', 'node_2', 'node_3'])
+    expect(activeStory.entireTree().frames?.[0].id).toBe(frameId)
   })
 
   it('counts joins for all visible groups once per tree and level', () => {

@@ -103,6 +103,108 @@ describe('StoryEditorService', () => {
     expect(activeStory.entireTree().nodes[1].groupId).toBeUndefined()
   })
 
+  it('persists a visual frame without changing graph membership or links', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    const frameId = editor.frameNodes(new Set(['node_0', 'node_1']))!
+    expect(frameId).toBeTruthy()
+    expect(activeStory.entireTree().frames).toEqual([{
+      id: frameId, name: 'Frame', nodeIds: ['node_0', 'node_1'], groupId: undefined,
+    }])
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    expect(activeStory.entireTree().nodes[0].groupId).toBeUndefined()
+    expect(save.calls.mostRecent().args[1].frames[0].id).toBe(frameId)
+
+    editor.renameFrame(frameId, '  Chapter 1  ')
+    expect(activeStory.entireTree().frames?.[0].name).toBe('Chapter 1')
+    editor.removeFrame(frameId)
+    expect(activeStory.entireTree().frames).toEqual([])
+    expect(activeStory.entireTree().nodes).toHaveSize(2)
+  })
+
+  it('reassigns frame members and cleans up empty frames when nodes are removed', () => {
+    const first = editor.frameNodes(new Set(['node_0', 'node_1']))!
+    activeStory.load('story-1', 'Story', {
+      ...activeStory.entireTree(),
+      nodes: [...activeStory.entireTree().nodes, { id: 'node_2', type: 'end', left: 200, top: 0 }],
+    })
+    const second = editor.frameNodes(new Set(['node_1', 'node_2']))!
+    expect(activeStory.entireTree().frames?.find((frame) => frame.id === first)?.nodeIds).toEqual(['node_0'])
+    editor.removeNode('node_1')
+    expect(activeStory.entireTree().frames?.find((frame) => frame.id === second)?.nodeIds).toEqual(['node_2'])
+    editor.removeNode('node_2')
+    expect(activeStory.entireTree().frames?.map((frame) => frame.id)).toEqual([first])
+  })
+
+  it('keeps frames on their board level when nodes are grouped or ungrouped', () => {
+    activeStory.load('nested', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'content', left: 100, top: 0 },
+        { id: 'node_2', type: 'content', left: 300, top: 0 },
+      ],
+    })
+    editor.frameNodes(new Set(['node_1', 'node_2']))
+    const groupId = editor.groupNodes(new Set(['node_1', 'node_2']))!
+    expect(activeStory.entireTree().frames).toEqual([])
+    const inside = editor.frameNodes(new Set(['node_1', 'node_2']), groupId)!
+    expect(activeStory.entireTree().frames?.[0].groupId).toBe(groupId)
+    expect(editor.frameNodes(new Set(['node_0', 'node_1']))).toBeUndefined()
+    editor.ungroupNodes(groupId)
+    expect(activeStory.entireTree().frames).toEqual([])
+    expect(activeStory.entireTree().nodes.find((node) => node.id === 'node_1')?.groupId).toBeUndefined()
+    expect(inside).toBeTruthy()
+  })
+
+  it('moves nodes into a frame with their positions in one save and transfers membership', async () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', top: 0, left: 0 },
+        { id: 'node_1', type: 'content', top: 10, left: 10 },
+        { id: 'node_2', type: 'end', top: 20, left: 20 },
+        { id: 'node_3', type: 'end', top: 30, left: 30 },
+      ],
+    })
+    const first = editor.frameNodes(new Set(['node_0', 'node_3']))!
+    const second = editor.frameNodes(new Set(['node_1', 'node_2']))!
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+    const before = save.calls.count()
+    editor.updateNodePositions(new Map([['node_3', { x: 50, y: 60 }]]), {
+      frameId: second, nodeIds: new Set(['node_3']),
+    })
+    expect(save.calls.count()).toBe(before + 1)
+    expect(save.calls.mostRecent().args[1].frames.find(
+      (frame: { id: string }) => frame.id === second
+    ).nodeIds).toEqual(['node_1', 'node_2', 'node_3'])
+    expect(activeStory.entireTree().frames?.find((frame) => frame.id === first)?.nodeIds).toEqual(['node_0'])
+    expect(activeStory.entireTree().frames?.find((frame) => frame.id === second)?.nodeIds).toEqual(['node_1', 'node_2', 'node_3'])
+    expect(activeStory.entireTree().nodes[3].left).toBe(50)
+
+    editor.updateNodePositions(new Map([['node_0', { x: 70, y: 80 }]]), {
+      frameId: second, nodeIds: new Set(['node_0']),
+    })
+    expect(activeStory.entireTree().frames?.some((frame) => frame.id === first)).toBeFalse()
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_1', 'node_2', 'node_3', 'node_0'])
+  })
+
+  it('does not add a node from another board level to a frame', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', top: 0, left: 0 },
+        { id: 'node_1', type: 'group', top: 0, left: 100 },
+        { id: 'node_2', type: 'content', top: 20, left: 20, groupId: 'node_1' },
+        { id: 'node_3', type: 'end', top: 30, left: 30 },
+      ],
+    })
+    editor.frameNodes(new Set(['node_0', 'node_3']))
+    const frameId = activeStory.entireTree().frames![0].id
+    editor.updateNodePositions(new Map([['node_2', { x: 40, y: 50 }]]), {
+      frameId, nodeIds: new Set(['node_2']),
+    })
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_3'])
+    expect(activeStory.entireTree().nodes[2].left).toBe(40)
+  })
+
   it('updates several node positions in one tree change and queued save', () => {
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
     const previousTree = activeStory.entireTree()
