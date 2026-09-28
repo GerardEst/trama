@@ -218,6 +218,16 @@ export class StoryEditorService {
     })
   }
 
+  removeNodeFromFrame(nodeId: string, position: { x: number; y: number }) {
+    this.mutations.update((tree) => {
+      if (!tree.nodes.some((node) => node.id === nodeId) ||
+        !tree.frames?.some((frame) => frame.nodeIds.includes(nodeId))) return false
+      this.detachFromFrames(tree, new Set([nodeId]))
+      this.moveNodes(tree, new Map([[nodeId, position]]))
+      return true
+    })
+  }
+
   updateNodeText(nodeId: string, text: string) {
     this.withNode(nodeId, (storyNode) => (storyNode.text = text))
   }
@@ -269,36 +279,7 @@ export class StoryEditorService {
     frameAssignment?: { frameId: string; nodeIds: ReadonlySet<string> }
   ) {
     this.mutations.update((tree) => {
-      let changed = false
-      const offsets = new Map<string, { x: number; y: number }>()
-      for (const storyNode of tree.nodes) {
-        const position = positions.get(storyNode.id)
-        if (!position) continue
-        if (storyNode.type === 'group') {
-          offsets.set(storyNode.id, {
-            x: position.x - Number(storyNode.left),
-            y: position.y - Number(storyNode.top),
-          })
-        }
-        storyNode.left = position.x
-        storyNode.top = position.y
-        changed = true
-      }
-      if (offsets.size) {
-        const byId = new Map(tree.nodes.map((storyNode) => [storyNode.id, storyNode]))
-        for (const storyNode of tree.nodes) {
-          if (positions.has(storyNode.id)) continue
-          let ancestor = storyNode.groupId
-          while (ancestor) {
-            const offset = offsets.get(ancestor)
-            if (offset) {
-              storyNode.left = Number(storyNode.left) + offset.x
-              storyNode.top = Number(storyNode.top) + offset.y
-            }
-            ancestor = byId.get(ancestor)?.groupId
-          }
-        }
-      }
+      const changed = this.moveNodes(tree, positions)
       if (frameAssignment) {
         const frame = tree.frames?.find((item) => item.id === frameAssignment.frameId)
         const members = tree.nodes.filter((node) => frameAssignment.nodeIds.has(node.id))
@@ -319,6 +300,43 @@ export class StoryEditorService {
       }
       return changed
     })
+  }
+
+  private moveNodes(
+    tree: tree,
+    positions: ReadonlyMap<string, { x: number; y: number }>
+  ): boolean {
+    let changed = false
+    const offsets = new Map<string, { x: number; y: number }>()
+    for (const storyNode of tree.nodes) {
+      const position = positions.get(storyNode.id)
+      if (!position) continue
+      if (storyNode.type === 'group') {
+        offsets.set(storyNode.id, {
+          x: position.x - Number(storyNode.left),
+          y: position.y - Number(storyNode.top),
+        })
+      }
+      storyNode.left = position.x
+      storyNode.top = position.y
+      changed = true
+    }
+    if (offsets.size) {
+      const byId = new Map(tree.nodes.map((storyNode) => [storyNode.id, storyNode]))
+      for (const storyNode of tree.nodes) {
+        if (positions.has(storyNode.id)) continue
+        let ancestor = storyNode.groupId
+        while (ancestor) {
+          const offset = offsets.get(ancestor)
+          if (offset) {
+            storyNode.left = Number(storyNode.left) + offset.x
+            storyNode.top = Number(storyNode.top) + offset.y
+          }
+          ancestor = byId.get(ancestor)?.groupId
+        }
+      }
+    }
+    return changed
   }
 
   updateNodeShareOptions(nodeId: string, options: shareOptions) {

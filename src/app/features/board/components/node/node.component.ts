@@ -71,6 +71,7 @@ import { TextFocusFieldComponent } from '../text-focus/text-focus-field.componen
  */
 export class NodeComponent implements OnInit {
   @Input() nodeId: string = ''
+  @Input() frameName?: string
 
   // Common
   @Input() text: string = ''
@@ -111,6 +112,7 @@ export class NodeComponent implements OnInit {
 
   @Input() type: 'text' | 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode = new EventEmitter<string>()
+  @Output() removeFromFrame = new EventEmitter<string>()
   @Output() removeNode = new EventEmitter<{
     nodeId: string
     answers?: string[]
@@ -258,6 +260,11 @@ export class NodeComponent implements OnInit {
 
   onDuplicateNode() {
     this.duplicateNode.emit(this.nodeId)
+  }
+
+  onRemoveFromFrame() {
+    this.optionsOpen = false
+    this.removeFromFrame.emit(this.nodeId)
   }
 
   onRemoveNode() {

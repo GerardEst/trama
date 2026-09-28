@@ -309,6 +309,22 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storyEditor.removeFrame(frameId)
   }
 
+  frameForNode(nodeId: string): boardFrame | undefined {
+    return this.visibleFrames().find((frame) => frame.nodeIds.includes(nodeId))
+  }
+
+  removeNodeFromFrame(nodeId: string) {
+    const frame = this.frameForNode(nodeId)
+    const storyNode = this.visibleNodes().find((node) => node.id === nodeId)
+    if (!frame || !storyNode) return
+    const bounds = this.frameBounds(frame)
+    this.storyEditor.removeNodeFromFrame(nodeId, {
+      x: bounds.left + bounds.width + 48,
+      y: Number(storyNode.top) || 0,
+    })
+    this.refreshFlows()
+  }
+
   frameBounds(frame: boardFrame) {
     const members = new Set(frame.nodeIds)
     const nodes = this.visibleNodes().filter((storyNode) => members.has(storyNode.id))

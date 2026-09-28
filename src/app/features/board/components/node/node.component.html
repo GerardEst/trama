@@ -29,6 +29,8 @@
         <polo-node-options
           [type]="type"
           [nodeId]="nodeId"
+          [frameName]="frameName"
+          (removeFromFrame)="onRemoveFromFrame()"
           (onAddImage)="onAddImage($event)"
           (onDuplicateNode)="onDuplicateNode()"
           (onRemoveNode)="onRemoveNode()"

@@ -135,6 +135,51 @@ describe('StoryEditorService', () => {
     expect(activeStory.entireTree().frames?.map((frame) => frame.id)).toEqual([first])
   })
 
+  it('explicitly removes a node from its frame and moves it without changing joins', async () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'content', left: 100, top: 10 },
+        { id: 'node_2', type: 'end', left: 300, top: 20 },
+      ],
+    })
+    const frameId = editor.frameNodes(new Set(['node_0', 'node_1', 'node_2']))!
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+    const before = save.calls.count()
+
+    editor.removeNodeFromFrame('node_1', { x: 700, y: 10 })
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_2'])
+    expect(activeStory.entireTree().nodes[1].left).toBe(700)
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    expect(save.calls.count()).toBe(before + 1)
+    expect(save.calls.mostRecent().args[1].frames[0].nodeIds).toEqual(['node_0', 'node_2'])
+
+    editor.removeNodeFromFrame('node_1', { x: 900, y: 10 })
+    expect(activeStory.entireTree().nodes[1].left).toBe(700)
+    editor.removeNodeFromFrame('node_0', { x: 700, y: 0 })
+    editor.removeNodeFromFrame('node_2', { x: 700, y: 20 })
+    expect(activeStory.entireTree().frames).toEqual([])
+    expect(activeStory.entireTree().nodes).toHaveSize(3)
+  })
+
+  it('keeps children with a group node explicitly removed from a visual frame', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'group', left: 100, top: 20 },
+        { id: 'node_2', type: 'end', left: 150, top: 40, groupId: 'node_1' },
+        { id: 'node_3', type: 'end', left: 400, top: 50 },
+      ],
+    })
+    editor.frameNodes(new Set(['node_1', 'node_3']))
+    editor.removeNodeFromFrame('node_1', { x: 600, y: 20 })
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_3'])
+    expect(activeStory.entireTree().nodes[1].left).toBe(600)
+    expect(activeStory.entireTree().nodes[2].left).toBe(650)
+    expect(activeStory.entireTree().nodes[2].groupId).toBe('node_1')
+  })
+
   it('keeps frames on their board level when nodes are grouped or ungrouped', () => {
     activeStory.load('nested', 'Story', {
       nodes: [

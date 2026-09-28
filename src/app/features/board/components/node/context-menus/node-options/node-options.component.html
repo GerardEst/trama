@@ -24,6 +24,17 @@
       </label>
     </form>
   }
+  @if (frameName) {
+    <polo-basic-button
+      [transparent]="true"
+      size="s"
+      [title]="'Remove from ' + frameName + ' (keep the node)'"
+      text="Remove from frame"
+      icon="/assets/icons/minus.svg"
+      (click)="removeFromFrame.emit()"
+      align="left"
+    ></polo-basic-button>
+  }
   @if (nodeId !== 'node_0') {
     <polo-basic-button
       [transparent]="true"

@@ -368,6 +368,50 @@ describe('BoardComponent', () => {
     expect(host.querySelectorAll('polo-node').length).toBe(3)
   })
 
+  it('offers a remove-from-frame action on a framed node without removing the node', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('unframe', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'end', left: 200, top: 100 },
+        { id: 'node_2', type: 'end', left: 450, top: 100 },
+      ],
+    })
+    storyEditor.frameNodes(new Set(['node_0', 'node_1', 'node_2']))
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    const framedNode = host.querySelectorAll<HTMLElement>('polo-node')[1]
+    const drag = component.nodeDrags!.toArray()[1]
+    spyOn(drag, 'getFreeDragPosition').and.returnValue({ x: 750, y: 100 })
+    component.nodeDragEnded(
+      { source: drag, dropPoint: { x: 9000, y: 9000 } } as CdkDragEnd<string>,
+      activeStory.entireTree().nodes[1]
+    )
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_1', 'node_2'])
+    fixture.detectChanges()
+    const frame = activeStory.entireTree().frames![0]
+    const bounds = component.frameBounds(frame)
+    const right = bounds.left + bounds.width
+
+    framedNode.querySelector<HTMLButtonElement>('.node__menuButton button')!.click()
+    fixture.detectChanges()
+    const option = Array.from(framedNode.querySelectorAll<HTMLElement>('polo-node-options polo-basic-button'))
+      .find((button) => button.textContent?.includes('Remove from frame'))!
+    expect(option).toBeTruthy()
+    option.querySelector<HTMLButtonElement>('button')!.click()
+    fixture.detectChanges()
+
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_2'])
+    expect(Number(activeStory.entireTree().nodes[1].left)).toBeGreaterThan(right)
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    expect(host.querySelectorAll('polo-node')).toHaveSize(3)
+    expect(framedNode.querySelector('polo-node-options')).toBeNull()
+    framedNode.querySelector<HTMLButtonElement>('.node__menuButton button')!.click()
+    fixture.detectChanges()
+    expect(framedNode.textContent).not.toContain('Remove from frame')
+  })
+
   it('adds a dragged node to a frame when its header is dropped inside at half zoom', () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)

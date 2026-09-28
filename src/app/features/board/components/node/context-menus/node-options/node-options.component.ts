@@ -12,9 +12,11 @@ import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popu
 export class NodeOptionsComponent extends PopupBaseComponent {
   @Input() type?: string
   @Input() nodeId?: string
+  @Input() frameName?: string
 
   @Output() onDuplicateNode = new EventEmitter<void>()
   @Output() onRemoveNode = new EventEmitter<void>()
+  @Output() removeFromFrame = new EventEmitter<void>()
   @Output() onAddImage = new EventEmitter<Event>()
 
   protected override closePopup(): void {
