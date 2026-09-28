@@ -55,9 +55,11 @@ describe('NodeComponent', () => {
     const host = fixture.nativeElement as HTMLElement
     const boardTextarea = host.querySelector('.node__text') as HTMLTextAreaElement
     boardTextarea.value = 'Original passage'
-    const focusButton = host.querySelector('.node__focusButton') as HTMLElement
-    expect(focusButton.nextElementSibling?.classList.contains('node__menuButton')).toBeTrue()
+    const focusButton = host.querySelector('.textFocusField__button button') as HTMLButtonElement
+    expect(focusButton.title).toContain('Ctrl+F')
+    expect(host.querySelector('.node__header .node__focusButton')).toBeNull()
     focusButton.click()
+    fixture.detectChanges()
 
     const panel = host.querySelector('.focusEditor') as HTMLDialogElement
     const textarea = panel.querySelector('textarea') as HTMLTextAreaElement
@@ -79,10 +81,51 @@ describe('NodeComponent', () => {
     expect(update).toHaveBeenCalledOnceWith('node_7', 'A longer passage')
   })
 
-  it('does not offer focus mode for distributor nodes without passage text', () => {
+  it('opens focus on Ctrl+F only for the active textarea', () => {
+    fixture.componentRef.setInput('type', 'text')
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const textarea = host.querySelector('.node__text') as HTMLTextAreaElement
+    const shortcut = new KeyboardEvent('keydown', {
+      key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+
+    textarea.focus()
+    textarea.dispatchEvent(shortcut)
+    fixture.detectChanges()
+    expect(shortcut.defaultPrevented).toBeTrue()
+    expect(host.querySelector('.focusEditor')).not.toBeNull()
+  })
+
+  it('focuses a text-node description with Ctrl+F and saves that field', async () => {
+    const editor = TestBed.inject(StoryEditorService)
+    const save = spyOn(editor, 'updateNodeDescription')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('type', 'text')
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const description = host.querySelector('#node_7-description') as HTMLTextAreaElement
+    description.focus()
+    description.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
+    }))
+    fixture.detectChanges()
+
+    const dialog = host.querySelector('.focusEditor') as HTMLDialogElement
+    const editorTextarea = dialog.querySelector('textarea') as HTMLTextAreaElement
+    expect(editorTextarea.getAttribute('aria-label')).toBe('Description')
+    editorTextarea.value = 'An expanded description'
+    editorTextarea.dispatchEvent(new Event('input', { bubbles: true }))
+    const closed = new Promise<void>((resolve) => dialog.addEventListener('close', () => resolve(), { once: true }))
+    dialog.close()
+    await closed
+    expect(save).toHaveBeenCalledOnceWith('node_7', 'An expanded description')
+  })
+
+  it('does not offer focus mode for distributor nodes without text', () => {
     fixture.componentRef.setInput('type', 'distributor')
     fixture.detectChanges()
-    expect((fixture.nativeElement as HTMLElement).querySelector('.node__focusButton')).toBeNull()
+    expect((fixture.nativeElement as HTMLElement).querySelector('.textFocusField__button')).toBeNull()
   })
 
   it('uses labeled form fields for text node settings and saves changes', () => {

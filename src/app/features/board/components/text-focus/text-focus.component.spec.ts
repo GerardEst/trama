@@ -1,14 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NodeFullComponent } from './node-full.component'
+import { TextFocusComponent } from './text-focus.component'
 
-describe('NodeFullComponent', () => {
-  let fixture: ComponentFixture<NodeFullComponent>
+describe('TextFocusComponent', () => {
+  let fixture: ComponentFixture<TextFocusComponent>
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [NodeFullComponent] })
-    fixture = TestBed.createComponent(NodeFullComponent)
-    fixture.componentRef.setInput('nodeId', 'node_7')
-    fixture.componentRef.setInput('type', 'text')
+    TestBed.configureTestingModule({ imports: [TextFocusComponent] })
+    fixture = TestBed.createComponent(TextFocusComponent)
+    fixture.componentRef.setInput('label', 'Prompt')
     fixture.componentRef.setInput('text', 'Original prompt')
     fixture.detectChanges()
   })

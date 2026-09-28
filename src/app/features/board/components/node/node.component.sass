@@ -58,11 +58,8 @@
         text-overflow: ellipsis
         white-space: nowrap
 
-  &__focusButton
-    margin-left: auto
-
   &__menuButton
-    margin-left: 0
+    margin-left: auto
 
   &__options
     position: absolute
@@ -93,7 +90,7 @@
     min-height: 6rem
     max-height: 25rem
     box-sizing: border-box
-    padding: 0.8rem
+    padding: 0.8rem 2.75rem 0.8rem 0.8rem
     color: var(--polo-color-text)
     background: var(--polo-color-surface-subtle)
     border: 1px solid var(--polo-color-border)
@@ -132,6 +129,9 @@
       outline: none
       box-shadow: 0 0 0 3px var(--polo-color-focus-ring)
 
+    &[name='description']
+      padding-right: 2.75rem
+
   &__shareoptions,
   &__linkoptions
     display: flex
@@ -167,6 +167,9 @@
         background: var(--polo-color-surface)
         border: 1px solid var(--polo-color-border-strong)
         border-radius: 0.6rem
+
+      textarea
+        padding-right: 2.75rem
 
   &__footer
     display: flex

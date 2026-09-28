@@ -15,17 +15,6 @@
     ></span>
     <ng-content select=".dragHandle"> </ng-content>
 
-    @if (type !== 'distributor') {
-      <polo-basic-button
-        class="node__focusButton"
-        size="s"
-        [transparent]="true"
-        title="Open focus mode"
-        icon="/assets/icons/maximize.svg"
-        (pointerdown)="$event.stopPropagation()"
-        (click)="openFocus()"
-      ></polo-basic-button>
-    }
     <polo-basic-button
       class="node__menuButton"
       size="s"
@@ -87,13 +76,15 @@
           [canDelete]="true"
         ></polo-image>
       }
-      <textarea
-        #textarea
-        class="node__text"
-        aria-label="End node text"
-        placeholder="Write the ending…"
-        (change)="saveNodeText($event)"
-      >{{ text }}</textarea>
+      <polo-text-focus-field label="End node text">
+        <textarea
+          #textarea #focusTextarea
+          class="node__text"
+          aria-label="End node text"
+          placeholder="Write the ending…"
+          (change)="saveNodeText($event)"
+        >{{ text }}</textarea>
+      </polo-text-focus-field>
       <div class="node__linkoptions">
         @if (database.user()?.profile?.subscription_status === 'active') {
           <div class="node__linkoptions__header">
@@ -131,11 +122,13 @@
             <input [(ngModel)]="openedShareOptions" type="checkbox" />
           </label>
           @if (openedShareOptions) {
-            <label class="node__shareoptions__option">
-              <p>Custom shared text</p>
-              <textarea (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
-              </textarea>
-            </label>
+            <div class="node__shareoptions__option">
+              <label [for]="nodeId + '-shared-text'">Custom shared text</label>
+              <polo-text-focus-field label="Custom shared text">
+                <textarea #focusTextarea [id]="nodeId + '-shared-text'" (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
+                </textarea>
+              </polo-text-focus-field>
+            </div>
             <label class="node__shareoptions__option">
               <p>Custom share button text</p>
               <input
@@ -165,13 +158,15 @@
           [class.union_point--hasJoin]="join && join.length > 0"
         ></div>
       }
-      <textarea
-        #textarea
-        class="node__text"
-        aria-label="Node text"
-        placeholder="Write the passage…"
-        (change)="saveNodeText($event)"
-      >{{ text }}</textarea>
+      <polo-text-focus-field label="Node text">
+        <textarea
+          #textarea #focusTextarea
+          class="node__text"
+          aria-label="Node text"
+          placeholder="Write the passage…"
+          (change)="saveNodeText($event)"
+        >{{ text }}</textarea>
+      </polo-text-focus-field>
       @if (answers && answers.length > 0) {
         <div
           class="node__answers"
@@ -210,13 +205,15 @@
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
       <polo-form-field label="Prompt" [controlId]="nodeId + '-prompt'" [showOptional]="false">
-        <textarea
-          #textarea
-          class="node__text"
-          [id]="nodeId + '-prompt'"
-          placeholder="Ask the player something…"
-          (change)="saveNodeText($event)"
-        >{{ text }}</textarea>
+        <polo-text-focus-field label="Prompt">
+          <textarea
+            #textarea #focusTextarea
+            class="node__text"
+            [id]="nodeId + '-prompt'"
+            placeholder="Ask the player something…"
+            (change)="saveNodeText($event)"
+          >{{ text }}</textarea>
+        </polo-text-focus-field>
       </polo-form-field>
       <polo-form-field
         #propertyField
@@ -276,14 +273,17 @@
         [showOptional]="false"
         description="Saved as extra guidance for this input; not currently shown in the playground."
       >
-        <textarea
-          class="node__fieldControl"
-          [id]="nodeId + '-description'"
-          [attr.aria-describedby]="descriptionField.descriptionId"
-          (change)="saveDescription($event)"
-          name="description"
-          value="{{ userTextOptions?.description }}"
-        ></textarea>
+        <polo-text-focus-field label="Description">
+          <textarea
+            #focusTextarea
+            class="node__fieldControl"
+            [id]="nodeId + '-description'"
+            [attr.aria-describedby]="descriptionField.descriptionId"
+            (change)="saveDescription($event)"
+            name="description"
+            value="{{ userTextOptions?.description }}"
+          ></textarea>
+        </polo-text-focus-field>
       </polo-form-field>
     }
   </main>
@@ -296,11 +296,3 @@
     }
   </footer>
 </div>
-@if (focusOpen && type !== 'distributor') {
-  <polo-node-full
-    [nodeId]="nodeId"
-    [type]="type"
-    [text]="focusDraft"
-    (closed)="onFocusClosed($event)"
-  ></polo-node-full>
-}

@@ -1,7 +1,7 @@
 <dialog
   #dialog
   class="focusEditor"
-  aria-label="Focus mode"
+  [attr.aria-label]="'Focus on ' + label()"
   (close)="onClosed()"
   (pointerdown)="onBackdropPointerDown($event)"
 >
@@ -11,8 +11,7 @@
   <main class="focusEditor__body">
     <textarea
       #editor
-      [id]="'focus-text-' + nodeId()"
-      [attr.aria-label]="type() === 'text' ? 'Prompt' : type() === 'end' ? 'Ending text' : 'Node text'"
+      [attr.aria-label]="label()"
       [value]="draft"
       (input)="updateDraft($event)"
     ></textarea>

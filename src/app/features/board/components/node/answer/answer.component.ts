@@ -15,6 +15,7 @@ import { NodeEventsComponent } from '../node-events/node-events.component'
 import { NodeRequirementsComponent } from '../node-requirements/node-requirements.component'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { BoardAnchorDirective } from '../../../directives/board-anchor.directive'
+import { TextFocusFieldComponent } from '../../text-focus/text-focus-field.component'
 
 @Component({
   selector: 'polo-answer',
@@ -24,6 +25,7 @@ import { BoardAnchorDirective } from '../../../directives/board-anchor.directive
     BasicButtonComponent,
     NodeRequirementsComponent,
     BoardAnchorDirective,
+    TextFocusFieldComponent,
   ],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],

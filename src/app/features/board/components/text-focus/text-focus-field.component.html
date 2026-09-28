@@ -1,0 +1,19 @@
+<div class="textFocusField">
+  <ng-content></ng-content>
+  <polo-basic-button
+    class="textFocusField__button"
+    size="s"
+    [transparent]="true"
+    [title]="'Focus on ' + label() + ' (Ctrl+F / ⌘F)'"
+    icon="/assets/icons/maximize.svg"
+    (pointerdown)="$event.stopPropagation()"
+    (click)="openFocus()"
+  ></polo-basic-button>
+  @if (focusOpen) {
+    <polo-text-focus
+      [label]="label()"
+      [text]="initialText"
+      (closed)="onClosed($event)"
+    ></polo-text-focus>
+  }
+</div>

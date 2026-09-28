@@ -1,14 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, input, output } from '@angular/core'
 
 @Component({
-  selector: 'polo-node-full',
+  selector: 'polo-text-focus',
   standalone: true,
-  templateUrl: './node-full.component.html',
-  styleUrl: './node-full.component.sass',
+  templateUrl: './text-focus.component.html',
+  styleUrl: './text-focus.component.sass',
 })
-export class NodeFullComponent implements OnInit, AfterViewInit {
-  readonly nodeId = input.required<string>()
-  readonly type = input.required<'text' | 'content' | 'end'>()
+export class TextFocusComponent implements OnInit, AfterViewInit {
+  readonly label = input.required<string>()
   readonly text = input.required<string>()
   readonly closed = output<string>()
 
