@@ -119,6 +119,10 @@
   box-shadow: 0 4px 16px #0002
   &.node--selected
     outline: 2px solid var(--polo-color-border-hover)
+  &.node--active
+    outline: 3px solid var(--polo-color-focus)
+    outline-offset: 2px
+    box-shadow: 0 0 0 5px var(--polo-color-focus-ring), 0 4px 16px #0002
   &__port
     position: absolute
     top: 50%

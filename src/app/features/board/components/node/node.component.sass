@@ -205,12 +205,18 @@
       left: -1.5rem
 
 :host(.node--selected) .node,
+:host(.node--active) .node,
 .node:hover
   border-color: var(--polo-color-focus)
   outline-color: var(--polo-color-focus)
   box-shadow: 0 0 0 5px var(--polo-color-focus-ring), var(--shadow-elevation-high)
 
+:host(.node--active) .node
+  outline-width: 3px
+  outline-offset: 2px
+
 :host(.node--selected) .node__header,
+:host(.node--active) .node__header,
 .node:hover .node__header
   background: var(--polo-color-surface-accent)
 

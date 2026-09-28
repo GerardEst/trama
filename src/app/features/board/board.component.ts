@@ -156,6 +156,15 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return { groups, boundary }
   })
+  private readonly activeNodeSelection = signal<
+    { storyId: string; nodeId: string } | undefined
+  >(undefined)
+  readonly activeNodeId = computed(() => {
+    const selection = this.activeNodeSelection()
+    return selection?.storyId === this.activeStory.storyId()
+      ? selection.nodeId
+      : undefined
+  })
   selectedNodeIds = new Set<string>()
   selectionBox?: { left: number; top: number; width: number; height: number }
   private selectionPointerId?: number
@@ -193,6 +202,14 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       x: dimensions.left + (pointerPosition.x - initialPointerX) / scale,
       y: dimensions.top + (pointerPosition.y - initialPointerY) / scale,
     }
+  }
+
+  @HostListener('document:pointerdown', ['$event'])
+  handleDocumentPointerDown(event: PointerEvent) {
+    const target = event.target
+    if (target instanceof Element &&
+      this.boardElement?.nativeElement.contains(target.closest('polo-node, .groupNode'))) return
+    this.clearActiveNode()
   }
 
   @HostListener('document:keydown.escape')
@@ -249,6 +266,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   public centerToNode(node: node | undefined) {
     if (!node) return
 
+    this.clearActiveNode()
     this.currentGroupId = node.groupId
     this.selectedNodeIds = new Set()
     this.panzoom.centerToNode(node)
@@ -380,6 +398,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!group) return
     this.currentGroupId = groupId
     this.selectedNodeIds = new Set()
+    this.clearActiveNode()
     this.closeContextMenu()
     const first = this.visibleNodes()[0]
     if (first) this.panzoom.centerToNode(first)
@@ -391,6 +410,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!group) return
     this.currentGroupId = group.groupId
     this.selectedNodeIds = new Set()
+    this.clearActiveNode()
     this.closeContextMenu()
     this.panzoom.centerToNode(group)
     this.refreshFlows()
@@ -399,6 +419,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   ungroup(groupId: string) {
     this.storyEditor.ungroupNodes(groupId)
     this.selectedNodeIds = new Set()
+    this.clearActiveNode()
     this.refreshFlows()
   }
 
@@ -441,6 +462,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.selectedNodeIds = new Set()
       }
+      this.clearActiveNode()
       return
     }
 
@@ -591,7 +613,16 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nodePointerDown(nodeId: string) {
     if (!this.selectedNodeIds.has(nodeId)) this.selectedNodeIds = new Set()
+    this.activateNode(nodeId)
     this.panzoom.pauseDrag()
+  }
+
+  activateNode(nodeId: string) {
+    this.activeNodeSelection.set({ storyId: this.activeStory.storyId(), nodeId })
+  }
+
+  private clearActiveNode() {
+    this.activeNodeSelection.set(undefined)
   }
 
   focusNode(event: MouseEvent) {
@@ -601,6 +632,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setNodeZIndex(event.currentTarget, 0)
   }
   nodeDragStarted(event: CdkDragStart<string>) {
+    this.activateNode(event.source.data)
     this.setNodeZIndex(event.source.element.nativeElement, 1)
     if (
       !this.selectedNodeIds.has(event.source.data) ||
@@ -630,6 +662,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   frameDragStarted(event: CdkDragStart<string>, frame: boardFrame) {
+    this.clearActiveNode()
     this.panzoom.pauseDrag()
     const members = new Set(frame.nodeIds)
     const positions = new Map<string, Point>()
@@ -734,6 +767,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setActiveNode(nodeId: string, storyId: string) {
+    this.activateNode(nodeId)
     this.preferences.setActiveNode(storyId, nodeId)
   }
 
@@ -797,6 +831,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.storyEditor.removeNode(event.nodeId)
     this.selectedNodeIds.delete(event.nodeId)
+    if (this.activeNodeId() === event.nodeId) this.clearActiveNode()
 
     const storyId = this.activeStory.storyId()
     if (this.preferences.getActiveNode(storyId) === event.nodeId) {

@@ -123,6 +123,7 @@
             #nodeDrag="cdkDrag"
             [cdkDragData]="node.id"
             [class.node--selected]="selectedNodeIds.has(node.id)"
+            [class.node--active]="activeNodeId() === node.id"
             [cdkDragConstrainPosition]="constrainNodePosition"
             [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
             (pointerdown)="nodePointerDown(node.id)"
@@ -137,6 +138,7 @@
               aria-label="Group name"
               [value]="node.text || 'Group'"
               (pointerdown)="$event.stopPropagation()"
+              (click)="activateNode(node.id)"
               (change)="renameGroup(node.id, $event)"
             />
             <span>{{ nodeChildCount(node.id) }} nodes</span>
@@ -151,7 +153,7 @@
                 Ungroup
               </button>
               @if (frameForNode(node.id)) {
-                <button type="button" (pointerdown)="$event.stopPropagation()" (click)="removeNodeFromFrame(node.id)">
+                <button type="button" (pointerdown)="$event.stopPropagation()" (click)="activateNode(node.id); removeNodeFromFrame(node.id)">
                   Remove from frame
                 </button>
               }
@@ -163,6 +165,7 @@
             #nodeDrag="cdkDrag"
             [cdkDragData]="node.id"
             [class.node--selected]="selectedNodeIds.has(node.id)"
+            [class.node--active]="activeNodeId() === node.id"
             [cdkDragConstrainPosition]="constrainNodePosition"
             [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
             [nodeId]="node.id"

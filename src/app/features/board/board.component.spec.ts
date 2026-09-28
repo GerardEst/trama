@@ -596,6 +596,127 @@ describe('BoardComponent', () => {
     expect(resume).toHaveBeenCalled()
   })
 
+  it('keeps a clicked or dragged node active until another node or the background is clicked', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('active-node', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 350, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const nodes = Array.from(board.querySelectorAll<HTMLElement>('polo-node'))
+
+    nodes[0].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    fixture.detectChanges()
+    expect(component.activeNodeId()).toBe('node_0')
+    expect(nodes[0].classList.contains('node--active')).toBeTrue()
+    expect(nodes[0].classList.contains('node--selected')).toBeFalse()
+    nodes[0].dispatchEvent(new MouseEvent('mouseleave'))
+    nodes[0].dispatchEvent(new PointerEvent('pointerup', { bubbles: true }))
+    component.handleEscape()
+    fixture.detectChanges()
+    expect(nodes[0].classList.contains('node--active')).toBeTrue()
+
+    nodes[1].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    fixture.detectChanges()
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(nodes[0].classList.contains('node--active')).toBeFalse()
+    expect(nodes[1].classList.contains('node--active')).toBeTrue()
+
+    board.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    fixture.detectChanges()
+    expect(component.activeNodeId()).toBeUndefined()
+    expect(nodes[1].classList.contains('node--active')).toBeFalse()
+  })
+
+  it('activates a node when its menu is opened without starting a drag', () => {
+    TestBed.inject(ActiveStoryService).load('menu-focus', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 350, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const nodes = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('polo-node')
+    nodes[0].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    const menu = nodes[1].querySelector<HTMLButtonElement>('.node__menuButton button')!
+    menu.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    menu.click()
+    fixture.detectChanges()
+
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(nodes[1].classList.contains('node--active')).toBeTrue()
+    expect(nodes[0].classList.contains('node--active')).toBeFalse()
+  })
+
+  it('activates group nodes and clears focus when entering their board', () => {
+    TestBed.inject(ActiveStoryService).load('group-focus', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'group', left: 350, top: 0 },
+        { id: 'node_2', type: 'end', left: 400, top: 10, groupId: 'node_1' },
+      ],
+    })
+    fixture.detectChanges()
+    const group = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.groupNode')!
+    group.querySelector<HTMLElement>('.groupNode__header')!.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, button: 0 })
+    )
+    fixture.detectChanges()
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(group.classList.contains('node--active')).toBeTrue()
+
+    group.querySelector<HTMLButtonElement>('.groupNode__actions button')!.click()
+    fixture.detectChanges()
+    expect(component.currentGroupId).toBe('node_1')
+    expect(component.activeNodeId()).toBeUndefined()
+  })
+
+  it('activates the dragged node without losing a multi-node selection', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('active-drag', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 350, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const drags = component.nodeDrags!.toArray()
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    component.nodePointerDown('node_1')
+    component.nodeDragStarted({ source: drags[1] } as CdkDragStart<string>)
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(component.selectedNodeIds.size).toBe(2)
+    spyOn(drags[1], 'getFreeDragPosition').and.returnValue({ x: 380, y: 10 })
+    component.nodeDragEnded(
+      { source: drags[1] } as CdkDragEnd<string>,
+      activeStory.entireTree().nodes[1]
+    )
+    fixture.detectChanges()
+    expect(component.activeNodeId()).toBe('node_1')
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.node--selected').length).toBe(2)
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.node--active').length).toBe(1)
+  })
+
+  it('clears the active node on clicks outside the board and across stories', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('first', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }],
+    })
+    fixture.detectChanges()
+    component.nodePointerDown('node_0')
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(component.activeNodeId()).toBeUndefined()
+
+    component.nodePointerDown('node_0')
+    activeStory.load('second', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }],
+    })
+    expect(component.activeNodeId()).toBeUndefined()
+  })
+
   it('clears selection on a plain background click or Escape', () => {
     fixture.detectChanges()
     const board = component.boardElement!.nativeElement
