@@ -136,15 +136,15 @@
     &--exit
       right: -5px
   &__header
+    display: flex
+    flex-direction: column
     cursor: grab
+  polo-editable-name
     font-weight: bold
-  input
-    width: 100%
-    box-sizing: border-box
-    color: inherit
-    background: transparent
-    border: 1px solid var(--polo-color-border-hover)
-    padding: 0.4rem
+  &__type
+    color: var(--polo-color-text-muted)
+    font-size: 0.75rem
+    padding: 0.3rem 0.4rem 0
   span
     font-size: 0.8rem
   &__actions
@@ -180,14 +180,6 @@
       right: -5px
     &--out
       left: -5px
-
-.dragHandle
-    width: 100%
-    cursor: grab
-    display: flex
-    align-items: center
-    padding-left: 2.5rem
-    color: var(--text-color)
 
 .contextMenu
   display: none

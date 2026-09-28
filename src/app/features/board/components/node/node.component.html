@@ -24,7 +24,16 @@
       class="joiner"
       [poloBoardAnchor]="nodeId + '_joiner'"
     ></span>
-    <ng-content select=".dragHandle"> </ng-content>
+    <div class="node__heading">
+      <polo-editable-name
+        class="node__name"
+        [label]="'Name of ' + type + ' node ' + nodeId"
+        [value]="name === nodeId ? '' : name || ''"
+        [placeholder]="nodeId"
+        (valueChanged)="saveNodeName($event)"
+      ></polo-editable-name>
+      <span class="node__type">{{ type | titlecase }} node</span>
+    </div>
 
     <polo-basic-button
       class="node__menuButton"
@@ -300,12 +309,13 @@
       </polo-form-field>
     }
   </main>
-  <footer class="node__footer">
-    <p>{{ nodeId }}</p>
-    @if (type === 'distributor') {
-      <polo-basic-button (click)="addCondition()" text="Add route"></polo-basic-button>
-    } @else if (type === 'content') {
-      <polo-basic-button (click)="addAnswer()" text="Add answer"></polo-basic-button>
-    }
-  </footer>
+  @if (type === 'distributor' || type === 'content') {
+    <footer class="node__footer">
+      @if (type === 'distributor') {
+        <polo-basic-button (click)="addCondition()" text="Add route"></polo-basic-button>
+      } @else {
+        <polo-basic-button (click)="addAnswer()" text="Add answer"></polo-basic-button>
+      }
+    </footer>
+  }
 </div>

@@ -30,33 +30,29 @@
     &:active
       cursor: grabbing
 
-    > .dragHandle
-      display: flex
-      min-width: 0
-      flex: 1
-      align-items: center
-      padding-left: 1.5rem
-      position: relative
+    &::before
+      content: ''
+      width: 1rem
+      height: 1rem
+      flex: none
+      background: var(--polo-icon-drag, url('/assets/icons/drag.svg')) no-repeat center/contain
+      pointer-events: none
 
-      &::before
-        content: ''
-        position: absolute
-        left: 0
-        top: 50%
-        width: 1rem
-        height: 1rem
-        transform: translateY(-50%)
-        background: var(--polo-icon-drag, url('/assets/icons/drag.svg')) no-repeat center/contain
-        pointer-events: none
+  &__heading
+    display: flex
+    min-width: 0
+    flex: 1
+    flex-direction: column
 
-      p
-        overflow: hidden
-        color: var(--polo-color-text)
-        font-size: 0.88rem
-        font-weight: 700
-        letter-spacing: 0.02em
-        text-overflow: ellipsis
-        white-space: nowrap
+  &__name
+    color: var(--polo-color-text)
+    font-size: 0.88rem
+    font-weight: 700
+
+  &__type
+    padding: 0 0.35rem 0.2rem
+    color: var(--polo-color-text-muted)
+    font-size: 0.75rem
 
   &__menuButton
     margin-left: auto
@@ -180,11 +176,6 @@
     background: var(--polo-color-surface-subtle)
     border-top: 1px solid var(--polo-color-surface-muted)
     border-radius: 0 0 1rem 1rem
-
-    p
-      color: var(--polo-color-text-muted)
-      font-family: monospace
-      font-size: 0.8rem
 
     polo-basic-button
       margin-left: auto

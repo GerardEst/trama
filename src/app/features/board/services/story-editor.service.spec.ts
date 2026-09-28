@@ -50,6 +50,22 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('persists node names without changing story text or legacy unnamed nodes', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(activeStory.entireTree().nodes[0].name).toBeUndefined()
+
+    editor.updateNodeName('node_0', '  Opening scene  ')
+    expect(activeStory.entireTree().nodes[0].name).toBe('Opening scene')
+    expect(activeStory.entireTree().nodes[0].text).toBe('Before')
+    expect(save.calls.mostRecent().args[1].nodes[0].name).toBe('Opening scene')
+
+    editor.duplicateNode('node_0', 'node_2')
+    expect(activeStory.entireTree().nodes.find((node) => node.id === 'node_2')?.name).toBe('Opening scene')
+
+    editor.updateNodeName('node_0', '  ')
+    expect(activeStory.entireTree().nodes[0].name).toBeUndefined()
+  })
+
   it('groups nodes without rewriting links, then ungroups them', () => {
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
     activeStory.load('story-1', 'Story', {

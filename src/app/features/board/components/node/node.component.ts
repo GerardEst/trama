@@ -41,6 +41,7 @@ import { NodeEventsComponent } from './node-events/node-events.component'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { TextFocusFieldComponent } from '../text-focus/text-focus-field.component'
+import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 
 @Component({
   selector: 'polo-node',
@@ -56,6 +57,7 @@ import { TextFocusFieldComponent } from '../text-focus/text-focus-field.componen
     NodeOptionsComponent,
     NodeEventsComponent,
     TextFocusFieldComponent,
+    EditableNameComponent,
     BoardAnchorDirective,
     CdkDragHandle,
   ],
@@ -71,6 +73,7 @@ import { TextFocusFieldComponent } from '../text-focus/text-focus-field.componen
  */
 export class NodeComponent implements OnInit {
   @Input() nodeId: string = ''
+  @Input() name?: string
   @Input() frameName?: string
 
   // Common
@@ -240,6 +243,10 @@ export class NodeComponent implements OnInit {
 
   moveCondition(id: string, direction: -1 | 1) {
     this.storyEditor.moveCondition(this.nodeId, id, direction)
+  }
+
+  saveNodeName(name: string) {
+    this.storyEditor.updateNodeName(this.nodeId, name)
   }
 
   saveNodeText(event: Event) {

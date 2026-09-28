@@ -2,11 +2,11 @@
   <div (click)="closePopup()" class="overlay"></div>
 }
 <div class="menu">
-  <input
-    aria-label="storyName"
-    (change)="updateStoryName($event)"
-    value="{{ activeStory.storyName() }}"
-  />
+  <polo-editable-name
+    label="Story name"
+    [value]="activeStory.storyName()"
+    (valueChanged)="updateStoryName($event)"
+  ></polo-editable-name>
   <polo-basic-button
     icon="/assets/icons/configuration.svg"
     (click)="toggleOptions()"

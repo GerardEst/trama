@@ -57,18 +57,21 @@ html
 
 body
   margin: 0
+  font-family: Raleway, sans-serif
   height: 100vh
   overscroll-behavior: contain
 
 p,h1,h2,h3,h4,h5,h6,a,input,li,textarea,button,label,details,summary,table
   margin: 0
-  font-family: Raleway
   color: var(--text-color)
   font-size: 1rem
   box-sizing: border-box
 details
   p
     margin-top: 1rem
+
+input, textarea, button, select
+  font-family: inherit
 
 input
   padding: 0.3rem 0.5rem
@@ -96,7 +99,7 @@ img[src^='/assets/icons/'], .tag__type, .tag__delete
   filter: var(--polo-icon-filter, none)
 
 =dark-authoring-controls
-  input:not([type='checkbox']), textarea, select
+  input:not([type='checkbox']):not(.editableName__input), textarea, select
     color: var(--polo-color-text)
     background-color: var(--polo-color-surface)
     border-color: var(--polo-color-border-strong)

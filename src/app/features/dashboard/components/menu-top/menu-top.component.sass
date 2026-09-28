@@ -22,21 +22,9 @@
   box-shadow: var(--shadow-elevation-medium)
   border: 1px solid var(--medium-gray)
   z-index: 1
-  input
-    border: none
+  polo-editable-name
+    flex: 1
     font-weight: 600
-    background: var(--light-gray)
-    transition: text-indent 0.2s ease
-    &.alert
-      outline: 1px solid #fd8181
-    &:hover, &:focus
-      background-image: var(--polo-icon-edit, url('/assets/icons/edit.svg'))
-      background-repeat: no-repeat
-      background-position: left 3px center
-      background-size: 16px
-      text-indent: 1.5rem
-    &:not(:focus)
-      cursor: pointer
   .dropdown
     border: 1px solid var(--medium-gray)
     width: 300px
@@ -55,6 +43,8 @@
       margin-bottom: 0.5rem
     input
       border: 1px solid var(--medium-gray)
+      &.alert
+        outline: 1px solid #fd8181
     label
       display: flex
       flex-direction: row

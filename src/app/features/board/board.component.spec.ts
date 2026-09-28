@@ -38,6 +38,29 @@ describe('BoardComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('edits a node name without starting a drag or moving keyboard focus to the header', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('story-1', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }],
+    })
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    document.body.appendChild(host)
+    const header = host.querySelector<HTMLElement>('.node__header')!
+    const input = host.querySelector<HTMLInputElement>('.node__name input')!
+    const mouseDown = jasmine.createSpy('mouseDown')
+    header.addEventListener('mousedown', mouseDown)
+    input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    expect(mouseDown).not.toHaveBeenCalled()
+    input.focus()
+    expect(document.activeElement).toBe(input)
+    input.value = 'My beginning'
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    expect(activeStory.entireTree().nodes[0].name).toBe('My beginning')
+    expect(document.activeElement).toBe(input)
+  })
+
   it('removes a node event from the rendered board, tree and queued save', () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     const database = TestBed.inject(DatabaseService)

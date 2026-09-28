@@ -14,14 +14,13 @@ const meta: Meta<NodeComponent> = {
     props: args,
     template: `
       <div style="position: relative; min-height: 48rem; padding: 3rem; background: var(--polo-color-canvas);">
-        <polo-node ${argsToTemplate(args)}>
-          <div class="dragHandle"><p><span style="text-transform: capitalize">{{ type }}</span> node</p></div>
-        </polo-node>
+        <polo-node ${argsToTemplate(args)}></polo-node>
       </div>
     `,
   }),
   args: {
     nodeId: 'node_12',
+    name: 'The observatory',
     type: 'content',
     text: 'The observatory door groans open. Beyond it, a spiral staircase disappears into blue light.',
     join: [],

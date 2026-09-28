@@ -42,11 +42,11 @@
         <span class="tag__type tag__type--{{ ref.type }}"></span>
 
         <div class="tag__names">
-          <input
-            type="text"
-            (change)="updateRefName($event, ref.id)"
-            value="{{ ref.name }}"
-          />
+          <polo-editable-name
+            [label]="'Name of ' + ref.type + ' ' + ref.id"
+            [value]="ref.name"
+            (valueChanged)="updateRefName($event, ref.id)"
+          ></polo-editable-name>
           <p class="tag__names__id">{{ ref.id }}</p>
         </div>
         <p class="tag__times">
@@ -64,11 +64,11 @@
       <div class="tag">
         <span class="tag__type tag__type--{{ ref.type }}"></span>
         <div class="tag__names">
-          <input
-            type="text"
-            (change)="updateRefName($event, ref.id)"
-            value="{{ ref.name }}"
-          />
+          <polo-editable-name
+            [label]="'Name of ' + ref.type + ' ' + ref.id"
+            [value]="ref.name"
+            (valueChanged)="updateRefName($event, ref.id)"
+          ></polo-editable-name>
           <p class="tag__names__id">{{ ref.id }}</p>
         </div>
         <span class="tag__delete" (click)="deleteRef(ref.id)"></span>

@@ -133,14 +133,15 @@
           >
             <span class="groupNode__port groupNode__port--entry" [poloBoardAnchor]="node.id + '_group-entry'"></span>
             <span class="groupNode__port groupNode__port--exit" [poloBoardAnchor]="node.id + '_group-exit'"></span>
-            <div class="groupNode__header" cdkDragHandle tabindex="0">Group</div>
-            <input
-              aria-label="Group name"
-              [value]="node.text || 'Group'"
-              (pointerdown)="$event.stopPropagation()"
-              (click)="activateNode(node.id)"
-              (change)="renameGroup(node.id, $event)"
-            />
+            <div class="groupNode__header" cdkDragHandle tabindex="0">
+              <polo-editable-name
+                label="Group name"
+                [value]="node.text || 'Group'"
+                (click)="activateNode(node.id)"
+                (valueChanged)="renameGroup(node.id, $event)"
+              ></polo-editable-name>
+              <span class="groupNode__type">Group node</span>
+            </div>
             <span>{{ nodeChildCount(node.id) }} nodes</span>
             @if (groupPortCounts(node.id); as ports) {
               <span>{{ ports.incoming }} in · {{ ports.outgoing }} out</span>
@@ -169,6 +170,7 @@
             [cdkDragConstrainPosition]="constrainNodePosition"
             [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
             [nodeId]="node.id"
+            [name]="node.name"
             [frameName]="frameForNode(node.id)?.name"
             [type]="node.type || 'content'"
             (click)="setActiveNode(node.id, activeStory.storyId())"
@@ -191,14 +193,7 @@
             [shareOptions]="node.share || {}"
             [image]="node.image?.path"
             [links]="node.links || []"
-          >
-            <div class="dragHandle">
-              <p>
-                <span style="text-transform: capitalize">{{ node.type || 'content' }}</span>
-                node
-              </p>
-            </div>
-          </polo-node>
+          ></polo-node>
         }
       }
     </ng-container>

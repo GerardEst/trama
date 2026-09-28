@@ -57,6 +57,8 @@ export interface boardFrame {
 
 export interface node {
   id: string
+  /** Editor-only display name; absent in older stories. */
+  name?: string
   top: string | number
   left: string | number
   /** Editor-only container. Omitted for nodes on the main board. */

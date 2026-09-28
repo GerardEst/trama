@@ -9,6 +9,7 @@ import { ShareStoryComponent } from 'src/app/features/dashboard/modals/share-sto
 import { ModalService } from 'src/app/core/services/modal.service'
 import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 import { refType } from 'src/app/core/interfaces/interfaces'
+import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 
 interface DisplayedRef {
   id: string
@@ -21,7 +22,7 @@ interface DisplayedRef {
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [BasicButtonComponent, StadisticsLayerComponent],
+  imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.sass',
 })
@@ -86,8 +87,8 @@ export class MenuTreeLegendComponent {
     }
   }
 
-  updateRefName(event: any, refId: string) {
-    this.storyReferences.rename(refId, event.target.value)
+  updateRefName(name: string, refId: string) {
+    this.storyReferences.rename(refId, name)
   }
 
   getCategories() {

@@ -228,6 +228,14 @@ export class StoryEditorService {
     })
   }
 
+  updateNodeName(nodeId: string, name: string) {
+    this.withNode(nodeId, (storyNode) => {
+      const trimmed = name.trim()
+      if (trimmed) storyNode.name = trimmed
+      else delete storyNode.name
+    })
+  }
+
   updateNodeText(nodeId: string, text: string) {
     this.withNode(nodeId, (storyNode) => (storyNode.text = text))
   }

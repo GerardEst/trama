@@ -35,6 +35,7 @@ import { StorageService } from 'src/app/shared/services/storage.service'
 import { BoardJoinStroke, BoardPoint } from './board-interactions'
 import { projectBoardJoins } from './board-join-projection'
 import { BoardAnchorDirective } from './directives/board-anchor.directive'
+import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 
 interface JoinCounts {
   incoming: number
@@ -58,6 +59,7 @@ interface BoardJoinTarget {
     CdkDragHandle,
     BoardFlowsComponent,
     BoardAnchorDirective,
+    EditableNameComponent,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
@@ -475,9 +477,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshFlows()
   }
 
-  renameGroup(groupId: string, event: Event) {
-    const name = (event.target as HTMLInputElement).value.trim()
-    this.storyEditor.updateNodeText(groupId, name || 'Group')
+  renameGroup(groupId: string, value: string) {
+    this.storyEditor.updateNodeText(groupId, value.trim() || 'Group')
   }
 
   openContextMenu(event: MouseEvent) {

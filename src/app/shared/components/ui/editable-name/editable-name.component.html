@@ -1,0 +1,12 @@
+<input
+  class="editableName__input"
+  type="text"
+  [attr.aria-label]="label()"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  (pointerdown)="$event.stopPropagation()"
+  (mousedown)="$event.stopPropagation()"
+  (touchstart)="$event.stopPropagation()"
+  (dblclick)="$event.stopPropagation()"
+  (change)="save($event)"
+/>

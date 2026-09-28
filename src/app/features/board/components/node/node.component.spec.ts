@@ -25,6 +25,37 @@ describe('NodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('shows a saved name above the node type and edits it without starting a drag', () => {
+    const editor = TestBed.inject(StoryEditorService)
+    const update = spyOn(editor, 'updateNodeName')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('name', 'The crossroads')
+    fixture.componentRef.setInput('type', 'end')
+    fixture.detectChanges()
+
+    const host = fixture.nativeElement as HTMLElement
+    const input = host.querySelector<HTMLInputElement>('.node__name input')!
+    expect(input.value).toBe('The crossroads')
+    expect(host.querySelector('.node__type')?.textContent).toBe('End node')
+    const pointerDown = jasmine.createSpy('pointerDown')
+    host.addEventListener('pointerdown', pointerDown)
+    input.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(pointerDown).not.toHaveBeenCalled()
+
+    input.value = 'A new ending'
+    input.dispatchEvent(new Event('change'))
+    expect(update).toHaveBeenCalledOnceWith('node_7', 'A new ending')
+
+    fixture.componentRef.setInput('name', undefined)
+    fixture.detectChanges()
+    expect(input.placeholder).toBe('node_7')
+    expect(getComputedStyle(input, '::placeholder').color).not.toBe(getComputedStyle(input).color)
+    fixture.componentRef.setInput('name', 'node_7')
+    fixture.detectChanges()
+    expect(input.value).toBe('')
+    expect(host.querySelector('.node__footer')?.textContent).not.toContain('node_7')
+  })
+
   it('opens the shortcut image input through the existing upload handler', () => {
     const host = fixture.nativeElement as HTMLElement
     const input = host.querySelector<HTMLInputElement>('.node__shortcutImageInput')!

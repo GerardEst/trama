@@ -6,11 +6,12 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { normalizeLink } from 'src/app/shared/utils/normalizers'
 import { AlertService } from 'src/app/core/services/alert.service'
 import { DeleteStoryComponent } from '../delete-story/delete-story.component'
+import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, EditableNameComponent],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.sass',
 })
@@ -28,12 +29,12 @@ export class MenuTopComponent {
     private alertService: AlertService
   ) {}
 
-  async updateStoryName($event: any) {
+  async updateStoryName(value: string) {
     const storyId = this.activeStory.storyId()
-    const newName = $event.target.value.trim()
+    const newName = value.trim()
     if (!storyId || newName.length === 0) return
 
-    await this.db.saveNewStoryName(storyId, $event.target.value)
+    await this.db.saveNewStoryName(storyId, value)
 
     this.activeStory.setStoryName(newName)
   }
