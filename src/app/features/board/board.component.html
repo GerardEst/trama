@@ -5,10 +5,10 @@
         ← Exit {{ currentGroup()?.text || 'group' }}
       </button>
     }
-    <button type="button" [disabled]="!canGroupSelection()" (click)="groupSelection()">
+    <button type="button" title="Group selected nodes (Ctrl+G / ⌘G)" [disabled]="!canGroupSelection()" (click)="groupSelection()">
       Group selected nodes
     </button>
-    <button type="button" [disabled]="!canFrameSelection()" (click)="frameSelection()">
+    <button type="button" title="Frame selected nodes (Ctrl+F / ⌘F)" [disabled]="!canFrameSelection()" (click)="frameSelection()">
       Frame selected nodes
     </button>
     @if (!canGroupSelection()) {

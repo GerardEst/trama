@@ -260,6 +260,114 @@ describe('BoardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Ctrl + drag')
   })
 
+  it('groups a valid multi-selection with Ctrl+G without requiring an active node', () => {
+    component.groupControls = true
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('group-shortcut', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'content', left: 200, top: 0 },
+        { id: 'node_2', type: 'end', left: 400, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const groupButton = (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.groupToolbar button')!
+    expect(groupButton.title).toContain('Ctrl+G / ⌘G')
+    component.selectedNodeIds = new Set(['node_1', 'node_2'])
+    expect(component.activeNodeId()).toBeUndefined()
+
+    const shortcut = new KeyboardEvent('keydown', {
+      key: 'g', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(shortcut)
+
+    expect(shortcut.defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes.find((node) => node.id === 'node_3')?.type).toBe('group')
+    expect(activeStory.entireTree().nodes.find((node) => node.id === 'node_1')?.groupId).toBe('node_3')
+    expect(component.selectedNodeIds.size).toBe(0)
+  })
+
+  it('frames a multi-selection with Ctrl+F while leaving focus editing intact', () => {
+    component.groupControls = true
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('frame-shortcut', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 200, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    expect(host.querySelectorAll<HTMLButtonElement>('.groupToolbar button')[1].title)
+      .toContain('Ctrl+F / ⌘F')
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    const invalidGroup = new KeyboardEvent('keydown', {
+      key: 'g', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(invalidGroup)
+    expect(invalidGroup.defaultPrevented).toBeFalse()
+    expect(activeStory.entireTree().nodes).toHaveSize(2)
+
+    const textarea = host.querySelector<HTMLTextAreaElement>('polo-node textarea')!
+    const edit = new KeyboardEvent('keydown', {
+      key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+    textarea.dispatchEvent(edit)
+    fixture.detectChanges()
+    expect(edit.defaultPrevented).toBeTrue()
+    expect(host.querySelector('.focusEditor')).not.toBeNull()
+    expect(activeStory.entireTree().frames).toBeUndefined()
+    host.querySelector<HTMLButtonElement>('.focusEditor button')!.click()
+    fixture.detectChanges()
+
+    const shortcut = new KeyboardEvent('keydown', {
+      key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(shortcut)
+    expect(shortcut.defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_1'])
+    expect(activeStory.entireTree().nodes).toHaveSize(2)
+    expect(component.selectedNodeIds.size).toBe(0)
+
+    const noSelection = new KeyboardEvent('keydown', {
+      key: 'f', metaKey: true, bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(noSelection)
+    expect(noSelection.defaultPrevented).toBeFalse()
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    const macShortcut = new KeyboardEvent('keydown', {
+      key: 'f', metaKey: true, bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(macShortcut)
+    expect(macShortcut.defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_0', 'node_1'])
+  })
+
+  it('leaves browser shortcuts alone when multi-selection actions are unavailable', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('inactive-shortcut', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 200, top: 0 },
+        { id: 'node_2', type: 'end', left: 400, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    component.selectedNodeIds = new Set(['node_1', 'node_2'])
+    for (const key of ['f', 'g']) {
+      const event = new KeyboardEvent('keydown', {
+        key, metaKey: true, bubbles: true, cancelable: true,
+      })
+      document.dispatchEvent(event)
+      expect(event.defaultPrevented).toBeFalse()
+    }
+    expect(activeStory.entireTree().frames).toBeUndefined()
+    expect(activeStory.entireTree().nodes).toHaveSize(3)
+  })
+
   it('groups selected nodes and navigates between board levels', () => {
     component.groupControls = true
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)

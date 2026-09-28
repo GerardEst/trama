@@ -230,12 +230,22 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       ))
     ) return
 
+    const modifier = event.ctrlKey || event.metaKey
+    const key = event.key.toLowerCase()
+    if (modifier && this.groupControls && key === 'g' && this.canGroupSelection()) {
+      event.preventDefault()
+      this.groupSelection()
+      return
+    }
+    if (modifier && this.groupControls && key === 'f' && this.canFrameSelection()) {
+      event.preventDefault()
+      this.frameSelection()
+      return
+    }
+
     const nodeId = this.activeNodeId()
     const storyNode = this.visibleNodes().find((node) => node.id === nodeId)
     if (!storyNode) return
-
-    const modifier = event.ctrlKey || event.metaKey
-    const key = event.key.toLowerCase()
     if (key === 'delete' && !modifier && storyNode.id !== 'node_0') {
       event.preventDefault()
       if (storyNode.type === 'group') this.ungroup(storyNode.id)
