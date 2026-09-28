@@ -15,6 +15,17 @@
     ></span>
     <ng-content select=".dragHandle"> </ng-content>
 
+    @if (type !== 'distributor') {
+      <polo-basic-button
+        class="node__focusButton"
+        size="s"
+        [transparent]="true"
+        title="Open focus mode"
+        icon="/assets/icons/maximize.svg"
+        (pointerdown)="$event.stopPropagation()"
+        (click)="openFocus()"
+      ></polo-basic-button>
+    }
     <polo-basic-button
       class="node__menuButton"
       size="s"
@@ -285,3 +296,11 @@
     }
   </footer>
 </div>
+@if (focusOpen && type !== 'distributor') {
+  <polo-node-full
+    [nodeId]="nodeId"
+    [type]="type"
+    [text]="focusDraft"
+    (closed)="onFocusClosed($event)"
+  ></polo-node-full>
+}

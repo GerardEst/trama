@@ -45,6 +45,46 @@ describe('NodeComponent', () => {
     expect(pointerDown).toHaveBeenCalledTimes(1)
   })
 
+  it('opens a large focus editor and saves the draft when dismissed', async () => {
+    const editor = TestBed.inject(StoryEditorService)
+    const update = spyOn(editor, 'updateNodeText')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('text', 'Original passage')
+    fixture.detectChanges()
+
+    const host = fixture.nativeElement as HTMLElement
+    const boardTextarea = host.querySelector('.node__text') as HTMLTextAreaElement
+    boardTextarea.value = 'Original passage'
+    const focusButton = host.querySelector('.node__focusButton') as HTMLElement
+    expect(focusButton.nextElementSibling?.classList.contains('node__menuButton')).toBeTrue()
+    focusButton.click()
+
+    const panel = host.querySelector('.focusEditor') as HTMLDialogElement
+    const textarea = panel.querySelector('textarea') as HTMLTextAreaElement
+    expect(panel.open).toBeTrue()
+    expect(textarea.value).toBe('Original passage')
+    expect(getComputedStyle(panel).width).toBe(`${window.innerWidth}px`)
+    expect(getComputedStyle(panel).height).toBe(`${window.innerHeight}px`)
+    textarea.value = 'A longer passage'
+    textarea.dispatchEvent(new Event('input', { bubbles: true }))
+    const closed = new Promise<void>((resolve) => {
+      panel.addEventListener('close', () => resolve(), { once: true })
+    })
+    const closeButton = panel.querySelector('button') as HTMLButtonElement
+    closeButton.click()
+    await closed
+    fixture.detectChanges()
+    expect(host.querySelector('.focusEditor')).toBeNull()
+    expect(boardTextarea.value).toBe('A longer passage')
+    expect(update).toHaveBeenCalledOnceWith('node_7', 'A longer passage')
+  })
+
+  it('does not offer focus mode for distributor nodes without passage text', () => {
+    fixture.componentRef.setInput('type', 'distributor')
+    fixture.detectChanges()
+    expect((fixture.nativeElement as HTMLElement).querySelector('.node__focusButton')).toBeNull()
+  })
+
   it('uses labeled form fields for text node settings and saves changes', () => {
     const editor = TestBed.inject(StoryEditorService)
     fixture.componentRef.setInput('nodeId', 'node_7')

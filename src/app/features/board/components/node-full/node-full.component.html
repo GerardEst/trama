@@ -1,0 +1,20 @@
+<dialog
+  #dialog
+  class="focusEditor"
+  aria-label="Focus mode"
+  (close)="onClosed()"
+  (pointerdown)="onBackdropPointerDown($event)"
+>
+  <header class="focusEditor__header">
+    <button type="button" aria-label="Close focus mode" (click)="close()">Close</button>
+  </header>
+  <main class="focusEditor__body">
+    <textarea
+      #editor
+      [id]="'focus-text-' + nodeId()"
+      [attr.aria-label]="type() === 'text' ? 'Prompt' : type() === 'end' ? 'Ending text' : 'Node text'"
+      [value]="draft"
+      (input)="updateDraft($event)"
+    ></textarea>
+  </main>
+</dialog>

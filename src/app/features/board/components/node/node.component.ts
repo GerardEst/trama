@@ -8,6 +8,7 @@ import {
   ViewChild,
   OnInit,
   signal,
+  ChangeDetectorRef,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
@@ -40,6 +41,7 @@ import { NodeOptionsComponent } from './context-menus/node-options/node-options.
 import { NodeEventsComponent } from './node-events/node-events.component'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
+import { NodeFullComponent } from '../node-full/node-full.component'
 
 @Component({
   selector: 'polo-node',
@@ -54,6 +56,7 @@ import { StoryEditorService } from '../../services/story-editor.service'
     FormFieldComponent,
     NodeOptionsComponent,
     NodeEventsComponent,
+    NodeFullComponent,
     BoardAnchorDirective,
     CdkDragHandle,
   ],
@@ -106,6 +109,8 @@ export class NodeComponent implements OnInit {
   readonly loading = signal(false)
   readonly loadingMessage = signal<string | undefined>(undefined)
   optionsOpen: boolean = false
+  focusOpen = false
+  focusDraft = ''
 
   @Input() type: 'text' | 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode = new EventEmitter<string>()
@@ -122,7 +127,8 @@ export class NodeComponent implements OnInit {
     public activeStory: ActiveStoryService,
     private apis: ApisService,
     private storage: StorageService,
-    private storyEditor: StoryEditorService
+    private storyEditor: StoryEditorService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -227,6 +233,22 @@ export class NodeComponent implements OnInit {
 
   moveCondition(id: string, direction: -1 | 1) {
     this.storyEditor.moveCondition(this.nodeId, id, direction)
+  }
+
+  openFocus() {
+    if (this.type === 'distributor') return
+
+    this.focusDraft = this.textarea?.nativeElement.value ?? this.text
+    this.focusOpen = true
+    this.changeDetector.detectChanges()
+  }
+
+  onFocusClosed(text: string) {
+    if (text !== this.text) {
+      this.storyEditor.updateNodeText(this.nodeId, text)
+    }
+    if (this.textarea) this.textarea.nativeElement.value = text
+    this.focusOpen = false
   }
 
   saveNodeText(event: Event) {
