@@ -5,6 +5,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, input, output 
   standalone: true,
   templateUrl: './text-focus.component.html',
   styleUrl: './text-focus.component.sass',
+  host: { '(keydown.escape)': 'onEscape($event)' },
 })
 export class TextFocusComponent implements OnInit, AfterViewInit {
   readonly label = input.required<string>()
@@ -31,6 +32,12 @@ export class TextFocusComponent implements OnInit, AfterViewInit {
 
   close() {
     this.dialog.nativeElement.close()
+  }
+
+  onEscape(event: Event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.close()
   }
 
   onBackdropPointerDown(event: PointerEvent) {

@@ -29,7 +29,7 @@ describe('TextFocusFieldComponent', () => {
     textarea = host.querySelector('textarea') as HTMLTextAreaElement
   })
 
-  it('opens from the field button and writes back through the existing change handler', async () => {
+  it('opens from the field button and saves the draft when Escape closes focus', async () => {
     const button = host.querySelector('.textFocusField__button button') as HTMLButtonElement
     expect(button.title).toContain('Ctrl+F')
     button.click()
@@ -42,10 +42,13 @@ describe('TextFocusFieldComponent', () => {
     editor.value = 'New draft'
     editor.dispatchEvent(new Event('input', { bubbles: true }))
     const closed = new Promise<void>((resolve) => dialog.addEventListener('close', () => resolve(), { once: true }))
-    dialog.close()
+    const escape = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })
+    editor.dispatchEvent(escape)
     await closed
     fixture.detectChanges()
 
+    expect(escape.defaultPrevented).toBeTrue()
+    expect(host.querySelector('dialog')).toBeNull()
     expect(textarea.value).toBe('New draft')
     expect(fixture.componentInstance.saved).toBe('New draft')
   })
