@@ -119,6 +119,7 @@ export class NodeComponent implements OnInit {
   }>()
 
   @ViewChild('textarea') textarea?: ElementRef<HTMLTextAreaElement>
+  @ViewChild('shortcutImageInput') shortcutImageInput?: ElementRef<HTMLInputElement>
 
   constructor(
     private panzoom: PanzoomService,
@@ -135,6 +136,13 @@ export class NodeComponent implements OnInit {
         this.textarea?.nativeElement.focus()
       }, 0)
     }
+  }
+
+  openImagePicker(): boolean {
+    const input = this.shortcutImageInput?.nativeElement
+    if (!input || this.type === 'distributor') return false
+    input.click()
+    return true
   }
 
   async onAddImage(event: Event) {
@@ -187,6 +195,7 @@ export class NodeComponent implements OnInit {
       this.loadingMessage.set('Error uploading the image')
     } finally {
       this.loading.set(false)
+      imageInput.value = ''
     }
   }
 

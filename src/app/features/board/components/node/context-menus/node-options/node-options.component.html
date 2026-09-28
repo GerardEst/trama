@@ -3,7 +3,7 @@
   <polo-basic-button
     [transparent]="true"
     size="s"
-    title="Duplicate node"
+    title="Duplicate node (Ctrl+D / ⌘D)"
     text="Duplicate"
     icon="/assets/icons/duplicate.svg"
     (click)="onDuplicateNode.emit()"
@@ -11,7 +11,7 @@
   ></polo-basic-button>
   @if (type !== 'distributor') {
     <form>
-      <label class="options__addImage" role="menuitem">
+      <label class="options__addImage" role="menuitem" title="Add image (Ctrl+I / ⌘I)">
         <img src="/assets/icons/camera.svg" alt="" />
         <span>Add image</span>
         <input
@@ -28,7 +28,7 @@
     <polo-basic-button
       [transparent]="true"
       size="s"
-      [title]="'Remove from ' + frameName + ' (keep the node)'"
+      [title]="'Remove from ' + frameName + ' (Ctrl+U / ⌘U; keep the node)'"
       text="Remove from frame"
       icon="/assets/icons/minus.svg"
       (click)="removeFromFrame.emit()"
@@ -40,7 +40,7 @@
       [transparent]="true"
       size="s"
       type="danger"
-      title="Delete node"
+      title="Delete node (Supr)"
       text="Delete"
       icon="/assets/icons/trash.svg"
       (click)="onRemoveNode.emit()"

@@ -68,6 +68,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('board') boardElement?: ElementRef<HTMLElement>
   @ViewChild(BoardFlowsComponent) boardFlows?: BoardFlowsComponent
   @ViewChildren('nodeDrag') nodeDrags?: QueryList<CdkDrag<string>>
+  @ViewChildren(NodeComponent) nodeComponents?: QueryList<NodeComponent>
 
   @Input() grid?: boolean
   @Input() groupControls = false
@@ -212,7 +213,48 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.clearActiveNode()
   }
 
-  @HostListener('document:keydown.escape')
+  @HostListener('document:keydown', ['$event'])
+  handleBoardKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && !event.altKey && !event.ctrlKey &&
+      !event.metaKey && !event.shiftKey) {
+      this.handleEscape()
+      return
+    }
+
+    const target = event.target
+    if (
+      event.repeat || event.altKey || event.shiftKey ||
+      this.isDrawingJoin || this.selectionPointerId !== undefined ||
+      (target instanceof Element && target.closest(
+        'input, textarea, select, [contenteditable], [role="textbox"], dialog, [role="dialog"]'
+      ))
+    ) return
+
+    const nodeId = this.activeNodeId()
+    const storyNode = this.visibleNodes().find((node) => node.id === nodeId)
+    if (!storyNode) return
+
+    const modifier = event.ctrlKey || event.metaKey
+    const key = event.key.toLowerCase()
+    if (key === 'delete' && !modifier && storyNode.id !== 'node_0') {
+      event.preventDefault()
+      if (storyNode.type === 'group') this.ungroup(storyNode.id)
+      else {
+        this.clearActiveNode()
+        void this.removeNode({ nodeId: storyNode.id })
+      }
+    } else if (modifier && key === 'u' && this.frameForNode(storyNode.id)) {
+      event.preventDefault()
+      this.removeNodeFromFrame(storyNode.id)
+    } else if (modifier && key === 'd' && storyNode.type !== 'group') {
+      event.preventDefault()
+      this.duplicateNode(storyNode.id)
+    } else if (modifier && key === 'i' && storyNode.type !== 'group' && storyNode.type !== 'distributor') {
+      const nodeComponent = this.nodeComponents?.find((component) => component.nodeId === storyNode.id)
+      if (nodeComponent?.openImagePicker()) event.preventDefault()
+    }
+  }
+
   handleEscape() {
     const wasInteracting = this.isDrawingJoin || this.selectionPointerId !== undefined
     if (this.isDrawingJoin) this.stopDragging()
@@ -611,8 +653,16 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedNodeIds = selected
   }
 
-  nodePointerDown(nodeId: string) {
+  nodePointerDown(nodeId: string, event?: PointerEvent) {
     if (!this.selectedNodeIds.has(nodeId)) this.selectedNodeIds = new Set()
+    const target = event?.target
+    if (target instanceof Element && !target.closest(
+      'input, textarea, select, button, a, label, [contenteditable], [role="textbox"]'
+    )) {
+      (event?.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
+        '.node__header, .groupNode__header'
+      )?.focus({ preventScroll: true })
+    }
     this.activateNode(nodeId)
     this.panzoom.pauseDrag()
   }

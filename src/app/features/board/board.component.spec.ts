@@ -13,6 +13,7 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardComponent } from './board.component'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
+import { StorageService } from 'src/app/shared/services/storage.service'
 
 describe('BoardComponent', () => {
   let component: BoardComponent
@@ -728,8 +729,201 @@ describe('BoardComponent', () => {
     expect(component.selectedNodeIds.size).toBe(0)
 
     component.selectedNodeIds = new Set(['node_0'])
-    component.handleEscape()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
     expect(component.selectedNodeIds.size).toBe(0)
+  })
+
+  it('cancels a join with Escape via the board keydown listener', () => {
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const origin = document.createElement('div')
+    origin.dataset['boardOrigin'] = 'node_0'
+    board.appendChild(origin)
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(false)
+    const resume = spyOn(component.panzoom, 'resumeDrag')
+    component.checkDragStart({
+      button: 0, target: origin, pointerId: 7, clientX: 10, clientY: 20,
+    } as unknown as PointerEvent)
+    expect(component.isDrawingJoin).toBeTrue()
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+
+    expect(component.isDrawingJoin).toBeFalse()
+    expect(resume).toHaveBeenCalled()
+  })
+
+  it('runs Supr, Ctrl+U and Ctrl+D on the active node through existing actions', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('shortcuts', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0, join: [{ node: 'node_1' }] },
+        { id: 'node_1', type: 'end', left: 200, top: 40 },
+        { id: 'node_2', type: 'end', left: 420, top: 40 },
+      ],
+    })
+    storyEditor.frameNodes(new Set(['node_1', 'node_2']))
+    fixture.detectChanges()
+    component.activateNode('node_1')
+    const shortcut = (key: string, ctrlKey = false, extra: KeyboardEventInit = {}) => {
+      const event = new KeyboardEvent('keydown', {
+        key, ctrlKey, bubbles: true, cancelable: true, ...extra,
+      })
+      document.dispatchEvent(event)
+      return event
+    }
+
+    expect(shortcut('u', true).defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_2'])
+    expect(activeStory.entireTree().nodes[1].left).not.toBe(200)
+    expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
+    expect(shortcut('d', true).defaultPrevented).toBeTrue()
+    expect(shortcut('d', false, { metaKey: true }).defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes.map((node) => node.id)).toEqual([
+      'node_0', 'node_1', 'node_2', 'node_3', 'node_4',
+    ])
+    expect(activeStory.entireTree().nodes[3].type).toBe('end')
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(shortcut('Backspace').defaultPrevented).toBeFalse()
+    expect(activeStory.entireTree().nodes).toHaveSize(5)
+    expect(shortcut('Delete').defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes.map((node) => node.id)).toEqual([
+      'node_0', 'node_2', 'node_3', 'node_4',
+    ])
+    expect(activeStory.entireTree().nodes[0].join).toEqual([])
+    expect(component.activeNodeId()).toBeUndefined()
+    expect(shortcut('d', true).defaultPrevented).toBeFalse()
+
+    component.activateNode('node_2')
+    expect(shortcut('d', true, { repeat: true }).defaultPrevented).toBeFalse()
+    expect(shortcut('d', true, { shiftKey: true }).defaultPrevented).toBeFalse()
+    expect(activeStory.entireTree().nodes).toHaveSize(4)
+    component.activateNode('node_0')
+    expect(shortcut('Delete').defaultPrevented).toBeFalse()
+    expect(activeStory.entireTree().nodes[0].id).toBe('node_0')
+  })
+
+  it('supports frame removal and ungrouping shortcuts for an active group node', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('group-shortcuts', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'group', left: 100, top: 0 },
+        { id: 'node_2', type: 'end', left: 120, top: 20, groupId: 'node_1' },
+        { id: 'node_3', type: 'end', left: 400, top: 0 },
+      ],
+    })
+    storyEditor.frameNodes(new Set(['node_1', 'node_3']))
+    fixture.detectChanges()
+    component.activateNode('node_1')
+    const shortcut = (key: string, ctrlKey = false) => {
+      const event = new KeyboardEvent('keydown', {
+        key, ctrlKey, bubbles: true, cancelable: true,
+      })
+      document.dispatchEvent(event)
+      return event
+    }
+    expect(shortcut('d', true).defaultPrevented).toBeFalse()
+    expect(shortcut('i', true).defaultPrevented).toBeFalse()
+    expect(shortcut('u', true).defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().frames?.[0].nodeIds).toEqual(['node_3'])
+    expect(shortcut('Backspace').defaultPrevented).toBeFalse()
+    expect(shortcut('Delete').defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes.some((node) => node.id === 'node_1')).toBeFalse()
+    expect(activeStory.entireTree().nodes.find((node) => node.id === 'node_2')?.groupId).toBeUndefined()
+    expect(component.activeNodeId()).toBeUndefined()
+  })
+
+  it('deletes an active node image through the usual storage cleanup on Supr', async () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('delete-image', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 300, top: 0, image: { path: 'image.png' } },
+      ],
+    })
+    fixture.detectChanges()
+    const removeImage = spyOn(TestBed.inject(StorageService), 'removeImage').and.resolveTo(true)
+    component.activateNode('node_1')
+    const event = new KeyboardEvent('keydown', {
+      key: 'Delete', bubbles: true, cancelable: true,
+    })
+    document.dispatchEvent(event)
+    expect(event.defaultPrevented).toBeTrue()
+    expect(removeImage).toHaveBeenCalledWith('image.png')
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+    expect(activeStory.entireTree().nodes.map((node) => node.id)).toEqual(['node_0'])
+  })
+
+  it('uses Ctrl+I to open the active node image picker and does not intercept editing', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('image-shortcut', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'distributor', left: 300, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    const input = host.querySelector<HTMLInputElement>('polo-node .node__shortcutImageInput')!
+    const click = spyOn(input, 'click')
+    component.activateNode('node_0')
+    const shortcut = (target: EventTarget, key: string, extra: KeyboardEventInit = {}) => {
+      const event = new KeyboardEvent('keydown', {
+        key, ctrlKey: true, bubbles: true, cancelable: true, ...extra,
+      })
+      target.dispatchEvent(event)
+      return event
+    }
+
+    expect(shortcut(document, 'i').defaultPrevented).toBeTrue()
+    expect(click).toHaveBeenCalledTimes(1)
+    const text = host.querySelector<HTMLTextAreaElement>('polo-node textarea')!
+    text.focus()
+    for (const key of ['i', 'd', 'u']) {
+      expect(shortcut(text, key).defaultPrevented).toBeFalse()
+    }
+    for (const key of ['Backspace', 'Delete']) {
+      const event = new KeyboardEvent('keydown', {
+        key, bubbles: true, cancelable: true,
+      })
+      text.dispatchEvent(event)
+      expect(event.defaultPrevented).toBeFalse()
+    }
+    expect(activeStory.entireTree().nodes).toHaveSize(2)
+    expect(click).toHaveBeenCalledTimes(1)
+
+    const header = host.querySelector<HTMLElement>('polo-node .node__header')!
+    header.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    expect(document.activeElement).toBe(header)
+    component.activateNode('node_1')
+    expect(shortcut(document, 'i').defaultPrevented).toBeFalse()
+    expect(shortcut(document, 'u').defaultPrevented).toBeFalse()
+    expect(shortcut(document, 'd').defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes).toHaveSize(3)
+  })
+
+  it('does not trigger an active-node shortcut inside a focused dialog', () => {
+    TestBed.inject(ActiveStoryService).load('dialog-shortcut', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }],
+    })
+    fixture.detectChanges()
+    component.activateNode('node_0')
+    const dialog = document.createElement('dialog')
+    const button = document.createElement('button')
+    dialog.appendChild(button)
+    document.body.appendChild(dialog)
+    const duplicate = spyOn(storyEditor, 'duplicateNode')
+    const event = new KeyboardEvent('keydown', {
+      key: 'd', ctrlKey: true, bubbles: true, cancelable: true,
+    })
+    button.dispatchEvent(event)
+    dialog.remove()
+    expect(event.defaultPrevented).toBeFalse()
+    expect(duplicate).not.toHaveBeenCalled()
   })
 
   it('commits the CDK free drag position without resetting placement', () => {

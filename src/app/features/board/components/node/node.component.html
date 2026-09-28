@@ -1,3 +1,14 @@
+@if (type !== 'distributor') {
+  <input
+    #shortcutImageInput
+    class="node__shortcutImageInput"
+    type="file"
+    accept="image/*"
+    aria-label="Add image"
+    hidden
+    (change)="onAddImage($event)"
+  />
+}
 <div
   class="node"
   [class.node--text]="type === 'text'"
@@ -8,7 +19,7 @@
   [attr.data-board-join-anchor]="nodeId + '_joiner'"
   data-board-join-to-answers="false"
 >
-  <header class="node__header" cdkDragHandle>
+  <header class="node__header" cdkDragHandle tabindex="0">
     <span
       class="joiner"
       [poloBoardAnchor]="nodeId + '_joiner'"

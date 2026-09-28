@@ -126,14 +126,14 @@
             [class.node--active]="activeNodeId() === node.id"
             [cdkDragConstrainPosition]="constrainNodePosition"
             [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
-            (pointerdown)="nodePointerDown(node.id)"
+            (pointerdown)="nodePointerDown(node.id, $event)"
             (cdkDragStarted)="nodeDragStarted($event)"
             (cdkDragEnded)="nodeDragEnded($event, node)"
             (cdkDragMoved)="nodeDragCheck($event)"
           >
             <span class="groupNode__port groupNode__port--entry" [poloBoardAnchor]="node.id + '_group-entry'"></span>
             <span class="groupNode__port groupNode__port--exit" [poloBoardAnchor]="node.id + '_group-exit'"></span>
-            <div class="groupNode__header" cdkDragHandle>Group</div>
+            <div class="groupNode__header" cdkDragHandle tabindex="0">Group</div>
             <input
               aria-label="Group name"
               [value]="node.text || 'Group'"
@@ -149,11 +149,11 @@
               <button type="button" (pointerdown)="$event.stopPropagation()" (click)="enterGroup(node.id)">
                 Enter group
               </button>
-              <button type="button" (pointerdown)="$event.stopPropagation()" (click)="ungroup(node.id)">
+              <button type="button" title="Ungroup (Supr)" (pointerdown)="$event.stopPropagation()" (click)="ungroup(node.id)">
                 Ungroup
               </button>
               @if (frameForNode(node.id)) {
-                <button type="button" (pointerdown)="$event.stopPropagation()" (click)="activateNode(node.id); removeNodeFromFrame(node.id)">
+                <button type="button" title="Remove from frame (Ctrl+U / ⌘U)" (pointerdown)="$event.stopPropagation()" (click)="activateNode(node.id); removeNodeFromFrame(node.id)">
                   Remove from frame
                 </button>
               }
@@ -172,7 +172,7 @@
             [frameName]="frameForNode(node.id)?.name"
             [type]="node.type || 'content'"
             (click)="setActiveNode(node.id, activeStory.storyId())"
-            (pointerdown)="nodePointerDown(node.id)"
+            (pointerdown)="nodePointerDown(node.id, $event)"
             (mouseenter)="focusNode($event)"
             (mouseleave)="blurNode($event)"
             (duplicateNode)="duplicateNode($event)"

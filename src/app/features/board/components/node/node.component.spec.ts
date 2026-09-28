@@ -25,6 +25,23 @@ describe('NodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('opens the shortcut image input through the existing upload handler', () => {
+    const host = fixture.nativeElement as HTMLElement
+    const input = host.querySelector<HTMLInputElement>('.node__shortcutImageInput')!
+    const picker = spyOn(input, 'click')
+    const upload = spyOn(component, 'onAddImage').and.resolveTo()
+    expect(component.openImagePicker()).toBeTrue()
+    expect(picker).toHaveBeenCalledTimes(1)
+    const change = new Event('change')
+    input.dispatchEvent(change)
+    expect(upload).toHaveBeenCalledWith(change)
+
+    fixture.componentRef.setInput('type', 'distributor')
+    fixture.detectChanges()
+    expect(component.openImagePicker()).toBeFalse()
+    expect(host.querySelector('.node__shortcutImageInput')).toBeNull()
+  })
+
   it('keeps the options menu out of the header drag handle', () => {
     const host = fixture.nativeElement as HTMLElement
     host.querySelector('.node__menuButton')!.dispatchEvent(
