@@ -163,7 +163,7 @@ label
 .txt-linethrough
   text-decoration: line-through !important
 
-/** Important for markdown text in playground */
+/** Headings in authored story content */
 h6
   font-size: 1.3rem
   font-weight: 200
@@ -188,3 +188,39 @@ h1
   font-size: 1.8rem
   font-weight: 200
   line-height: 2
+
+.richTextEditor .richTextEditor__content
+  min-height: 100%
+  outline: none
+  font-size: clamp(1.3rem, 2vw, 1.7rem)
+  line-height: 1.7
+
+.richTextField__preview .tiptap
+  min-height: 5rem
+  outline: none
+  overflow-wrap: anywhere
+
+// An empty paragraph has a caret-sized line in ProseMirror; show that line in the preview too.
+.richTextField__preview > p:empty::before
+  content: '\00a0'
+
+.richTextEditor .richTextEditor__content p:has(> br.ProseMirror-trailingBreak:first-child:last-child)
+  line-height: 1.5
+
+// Tiptap placeholder, only while the whole editor is empty. aria-placeholder already
+// announces it, so the generated text gets empty alt text.
+.tiptap p.is-editor-empty:first-child::before
+  content: attr(data-placeholder) / ''
+  float: left
+  height: 0
+  color: var(--polo-color-placeholder)
+  pointer-events: none
+
+.richTextEditor .storyVariable, .richTextEditor .storyCategory,
+.richTextField__preview .storyVariable, .richTextField__preview .storyCategory
+  background: var(--polo-color-surface-muted)
+  border-radius: 0.3rem
+  padding: 0.05rem 0.25rem
+
+.node__text .storyCategory__entries
+  white-space: pre-line

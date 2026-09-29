@@ -98,15 +98,7 @@
           [canDelete]="true"
         ></polo-image>
       }
-      <polo-text-focus-field label="End node text">
-        <textarea
-          #textarea #focusTextarea
-          class="node__text"
-          aria-label="End node text"
-          placeholder="Write the ending…"
-          (change)="saveNodeText($event)"
-        >{{ text }}</textarea>
-      </polo-text-focus-field>
+      <polo-rich-text-field label="End node text" [text]="text" placeholder="Write the ending…" (saved)="saveRichText($event)" />
       <div class="node__linkoptions">
         @if (database.user()?.profile?.subscription_status === 'active') {
           <div class="node__linkoptions__header">
@@ -146,10 +138,8 @@
           @if (openedShareOptions) {
             <div class="node__shareoptions__option">
               <label [for]="nodeId + '-shared-text'">Custom shared text</label>
-              <polo-text-focus-field label="Custom shared text">
-                <textarea #focusTextarea [id]="nodeId + '-shared-text'" (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
-                </textarea>
-              </polo-text-focus-field>
+              <textarea [id]="nodeId + '-shared-text'" (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
+              </textarea>
             </div>
             <label class="node__shareoptions__option">
               <p>Custom share button text</p>
@@ -180,15 +170,7 @@
           [class.union_point--hasJoin]="join && join.length > 0"
         ></div>
       }
-      <polo-text-focus-field label="Node text">
-        <textarea
-          #textarea #focusTextarea
-          class="node__text"
-          aria-label="Node text"
-          placeholder="Write the passage…"
-          (change)="saveNodeText($event)"
-        >{{ text }}</textarea>
-      </polo-text-focus-field>
+      <polo-rich-text-field label="Node text" [text]="text" (saved)="saveRichText($event)" />
       @if (answers && answers.length > 0) {
         <div
           class="node__answers"
@@ -226,16 +208,8 @@
         [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
-      <polo-form-field label="Prompt" [controlId]="nodeId + '-prompt'" [showOptional]="false">
-        <polo-text-focus-field label="Prompt">
-          <textarea
-            #textarea #focusTextarea
-            class="node__text"
-            [id]="nodeId + '-prompt'"
-            placeholder="Ask the player something…"
-            (change)="saveNodeText($event)"
-          >{{ text }}</textarea>
-        </polo-text-focus-field>
+      <polo-form-field label="Prompt" [showOptional]="false">
+        <polo-rich-text-field label="Prompt" [text]="text" placeholder="Ask the player something…" (saved)="saveRichText($event)" />
       </polo-form-field>
       <polo-form-field
         #propertyField
@@ -295,17 +269,14 @@
         [showOptional]="false"
         description="Saved as extra guidance for this input; not currently shown in the playground."
       >
-        <polo-text-focus-field label="Description">
-          <textarea
-            #focusTextarea
-            class="node__fieldControl"
-            [id]="nodeId + '-description'"
-            [attr.aria-describedby]="descriptionField.descriptionId"
-            (change)="saveDescription($event)"
-            name="description"
-            value="{{ userTextOptions?.description }}"
-          ></textarea>
-        </polo-text-focus-field>
+        <textarea
+          class="node__fieldControl"
+          [id]="nodeId + '-description'"
+          [attr.aria-describedby]="descriptionField.descriptionId"
+          (change)="saveDescription($event)"
+          name="description"
+          value="{{ userTextOptions?.description }}"
+        ></textarea>
       </polo-form-field>
     }
   </main>

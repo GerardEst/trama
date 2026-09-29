@@ -1,0 +1,35 @@
+<dialog #dialog class="focusEditor richTextEditor" [attr.aria-label]="'Focus on ' + label()"
+  (close)="onClosed()" (pointerdown)="onBackdropPointerDown($event)">
+  <header class="focusEditor__header">
+    <button type="button" aria-label="Close focus mode" (click)="close()">Close</button>
+  </header>
+  <main class="focusEditor__body">
+    <div class="richTextEditor__toolbar" role="toolbar" aria-label="Text formatting">
+      <button type="button" aria-label="Bold" (click)="toggle('bold')"><strong>B</strong></button>
+      <button type="button" aria-label="Italic" (click)="toggle('italic')"><em>I</em></button>
+      @if (!inlineOnly()) {
+        <button type="button" aria-label="Paragraph" (click)="paragraph()">P</button>
+        <button type="button" aria-label="Heading 1" (click)="heading(1)">H1</button>
+        <button type="button" aria-label="Heading 2" (click)="heading(2)">H2</button>
+        <button type="button" aria-label="Heading 3" (click)="heading(3)">H3</button>
+        <button type="button" aria-label="Bullet list" (click)="toggle('bulletList')">• List</button>
+        <button type="button" aria-label="Numbered list" (click)="toggle('orderedList')">1. List</button>
+      }
+      <select #variableSelect aria-label="Insert variable" (change)="insertVariable(variableSelect.value, variableSelect)">
+        <option value="">Insert variable…</option>
+        @for (variable of variables(); track variable.kind + ':' + variable.key) {
+          <option [value]="variable.kind + ':' + variable.key">{{ variable.label }}</option>
+        }
+      </select>
+      @if (!inlineOnly() && categories().length) {
+        <select #categorySelect aria-label="Insert category" (change)="insertCategory(categorySelect.value, categorySelect)">
+          <option value="">Insert category…</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+      }
+    </div>
+    <div #surface class="richTextEditor__surface"></div>
+  </main>
+</dialog>

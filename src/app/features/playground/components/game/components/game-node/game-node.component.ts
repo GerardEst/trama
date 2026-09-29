@@ -8,14 +8,14 @@ import {
   HostListener,
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { storyPlainText } from 'src/app/shared/utils/story-html'
 import { trigger, style, transition, animate } from '@angular/animations'
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms'
-import { MarkdownComponent } from 'ngx-markdown'
 
 @Component({
   selector: 'polo-game-node',
   standalone: true,
-  imports: [ReactiveFormsModule, MarkdownComponent],
+  imports: [ReactiveFormsModule],
   templateUrl: './game-node.component.html',
   styleUrl: './game-node.component.sass',
   animations: [
@@ -63,6 +63,8 @@ export class GameNodeComponent {
       join: this.data.join,
     })
   }
+
+  plainText = storyPlainText
 
   // Others
   getNativeElement(): HTMLElement {

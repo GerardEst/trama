@@ -12,6 +12,7 @@ import {
 } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
+import { storyInlineHtml } from 'src/app/shared/utils/story-html'
 import { PlayerService } from './player.service'
 
 interface playableNode extends node {
@@ -77,7 +78,7 @@ export class GameEngineService {
 
   interpolateNodeTexts(node: node) {
     const interpolateAnswers = node.answers?.map((answer) => {
-      return { ...answer, text: this.getTextWithFinalParameters(answer.text) }
+      return { ...answer, text: storyInlineHtml(this.getTextWithFinalParameters(answer.text)) }
     })
     return {
       ...node,
@@ -87,6 +88,31 @@ export class GameEngineService {
   }
 
   getTextWithFinalParameters(text: string = '') {
+    // Rich text uses explicit tokens; never run the legacy text regex across HTML attributes.
+    if (/<[a-z][\s/>]/i.test(text) || text.includes('data-trama-')) {
+      const document = new DOMParser().parseFromString(text, 'text/html')
+      for (const variable of Array.from(document.querySelectorAll('[data-trama-variable]'))) {
+        const kind = variable.getAttribute('data-kind')
+        const key = variable.getAttribute('data-key')
+        if (!key || !['property', 'stat', 'condition'].includes(kind ?? '')) continue
+        // Resolve through the same player-state rules as plain story text, but only
+        // replace a text node: player-provided values must never become HTML.
+        let value: string | number | undefined
+        if (kind === 'property') value = this.player.playerProperties()[key]
+        if (kind === 'stat') value = this.player.playerStats().find(stat => stat.id === key)?.amount
+        if (kind === 'condition') value = this.player.playerConditions().some(condition => condition.id === key) ? 'true' : undefined
+        variable.replaceWith(document.createTextNode(String(value ?? '-')))
+      }
+      for (const category of Array.from(document.querySelectorAll('[data-trama-category]'))) {
+        const key = category.getAttribute('data-key')
+        if (!key) continue
+        const expanded = document.createElement('div')
+        expanded.className = 'storyCategory__entries'
+        expanded.textContent = this.getTextWithFinalParameters(`[${key}]`).trim()
+        category.replaceWith(expanded)
+      }
+      return document.body.innerHTML
+    }
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
       (_match: string, p1: string): any => {

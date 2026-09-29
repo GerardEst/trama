@@ -10,6 +10,7 @@ import {
 import { PlayerService } from '../../services/player.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { Router } from '@angular/router'
+import { storyPlainText } from 'src/app/shared/utils/story-html'
 
 @Component({
   selector: 'polo-playground',
@@ -123,7 +124,7 @@ export class PlaygroundComponent implements OnInit {
       this.playerPath.push({
         type: 'answer',
         id: answer.id,
-        text: answer.text,
+        text: storyPlainText(answer.text),
         timestamp: Date.now(),
       })
       console.log('Selection registered', this.playerPath)
@@ -135,7 +136,7 @@ export class PlaygroundComponent implements OnInit {
       this.playerPath.push({
         type: 'node',
         id: node.id,
-        text: node.text,
+        text: storyPlainText(node.text),
         timestamp: Date.now(),
       })
       console.log('Node registered', this.playerPath)

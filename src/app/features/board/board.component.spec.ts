@@ -14,6 +14,9 @@ import { StoryEditorService } from './services/story-editor.service'
 import { BoardComponent } from './board.component'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
+import { RichTextFieldComponent } from './components/rich-text/rich-text-field.component'
+import { StoryEditorLoader } from './components/rich-text/story-editor-loader.service'
+import { NodeComponent } from './components/node/node.component'
 
 describe('BoardComponent', () => {
   let component: BoardComponent
@@ -36,6 +39,37 @@ describe('BoardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('focuses a newly created node, not every node and answer loaded onto the board', async () => {
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    await TestBed.inject(StoryEditorLoader).load()
+    TestBed.inject(ActiveStoryService).load('focus-test', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0,
+        answers: [{ id: 'answer_0_0', text: '<p>Answer</p>' }] }],
+    })
+    fixture.detectChanges()
+    await new Promise<void>(resolve => setTimeout(resolve, 0))
+    const existing = fixture.debugElement.queryAll(By.directive(RichTextFieldComponent))
+      .map(item => item.componentInstance as RichTextFieldComponent)
+    expect(existing.length).toBe(2)
+    for (const field of existing) expect(field.inlineEditor).toBeUndefined()
+
+    const created = component.createNode({ left: 400, top: 0 }, 'content')
+    fixture.detectChanges()
+    await new Promise<void>(resolve => setTimeout(resolve, 0))
+    const node = fixture.debugElement.queryAll(By.directive(NodeComponent))
+      .find(item => (item.componentInstance as NodeComponent).nodeId === created.id)!
+    const field = node.query(By.directive(RichTextFieldComponent)).componentInstance as RichTextFieldComponent
+    expect(field.inlineEditor).toBeDefined()
+
+    const firstNode = fixture.debugElement.queryAll(By.directive(NodeComponent))
+      .find(item => (item.componentInstance as NodeComponent).nodeId === 'node_0')!
+    const nodeComponent = firstNode.componentInstance as NodeComponent
+    nodeComponent.addAnswer()
+    fixture.detectChanges()
+    await new Promise<void>(resolve => setTimeout(resolve, 0))
+    expect(nodeComponent.answerComponents?.last.richTextField?.inlineEditor).toBeDefined()
   })
 
   it('edits a node name without starting a drag or moving keyboard focus to the header', () => {
@@ -312,7 +346,7 @@ describe('BoardComponent', () => {
     expect(component.selectedNodeIds.size).toBe(0)
   })
 
-  it('frames a multi-selection with Ctrl+F while leaving focus editing intact', () => {
+  it('frames a multi-selection with Ctrl+F while leaving focus editing intact', async () => {
     component.groupControls = true
     const activeStory = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
@@ -334,16 +368,17 @@ describe('BoardComponent', () => {
     expect(invalidGroup.defaultPrevented).toBeFalse()
     expect(activeStory.entireTree().nodes).toHaveSize(2)
 
-    const textarea = host.querySelector<HTMLTextAreaElement>('polo-node textarea')!
+    const preview = host.querySelector<HTMLElement>('polo-node .richTextField__preview')!
     const edit = new KeyboardEvent('keydown', {
       key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
     })
-    textarea.dispatchEvent(edit)
+    preview.dispatchEvent(edit)
     fixture.detectChanges()
     expect(edit.defaultPrevented).toBeTrue()
-    expect(host.querySelector('.focusEditor')).not.toBeNull()
+    const field = fixture.debugElement.query(By.directive(RichTextFieldComponent)).componentInstance as RichTextFieldComponent
+    expect(field.openEditor).toBeTrue()
     expect(activeStory.entireTree().frames).toBeUndefined()
-    host.querySelector<HTMLButtonElement>('.focusEditor button')!.click()
+    field.onClosed(field.draft)
     fixture.detectChanges()
 
     const shortcut = new KeyboardEvent('keydown', {
@@ -1012,7 +1047,7 @@ describe('BoardComponent', () => {
 
     expect(shortcut(document, 'i').defaultPrevented).toBeTrue()
     expect(click).toHaveBeenCalledTimes(1)
-    const text = host.querySelector<HTMLTextAreaElement>('polo-node textarea')!
+    const text = host.querySelector<HTMLElement>('polo-node .richTextField__preview')!
     text.focus()
     for (const key of ['i', 'd', 'u']) {
       expect(shortcut(text, key).defaultPrevented).toBeFalse()

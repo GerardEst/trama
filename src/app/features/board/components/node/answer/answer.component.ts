@@ -1,21 +1,19 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   Output,
   ViewChild,
   OnInit,
 } from '@angular/core'
-import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { answer_requirement, event } from 'src/app/core/interfaces/interfaces'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { NodeEventsComponent } from '../node-events/node-events.component'
 import { NodeRequirementsComponent } from '../node-requirements/node-requirements.component'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { BoardAnchorDirective } from '../../../directives/board-anchor.directive'
-import { TextFocusFieldComponent } from '../../text-focus/text-focus-field.component'
+import { RichTextFieldComponent } from '../../rich-text/rich-text-field.component'
 
 @Component({
   selector: 'polo-answer',
@@ -25,7 +23,7 @@ import { TextFocusFieldComponent } from '../../text-focus/text-focus-field.compo
     BasicButtonComponent,
     NodeRequirementsComponent,
     BoardAnchorDirective,
-    TextFocusFieldComponent,
+    RichTextFieldComponent,
   ],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],
@@ -39,28 +37,21 @@ export class AnswerComponent implements OnInit {
   @Input() text: string = ''
   @Input() hasJoin: boolean = false
   @Output() onRemoveAnswer = new EventEmitter<string>()
-  @ViewChild('textarea') textarea?: ElementRef<HTMLTextAreaElement>
+  @ViewChild(RichTextFieldComponent) richTextField?: RichTextFieldComponent
 
   constructor(
-    private storyEditor: StoryEditorService,
-    private panzoom: PanzoomService
+    private storyEditor: StoryEditorService
   ) {}
 
   ngOnInit() {
     this.events = this.storyEditor.getEventsOfAnswer(this.answerId)
     this.requirements = this.storyEditor.getRequirementsOfAnswer(this.answerId)
-
-    if (this.panzoom.focusElements) {
-      setTimeout(() => {
-        const textarea = this.textarea
-        if (textarea) textarea.nativeElement.focus()
-      }, 0)
-    }
   }
 
-  saveAnswerText(event: Event) {
-    const text = (event.target as HTMLTextAreaElement).value
-    this.storyEditor.updateAnswerText(this.answerId, text)
+  focusText() { this.richTextField?.focusPreview() }
+
+  saveAnswerText(html: string) {
+    this.storyEditor.updateAnswerText(this.answerId, html)
   }
 
   removeAnswer() {

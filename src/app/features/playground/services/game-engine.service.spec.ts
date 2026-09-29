@@ -65,6 +65,22 @@ describe('GameEngineService', () => {
     expect(engine).toBeTruthy()
   })
 
+  it('prepares answer HTML once, after resolving player variables', () => {
+    player.playerProperties.set({ name: '<Ada>' })
+    const storyNode: node = {
+      id: 'node_0', type: 'content', top: 0, left: 0,
+      answers: [
+        { id: 'a', text: '<p>Hello <span data-trama-variable="" data-kind="property" data-key="name">#name</span></p><p>Choose me</p>' },
+        { id: 'b', text: 'Plain answer' },
+      ],
+    }
+
+    const result = engine.interpolateNodeTexts(storyNode)
+    expect(result.answers?.[0].text).toBe('Hello &lt;Ada&gt;<br>Choose me')
+    expect(result.answers?.[1].text).toBe('Plain answer')
+    expect(storyNode.answers?.[0].text).toContain('<p>')
+  })
+
   describe('getRandomJoin', () => {
     it('returns the only join available', () => {
       const join = { node: 'node_1' }
@@ -497,6 +513,27 @@ describe('GameEngineService', () => {
   })
 
   describe('getTextWithFinalParameters', () => {
+    it('resolves rich-text tokens without treating player input as HTML', () => {
+      player.playerProperties.set({ name: '<img src=x onerror=alert(1)>' })
+      const html = '<p>Hello <strong><span data-trama-variable="" data-kind="property" data-key="name">#name</span></strong></p>'
+      const rendered = engine.getTextWithFinalParameters(html)
+      expect(rendered).toContain('<strong>&lt;img src=x onerror=alert(1)&gt;</strong>')
+      expect(rendered).not.toContain('<img')
+    })
+
+    it('does not interpolate ordinary text or attributes inside authored HTML', () => {
+      player.playerProperties.set({ name: 'Ada' })
+      expect(engine.getTextWithFinalParameters('<p data-note="#name">#name</p>'))
+        .toBe('<p data-note="#name">#name</p>')
+    })
+
+    it('expands a category token as text within the HTML structure', () => {
+      tree.refs = { stat_gold: { name: 'gold', type: 'stat', category: 'inventory' } }
+      player.playerStats.set([{ id: 'stat_gold', amount: 9 }])
+      const rendered = engine.getTextWithFinalParameters('<div data-trama-category="" data-key="inventory">[inventory]</div>')
+      expect(rendered).toContain('Gold: 9')
+      expect(rendered).toContain('storyCategory__entries')
+    })
     it('interpolates a player property by name', () => {
       player.playerProperties.set({ name: 'Bob' })
       expect(engine.getTextWithFinalParameters('Hi #name')).toBe('Hi Bob')

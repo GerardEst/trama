@@ -12,14 +12,8 @@
     [transparent]="true"
   ></polo-basic-button>
 </div>
-<polo-text-focus-field label="Answer text">
-  <textarea
-    #textarea #focusTextarea
-    aria-label="Answer text"
-    placeholder="Write an answer…"
-    (change)="saveAnswerText($event)"
-  >{{ text }}</textarea>
-</polo-text-focus-field>
+<polo-rich-text-field label="Answer text" [text]="text" [inlineOnly]="true"
+  placeholder="Write an answer…" (saved)="saveAnswerText($event)" />
 <polo-node-events [events]="events" [answerId]="answerId"></polo-node-events>
 <div
   class="union_point"

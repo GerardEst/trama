@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, DeferBlockState, TestBed } from '@angular/core/testing'
 
 import { NodeComponent } from './node.component'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
@@ -101,22 +101,26 @@ describe('NodeComponent', () => {
     fixture.detectChanges()
 
     const host = fixture.nativeElement as HTMLElement
-    const boardTextarea = host.querySelector('.node__text') as HTMLTextAreaElement
-    boardTextarea.value = 'Original passage'
-    const focusButton = host.querySelector('.textFocusField__button button') as HTMLButtonElement
-    expect(focusButton.title).toContain('Ctrl+F')
-    expect(host.querySelector('.node__header .node__focusButton')).toBeNull()
+    const preview = host.querySelector('.richTextField__preview') as HTMLElement
+    expect(preview.textContent).toBe('Original passage')
+    const focusButton = host.querySelector('.richTextField__button button') as HTMLButtonElement
+    expect(focusButton.title).toBe('Focus on Node text (Ctrl+F / ⌘F)')
+    expect(focusButton.querySelector('img')?.getAttribute('src')).toBe('/assets/icons/maximize.svg')
     focusButton.click()
+    fixture.detectChanges()
+    const [block] = await fixture.getDeferBlocks()
+    await block.render(DeferBlockState.Complete)
     fixture.detectChanges()
 
     const panel = host.querySelector('.focusEditor') as HTMLDialogElement
-    const textarea = panel.querySelector('textarea') as HTMLTextAreaElement
+    const content = panel.querySelector('[contenteditable]') as HTMLElement
     expect(panel.open).toBeTrue()
-    expect(textarea.value).toBe('Original passage')
+    expect(content.textContent).toBe('Original passage')
     expect(getComputedStyle(panel).width).toBe(`${window.innerWidth}px`)
     expect(getComputedStyle(panel).height).toBe(`${window.innerHeight}px`)
-    textarea.value = 'A longer passage'
-    textarea.dispatchEvent(new Event('input', { bubbles: true }))
+    content.focus()
+    content.textContent = 'A longer passage'
+    content.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }))
     const closed = new Promise<void>((resolve) => {
       panel.addEventListener('close', () => resolve(), { once: true })
     })
@@ -125,55 +129,51 @@ describe('NodeComponent', () => {
     await closed
     fixture.detectChanges()
     expect(host.querySelector('.focusEditor')).toBeNull()
-    expect(boardTextarea.value).toBe('A longer passage')
-    expect(update).toHaveBeenCalledOnceWith('node_7', 'A longer passage')
+    expect(update).toHaveBeenCalledOnceWith('node_7', '<p>A longer passage</p>')
   })
 
-  it('opens focus on Ctrl+F only for the active textarea', () => {
+  it('opens focus on Ctrl+F from the read-only preview', async () => {
     fixture.componentRef.setInput('type', 'text')
     fixture.detectChanges()
     const host = fixture.nativeElement as HTMLElement
-    const textarea = host.querySelector('.node__text') as HTMLTextAreaElement
+    const preview = host.querySelector('.richTextField__preview') as HTMLElement
     const shortcut = new KeyboardEvent('keydown', {
       key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
     })
 
-    textarea.focus()
-    textarea.dispatchEvent(shortcut)
+    preview.focus()
+    preview.dispatchEvent(shortcut)
+    fixture.detectChanges()
+    const [block] = await fixture.getDeferBlocks()
+    await block.render(DeferBlockState.Complete)
     fixture.detectChanges()
     expect(shortcut.defaultPrevented).toBeTrue()
     expect(host.querySelector('.focusEditor')).not.toBeNull()
   })
 
-  it('focuses a text-node description with Ctrl+F and saves that field', async () => {
-    const editor = TestBed.inject(StoryEditorService)
-    const save = spyOn(editor, 'updateNodeDescription')
+  it('keeps the text-node description a plain text area without focus mode', () => {
     fixture.componentRef.setInput('nodeId', 'node_7')
     fixture.componentRef.setInput('type', 'text')
     fixture.detectChanges()
     const host = fixture.nativeElement as HTMLElement
     const description = host.querySelector('#node_7-description') as HTMLTextAreaElement
     description.focus()
-    description.dispatchEvent(new KeyboardEvent('keydown', {
+    const shortcut = new KeyboardEvent('keydown', {
       key: 'f', ctrlKey: true, bubbles: true, cancelable: true,
-    }))
+    })
+    description.dispatchEvent(shortcut)
     fixture.detectChanges()
 
-    const dialog = host.querySelector('.focusEditor') as HTMLDialogElement
-    const editorTextarea = dialog.querySelector('textarea') as HTMLTextAreaElement
-    expect(editorTextarea.getAttribute('aria-label')).toBe('Description')
-    editorTextarea.value = 'An expanded description'
-    editorTextarea.dispatchEvent(new Event('input', { bubbles: true }))
-    const closed = new Promise<void>((resolve) => dialog.addEventListener('close', () => resolve(), { once: true }))
-    dialog.close()
-    await closed
-    expect(save).toHaveBeenCalledOnceWith('node_7', 'An expanded description')
+    expect(description.tagName).toBe('TEXTAREA')
+    expect(shortcut.defaultPrevented).toBeFalse()
+    expect(host.querySelector('.focusEditor')).toBeNull()
+    expect(description.closest('.formField__control')?.querySelector('polo-basic-button')).toBeNull()
   })
 
   it('does not offer focus mode for distributor nodes without text', () => {
     fixture.componentRef.setInput('type', 'distributor')
     fixture.detectChanges()
-    expect((fixture.nativeElement as HTMLElement).querySelector('.textFocusField__button')).toBeNull()
+    expect((fixture.nativeElement as HTMLElement).querySelector('.richTextField__button')).toBeNull()
   })
 
   it('uses labeled form fields for text node settings and saves changes', () => {
@@ -190,7 +190,6 @@ describe('NodeComponent', () => {
     fixture.detectChanges()
 
     const fields = [
-      { label: 'Prompt', id: 'prompt', value: 'New prompt', method: 'updateNodeText' },
       { label: 'Property', id: 'property', value: 'alias', method: 'updateNodeProperty' },
       {
         label: 'Placeholder', id: 'placeholder', value: 'Your alias', method: 'updateNodePlaceholder',
@@ -208,6 +207,11 @@ describe('NodeComponent', () => {
       description: 'Saved as extra guidance for this input; not currently shown in the playground.',
     }
 
+    const promptField = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.formField'))
+      .find(formField => formField.querySelector('.formField__label')?.textContent?.trim() === 'Prompt')
+    const prompt = promptField?.querySelector('.formField__control .richTextField__preview')
+    expect(prompt?.textContent).toBe('What is your name?')
+    expect(prompt?.getAttribute('aria-label')).toBe('Prompt')
     for (const field of fields) {
       const control = fixture.nativeElement.querySelector(
         `#node_7-${field.id}`

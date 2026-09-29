@@ -6,7 +6,8 @@ import {
   Output,
   EventEmitter,
   ViewChild,
-  OnInit,
+  ViewChildren,
+  QueryList,
   signal,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
@@ -40,7 +41,7 @@ import { NodeOptionsComponent } from './context-menus/node-options/node-options.
 import { NodeEventsComponent } from './node-events/node-events.component'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
-import { TextFocusFieldComponent } from '../text-focus/text-focus-field.component'
+import { RichTextFieldComponent } from '../rich-text/rich-text-field.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 
 @Component({
@@ -56,7 +57,7 @@ import { EditableNameComponent } from 'src/app/shared/components/ui/editable-nam
     FormFieldComponent,
     NodeOptionsComponent,
     NodeEventsComponent,
-    TextFocusFieldComponent,
+    RichTextFieldComponent,
     EditableNameComponent,
     BoardAnchorDirective,
     CdkDragHandle,
@@ -71,7 +72,7 @@ import { EditableNameComponent } from 'src/app/shared/components/ui/editable-nam
  * and updates activeStory object, so input changes
  * are detected and node is updated
  */
-export class NodeComponent implements OnInit {
+export class NodeComponent {
   @Input() nodeId: string = ''
   @Input() name?: string
   @Input() frameName?: string
@@ -121,7 +122,8 @@ export class NodeComponent implements OnInit {
     answers?: string[]
   }>()
 
-  @ViewChild('textarea') textarea?: ElementRef<HTMLTextAreaElement>
+  @ViewChild(RichTextFieldComponent) richTextField?: RichTextFieldComponent
+  @ViewChildren(AnswerComponent) answerComponents?: QueryList<AnswerComponent>
   @ViewChild('shortcutImageInput') shortcutImageInput?: ElementRef<HTMLInputElement>
 
   constructor(
@@ -132,14 +134,6 @@ export class NodeComponent implements OnInit {
     private storage: StorageService,
     private storyEditor: StoryEditorService
   ) {}
-
-  async ngOnInit() {
-    if (this.panzoom.focusElements) {
-      setTimeout(() => {
-        this.textarea?.nativeElement.focus()
-      }, 0)
-    }
-  }
 
   openImagePicker(): boolean {
     const input = this.shortcutImageInput?.nativeElement
@@ -216,6 +210,9 @@ export class NodeComponent implements OnInit {
   addAnswer() {
     const newId = generateIDForNewAnswer(this.nodeId, this.answers)
     this.storyEditor.createNodeAnswer(this.nodeId, newId)
+    if (this.panzoom.focusElements) {
+      setTimeout(() => this.answerComponents?.find(answer => answer.answerId === newId)?.focusText(), 0)
+    }
   }
 
   addCondition() {
@@ -249,9 +246,8 @@ export class NodeComponent implements OnInit {
     this.storyEditor.updateNodeName(this.nodeId, name)
   }
 
-  saveNodeText(event: Event) {
-    const newText = this.getControlValue(event)
-    this.storyEditor.updateNodeText(this.nodeId, newText)
+  saveRichText(html: string) {
+    this.storyEditor.updateNodeText(this.nodeId, html)
   }
 
   saveProperty(event: Event) {

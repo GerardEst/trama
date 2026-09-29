@@ -10,26 +10,23 @@
   }
   <div class="node__text">
     @if (data.text && !data.jumpToAnswers) {
-      <div markdown class="test" ngPreserveWhitespaces>
-        {{ data.text }}
-      </div>
+      <div class="test" [innerHTML]="data.text"></div>
     }
     @if (data.answers && data.answers.length > 0 && showAnswers) {
       @if (disabled) {
         <div class="answers">
           @for (answer of data.answers; track $index) {
-            <button markdown>{{ answer.text }}</button>
+            <button><span [innerHTML]="answer.text"></span></button>
           }
         </div>
       } @else {
         <div @showAnswers class="answers">
           @for (answer of data.answers; track $index) {
             <button
-              markdown
               (click)="!disabled && markAsSelected($event)"
               (click)="!disabled && onSelectAnswer.emit(answer)"
             >
-              {{ answer.text }}
+              <span [innerHTML]="answer.text"></span>
             </button>
           }
         </div>
@@ -68,7 +65,7 @@
             </button>
           }
           @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
-            <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || data.text)">
+            <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || plainText(data.text))">
               {{ data.share?.shareButtonText || 'Share this story' }}
               <img src="/assets/icons/share.svg" alt="Share icon" />
             </button>

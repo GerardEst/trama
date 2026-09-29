@@ -875,6 +875,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       groupId: this.currentGroupId,
     }
     this.storyEditor.createNode(newNodeInfo)
+    this.focusNewNode(newNodeInfo.id)
 
     return newNodeInfo
   }
@@ -884,6 +885,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.activeStory.entireTree().nodes
     )
     this.storyEditor.duplicateNode(nodeId, idForNewNode)
+    this.focusNewNode(idForNewNode)
+  }
+
+  private focusNewNode(nodeId: string) {
+    if (!this.panzoom.focusElements) return
+    setTimeout(() => this.nodeComponents?.find(component => component.nodeId === nodeId)?.richTextField?.focusPreview(), 0)
   }
 
   async removeNode(event: { nodeId: string }) {

@@ -9,6 +9,7 @@ import { MenuTreeLegendComponent } from './components/menu-tree-legend/menu-tree
 import { findNodeInTree } from 'src/app/shared/utils/tree-searching'
 import { StatisticsService } from 'src/app/shared/services/statistics.service'
 import { BoardPreferencesService } from '../board/services/board-preferences.service'
+import { StoryEditorLoader } from '../board/components/rich-text/story-editor-loader.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -35,10 +36,13 @@ export class DashboardComponent implements OnInit {
     private db: DatabaseService,
     public activeStory: ActiveStoryService,
     private stadistics: StatisticsService,
-    private boardPreferences: BoardPreferencesService
+    private boardPreferences: BoardPreferencesService,
+    private editorLoader: StoryEditorLoader
   ) {}
 
   ngOnInit(): void {
+    // Authors are here to edit, so have the editor ready before the first click.
+    this.editorLoader.prefetchWhenIdle()
     // If there is some tree reference in localstorage, load that one
     const localStoryId = localStorage.getItem('polo-id')
     this.initBoard(localStoryId)
