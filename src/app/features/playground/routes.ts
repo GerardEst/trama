@@ -1,10 +1,27 @@
-import { PlaygroundComponent } from './pages/playground/playground.component'
-import { StoryNotFoundComponent } from './pages/story-not-found/story-not-found.component'
+import { Routes } from '@angular/router'
 
-export const playgroundRoutes = [
-  { path: 'private/:storyId', component: PlaygroundComponent },
-  { path: 'not-found', component: StoryNotFoundComponent },
+export const playgroundRoutes: Routes = [
+  {
+    path: 'private/:storyId',
+    loadComponent: () =>
+      import('./pages/playground/playground.component').then(
+        (m) => m.PlaygroundComponent
+      ),
+  },
+  {
+    path: 'not-found',
+    loadComponent: () =>
+      import('./pages/story-not-found/story-not-found.component').then(
+        (m) => m.StoryNotFoundComponent
+      ),
+  },
 
   // This must be the last item on the router
-  { path: ':customId', component: PlaygroundComponent },
+  {
+    path: ':customId',
+    loadComponent: () =>
+      import('./pages/playground/playground.component').then(
+        (m) => m.PlaygroundComponent
+      ),
+  },
 ]

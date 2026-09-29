@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router'
-import { authGuard } from './core/guards/auth.guard'
 import { loginRoutes } from './features/login/routes'
 import { playgroundRoutes } from './features/playground/routes'
 import { dashboardRoutes } from './features/dashboard/routes'

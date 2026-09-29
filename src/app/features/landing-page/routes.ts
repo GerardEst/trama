@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router'
-import { LandingpageComponent } from './landingpage.component'
 
 export const landingRoutes: Routes = [
-  { path: '', title: 'Trama', component: LandingpageComponent },
+  {
+    path: '',
+    title: 'Trama',
+    loadComponent: () =>
+      import('./landingpage.component').then((m) => m.LandingpageComponent),
+  },
 ]
