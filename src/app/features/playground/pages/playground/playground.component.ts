@@ -29,7 +29,6 @@ export class PlaygroundComponent implements OnInit {
   playerPath: Array<any> = []
   externalEvents: externalEvent[] = []
   gameId?: string
-  customStyles?: string
 
   constructor(
     private db: DatabaseService,
@@ -70,8 +69,6 @@ export class PlaygroundComponent implements OnInit {
       footer: configuration.footer,
       cumulativeMode: configuration.cumulativeMode,
     })
-
-    this.customStyles = (configuration as any).customStyles || 'default'
 
     this.displayGame()
   }

@@ -66,7 +66,9 @@ export class GameEngineService {
   }
 
   filterAvailableAnswers(storyNode: node) {
+    // An unfinished answer cannot advance the story and must not be clickable.
     storyNode.answers = storyNode.answers?.filter((answer: node_answer) =>
+      (answer.join?.length ?? 0) > 0 &&
       this.playerHasAnswerRequirements(
         this.player.playerProperties(),
         this.player.playerStats(),

@@ -6,6 +6,7 @@ import {
   tick,
 } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { PlayerService } from 'src/app/features/playground/services/player.service'
 
 import { GameComponent } from './game.component'
@@ -16,7 +17,7 @@ describe('GameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GameComponent],
+      imports: [GameComponent, NoopAnimationsModule],
     }).compileComponents()
 
     fixture = TestBed.createComponent(GameComponent)
@@ -51,6 +52,55 @@ describe('GameComponent', () => {
     expect(apply).toHaveBeenCalledOnceWith(answer.events)
     expect(nextStep).toHaveBeenCalledWith(answer.join)
   })
+
+  it('does not apply events or advance for an unconnected answer', () => {
+    const answer = {
+      id: 'answer_0_0',
+      text: '',
+      events: [
+        {
+          id: 'e', target: 'stat_gold', type: 'stat' as const,
+          amount: '1', action: 'alterStat' as const,
+        },
+      ],
+      join: [],
+    }
+    const apply = spyOn(component.gameEngine, 'applyEvents')
+    const nextStep = spyOn(component, 'nextStep')
+
+    component.selectAnswer(answer)
+
+    expect(apply).not.toHaveBeenCalled()
+    expect(nextStep).not.toHaveBeenCalled()
+  })
+
+  it('does not show an empty answer when a node randomly joins two endings', fakeAsync(() => {
+    const nodes: Record<string, node> = {
+      node_0: {
+        id: 'node_0', type: 'content', top: 0, left: 0,
+        text: 'A question',
+        join: [{ node: 'node_1' }, { node: 'node_2' }],
+        answers: [{ id: 'answer_0_0', text: '', join: [] }],
+      },
+      node_1: { id: 'node_1', type: 'end', top: 0, left: 0 },
+      node_2: { id: 'node_2', type: 'end', top: 0, left: 0 },
+    }
+    spyOn(component.gameEngine, 'buildNextNodeFromJoin').and.callFake(
+      (storyJoin) => structuredClone(nodes[storyJoin.node])
+    )
+
+    component.nextStep([{ node: 'node_0' }])
+    tick(1200)
+    fixture.detectChanges()
+
+    expect(fixture.nativeElement.querySelectorAll('.answers button').length)
+      .toBe(0)
+    expect(component.activeNodes[0].id).toBe('node_0')
+
+    tick(1200)
+    expect(['node_1', 'node_2']).toContain(component.activeNodes[1].id)
+    flush()
+  }))
 
   it('applies distributor events before choosing a condition branch', fakeAsync(() => {
     const player = TestBed.inject(PlayerService)
@@ -122,12 +172,14 @@ describe('GameComponent', () => {
       answers: [
         {
           id: 'yes',
+          join: [{ node: 'node_2' }],
           requirements: [
             { target: 'condition_key', type: 'condition', amount: 1 },
           ],
         },
         {
           id: 'no',
+          join: [{ node: 'node_3' }],
           requirements: [
             { target: 'condition_key', type: 'condition', amount: 0 },
           ],

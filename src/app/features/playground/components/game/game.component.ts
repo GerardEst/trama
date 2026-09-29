@@ -44,7 +44,6 @@ import { GameNodeComponent } from './components/game-node/game-node.component'
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
   @ViewChild('node') DOMnode?: GameNodeComponent
-  @Input() customStyles?: string
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
   @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
@@ -78,6 +77,8 @@ export class GameComponent {
   }
 
   selectAnswer(answer: node_answer) {
+    if (!answer.join?.length) return
+
     this.gameEngine.applyEvents(answer.events ?? [])
     this.registerAnswer(answer)
     this.nextStep(answer.join ?? [])

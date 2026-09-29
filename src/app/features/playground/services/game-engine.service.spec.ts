@@ -110,7 +110,7 @@ describe('GameEngineService', () => {
       text,
       requirements,
       events: [],
-      join: [],
+      join: [{ node: 'node_2' }],
     })
 
     it('builds a playable node without mutating the stored story', () => {
@@ -167,6 +167,19 @@ describe('GameEngineService', () => {
         engine.buildNextNodeFromJoin({ node: 'missing-node' })
       ).toThrowError('Next node not found')
     })
+  })
+
+  it('hides disconnected placeholder answers on a node with random joins', () => {
+    const storyNode: node = {
+      id: 'node_0', type: 'content', top: 0, left: 0,
+      join: [{ node: 'node_1' }, { node: 'node_2' }],
+      answers: [{ id: 'answer_0_0', text: '', join: [] }],
+    }
+
+    engine.filterAvailableAnswers(storyNode)
+
+    expect(storyNode.answers).toEqual([])
+    expect(storyNode.join).toEqual([{ node: 'node_1' }, { node: 'node_2' }])
   })
 
   describe('playerHasAnswerRequirements', () => {
@@ -492,8 +505,14 @@ describe('GameEngineService', () => {
         left: 0,
         events: [conditionEvent('hasKey', '1')],
         answers: [
-          { id: 'yes', requirements: [conditionRequirement('hasKey', 1)] },
-          { id: 'no', requirements: [conditionRequirement('hasKey', 0)] },
+          {
+            id: 'yes', join: [{ node: 'node_2' }],
+            requirements: [conditionRequirement('hasKey', 1)],
+          },
+          {
+            id: 'no', join: [{ node: 'node_3' }],
+            requirements: [conditionRequirement('hasKey', 0)],
+          },
         ],
       }
       tree.nodes = [storyNode]
