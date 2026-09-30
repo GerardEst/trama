@@ -102,6 +102,39 @@ describe('GameComponent', () => {
     flush()
   }))
 
+  it('shows a passage and its answers without waiting for an animation', () => {
+    const storyNode: node = {
+      id: 'node_0', type: 'content', top: 0, left: 0,
+      text: 'Choose your path',
+      answers: [{ id: 'left', text: 'Left', join: [{ node: 'node_1' }] }],
+    }
+    spyOn(component.gameEngine, 'buildNextNodeFromJoin').and.returnValue(storyNode)
+
+    component.nextStep([{ node: 'node_0' }])
+    fixture.detectChanges()
+
+    expect(fixture.nativeElement.textContent).toContain('Choose your path')
+    expect(fixture.nativeElement.textContent).toContain('Left')
+  })
+
+  it('renders two connected answers as separate choices', () => {
+    const storyNode: node = {
+      id: 'node_0', type: 'content', top: 0, left: 0,
+      text: 'Which path?',
+      answers: [
+        { id: 'left', text: 'Go left', join: [{ node: 'node_1' }] },
+        { id: 'right', text: 'Go right', join: [{ node: 'node_2' }] },
+      ],
+    }
+    spyOn(component.gameEngine, 'buildNextNodeFromJoin').and.returnValue(storyNode)
+
+    component.nextStep([{ node: 'node_0' }])
+    fixture.detectChanges()
+
+    const buttons: NodeListOf<HTMLButtonElement> = fixture.nativeElement.querySelectorAll('.node__answers button')
+    expect(Array.from(buttons, button => button.textContent?.trim())).toEqual(['Go left', 'Go right'])
+  })
+
   it('applies distributor events before choosing a condition branch', fakeAsync(() => {
     const player = TestBed.inject(PlayerService)
     player.playerStats.set([])

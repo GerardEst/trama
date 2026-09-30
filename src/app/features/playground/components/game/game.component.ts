@@ -10,8 +10,6 @@ import {
 import { join, node, node_answer } from 'src/app/core/interfaces/interfaces'
 import { GameEngineService } from 'src/app/features/playground/services/game-engine.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { normalizeLink } from 'src/app/shared/utils/normalizers'
-import { trigger, style, transition, animate } from '@angular/animations'
 import { GameNodeComponent } from './components/game-node/game-node.component'
 
 @Component({
@@ -20,39 +18,15 @@ import { GameNodeComponent } from './components/game-node/game-node.component'
   imports: [GameNodeComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.sass',
-  animations: [
-    trigger('insertNode', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('500ms', style({ opacity: 1 })),
-      ]),
-    ]),
-    trigger('removeNode', [
-      transition(':leave', [
-        style({ opacity: 1 }),
-        animate('200ms', style({ opacity: 0 })),
-      ]),
-    ]),
-    trigger('insertInactiveNode', [
-      transition(':enter', [
-        style({ opacity: 1 }),
-        animate('500ms', style({ opacity: 0.5 })),
-      ]),
-    ]),
-  ],
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef
-  @ViewChild('node') DOMnode?: GameNodeComponent
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
-  @Input() writeSpeed: 'immediate' | 'fast' | 'slow' = 'fast'
 
-  activeNodes?: any = []
-  isWrittingNodes: boolean = false
-  inactiveNodes: any = []
+  activeNodes: any[] = []
+  inactiveNodes: any[] = []
 
   gameInitialized: boolean = false
-  private TIME_BETWEEN_NODES = 700
 
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
@@ -84,75 +58,50 @@ export class GameComponent {
     this.nextStep(answer.join ?? [])
   }
 
-  continueFlow(continueInfo: any) {
+  continueFlow(continueInfo: { property: string; value: string; join?: join[] }) {
+    if (!continueInfo.join?.length) return
     this.gameEngine.alterProperty(continueInfo.property, continueInfo.value)
     this.nextStep(continueInfo.join)
   }
 
-  // Each step can contain multiple nodes
+  // Each step can contain multiple nodes. Automatic transitions yield to the
+  // browser to avoid recursing through a long (or cyclic) chain in one stack.
   nextStep(possibleJoins: Array<join>, addToCurrentStep: boolean = false) {
-    const randomlyChoosedJoin = this.gameEngine.getRandomJoin(possibleJoins)
+    if (!possibleJoins.length) return
+    const chosenJoin = this.gameEngine.getRandomJoin(possibleJoins)
+    let activeNode = this.gameEngine.buildNextNodeFromJoin(chosenJoin)
 
-    let activeNode =
-      this.gameEngine.buildNextNodeFromJoin(randomlyChoosedJoin)
-    const isDistributor = activeNode.type === 'distributor'
-    const isNonInteractableNode = activeNode.join && activeNode.type !== 'text'
-
-    if (isDistributor) {
+    if (activeNode.type === 'distributor') {
       this.gameEngine.applyEvents(activeNode.events ?? [])
-      this.nextStep(
-        this.gameEngine.distributeNode(activeNode),
-        addToCurrentStep
-      )
+      setTimeout(() => this.nextStep(this.gameEngine.distributeNode(activeNode), addToCurrentStep))
       return
     }
 
-    setTimeout(() => {
-      if (!addToCurrentStep) {
-        this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
-        this.activeNodes = []
-      }
-    }, this.TIME_BETWEEN_NODES)
+    if (!addToCurrentStep) {
+      this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
+      this.activeNodes = []
+    }
 
-    setTimeout(() => {
-      this.gameEngine.applyEvents(activeNode.events ?? [])
-      this.gameEngine.filterAvailableAnswers(activeNode)
-      activeNode = this.gameEngine.interpolateNodeTexts(activeNode)
-      this.activeNodes.push(activeNode)
-      if (this.activeNodes.length === 1) this.scrollToNewNode()
-      this.notifyNodeDrawn(activeNode)
+    this.gameEngine.applyEvents(activeNode.events ?? [])
+    this.gameEngine.filterAvailableAnswers(activeNode)
+    activeNode = this.gameEngine.interpolateNodeTexts(activeNode)
+    this.activeNodes.push(activeNode)
+    this.scrollToNewNode()
+    this.notifyNodeDrawn(activeNode)
 
-      if (isNonInteractableNode) {
-        this.nextStep(activeNode.join ?? [], true)
-      }
-    }, this.TIME_BETWEEN_NODES + 500)
+    if (activeNode.join?.length && activeNode.type !== 'text') {
+      setTimeout(() => this.nextStep(activeNode.join ?? [], true))
+    }
   }
 
   scrollToNewNode() {
     setTimeout(() => {
-      if (!this.DOMnode) return
-      const nativeElement = this.DOMnode.getNativeElement()
-
-      this.DOMgame.nativeElement.scrollTo({
-        top: nativeElement.offsetTop - 50,
-        behavior: 'smooth',
-      })
+      const container = this.DOMgame?.nativeElement as HTMLElement | undefined
+      const nodes = container?.querySelectorAll('polo-game-node')
+      const latest = nodes?.item(nodes.length - 1) as HTMLElement | null
+      if (!container || !latest) return
+      container.scrollTo({ top: latest.offsetTop - container.offsetTop - 24, behavior: 'auto' })
     })
-  }
-
-  openShareContext(shareText: string) {
-    if (navigator.share) {
-      navigator
-        .share({
-          text: shareText,
-          url: window.location.href,
-        })
-        .catch((error) => console.warn('Error sharing', error))
-    }
-  }
-
-  registerLink(link: string) {
-    window.open(normalizeLink(link), '_blank')
   }
 
   registerAnswer(answer: node_answer) {

@@ -46,6 +46,8 @@ const preview: Preview = {
           ],
           'Board',
           ['Molecules', ['*'], 'Organisms', ['*']],
+          'Playground',
+          ['Passages', ['*'], 'Choices', ['*'], 'Endings', ['*']],
           '*',
         ],
       },

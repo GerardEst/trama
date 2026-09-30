@@ -28,6 +28,34 @@ describe('GameNodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('uses the same passage font size for plain and rich text', () => {
+    const host = fixture.nativeElement as HTMLElement
+    component.data = { type: 'content', text: 'A passage', answers: [] }
+    fixture.detectChanges()
+    const plainSize = getComputedStyle(host.querySelector('.node__passage')!).fontSize
+
+    component.data = { type: 'content', text: '<p>A passage</p>', answers: [] }
+    fixture.detectChanges()
+    const richSize = getComputedStyle(host.querySelector('.node__passage p')!).fontSize
+
+    expect(richSize).toBe(plainSize)
+  })
+
+  it('keeps authored headings visually larger than passage paragraphs', () => {
+    component.data = {
+      type: 'content',
+      text: '<h1>Chapter</h1><h2>Scene</h2><h3>Moment</h3><p>The passage continues.</p>',
+    }
+    fixture.detectChanges()
+    const passage = (fixture.nativeElement as HTMLElement).querySelector('.node__passage')!
+    const size = (selector: string) =>
+      parseFloat(getComputedStyle(passage.querySelector(selector)!).fontSize)
+
+    expect(size('h3')).toBeGreaterThan(size('p') * 1.2)
+    expect(size('h2')).toBeGreaterThan(size('h3'))
+    expect(size('h1')).toBeGreaterThan(size('h2'))
+  })
+
   it('renders formatted text and answers without an editor or unsafe HTML', () => {
     component.data = TestBed.inject(GameEngineService).interpolateNodeTexts({
       id: 'node_0', type: 'content', top: 0, left: 0,
@@ -36,9 +64,9 @@ describe('GameNodeComponent', () => {
     } as node)
     fixture.detectChanges()
     const host = fixture.nativeElement as HTMLElement
-    expect(host.querySelector('.node__text strong')?.textContent).toBe('reader')
-    expect(host.querySelector('.node__text img[onerror]')).toBeNull()
-    expect(host.querySelector('.answers button em')?.textContent).toBe('Continue')
-    expect(host.querySelector('.answers button p')).toBeNull()
+    expect(host.querySelector('.node__passage strong')?.textContent).toBe('reader')
+    expect(host.querySelector('.node__passage img[onerror]')).toBeNull()
+    expect(host.querySelector('polo-game-answer button em')?.textContent).toBe('Continue')
+    expect(host.querySelector('polo-game-answer button p')).toBeNull()
   })
 })

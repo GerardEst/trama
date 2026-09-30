@@ -42,16 +42,6 @@
 
   --menu-shadow: 0 0 0.5rem var(--dark-gray)
 
-  /** Base playground styles */
-  --button-background-color: #ffffff
-  --button-background-selected: #3d3736
-  --buttons-border-width: 1px
-  --text-and-borders: #3d3736
-  --border-color: var(--button-background-color)
-  --storytitle-font: 'LibreBaskerville'
-  --storyfooter-font: 'Baskerville'
-  --storyfooter-color: var(--text-and-borders)
-
 html
   font-size: 12px
 
@@ -107,10 +97,10 @@ img[src^='/assets/icons/'], .tag__type, .tag__delete
       outline-color: var(--polo-color-focus)
 
 @media (prefers-color-scheme: dark)
-  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-playground, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
     +dark-authoring-controls
 
-:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-playground, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
   +dark-authoring-controls
 
 :root[data-storybook-theme='dark']
@@ -222,5 +212,24 @@ h1
   border-radius: 0.3rem
   padding: 0.05rem 0.25rem
 
-.node__text .storyCategory__entries
+// Authored HTML has no Angular style-encapsulation attributes. Override the
+// global 1rem element defaults so paragraphs and lists match plain passages.
+.node__passage :is(p, li, a)
+  font-size: inherit
+
+// Headings use the passage size as their base, not the root font size.
+.node__passage :is(h1, h2, h3)
+  font-weight: 700
+  line-height: 1.35
+
+.node__passage h1
+  font-size: 1.65em
+
+.node__passage h2
+  font-size: 1.45em
+
+.node__passage h3
+  font-size: 1.25em
+
+.node__passage .storyCategory__entries
   white-space: pre-line

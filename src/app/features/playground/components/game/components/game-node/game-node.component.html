@@ -1,77 +1,47 @@
-<div #node class="node" [class.disabled]="disabled">
+<article #node class="node" [class.node--inactive]="disabled">
   @if (data.image) {
     <img
       class="node__image"
-      [src]="
-        'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' +
-        data.image.path
-      "
+      [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + data.image.path"
+      alt="Story illustration"
+      loading="lazy"
     />
   }
-  <div class="node__text">
+  <div class="node__content">
     @if (data.text && !data.jumpToAnswers) {
-      <div class="test" [innerHTML]="data.text"></div>
+      <div class="node__passage" [innerHTML]="data.text"></div>
     }
-    @if (data.answers && data.answers.length > 0 && showAnswers) {
-      @if (disabled) {
-        <div class="answers">
-          @for (answer of data.answers; track $index) {
-            <button><span [innerHTML]="answer.text"></span></button>
-          }
-        </div>
-      } @else {
-        <div @showAnswers class="answers">
-          @for (answer of data.answers; track $index) {
-            <button
-              (click)="!disabled && markAsSelected($event)"
-              (click)="!disabled && onSelectAnswer.emit(answer)"
-            >
-              <span [innerHTML]="answer.text"></span>
-            </button>
-          }
-        </div>
-      }
-    }
-    @if (showAnswers) {
-      @if (data.type === 'text') {
-        <div @showAnswers class="textInput">
-          <input
-            type="text"
-            name="userText"
-            placeholder="{{ data.userTextOptions.placeholder }}"
-            [formControl]="userText"
-          />
-          <button
-            aria-label="Continue"
-            [disabled]="userText.invalid"
-            (click)="continue($event)"
-          ></button>
-        </div>
-        @if (userText.invalid && (userText.dirty || userText.touched)) {
-          @if (userText.errors?.['required']) {
-            <p>Please fill in the input</p>
-          }
-          @if (userText.errors?.['maxlength']) {
-            <p>This cannot be more than 100 characters long</p>
-          }
+    @if (data.answers?.length) {
+      <div class="node__answers" aria-label="Choose an answer">
+        @for (answer of data.answers; track answer.id) {
+          <polo-game-answer
+            [text]="answer.text || ''"
+            [disabled]="disabled"
+            [selected]="data.selectedAnswerId === answer.id"
+            (chosen)="chooseAnswer(answer)"
+          ></polo-game-answer>
         }
+      </div>
+    }
+    @if (data.type === 'text') {
+      @if (disabled) {
+        @if (data.userResponse) {
+          <p class="node__response">{{ data.userResponse }}</p>
+        }
+      } @else {
+        <polo-game-text-input
+          [options]="data.userTextOptions"
+          (submitted)="continue($event)"
+        ></polo-game-text-input>
       }
-      @if (data.type === 'end') {
-        <div class="endNodeExtras">
-          @for (link of data.links; track $index) {
-            <button (click)="onGoToLink.emit(link.url)">
-              {{ link.name }}
-              <img src="/assets/icons/open-external.svg" alt="Open external icon" />
-            </button>
-          }
-          @if (data.type === 'end' && activeStory.storyConfiguration().sharing) {
-            <button class="sharebutton" (click)="onShare.emit(data.share.sharedText || plainText(data.text))">
-              {{ data.share?.shareButtonText || 'Share this story' }}
-              <img src="/assets/icons/share.svg" alt="Share icon" />
-            </button>
-          }
-        </div>
-      }
+    }
+    @if (data.type === 'end' && !disabled) {
+      <polo-game-end-actions
+        [links]="data.links || []"
+        [share]="data.share"
+        [text]="data.text || ''"
+        [sharing]="activeStory.storyConfiguration().sharing"
+      ></polo-game-end-actions>
     }
   </div>
-</div>
+</article>

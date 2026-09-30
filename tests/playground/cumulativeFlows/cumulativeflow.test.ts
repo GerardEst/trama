@@ -14,12 +14,12 @@ test(
 
     await page.waitForTimeout(1000)
 
-    await expect(page.getByText('User')).toBeVisible()
+    await expect(page.locator('.node__passage').filter({ hasText: /^User$/ })).toBeVisible()
     await page.getByRole('button', { name: /next/i }).click()
 
     await page.waitForTimeout(1000)
 
-    await expect(page.getByText('no stop')).toBeVisible()
+    await expect(page.getByText('no stop', { exact: true })).toBeVisible()
     await expect(page.getByText('no stop II')).toBeVisible()
     await expect(page.getByText('answers')).toBeVisible()
     await page.getByRole('button', { name: /1/i }).click()
@@ -31,9 +31,10 @@ test(
     await expect(page.getByText('back to answers')).toBeVisible()
     await page.waitForTimeout(1000)
 
-    const activeDistributeButton = page
-      .locator('.node:not(.disabled)')
-      .getByRole('button', { name: /distribute/i })
+    const activeDistributeButton = page.getByRole('button', {
+      name: /distribute/i,
+      disabled: false,
+    })
     await expect(activeDistributeButton).toBeVisible()
     await activeDistributeButton.click()
 

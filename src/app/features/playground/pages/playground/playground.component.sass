@@ -1,28 +1,66 @@
 :host
   display: block
-  height: 100%
+  min-height: 100dvh
 
 .playground
   display: flex
-  height: 100dvh
-  box-sizing: border-box
   flex-direction: column
-  border: 5px solid #00000000
-  .storytitle
-    font-family: Raleway
-    font-weight: 900
-    text-align: center
-    font-size: 1.1rem
-    padding: 1.5rem
-  .storyfooter
-    display: grid
-    grid-template-columns: 1fr 2fr 1fr
-    align-items: center
-    text-align: center
-    font-size: 1rem
-    padding: 1rem
-    margin-top: auto
-    text-decoration: none
-    font-family: var(--storyfooter-font)
-  polo-game
-    overflow: hidden
+  height: 100dvh
+  min-height: 0
+  background: var(--polo-color-canvas)
+  color: var(--polo-color-text)
+
+.storyHeader
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 1rem
+  padding-block: 1.25rem
+  padding-inline: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right))
+  border-bottom: 1px solid var(--polo-color-border)
+  background: var(--polo-color-surface)
+
+  &__title
+    min-width: 0
+    font: 700 clamp(1.3rem, 2.5vw, 1.8rem)/1.4 Raleway, sans-serif
+    color: var(--polo-color-text-strong)
+    overflow-wrap: anywhere
+
+  &__theme
+    flex: none
+    min-height: 3rem
+    padding: 0.5rem 0.85rem
+    border: 1px solid var(--polo-color-border-strong)
+    border-radius: 0.65rem
+    background: var(--polo-color-surface-subtle)
+    color: var(--polo-color-text)
+    font: 600 1rem Raleway, sans-serif
+    cursor: pointer
+    touch-action: manipulation
+
+    &:hover
+      background: var(--polo-color-action-soft)
+
+    &:focus-visible
+      outline: 2px solid var(--polo-color-focus)
+      outline-offset: 2px
+
+.storyFooter
+  display: flex
+  flex-wrap: wrap
+  justify-content: space-between
+  gap: 0.75rem 2rem
+  padding-block: 1rem
+  padding-inline: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right))
+  border-top: 1px solid var(--polo-color-border)
+  background: var(--polo-color-surface)
+  color: var(--polo-color-text-secondary)
+  font: 1rem/1.5 Raleway, sans-serif
+  overflow-wrap: anywhere
+
+  a
+    color: var(--polo-color-action)
+
+    &:focus-visible
+      outline: 2px solid var(--polo-color-focus)
+      outline-offset: 2px

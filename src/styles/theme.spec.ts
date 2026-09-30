@@ -32,10 +32,10 @@ describe('authoring theme', () => {
   const surface = (element: HTMLElement) =>
     getComputedStyle(element).getPropertyValue('--polo-color-surface').trim()
 
-  it('follows the system scheme without changing public stories', () => {
+  it('uses the same system palette for the dashboard and default playground', () => {
     const dark = window.matchMedia('(prefers-color-scheme: dark)').matches
     expect(surface(dashboard)).toBe(dark ? '#232d3d' : '#ffffff')
-    expect(surface(playground)).toBe('#ffffff')
+    expect(surface(playground)).toBe(surface(dashboard))
   })
 
   it('allows a saved preference to override the system on both authoring pages', () => {
@@ -43,6 +43,7 @@ describe('authoring theme', () => {
     expect(surface(dashboard)).toBe('#232d3d')
     expect(surface(statistics)).toBe('#232d3d')
     expect(surface(account)).toBe('#232d3d')
+    expect(surface(playground)).toBe('#232d3d')
 
     document.documentElement.dataset['poloTheme'] = 'light'
     expect(surface(dashboard)).toBe('#ffffff')

@@ -1,30 +1,35 @@
-<div class="playground">
-  <div class="storytitle">{{ activeStory.storyName() }}</div>
+<main class="playground">
+  <header class="storyHeader">
+    <h1 class="storyHeader__title">{{ activeStory.storyName() }}</h1>
+    <button
+      class="storyHeader__theme"
+      type="button"
+      [attr.aria-label]="theme.dark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      (click)="theme.setDark(!theme.dark())"
+    >
+      {{ theme.dark() ? 'Light mode' : 'Dark mode' }}
+    </button>
+  </header>
   <polo-game
     [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
     (onEndGame)="endGame()"
     (onDrawNode)="drawNode($event)"
     (onSelectAnswer)="selectAnswer($event)"
-  >
-  </polo-game>
-  <div class="storyfooter">
-    <span></span>
-    @if (activeStory.storyConfiguration().footer.text) {
-      @if (activeStory.storyConfiguration().footer.link) {
-        <a href="{{ activeStory.storyConfiguration().footer.link }}" target="_blank">{{
-          activeStory.storyConfiguration().footer.text
-        }}</a>
-      } @else {
-        <p>
-          {{ activeStory.storyConfiguration().footer.text }}
-        </p>
+  ></polo-game>
+  @if (activeStory.storyConfiguration().footer.text || activeStory.storyConfiguration().tapLink) {
+    <footer class="storyFooter">
+      @if (activeStory.storyConfiguration().footer.text) {
+        @if (activeStory.storyConfiguration().footer.link) {
+          <a [href]="activeStory.storyConfiguration().footer.link" target="_blank" rel="noopener noreferrer">
+            {{ activeStory.storyConfiguration().footer.text }}
+          </a>
+        } @else {
+          <p>{{ activeStory.storyConfiguration().footer.text }}</p>
+        }
       }
-    }
-    @if (activeStory.storyConfiguration().tapLink) {
-      <p>
-        Created with
-        <a target="_blank" href="https://trama.app">Trama</a>
-      </p>
-    }
-  </div>
-</div>
+      @if (activeStory.storyConfiguration().tapLink) {
+        <p>Created with <a target="_blank" rel="noopener noreferrer" href="https://trama.app">Trama</a></p>
+      }
+    </footer>
+  }
+</main>

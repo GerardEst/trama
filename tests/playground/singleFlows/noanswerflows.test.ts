@@ -8,22 +8,14 @@ test.describe('Flow of no-answers nodes', () => {
   test('can start and see all the steps till the end without interaction', async ({
     page,
   }) => {
-    await expect(page).toHaveTitle('noanswerflows.test')
+    await expect(page).toHaveTitle(/noanswerflows\.test$/)
 
-    const title = page.getByText(/noanswerflows.test/)
-    await title.waitFor()
-    expect(title).toBeVisible()
+    const title = page.getByRole('heading', { name: /noanswerflows\.test/ })
+    await expect(title).toBeVisible()
+    await expect(page).toHaveTitle(await title.innerText())
 
-    const firstStep = page.getByText('node 1')
-    await firstStep.waitFor()
-    expect(firstStep).toBeVisible()
-
-    const secondStep = page.getByText('node 2')
-    await secondStep.waitFor()
-    expect(secondStep).toBeVisible()
-
-    const lastStep = page.getByText('end node')
-    await lastStep.waitFor()
-    expect(lastStep).toBeVisible()
+    await expect(page.getByText('node 1')).toBeVisible()
+    await expect(page.getByText('node 2')).toBeVisible()
+    await expect(page.getByText('end node')).toBeVisible()
   })
 })

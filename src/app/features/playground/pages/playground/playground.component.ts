@@ -11,6 +11,7 @@ import { PlayerService } from '../../services/player.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { Router } from '@angular/router'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
+import { ThemeService } from 'src/app/shared/services/theme.service'
 
 @Component({
   selector: 'polo-playground',
@@ -34,6 +35,7 @@ export class PlaygroundComponent implements OnInit {
     private db: DatabaseService,
     public playerService: PlayerService,
     public activeStory: ActiveStoryService,
+    public theme: ThemeService,
     private router: Router,
     private renderer: Renderer2
   ) {}

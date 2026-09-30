@@ -5,31 +5,12 @@
         <polo-game-node [data]="inactiveNode" [disabled]="true"></polo-game-node>
       }
     }
-    @if (activeNodes) {
-      @for (activeNode of activeNodes; track activeNode.key) {
-        @if (mode === 'single') {
-          <polo-game-node
-            #node
-            @insertNode
-            @removeNode
-            [data]="activeNode"
-            (onSelectAnswer)="selectAnswer($event)"
-            (onContinue)="continueFlow($event)"
-            (onShare)="openShareContext($event)"
-            (onGoToLink)="registerLink($event)"
-          ></polo-game-node>
-        } @else {
-          <polo-game-node
-            #node
-            @insertNode
-            [data]="activeNode"
-            (onSelectAnswer)="selectAnswer($event)"
-            (onContinue)="continueFlow($event)"
-            (onShare)="openShareContext($event)"
-            (onGoToLink)="registerLink($event)"
-          ></polo-game-node>
-        }
-      }
+    @for (activeNode of activeNodes; track activeNode.key) {
+      <polo-game-node
+        [data]="activeNode"
+        (onSelectAnswer)="selectAnswer($event)"
+        (onContinue)="continueFlow($event)"
+      ></polo-game-node>
     }
   </div>
 </div>

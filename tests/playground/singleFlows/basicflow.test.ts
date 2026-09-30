@@ -7,26 +7,17 @@ test.describe('Basic flow', () => {
 
   test('can see the first question', async ({ page }) => {
     // Title is on the tab
-    await expect(page).toHaveTitle('basicflow.test')
+    await expect(page).toHaveTitle(/basicflow\.test$/)
 
-    // There is a title on top
-    const title = page.getByText(/basicflow.test/)
-    await title.waitFor()
-    expect(title).toBeVisible()
+    // The tab title and the visible story heading stay in sync.
+    const title = page.getByRole('heading', { name: /basicflow\.test/ })
+    await expect(title).toBeVisible()
+    await expect(page).toHaveTitle(await title.innerText())
 
-    // There is a text
-    const text = page.getByText('node 1')
-    await text.waitFor()
-    expect(text).toBeVisible()
-
-    // There are the answers
-    const answer1 = page.getByText('answer 1')
-    await answer1.waitFor()
-    expect(answer1).toBeVisible()
-
-    const answer2 = page.getByText('answer 2')
-    await answer2.waitFor()
-    expect(answer2).toBeVisible()
+    // Only connected answers are playable. The authored second answer has no join.
+    await expect(page.getByText('node 1')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'answer 1' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'answer 2' })).toHaveCount(0)
   })
 
   test('can complete the test till the end', async ({ page }) => {
@@ -36,21 +27,16 @@ test.describe('Basic flow', () => {
 
     // We see the text and answers of the second step
     const text = page.getByText('node 2')
-    await text.waitFor()
-    expect(text).toBeVisible()
+    await expect(text).toBeVisible()
 
     const answer = page.getByText('node2 answer')
-    await answer.waitFor()
+    await expect(answer).toBeVisible()
     await answer.click()
 
     // Can see text for final node
-    const finalText = page.getByText('end node')
-    await finalText.waitFor()
-    expect(finalText).toBeVisible()
+    await expect(page.getByText('end node')).toBeVisible()
 
-    // Can see and use the link
-    const finalLink = page.getByText('Share this story')
-    await finalLink.waitFor()
-    expect(finalLink).toBeVisible()
+    // Can see and use the share action.
+    await expect(page.getByRole('button', { name: 'Share this story' })).toBeVisible()
   })
 })

@@ -87,8 +87,8 @@
   --success: var(--polo-color-success)
   --success-light: var(--polo-color-success-soft)
 
-// The editor and statistics follow the OS theme. Public stories and marketing
-// keep their own palettes rather than inheriting colors meant for authoring UI.
+// Authoring pages and the default playground follow the OS theme.
+// Marketing pages remain independent of the application palette.
 =dark-authoring-theme
   color-scheme: dark
   --polo-color-canvas: #161d2a
@@ -142,10 +142,10 @@
   --polo-icon-drag: url('/assets/icons/drag-white.svg')
 
 @media (prefers-color-scheme: dark)
-  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+  :root:not([data-polo-theme='light']) :is(polo-dashboard, polo-stadistics, polo-playground, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
     +dark-authoring-theme
 
-:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
+:root[data-polo-theme='dark'] :is(polo-dashboard, polo-stadistics, polo-playground, polo-profile-modal, polo-share-story, polo-creator-paywall, polo-feedback-modal, polo-delete-story)
   +dark-authoring-theme
 
 :root[data-storybook-theme='dark']

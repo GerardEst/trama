@@ -1,0 +1,27 @@
+<form (submit)="$event.preventDefault(); submit()">
+  <label for="playground-answer">{{ options?.description || 'Your answer' }}</label>
+  <div class="field">
+    <input
+      id="playground-answer"
+      name="userText"
+      type="text"
+      autocomplete="off"
+      [placeholder]="options?.placeholder || ''"
+      [formControl]="userText"
+      [attr.aria-invalid]="userText.invalid && userText.touched"
+      [attr.aria-describedby]="userText.invalid && userText.touched ? 'playground-answer-error' : null"
+    />
+    <button type="submit" [disabled]="userText.invalid">
+      {{ options?.buttonText || 'Continue' }}
+    </button>
+  </div>
+  @if (userText.invalid && userText.touched) {
+    <p id="playground-answer-error" role="alert">
+      @if (userText.errors?.['required']) {
+        Please enter an answer.
+      } @else if (userText.errors?.['maxlength']) {
+        Use 100 characters or fewer.
+      }
+    </p>
+  }
+</form>

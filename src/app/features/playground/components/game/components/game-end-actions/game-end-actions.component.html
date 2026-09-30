@@ -1,0 +1,13 @@
+<div class="actions">
+  @for (link of links; track $index) {
+    <a [href]="normalizeLink(link.url)" target="_blank" rel="noopener noreferrer">
+      {{ link.name }} <span aria-hidden="true">↗</span>
+    </a>
+  }
+  @if (sharing) {
+    <button type="button" (click)="shareStory()">
+      {{ share?.shareButtonText || 'Share this story' }}
+    </button>
+  }
+</div>
+<p class="feedback" aria-live="polite">{{ feedback }}</p>

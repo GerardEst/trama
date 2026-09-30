@@ -1,101 +1,42 @@
+:host
+  display: block
+
 .node
-  display: flex
-  flex-direction: column
+  color: var(--polo-color-text)
+
+  &--inactive
+    opacity: 0.7
+
+.node__image
+  display: block
+  width: 100%
+  max-height: 32rem
+  object-fit: cover
+
+.node__content
+  display: grid
+  gap: 1.75rem
+  padding: clamp(1.5rem, 5vw, 3rem)
+
+.node__passage
+  display: grid
   gap: 1rem
-  &.disabled
-    opacity: 0.5
-  &__image
-    border-radius: 15px
-    width: 100%
-  &__text
-    padding: 0 2rem
-    display: flex
-    flex-direction: column
-    p
-      font-family: 'Baskerville'
-      font-size: 1.2rem
-      line-height: 2.2rem
-    .answers
-      display: flex
-      flex-direction: column
-      gap: 1rem
-      margin-top: 2rem
-    .endNodeExtras
-      display: flex
-      flex-direction: column
-      gap: 1rem
-      margin-top: 2rem
-    button, a
-      position: relative
+  color: var(--polo-color-text-strong)
+  font: 400 clamp(1.35rem, 2vw, 1.6rem)/1.7 Baskerville, serif
+  overflow-wrap: anywhere
+  white-space: pre-line
 
-      display: flex
-      justify-content: space-between
-      // white-space: pre-line
-      width: 100%
-      cursor: pointer
-      -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
-      -webkit-tap-highlight-color: transparent
-      -webkit-user-select: none
-      -khtml-user-select: none
-      -moz-user-select: none
-      -ms-user-select: none
-      user-select: none
+.node__answers
+  display: grid
+  gap: 0.75rem
 
-      border-radius: 6px
-      border: var(--buttons-border-width) solid var(--text-and-borders)
-      background: var(--button-background-color)
-      color: var(--text-and-borders)
-      text-align: left
-      font-family: "Raleway"
-      font-size: 0.9rem
-      line-height: 1.5rem
-      padding: 0.7rem 1.1rem
-      img
-        width: 20px
-        margin: unset
-    button:hover
-      background: var(--button-background-color)
-    button.selected
-      animation: 0.4s selected
-      animation-fill-mode: forwards
-      border: var(--buttons-border-width) solid var(--button-background-selected)
-    .textInput
-      display: flex
-      gap: 0.5rem
-      margin-top: 1rem
-      input
-        flex: 1
-        height: 3.5rem
-        border-radius: 6px
-        border: var(--buttons-border-width) solid var(--text-and-borders)
-        input:active
-          outline: var(--text-and-borders)
-      button
-        width: 40px
-        background: var(--button-background-color) no-repeat
-        background-image: url("/assets/icons/play.svg")
-        background-position: center
-        background-size: 15px
-        &.selected
-          background-image: url("/assets/icons/play-white.svg") !important
-          background-size: 15px !important
-          background-repeat: no-repeat !important
-          background-position: center !important
-
-@keyframes selected
-  from
-    scale: 1
-    background: var(--button-background-color)
-    color: var(--button-background-selected)
-  30%
-    scale: 0.99
-    background: var(--button-background-color)
-    color: var(--button-background-selected)
-  60%
-    scale: 1.02
-    background: var(--button-background-selected)
-    color: var(--button-background-color)
-  to
-    scale: 1
-    background: var(--button-background-selected)
-    color: var(--button-background-color)
+.node__response
+  width: fit-content
+  max-width: 100%
+  margin: 0
+  padding: 0.75rem 1rem
+  border-radius: 0.75rem
+  background: var(--polo-color-action-soft)
+  color: var(--polo-color-text-strong)
+  font: 600 1.1rem/1.5 Raleway, sans-serif
+  overflow-wrap: anywhere
