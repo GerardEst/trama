@@ -1,14 +1,12 @@
 <main class="playground">
   <header class="storyHeader">
     <h1 class="storyHeader__title">{{ activeStory.storyName() }}</h1>
-    <button
+    <polo-toggle
       class="storyHeader__theme"
-      type="button"
-      [attr.aria-label]="theme.dark() ? 'Switch to light mode' : 'Switch to dark mode'"
-      (click)="theme.setDark(!theme.dark())"
-    >
-      {{ theme.dark() ? 'Light mode' : 'Dark mode' }}
-    </button>
+      label="Dark mode"
+      [checked]="theme.dark()"
+      (checkedChange)="theme.setDark($event)"
+    ></polo-toggle>
   </header>
   <polo-game
     [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"

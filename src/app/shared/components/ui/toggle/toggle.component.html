@@ -1,0 +1,17 @@
+<button
+  class="toggle"
+  type="button"
+  role="switch"
+  [class.toggle--checked]="checked"
+  [attr.aria-checked]="checked"
+  [attr.aria-label]="label"
+  [disabled]="disabled"
+  (click)="toggle()"
+>
+  @if (!hideLabel) {
+    <span class="toggle__label">{{ label }}</span>
+  }
+  <span class="toggle__track" aria-hidden="true">
+    <span class="toggle__thumb"></span>
+  </span>
+</button>

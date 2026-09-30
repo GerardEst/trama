@@ -12,11 +12,12 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { Router } from '@angular/router'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
 import { ThemeService } from 'src/app/shared/services/theme.service'
+import { ToggleComponent } from 'src/app/shared/components/ui/toggle/toggle.component'
 
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, GameComponent],
+  imports: [CommonModule, GameComponent, ToggleComponent],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })
