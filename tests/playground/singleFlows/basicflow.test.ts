@@ -14,10 +14,12 @@ test.describe('Basic flow', () => {
     await expect(title).toBeVisible()
     await expect(page).toHaveTitle(await title.innerText())
 
-    // Only connected answers are playable. The authored second answer has no join.
+    // Authored answers remain visible, but only connected answers are playable.
     await expect(page.getByText('node 1')).toBeVisible()
     await expect(page.getByRole('button', { name: 'answer 1' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'answer 2' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'answer 1' })).toBeEnabled()
+    await expect(page.getByRole('button', { name: 'answer 2' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'answer 2' })).toBeDisabled()
   })
 
   test('can complete the test till the end', async ({ page }) => {

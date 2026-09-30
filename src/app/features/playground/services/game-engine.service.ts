@@ -12,7 +12,7 @@ import {
 } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
-import { storyInlineHtml } from 'src/app/shared/utils/story-html'
+import { storyInlineHtml, storyPlainText } from 'src/app/shared/utils/story-html'
 import { PlayerService } from './player.service'
 
 interface playableNode extends node {
@@ -65,10 +65,11 @@ export class GameEngineService {
     return nextNode
   }
 
-  filterAvailableAnswers(storyNode: node) {
-    // An unfinished answer cannot advance the story and must not be clickable.
+  filterAvailableAnswers(storyNode: playableNode) {
+    // Keep authored text visible even when its answer is unfinished. The view
+    // disables disconnected answers; only empty placeholders are hidden.
     storyNode.answers = storyNode.answers?.filter((answer: node_answer) =>
-      (answer.join?.length ?? 0) > 0 &&
+      ((answer.join?.length ?? 0) > 0 || storyPlainText(answer.text).trim().length > 0) &&
       this.playerHasAnswerRequirements(
         this.player.playerProperties(),
         this.player.playerStats(),
@@ -76,6 +77,10 @@ export class GameEngineService {
         answer.requirements
       )
     )
+
+    // An answers-only join must not hide the passage if all answers are empty
+    // or locked by requirements, leaving the player with a blank node.
+    if (!storyNode.answers?.length) storyNode.jumpToAnswers = false
   }
 
   interpolateNodeTexts(node: node) {

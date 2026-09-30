@@ -114,20 +114,14 @@
       } @else {
         <polo-basic-button [disabled]="true" text="🚫 Open analytics"></polo-basic-button>
       }
-      @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-        <!--polo-basic-button
-      (click)="exportTree()"
-      icon="/assets/icons/export.svg"
-      text="Export tree"
-    >
-    </polo-basic-button>
-    } @else {
-    <polo-basic-button
-      icon="/assets/icons/export.svg"
-      [disabled]="true"
-      text="🚫 Export tree"
-    >
-    </polo-basic-button-->
+      <polo-basic-button
+        (click)="exportTree()"
+        icon="/assets/icons/export.svg"
+        text="Export JSON"
+        [disabled]="!activeStory.storyId()"
+      ></polo-basic-button>
+      @if (exportError) {
+        <p role="alert">{{ exportError }}</p>
       }
       <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg" text="Delete tree">
       </polo-basic-button>

@@ -21,8 +21,12 @@ export class GameNodeComponent {
 
   constructor(public activeStory: ActiveStoryService) {}
 
+  isAnswerDisabled(answer: node_answer): boolean {
+    return this.disabled || !answer.join?.length
+  }
+
   chooseAnswer(answer: node_answer) {
-    if (this.disabled) return
+    if (this.isAnswerDisabled(answer)) return
     this.data.selectedAnswerId = answer.id
     this.onSelectAnswer.emit(answer)
   }

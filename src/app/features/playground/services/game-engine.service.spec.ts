@@ -182,6 +182,44 @@ describe('GameEngineService', () => {
     expect(storyNode.join).toEqual([{ node: 'node_1' }, { node: 'node_2' }])
   })
 
+  it('keeps disconnected answers with text visible without retaining empty placeholders', () => {
+    const storyNode: node = {
+      id: 'node_1', type: 'content', top: 0, left: 0,
+      answers: [
+        { id: 'named', text: '<p>ccc</p>' },
+        { id: 'empty', text: '<p><br></p>', join: [] },
+        { id: 'whitespace', text: '<p>&nbsp;</p>' },
+      ],
+    }
+
+    engine.filterAvailableAnswers(storyNode)
+
+    expect(storyNode.answers?.map((answer) => answer.id)).toEqual(['named'])
+  })
+
+  it('restores the passage when a jump to answers has nothing to display', () => {
+    tree.nodes = [{
+      id: 'node_2', type: 'content', top: 0, left: 0, text: 'A passage',
+      answers: [{ id: 'empty', text: '' }],
+    }]
+    const playable = engine.buildNextNodeFromJoin({ node: 'node_2', toAnswer: true })
+
+    engine.filterAvailableAnswers(playable)
+
+    expect(playable.jumpToAnswers).toBeFalse()
+    expect(playable.answers).toEqual([])
+    expect(tree.nodes[0].answers.length).toBe(1)
+  })
+
+  it('does not reveal disconnected answers whose requirements are unmet', () => {
+    const storyNode: node = {
+      id: 'node_1', type: 'content', top: 0, left: 0,
+      answers: [{ id: 'locked', text: 'Need a key', requirements: [conditionRequirement('hasKey', 1)] }],
+    }
+    engine.filterAvailableAnswers(storyNode)
+    expect(storyNode.answers).toEqual([])
+  })
+
   describe('playerHasAnswerRequirements', () => {
     it('passes when there are no requirements', () => {
       expect(engine.playerHasAnswerRequirements({}, [], [], [])).toBe(true)

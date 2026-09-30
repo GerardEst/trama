@@ -7,6 +7,7 @@ import { normalizeLink } from 'src/app/shared/utils/normalizers'
 import { AlertService } from 'src/app/core/services/alert.service'
 import { DeleteStoryComponent } from '../delete-story/delete-story.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
+import { StoryExportService } from 'src/app/shared/services/story-export.service'
 
 @Component({
   selector: 'polo-menu-top',
@@ -19,6 +20,7 @@ export class MenuTopComponent {
   showOptions: boolean = false
   savingTree = false
   takenCustomId = false
+  exportError = ''
 
   @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
 
@@ -26,7 +28,8 @@ export class MenuTopComponent {
     public db: DatabaseService,
     private router: Router,
     public activeStory: ActiveStoryService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private storyExport: StoryExportService
   ) {}
 
   async updateStoryName(value: string) {
@@ -101,7 +104,16 @@ export class MenuTopComponent {
   }
 
   exportTree() {
-    navigator.clipboard.writeText(this.activeStory.storyId())
+    if (!this.activeStory.storyId()) return
+
+    this.exportError = ''
+    try {
+      this.storyExport.downloadJson()
+      this.closePopup()
+    } catch (error: unknown) {
+      console.error('Could not export the story', error)
+      this.exportError = 'Could not export the story. Please try again.'
+    }
   }
 
   async deleteTree() {

@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { MenuTopComponent } from './menu-top.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { provideRouter } from '@angular/router'
+import { AlertService } from 'src/app/core/services/alert.service'
+import { StoryExportService } from 'src/app/shared/services/story-export.service'
 
 describe('MenuTopComponent', () => {
   let component: MenuTopComponent
@@ -11,6 +14,17 @@ describe('MenuTopComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MenuTopComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: DatabaseService,
+          useValue: {
+            userPlanIs: () => false,
+            saveNewStoryName: () => Promise.resolve(true),
+          },
+        },
+        { provide: AlertService, useValue: {} },
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(MenuTopComponent)
@@ -20,6 +34,69 @@ describe('MenuTopComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('offers JSON export for free users in story options', () => {
+    TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
+    component.toggleOptions()
+    fixture.detectChanges()
+
+    const buttons = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button')
+    )
+    const exportButton = buttons.find((button) => button.textContent?.includes('Export JSON'))
+    expect(exportButton).toBeDefined()
+    expect(exportButton?.disabled).toBeFalse()
+  })
+
+  it('disables JSON export when there is no active story', () => {
+    component.toggleOptions()
+    fixture.detectChanges()
+
+    const buttons = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button')
+    )
+    const exportButton = buttons.find((button) => button.textContent?.includes('Export JSON'))
+    expect(exportButton).toBeDefined()
+    expect(exportButton?.disabled).toBeTrue()
+  })
+
+  it('downloads JSON and closes the options when the export button is clicked', () => {
+    TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
+    const download = spyOn(TestBed.inject(StoryExportService), 'downloadJson')
+    component.toggleOptions()
+    fixture.detectChanges()
+
+    const buttons = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('button')
+    )
+    buttons.find((button) => button.textContent?.includes('Export JSON'))!.click()
+    expect(download).toHaveBeenCalledTimes(1)
+    expect(component.showOptions).toBeFalse()
+  })
+
+  it('shows an error and allows retrying if export fails', () => {
+    TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
+    const download = spyOn(TestBed.inject(StoryExportService), 'downloadJson').and.throwError('Download failed')
+    spyOn(console, 'error')
+    component.toggleOptions()
+    component.exportTree()
+    fixture.detectChanges()
+
+    expect(component.showOptions).toBeTrue()
+    expect((fixture.nativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent)
+      .toContain('Could not export the story')
+
+    download.and.stub()
+    component.exportTree()
+    expect(component.exportError).toBe('')
+    expect(component.showOptions).toBeFalse()
+  })
+
+  it('ignores export requests without an active story', () => {
+    const download = spyOn(TestBed.inject(StoryExportService), 'downloadJson')
+    component.exportTree()
+    expect(download).not.toHaveBeenCalled()
   })
 
   it('saves the story name from the shared editor', async () => {

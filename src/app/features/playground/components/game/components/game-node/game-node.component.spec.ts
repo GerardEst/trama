@@ -28,6 +28,27 @@ describe('GameNodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('shows disconnected answers disabled and does not select them', () => {
+    component.data = {
+      type: 'content', text: 'Keep going',
+      answers: [
+        { id: 'unfinished', text: 'ccc' },
+        { id: 'connected', text: 'Continue', join: [{ node: 'node_2' }] },
+      ],
+    }
+    const selected = spyOn(component.onSelectAnswer, 'emit')
+    fixture.detectChanges()
+    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('polo-game-answer button')
+
+    expect(buttons[0].textContent).toContain('ccc')
+    expect(buttons[0].disabled).toBeTrue()
+    expect(buttons[1].disabled).toBeFalse()
+    buttons[0].click()
+    component.chooseAnswer(component.data.answers[0])
+    expect(selected).not.toHaveBeenCalled()
+    expect(component.data.selectedAnswerId).toBeUndefined()
+  })
+
   it('uses the same passage font size for plain and rich text', () => {
     const host = fixture.nativeElement as HTMLElement
     component.data = { type: 'content', text: 'A passage', answers: [] }
