@@ -199,6 +199,39 @@ describe('StoryMutationService', () => {
     expect(sessionStorage.getItem('polo-pending-tree:save-test-author:story-1')).not.toBeNull()
   }))
 
+  it('keeps the latest signed-out edits scoped to their author and resumes after reauthentication', fakeAsync(() => {
+    database.user.set({ id: 'save-test-author' } as appUser)
+    database.saveTreeToDB.and.resolveTo(false)
+    mutations.loadStory('story-1', 'Story', { nodes: [] })
+    mutations.update(addNode)
+    flushMicrotasks()
+    database.user.set(null)
+    mutations.update((draft) => { draft.nodes = [] })
+    flushMicrotasks()
+    tick(2000)
+    flushMicrotasks()
+
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(1)
+    expect(mutations.hasUnsavedChanges()).toBeTrue()
+    const key = 'polo-pending-tree:save-test-author:story-1'
+    expect(JSON.parse(sessionStorage.getItem(key)!).nodes).toEqual([])
+
+    database.user.set({ id: 'different-author' } as appUser)
+    mutations.retry()
+    flushMicrotasks()
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(1)
+    expect(mutations.hasUnsavedChanges()).toBeTrue()
+
+    database.user.set({ id: 'save-test-author' } as appUser)
+    database.saveTreeToDB.and.resolveTo(true)
+    TestBed.flushEffects()
+    flushMicrotasks()
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(2)
+    expect(database.saveTreeToDB.calls.mostRecent().args[1].nodes).toEqual([])
+    expect(mutations.saveState()).toBe('saved')
+    expect(sessionStorage.getItem(key)).toBeNull()
+  }))
+
   it('warns before leaving while a save is unconfirmed, but not after success', fakeAsync(() => {
     let finish: (saved: boolean) => void = () => undefined
     database.saveTreeToDB.and.returnValue(new Promise<boolean>((resolve) => { finish = resolve }))

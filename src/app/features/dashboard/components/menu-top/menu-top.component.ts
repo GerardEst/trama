@@ -33,6 +33,10 @@ export class MenuTopComponent {
     public mutations: StoryMutationService
   ) {}
 
+  signInAgain() {
+    this.router.navigate(['/login'])
+  }
+
   async updateStoryName(value: string) {
     const storyId = this.activeStory.storyId()
     const newName = value.trim()

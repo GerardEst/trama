@@ -1,4 +1,5 @@
 import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing'
+import { signal } from '@angular/core'
 
 import { MenuTopComponent } from './menu-top.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -21,6 +22,7 @@ describe('MenuTopComponent', () => {
           provide: DatabaseService,
           useValue: {
             userPlanIs: () => false,
+            authenticationRequired: signal(false),
             saveNewStoryName: () => Promise.resolve(true),
             saveTreeToDB: () => Promise.resolve(true),
           },
@@ -59,6 +61,18 @@ describe('MenuTopComponent', () => {
     expect(host.querySelector('[role="status"]')?.textContent).toContain('Board changes saved')
     expect(save).toHaveBeenCalledTimes(2)
   }))
+
+  it('offers reauthentication and export without clearing the active story', () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('story-1', 'Story', { nodes: [] })
+    TestBed.inject(DatabaseService).authenticationRequired.set(true)
+    fixture.detectChanges()
+    const alert = (fixture.nativeElement as HTMLElement).querySelector('[role="alert"]')!
+    expect(alert.textContent).toContain('Your session has ended')
+    expect(alert.textContent).toContain('Sign in again')
+    expect(alert.textContent).toContain('Export JSON')
+    expect(activeStory.storyId()).toBe('story-1')
+  })
 
   it('offers JSON export for free users in story options', () => {
     TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })

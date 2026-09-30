@@ -12,6 +12,13 @@
     (click)="toggleOptions()"
     text="Story options"
   ></polo-basic-button>
+  @if (db.authenticationRequired()) {
+    <div class="saveStatus saveStatus--error" role="alert">
+      <span>Your session has ended. Export your changes before signing in again with the same account.</span>
+      <polo-basic-button text="Sign in again" size="s" (click)="signInAgain()"></polo-basic-button>
+      <polo-basic-button text="Export JSON" size="s" (click)="exportTree()" [disabled]="!activeStory.storyId()"></polo-basic-button>
+    </div>
+  }
   @if (mutations.saveState() !== 'idle') {
     <div class="saveStatus" [class.saveStatus--error]="mutations.saveState() === 'error'" role="status" aria-live="polite">
       @switch (mutations.saveState()) {

@@ -1,4 +1,4 @@
-import { computed, Injectable, OnDestroy, signal } from '@angular/core'
+import { computed, effect, EffectRef, Injectable, OnDestroy, signal, untracked } from '@angular/core'
 import { tree } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from './active-story.service'
@@ -15,12 +15,15 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 })
 export class StoryMutationService implements OnDestroy {
   private readonly pendingSaves = new Map<string, PendingSave>()
+  private readonly storyAuthors = new Map<string, string | undefined>()
   private readonly failedStories = new Set<string>()
   private readonly recoveredStories = new Set<string>()
   private saveInProgress = false
   private destroyed = false
   private retryTimer?: ReturnType<typeof setTimeout>
   private retryDelay = 2000
+  private readonly sessionWatcher: EffectRef
+  private readonly currentAuthor = computed(() => this.database.user?.()?.id)
   private readonly state = signal<SaveState>('idle')
   readonly saveState = this.state.asReadonly()
   private readonly recoveredState = signal(false)
@@ -45,10 +48,18 @@ export class StoryMutationService implements OnDestroy {
   ) {
     window.addEventListener('beforeunload', this.warnBeforeUnload)
     window.addEventListener('online', this.retryWhenOnline)
+    this.sessionWatcher = effect(() => {
+      const userId = this.currentAuthor()
+      untracked(() => {
+        this.cancelRetry()
+        if (userId) void this.drainSaveQueue()
+      })
+    }, { allowSignalWrites: true })
   }
 
   ngOnDestroy() {
     this.destroyed = true
+    this.sessionWatcher.destroy()
     this.cancelRetry()
     window.removeEventListener('beforeunload', this.warnBeforeUnload)
     window.removeEventListener('online', this.retryWhenOnline)
@@ -57,6 +68,7 @@ export class StoryMutationService implements OnDestroy {
   /** Dashboard loads must not replace pending edits with an older server tree. */
   loadStory(storyId: string, name: string, serverTree: Partial<tree>) {
     const userId = this.database.user?.()?.id
+    if (userId || !this.storyAuthors.has(storyId)) this.storyAuthors.set(storyId, userId)
     const pending = this.pendingSaves.get(storyId)
     const pendingTree = pending?.userId === userId ? pending?.tree : undefined
     const recoveredTree = pendingTree ? undefined : this.readDraft(storyId, userId)
@@ -94,7 +106,10 @@ export class StoryMutationService implements OnDestroy {
     const storyId = this.activeStory.storyId()
     if (!storyId) return
 
-    const userId = this.database.user?.()?.id
+    // Keep the original author's scope when the session disappears mid-edit.
+    // New signed-out edits must not become anonymous drafts or another user's.
+    if (!this.storyAuthors.has(storyId)) this.storyAuthors.set(storyId, this.database.user?.()?.id)
+    const userId = this.storyAuthors.get(storyId)
     this.pendingSaves.set(storyId, { tree: storyTree, userId })
     this.recoveredStories.delete(storyId)
     this.writeDraft(storyId, storyTree, userId)
@@ -117,10 +132,10 @@ export class StoryMutationService implements OnDestroy {
 
         const [storyId, pending] = nextSave
         if (pending.userId !== this.database.user?.()?.id) {
-          // Never retry another account's writes after logout/login. Its draft
-          // remains scoped to that author for recovery on their next visit.
-          this.pendingSaves.delete(storyId)
-          this.failedStories.delete(storyId)
+          // Pause, rather than drop, an author's writes on session loss or an
+          // account switch. Continue backing up their latest edits locally.
+          this.failedStories.add(storyId)
+          failedThisAttempt.add(storyId)
           continue
         }
 
@@ -149,7 +164,10 @@ export class StoryMutationService implements OnDestroy {
     } finally {
       this.saveInProgress = false
       this.refreshState()
-      if (!this.destroyed && Array.from(this.pendingSaves.keys()).some((id) => !this.recoveredStories.has(id))) {
+      const userId = this.database.user?.()?.id
+      if (!this.destroyed && Array.from(this.pendingSaves.entries()).some(([id, pending]) =>
+        !this.recoveredStories.has(id) && pending.userId === userId
+      )) {
         this.retryTimer = setTimeout(() => {
           this.retryTimer = undefined
           void this.drainSaveQueue()

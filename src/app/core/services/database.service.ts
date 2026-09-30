@@ -1,27 +1,67 @@
-import { Injectable, WritableSignal, signal } from '@angular/core'
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { Inject, Injectable, InjectionToken, OnDestroy, WritableSignal, signal } from '@angular/core'
+import { createClient, SupabaseClient, Subscription } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
 import { appUser, tree, userProfile } from 'src/app/core/interfaces/interfaces'
+import { withRetryableRefreshErrors } from './supabase-fetch'
+
+export const SUPABASE_CLIENT = new InjectionToken<SupabaseClient>('Supabase client', {
+  providedIn: 'root',
+  factory: () => createClient(environment.apiUrl, environment.apiAnonKey, {
+    auth: { autoRefreshToken: true, persistSession: true },
+    global: { fetch: withRetryableRefreshErrors(environment.apiUrl) },
+  }),
+})
 
 @Injectable({
   providedIn: 'root',
 })
-export class DatabaseService {
-  public supabase: SupabaseClient
+export class DatabaseService implements OnDestroy {
   user: WritableSignal<appUser | null> = signal(null)
+  readonly authenticationRequired = signal(false)
+  private readonly authSubscription: Subscription
 
-  constructor() {
-    this.supabase = createClient(environment.apiUrl, environment.apiAnonKey)
+  constructor(@Inject(SUPABASE_CLIENT) public supabase: SupabaseClient) {
+    const { data } = this.supabase.auth.onAuthStateChange((event, session) => {
+      // Keep this callback synchronous: awaiting auth calls here can deadlock
+      // Supabase's session lock. Never clear the editor on session changes.
+      if (session) {
+        this.authenticationRequired.set(false)
+        const current = this.user()
+        if (current?.id === session.user.id) {
+          this.user.set({ ...session.user, profile: current.profile })
+        } else if (current) {
+          this.user.set(null)
+        }
+      } else if (event === 'SIGNED_OUT') {
+        this.user.set(null)
+        this.authenticationRequired.set(true)
+      }
+    })
+    this.authSubscription = data.subscription
+  }
+
+  ngOnDestroy() {
+    this.authSubscription.unsubscribe()
   }
 
   async getUser() {
     try {
-      const fetchUser = await this.supabase.auth.getUser()
+      let fetchUser = await this.supabase.auth.getUser()
+      if (fetchUser.error?.status === 401) {
+        const refreshed = await this.supabase.auth.refreshSession()
+        if (refreshed.error || !refreshed.data.session) return false
+        fetchUser = await this.supabase.auth.getUser()
+      }
       const authUser = fetchUser.data.user
       if (!authUser) return false
 
       const profileInfo = await this.getUserProfile(authUser.id)
+      const { data, error } = await this.supabase.auth.getSession()
+      // A profile request must not resurrect a user who signed out or switched
+      // accounts while it was in flight. Network errors don't revoke a session.
+      if (error || data.session?.user.id !== authUser.id || !profileInfo) return false
       this.user.set({ ...authUser, profile: profileInfo })
+      this.authenticationRequired.set(false)
 
       return this.user()
     } catch {
@@ -157,31 +197,76 @@ export class DatabaseService {
   }
 
   async saveTreeToDB(treeId: string, treeContent: tree): Promise<boolean> {
+    const userId = this.user()?.id
+    if (!userId) return false
+
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 15000)
+    let timeout: ReturnType<typeof setTimeout> | undefined
+    const expired = new Promise<boolean>((resolve) => {
+      timeout = setTimeout(() => {
+        controller.abort()
+        resolve(false)
+      }, 15000)
+    })
 
     try {
-      const { data, error } = await this.supabase
-        .from('stories')
-        .update({ tree: treeContent })
-        .eq('id', treeId)
-        .select('id')
-        .abortSignal(controller.signal)
-        .single()
-
-      // An UPDATE can succeed with zero affected rows (e.g. under RLS). Only
-      // acknowledge the save if the database actually returned this story.
-      if (error || data?.id !== treeId) {
-        console.error('Story save was not confirmed by the database', error?.code ?? 'no updated row')
-        return false
-      }
-      return true
+      // The deadline includes session recovery, not only the PATCH. Auth calls
+      // cannot take this signal, so check it before any subsequent write.
+      return await Promise.race([
+        this.saveTreeWithSession(treeId, treeContent, userId, controller.signal),
+        expired,
+      ])
     } catch (error: unknown) {
       console.error('Could not save the story', error)
       return false
     } finally {
       clearTimeout(timeout)
     }
+  }
+
+  private async saveTreeWithSession(treeId: string, treeContent: tree, userId: string, signal: AbortSignal): Promise<boolean> {
+    // getSession already refreshes an expiring JWT through the SDK. Do not
+    // send an anonymous PATCH when the refresh token is no longer available.
+    const sessionResult = await this.supabase.auth.getSession()
+    if (signal.aborted || sessionResult.error) return false
+    if (!sessionResult.data.session) {
+      this.user.set(null)
+      this.authenticationRequired.set(true)
+      return false
+    }
+    if (sessionResult.data.session.user.id !== userId || this.user()?.id !== userId) return false
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const { data, error, status } = await this.supabase
+        .from('stories')
+        .update({ tree: treeContent })
+        .eq('id', treeId)
+        .select('id')
+        .abortSignal(signal)
+        .single()
+
+      if (status === 401 && attempt === 0 && !signal.aborted) {
+        const refreshed = await this.supabase.auth.refreshSession()
+        if (signal.aborted || refreshed.error) return false
+        if (!refreshed.data.session) {
+          this.user.set(null)
+          this.authenticationRequired.set(true)
+          return false
+        }
+        // Never replay one author's snapshot under another account.
+        if (refreshed.data.session.user.id !== userId || this.user()?.id !== userId) return false
+        continue
+      }
+
+      // Permission/zero-row errors are not evidence of an expired JWT. Only
+      // acknowledge a positively confirmed update; do not refresh for RLS.
+      if (signal.aborted || error || data?.id !== treeId) {
+        console.error('Story save was not confirmed by the database', error?.code ?? 'no updated row')
+        return false
+      }
+      return true
+    }
+    return false
   }
 
   async getConfigurationOf(storyId: string) {
