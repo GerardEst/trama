@@ -10,6 +10,7 @@ import { findNodeInTree } from 'src/app/shared/utils/tree-searching'
 import { StatisticsService } from 'src/app/shared/services/statistics.service'
 import { BoardPreferencesService } from '../board/services/board-preferences.service'
 import { StoryEditorLoader } from '../board/components/rich-text/story-editor-loader.service'
+import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -30,14 +31,15 @@ export class DashboardComponent implements OnInit {
   @ViewChild('menuSide') menuSide?: MenuComponent
 
   id?: string
-  savingTree: boolean = false
+  private loadRequest = 0
 
   constructor(
     private db: DatabaseService,
     public activeStory: ActiveStoryService,
     private stadistics: StatisticsService,
     private boardPreferences: BoardPreferencesService,
-    private editorLoader: StoryEditorLoader
+    private editorLoader: StoryEditorLoader,
+    private mutations: StoryMutationService
   ) {}
 
   ngOnInit(): void {
@@ -49,22 +51,29 @@ export class DashboardComponent implements OnInit {
   }
 
   async initBoard(storyId: string | null) {
-    console.log('Initializing board with story ID:', storyId)
-    if (storyId) {
-      const story = await this.db.getStoryWithID(storyId)
-      if (story) this.loadStory(story)
-    } else {
-      console.log('No story ID found in localStorage, loading newest story')
-      const story = await this.db.getNewestStory()
-      console.log('Newest story:', story)
-      if (story) this.loadStory(story)
-    }
+    const request = ++this.loadRequest
+    const currentId = this.activeStory.storyId()
+    const currentTree = this.activeStory.entireTree()
+    const hadPendingChanges = this.mutations.hasUnsavedChanges()
+    const story = storyId
+      ? await this.db.getStoryWithID(storyId)
+      : await this.db.getNewestStory()
+    if (!story || request !== this.loadRequest) return
+
+    // A read started before a deletion/save must not resurrect its old tree,
+    // even if the save finished while that read was still in flight.
+    const keepCurrentTree =
+      story.id === currentId && this.activeStory.storyId() === currentId &&
+      (hadPendingChanges || this.activeStory.entireTree() !== currentTree)
+    this.loadStory(keepCurrentTree
+      ? { ...story, tree: this.activeStory.entireTree() }
+      : story)
   }
 
   loadStory(story: any) {
     localStorage.setItem('polo-id', story.id)
 
-    this.activeStory.load(story.id, story.name, story.tree)
+    this.mutations.loadStory(story.id, story.name, story.tree)
 
     this.stadistics.clean()
     this.setInitialBoardPositionFor(story.id)
@@ -95,7 +104,7 @@ export class DashboardComponent implements OnInit {
   async loadConfigurationForStory(storyId: string) {
     const configuration: any = await this.db.getConfigurationOf(storyId)
 
-    if (!configuration) return
+    if (!configuration || this.activeStory.storyId() !== storyId) return
 
     this.activeStory.patchConfiguration({
       customId: configuration.custom_id,

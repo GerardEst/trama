@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing'
 
 import { MenuTopComponent } from './menu-top.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -6,6 +6,7 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { provideRouter } from '@angular/router'
 import { AlertService } from 'src/app/core/services/alert.service'
 import { StoryExportService } from 'src/app/shared/services/story-export.service'
+import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 
 describe('MenuTopComponent', () => {
   let component: MenuTopComponent
@@ -21,6 +22,7 @@ describe('MenuTopComponent', () => {
           useValue: {
             userPlanIs: () => false,
             saveNewStoryName: () => Promise.resolve(true),
+            saveTreeToDB: () => Promise.resolve(true),
           },
         },
         { provide: AlertService, useValue: {} },
@@ -35,6 +37,28 @@ describe('MenuTopComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy()
   })
+
+  it('shows a failed save and lets the author retry without opening story options', fakeAsync(() => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('story-1', 'Story', { nodes: [] })
+    const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(false)
+    const mutations = TestBed.inject(StoryMutationService)
+    mutations.update((draft) => { draft.nodes.push({ id: 'node_0', type: 'content', top: 0, left: 0 }) })
+    flushMicrotasks()
+    fixture.detectChanges()
+
+    const host = fixture.nativeElement as HTMLElement
+    expect(host.querySelector('[role="status"]')?.textContent).toContain('Board changes not saved')
+    const retry = Array.from(host.querySelectorAll('button')).find((button) => button.textContent?.includes('Retry save'))!
+    expect(retry).toBeDefined()
+    expect(component.showOptions).toBeFalse()
+    save.and.resolveTo(true)
+    retry.click()
+    flushMicrotasks()
+    fixture.detectChanges()
+    expect(host.querySelector('[role="status"]')?.textContent).toContain('Board changes saved')
+    expect(save).toHaveBeenCalledTimes(2)
+  }))
 
   it('offers JSON export for free users in story options', () => {
     TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })

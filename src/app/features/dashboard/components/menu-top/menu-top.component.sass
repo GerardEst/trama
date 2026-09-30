@@ -12,6 +12,7 @@
   top: 1rem
   right: 1rem
   display: flex
+  flex-wrap: wrap
   width: 300px
   box-sizing: border-box
   justify-content: space-between
@@ -25,6 +26,19 @@
   polo-editable-name
     flex: 1
     font-weight: 600
+  .saveStatus
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 0.5rem
+    flex-basis: 100%
+    padding-top: 0.5rem
+    border-top: 1px solid var(--polo-color-border)
+    color: var(--polo-color-text-secondary)
+    font-size: 0.9rem
+    line-height: 1.4
+    &--error
+      color: var(--polo-color-danger-text)
   .dropdown
     border: 1px solid var(--medium-gray)
     width: 300px

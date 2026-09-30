@@ -156,25 +156,32 @@ export class DatabaseService {
     return data
   }
 
-  async saveTreeToDB(treeId: string, treeContent: tree) {
-    if (!environment.production)
-      console.log('%cdb call to save story to db', 'color: #9999ff')
+  async saveTreeToDB(treeId: string, treeContent: tree): Promise<boolean> {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 15000)
 
-    // const size = new TextEncoder().encode(JSON.stringify(treeContent)).length
-    // const kiloBytes = size / 1024
-    // console.log(
-    //   '%caprox size of tree being saved: ' + kiloBytes + 'kb',
-    //   'color: #9999ff'
-    // )
+    try {
+      const { data, error } = await this.supabase
+        .from('stories')
+        .update({ tree: treeContent })
+        .eq('id', treeId)
+        .select('id')
+        .abortSignal(controller.signal)
+        .single()
 
-    const { data, error } = await this.supabase
-      .from('stories')
-      .update({ tree: treeContent })
-      .eq('id', treeId)
-
-    if (error) return false
-
-    return true
+      // An UPDATE can succeed with zero affected rows (e.g. under RLS). Only
+      // acknowledge the save if the database actually returned this story.
+      if (error || data?.id !== treeId) {
+        console.error('Story save was not confirmed by the database', error?.code ?? 'no updated row')
+        return false
+      }
+      return true
+    } catch (error: unknown) {
+      console.error('Could not save the story', error)
+      return false
+    } finally {
+      clearTimeout(timeout)
+    }
   }
 
   async getConfigurationOf(storyId: string) {

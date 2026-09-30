@@ -12,6 +12,26 @@
     (click)="toggleOptions()"
     text="Story options"
   ></polo-basic-button>
+  @if (mutations.saveState() !== 'idle') {
+    <div class="saveStatus" [class.saveStatus--error]="mutations.saveState() === 'error'" role="status" aria-live="polite">
+      @switch (mutations.saveState()) {
+        @case ('saving') {
+          <span>Saving board changes…</span>
+        }
+        @case ('saved') {
+          <span>Board changes saved</span>
+        }
+        @case ('error') {
+          <span>
+            {{ mutations.recoveredDraft() ? 'Unsaved edits recovered from this tab.' : 'Board changes not saved.' }}
+            Keep this tab open until saved.
+          </span>
+          <polo-basic-button text="Retry save" size="s" (click)="mutations.retry()"></polo-basic-button>
+          <polo-basic-button text="Export JSON" size="s" (click)="exportTree()"></polo-basic-button>
+        }
+      }
+    </div>
+  }
   @if (showOptions) {
     <div class="dropdown">
       <div class="dropdown__section">

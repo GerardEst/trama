@@ -8,6 +8,7 @@ import { AlertService } from 'src/app/core/services/alert.service'
 import { DeleteStoryComponent } from '../delete-story/delete-story.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 import { StoryExportService } from 'src/app/shared/services/story-export.service'
+import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 
 @Component({
   selector: 'polo-menu-top',
@@ -18,7 +19,6 @@ import { StoryExportService } from 'src/app/shared/services/story-export.service
 })
 export class MenuTopComponent {
   showOptions: boolean = false
-  savingTree = false
   takenCustomId = false
   exportError = ''
 
@@ -29,7 +29,8 @@ export class MenuTopComponent {
     private router: Router,
     public activeStory: ActiveStoryService,
     private alertService: AlertService,
-    private storyExport: StoryExportService
+    private storyExport: StoryExportService,
+    public mutations: StoryMutationService
   ) {}
 
   async updateStoryName(value: string) {
