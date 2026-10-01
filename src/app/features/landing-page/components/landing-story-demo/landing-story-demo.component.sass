@@ -26,24 +26,20 @@
   background: var(--blue)
 
 .story-player__scene
-  height: 155px
   position: relative
-  overflow: hidden
   background: var(--ink)
   img
-    width: 100%
-    height: 100%
     display: block
-    object-fit: cover
-    object-position: 50% 38%
-    opacity: .48
+    width: 100%
+    height: auto
   > span
     position: absolute
     left: 24px
     bottom: 24px
     color: #fff4da
-    font: 400 23px/1.25 'LibreBaskerville', serif
+    font: 400 clamp(15px, 3vw, 23px)/1.25 'LibreBaskerville', serif
     letter-spacing: -.03em
+    text-shadow: 0 2px 8px #000d, 0 0 20px #000a
   strong
     font-weight: 400
   > .story-player__chapter
@@ -110,7 +106,3 @@
   .story-player__game
     --polo-passage-size: 18px
     min-height: 240px
-
-@media (max-width: 480px)
-  .story-player__scene
-    height: 120px

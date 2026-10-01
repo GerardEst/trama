@@ -45,7 +45,10 @@ describe('LandingpageComponent', () => {
     expect(primaryAction.getAttribute('href')).toBe('/login?mode=register')
     expect(storyAction.getAttribute('href')).toBe('#try-it')
     expect(hero.querySelector('#try-it polo-game')).toBeTruthy()
-    expect(hero.querySelectorAll('.story-player__scene img').length).toBe(1)
+    const demoImage = hero.querySelector('.story-player__scene img') as HTMLImageElement
+    expect(demoImage.getAttribute('src')).toBe('/assets/images/landing/modest-hero.webp')
+    expect(demoImage.getAttribute('width')).toBe('1368')
+    expect(demoImage.getAttribute('height')).toBe('768')
     const demo = fixture.debugElement.query(By.directive(LandingStoryDemoComponent))
     expect(demo.injector.get(ActiveStoryService).entireTree().nodes[0].text).toContain(
       'The library closes at midnight'
