@@ -1,0 +1,273 @@
+.landing-pricing
+  padding: 72px 0 48px
+  background: #fffefa
+
+.pricing-heading
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 64px
+  align-items: end
+  margin-bottom: 32px
+  p
+    font-size: 16px
+    font-weight: 500
+    line-height: 1.65
+    color: var(--muted)
+  polo-billing-cycle
+    display: block
+    margin-top: 20px
+
+.pricing-options
+  display: grid
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr)
+  gap: 32px
+  > polo-pricing
+    min-width: 0
+
+.export-license
+  position: relative
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  padding: 28px 0 24px 20px
+  h3
+    display: flex
+    align-items: baseline
+    gap: 16px
+    font: 800 28px/1.3 Raleway, sans-serif
+    letter-spacing: -.045em
+    span
+      color: var(--blue)
+      font: 400 28px Raleway, sans-serif
+  .export-license__audience
+    position: absolute
+    top: 0
+    font-size: 9px
+    font-weight: 800
+    letter-spacing: .14em
+    color: var(--blue)
+  .export-license__payment
+    display: flex
+    align-items: center
+    gap: 20px
+    margin: 20px 0 16px
+  .export-license__price
+    font: 800 48px/1 Raleway, sans-serif
+    letter-spacing: -.065em
+    white-space: nowrap
+    span
+      margin-left: 4px
+      font-size: 28px
+  .export-license__frequency
+    color: var(--blue)
+    font-size: 12px
+    font-weight: 800
+    line-height: 1.6
+  .export-license__description
+    max-width: 350px
+    font-size: 15px
+    font-weight: 500
+    line-height: 1.6
+    color: var(--muted)
+  .export-license__ownership
+    margin-top: 12px
+    font-size: 12px
+    font-weight: 700
+    line-height: 1.6
+  .export-license__limit
+    margin: 12px 0 20px
+    font-size: 12px
+    line-height: 1.6
+    color: var(--muted)
+  .export-license__action
+    justify-self: start
+    min-height: 44px
+    margin-top: auto
+    font-size: 14px
+  .export-license__preview
+    margin-top: 6px
+    font-size: 10px
+    line-height: 1.6
+    color: var(--muted)
+
+@media (max-width: 1100px) and (min-width: 761px)
+  .pricing-options
+    grid-template-columns: 1fr
+  .export-license
+    display: grid
+    grid-template-columns: minmax(0, 1fr) auto
+    column-gap: 48px
+    padding: 40px 0 0
+    border-top: 1px solid var(--rule)
+    .export-license__audience
+      top: 16px
+    .export-license__payment
+      grid-column: 2
+      grid-row: 1 / span 3
+      margin: 0
+    .export-license__description
+      max-width: 540px
+      margin-top: 16px
+    .export-license__description, .export-license__ownership, .export-license__limit, .export-license__action, .export-license__preview
+      grid-column: 1
+
+.questions
+  display: grid
+  grid-template-columns: 1fr 1.5fr
+  gap: 64px
+  margin-top: 48px
+  padding-top: 32px
+  border-top: 1px solid var(--rule)
+  h3
+    font: 800 28px/1.3 Raleway, sans-serif
+    letter-spacing: -.045em
+  .text-link
+    margin-top: 12px
+
+.questions__list
+  details
+    padding: 16px 0
+    border-bottom: 1px solid var(--rule)
+  summary
+    min-height: 24px
+    font-size: 15px
+    font-weight: 700
+    line-height: 1.6
+    cursor: pointer
+    &:hover
+      color: var(--blue)
+  p
+    margin-top: 12px
+    color: var(--muted)
+    font-size: 15px
+    line-height: 1.6
+
+.closing-section
+  padding: 80px 0
+  text-align: center
+
+.closing-node
+  position: relative
+  max-width: 740px
+  margin-inline: auto
+  padding: 40px 24px
+  border: 1px solid #294b3e50
+  border-radius: 20px
+  background: #fffefa
+  &::before
+    content: ''
+    position: absolute
+    left: 50%
+    top: -57px
+    height: 56px
+    border-left: 1px solid var(--blue)
+  &::after
+    content: ''
+    position: absolute
+    left: calc(50% - 5px)
+    top: -5px
+    width: 10px
+    height: 10px
+    background: var(--paper)
+    border: 1px solid var(--blue)
+    border-radius: 50%
+  h2
+    margin: 20px 0 28px
+    font-size: clamp(48px, 5.8vw, 80px)
+  em
+    color: var(--blue)
+    font-family: 'LibreBaskerville', serif
+  p
+    margin-top: 20px
+    font-size: 13px
+    color: var(--muted)
+
+.closing-node__label
+  font-size: 10px
+  font-weight: 800
+  letter-spacing: .13em
+  color: var(--blue)
+
+.closing-node__cursor
+  margin-left: 8px
+  color: var(--blue)
+  font-weight: 400
+
+.footer
+  padding: 28px 0
+  border-top: 1px solid var(--rule)
+  background: #fffefa
+
+.footer__inner
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 20px
+  p, small
+    font-size: 12px
+    color: var(--muted)
+  small
+    flex-basis: 100%
+    font-size: 10px
+
+.footer__links
+  display: flex
+  flex-wrap: wrap
+  gap: 24px
+  margin-left: auto
+  a
+    padding: 8px 0
+    font-size: 12px
+    font-weight: 700
+    &:hover
+      color: var(--blue)
+
+@media (max-width: 760px)
+  .landing-pricing
+    padding: 48px 0 32px
+  .pricing-heading
+    grid-template-columns: 1fr
+    gap: 20px
+    margin-bottom: 24px
+  .pricing-options
+    grid-template-columns: 1fr
+    gap: 32px
+  .export-license
+    padding: 40px 0 0
+    border-top: 1px solid var(--rule)
+    .export-license__audience
+      top: 16px
+    .export-license__description
+      max-width: none
+  .questions
+    grid-template-columns: 1fr
+    gap: 12px
+    margin-top: 32px
+    > div:first-child
+      display: flex
+      align-items: baseline
+      justify-content: space-between
+      gap: 16px
+    h3
+      font-size: 23px
+    .text-link
+      margin-top: 0
+      font-size: 12px
+  .closing-section
+    padding: 40px 0
+  .closing-node
+    padding: 24px 18px
+    h2
+      font-size: 44px
+      margin: 16px 0 24px
+    &::before
+      top: -41px
+      height: 40px
+  .footer__inner
+    align-items: flex-start
+    gap: 16px
+    p
+      flex-basis: calc(100% - 120px)
+      line-height: 1.5
+  .footer__links
+    margin-left: 0

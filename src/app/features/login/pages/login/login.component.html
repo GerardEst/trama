@@ -1,84 +1,124 @@
 <div class="loginBox">
-  <div class="box">
-    <p class="logo">Trama</p>
-    @if (mode === 'register') {
-      <h3>Create an account</h3>
-      <polo-google-login [isRegistering]="true" (click)="signInWithGoogle()"></polo-google-login>
-      <polo-separator [space]="20" [word]="'or'"></polo-separator>
-      <form>
-        <label>
-          <p>User name</p>
-          <input id="register_username" type="text" [formControl]="register_username" />
-        </label>
-        <label>
-          <p>Your email</p>
-          <input id="register_email" type="text" [formControl]="register_email" />
-        </label>
-        <label>
-          <p>New password</p>
-          <input id="register_password" type="password" [formControl]="register_password" />
-        </label>
+  <div class="login-layout">
+    <aside class="login-intro">
+      <a class="login-intro__brand" href="/" aria-label="Trama home">Trama<span>.</span></a>
+      <p class="login-intro__eyebrow">YOUR STORY STARTS HERE</p>
+      <p class="login-intro__title">There's a story only <em>you can tell.</em></p>
+      <p>Give it a place to begin. Write it, let your readers find their own way through it, and share it when you're ready.</p>
+      <div class="login-intro__note">✦ &nbsp; Free plan available · No credit card required</div>
+    </aside>
+    <div class="box">
+      <a class="login-back" href="/">← Back to Trama</a>
+      @if (mode === 'register') {
+        <h1>Create your account</h1>
+        <p class="login-subtitle">Start making your first story for free.</p>
+        <polo-google-login [isRegistering]="true" (click)="signInWithGoogle()"></polo-google-login>
+        <polo-separator [space]="20" [word]="'or'"></polo-separator>
+        <form>
+          <label>
+            <p>User name</p>
+            <input
+              id="register_username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              [formControl]="register_username"
+            />
+          </label>
+          <label>
+            <p>Your email</p>
+            <input
+              id="register_email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              [formControl]="register_email"
+            />
+          </label>
+          <label>
+            <p>New password</p>
+            <input
+              id="register_password"
+              name="new-password"
+              type="password"
+              autocomplete="new-password"
+              [formControl]="register_password"
+            />
+          </label>
 
-        @if (emailAlreadyRegistered) {
-          <div class="feedbackMessage feedbackMessage--error">
-            <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED"></p>
-          </div>
-        }
-        <!-- @if (checkMail) {
+          @if (emailAlreadyRegistered) {
+            <div class="feedbackMessage feedbackMessage--error" role="alert">
+              <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED"></p>
+            </div>
+          }
+          <!-- @if (checkMail) {
       <div class="feedbackMessage feedbackMessage--success">
         <p [innerHTML]="LOGIN_FEEDBACKS.CONFIRM_EMAIL"></p>
       </div>
       } -->
-        <polo-basic-button
-          (click)="signUpNewUser($event, register_email, register_password, register_username)"
-          [disabled]="false"
-          [waiting]="waitingForSignUp"
-          text="Register"
-        >
-        </polo-basic-button>
-      </form>
-    } @else {
-      <h3>Log in</h3>
-      <polo-google-login (click)="signInWithGoogle()"></polo-google-login>
-      <polo-separator [space]="20" [word]="'or'"></polo-separator>
-      <form>
-        <div class="form__row">
-          <label>
-            <p>Your email</p>
-            <input id="login_email" type="text" [formControl]="login_email" />
-          </label>
-          <label>
-            <p>Your password</p>
-            <input id="login_password" type="password" [formControl]="login_password" />
-          </label>
-        </div>
-        <!-- @if (mailNotConfirmed) {
+          <polo-basic-button
+            (click)="signUpNewUser($event, register_email, register_password, register_username)"
+            [disabled]="false"
+            [waiting]="waitingForSignUp"
+            text="Register"
+          >
+          </polo-basic-button>
+        </form>
+      } @else {
+        <h1>Welcome back</h1>
+        <polo-google-login (click)="signInWithGoogle()"></polo-google-login>
+        <polo-separator [space]="20" [word]="'or'"></polo-separator>
+        <form>
+          <div class="form__row">
+            <label>
+              <p>Your email</p>
+              <input
+                id="login_email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                [formControl]="login_email"
+              />
+            </label>
+            <label>
+              <p>Your password</p>
+              <input
+                id="login_password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                [formControl]="login_password"
+              />
+            </label>
+          </div>
+          <!-- @if (mailNotConfirmed) {
       <div class="feedbackMessage feedbackMessage--error">
         <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_NOT_CONFIRMED"></p>
       </div>
       } -->
-        <div class="form__footer">
-          <a href="/reset-password">Forgot password</a>
-          <polo-basic-button
-            (click)="signInWithEmail($event, login_email, login_password)"
-            [disabled]="false"
-            text="Login"
-          >
-          </polo-basic-button>
+          <div class="form__footer">
+            <a href="/reset-password">Forgot password</a>
+            <polo-basic-button
+              (click)="signInWithEmail($event, login_email, login_password)"
+              [disabled]="false"
+              text="Login"
+            >
+            </polo-basic-button>
+          </div>
+        </form>
+      }
+      <polo-separator [space]="20"></polo-separator>
+      @if (mode === 'register') {
+        <div class="change">
+          <p>Already have an account?</p>
+          <polo-basic-button (click)="goToLogin()" text="Login"></polo-basic-button>
         </div>
-      </form>
-    }
-    <polo-separator [space]="20"></polo-separator>
-    @if (mode === 'register') {
-      <div class="change">
-        <p>Already have an account?</p>
-        <polo-basic-button (click)="goToLogin()" text="Login"></polo-basic-button>
-      </div>
-    } @else {
-      <div class="change">
-        <p>Don't have an account?</p>
-        <polo-basic-button (click)="goToRegister()" text="Register"></polo-basic-button>
-      </div>
-    }
+      } @else {
+        <div class="change">
+          <p>Don't have an account?</p>
+          <polo-basic-button (click)="goToRegister()" text="Register"></polo-basic-button>
+        </div>
+      }
+    </div>
   </div>
 </div>

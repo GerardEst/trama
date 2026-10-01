@@ -4,9 +4,11 @@ import { playgroundRoutes } from './features/playground/routes'
 import { dashboardRoutes } from './features/dashboard/routes'
 import { landingRoutes } from './features/landing-page/routes'
 import { statisticsRoutes } from './features/statistics/routes'
+import { featureGuideRoutes } from './features/feature-guide/routes'
 
 export const appRoutes: Routes = [
   ...landingRoutes,
+  ...featureGuideRoutes,
   ...loginRoutes,
   ...dashboardRoutes,
   ...statisticsRoutes,

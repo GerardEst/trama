@@ -1,453 +1,286 @@
 :host
-  --transition: cubic-bezier(0.000, 1.000, 0.950, 0.995)
-  --background-gray: rgb(230, 230, 230)
-  background-color: rgb(243 243 243)
-  background-position: 44px 44px
-  background-size: 10px 10px
-  background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 14%)
+  --ink: #252720
+  --muted: #5c625a
+  --paper: #fbf9f4
+  --blue: #294b3e
+  --accent: #f6ce6a
+  --rule: #25272024
+  --polo-color-text: #252720
+  --polo-color-text-strong: #252720
+  --polo-color-surface: #fffefa
+  --polo-color-border-strong: #25272033
+  --polo-color-action-soft: #294b3e12
+  --polo-color-focus: #294b3e
+  --polo-color-border-hover: #294b3e
+  display: block
+  color: var(--ink)
+  font-family: Raleway, sans-serif
+  background-color: var(--paper)
+  // Fine and major graph-paper lines, with the little intersections from pi.dev.
+  background-image: linear-gradient(#25272006 1px, transparent 1px), linear-gradient(90deg, #25272006 1px, transparent 1px), linear-gradient(#2527200d 1px, transparent 1px), linear-gradient(90deg, #2527200d 1px, transparent 1px), radial-gradient(circle, #25272018 1px, transparent 1.5px)
+  background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px, 20px 20px
 
-  display: flex
-  flex-direction: column
-  align-items: center
-
-iframe
-  border: none
-  width: 100%
-  height: 100%
-  background: #ffffffaa
-  border-radius: 10px
-
-menu
-  position: fixed
-  width: calc(100% - 20px)
+:host *
   box-sizing: border-box
-  transform: translate(-50%)
-  border-radius: 10px
-  left: 50%
-  top: 10px
-  display: flex
-  gap: 2rem
-  align-items: center
-  padding: 10px 20px
-  background: #ffffffcc
-  z-index: 3
-  backdrop-filter: blur(15px)
-  // box-shadow: 2px 2px var(--text-color)
-  // border: 1px solid var(--text-color)
-  .logo
-    font-size: 2rem
-    font-weight: 900
-    margin: 0
-    font-family: 'LibreBaskerville'
-  > div
-    margin-left: auto
-    display: flex
-    gap: 1rem
 
-h1
-  font-size: 3rem
-h2
-  font-size: 2.5rem
-  font-weight: 300
+:host :is(h1, h2, h3, p, a, li, small, summary)
+  color: inherit
 
-p, a, li, details,summary
-  font-family: 'Raleway'
-  font-size: 1.3rem
-  line-height: 1.5
-  font-weight: 300
+:host a
+  text-decoration: none
 
-details
-  padding: 0.5rem 1rem
-  border: 1px solid var(--background-gray)
-  border-radius: 10px
-  cursor: pointer
-.background-cover
+:host :is(a, button, summary):focus-visible
+  outline: 3px solid var(--blue)
+  outline-offset: 5px
+
+:host :is(h1, h2, h3)
+  text-wrap: balance
+
+:host h2
+  font: 800 clamp(36px, 4vw, 54px)/1.12 Raleway, sans-serif
+  letter-spacing: -.055em
+
+.section-container, .nav-shell, .hero__inner
+  width: min(100% - 96px, 1248px)
+  margin-inline: auto
+
+.skip-link
   position: absolute
-  width: 100%
-  height: calc(100% - 100px)
-  background: radial-gradient(rgb(243 243 243) 100%, transparent 0%)
-  filter: blur(100px)
-  bottom: -30px
-section
-  width: 100%
-  box-sizing: border-box
+  top: -80px
+  left: 20px
+  z-index: 30
+  padding: 14px 20px
+  background: var(--paper)
+  &:focus
+    top: 12px
+
+.site-header
+  position: sticky
+  top: 0
+  z-index: 20
+  background: #fbf9f4f2
+  backdrop-filter: blur(16px)
+  border-bottom: 1px solid var(--rule)
+
+.nav-shell
+  min-height: 76px
+  display: flex
+  align-items: center
+  gap: 32px
+
+.wordmark
+  font: 800 27px Raleway, sans-serif
+  letter-spacing: -.075em
+  span
+    color: #d79829
+
+.nav-links
+  display: flex
+  gap: 30px
+  margin-left: auto
+
+.nav-links a, .nav-login, .nav-cta
+  font-size: 14px
+  font-weight: 700
+
+.nav-links a:hover, .nav-login:hover
+  color: var(--blue)
+
+.nav-cta
+  display: inline-flex
+  align-items: center
+  gap: 22px
+  min-height: 44px
+  padding: 0 18px
+  border: 1px solid #d8b354
+  border-radius: 10px
+  background: var(--accent)
+  box-shadow: 0 3px 0 #25272020
+  &:hover
+    background: #f3c24c
+    transform: translateY(-1px)
+
+.hero
   position: relative
-  & .section--centeredContent
-    width: 100%
-    max-width: 1200px
-    margin-left: auto
-    margin-right: auto
-    padding: 0 30px
-    box-sizing: border-box
-  & .section--relativeMarginSpace
-    margin: 10vw 0
-  &.section--intro
-    padding-bottom: 90px
-    padding-top: 160px
-    height: 120vh
-    // &::after
-    //   content:"This is a simplified preview of the Trama dashboard"
-    //   position: absolute
-    //   bottom: 10px
-    //   right: 10px
-    //   font-family: 'RalewayItalic'
-    //   color: var(--light-text)
-  &.section--mobile
-    display: flex
-    flex-direction: column
-    padding: 60px
-    padding-bottom: 130px
-    .mobile__playground
-      position: relative
-      display: flex
-      align-items: center
-      justify-content: space-around
-      flex-wrap: wrap
-      gap: 20px
+  isolation: isolate
+  &::before
+    content: ''
+    position: absolute
+    inset: 0
+    z-index: -1
+    pointer-events: none
+    background: radial-gradient(ellipse 70% 50% at 50% 26%, #fbf9f4e8, #fbf9f400)
 
-      img
-        width: 100px
-      .interactAdvise
-        position: absolute
-        top: 1rem
-        z-index: 1
-        background: var(--important-color)
-        padding: 1rem
-        border-radius: 10px
-        box-shadow: var(--shadow-elevation-medium)
-        p
-          color: white
-    .mobile__text
-      display: flex
-      &__editor
-        padding: 1rem
-        background: rgba(255, 255, 255, 0.9)
-  &.section--mainFeatures
-    position: relative
-    padding-top: 10px
-    margin-bottom: 100px
-  &.section--usecases
-    position: relative
-    background: white
-    border-radius: 45px 45px 0 0
-    box-shadow: 0 0 200px rgba(0,0,0,.1)
-    padding: 70px 0
-  &.section--advantages
-    position: relative
-    background: var(--polo-neutral-0)
-    padding: 0 30px
-    padding-bottom: 100px
-    box-sizing: border-box
-    box-shadow: 0px 5px 5px var(--shadow-color-light), 0px -60px 50px white
-    margin-bottom: 100px
-  &.section--roadmap
-    padding: 60px 0
-    background: white
-  &.section--pricing
-    display: flex
-    flex-direction: column
-    padding: 90px 0
-    background: var(--text-color)
-    background-size: 5px 5px
-    //background-image: radial-gradient(rgb(167, 167, 167) 5%, transparent 11%)
-    background-image: radial-gradient(rgb(89 89 89) 5%, transparent 11%)
-.textImageContent
-  display: grid
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
-  gap: 3rem
+.eyebrow
+  display: inline-flex
+  align-items: center
+  gap: 9px
+  font-size: 11px
+  font-weight: 800
+  line-height: 1.5
+  letter-spacing: .13em
+  color: var(--blue) !important
 
-.intro
+.hero__inner
   display: flex
   flex-direction: column
   align-items: center
-  gap: 2rem
-  position: relative
-  z-index: 1
-  pointer-events: none
-  background: #ffffffaa
-  box-shadow: 0 0 80px 50px #ffffffaa
-  width: fit-content
-  margin: auto
-  h1
-    max-width: 700px
-    font-family: LibreBaskerville
-    font-size: 3rem
-    line-height: 1.3
-    text-align: center
-  h2
-    font-family: Raleway
-    max-width: 800px
-    font-size: 1.7rem
-    line-height: 1.5
-    text-align: center
-    font-weight: 300
-  &__buttons
-    display: flex
-    gap: 1rem
-    pointer-events: auto
+  padding: 78px 0 56px
+  gap: 56px
 
-
-.claim
-  padding: 2rem 4rem
-  backdrop-filter: blur(1.8px)
+.hero__copy
+  max-width: 850px
   text-align: center
 
-.buildFeatures, .shareFeatures
-  display: grid
-  grid-template-columns: 1fr 1fr 1fr
-  grid-template-rows: 1fr 1fr
-  grid-template-areas: "feature1 feature1 feature1" "feature2 feature2 feature3" "feature4 feature5 feature5" "feature6 feature6 feature6"
-  gap: 2rem
-// .shareFeatures
-//  grid-template-areas: "feature1 feature2 feature2" "feature3 feature3 feature3"
-.feature1
-  grid-area: feature1
-.feature2
-  grid-area: feature2
-.feature3
-  grid-area: feature3
-.feature4
-  grid-area: feature4
-.feature5
-  grid-area: feature5
-.feature6
-  grid-area: feature6
-.feature
-  position: relative
-  border: 1px solid var(--text-color)
-  box-shadow: 5px 5px var(--text-color)
-  border-radius: 10px
-  display: flex
-  flex-wrap: wrap-reverse
-  overflow: hidden
-  background: white
-  transition: 0.5s ease
-  & video
-    flex: 1
-    min-width: 500px
-  & .tag
-    border-radius: 6px
-    padding: 4px 10px
-    margin-bottom: 15px
-    width: fit-content
-    & p
-      color: white
-      font-size: 1rem
-    &--build
-      background-color: var(--important-color)
-    &--share
-      background-color: var(--important-color-tint)
-      & p
-        color: var(--text-color)
-    &--analyze
-      background-color: var(--important-color-shade)
-  &:hover
-    box-shadow: 10px 10px var(--text-color)
-    transform: translate(-5px, -5px)
-  & ul
-    & li
-      margin: 10px 0
-      margin-left: 15px
-      list-style: circle
-      font-weight: 700
-      text-decoration: underline
-      text-decoration-style: dotted
-      text-underline-offset: 3px
-
-  &__text
-    padding: 3rem
-    padding-top: 2rem
-    display: flex
-    flex-direction: column
-    flex: 1
-    min-width: 300px
-    &__title
-      font-weight: 700
-      font-size: 1.7rem
-      margin-bottom: 1.2rem
-      font-family: LibreBaskerville
-    &__action
-      margin-top: auto
-      padding-top: 1rem
-  &__image
-    position: absolute
-    width: 200px
-    bottom: 0
-    right: 2rem
-.advantages
-  display: flex
-  flex-direction: column
-  align-items: center
-  gap: 4rem
-  &__title
-    text-align: center
-    span
-      position: relative
-      background: url(/assets/images/landing/we_detail.webp) no-repeat bottom -2px center / 25px
-      height: 55px
-      display: inline-block
-      sub
-        position: absolute
-        bottom: 18px
-        transform: translateY(18px) translateX(-16px) rotate(7deg)
-        width: 100px
-        opacity: 0.6
-  &__list
-    display: grid
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
-    gap: 3rem
-    width: 100%
-
-.usecases
-  margin-top: 50px
-  & .linepoints
-    position: absolute
-    left: 50%
-    height: calc(100% - 40px)
-    bottom: 0
-    width: 2px
-    background: var(--text-color)
-  &__title
-    text-align: center
-  &__list
+.hero h1
+  margin-top: 20px
+  font: 800 clamp(48px, 6.4vw, 88px)/1.08 Raleway, sans-serif
+  letter-spacing: -.065em
+  em
     position: relative
-    display: flex
-    align-items: flex-start
-    flex-direction: column
-    gap: 2rem
-    margin-top: 1rem
-    &__item
-      position: relative
-      width: 100%
-      box-sizing: border-box
-      background-color: white
-      z-index: 1
-      padding: 1rem 0
-      display: flex
-      flex-direction: column
-      align-items: flex-start
-      gap: 1rem
-      cursor: pointer
-      transition: padding-left 0.2s cubic-bezier(0,.74,.12,.95)
-      padding: 2rem
-      box-shadow: 5px 5px var(--text-color)
-      border-radius: 10px
-      border: 1px solid var(--text-color)
-      h3
-        font-size: 1.5rem
-      p
-        font-size: 1.3rem
-      polo-landing-link
-        margin-top: 0.5rem
-      &.active
-        //background: var(--important-color-tint-gradient)
-        &::after
-          content: ""
-          position: absolute
-          transform: translateX(100%)
-          right: 0
-          top: 50%
-          width: 50px
-          height: 1.5px
-          background: var(--text-color)
-  &__examples
-    width: 100%
-    height: 100%
-    min-height: 500px
-    display: flex
-    flex-direction: column
-    z-index: 1
-    & .exampleContainer
-      flex: 1
-      background: var(--important-color-tint-gradient)
-      padding: 1rem
-      margin-top: 10px
-      border-radius: 10px
-      box-sizing: border-box
-      box-shadow: var(--shadow-elevation-high)
-      // border: 2px solid var(--important-color-shade)
+    font-style: normal
+    white-space: nowrap
+    &::after
+      content: ''
+      position: absolute
+      height: .16em
+      bottom: .03em
+      left: 1%
+      width: 98%
+      z-index: -1
+      border-radius: 50%
+      background: var(--accent)
+      transform: rotate(-1deg)
 
-.roadmap
-  display: flex
-  flex-direction: column
-  gap: 2rem
-  &__list
-    display: flex
-    flex-direction: column
-    gap: 0.5rem
-.roadmap__image
-  width: 300px
-  justify-self: center
-  align-self: flex-end
+.hero__description
+  max-width: 630px
+  margin: 26px auto 0
+  font-size: 17px
+  font-weight: 500
+  line-height: 1.7
+  color: var(--muted) !important
 
-polo-billing-cycle
-  display: block
-  margin-top: 2rem
-
-polo-pricing
-  display: block
-  margin-top: 2rem
-
-footer
-  width: 100%
-  box-sizing: border-box
-  position: relative
-  background: var(--text-color)
-  .footer--centeredContent
-    max-width: 1200px
-    margin: auto
-    display: flex
-    width: 100%
-    box-sizing: border-box
-    justify-content: space-between
-    align-items: flex-end
-    padding: 50px 20px
-    a
-      text-decoration: none
-      padding-bottom: 1px
-      border-bottom: 1px dotted white
-
-.paidFeatureTag
-  position: absolute
-  top: 0
-  right: 0
-  background-color: #ffe86e
+.hero__actions
   display: flex
   align-items: center
-  padding: 0.6rem 1rem
-  border-radius: 5px
-  font-family: monospace
-  transform: rotate(13deg) translate(27px, -8px)
-  box-shadow: 0px 0px 0px 4px #fff9d9
+  justify-content: center
+  flex-wrap: wrap
+  gap: 22px
+  margin-top: 28px
 
-polo-board
-  position: relative
-  position: absolute
-  top: 0
-  width: 100%
-  height: 100%
-  overflow: hidden
-  //flex-grow: 1
-  //border: 1px solid var(--text-color)
-  box-shadow: 5px 5px var(--text-color)
-  cursor: grab
-  // &:hover
-  //   border: 1px solid var(--important-color-shade)
-  //   outline: 4px solid var(--important-color-shade)
-polo-landing-mobile
-    padding-right: 5vw
+.button
+  display: inline-flex
+  align-items: center
+  justify-content: space-between
+  gap: 36px
+  min-height: 54px
+  padding: 0 24px
+  border: 1px solid #d8b354
+  border-radius: 10px
+  font-size: 15px
+  font-weight: 800
+  box-shadow: 0 4px 0 #25272020
+  transition: background .2s, transform .2s, box-shadow .2s
+  &:hover
+    transform: translateY(-2px)
+    background: #f3c24c
+    box-shadow: 0 5px 0 #25272020
 
-@media screen and (max-width: 768px)
-  polo-board
-    pointer-events: none
-    touch-action: none
-    cursor: default
-  section.section--mobile .mobile__playground
-    flex-direction: column
-    gap: 50px
-    & img
-      transform: rotate(90deg)
-  .buildFeatures, .shareFeatures
-    grid-template-columns: 1fr
-    grid-template-rows: unset
-    grid-template-areas: "feature1" "feature2" "feature3" "feature4" "feature5"
+.button--primary
+  background: var(--accent)
+  color: var(--ink) !important
+
+.text-link
+  display: inline-block
+  padding: 8px 0
+  border-bottom: 1px solid currentColor
+  font-size: 14px
+  font-weight: 800
+  span
+    margin-left: 12px
+  &:hover
+    color: var(--blue)
+
+.hero__reassurance
+  display: flex
+  justify-content: center
+  flex-wrap: wrap
+  gap: 8px 22px
+  margin-top: 20px
+  color: var(--muted) !important
+  font-size: 12px
+  font-weight: 600
+  span::first-letter
+    color: var(--blue)
+
+.live-dot
+  width: 6px
+  height: 6px
+  border-radius: 50%
+  background: var(--blue)
+
+#pricing
+  scroll-margin-top: 96px
+
+@media (max-width: 1000px)
+  .section-container, .nav-shell, .hero__inner
+    width: calc(100% - 48px)
+  .nav-shell
+    gap: 24px
+  .nav-links
+    gap: 18px
+  .hero h1
+    font-size: clamp(48px, 6.4vw, 72px)
+
+@media (max-width: 760px)
+  .nav-links
+    display: none
+  .nav-login
+    margin-left: auto
+  .hero__inner
+    padding: 54px 0 40px
+    gap: 40px
+  .hero h1
+    font-size: clamp(44px, 8vw, 64px)
+    em
+      white-space: normal
+  .hero__description
+    max-width: 560px
+
+@media (max-width: 480px)
+  .section-container, .nav-shell, .hero__inner
+    width: calc(100% - 36px)
+  .nav-shell
+    min-height: 66px
+    gap: 12px
+  .nav-login, .nav-cta
+    font-size: 12px
+  .nav-cta
+    gap: 12px
+    padding: 0 12px
+  .hero__inner
+    padding-top: 42px
+    gap: 32px
+  .hero h1
+    font-size: clamp(36px, 10vw, 48px)
+  .hero__description
+    margin-top: 20px
+    font-size: 16px
+  .hero__actions
+    gap: 16px
+    margin-top: 24px
+    .button
+      gap: 24px
+      padding: 0 18px
+    .text-link
+      font-size: 13px
+  .hero__reassurance
+    margin-top: 16px
+    gap: 6px 14px
+    font-size: 11px
+
+@media (prefers-reduced-motion: reduce)
+  .button
+    transition: none
+    &:hover
+      transform: none

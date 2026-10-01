@@ -1,469 +1,154 @@
-<menu>
-  <p class="logo">Trama</p>
-  <div>
-    <!-- <polo-landing-link (click)="scrollTo('pricing')" text="Pricing"></polo-landing-link> -->
-    <!--polo-landing-link destiny="/blog" text="Blog"></polo-landing-link-->
-    <div class="login">
-      @if (checkedLoggedUser) {
-        <polo-landing-link
-          behaviour="link"
-          destiny="/dashboard"
-          text="{{ loggedUserEmail ? 'Dashboard' : 'Login' }}"
-          [highlight]="true"
-        ></polo-landing-link>
-      }
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <nav class="nav-shell" aria-label="Main navigation">
+    <a class="wordmark" href="/" aria-label="Trama home">Trama<span>.</span></a>
+    <div class="nav-links">
+      <a href="#pricing">Pricing</a>
+      <a href="/docs/features">Docs</a>
     </div>
-  </div>
-</menu>
-<section class="section--intro pattern-background">
-  <polo-board
-    #board
-    [initialZoom]="0.9"
-    [grid]="true"
-    [initialPosition]="{ x: 0, y: 3550 }"
-    [zoomable]="false"
-  ></polo-board>
-  <!--div class="background-cover"></div-->
-  <div class="intro">
-    <h1>Write and share text adventures</h1>
-    <h2>
-      Create the epic adventure you have in mind, a small story, a complex quizz...
-      <br />
-      Share with a link and let others enjoy your creation.
-      <br />
-    </h2>
-    <!--div>
-      <li>Intuitive node-based platform for creating dynamic interactive tests and narratives</li>
-      <li>Build complex, branching, reactive scenarios with ease</li>
-      <li>Share with one click and track user decisions</li>
-    </div-->
-    <div class="intro__buttons">
-      <polo-landing-link
-        destiny="/dashboard"
-        behaviour="link"
-        text="Start creating!"
-        [highlight]="true"
-      ></polo-landing-link>
-      <!--polo-landing-link
-        (click)="scrollTo('examples')"
-        text="Check some examples"
-      ></polo-landing-link-->
-    </div>
-  </div>
-</section>
+    @if (!loggedUserEmail) {
+      <a class="nav-login" href="/login">Log in</a>
+    }
+    <a class="nav-cta" [href]="creationUrl"
+      >{{ loggedUserEmail ? 'Dashboard' : 'Start for free' }} <span aria-hidden="true">↗</span></a
+    >
+  </nav>
+</header>
 
-<!--section class="section--mobile pattern-background">
+<main id="main-content">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> A HOME FOR INTERACTIVE STORIES</p>
+        <h1 id="hero-title">
+          You write the story.<br /><em>They choose the way.</em>
+        </h1>
+        <p class="hero__description">
+          Build a world of scenes and choices on a visual canvas. Share your interactive story
+          with a single link, and see where your readers go.
+        </p>
+        <div class="hero__actions">
+          <a class="button button--primary" [href]="creationUrl"
+            >{{ loggedUserEmail ? 'Open your dashboard' : 'Start your story' }}
+            <span aria-hidden="true">↗</span></a
+          >
+          <a class="text-link" href="#try-it">Try a story <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="hero__reassurance"><span>✓ Free to start</span><span>✓ No credit card</span><span>✓ Just an idea</span></p>
+      </div>
+      <polo-landing-story-demo
+        id="try-it"
+        role="region"
+        aria-label="Play The Library at Midnight"
+        [creationUrl]="creationUrl"
+        [loggedUserEmail]="loggedUserEmail"
+      ></polo-landing-story-demo>
+    </div>
+  </section>
 
-  <div class="mobile__playground">
-    <div>
-      <div class="interactAdvise">
-        <p class="txt-n">
-          <strong>Play with our node system right here! ⬇️</strong>
-        </p>
+  <section id="pricing" class="landing-pricing" aria-labelledby="pricing-title">
+    <div class="section-container">
+      <div class="pricing-heading">
+        <h2 id="pricing-title">Start free.<br />Grow from there.</h2>
+        <div>
+          <p>More room when you need it.</p>
+          <polo-billing-cycle
+            (onChangePayingPeriod)="payAnnually = $event === 'annual'"
+          ></polo-billing-cycle>
+        </div>
       </div>
-      <polo-board
-        #board
-        [initialZoom]="0.9"
-        [grid]="true"
-        [focusElements]="false"
-        [zoomable]="false"
-      ></polo-board>
-    </div>
-    <img alt="Decorative arrow" src="assets/images/landing/arrow.webp" />
-    <polo-landing-mobile [camera]="true" [topSpacing]="true">
-      <polo-game mode="single"></polo-game>
-    </polo-landing-mobile>
-  </div>
-
-</section-->
-<section class="section--advantages">
-  <div class="advantages section--centeredContent">
-    <h2 class="claim advantages__title txt-baskerville">Everything you need</h2>
-    <!--h2 class="claim advantages__title txt-baskerville">
-      Why <span>we<sub class="txt-s">and hopefuly you</sub></span> love
-      trama
-    </h2-->
-    <div class="advantages__list">
-      <polo-landing-card
-        image="/assets/images/landing/advantages_unleash_creativity.webp"
-        title="The freedom of nodes!"
-        alt="Decorative drawing of a person drawing nodes in a canvas"
-      >
-        <p>
-          Nodes allow you to create
-          <strong>complex and branching flows</strong> very easily and visually. So you can build
-          quizzes, formularies, text adventures... you name it!
-        </p>
-        <!-- <polo-landing-link text="Where is the limit?"></polo-landing-link> -->
-      </polo-landing-card>
-      <polo-landing-card
-        image="/assets/images/landing/advantages_flow_control.webp"
-        title="Flows that adapt to users"
-        alt="Decorative drawing of a person in front of a signpost deciding where to go"
-      >
-        <p>
-          Every user action can change the flow thanks to
-          <strong>properties, requirements and distributor nodes</strong>. Make the experience
-          trully unique!
-        </p>
-        <!-- <polo-landing-link text="How?"></polo-landing-link> -->
-      </polo-landing-card>
-      <polo-landing-card
-        image="/assets/images/landing/advantages_analyze.webp"
-        title="Deeply analyze the results"
-        alt="Decorative drawing of two persons making cientific experiments"
-      >
-        <p>
-          Analyze globally or in detail, from how many users completed the flow to the
-          <strong>exact path and choices for a specific user</strong>.
-        </p>
-        <!-- <polo-landing-link text="Analyze it"></polo-landing-link> -->
-      </polo-landing-card>
-      <!--polo-landing-card
-        image="/assets/images/landing/advantages_integrate_everywhere.webp"
-        title="Integrate everywhere, reach everyone"
-        alt="Decorative drawing of a wizard viewing Trama inside a crystal ball"
-      >
-        <p>
-          Embed your scenarios anywhere with simple iframes, expanding your
-          reach across platforms
-        </p>
-      </polo-landing-card-->
-      <!--polo-landing-card
-        image="/assets/images/landing/advantages_breeze.webp"
-        title="Know your users"
-        alt="Decorative drawing of a paper plane flying through clouds"
-      >
-        <span class="paidFeatureTag">Pro feature</span>
-        <p>
-          Gain valuable data on user choices, paths, and engagement
-        </p>
-      </polo-landing-card-->
-    </div>
-  </div>
-</section>
-<h2 class="claim txt-baskerville">Create anything with the most flexible tools</h2>
-<!--p>We provide the most flexible tools so you can build any flow</p-->
-<section class="section--mainFeatures">
-  <div class="section--centeredContent buildFeatures">
-    <div class="feature feature1">
-      <div class="feature__text">
-        <div class="tag tag--build"><p>Build tools</p></div>
-        <p class="feature__text__title">Handle complex flows with nodes</p>
-        <p>By joining nodes, anyone can handle anything without hassle.</p>
-        <ul>
-          <li>Drag and drop nodes around to build your flow</li>
-          <li>Understand all your structure at a glance</li>
-          <li>Unlimited paths and endings</li>
-        </ul>
-        <!--polo-landing-link
-          class="feature__text__action"
-          text="Check all the possibilities"
-          [highlight]="true"
-        ></polo-landing-link-->
-      </div>
-
-      <video muted autoplay loop playsinline width="640">
-        <source src="/assets/videos/nodes_2.mp4" type="video/mp4" />
-        <!--source src="/assets/videos/nodes.webm" type="video/webm" /-->
-      </video>
-    </div>
-    <div class="feature feature2">
-      <div class="feature__text">
-        <div class="tag tag--build"><p>Build tools</p></div>
-        <p class="feature__text__title">Make your adventure unique for every reader</p>
-        <p>
-          You got properties, stats, requirements, distributor nodes, and much more to give every
-          player their own story
-        </p>
-        <ul>
-          <li>Add some randomness to the flows to make the experience unique</li>
-          <li>Send users to specific nodes depending on previous actions</li>
-          <li>Dynamic hashtags</li>
-        </ul>
-        <!--polo-landing-link
-          class="feature__text__action"
-          text="Learn more about personalization"
-          [highlight]="true"
-        ></polo-landing-link-->
-      </div>
-    </div>
-    <div class="feature feature3">
-      <div class="feature__text">
-        <div class="tag tag--build"><p>Build tools</p></div>
-        <p class="feature__text__title">Simplicity to handle complexity</p>
-        <p>
-          We build with simplicity in mind so everything is as easy and straightforward as it can
-          be. <br /><br />You don't have to learn a new tool, you just have to use it.
-        </p>
-      </div>
-    </div>
-    <div class="feature feature4">
-      <div class="feature__text">
-        <div class="tag tag--share"><p>Share tools</p></div>
-        <p class="feature__text__title">Let your story flow!</p>
-        <p>Share your story with everyone just sending a link</p>
-        <br />
-        <p>Let readers just read, without installing anything or creating accounts.</p>
-        <!--polo-landing-link
-          class="feature__text__action"
-          text="Discover more sharing options"
-          [highlight]="true"
-        ></polo-landing-link-->
-      </div>
-    </div>
-    <!-- <div class="feature feature5">
-      <div class="feature__text">
-        <div class="tag tag--share"><p>Share tools</p></div>
-        <p class="feature__text__title">Want real user feedback? Treat users like humans</p>
-        <p>
-          There are many tools to build a form, but from the user perspective every form will be
-          just another form. Give them something better and start receiving better feedback.
-        </p>
-        <ul>
-          <li>Options for conversational flows</li>
-          <li>Trully personalized texts and experiences</li>
-        </ul>
-      </div>
-    </div> -->
-    <!--div class="feature feature6">
-      <div class="feature__text">
-        <div class="tag tag--analyze"><p>Analyze tools</p></div>
-        <p class="feature__text__title">
-          Which insights do you need? We cover you
-        </p>
-        <p>Analyze the answers from users</p>
-        <ul>
-          <li>See paths followed by users easily over your nodes</li>
-          <li>
-            Detection of users changing screens for exams or engaging data
-          </li>
-        </ul>
-        <polo-landing-link
-          class="feature__text__action"
-          text="Check all the analyze tools"
-          [highlight]="true"
-        ></polo-landing-link>
-      </div>
-    </div-->
-  </div>
-</section>
-<!--section class="section--mainFeatures">
-  <div class="section--centeredContent shareFeatures">
-    <div class="feature feature1">
-      <div class="feature__text">
-        <p class="feature__text__title">Let your flow, flow!</p>
-        <p>
-          More users completing the flow means more data and visits for you.
-        </p>
-        <p>That's why we made share a flow as easy as sharing a link.</p>
-        <polo-landing-link
-          class="feature__text__action"
-          text="Discover more sharing options"
-        ></polo-landing-link>
-      </div>
-    </div>
-    <div class="feature feature2">
-      <div class="feature__text">
-        <p class="feature__text__title">
-          Want real user feedback? Treat users as humans
-        </p>
-        <p>
-          There are many tools to build a form, but from the user perspective
-          every form will be just another form. Give them something better and
-          start receiving better feedback
-        </p>
-        <ul>
-          <li>Options for conversational flows</li>
-          <li>Trully personalized texts and experiences</li>
-        </ul>
-        <polo-landing-link
-          class="feature__text__action"
-          text="More options for better engagement"
-        ></polo-landing-link>
-      </div>
-    </div>
-    <div class="feature feature3">
-      <div class="feature__text">
-        <p class="feature__text__title">
-          Which insights do you need? We cover you
-        </p>
-        <p>Analyze the answers from users</p>
-        <ul>
-          <li>See paths followed by users easily over your nodes</li>
-          <li>
-            Detection of users changing screens for exams or engaging data
-          </li>
-        </ul>
-        <polo-landing-link
-          class="feature__text__action"
-          text="Learn more about personalization"
-        ></polo-landing-link>
-      </div>
-    </div>
-  </div>
-</section-->
-<!-- <section #examplesSection class="section--usecases">
-  <h2 class="usecases__title txt-baskerville">Who is this for?</h2>
-  <div class="usecases section--centeredContent textImageContent">
-    <div class="usecases__list">
-      <div class="linepoints"></div>
-      <div
-        class="usecases__list__item"
-        [class.active]="activeUseCase === 'brands'"
-        (click)="selectUseCase('brands')"
-      >
-        <h3 class="txt-baskerville txt-l">Marketing teams</h3>
-        <p>
-          Engage your users with personalized formularies that guide them to
-          your products and services, track most choosen answers and adapt your
-          business to <strong>bring more value</strong>
-        </p>
-        <polo-landing-link
-          (click)="scrollTo('activeExample')"
-          [small]="true"
-          [highlight]="activeUseCase === 'brands'"
-          text="{{
-            activeUseCase === 'brands'
-              ? 'Active example'
-              : 'Answer an example funnel'
-          }}"
-        ></polo-landing-link>
-      </div>
-      <div
-        class="usecases__list__item"
-        [class.active]="activeUseCase === 'schools'"
-        (click)="selectUseCase('schools')"
-      >
-        <h3 class="txt-baskerville txt-l">Schools and teachers</h3>
-        <p>
-          Gamify your classrooms, evaluate automatically, analyse the results,
-          discover where your students failed most, and
-          <strong>upgrade quality of your classes</strong>
-        </p>
-        <polo-landing-link
-          (click)="scrollTo('activeExample')"
-          [small]="true"
-          [highlight]="activeUseCase === 'schools'"
-          text="{{
-            activeUseCase === 'schools'
-              ? 'Active example'
-              : 'Pass an example exam'
-          }}"
-        ></polo-landing-link>
-      </div>
-      <div
-        class="usecases__list__item"
-        [class.active]="activeUseCase === 'creatives'"
-        (click)="selectUseCase('creatives')"
-      >
-        <h3 class="txt-baskerville txt-l">Creative minds</h3>
-        <p>
-          Writters, storytellers, creators... We provide the most
-          straightforward tools to let you <strong>just create</strong> whatever
-          you want, from big text adventures to small funny quizzes
-        </p>
-        <polo-landing-link
-          (click)="scrollTo('activeExample')"
-          [small]="true"
-          [highlight]="activeUseCase === 'creatives'"
-          text="{{
-            activeUseCase === 'creatives'
-              ? 'Active example'
-              : 'Play an example adventure'
-          }}"
-        ></polo-landing-link>
-      </div>
-    </div>
-    <div #activeExample class="usecases__examples">
-      <div class="exampleContainer">
-        @if(activeUseCase==='brands'){
-        <iframe
-          title="Brand flow example"
-          @showUseCase
-          src="https://trama.app/private/0a9d2015-8d6c-44ae-95cc-980f59a8efdc"
-        ></iframe>
-        } @if(activeUseCase==='schools'){
-        <iframe
-          title="School flow example"
-          @showUseCase
-          src="https://trama.app/private/414a6ab4-8f7c-442c-8968-e26294ae335f"
-        ></iframe>
-        } @if(activeUseCase==='creatives'){
-        <iframe
-          title="Creative flow example"
-          @showUseCase
-          src="https://trama.app/private/337b5201-40eb-4732-b29a-8c09663ef8b5"
-        ></iframe>
-        }
-      </div>
-    </div>
-  </div>
-</section> -->
-<section #pricingSection class="section--pricing">
-  <div class="section--centeredContent">
-    <h2 class="txt-white txt-baskerville">Pricing</h2>
-    <polo-billing-cycle
-      (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
-    ></polo-billing-cycle>
-    <polo-pricing
-      [userPlan]="loggedUserPlan"
-      [payAnnually]="payAnnually"
-      [email]="loggedUserEmail"
-      [preventEasyDowngrading]="true"
-    ></polo-pricing>
-    <!--p class="txt-white">We will be glad to talk about your specific needs, if you have some!<br>Contact us
-    </p-->
-  </div>
-</section>
-<!--section class="section--roadmap">
-  <div class="section--centeredContent textImageContent">
-    <div class="roadmap">
-      <h2 class="txt-baskerville">The future ahead</h2>
-      <p>We are just starting. Check out what's next in our roadmap:</p>
-      <div class="roadmap__list">
-        <details>
-          <summary>&nbsp;Images in the answers</summary>
-          <p>Add the possibility to have images also in the answers, to select between some images instead of text, for
-            example.</p>
-        </details>
-        <details>
-          <summary>&nbsp;Better analytics for pro users</summary>
-          <p>More clear data from your user activity, easy to digest and understand</p>
-        </details>
-        <details>
-          <summary>&nbsp;See all nodes listed and editable</summary>
-          <p>We want a place where you can see all your nodes in a list format, and you can rapidly edit from there</p>
-        </details>
-        <details>
-          <summary>&nbsp;Customization options</summary>
-          <p>It would be good to have some customization options to let you choose the colors, typography, etc</p>
-        </details>
-        <details>
-          <summary>&nbsp;Multiple joins with probabilities</summary>
-          <p>As of now, you can join to multiple nodes from the same node, giving a probability of 50% to each
-            one.<br><br>
-            We want to add a custom percentage selector so you can give 20% changes to one node and 80% to the other,
-            for example<br><br>
-            <span class="txt-s">This is not very necessary, but it adds a lot of freedom, which is what moves us
-              😬</span>
+      <div class="pricing-options">
+        <polo-pricing
+          [userPlan]="loggedUserPlan"
+          [payAnnually]="payAnnually"
+          [email]="loggedUserEmail"
+          [preventEasyDowngrading]="true"
+          [showUpcomingPlan]="false"
+          [compactFeatures]="true"
+        ></polo-pricing>
+        <article class="export-license" aria-labelledby="export-license-title">
+          <p class="export-license__audience">FOR PROFESSIONALS</p>
+          <h3 id="export-license-title">Export License <span aria-hidden="true">↗</span></h3>
+          <div class="export-license__payment">
+            <p class="export-license__price">299<span>€</span></p>
+            <p class="export-license__frequency">One payment.<br />No subscription.</p>
+          </div>
+          <p class="export-license__description">
+            All creation tools. Unlimited exports. Host, distribute or sell your stories on your own
+            terms.
           </p>
-        </details>
+          <p class="export-license__ownership">Your platform. Your revenue. No royalties.</p>
+          <p class="export-license__limit">
+            Export only. No Trama-hosted games, share links or player analytics.
+          </p>
+          <a
+            class="text-link export-license__action"
+            href="mailto:gesteve.12@gmail.com?subject=Export%20License%20enquiry"
+          >
+            Ask about the license <span aria-hidden="true">↗</span>
+          </a>
+          <p class="export-license__preview">Proposed license. Not available to buy yet.</p>
+        </article>
+      </div>
+      <div class="questions" aria-labelledby="questions-title">
+        <div>
+          <h3 id="questions-title">A few loose ends.</h3>
+          <a class="text-link" href="mailto:gesteve.12@gmail.com"
+            >Ask the maker <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="questions__list">
+          <details>
+            <summary>Can I start for free?</summary>
+            <p>
+              Yes. The Basic plan is free, so you can build and share your first stories before
+              deciding whether you need more room.
+            </p>
+          </details>
+          <details>
+            <summary>Do readers need an account?</summary>
+            <p>
+              No. Share a link and readers can jump straight into your story without signing up or
+              installing anything.
+            </p>
+          </details>
+          <details>
+            <summary>What can I create with Trama?</summary>
+            <p>
+              Interactive fiction, branching adventures, quizzes and other choose-your-own-path
+              experiences. Start with a scene and see where it leads.
+            </p>
+          </details>
+        </div>
       </div>
     </div>
-    <img class="roadmap__image" width="100%" src="/assets/images/landing/futureAhead.webp"
-      alt="Puppet looking through a telescope" />
-  </div>
-</section-->
-<footer>
-  <div class="footer--centeredContent">
-    <div>
-      <p class="logo txt-white">Trama</p>
-      <p class="txt-n txt-white">© trama.app - All Rights Reserved</p>
+  </section>
+
+  <section class="closing-section" aria-labelledby="closing-title">
+    <div class="section-container">
+      <div class="closing-node">
+        <span class="closing-node__label">YOUR NEXT SCENE</span>
+        <h2 id="closing-title">
+          What happens<br /><em>next?</em
+          ><span class="closing-node__cursor" aria-hidden="true">|</span>
+        </h2>
+        <a class="button button--primary" [href]="creationUrl"
+          >{{ loggedUserEmail ? 'Open your dashboard' : 'Start your story' }}
+          <span aria-hidden="true">↗</span></a
+        >
+        <p>That part is yours to write.</p>
+      </div>
     </div>
-    <div>
-      <p class="txt-white txt-weight-bold">Contact</p>
-      <a href="mailto:gesteve.12@gmail.com" class="txt-white">gesteve.12&#64;gmail.com</a>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="section-container footer__inner">
+    <a class="wordmark" href="/" aria-label="Trama home">Trama<span>.</span></a>
+    <p>Stories don’t have to go in a straight line.</p>
+    <div class="footer__links">
+      <a href="/docs/features">Feature guide</a><a href="#pricing">Pricing</a><a href="mailto:gesteve.12@gmail.com">Email the maker</a>
     </div>
+    <small>© trama.app · All rights reserved</small>
   </div>
 </footer>

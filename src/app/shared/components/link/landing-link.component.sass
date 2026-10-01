@@ -1,25 +1,37 @@
 :host
   display: flex
 a, button
-  padding: 0.8rem 1.4rem
-  background: white
-  border: 1px solid var(--text-color)
-  border-radius: 5px
+  display: var(--pricing-link-display, inline)
+  width: var(--pricing-link-width, auto)
+  align-items: center
+  justify-content: center
+  min-height: var(--pricing-link-height, 0)
+  padding: var(--pricing-link-padding, 0.8rem 1.4rem)
+  background: var(--pricing-link-background, white)
+  border: 1px solid var(--pricing-link-border, var(--text-color))
+  border-radius: var(--pricing-link-radius, 5px)
   text-decoration: none
-  color: var(--text-color)
-  font-size: 1rem
+  color: var(--pricing-link-color, var(--text-color))
+  font-size: var(--pricing-link-font-size, 1rem)
+  font-weight: var(--pricing-link-font-weight, inherit)
   cursor: pointer
+  &:focus-visible
+    outline: 3px solid var(--pricing-link-focus, var(--text-color))
+    outline-offset: 4px
 a.small, button.small
   padding: 0.5rem 1rem
 a.inactive, button.inactive
   opacity: 0.5
   pointer-events: none
 a:hover, button:hover
-  background: var(--background-gray)
+  background: var(--pricing-link-hover-background, var(--background-gray))
+  color: var(--pricing-link-hover-color, var(--text-color))
 a.highlight, button.highlight
-  background-color: var(--important-color)
-  color: white
-  border: 1px solid white
-  outline: 1px solid var(--important-color)
+  background-color: var(--pricing-link-highlight-background, var(--important-color))
+  color: var(--pricing-link-highlight-color, white)
+  border: 1px solid var(--pricing-link-highlight-border, white)
+  outline: var(--pricing-link-highlight-outline, 1px solid var(--important-color))
   &:hover
-    background: var(--important-color-shade)
+    background: var(--pricing-link-highlight-hover-background, var(--important-color-shade))
+  &:focus-visible
+    outline: 3px solid var(--pricing-link-focus, var(--text-color))

@@ -1,0 +1,103 @@
+<a class="skip-link" href="#guide-content">Skip to the guide</a>
+<header class="guide-header">
+  <nav class="guide-shell guide-header__inner" aria-label="Main navigation">
+    <a class="wordmark" routerLink="/" aria-label="Trama home">Trama<span>.</span></a>
+    <span class="guide-header__label">THE FEATURE GUIDE</span>
+    <a class="guide-header__back" href="/#pricing">Pricing</a>
+    <a class="guide-button" routerLink="/login" [queryParams]="{ mode: 'register' }"
+      >Start your story <span aria-hidden="true">↗</span></a
+    >
+  </nav>
+</header>
+<main class="guide-shell">
+  <div class="guide-intro">
+    <a class="guide-back" routerLink="/"><span aria-hidden="true">←</span> Back to Trama</a>
+    <p class="eyebrow">{{ featureCount }} TOOLS. ONE STORY THAT’S YOURS.</p>
+    <h1>A field guide<br />to <em>possibility.</em></h1>
+    <p class="guide-intro__description">
+      Start with a scene and a choice. Add a little memory, a reader’s name or a secret entrance
+      when your story needs it.
+    </p>
+    <p class="guide-intro__note">
+      You don’t need every feature to write a good story. Here’s what’s possible when you want to go
+      further.
+    </p>
+  </div>
+  <ng-template #index>
+    @for (group of groups; track group.title) {
+      <div class="guide-index__group">
+        <p>{{ group.title }}</p>
+        @for (feature of group.features; track feature.id) {
+          <a [routerLink]="[]" [fragment]="feature.id">{{ feature.title }}</a>
+        }
+      </div>
+    }
+  </ng-template>
+  <details class="guide-mobile-index">
+    <summary>Browse all {{ featureCount }} features <span aria-hidden="true">↓</span></summary>
+    <nav aria-label="Mobile feature index">
+      <ng-container [ngTemplateOutlet]="index"></ng-container>
+    </nav>
+  </details>
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav aria-label="Feature index"><ng-container [ngTemplateOutlet]="index"></ng-container></nav>
+      <a class="guide-sidebar__play" href="/#try-it"
+        >Play the example story <span aria-hidden="true">↗</span></a
+      >
+    </aside>
+    <div id="guide-content" class="guide-content" tabindex="-1">
+      @for (group of groups; track group.title; let groupIndex = $index) {
+        <div class="guide-group-heading">
+          <span class="eyebrow">0{{ groupIndex + 1 }} / {{ group.title }}</span>
+          <p>{{ group.description }}</p>
+        </div>
+        @for (feature of group.features; track feature.id) {
+          <section
+            class="guide-chapter"
+            [id]="feature.id"
+            [attr.aria-labelledby]="feature.id + '-title'"
+            tabindex="-1"
+          >
+            <h2 [id]="feature.id + '-title'">{{ feature.title }}</h2>
+            <p class="guide-chapter__summary">{{ feature.summary }}</p>
+            <h3>How to use it</h3>
+            <ol>
+              @for (step of feature.steps; track $index) {
+                <li>{{ step }}</li>
+              }
+            </ol>
+            <figure class="guide-example">
+              <figcaption>{{ feature.example.label }}</figcaption>
+              @for (line of feature.example.lines; track $index) {
+                <p>{{ line }}</p>
+              }
+            </figure>
+            <div class="guide-note">
+              <span>GOOD TO KNOW</span>
+              <p>{{ feature.note }}</p>
+            </div>
+          </section>
+        }
+      }
+      <div class="guide-next">
+        <p class="eyebrow">YOU CAN START SMALL</p>
+        <h2>One scene.<br />See where it takes you.</h2>
+        <a
+          class="guide-button guide-button--primary"
+          routerLink="/login"
+          [queryParams]="{ mode: 'register' }"
+          >Create your first story <span aria-hidden="true">↗</span></a
+        >
+        <a class="guide-back" href="/#pricing"
+          >Compare the plans <span aria-hidden="true">→</span></a
+        >
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="guide-footer guide-shell">
+  <a class="wordmark" routerLink="/">Trama<span>.</span></a>
+  <p>The rules are yours to write.</p>
+  <a href="mailto:gesteve.12@gmail.com">Ask the maker <span aria-hidden="true">↗</span></a>
+</footer>

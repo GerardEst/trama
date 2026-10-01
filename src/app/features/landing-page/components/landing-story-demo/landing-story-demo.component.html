@@ -1,0 +1,34 @@
+<div class="story-player__heading">
+  <span class="live-dot" aria-hidden="true"></span> A REAL STORY. YOUR NEXT MOVE.
+</div>
+<div class="story-player__scene">
+  <img
+    src="/assets/images/landing/library-at-midnight.svg"
+    alt=""
+    width="760"
+    height="620"
+    fetchpriority="high"
+  />
+  <span>THE LIBRARY<br /><strong>AT MIDNIGHT</strong></span>
+  <span class="story-player__chapter" aria-hidden="true">01 / A BEGINNING</span>
+</div>
+<div class="story-player__game">
+  @if (showDemo) {
+    <polo-game mode="single" (onEndGame)="demoCompleted = true"></polo-game>
+  }
+</div>
+<div class="story-player__footer">
+  <span>No sign-up. Pick a path.</span>
+  <button type="button" (click)="restartDemo()">
+    <span aria-hidden="true">↺</span> Start over
+  </button>
+</div>
+@if (demoCompleted) {
+  <div class="story-player__next" aria-live="polite">
+    <p>That ending was yours.<br />Now write someone else’s beginning.</p>
+    <a class="text-link" [href]="creationUrl"
+      >{{ loggedUserEmail ? 'Make another story' : 'Create your first story free' }}
+      <span aria-hidden="true">↗</span></a
+    >
+  </div>
+}

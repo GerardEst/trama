@@ -1,17 +1,20 @@
-<div class="period__toggle" [class.small]="small">
-  <div
+<div class="period__toggle" [class.small]="small" role="group" aria-label="Billing period">
+  <button
+    type="button"
     class="period__toggle__monthly"
     [class.active]="period === 'monthly'"
+    [attr.aria-pressed]="period === 'monthly'"
     (click)="changePayingPeriod('monthly')"
   >
-    <p>Monthly billing</p>
-  </div>
-  <div
+    <span class="period__label">Monthly billing</span>
+  </button>
+  <button
+    type="button"
     class="period__toggle__annually"
     [class.active]="period === 'annual'"
+    [attr.aria-pressed]="period === 'annual'"
     (click)="changePayingPeriod('annual')"
   >
-    <p>Annual billing <span>Save 30%</span></p>
-    <!--https://dribbble.com/shots/24074397-Pricing-Untitled-UI-->
-  </div>
+    <span class="period__label">Annual billing <span>Save 30%</span></span>
+  </button>
 </div>

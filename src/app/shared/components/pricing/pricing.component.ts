@@ -22,6 +22,8 @@ export class PricingComponent {
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
   @Input() dashed: boolean = false
+  @Input() showUpcomingPlan: boolean = true
+  @Input() compactFeatures: boolean = false
 
   cancelingSubscription: boolean = false
 

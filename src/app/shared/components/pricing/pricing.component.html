@@ -1,4 +1,4 @@
-<div class="pricing">
+<div class="pricing" [class.pricing--compact]="compactFeatures">
   <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'free'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Basic</h2>
@@ -8,44 +8,50 @@
       <p class="currentPlan">Your current plan</p>
     }
     <p>
-      Try our no-code creation tool, test your ideas, share them and check if Trama could work for
-      you
+      @if (compactFeatures) {
+        Create and share up to 3 stories. Free, with no payment details needed.
+      } @else {
+        Create and share your first branching stories, with no payment details needed.
+      }
     </p>
-    <ul class="pricing__plan__features">
-      <li>
-        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
-        All types of nodes
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
-        Full flow control
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
-        Text interpolations
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
-        Basic customization options
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
-        Up to 3 stories
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
-        Limited images
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/warning_2.webp" alt="Warning icon" />
-        Trama brand in the stories
-      </li>
-    </ul>
+    <details class="pricing__details" [open]="!compactFeatures">
+      <summary [hidden]="!compactFeatures">What’s included in Basic</summary>
+      <ul class="pricing__plan__features">
+        <li>
+          <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+          All types of nodes
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+          Full flow control
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+          Text interpolations
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_3.webp" alt="Success icon" />
+          Basic customization options
+        </li>
+        <li>
+          <span class="pricing__limit" aria-hidden="true">·</span>
+          Up to 3 stories
+        </li>
+        <li>
+          <span class="pricing__limit" aria-hidden="true">·</span>
+          Limited images
+        </li>
+        <li>
+          <span class="pricing__limit" aria-hidden="true">·</span>
+          Trama brand in the stories
+        </li>
+      </ul>
+    </details>
     @if (!email) {
       <polo-landing-link
         destiny="/login?mode=register"
         behaviour="link"
-        text="Use free"
+        text="Start with Basic"
       ></polo-landing-link>
     }
   </div>
@@ -69,36 +75,31 @@
     } @else if (userPlan === 'creator') {
       <p class="currentPlan">Your current plan</p>
     }
-    <p>
-      Perfect for small businesses and creatives to engage their audiences and bring more traffic to
-      their websites and projects
-    </p>
-    <ul class="pricing__plan__features">
-      <li class="txt-gray">Everything from hobby plan</li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /><strong
-          >Support me in developing Trama</strong
-        >
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
-        Unlimited stories
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
-        Unlimited images
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
-        Customize brand in the stories
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
-        Share options and external links
-      </li>
-      <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
-      <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
-    </ul>
+    <p>More room to build: unlimited stories and images, plus control over how you share.</p>
+    <details class="pricing__details" [open]="!compactFeatures">
+      <summary [hidden]="!compactFeatures">What’s included in Creator</summary>
+      <ul class="pricing__plan__features">
+        <li class="txt-gray">Everything in Basic, plus:</li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+          Unlimited stories
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+          Unlimited images
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+          Customize brand in the stories
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" />
+          Share options and external links
+        </li>
+        <!--li><img src="/assets/images/drawn_icons/tick_4.webp" alt="Success icon" /> Vote and propose new features</li-->
+        <!--li><img src="/assets/images/drawn_icons/heart.webp" alt="Success icon" /> Help to keep the project going</li>-->
+      </ul>
+    </details>
     @if (userPlan === 'creator') {
       @if (!preventEasyDowngrading && !canceledSubscription) {
         <polo-basic-button
@@ -113,67 +114,69 @@
       <polo-landing-link
         (click)="subscribe('creator', payAnnually)"
         [highlight]="true"
-        text="Be a creator"
+        text="Choose Creator"
       ></polo-landing-link>
     }
   </div>
-  <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'pro'">
-    <div class="pricing__plan__header">
-      <h2 class="txt-baskerville txt-2">Pro</h2>
-      @if (payAnnually) {
-        <p class="txt-ralewayItalic">{{ pricing.PRO_YEARLY_PRICE }}€/year</p>
-      } @else {
-        <p class="txt-ralewayItalic">{{ pricing.PRO_MONTHLY_PRICE }}€/month</p>
+  @if (showUpcomingPlan || userPlan === 'pro') {
+    <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'pro'">
+      <div class="pricing__plan__header">
+        <h2 class="txt-baskerville txt-2">Pro</h2>
+        @if (userPlan === 'pro') {
+          <p class="txt-ralewayItalic">
+            {{ payAnnually ? pricing.PRO_YEARLY_PRICE : pricing.PRO_MONTHLY_PRICE }}€ /
+            {{ payAnnually ? 'year' : 'month' }}
+          </p>
+        } @else {
+          <p class="pricing__planned">In development</p>
+        }
+      </div>
+      @if (userPlan === 'pro' && canceledSubscription) {
+        <p class="currentPlan currentPlan--canceled">
+          Your current canceled plan, you can enjoy it till the end of this period
+        </p>
+      } @else if (userPlan === 'pro') {
+        <p class="currentPlan">Your current plan</p>
       }
-    </div>
-    @if (userPlan === 'pro' && canceledSubscription) {
-      <p class="currentPlan currentPlan--canceled">
-        Your current canceled plan, you can enjoy it till the end of this period
-      </p>
-    } @else if (userPlan === 'pro') {
-      <p class="currentPlan">Your current plan</p>
-    }
-    <p>
-      Powerful features to gain insights about your audience, track their actions in your stories,
-      and reach more people
-    </p>
-    <ul class="pricing__plan__features">
-      <li class="txt-gray">Everything from other plans</li>
-      <li>
-        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
-        Analytics of your stories
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
-        Tracking of users actions
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
-        Embed stories on your website
-      </li>
-      <li>
-        <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
-        Priority support
-      </li>
-      <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
+      <p>Planned tools for understanding your readers. These features are not available yet.</p>
+      <ul class="pricing__plan__features">
+        <li class="txt-gray">Planned for Pro:</li>
+        <li>
+          <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+          Analytics of your stories
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+          Tracking of users actions
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+          Embed stories on your website
+        </li>
+        <li>
+          <img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" />
+          Priority support
+        </li>
+        <!--li><img src="/assets/images/drawn_icons/star_3.webp" alt="Star icon" /> Access to creative writting service
           </li-->
-    </ul>
-    @if (userPlan === 'pro') {
-      @if (!preventEasyDowngrading && !canceledSubscription) {
-        <polo-basic-button
-          (click)="cancelSubscription()"
-          [waiting]="cancelingSubscription"
-          text="Cancel subscription"
-          type="danger"
-        ></polo-basic-button>
+      </ul>
+      @if (userPlan === 'pro') {
+        @if (!preventEasyDowngrading && !canceledSubscription) {
+          <polo-basic-button
+            (click)="cancelSubscription()"
+            [waiting]="cancelingSubscription"
+            text="Cancel subscription"
+            type="danger"
+          ></polo-basic-button>
+        }
       }
-    }
-    @if (userPlan === 'free' || !userPlan) {
-      <!--polo-landing-link
+      @if (userPlan === 'free' || !userPlan) {
+        <!--polo-landing-link
       (click)="subscribe('pro', payAnnually)"
       text="Upgrade to pro"
     ></polo-landing-link-->
-      <polo-landing-link text="Coming soon"></polo-landing-link>
-    }
-  </div>
+        <span class="pricing__coming-soon">Coming soon</span>
+      }
+    </div>
+  }
 </div>
