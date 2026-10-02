@@ -25,6 +25,8 @@
             "inlineStyleLanguage": "sass",
             "assets": [
               "src/favicon.png",
+              "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets",
               "src/.well-known",
               "src/robots.txt",
@@ -89,7 +91,13 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.png", "src/assets", "src/.well-known"],
+            "assets": [
+              "src/favicon.png",
+              "src/favicon.ico",
+              "src/favicon.svg",
+              "src/assets",
+              "src/.well-known"
+            ],
             "styles": ["src/styles.sass"],
             "scripts": []
           }

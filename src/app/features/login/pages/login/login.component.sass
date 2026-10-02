@@ -1,9 +1,16 @@
+@use '../../../../../styles/marketing'
 @import '../login-shared.sass'
 
 :host
-  --ink: #192c32
-  --blue: #345dbe
+  +marketing.page-theme
+  --text-color: var(--ink)
+  --important-color: var(--blue)
+  --polo-color-text-secondary: var(--muted)
+  --polo-color-surface-muted: #294b3e12
+  --polo-color-border: #25272024
+  --polo-color-focus-ring: #294b3e20
   display: block
+  color-scheme: light
 
 :host *
   box-sizing: border-box
@@ -12,7 +19,7 @@
   min-height: 100dvh
   height: auto
   padding: 36px 24px
-  background: radial-gradient(ellipse at 85% 85%, #e4eee8, transparent 45%), #faf8f2
+  background: radial-gradient(ellipse at 50% 35%, #fbf9f4e8, #fbf9f400)
 
 .login-layout
   width: min(100%, 1080px)
@@ -26,32 +33,45 @@
   color: var(--ink)
   &__brand
     color: var(--ink)
-    font: 700 28px 'LibreBaskerville', serif
-    letter-spacing: -.08em
+    font: 800 27px Raleway, sans-serif
+    letter-spacing: -.075em
     text-decoration: none
     span
-      color: var(--blue)
+      color: #d79829
   &__eyebrow
     margin-top: 100px
     color: var(--blue)
     font-size: 11px
     font-weight: 800
-    letter-spacing: .16em
+    letter-spacing: .13em
   &__title
     margin: 22px 0
-    font: 400 clamp(36px, 4vw, 54px)/1.23 'LibreBaskerville', serif
+    font: 800 clamp(36px, 4vw, 54px)/1.12 Raleway, sans-serif
     letter-spacing: -.055em
+    text-wrap: balance
     em
-      color: var(--blue)
+      position: relative
+      isolation: isolate
+      font-style: normal
+      color: var(--ink)
+      &::after
+        content: ''
+        position: absolute
+        inset: auto 1% .03em
+        height: .16em
+        z-index: -1
+        border-radius: 50%
+        background: var(--accent)
+        transform: rotate(-1deg)
   > p:not(.login-intro__eyebrow):not(.login-intro__title)
     max-width: 420px
-    color: #536268
+    color: var(--muted)
     font-size: 16px
     line-height: 1.7
   &__note
     margin-top: 42px
     padding-top: 20px
-    border-top: 1px solid #d7e0d9
+    border-top: 1px solid var(--rule)
     font-size: 12px
     font-weight: 700
 
@@ -60,55 +80,73 @@
   max-width: 480px
   margin: 0
   padding: clamp(28px, 4vw, 48px)
-  border: 1px solid #e1e5df
+  border: 1px solid var(--polo-color-border-strong)
   border-radius: 14px
-  background: white
-  box-shadow: 0 25px 60px #192c3218
+  background: var(--polo-color-surface)
+  box-shadow: 0 5px 0 #2527200d
   color: var(--ink)
   h1
-    margin: 0
-    font: 400 28px/1.3 'LibreBaskerville', serif
+    margin: 0 0 24px
+    font: 800 28px/1.3 Raleway, sans-serif
     letter-spacing: -.04em
   .login-subtitle
-    margin: 9px 0 27px
-    color: #536268
+    margin: -15px 0 27px
+    color: var(--muted)
     font-size: 14px
     text-align: left
   form
     gap: 17px
+    .form__row
+      grid-template-columns: 1fr
+    .form__footer
+      flex-wrap: wrap
+      gap: 16px
     label
       p
         font-size: 13px
       input
-        border-color: #cbd5d4
+        min-width: 0
+        border-color: var(--polo-color-border-strong)
+        border-radius: 10px
+        color: var(--ink)
+        background: var(--polo-color-surface)
+        &:focus
+          box-shadow: 0 0 0 2px var(--polo-color-focus-ring)
         &:focus-visible
-          outline: 2px solid #82a7ff
+          outline: 2px solid var(--blue)
           outline-offset: 2px
-    > polo-basic-button
-      --polo-color-surface-muted: #345dbe
-      --polo-color-text: white
-      --polo-color-border: #294b9f
+    a
+      color: var(--blue)
+    > polo-basic-button, .form__footer polo-basic-button
+      --polo-color-surface-muted: var(--accent)
+      --polo-color-border: #f3c24c
       display: block
+      border: 1px solid #d8b354
+      border-radius: 10px
+      box-shadow: 0 4px 0 #25272020
   .change
     flex-direction: row
     justify-content: center
+    flex-wrap: wrap
     gap: 12px
     p
       font-size: 13px
     polo-basic-button
       margin: 0
   a:focus-visible
-    outline: 2px solid #82a7ff
-    outline-offset: 3px
+    outline: 3px solid var(--blue)
+    outline-offset: 5px
 
 .login-top
   display: flex
   align-items: center
   justify-content: space-between
   gap: 1rem
+  margin-bottom: 28px
   polo-language-selector
     --polo-color-action: var(--blue)
     --polo-color-action-hover: var(--ink)
+    --polo-color-text-on-action: var(--paper)
 
 .login-back
   color: var(--blue)
@@ -137,5 +175,3 @@
     width: 100%
     max-width: none
     padding: 25px
-    form .form__row
-      grid-template-columns: 1fr

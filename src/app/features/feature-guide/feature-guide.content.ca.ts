@@ -3,15 +3,15 @@ import type { GuideGroup } from './feature-guide.content'
 // Mirrors FEATURE_GUIDE chapter by chapter; ids stay in English so links are shared.
 export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
   {
-    title: 'Fes que reaccioni',
+    title: 'Lògica i estat del jugador',
     description:
-      'Dona conseqüències a les decisions i fes que la història les recordi.',
+      'Configura els canvis d’estat, els requisits de les respostes i les connexions entre nodes.',
     features: [
       {
         id: 'events',
         title: 'Esdeveniments a escenes i decisions',
         summary:
-          'Canvia l’estat del jugador quan arriba a un node o tria una resposta. Porta el compte de monedes, descobertes, confiança i altres conseqüències sense escriure codi.',
+          'Els esdeveniments modifiquen estadístiques numèriques, condicions o propietats de text quan el jugador arriba a un node o selecciona una resposta.',
         steps: [
           'Tria Afegeix un esdeveniment en un node per actuar quan el jugador hi arribi, o en una resposta per actuar quan la triï.',
           'Tria una estadística numèrica, una condició vertadera/falsa o una propietat de text. Posa nom a la referència per poder-la reutilitzar en altres llocs.',
@@ -28,16 +28,16 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
       },
       {
         id: 'conditional-paths',
-        title: 'Camins que depenen del jugador',
+        title: 'Camins condicionals',
         summary:
-          'El mateix punt de decisió pot portar a escenes diferents segons el que hagi fet el jugador. Un visitant de confiança i un de desconegut no han de rebre per força la mateixa benvinguda.',
+          'Fes servir un distribuïdor per seleccionar el node següent segons el valor d’una estadística numèrica o d’una condició del jugador.',
         steps: [
           'Fes servir esdeveniments per registrar una estadística numèrica o una condició vertadera/falsa durant la història.',
           'Connecta el camí a un node distribuïdor que comprovi aquestes referències.',
           'Connecta cada ruta que es compleixi amb la seva escena i afegeix una destinació En cas contrari per a la resta.',
         ],
         example: {
-          label: 'Una entrada, dues experiències',
+          label: 'Exemple: ruta segons una condició',
           lines: [
             'te_clau és vertadera → entrar a l’arxiu',
             'En cas contrari → trobar-se amb el guardià',
@@ -49,14 +49,14 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
         id: 'requirements',
         title: 'Requisits de les respostes',
         summary:
-          'Fes que una resposta només estigui disponible quan el jugador en compleixi els requisits. Una clau trobada pot obrir una porta; prou monedes poden fer possible una compra.',
+          'Els requisits restringeixen la disponibilitat d’una resposta segons un valor numèric mínim o una condició vertadera o falsa. Tots els requisits de la resposta s’han de complir.',
         steps: [
           'Tria Afegeix un requisit a la resposta que vulguis restringir.',
           'Selecciona una estadística numèrica i el seu valor mínim, o una condició que hagi de ser vertadera o falsa.',
           'Afegeix més requisits si cal. El jugador ha de complir tots els requisits d’aquella resposta.',
         ],
         example: {
-          label: 'Guanyar-se l’opció',
+          label: 'Exemple: requisits de dues respostes',
           lines: [
             'Comprar el mapa → requereix almenys 3 monedes',
             'Obrir l’arxiu → requereix te_clau',
@@ -76,7 +76,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
           'Fes servir Puja i Baixa per fixar la prioritat i connecta En cas contrari com a alternativa.',
         ],
         example: {
-          label: 'La prioritat importa',
+          label: 'Exemple: ordre de les rutes',
           lines: [
             'Ruta 1: confiança > 2 I te_clau → entrada secreta',
             'Ruta 2: confiança > 2 → entrada principal',
@@ -107,15 +107,15 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Fes-la personal',
+    title: 'Text, imatges i compartició',
     description:
-      'Fes entrar qui llegeix a la història i dona-li un món on endinsar-se.',
+      'Recull text del jugador, insereix valors en els passatges i configura imatges i opcions de compartició.',
     features: [
       {
         id: 'player-input',
         title: 'Demana text al jugador',
         summary:
-          'Demana un nom, una idea o una altra resposta escrita i mantén-la disponible durant tota la partida. Les paraules de qui llegeix passen a formar part de la teva història.',
+          'Un node de text lliure desa la resposta escrita del jugador en una propietat de la partida. Aquesta propietat es pot reutilitzar en escenes i respostes.',
         steps: [
           'Crea un node de text lliure i escriu la pregunta al seu camp Pregunta.',
           'Indica a Propietat una clau com ara nom. És on es desa la resposta del jugador.',
@@ -123,7 +123,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
           'Reutilitza aquesta propietat en escenes o respostes posteriors amb una variable.',
         ],
         example: {
-          label: 'Un nom que viatja amb qui llegeix',
+          label: 'Exemple: desar i mostrar un nom',
           lines: [
             'Pregunta: Com vols que et diguem?',
             'Propietat: nom · El jugador escriu: Morgan',
@@ -136,7 +136,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
         id: 'variables',
         title: 'Variables dins del text',
         summary:
-          'Deixa que la redacció s’adapti al jugador. Insereix un nom, una estadística numèrica o una condició en un passatge o una resposta en lloc d’escriure una escena diferent per a cada variant.',
+          'Les variables mostren el valor actual d’una propietat, una estadística numèrica o una condició dins del text d’una escena o d’una resposta.',
         steps: [
           'Crea la referència amb un esdeveniment o desa una resposta del jugador a la propietat d’un node de text lliure.',
           'Obre el mode concentració i fes servir Insereix una variable per triar la referència pel seu nom.',
@@ -154,9 +154,9 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
       },
       {
         id: 'images',
-        title: 'Imatges als teus nodes',
+        title: 'Imatges als nodes',
         summary:
-          'Ambienta l’escena amb una il·lustració, el retrat d’un personatge o una pista visual. La imatge acompanya el text sense substituir les teves decisions.',
+          'Els nodes de contingut, de text lliure i finals poden mostrar una imatge a sobre del passatge. Els nodes distribuïdors no admeten imatges.',
         steps: [
           'Obre el menú d’un node de contingut, de text lliure o final i tria Afegeix una imatge.',
           'Tria un fitxer d’imatge i espera que s’acabi de pujar.',
@@ -176,7 +176,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
         id: 'share-node',
         title: 'Compartir i nodes finals',
         summary:
-          'Dona a un final un lloc on anar. Convida qui llegeix a compartir l’aventura, a descobrir la teva obra o a visitar els teus perfils socials.',
+          'Els nodes finals poden oferir un botó per compartir la història i enllaços externs. El missatge i el text del botó es configuren per a cada final.',
         steps: [
           'Crea un node final i escriu el passatge final.',
           'Activa Permet compartir a les opcions de la història per oferir Comparteix aquesta història.',
@@ -196,25 +196,25 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Continua escrivint',
+    title: 'Edició i organització del tauler',
     description:
-      'Endinsa’t en un passatge sense perdre la forma de tota l’aventura.',
+      'Edita els passatges en una vista ampliada i organitza els nodes amb grups o marcs.',
     features: [
       {
         id: 'focus-mode',
         title: 'Mode concentració per a passatges llargs',
         summary:
-          'Aparta’t del llenç i entra en un editor de text sense distraccions. Escriu un passatge llarg, dona-li format i torna al mapa quan vulguis.',
+          'El mode concentració amplia el camp de text d’una escena o d’una resposta i ofereix eines de format i d’inserció de variables.',
         steps: [
           'Fes servir el botó d’ampliar del camp de text d’una escena o d’una resposta per obrir el mode concentració.',
           'Escriu amb negreta, cursiva i variables. Els passatges de les escenes també admeten títols i llistes.',
           'Tria Tanca, o prem Escape, per aplicar el que has escrit al node.',
         ],
         example: {
-          label: 'Del mapa al manuscrit',
+          label: 'Exemple: editar un passatge',
           lines: [
             'Obre una escena → amplia’n el camp de text',
-            'Escriu tot el passatge sense el soroll del llenç',
+            'Edita el text i aplica el format a la vista ampliada',
             'Tanca → tornes al mateix mapa de la història',
           ],
         },
@@ -224,7 +224,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
         id: 'organisation',
         title: 'Grups i marcs mòbils',
         summary:
-          'Mantén comprensible una història gran. Plega un capítol en un grup o mantén-ne les escenes visibles dins d’un marc amb nom que es mou amb elles.',
+          'Els grups contenen nodes en un tauler intern. Els marcs mantenen els nodes visibles al tauler actual i permeten moure’ls conjuntament.',
         steps: [
           'Selecciona nodes relacionats al llenç.',
           'Tria Agrupa els nodes seleccionats per posar-los dins d’un grup. Obre el grup per treballar-hi i fes servir Surt per tornar.',

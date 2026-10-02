@@ -63,7 +63,7 @@ describe('LandingpageComponent', () => {
     expect(hero.querySelector('.hero__reassurance')?.textContent).toContain('No credit card')
     expect(hero.querySelectorAll('.hero__reassurance span').length).toBe(3)
     expect(primaryAction.getAttribute('href')).toBe('/login?mode=register')
-    expect(storyAction.getAttribute('href')).toBe('#try-it')
+    expect(storyAction.getAttribute('href')).toBe('/#try-it')
     expect(hero.querySelector('#try-it polo-game')).toBeTruthy()
     const demoImage = hero.querySelector('.story-player__scene img') as HTMLImageElement
     expect(demoImage.getAttribute('src')).toBe('/assets/images/landing/modest-hero.webp')
@@ -83,11 +83,18 @@ describe('LandingpageComponent', () => {
     expect(blocks.map((block) => block.id)).toEqual(['', 'features', 'pricing', ''])
     expect(main.querySelector('polo-board, #toolkit, .hero__foot')).toBeNull()
     expect(main.textContent).not.toContain('Here’s how')
-    const featuresLink = fixture.nativeElement.querySelector('.nav-links a[href="#features"]')
+    const featuresLink = fixture.nativeElement.querySelector('.nav-links a[href="/#features"]')
     expect(featuresLink?.textContent).toBe('Features')
     expect(main.querySelector('#features polo-landing-feature-card')).toBeTruthy()
     expect(fixture.nativeElement.querySelector('.nav-links a[href="/docs/features"]')?.textContent).toBe('Docs')
     expect(fixture.nativeElement.querySelector('.footer a[href="/docs/features"]')).toBeTruthy()
+  })
+
+  it('offers language selection only in the footer', () => {
+    const page = fixture.nativeElement as HTMLElement
+    expect(page.querySelector('.site-header polo-language-selector')).toBeNull()
+    expect(page.querySelectorAll('polo-language-selector').length).toBe(1)
+    expect(page.querySelector('.footer polo-language-selector')).toBeTruthy()
   })
 
   it('offers creation as soon as the playable demo ends', async () => {

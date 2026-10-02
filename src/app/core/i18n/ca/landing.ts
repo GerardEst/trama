@@ -12,7 +12,7 @@ export const landing: Dictionary['landing'] = {
     skip: 'Salta al contingut',
     features: 'Funcions',
     pricing: 'Preus',
-    docs: 'Guia',
+    docs: 'Documentació',
     login: 'Inicia sessió',
     dashboard: 'Panell',
     start: 'Comença gratis',
@@ -49,7 +49,7 @@ export const landing: Dictionary['landing'] = {
     titleEnd: 'recorden.',
     description:
       'Decisions que importen, camins que s’adapten i un tauler que continua sent llegible a mesura que el teu món creix. Tot sense escriure ni una línia de codi.',
-    readGuide: 'Llegeix la guia',
+    readGuide: 'Consulta la documentació',
     events: {
       label: 'ESDEVENIMENTS',
       title: 'Decisions amb conseqüències',
@@ -172,7 +172,7 @@ export const landing: Dictionary['landing'] = {
   },
   footer: {
     tagline: 'Les històries no han d’anar per força en línia recta.',
-    guide: 'Guia de funcions',
+    guide: 'Documentació',
     pricing: 'Preus',
     login: 'Inicia sessió',
     email: 'Escriu al creador',

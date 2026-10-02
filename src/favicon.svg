@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Trama — històries entrellaçades</title>
+  <rect width="64" height="64" rx="14" fill="#294b3e"/>
+  <!-- Els espais als creuaments alternen els fils per sobre i per sota. -->
+  <g fill="none" stroke-width="6">
+    <path stroke="#f6ce6a" d="M12 24h7m10 0h23M12 40h23m10 0h7"/>
+    <path stroke="#fbf9f4" d="M24 12v23m0 10v7M40 12v7m0 10v23"/>
+  </g>
+  <g fill="#f6ce6a">
+    <circle cx="12" cy="24" r="4"/>
+    <circle cx="52" cy="24" r="4"/>
+    <circle cx="12" cy="40" r="4"/>
+    <circle cx="52" cy="40" r="4"/>
+  </g>
+  <g fill="#fbf9f4">
+    <circle cx="24" cy="12" r="4"/>
+    <circle cx="40" cy="12" r="4"/>
+    <circle cx="24" cy="52" r="4"/>
+    <circle cx="40" cy="52" r="4"/>
+  </g>
+</svg>

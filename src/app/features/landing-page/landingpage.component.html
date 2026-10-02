@@ -1,13 +1,12 @@
-<a class="skip-link" href="#main-content">{{ 'landing.nav.skip' | t }}</a>
+<a class="skip-link" [routerLink]="homeUrl" fragment="main-content">{{ 'landing.nav.skip' | t }}</a>
 <header class="site-header">
   <nav class="nav-shell" [attr.aria-label]="'landing.nav.label' | t">
     <a class="wordmark" [href]="homeUrl" [attr.aria-label]="'landing.nav.home' | t">Trama<span>.</span></a>
     <div class="nav-links">
-      <a href="#features">{{ 'landing.nav.features' | t }}</a>
-      <a href="#pricing">{{ 'landing.nav.pricing' | t }}</a>
+      <a [routerLink]="homeUrl" fragment="features">{{ 'landing.nav.features' | t }}</a>
+      <a [routerLink]="homeUrl" fragment="pricing">{{ 'landing.nav.pricing' | t }}</a>
       <a href="/docs/features">{{ 'landing.nav.docs' | t }}</a>
     </div>
-    <polo-language-selector class="nav-language" (langChange)="changeLanguage($event)"></polo-language-selector>
     @if (!loggedUserEmail) {
       <a class="nav-login" href="/login">{{ 'landing.nav.login' | t }}</a>
     }
@@ -34,7 +33,7 @@
             >{{ (loggedUserEmail ? 'landing.hero.openDashboard' : 'landing.hero.startStory') | t }}
             <span aria-hidden="true">→</span></a
           >
-          <a class="text-link" href="#try-it"
+          <a class="text-link" [routerLink]="homeUrl" fragment="try-it"
             >{{ 'landing.hero.tryStory' | t }} <span aria-hidden="true">↓</span></a
           >
         </div>
@@ -150,7 +149,7 @@
     <p>{{ 'landing.footer.tagline' | t }}</p>
     <div class="footer__links">
       <a href="/docs/features">{{ 'landing.footer.guide' | t }}</a
-      ><a href="#pricing">{{ 'landing.footer.pricing' | t }}</a>
+      ><a [routerLink]="homeUrl" fragment="pricing">{{ 'landing.footer.pricing' | t }}</a>
       @if (!loggedUserEmail) {
         <a href="/login">{{ 'landing.footer.login' | t }}</a>
       }

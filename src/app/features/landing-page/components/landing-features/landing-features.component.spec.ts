@@ -26,6 +26,17 @@ describe('LandingFeaturesComponent', () => {
     })
   })
 
+  it('links to the full documentation below the feature cards', () => {
+    const host = fixture.nativeElement as HTMLElement
+    const link = host.querySelector<HTMLAnchorElement>('.features__footer a')!
+    const grid = host.querySelector('.features__grid')!
+
+    expect(link.getAttribute('href')).toBe('/docs/features')
+    expect(link.textContent?.trim()).toBeTruthy()
+    expect(grid.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(link.querySelector('span')?.getAttribute('aria-hidden')).toBe('true')
+  })
+
   it('links every card to an existing chapter of the feature guide', () => {
     const guideIds = FEATURE_GUIDE.flatMap((group) => group.features.map((feature) => feature.id))
     const links = Array.from(

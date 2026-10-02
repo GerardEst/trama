@@ -16,11 +16,12 @@ import { FEATURE_GUIDE_ES } from './feature-guide.content.es'
 import { FEATURE_GUIDE_CA } from './feature-guide.content.ca'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
 
 @Component({
   selector: 'polo-feature-guide',
   standalone: true,
-  imports: [RouterLink, NgTemplateOutlet, TranslatePipe],
+  imports: [RouterLink, NgTemplateOutlet, TranslatePipe, LanguageSelectorComponent],
   templateUrl: './feature-guide.component.html',
   styleUrl: './feature-guide.component.sass',
 })
@@ -53,7 +54,7 @@ export class FeatureGuideComponent implements OnInit {
             window.scrollTo(0, 0)
             return
           }
-          if (!this.featureIds.has(fragment)) return
+          if (fragment !== 'guide-content' && !this.featureIds.has(fragment)) return
           const chapter = document.getElementById(fragment)
           chapter?.scrollIntoView({ block: 'start' })
           chapter?.focus({ preventScroll: true })

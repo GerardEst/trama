@@ -12,7 +12,7 @@ export const landing: Dictionary['landing'] = {
     skip: 'Saltar al contenido',
     features: 'Funciones',
     pricing: 'Precios',
-    docs: 'Guía',
+    docs: 'Documentación',
     login: 'Iniciar sesión',
     dashboard: 'Panel',
     start: 'Empieza gratis',
@@ -49,7 +49,7 @@ export const landing: Dictionary['landing'] = {
     titleEnd: 'recuerdan.',
     description:
       'Decisiones que importan, caminos que se adaptan y un tablero que sigue siendo legible a medida que crece tu mundo. Todo sin escribir una línea de código.',
-    readGuide: 'Lee la guía',
+    readGuide: 'Consulta la documentación',
     events: {
       label: 'EVENTOS',
       title: 'Decisiones con consecuencias',
@@ -172,7 +172,7 @@ export const landing: Dictionary['landing'] = {
   },
   footer: {
     tagline: 'Las historias no tienen por qué ir en línea recta.',
-    guide: 'Guía de funciones',
+    guide: 'Documentación',
     pricing: 'Precios',
     login: 'Iniciar sesión',
     email: 'Escribe al creador',

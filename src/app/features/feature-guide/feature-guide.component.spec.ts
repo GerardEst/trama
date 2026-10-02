@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router'
 import { Meta, Title } from '@angular/platform-browser'
 import { FeatureGuideComponent } from './feature-guide.component'
 import { FEATURE_GUIDE } from './feature-guide.content'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 describe('FeatureGuideComponent', () => {
   let fixture: ComponentFixture<FeatureGuideComponent>
@@ -15,6 +16,53 @@ describe('FeatureGuideComponent', () => {
     fixture = TestBed.createComponent(FeatureGuideComponent)
     fixture.detectChanges()
     await fixture.whenStable()
+  })
+
+  it('uses the shared landing theme and readable documentation typography', () => {
+    const page = fixture.nativeElement as HTMLElement
+    const style = getComputedStyle(page)
+    expect(style.getPropertyValue('--paper').trim()).toBe('#fbf9f4')
+    expect(style.getPropertyValue('--blue').trim()).toBe('#294b3e')
+    expect(style.getPropertyValue('--accent').trim()).toBe('#f6ce6a')
+    expect(style.backgroundImage).toContain('linear-gradient')
+    expect(getComputedStyle(page.querySelector('h1')!).fontFamily).toContain('Raleway')
+    expect(page.querySelector('.guide-header polo-language-selector')).toBeNull()
+    expect(page.querySelectorAll('polo-language-selector').length).toBe(1)
+    expect(page.querySelector('.guide-footer polo-language-selector')).toBeTruthy()
+  })
+
+  it('uses documentation headings and configuration labels in every language', async () => {
+    const i18n = TestBed.inject(I18nService)
+    const page = fixture.nativeElement as HTMLElement
+    try {
+      for (const [lang, title, setup, notes] of [
+        ['en', 'Docs', 'Setup', 'Notes and limitations'],
+        ['ca', 'Documentació', 'Configuració', 'Notes i limitacions'],
+        ['es', 'Documentación', 'Configuración', 'Notas y limitaciones'],
+      ] as const) {
+        await i18n.setLang(lang, { persist: false })
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(page.querySelector('h1')?.textContent?.trim()).toBe(title)
+        expect(page.querySelector('.guide-chapter h3')?.textContent?.trim()).toBe(setup)
+        expect(page.querySelector('.guide-note span')?.textContent?.trim()).toBe(notes)
+        expect(page.querySelectorAll('.guide-chapter').length).toBe(11)
+      }
+    } finally {
+      await i18n.setLang('en', { persist: false })
+    }
+  })
+
+  it('places the index on a solid surface and separates the footer from the content', () => {
+    const page = fixture.nativeElement as HTMLElement
+    const sidebar = getComputedStyle(page.querySelector('.guide-sidebar')!)
+    const content = getComputedStyle(page.querySelector('.guide-content')!)
+    const footer = page.querySelector('.guide-footer')!
+
+    expect(sidebar.backgroundColor).toBe(content.backgroundColor)
+    expect(sidebar.borderTopWidth).toBe('1px')
+    expect(parseFloat(getComputedStyle(footer).marginTop)).toBeGreaterThanOrEqual(40)
+    expect(footer.querySelector('polo-language-selector')).toBeTruthy()
   })
 
   it('documents all eleven features with unique, linkable chapters and practical instructions', () => {
@@ -65,7 +113,7 @@ describe('FeatureGuideComponent', () => {
 
   it('is a lightweight guide with metadata and routes back to creation, not an editor or a playable story', () => {
     const page = fixture.nativeElement as HTMLElement
-    expect(TestBed.inject(Title).getTitle()).toBe('Feature guide — Trama')
+    expect(TestBed.inject(Title).getTitle()).toBe('Docs — Trama')
     expect(
       TestBed.inject(Meta).getTag('name="description"')?.content
     ).toContain('Trama’s story-building tools')

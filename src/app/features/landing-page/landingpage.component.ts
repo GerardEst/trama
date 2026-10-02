@@ -1,16 +1,19 @@
 import {
   AfterViewInit,
+  afterNextRender,
   Component,
   effect,
   ElementRef,
   inject,
+  Injector,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core'
 import { DOCUMENT } from '@angular/common'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { Meta } from '@angular/platform-browser'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
@@ -32,6 +35,7 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
     BillingCycleComponent,
     LanguageSelectorComponent,
     TranslatePipe,
+    RouterLink,
   ],
   templateUrl: './landingpage.component.html',
   styleUrls: [
@@ -52,6 +56,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly i18n = inject(I18nService)
   private readonly router = inject(Router)
   private readonly document = inject(DOCUMENT)
+  private readonly route = inject(ActivatedRoute)
+  private readonly injector = inject(Injector)
   private alternateLinks: HTMLLinkElement[] = []
 
   get creationUrl() {
@@ -71,6 +77,14 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
     private meta: Meta,
     public db: DatabaseService
   ) {
+    // Scope anchor scrolling to the landing so editor navigation is unaffected.
+    this.route.fragment.pipe(takeUntilDestroyed()).subscribe((fragment) => {
+      if (!fragment || !['main-content', 'features', 'pricing', 'try-it'].includes(fragment)) return
+      afterNextRender(() => {
+        this.document.getElementById(fragment)?.scrollIntoView({ block: 'start' })
+      }, { injector: this.injector })
+    })
+
     // The route title follows the language too (see I18nTitleStrategy).
     effect(() => {
       this.meta.updateTag({ name: 'description', content: this.i18n.t('landing.meta.description') })
@@ -91,7 +105,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   changeLanguage(lang: Lang) {
-    this.router.navigate([landingUrl(lang)])
+    this.router.navigate([landingUrl(lang)], { preserveFragment: true })
   }
 
   private closingObserver?: IntersectionObserver

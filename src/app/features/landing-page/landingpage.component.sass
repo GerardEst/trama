@@ -1,24 +1,8 @@
+@use '../../../styles/marketing'
+
 :host
-  --ink: #252720
-  --muted: #5c625a
-  --paper: #fbf9f4
-  --blue: #294b3e
-  --accent: #f6ce6a
-  --rule: #25272024
-  --polo-color-text: #252720
-  --polo-color-text-strong: #252720
-  --polo-color-surface: #fffefa
-  --polo-color-border-strong: #25272033
-  --polo-color-action-soft: #294b3e12
-  --polo-color-focus: #294b3e
-  --polo-color-border-hover: #294b3e
+  +marketing.page-theme
   display: block
-  color: var(--ink)
-  font-family: Raleway, sans-serif
-  background-color: var(--paper)
-  // Fine and major graph-paper lines, with the little intersections from pi.dev.
-  background-image: linear-gradient(#25272006 1px, transparent 1px), linear-gradient(90deg, #25272006 1px, transparent 1px), linear-gradient(#2527200d 1px, transparent 1px), linear-gradient(90deg, #2527200d 1px, transparent 1px), radial-gradient(circle, #25272018 1px, transparent 1.5px)
-  background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px, 20px 20px
 
 :host *
   box-sizing: border-box
@@ -259,8 +243,8 @@ polo-language-selector
 @media (max-width: 760px)
   .nav-links
     display: none
-  .nav-language
-    margin-left: auto
+  .wordmark
+    margin-right: auto
   .hero__inner
     padding: 54px 0 40px
     gap: 40px
@@ -277,11 +261,6 @@ polo-language-selector
   .nav-shell
     min-height: 66px
     gap: 12px
-  // Small phones switch language from the footer.
-  .nav-language
-    display: none
-  .wordmark
-    margin-right: auto
   .nav-login, .nav-cta
     font-size: 12px
   .nav-cta

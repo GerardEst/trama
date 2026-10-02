@@ -15,14 +15,14 @@ export interface GuideGroup {
 
 export const FEATURE_GUIDE: readonly GuideGroup[] = [
   {
-    title: 'Make it react',
-    description: 'Give choices consequences and let the story remember them.',
+    title: 'Logic and player state',
+    description: 'Configure state changes, answer requirements and connections between nodes.',
     features: [
       {
         id: 'events',
         title: 'Events on scenes and choices',
         summary:
-          'Change the player’s state when they arrive at a node or choose an answer. Keep track of coins, discoveries, trust and other consequences without writing code.',
+          'Events modify numeric stats, conditions or text properties when the player arrives at a node or selects an answer.',
         steps: [
           'Choose Add event on a node to act when the player arrives, or on an answer to act when they choose it.',
           'Choose a numeric stat, a true/false condition or a text property. Name the reference so you can reuse it elsewhere.',
@@ -39,16 +39,16 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
       },
       {
         id: 'conditional-paths',
-        title: 'Paths that depend on the player',
+        title: 'Conditional paths',
         summary:
-          'The same decision point can lead to different scenes depending on what the player has done. A trusted visitor and an unknown visitor do not have to get the same welcome.',
+          'Use a distributor to select the next node based on the value of a numeric stat or a player condition.',
         steps: [
           'Use events to record a numeric stat or a true/false condition during the story.',
           'Connect the path to a distributor node that checks those references.',
           'Connect each matching route to its scene, and add an Otherwise destination for everyone else.',
         ],
         example: {
-          label: 'One entrance, two experiences',
+          label: 'Example: routing by a condition',
           lines: [
             'has_key is true → enter the archive',
             'Otherwise → meet the gatekeeper',
@@ -60,14 +60,14 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
         id: 'requirements',
         title: 'Answer requirements',
         summary:
-          'Make an answer available only when the player meets its requirements. A discovered key can open a door; enough coins can make a purchase possible.',
+          'Requirements restrict an answer’s availability based on a minimum numeric value or a true/false condition. Every requirement on the answer must be met.',
         steps: [
           'Choose Add requirement on the answer you want to restrict.',
           'Select a numeric stat and its minimum amount, or a condition that must be true or false.',
           'Add more requirements if needed. The player must meet every requirement on that answer.',
         ],
         example: {
-          label: 'Earn the option',
+          label: 'Example: requirements on two answers',
           lines: [
             'Buy the map → requires at least 3 coins',
             'Open the archive → requires has_key',
@@ -87,7 +87,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
           'Use Up and Down to set priority, then connect Otherwise as a fallback.',
         ],
         example: {
-          label: 'Priority matters',
+          label: 'Example: route order',
           lines: [
             'Route 1: trust > 2 AND has_key → secret entrance',
             'Route 2: trust > 2 → front entrance',
@@ -118,15 +118,15 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Make it personal',
+    title: 'Text, images and sharing',
     description:
-      'Bring the reader into the story, then give them a world to step inside.',
+      'Collect player text, insert values into passages and configure images and sharing options.',
     features: [
       {
         id: 'player-input',
         title: 'Ask the player for text',
         summary:
-          'Ask for a name, a thought or another written response and keep it available throughout that playthrough. The reader’s words become part of your story.',
+          'A text-input node stores the player’s written response in a property for the current playthrough. This property can be reused in scenes and answers.',
         steps: [
           'Create a text-input node and write the question in its Prompt field.',
           'Set Property to a key such as name. This is where the player’s response is stored.',
@@ -134,7 +134,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
           'Reuse that property in later scenes or answers with a variable token.',
         ],
         example: {
-          label: 'A name that travels with the reader',
+          label: 'Example: storing and displaying a name',
           lines: [
             'Prompt: What should we call you?',
             'Property: name · Player writes: Morgan',
@@ -147,7 +147,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
         id: 'variables',
         title: 'Variables inside your text',
         summary:
-          'Let the wording adapt to the player. Insert a name, a numeric stat or a condition into a passage or an answer rather than writing a separate scene for every variation.',
+          'Variables display the current value of a property, numeric stat or condition within the text of a scene or an answer.',
         steps: [
           'Create the reference with an event, or store a player response in a text-input property.',
           'Open focus mode and use Insert variable to choose the reference by name.',
@@ -165,9 +165,9 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
       },
       {
         id: 'images',
-        title: 'Images in your nodes',
+        title: 'Images in nodes',
         summary:
-          'Set the scene with an illustration, a character portrait or a visual clue. An image sits alongside the writing rather than replacing your choices.',
+          'Content, text-input and end nodes can display an image above the passage. Distributor nodes do not support images.',
         steps: [
           'Open the menu on a content, text-input or end node and choose Add image.',
           'Choose an image file and wait for the upload to finish.',
@@ -187,7 +187,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
         id: 'share-node',
         title: 'Share and end nodes',
         summary:
-          'Give an ending somewhere to go next. Invite the reader to share the adventure, discover your work or visit your social profiles.',
+          'End nodes can offer a story-sharing button and external links. The message and button label are configured for each ending.',
         steps: [
           'Create an end node and write the final passage.',
           'Enable sharing in the story settings to offer Share this story.',
@@ -207,25 +207,25 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Keep writing',
+    title: 'Editing and board organisation',
     description:
-      'Go deep into a passage without losing the shape of the whole adventure.',
+      'Edit passages in an expanded view and organise nodes with groups or frames.',
     features: [
       {
         id: 'focus-mode',
         title: 'Focus mode for long passages',
         summary:
-          'Step away from the canvas and into a distraction-free text editor. Write a long passage, format it and return to the map when you are ready.',
+          'Focus mode expands a scene or answer text field and provides formatting and variable-insertion tools.',
         steps: [
           'Use the expand button on a scene’s text field or an answer to open focus mode.',
           'Write with bold, italic and variable tokens. Scene passages also support headings and lists.',
           'Choose Close, or press Escape, to apply your writing back to the node.',
         ],
         example: {
-          label: 'From map to manuscript',
+          label: 'Example: editing a passage',
           lines: [
             'Open a scene → expand its text field',
-            'Write the whole passage without canvas clutter',
+            'Edit and format the text in the expanded view',
             'Close → return to the same story map',
           ],
         },
@@ -235,7 +235,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
         id: 'organisation',
         title: 'Groups and movable frames',
         summary:
-          'Keep a large story understandable. Collapse a chapter into a group, or keep its scenes visible inside a named frame that moves with them.',
+          'Groups contain nodes on an internal board. Frames keep nodes visible on the current board and let you move them together.',
         steps: [
           'Select related nodes on the canvas.',
           'Choose Group selected nodes to place them inside a group. Open the group to work on its contents and use Exit to return.',

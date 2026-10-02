@@ -3,15 +3,15 @@ import type { GuideGroup } from './feature-guide.content'
 // Mirrors FEATURE_GUIDE chapter by chapter; ids stay in English so links are shared.
 export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
   {
-    title: 'Que reaccione',
+    title: 'Lógica y estado del jugador',
     description:
-      'Da consecuencias a las decisiones y haz que la historia las recuerde.',
+      'Configura los cambios de estado, los requisitos de las respuestas y las conexiones entre nodos.',
     features: [
       {
         id: 'events',
         title: 'Eventos en escenas y decisiones',
         summary:
-          'Cambia el estado del jugador cuando llega a un nodo o elige una respuesta. Lleva la cuenta de monedas, descubrimientos, confianza y otras consecuencias sin escribir código.',
+          'Los eventos modifican estadísticas numéricas, condiciones o propiedades de texto cuando el jugador llega a un nodo o selecciona una respuesta.',
         steps: [
           'Elige Añadir evento en un nodo para actuar cuando el jugador llegue, o en una respuesta para actuar cuando la elija.',
           'Elige una estadística numérica, una condición verdadera/falsa o una propiedad de texto. Ponle nombre a la referencia para reutilizarla en otros lugares.',
@@ -28,16 +28,16 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
       },
       {
         id: 'conditional-paths',
-        title: 'Caminos que dependen del jugador',
+        title: 'Caminos condicionales',
         summary:
-          'El mismo punto de decisión puede llevar a escenas distintas según lo que haya hecho el jugador. Un visitante de confianza y uno desconocido no tienen por qué recibir la misma bienvenida.',
+          'Usa un distribuidor para seleccionar el siguiente nodo según el valor de una estadística numérica o de una condición del jugador.',
         steps: [
           'Usa eventos para registrar una estadística numérica o una condición verdadera/falsa durante la historia.',
           'Conecta el camino a un nodo distribuidor que compruebe esas referencias.',
           'Conecta cada ruta que se cumpla con su escena y añade un destino En otro caso para el resto.',
         ],
         example: {
-          label: 'Una entrada, dos experiencias',
+          label: 'Ejemplo: ruta según una condición',
           lines: [
             'tiene_llave es verdadera → entrar en el archivo',
             'En otro caso → encontrarse con el guardián',
@@ -49,14 +49,14 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
         id: 'requirements',
         title: 'Requisitos de las respuestas',
         summary:
-          'Haz que una respuesta solo esté disponible cuando el jugador cumpla sus requisitos. Una llave encontrada puede abrir una puerta; suficientes monedas pueden hacer posible una compra.',
+          'Los requisitos restringen la disponibilidad de una respuesta según un valor numérico mínimo o una condición verdadera o falsa. Todos los requisitos de la respuesta deben cumplirse.',
         steps: [
           'Elige Añadir requisito en la respuesta que quieras restringir.',
           'Selecciona una estadística numérica y su valor mínimo, o una condición que deba ser verdadera o falsa.',
           'Añade más requisitos si hace falta. El jugador debe cumplir todos los requisitos de esa respuesta.',
         ],
         example: {
-          label: 'Ganarse la opción',
+          label: 'Ejemplo: requisitos de dos respuestas',
           lines: [
             'Comprar el mapa → requiere al menos 3 monedas',
             'Abrir el archivo → requiere tiene_llave',
@@ -76,7 +76,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
           'Usa Subir y Bajar para fijar la prioridad y conecta En otro caso como alternativa.',
         ],
         example: {
-          label: 'La prioridad importa',
+          label: 'Ejemplo: orden de las rutas',
           lines: [
             'Ruta 1: confianza > 2 Y tiene_llave → entrada secreta',
             'Ruta 2: confianza > 2 → entrada principal',
@@ -107,15 +107,15 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Hazla personal',
+    title: 'Texto, imágenes y opciones para compartir',
     description:
-      'Mete a quien lee en la historia y dale un mundo en el que entrar.',
+      'Recoge texto del jugador, inserta valores en los pasajes y configura imágenes y opciones para compartir.',
     features: [
       {
         id: 'player-input',
         title: 'Pide texto al jugador',
         summary:
-          'Pide un nombre, una idea u otra respuesta escrita y mantenla disponible durante toda la partida. Las palabras de quien lee pasan a formar parte de tu historia.',
+          'Un nodo de texto libre guarda la respuesta escrita del jugador en una propiedad de la partida. Esta propiedad se puede reutilizar en escenas y respuestas.',
         steps: [
           'Crea un nodo de texto libre y escribe la pregunta en su campo Pregunta.',
           'Indica en Propiedad una clave como nombre. Ahí se guarda la respuesta del jugador.',
@@ -123,7 +123,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
           'Reutiliza esa propiedad en escenas o respuestas posteriores con una variable.',
         ],
         example: {
-          label: 'Un nombre que viaja con quien lee',
+          label: 'Ejemplo: guardar y mostrar un nombre',
           lines: [
             'Pregunta: ¿Cómo quieres que te llamemos?',
             'Propiedad: nombre · El jugador escribe: Morgan',
@@ -136,7 +136,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
         id: 'variables',
         title: 'Variables dentro del texto',
         summary:
-          'Deja que la redacción se adapte al jugador. Inserta un nombre, una estadística numérica o una condición en un pasaje o una respuesta en lugar de escribir una escena distinta para cada variante.',
+          'Las variables muestran el valor actual de una propiedad, una estadística numérica o una condición dentro del texto de una escena o una respuesta.',
         steps: [
           'Crea la referencia con un evento o guarda una respuesta del jugador en la propiedad de un nodo de texto libre.',
           'Abre el modo concentración y usa Insertar variable para elegir la referencia por su nombre.',
@@ -154,9 +154,9 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
       },
       {
         id: 'images',
-        title: 'Imágenes en tus nodos',
+        title: 'Imágenes en los nodos',
         summary:
-          'Ambienta la escena con una ilustración, el retrato de un personaje o una pista visual. La imagen acompaña al texto sin sustituir tus decisiones.',
+          'Los nodos de contenido, de texto libre y finales pueden mostrar una imagen encima del pasaje. Los nodos distribuidores no admiten imágenes.',
         steps: [
           'Abre el menú de un nodo de contenido, de texto libre o final y elige Añadir imagen.',
           'Elige un archivo de imagen y espera a que termine de subirse.',
@@ -176,7 +176,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
         id: 'share-node',
         title: 'Compartir y nodos finales',
         summary:
-          'Dale a un final un lugar adonde ir. Invita a quien lee a compartir la aventura, a descubrir tu obra o a visitar tus perfiles sociales.',
+          'Los nodos finales pueden ofrecer un botón para compartir la historia y enlaces externos. El mensaje y el texto del botón se configuran para cada final.',
         steps: [
           'Crea un nodo final y escribe el pasaje final.',
           'Activa Permitir compartir en las opciones de la historia para ofrecer Compartir esta historia.',
@@ -196,25 +196,25 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
     ],
   },
   {
-    title: 'Sigue escribiendo',
+    title: 'Edición y organización del tablero',
     description:
-      'Sumérgete en un pasaje sin perder la forma de toda la aventura.',
+      'Edita los pasajes en una vista ampliada y organiza los nodos con grupos o marcos.',
     features: [
       {
         id: 'focus-mode',
         title: 'Modo concentración para pasajes largos',
         summary:
-          'Apártate del lienzo y entra en un editor de texto sin distracciones. Escribe un pasaje largo, dale formato y vuelve al mapa cuando quieras.',
+          'El modo concentración amplía el campo de texto de una escena o una respuesta y ofrece herramientas de formato e inserción de variables.',
         steps: [
           'Usa el botón de ampliar del campo de texto de una escena o de una respuesta para abrir el modo concentración.',
           'Escribe con negrita, cursiva y variables. Los pasajes de las escenas también admiten títulos y listas.',
           'Elige Cerrar, o pulsa Escape, para aplicar lo que has escrito al nodo.',
         ],
         example: {
-          label: 'Del mapa al manuscrito',
+          label: 'Ejemplo: editar un pasaje',
           lines: [
             'Abre una escena → amplía su campo de texto',
-            'Escribe todo el pasaje sin el ruido del lienzo',
+            'Edita el texto y aplica el formato en la vista ampliada',
             'Cerrar → vuelves al mismo mapa de la historia',
           ],
         },
@@ -224,7 +224,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
         id: 'organisation',
         title: 'Grupos y marcos móviles',
         summary:
-          'Mantén comprensible una historia grande. Pliega un capítulo en un grupo o mantén sus escenas visibles dentro de un marco con nombre que se mueve con ellas.',
+          'Los grupos contienen nodos en un tablero interno. Los marcos mantienen los nodos visibles en el tablero actual y permiten moverlos conjuntamente.',
         steps: [
           'Selecciona nodos relacionados en el lienzo.',
           'Elige Agrupar nodos seleccionados para colocarlos dentro de un grupo. Abre el grupo para trabajar en su contenido y usa Salir para volver.',

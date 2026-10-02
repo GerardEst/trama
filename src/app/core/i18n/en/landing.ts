@@ -47,7 +47,7 @@ export const landing = {
     titleEnd: 'remember.',
     description:
       'Choices that matter, paths that adapt and a board that stays readable as your world grows. All without writing a line of code.',
-    readGuide: 'Read the guide',
+    readGuide: 'Read the docs',
     events: {
       label: 'EVENTS',
       title: 'Choices with consequences',
@@ -170,7 +170,7 @@ export const landing = {
   },
   footer: {
     tagline: 'Stories don’t have to go in a straight line.',
-    guide: 'Feature guide',
+    guide: 'Docs',
     pricing: 'Pricing',
     login: 'Log in',
     email: 'Email the maker',

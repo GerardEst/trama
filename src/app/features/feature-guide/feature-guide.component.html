@@ -1,10 +1,9 @@
-<a class="skip-link" href="#guide-content">{{ 'guide.skip' | t }}</a>
+<a class="skip-link" [routerLink]="[]" fragment="guide-content">{{ 'guide.skip' | t }}</a>
 <header class="guide-header">
   <nav class="guide-shell guide-header__inner" [attr.aria-label]="'guide.navLabel' | t">
     <a class="wordmark" [routerLink]="homeUrl()" [attr.aria-label]="'guide.home' | t"
       >Trama<span>.</span></a
     >
-    <span class="guide-header__label">{{ 'guide.label' | t }}</span>
     <a class="guide-header__back" [href]="homeUrl() + '#pricing'">{{ 'guide.pricing' | t }}</a>
     <a class="guide-button" routerLink="/login" [queryParams]="{ mode: 'register' }"
       >{{ 'guide.start' | t }} <span aria-hidden="true">↗</span></a
@@ -16,10 +15,7 @@
     <a class="guide-back" [routerLink]="homeUrl()"
       ><span aria-hidden="true">←</span> {{ 'guide.back' | t }}</a
     >
-    <p class="eyebrow">{{ 'guide.eyebrow' | t: { count: featureCount() } }}</p>
-    <h1>
-      {{ 'guide.titleStart' | t }}<br />{{ 'guide.titleMiddle' | t }} <em>{{ 'guide.titleEnd' | t }}</em>
-    </h1>
+    <h1>{{ 'guide.title' | t }}</h1>
     <p class="guide-intro__description">{{ 'guide.description' | t }}</p>
     <p class="guide-intro__note">{{ 'guide.note' | t }}</p>
   </div>
@@ -84,7 +80,7 @@
       }
       <div class="guide-next">
         <p class="eyebrow">{{ 'guide.nextEyebrow' | t }}</p>
-        <h2>{{ 'guide.nextTitleStart' | t }}<br />{{ 'guide.nextTitleEnd' | t }}</h2>
+        <h2>{{ 'guide.nextTitle' | t }}</h2>
         <a
           class="guide-button guide-button--primary"
           routerLink="/login"
@@ -101,5 +97,6 @@
 <footer class="guide-footer guide-shell">
   <a class="wordmark" [routerLink]="homeUrl()">Trama<span>.</span></a>
   <p>{{ 'guide.tagline' | t }}</p>
-  <a href="mailto:gesteve.12@gmail.com">{{ 'guide.ask' | t }} <span aria-hidden="true">↗</span></a>
+  <a class="guide-footer__contact" href="mailto:gesteve.12@gmail.com">{{ 'guide.ask' | t }} <span aria-hidden="true">↗</span></a>
+  <polo-language-selector></polo-language-selector>
 </footer>
