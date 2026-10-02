@@ -25,7 +25,7 @@ describe('NodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('shows a saved name above the node type and edits it without starting a drag', () => {
+  it('shows a saved name above the node type, drags from the name and edits on click', () => {
     const editor = TestBed.inject(StoryEditorService)
     const update = spyOn(editor, 'updateNodeName')
     fixture.componentRef.setInput('nodeId', 'node_7')
@@ -40,7 +40,11 @@ describe('NodeComponent', () => {
     const pointerDown = jasmine.createSpy('pointerDown')
     host.addEventListener('pointerdown', pointerDown)
     input.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
-    expect(pointerDown).not.toHaveBeenCalled()
+    expect(pointerDown).toHaveBeenCalledTimes(1)
+    input.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
+    expect(document.activeElement).toBe(input)
+    expect(input.readOnly).toBeFalse()
 
     input.value = 'A new ending'
     input.dispatchEvent(new Event('change'))

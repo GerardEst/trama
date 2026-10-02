@@ -72,7 +72,7 @@ describe('BoardComponent', () => {
     expect(nodeComponent.answerComponents?.last.richTextField?.inlineEditor).toBeDefined()
   })
 
-  it('edits a node name without starting a drag or moving keyboard focus to the header', () => {
+  it('starts a drag from the name, but a click edits without moving focus to the header', () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
     activeStory.load('story-1', 'Story', {
@@ -85,10 +85,14 @@ describe('BoardComponent', () => {
     const input = host.querySelector<HTMLInputElement>('.node__name input')!
     const mouseDown = jasmine.createSpy('mouseDown')
     header.addEventListener('mousedown', mouseDown)
-    input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
-    expect(mouseDown).not.toHaveBeenCalled()
-    input.focus()
+    input.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1 }))
+    input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+    expect(mouseDown).toHaveBeenCalledTimes(1)
+    input.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
     expect(document.activeElement).toBe(input)
+    input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    expect(mouseDown).toHaveBeenCalledTimes(1)
     input.value = 'My beginning'
     input.dispatchEvent(new Event('change', { bubbles: true }))
     expect(activeStory.entireTree().nodes[0].name).toBe('My beginning')

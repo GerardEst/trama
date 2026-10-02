@@ -27,6 +27,7 @@
     <div class="node__heading">
       <polo-editable-name
         class="node__name"
+        [dragHandle]="true"
         [label]="'board.node.nameLabel' | t: { type: kindName(), id: nodeId }"
         [value]="name === nodeId ? '' : name || ''"
         [placeholder]="nodeId"

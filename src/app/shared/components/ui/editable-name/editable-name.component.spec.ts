@@ -35,6 +35,48 @@ describe('EditableNameComponent', () => {
     expect(changed).toHaveBeenCalledOnceWith('Chapter two')
   })
 
+  it('lets an unfocused name start a header drag, but edits on a click', () => {
+    fixture.componentRef.setInput('dragHandle', true)
+    fixture.detectChanges()
+    const input = (fixture.nativeElement as HTMLElement).querySelector('input')!
+    const header = document.createElement('div')
+    header.appendChild(fixture.nativeElement)
+    document.body.appendChild(header)
+    const down = jasmine.createSpy('down')
+    header.addEventListener('mousedown', down)
+    try {
+      input.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true, pointerId: 1, clientX: 10, clientY: 10,
+      }))
+      const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+      input.dispatchEvent(mouseDown)
+      expect(mouseDown.defaultPrevented).toBeTrue()
+      expect(down).toHaveBeenCalledTimes(1)
+      expect(input.readOnly).toBeTrue()
+
+      document.dispatchEvent(new PointerEvent('pointermove', {
+        bubbles: true, pointerId: 1, clientX: 30, clientY: 10,
+      }))
+      input.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      fixture.detectChanges()
+      expect(input.readOnly).toBeTrue()
+      expect(document.activeElement).not.toBe(input)
+
+      input.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true, pointerId: 2, clientX: 10, clientY: 10,
+      }))
+      input.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      fixture.detectChanges()
+      expect(document.activeElement).toBe(input)
+      expect(input.readOnly).toBeFalse()
+      input.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      expect(down).toHaveBeenCalledTimes(1)
+    } finally {
+      input.blur()
+      header.remove()
+    }
+  })
+
   it('has no visible border until focused, including in the dark dashboard theme', () => {
     const input = (fixture.nativeElement as HTMLElement).querySelector('input')!
     const previousTheme = document.documentElement.getAttribute('data-polo-theme')

@@ -156,6 +156,7 @@
             <span class="groupNode__port groupNode__port--exit" [poloBoardAnchor]="node.id + '_group-exit'"></span>
             <div class="groupNode__header" cdkDragHandle tabindex="0">
               <polo-editable-name
+                [dragHandle]="true"
                 [label]="'board.groups.name' | t"
                 [value]="node.text || ('board.groups.defaultName' | t)"
                 (click)="activateNode(node.id)"
