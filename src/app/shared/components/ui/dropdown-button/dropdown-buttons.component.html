@@ -1,7 +1,0 @@
-<div (mouseleave)="closeDropdown()">
-  <polo-basic-button (click)="toggleDropdown()" text="{{ label }}">
-  </polo-basic-button>
-  <div (click)="closeDropdown()" *ngIf="openedDropdown" class="dropdown">
-    <ng-content></ng-content>
-  </div>
-</div>
