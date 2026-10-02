@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { Title, Meta } from '@angular/platform-browser'
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
+import { LandingFeaturesComponent } from './components/landing-features/landing-features.component'
 import { PricingComponent } from 'src/app/shared/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/billing-cycle.component'
 
@@ -10,6 +11,7 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
   standalone: true,
   imports: [
     LandingStoryDemoComponent,
+    LandingFeaturesComponent,
     PricingComponent,
     BillingCycleComponent,
   ],

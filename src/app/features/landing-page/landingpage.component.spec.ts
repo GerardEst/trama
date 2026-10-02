@@ -56,14 +56,16 @@ describe('LandingpageComponent', () => {
     expect(TestBed.inject(ActiveStoryService).entireTree().nodes).toEqual([])
   })
 
-  it('goes straight from the demo to pricing without a board or dead navigation links', () => {
+  it('goes from the demo to the features and pricing without a board or dead navigation links', () => {
     const main = fixture.nativeElement.querySelector('main') as HTMLElement
-    const sections = Array.from(main.querySelectorAll(':scope > section'))
+    const blocks = Array.from(main.querySelectorAll(':scope > section, :scope > polo-landing-features'))
 
-    expect(sections.map((section) => section.id)).toEqual(['', 'pricing', ''])
-    expect(main.querySelector('polo-board, #features, #toolkit, .hero__foot')).toBeNull()
+    expect(blocks.map((block) => block.id)).toEqual(['', 'features', 'pricing', ''])
+    expect(main.querySelector('polo-board, #toolkit, .hero__foot')).toBeNull()
     expect(main.textContent).not.toContain('Here’s how')
-    expect(fixture.nativeElement.querySelector('a[href="#features"]')).toBeNull()
+    const featuresLink = fixture.nativeElement.querySelector('.nav-links a[href="#features"]')
+    expect(featuresLink?.textContent).toBe('Features')
+    expect(main.querySelector('#features polo-landing-feature-card')).toBeTruthy()
     expect(fixture.nativeElement.querySelector('.nav-links a[href="/docs/features"]')?.textContent).toBe('Docs')
     expect(fixture.nativeElement.querySelector('.footer a[href="/docs/features"]')).toBeTruthy()
   })

@@ -1,0 +1,74 @@
+:host
+  display: block
+
+.features
+  padding: 88px 0 96px
+
+.features__heading
+  max-width: 720px
+  margin: 0 auto 48px
+  text-align: center
+
+.features__eyebrow
+  font-size: 11px
+  font-weight: 800
+  letter-spacing: .13em
+  color: var(--blue, #294b3e) !important
+
+p, h2
+  color: inherit
+
+h2
+  margin-top: 16px
+  font: 800 clamp(36px, 4vw, 54px)/1.12 Raleway, sans-serif
+  letter-spacing: -.055em
+  text-wrap: balance
+  em
+    position: relative
+    z-index: 0
+    font-style: normal
+    white-space: nowrap
+    &::after
+      content: ''
+      position: absolute
+      height: .16em
+      bottom: .05em
+      left: 1%
+      width: 98%
+      z-index: -1
+      border-radius: 50%
+      background: var(--accent, #f6ce6a)
+      transform: rotate(-1deg)
+
+.features__description
+  max-width: 600px
+  margin: 18px auto 0
+  font-size: 16px
+  font-weight: 500
+  line-height: 1.7
+  color: var(--muted, #5c625a) !important
+
+.features__grid
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  grid-auto-rows: 352px
+  gap: 16px
+
+.features__grid > polo-landing-feature-card.landing-feature-card--wide
+  grid-column: span 2
+
+@media (max-width: 1000px) and (min-width: 761px)
+  .features__grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  // A narrow card left alone at the end fills its row instead of leaving a hole.
+  .features__grid > polo-landing-feature-card:last-child:not(.landing-feature-card--wide)
+    grid-column: span 2
+
+@media (max-width: 760px)
+  .features
+    padding: 64px 0 72px
+  .features__grid
+    grid-template-columns: minmax(0, 1fr)
+    grid-auto-rows: minmax(420px, auto)
+  .features__grid > polo-landing-feature-card.landing-feature-card--wide
+    grid-column: auto

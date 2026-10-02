@@ -1,0 +1,86 @@
+@switch (kind) {
+  @case ('events') {
+    <div class="events">
+      @for (row of eventRows; track $index) {
+        <div class="events__row" [class.events__row--reverse]="$odd">
+          @for (copy of [0, 1]; track copy) {
+            <div class="events__track">
+              @for (event of row; track event) {
+                <span class="chip">{{ event }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @case ('distributor') {
+    <div class="node distributor">
+      <p class="node__title">Distributor</p>
+      <p class="route route--match"><span>trust &gt; 2 AND has_key</span><span>Secret entrance</span></p>
+      <p class="route"><span>trust &gt; 2</span><span>Front entrance</span></p>
+      <p class="route route--fallback"><span>Otherwise</span><span>Gatekeeper</span></p>
+    </div>
+  }
+
+  @case ('player-input') {
+    <div class="node player-input">
+      <p class="node__title">What should we call you?</p>
+      <p class="player-input__field"><span class="player-input__typed">Morgan</span></p>
+      <p class="player-input__result">
+        Welcome back, <span class="token">#name</span>
+        <span class="player-input__arrow">→</span> <strong>Morgan</strong>.
+      </p>
+    </div>
+  }
+
+  @case ('requirements') {
+    <div class="requirements">
+      <p class="requirements__stats"><span class="chip">coins 2</span><span class="chip">has_key ✓</span></p>
+      <div class="requirements__choices">
+        <p class="choice choice--available">Open the archive <small>requires has_key</small></p>
+        <p class="choice choice--locked">Buy the map <small>requires 3 coins</small></p>
+        <p class="choice choice--available">Walk away</p>
+      </div>
+    </div>
+  }
+
+  @case ('focus-mode') {
+    <div class="editor">
+      <p class="editor__toolbar">
+        <b>B</b><i>I</i><span>H</span><span>•</span><span class="token">#</span>
+        <span class="editor__close">Close</span>
+      </p>
+      <div class="editor__page">
+        <p class="editor__heading">Chapter 2 · The Archive</p>
+        <p>
+          The door gave way with a sigh, as if it had been waiting for <span class="token">#name</span> all
+          along. Dust drifted through the lantern light, settling on shelves that ran deeper than the
+          building should allow.
+        </p>
+        <span class="editor__line"></span>
+        <span class="editor__line editor__line--short"></span>
+      </div>
+    </div>
+  }
+
+  @case ('organisation') {
+    <div class="organisation">
+      <div class="frame">
+        <p class="frame__name">Chapter 2</p>
+        <span class="mini-node mini-node--a"></span>
+        <span class="mini-node mini-node--b"></span>
+        <span class="mini-node mini-node--c"></span>
+        <svg class="frame__links" viewBox="0 0 200 110" preserveAspectRatio="none">
+          <path d="M58 32 C 90 32, 110 26, 138 24" />
+          <path d="M37 42 C 37 80, 50 80, 68 80" />
+        </svg>
+      </div>
+      <div class="group-node">
+        <p>Chapter 3</p>
+        <small>6 scenes</small>
+      </div>
+    </div>
+  }
+}

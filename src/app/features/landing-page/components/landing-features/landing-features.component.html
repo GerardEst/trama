@@ -1,0 +1,24 @@
+<section class="features" aria-labelledby="features-title">
+  <div class="features__heading">
+    <p class="features__eyebrow">BEYOND BRANCHING</p>
+    <h2 id="features-title">Stories that <em>remember.</em></h2>
+    <p class="features__description">
+      Choices that matter, paths that adapt and a board that stays readable as your world grows.
+      All without writing a line of code.
+    </p>
+  </div>
+  <div class="features__grid">
+    @for (feature of features; track feature.docsFragment) {
+      <polo-landing-feature-card
+        [title]="feature.title"
+        [description]="feature.description"
+        [label]="feature.label"
+        [linkLabel]="feature.linkLabel"
+        [docsFragment]="feature.docsFragment"
+        [wide]="feature.wide"
+      >
+        <polo-landing-feature-visual [kind]="feature.visual"></polo-landing-feature-visual>
+      </polo-landing-feature-card>
+    }
+  </div>
+</section>
