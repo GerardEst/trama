@@ -5,10 +5,30 @@ import { LandingpageComponent } from './landingpage.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
+import { PlayerService } from '../playground/services/player.service'
 
 describe('LandingpageComponent', () => {
   let component: LandingpageComponent
   let fixture: ComponentFixture<LandingpageComponent>
+
+  const choose = async (text: string) => {
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('#try-it polo-game-answer button')
+    ) as HTMLButtonElement[]
+    const answer = buttons.find((button) => button.textContent?.trim() === text)
+    if (!answer) throw new Error(`Demo answer not found: ${text}`)
+    answer.click()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+  }
+
+  const finishWithSpirit = async () => {
+    await choose('Blade — cross the bridge of sentries')
+    await choose('Fight through. Cut the spirit free.')
+    await choose('Approach the throne together')
+    await choose('Sever its shadow with your blade')
+  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -51,7 +71,7 @@ describe('LandingpageComponent', () => {
     expect(demoImage.getAttribute('height')).toBe('768')
     const demo = fixture.debugElement.query(By.directive(LandingStoryDemoComponent))
     expect(demo.injector.get(ActiveStoryService).entireTree().nodes[0].text).toContain(
-      'The library closes at midnight'
+      'you reach the Hollow Citadel'
     )
     expect(TestBed.inject(ActiveStoryService).entireTree().nodes).toEqual([])
   })
@@ -70,16 +90,11 @@ describe('LandingpageComponent', () => {
     expect(fixture.nativeElement.querySelector('.footer a[href="/docs/features"]')).toBeTruthy()
   })
 
-  it('offers creation as soon as the playable demo ends', () => {
+  it('offers creation as soon as the playable demo ends', async () => {
     const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
     expect(demo.querySelector('.story-player__next')).toBeNull()
 
-    const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
-    firstAnswer.click()
-    fixture.detectChanges()
-    const nextAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
-    nextAnswer.click()
-    fixture.detectChanges()
+    await finishWithSpirit()
 
     const next = demo.querySelector('.story-player__next a') as HTMLAnchorElement
     expect(next.getAttribute('href')).toBe('/login?mode=register')
@@ -97,14 +112,9 @@ describe('LandingpageComponent', () => {
     expect(demo.querySelector('.story-player__footer button')?.textContent).toContain('Start over')
   })
 
-  it('shows the ending call to action before the player footer', () => {
+  it('shows the ending call to action before the player footer', async () => {
     const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
-    const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
-    firstAnswer.click()
-    fixture.detectChanges()
-    const nextAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
-    nextAnswer.click()
-    fixture.detectChanges()
+    await finishWithSpirit()
 
     const next = demo.querySelector('.story-player__next') as HTMLElement
     const footer = demo.querySelector('.story-player__footer') as HTMLElement
@@ -114,10 +124,11 @@ describe('LandingpageComponent', () => {
 
   it('restarts the playable story without leaving the landing page', async () => {
     const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
-    const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
-    firstAnswer.click()
-    fixture.detectChanges()
-    expect(demo.textContent).toContain('As you write')
+    await choose('Shadow — climb the haunted stair')
+    await choose('Steal the moon sigil')
+    expect(demo.textContent).toContain('The crown is a prison')
+    const player = fixture.debugElement.query(By.directive(LandingStoryDemoComponent)).injector.get(PlayerService)
+    expect(player.playerConditions()).toEqual([{ id: 'condition_sigil' }])
 
     const restart = demo.querySelector('.story-player__footer button') as HTMLButtonElement
     restart.click()
@@ -127,9 +138,20 @@ describe('LandingpageComponent', () => {
     await fixture.whenStable()
     fixture.detectChanges()
 
-    expect(demo.textContent).toContain('The library closes at midnight')
-    expect(demo.textContent).not.toContain('As you write')
+    expect(demo.textContent).toContain('you reach the Hollow Citadel')
+    expect(demo.textContent).not.toContain('The crown is a prison')
+    expect(player.playerProperties()).toEqual({})
+    expect(player.playerStats()).toEqual([])
+    expect(player.playerConditions()).toEqual([])
     expect(demo.querySelector('.story-player__next')).toBeNull()
+
+    await choose('Blade — cross the bridge of sentries')
+    await choose('Cut the bridge loose. Leap alone.')
+    await choose('Face what waits inside')
+    expect(demo.textContent).not.toContain('Fit the stolen sigil')
+    expect(demo.textContent).not.toContain('Slip into its shadow and strike')
+    await choose('Sever its shadow with your blade')
+    expect(demo.textContent).toContain('The crown settles on your brow')
   })
 
   it('keeps only available subscriptions in the boxed comparison', () => {

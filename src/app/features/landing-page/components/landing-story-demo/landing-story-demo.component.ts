@@ -21,16 +21,22 @@ export class LandingStoryDemoComponent implements OnInit {
   demoStarted = false
   demoCompleted = false
 
-  constructor(private activeStory: ActiveStoryService) {}
+  constructor(
+    private activeStory: ActiveStoryService,
+    private player: PlayerService
+  ) {}
 
   ngOnInit() {
-    this.activeStory.load('', 'Trama', exampleStory)
+    this.activeStory.load('', 'The Last Threshold', exampleStory)
   }
 
   restartDemo() {
     this.demoStarted = false
     this.demoCompleted = false
     this.showDemo = false
+    this.player.playerProperties.set({})
+    this.player.playerStats.set([])
+    this.player.playerConditions.set([])
     setTimeout(() => (this.showDemo = true), 0)
   }
 }
