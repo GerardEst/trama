@@ -31,21 +31,25 @@
   align-items: flex-start
   padding: 28px 0 24px 20px
   h3
-    display: flex
-    align-items: baseline
-    gap: 16px
-    font: 800 28px/1.3 Raleway, sans-serif
-    letter-spacing: -.045em
-    span
-      color: var(--blue)
-      font: 400 28px Raleway, sans-serif
+    // Matches the Basic and Creator plan titles.
+    font: 400 28px/1.3 Baskerville, serif
   .export-license__audience
     position: absolute
     top: 0
-    font-size: 9px
+    display: flex
+    align-items: center
+    gap: 10px
+    font-size: 11px
     font-weight: 800
     letter-spacing: .14em
     color: var(--blue)
+  .export-license__badge
+    padding: 2px 8px
+    border-radius: 999px
+    background: var(--accent)
+    color: var(--ink)
+    font-size: 10px
+    letter-spacing: .06em
   .export-license__payment
     display: flex
     align-items: center
@@ -85,8 +89,8 @@
     margin-top: auto
     font-size: 14px
   .export-license__preview
-    margin-top: 6px
-    font-size: 10px
+    margin-top: 4px
+    font-size: 12px
     line-height: 1.6
     color: var(--muted)
 
@@ -129,13 +133,27 @@
     padding: 16px 0
     border-bottom: 1px solid var(--rule)
   summary
+    display: flex
+    justify-content: space-between
+    gap: 16px
     min-height: 24px
     font-size: 15px
     font-weight: 700
     line-height: 1.6
     cursor: pointer
+    list-style: none
+    &::-webkit-details-marker
+      display: none
+    &::after
+      content: '+'
+      color: var(--blue)
+      font-size: 20px
+      font-weight: 400
+      line-height: 1.2
     &:hover
       color: var(--blue)
+  details[open] summary::after
+    content: '–'
   p
     margin-top: 12px
     color: var(--muted)
@@ -154,23 +172,27 @@
   border: 1px solid #294b3e50
   border-radius: 20px
   background: #fffefa
+  // The connector runs from the top edge of the section down to the node.
   &::before
     content: ''
     position: absolute
     left: 50%
-    top: -57px
-    height: 56px
-    border-left: 1px solid var(--blue)
+    top: -81px
+    height: 80px
+    border-left: 2px solid var(--blue)
+    transform: translateX(-50%)
   &::after
     content: ''
     position: absolute
-    left: calc(50% - 5px)
-    top: -5px
-    width: 10px
-    height: 10px
+    left: 50%
+    top: -6px
+    width: 12px
+    height: 12px
     background: var(--paper)
-    border: 1px solid var(--blue)
+    border: 2px solid var(--blue)
     border-radius: 50%
+    box-sizing: border-box
+    transform: translateX(-50%)
   h2
     margin: 20px 0 28px
     font-size: clamp(48px, 5.8vw, 80px)
@@ -183,7 +205,7 @@
     color: var(--muted)
 
 .closing-node__label
-  font-size: 10px
+  font-size: 11px
   font-weight: 800
   letter-spacing: .13em
   color: var(--blue)
@@ -192,6 +214,61 @@
   margin-left: 8px
   color: var(--blue)
   font-weight: 400
+  animation: cursor-blink 1.1s steps(1) infinite
+
+@keyframes cursor-blink
+  50%
+    opacity: 0
+
+// Scroll reveal: the connector draws down, the node opens, then its content rises in.
+// Animations fill backwards only, so hover transforms work normally afterwards.
+.closing-node::before
+  transform-origin: top
+
+.closing-section--pending .closing-node
+  border-color: transparent
+  background: transparent
+  &::before, &::after, > *
+    opacity: 0
+
+.closing-section--revealed .closing-node
+  animation: closing-node-open .5s .65s ease-out backwards
+  &::before
+    animation: closing-line-draw .6s cubic-bezier(.4, 0, .2, 1) backwards
+  &::after
+    animation: closing-dot-pop .4s .5s cubic-bezier(.3, 1.6, .5, 1) backwards
+  > *
+    animation: closing-content-rise .55s cubic-bezier(.2, .7, .2, 1) backwards
+  > :nth-child(1)
+    animation-delay: .8s
+  > :nth-child(2)
+    animation-delay: .9s
+  > :nth-child(3)
+    animation-delay: 1.05s
+  > :nth-child(4)
+    animation-delay: 1.15s
+
+@keyframes closing-line-draw
+  from
+    transform: translateX(-50%) scaleY(0)
+
+@keyframes closing-dot-pop
+  from
+    transform: translateX(-50%) scale(0)
+
+@keyframes closing-node-open
+  from
+    border-color: transparent
+    background: transparent
+
+@keyframes closing-content-rise
+  from
+    opacity: 0
+    transform: translateY(14px)
+
+@media (prefers-reduced-motion: reduce)
+  .closing-node__cursor
+    animation: none
 
 .footer
   padding: 28px 0
@@ -208,7 +285,7 @@
     color: var(--muted)
   small
     flex-basis: 100%
-    font-size: 10px
+    font-size: 11px
 
 .footer__links
   display: flex

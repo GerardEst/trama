@@ -10,25 +10,30 @@
     fetchpriority="high"
   />
   <span>THE LIBRARY<br /><strong>AT MIDNIGHT</strong></span>
-  <span class="story-player__chapter" aria-hidden="true">01 / A BEGINNING</span>
 </div>
-<div class="story-player__game">
+<div class="story-player__game" [class.story-player__game--ended]="demoCompleted">
   @if (showDemo) {
-    <polo-game mode="single" (onEndGame)="demoCompleted = true"></polo-game>
+    <polo-game
+      mode="single"
+      (onSelectAnswer)="demoStarted = true"
+      (onEndGame)="demoCompleted = true"
+    ></polo-game>
   }
-</div>
-<div class="story-player__footer">
-  <span>No sign-up. Pick a path.</span>
-  <button type="button" (click)="restartDemo()">
-    <span aria-hidden="true">↺</span> Start over
-  </button>
 </div>
 @if (demoCompleted) {
   <div class="story-player__next" aria-live="polite">
     <p>That ending was yours.<br />Now write someone else’s beginning.</p>
     <a class="text-link" [href]="creationUrl"
       >{{ loggedUserEmail ? 'Make another story' : 'Create your first story free' }}
-      <span aria-hidden="true">↗</span></a
+      <span aria-hidden="true">→</span></a
     >
   </div>
 }
+<div class="story-player__footer">
+  <span>{{ demoCompleted ? 'Every choice leads somewhere else.' : 'No sign-up. Pick a path.' }}</span>
+  @if (demoStarted) {
+    <button type="button" (click)="restartDemo()">
+      <span aria-hidden="true">↺</span> Start over
+    </button>
+  }
+</div>

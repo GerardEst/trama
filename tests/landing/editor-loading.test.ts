@@ -41,6 +41,7 @@ test.describe('Landing story experience', () => {
 
   test('follows the other ending and restarts without a board', async ({ page }) => {
     await page.goto('/')
+    await expect(page.getByRole('button', { name: 'Start over' })).toHaveCount(0)
     await page.getByRole('button', { name: 'Turn the page' }).click()
     await expect(page.locator('#try-it')).toContainText('A note in your handwriting')
     await page.getByRole('button', { name: 'Read the note' }).click()

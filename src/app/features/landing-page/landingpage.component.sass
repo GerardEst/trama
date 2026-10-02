@@ -190,6 +190,11 @@
   background: var(--accent)
   color: var(--ink) !important
 
+// The → glyph sits on the baseline; lift it to the optical centre of the label.
+.button, .nav-cta
+  span
+    transform: translateY(-.08em)
+
 .text-link
   display: inline-block
   padding: 8px 0

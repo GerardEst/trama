@@ -84,6 +84,32 @@ describe('LandingpageComponent', () => {
     expect(next.textContent).toContain('Create your first story free')
   })
 
+  it('only offers to start over once a choice has been made', () => {
+    const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
+    expect(demo.querySelector('.story-player__footer button')).toBeNull()
+
+    const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
+    firstAnswer.click()
+    fixture.detectChanges()
+
+    expect(demo.querySelector('.story-player__footer button')?.textContent).toContain('Start over')
+  })
+
+  it('shows the ending call to action before the player footer', () => {
+    const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
+    const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
+    firstAnswer.click()
+    fixture.detectChanges()
+    const nextAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement
+    nextAnswer.click()
+    fixture.detectChanges()
+
+    const next = demo.querySelector('.story-player__next') as HTMLElement
+    const footer = demo.querySelector('.story-player__footer') as HTMLElement
+    expect(next.nextElementSibling).toBe(footer)
+    expect(footer.textContent).not.toContain('No sign-up')
+  })
+
   it('restarts the playable story without leaving the landing page', async () => {
     const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
     const firstAnswer = demo.querySelector('polo-game-answer button') as HTMLButtonElement

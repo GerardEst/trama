@@ -15,7 +15,7 @@
   align-items: center
   gap: 8px
   padding: 15px 20px
-  font-size: 10px
+  font-size: 11px
   font-weight: 800
   letter-spacing: .09em
 
@@ -28,35 +28,40 @@
 .story-player__scene
   position: relative
   background: var(--ink)
+  // Keeps the title legible over the bright path in the illustration.
+  &::after
+    content: ''
+    position: absolute
+    inset: 0
+    pointer-events: none
+    background: linear-gradient(transparent 55%, #000a)
   img
     display: block
     width: 100%
     height: auto
   > span
     position: absolute
+    z-index: 1
     left: 24px
     bottom: 24px
     color: #fff4da
     font: 400 clamp(15px, 3vw, 23px)/1.25 'LibreBaskerville', serif
     letter-spacing: -.03em
-    text-shadow: 0 2px 8px #000d, 0 0 20px #000a
+    text-shadow: 0 1px 4px #0008
   strong
     font-weight: 400
-  > .story-player__chapter
-    left: auto
-    right: 20px
-    bottom: 26px
-    max-width: 90px
-    font: 700 9px/1.5 Raleway, sans-serif
-    letter-spacing: .1em
 
 .story-player__game
   --polo-game-padding: 0
   --polo-passage-size: 19px
+  // Choices are the main interaction, so they get more presence than the default 1.1rem.
+  --polo-answer-size: 15px
   display: flex
   min-height: 230px
   polo-game
     width: 100%
+  &--ended
+    min-height: 0
 
 .story-player__footer
   border-top: 1px solid var(--rule)
@@ -79,8 +84,9 @@
 .story-player__next
   padding: 20px 24px
   border-top: 1px solid var(--rule)
+  background: #294b3e0d
   p
-    font-size: 14px
+    font-size: 15px
     line-height: 1.5
   a
     display: inline-block
@@ -106,3 +112,5 @@
   .story-player__game
     --polo-passage-size: 18px
     min-height: 240px
+    &--ended
+      min-height: 0

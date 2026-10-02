@@ -18,6 +18,7 @@ export class LandingStoryDemoComponent implements OnInit {
   @Input() loggedUserEmail?: string
 
   showDemo = true
+  demoStarted = false
   demoCompleted = false
 
   constructor(private activeStory: ActiveStoryService) {}
@@ -27,6 +28,7 @@ export class LandingStoryDemoComponent implements OnInit {
   }
 
   restartDemo() {
+    this.demoStarted = false
     this.demoCompleted = false
     this.showDemo = false
     setTimeout(() => (this.showDemo = true), 0)

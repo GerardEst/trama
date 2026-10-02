@@ -21,3 +21,21 @@ for (const width of [1440, 820, 375, 320]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
   })
 }
+
+test('reveals the closing scene when it scrolls into view', async ({ page }) => {
+  await page.goto('/')
+  const closing = page.locator('.closing-section')
+  await expect(closing).toHaveClass(/closing-section--pending/)
+  await closing.scrollIntoViewIfNeeded()
+  await expect(closing).toHaveClass(/closing-section--revealed/)
+  await expect(closing).not.toHaveClass(/closing-section--pending/)
+  await expect(closing.getByRole('link', { name: /Start your story/ })).toHaveCSS('opacity', '1')
+})
+
+test('shows the closing scene without animation when motion is reduced', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const closing = page.locator('.closing-section')
+  await expect(closing.getByRole('heading', { level: 2 })).toBeVisible()
+  await expect(closing).not.toHaveClass(/closing-section--pending/)
+})
