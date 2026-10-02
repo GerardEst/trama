@@ -90,19 +90,30 @@
   p
     font-size: 15px
     line-height: 1.5
+  // Mirrors the landing page's outlined secondary action, sized for the card.
   a
-    display: inline-block
-    margin-top: 8px
-    padding: 8px 0
-    border-bottom: 1px solid currentColor
-    color: var(--blue)
+    display: inline-flex
+    align-items: center
+    gap: 12px
+    min-height: 44px
+    margin-top: 12px
+    padding: 0 18px
+    border: 1px solid #25272033
+    border-radius: 10px
+    background: #fffefa
+    box-shadow: 0 3px 0 #2527200d
+    color: var(--ink)
     text-decoration: none
     font-size: 14px
     font-weight: 800
+    transition: border-color .2s, color .2s, transform .2s
     span
-      margin-left: 12px
+      color: var(--blue)
+      transform: translateY(-.08em)
     &:hover
-      color: var(--ink)
+      border-color: var(--blue)
+      color: var(--blue)
+      transform: translateY(-1px)
 
 :host :is(a, button):focus-visible
   outline: 3px solid var(--blue)

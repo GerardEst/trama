@@ -202,16 +202,28 @@ polo-language-selector
   span
     transform: translateY(-.08em)
 
+// Secondary action: same footprint as .button, but outlined so the primary stays the obvious choice.
 .text-link
-  display: inline-block
-  padding: 8px 0
-  border-bottom: 1px solid currentColor
-  font-size: 14px
+  display: inline-flex
+  align-items: center
+  gap: 14px
+  min-height: 54px
+  padding: 0 22px
+  border: 1px solid var(--polo-color-border-strong)
+  border-radius: 10px
+  background: var(--polo-color-surface)
+  box-shadow: 0 4px 0 #2527200d
+  font-size: 15px
   font-weight: 800
+  transition: border-color .2s, color .2s, transform .2s, box-shadow .2s
   span
-    margin-left: 12px
-  &:hover
     color: var(--blue)
+    transform: translateY(-.08em)
+  &:hover
+    border-color: var(--blue)
+    color: var(--blue)
+    transform: translateY(-2px)
+    box-shadow: 0 5px 0 #294b3e1f
 
 .hero__reassurance
   display: flex
@@ -290,14 +302,14 @@ polo-language-selector
       gap: 24px
       padding: 0 18px
     .text-link
-      font-size: 13px
+      padding: 0 18px
   .hero__reassurance
     margin-top: 16px
     gap: 6px 14px
     font-size: 11px
 
 @media (prefers-reduced-motion: reduce)
-  .button
+  .button, .text-link
     transition: none
     &:hover
       transform: none
