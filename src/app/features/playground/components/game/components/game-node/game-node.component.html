@@ -3,7 +3,7 @@
     <img
       class="node__image"
       [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + data.image.path"
-      alt="Story illustration"
+      [alt]="'playground.illustration' | t"
       loading="lazy"
     />
   }
@@ -12,7 +12,7 @@
       <div class="node__passage" [innerHTML]="data.text"></div>
     }
     @if (data.answers?.length) {
-      <div class="node__answers" aria-label="Choose an answer">
+      <div class="node__answers" [attr.aria-label]="'playground.chooseAnswer' | t">
         @for (answer of data.answers; track answer.id) {
           <polo-game-answer
             [text]="answer.text || ''"

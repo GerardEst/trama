@@ -2,37 +2,37 @@
   @if (fallback) {
     <span class="condition__fallbackIcon" aria-hidden="true">↳</span>
     <div class="condition__fallbackCopy">
-      <strong>Otherwise</strong>
-      <span>Used when no route matches</span>
+      <strong>{{ 'board.route.otherwise' | t }}</strong>
+      <span>{{ 'board.route.otherwiseHelp' | t }}</span>
     </div>
   } @else {
     <div class="condition__header">
       <div class="condition__heading">
-        <strong>Route {{ routeNumber }}</strong>
-        <span>All rules must match</span>
+        <strong>{{ 'board.route.title' | t: { number: routeNumber } }}</strong>
+        <span>{{ 'board.route.allRules' | t }}</span>
       </div>
       <div class="condition__actions">
         <polo-basic-button
           size="s"
           [transparent]="true"
           [disabled]="routeNumber === 1"
-          title="Move route up"
-          text="Up"
+          [title]="'board.route.upTitle' | t"
+          [text]="'board.route.up' | t"
           (click)="moveRoute.emit(-1)"
         ></polo-basic-button>
         <polo-basic-button
           size="s"
           [transparent]="true"
           [disabled]="routeNumber === routeCount"
-          title="Move route down"
-          text="Down"
+          [title]="'board.route.downTitle' | t"
+          [text]="'board.route.down' | t"
           (click)="moveRoute.emit(1)"
         ></polo-basic-button>
         <polo-basic-button
           size="s"
           [transparent]="true"
           icon="/assets/icons/trash.svg"
-          title="Remove route"
+          [title]="'board.route.remove' | t"
           (click)="removeCondition()"
         ></polo-basic-button>
       </div>
@@ -40,13 +40,13 @@
     <div class="condition__rules">
       @for (rule of displayedRules; track $index; let i = $index) {
         @if (i > 0) {
-          <span class="condition__and">AND</span>
+          <span class="condition__and">{{ 'board.route.and' | t }}</span>
         }
         <div class="condition__rule">
           <label class="condition__field">
-            <span>Reference</span>
-            <select id="ref" aria-label="Condition reference" (change)="saveCondition($event, rule, i)">
-              <option [selected]="!rule.ref">None</option>
+            <span>{{ 'board.route.reference' | t }}</span>
+            <select id="ref" [attr.aria-label]="'board.route.referenceLabel' | t" (change)="saveCondition($event, rule, i)">
+              <option [selected]="!rule.ref">{{ 'board.route.none' | t }}</option>
               @for (ref of refOptions; track ref.id) {
                 <option [selected]="rule.ref === ref.id" [id]="ref.id">{{ ref.name }}</option>
               }
@@ -54,17 +54,17 @@
           </label>
           <div class="condition__comparison">
             <label class="condition__field">
-              <span>Rule</span>
-              <select id="comparator" aria-label="Condition comparator" (change)="saveCondition($event, rule, i)">
-                <option [selected]="!rule.comparator">None</option>
-                <option [selected]="rule.comparator === 'equalto'" id="equalto">equal to</option>
-                <option [selected]="rule.comparator === 'lessthan'" id="lessthan">less than</option>
-                <option [selected]="rule.comparator === 'morethan'" id="morethan">more than</option>
+              <span>{{ 'board.route.rule' | t }}</span>
+              <select id="comparator" [attr.aria-label]="'board.route.comparatorLabel' | t" (change)="saveCondition($event, rule, i)">
+                <option [selected]="!rule.comparator">{{ 'board.route.none' | t }}</option>
+                <option [selected]="rule.comparator === 'equalto'" id="equalto">{{ 'board.route.equalTo' | t }}</option>
+                <option [selected]="rule.comparator === 'lessthan'" id="lessthan">{{ 'board.route.lessThan' | t }}</option>
+                <option [selected]="rule.comparator === 'morethan'" id="morethan">{{ 'board.route.moreThan' | t }}</option>
               </select>
             </label>
             <label class="condition__field condition__field--value">
-              <span>Value</span>
-              <input id="value" aria-label="Condition value" (change)="saveCondition($event, rule, i)" [type]="isProperty(rule.ref) ? 'text' : 'number'" [value]="rule.value ?? 0" />
+              <span>{{ 'board.route.value' | t }}</span>
+              <input id="value" [attr.aria-label]="'board.route.valueLabel' | t" (change)="saveCondition($event, rule, i)" [type]="isProperty(rule.ref) ? 'text' : 'number'" [value]="rule.value ?? 0" />
             </label>
             @if (displayedRules.length > 1) {
               <polo-basic-button
@@ -72,7 +72,7 @@
                 size="s"
                 [transparent]="true"
                 icon="/assets/icons/trash.svg"
-                title="Remove rule"
+                [title]="'board.route.removeRule' | t"
                 (click)="removeRule(i)"
               ></polo-basic-button>
             }
@@ -83,7 +83,7 @@
     <polo-basic-button
       class="condition__addRule"
       size="s"
-      text="+ Add AND rule"
+      [text]="'board.route.addRule' | t"
       (click)="addRule()"
     ></polo-basic-button>
   }

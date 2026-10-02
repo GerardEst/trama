@@ -1,18 +1,18 @@
-<polo-modal-window name="Account">
+<polo-modal-window [name]="'dashboard.profile.title' | t">
   <ng-container modal-content>
     @if (db.user(); as user) {
       <div class="profileContainer">
         <section>
           <div>
-            <p class="txt-weight-bold">Email</p>
+            <p class="txt-weight-bold">{{ 'dashboard.profile.email' | t }}</p>
             <p>{{ user.email }}</p>
           </div>
           <div>
-            <p class="txt-weight-bold">Name</p>
+            <p class="txt-weight-bold">{{ 'dashboard.profile.name' | t }}</p>
             <p>{{ user.user_metadata['user_name'] }}</p>
           </div>
           <div class="themePreference">
-            <label for="night-mode">Night mode</label>
+            <label for="night-mode">{{ 'dashboard.profile.nightMode' | t }}</label>
             <input
               id="night-mode"
               #nightMode
@@ -22,31 +22,37 @@
               (change)="theme.setDark(nightMode.checked)"
             />
           </div>
+          <div class="languagePreference">
+            <span>{{ 'dashboard.profile.language' | t }}</span>
+            <polo-language-selector></polo-language-selector>
+          </div>
           <div class="profileOptions">
             @if (user.app_metadata.provider === 'email') {
               <polo-basic-button
                 (click)="changePassword()"
-                text="Change your password"
+                [text]="'dashboard.profile.changePassword' | t"
               ></polo-basic-button>
             }
-            <polo-basic-button (click)="logout()" text="Logout"></polo-basic-button>
+            <polo-basic-button
+              (click)="logout()"
+              [text]="'dashboard.profile.logout' | t"
+            ></polo-basic-button>
           </div>
         </section>
         <polo-separator [space]="20"></polo-separator>
         <section>
-          <p class="txt-l txt-weight-bold">Billing</p>
+          <p class="txt-l txt-weight-bold">{{ 'dashboard.profile.billing' | t }}</p>
           @if (user.profile.subscription_status === 'incomplete') {
-            <p>
-              You need to complete the payment. If the payment has been completed, refresh the page
-            </p>
+            <p>{{ 'dashboard.profile.incomplete' | t }}</p>
           }
           @if (user.profile.subscription_status === 'canceled') {
             <p>
-              Your subscription will expire on
-              {{ user.profile.next_payment }}
+              {{ 'dashboard.profile.expires' | t: { date: paymentDate(user.profile.next_payment) } }}
             </p>
           } @else {
-            <p>Your next payment will be {{ user.profile.next_payment }}</p>
+            <p>
+              {{ 'dashboard.profile.nextPayment' | t: { date: paymentDate(user.profile.next_payment) } }}
+            </p>
           }
           <polo-billing-cycle
             [small]="true"

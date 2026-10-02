@@ -1,0 +1,111 @@
+import type { Dictionary } from '../i18n.types'
+
+export const dashboard: Dictionary['dashboard'] = {
+  title: 'Panel',
+  newStoryName: 'Mi nueva historia',
+  menu: {
+    account: 'Tu cuenta',
+    docs: 'Guía',
+    stories: 'Tus historias',
+    newStory: 'Crear una historia nueva',
+    feedback: 'Enviar comentarios',
+    toggle: 'Mostrar u ocultar el menú',
+  },
+  top: {
+    storyName: 'Nombre de la historia',
+    options: 'Opciones de la historia',
+    sessionEnded:
+      'Tu sesión ha terminado. Exporta tus cambios antes de volver a iniciar sesión con la misma cuenta.',
+    signInAgain: 'Volver a iniciar sesión',
+    exportJson: 'Exportar JSON',
+    exportError: 'No se ha podido exportar la historia. Inténtalo de nuevo.',
+    saving: 'Guardando los cambios del tablero…',
+    saved: 'Cambios del tablero guardados',
+    recovered: 'Se han recuperado ediciones sin guardar de esta pestaña.',
+    notSaved: 'Los cambios del tablero no se han guardado.',
+    keepOpen: 'Mantén esta pestaña abierta hasta que se guarden.',
+    retry: 'Reintentar el guardado',
+    tracking: 'Activar seguimiento',
+    sharing: 'Permitir compartir',
+    cumulative: 'Modo acumulativo',
+    customId: 'ID personalizado',
+    idTaken: 'Este ID ya está en uso',
+    footer: 'Pie de página',
+    hideLink: 'Ocultar el enlace de Trama',
+    footerText: 'Texto del pie',
+    footerLink: 'Enlace del pie',
+    footerPitch:
+      'Puedes modificar el pie de página para mostrar tu logotipo, tu marca y tu enlace',
+    footerFree:
+      'Las opciones del pie de página no están disponibles en el plan gratuito',
+    analytics: 'Abrir analíticas',
+    deleteTree: 'Eliminar historia',
+  },
+  delete: {
+    confirm: '¿Seguro que quieres eliminar esta historia?',
+  },
+  legend: {
+    toggle: 'Mostrar u ocultar la leyenda',
+    title: 'Leyenda',
+    stats: 'Estadísticas',
+    statsTitle: 'Estadísticas y condiciones',
+    activity: 'Actividad',
+    activityTitle: 'Partidas jugadas por los usuarios',
+    refName: 'Nombre de {type} {id}',
+    usedBefore: 'Usada',
+    usedAfter: 'veces',
+    addCategory: 'Añadir categoría',
+    categoryMessage: 'Selecciona una categoría o crea una nueva',
+    preview: 'Vista previa',
+    share: 'Compartir',
+  },
+  paywall: {
+    limit: 'Has alcanzado el número máximo de historias del plan gratuito',
+    upgradeStart: 'Pásate al plan Creator o Pro para tener historias',
+    unlimited: 'ilimitadas',
+    upgradeEnd: '',
+  },
+  profile: {
+    title: 'Cuenta',
+    email: 'Correo electrónico',
+    name: 'Nombre',
+    nightMode: 'Modo nocturno',
+    language: 'Idioma',
+    changePassword: 'Cambiar la contraseña',
+    logout: 'Cerrar sesión',
+    billing: 'Facturación',
+    incomplete:
+      'Tienes que completar el pago. Si ya lo has completado, recarga la página',
+    expires: 'Tu suscripción caducará el {date}',
+    nextPayment: 'Tu próximo pago será el {date}',
+  },
+  share: {
+    title: 'Opciones para compartir',
+    private: 'Comparte con un enlace privado',
+    privateNote:
+      'Este enlace no se puede modificar y existirá mientras exista la historia. Ten cuidado al compartirlo',
+    custom: 'Comparte con tu ruta personalizada',
+    beautify: 'Embellece la ruta añadiendo un ID personalizado',
+    idTaken: 'Este ID ya está en uso',
+    customNote:
+      'Si eliminas o cambias el ID personalizado, quienes usen este enlace perderán el acceso a la historia',
+  },
+  feedback: {
+    title: 'Enviar comentarios',
+    label: 'Tus comentarios:',
+    placeholder:
+      'Cuéntanos tu experiencia, informa de un error o sugiere una función...',
+    screenshot: 'Captura de pantalla (tomada automáticamente):',
+    screenshotAlt: 'Vista previa de la captura',
+    send: 'Enviar comentarios',
+    failed:
+      'No se han podido enviar los comentarios. Inténtalo de nuevo más tarde.',
+  },
+  statistics: {
+    back: 'Volver',
+    title: 'Estadísticas',
+    all: 'Todas las respuestas',
+    name: 'Nombre',
+    date: 'Fecha',
+  },
+}

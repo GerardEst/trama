@@ -6,14 +6,19 @@
   <polo-basic-button
     class="delete-answer"
     size="s"
-    title="Delete answer"
+    [title]="'board.answer.delete' | t"
     (click)="removeAnswer()"
     icon="/assets/icons/trash.svg"
     [transparent]="true"
   ></polo-basic-button>
 </div>
-<polo-rich-text-field label="Answer text" [text]="text" [inlineOnly]="true"
-  placeholder="Write an answer…" (saved)="saveAnswerText($event)" />
+<polo-rich-text-field
+  [label]="'board.answer.text' | t"
+  [text]="text"
+  [inlineOnly]="true"
+  [placeholder]="'board.answer.placeholder' | t"
+  (saved)="saveAnswerText($event)"
+/>
 <polo-node-events [events]="events" [answerId]="answerId"></polo-node-events>
 <div
   class="union_point"

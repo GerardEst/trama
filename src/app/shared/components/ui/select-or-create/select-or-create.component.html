@@ -1,6 +1,6 @@
-<div class="dropdown" role="dialog" aria-label="Choose or create an option">
+<div class="dropdown" role="dialog" [attr.aria-label]="'common.select.label' | t">
   <div class="dropdown__header">
-    <label for="option-search">Find or create</label>
+    <label for="option-search">{{ 'common.select.find' | t }}</label>
     @if (message) {
       <p id="option-search-help">{{ message }}</p>
     }
@@ -15,7 +15,7 @@
     aria-describedby="option-search-help"
     (input)="filterOptions($event)"
     (keydown.enter)="submitSearch()"
-    placeholder="Type a name…"
+    [placeholder]="'common.select.placeholder' | t"
   />
 
   @if (newOption) {
@@ -25,11 +25,11 @@
       (click)="createOption(newOption)"
     >
       <img src="/assets/icons/plus.svg" alt="" />
-      <span>Create <strong>“{{ newOption }}”</strong></span>
+      <span>{{ 'common.select.create' | t }} <strong>“{{ newOption }}”</strong></span>
     </button>
   }
 
-  <div class="dropdown__options" role="listbox" aria-label="Available options">
+  <div class="dropdown__options" role="listbox" [attr.aria-label]="'common.select.available' | t">
     @for (option of searchedOptions; track option.id) {
       <button
         class="dropdown__option"
@@ -45,7 +45,7 @@
       </button>
     } @empty {
       @if (!newOption) {
-        <p class="dropdown__empty">No matching options</p>
+        <p class="dropdown__empty">{{ 'common.select.empty' | t }}</p>
       }
     }
   </div>

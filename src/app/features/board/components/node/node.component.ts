@@ -43,6 +43,8 @@ import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { RichTextFieldComponent } from '../rich-text/rich-text-field.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-node',
@@ -61,6 +63,7 @@ import { EditableNameComponent } from 'src/app/shared/components/ui/editable-nam
     EditableNameComponent,
     BoardAnchorDirective,
     CdkDragHandle,
+    TranslatePipe,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
@@ -132,8 +135,17 @@ export class NodeComponent {
     public activeStory: ActiveStoryService,
     private apis: ApisService,
     private storage: StorageService,
-    private storyEditor: StoryEditorService
+    private storyEditor: StoryEditorService,
+    private i18n: I18nService
   ) {}
+
+  typeName() {
+    return this.i18n.t(`board.node.types.${this.type}`)
+  }
+
+  kindName() {
+    return this.i18n.t(`board.node.kinds.${this.type}`)
+  }
 
   openImagePicker(): boolean {
     const input = this.shortcutImageInput?.nativeElement
@@ -148,7 +160,7 @@ export class NodeComponent {
     if (!imageFile) return
 
     this.loading.set(true)
-    this.loadingMessage.set('Optimizing image')
+    this.loadingMessage.set(this.i18n.t('board.node.optimizingImage'))
 
     try {
       const {
@@ -168,9 +180,7 @@ export class NodeComponent {
       )
       if (!optimizedImageBlob) {
         console.error('Error obtaining optimized image')
-        this.loadingMessage.set(
-          'The image is too big\nTry again with a smaller image.'
-        )
+        this.loadingMessage.set(this.i18n.t('board.node.imageTooBig'))
         imageInput.value = ''
         return
       }
@@ -185,11 +195,11 @@ export class NodeComponent {
         this.loadingMessage.set(undefined)
       } else {
         console.error('Not possible to upload image')
-        this.loadingMessage.set('Error uploading the image')
+        this.loadingMessage.set(this.i18n.t('board.node.imageError'))
       }
     } catch (error) {
       console.error('Not possible to upload image', error)
-      this.loadingMessage.set('Error uploading the image')
+      this.loadingMessage.set(this.i18n.t('board.node.imageError'))
     } finally {
       this.loading.set(false)
       imageInput.value = ''
@@ -281,7 +291,7 @@ export class NodeComponent {
 
   onRemoveNode() {
     if (this.nodeId === 'node_0') {
-      alert('cannot delete node_0')
+      alert(this.i18n.t('board.node.cannotDeleteStart'))
       return
     }
     const data = {

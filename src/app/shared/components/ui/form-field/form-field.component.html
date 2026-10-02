@@ -7,9 +7,9 @@
     }
 
     @if (required) {
-      <span class="formField__requirement">Required</span>
+      <span class="formField__requirement">{{ 'common.required' | t }}</span>
     } @else if (showOptional) {
-      <span class="formField__requirement">Optional</span>
+      <span class="formField__requirement">{{ 'common.optional' | t }}</span>
     }
   </div>
 

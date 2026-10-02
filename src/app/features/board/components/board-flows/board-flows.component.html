@@ -11,12 +11,12 @@
   [class.hideContextMenu]="!showJoinContextMenu"
   class="joinContextMenu"
 >
-  <p class="title">Join options</p>
+  <p class="title">{{ 'board.joins.title' | t }}</p>
   <polo-basic-button
     (click)="deleteJoin()"
     icon="/assets/icons/trash.svg"
-    text="Delete join"
-    title="Delete join"
+    [text]="'board.joins.delete' | t"
+    [title]="'board.joins.delete' | t"
   ></polo-basic-button>
 </div>
 

@@ -4,11 +4,12 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-share-story',
   standalone: true,
-  imports: [ModalWindowComponent, BasicButtonComponent],
+  imports: [ModalWindowComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './share-story.component.html',
   styleUrl: './share-story.component.sass',
 })

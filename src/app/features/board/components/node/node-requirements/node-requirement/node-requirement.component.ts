@@ -3,6 +3,8 @@ import { NodeAddRequirementComponent } from '../../context-menus/node-add-requir
 import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
 import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-node-requirement',
@@ -11,12 +13,16 @@ import { StoryReferencesService } from 'src/app/features/board/services/story-re
     AnchoredPopoverComponent,
     AnchoredPopoverContentDirective,
     NodeAddRequirementComponent,
+    TranslatePipe,
   ],
   templateUrl: './node-requirement.component.html',
   styleUrl: './node-requirement.component.sass',
 })
 export class NodeRequirementComponent {
-  constructor(private storyReferences: StoryReferencesService) {}
+  constructor(
+    private storyReferences: StoryReferencesService,
+    private i18n: I18nService
+  ) {}
 
   @Output() onSaveRequirement: EventEmitter<any> = new EventEmitter()
   @Output() onDeleteRequirement: EventEmitter<any> = new EventEmitter()
@@ -39,7 +45,7 @@ export class NodeRequirementComponent {
 
   get displayValue() {
     if (this.type === 'condition') {
-      return Number(this.amount) ? 'Required' : 'Must be off'
+      return this.i18n.t(Number(this.amount) ? 'board.requirement.required' : 'board.requirement.mustBeOff')
     }
 
     return `≥ ${this.amount}`

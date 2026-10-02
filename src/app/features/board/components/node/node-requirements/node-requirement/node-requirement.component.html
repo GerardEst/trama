@@ -6,7 +6,7 @@
     aria-haspopup="dialog"
     [attr.aria-expanded]="editRequirementPopover.isOpen"
     [class.node__requirement--condition]="type === 'condition'"
-    [attr.aria-label]="'Edit requirement ' + displayTarget + ', ' + displayValue"
+    [attr.aria-label]="'board.requirement.editLabel' | t: { target: displayTarget, value: displayValue }"
     (click)="editRequirementPopover.open()"
   >
     <img

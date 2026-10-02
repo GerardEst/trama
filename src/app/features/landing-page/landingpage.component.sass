@@ -79,6 +79,13 @@
   gap: 30px
   margin-left: auto
 
+// The shared selector picks up the landing palette through its tokens.
+polo-language-selector
+  --polo-color-action: var(--blue)
+  --polo-color-action-hover: var(--ink)
+  --polo-color-text-secondary: var(--muted)
+  --polo-color-text-on-action: var(--paper)
+
 .nav-links a, .nav-login, .nav-cta
   font-size: 14px
   font-weight: 700
@@ -240,7 +247,7 @@
 @media (max-width: 760px)
   .nav-links
     display: none
-  .nav-login
+  .nav-language
     margin-left: auto
   .hero__inner
     padding: 54px 0 40px
@@ -258,6 +265,11 @@
   .nav-shell
     min-height: 66px
     gap: 12px
+  // Small phones switch language from the footer.
+  .nav-language
+    display: none
+  .wordmark
+    margin-right: auto
   .nav-login, .nav-cta
     font-size: 12px
   .nav-cta

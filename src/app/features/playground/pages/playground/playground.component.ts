@@ -13,11 +13,12 @@ import { Router } from '@angular/router'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
 import { ThemeService } from 'src/app/shared/services/theme.service'
 import { ToggleComponent } from 'src/app/shared/components/ui/toggle/toggle.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, GameComponent, ToggleComponent],
+  imports: [CommonModule, GameComponent, ToggleComponent, TranslatePipe],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.sass'],
 })

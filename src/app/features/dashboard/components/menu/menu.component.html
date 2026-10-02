@@ -13,10 +13,12 @@
       </div>
       <ul>
         <li (click)="openProfile()">
-          <img width="12px" src="/assets/icons/configuration.svg" /> Your account
+          <img width="12px" src="/assets/icons/configuration.svg" alt="" />
+          {{ 'dashboard.menu.account' | t }}
         </li>
         <li>
-          <img width="12px" src="/assets/icons/docs.svg" /> Docs<img
+          <img width="12px" src="/assets/icons/docs.svg" alt="" />
+          {{ 'dashboard.menu.docs' | t }}<img
             class="action"
             width="15px"
             src="/assets/icons/external-link.svg"
@@ -27,12 +29,12 @@
 
     <section>
       <div class="nav__title">
-        <h4>Your stories</h4>
+        <h4>{{ 'dashboard.menu.stories' | t }}</h4>
         <polo-basic-button
           [iconSize]="10"
           icon="/assets/icons/plus.svg"
           (click)="createNewTree()"
-          title="Create new story"
+          [title]="'dashboard.menu.newStory' | t"
         ></polo-basic-button>
       </div>
       <ul>
@@ -47,7 +49,7 @@
 
     <section>
       <polo-basic-button
-        text="Give feedback"
+        [text]="'dashboard.menu.feedback' | t"
         icon="/assets/icons/user-info.svg"
         (click)="openFeedbackModal()"
         [transparent]="true"

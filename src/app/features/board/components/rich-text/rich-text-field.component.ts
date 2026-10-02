@@ -4,18 +4,20 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { RichTextEditorComponent } from './rich-text-editor.component'
 import { StoryEditorLoader, StoryEditorRuntime } from './story-editor-loader.service'
 import { storyEditorValue } from './story-editor-html'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-rich-text-field',
   standalone: true,
-  imports: [BasicButtonComponent, RichTextEditorComponent],
+  imports: [BasicButtonComponent, RichTextEditorComponent, TranslatePipe],
   templateUrl: './rich-text-field.component.html',
   styleUrl: './rich-text-field.component.sass',
 })
 export class RichTextFieldComponent implements OnChanges, OnDestroy {
   readonly label = input.required<string>()
   readonly text = input('')
-  readonly placeholder = input('Write a passage…')
+  readonly placeholder = input<string>()
   readonly inlineOnly = input(false)
   readonly saved = output<string>()
   @ViewChild('preview') preview?: ElementRef<HTMLElement>
@@ -30,7 +32,14 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
   // Characters typed on the preview while the editor chunk is still downloading.
   private pendingText = ''
 
-  constructor(private editorLoader: StoryEditorLoader) {}
+  constructor(
+    private editorLoader: StoryEditorLoader,
+    private i18n: I18nService
+  ) {}
+
+  placeholderText() {
+    return this.placeholder() ?? this.i18n.t('board.editor.placeholder')
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['text'] && !this.inlineEditor) this.currentHtml = this.text()
@@ -71,7 +80,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
       element: preview,
       content: this.currentHtml,
       label: this.label(),
-      placeholder: this.placeholder(),
+      placeholder: this.placeholderText(),
       inlineOnly: this.inlineOnly(),
       onUpdate: () => { this.inlineDirty = true },
       onBlur: () => {

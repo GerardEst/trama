@@ -10,6 +10,8 @@ import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 @Component({
   selector: 'polo-change-password',
@@ -19,6 +21,7 @@ import { DatabaseService } from 'src/app/core/services/database.service'
     SeparatorComponent,
     CommonModule,
     ReactiveFormsModule,
+    TranslatePipe,
   ],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.sass',
@@ -38,12 +41,12 @@ export class ChangePasswordComponent {
   })
 
   success: boolean = false
-  feedback: string | null = null
+  feedback: TranslationKey | null = null
   feedbackMessages = {
-    success: 'Your password was successfuly changed',
-    error: 'It was not possible to update your password. Try again later.',
-    notEqualPasswords: 'The password and repeated password must be the same',
-  }
+    success: 'login.change.success',
+    error: 'login.change.error',
+    notEqualPasswords: 'login.change.notEqual',
+  } as const
 
   async onSubmit() {
     const { password, confirmPassword } = this.newPasswordForm.value

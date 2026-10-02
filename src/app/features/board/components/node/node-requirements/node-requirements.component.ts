@@ -6,11 +6,12 @@ import { NodeAddRequirementComponent } from '../context-menus/node-add-requireme
 import { answer_requirement } from 'src/app/core/interfaces/interfaces'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-node-requirements',
   standalone: true,
-  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent],
+  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent, TranslatePipe],
   templateUrl: './node-requirements.component.html',
   styleUrl: './node-requirements.component.sass',
 })

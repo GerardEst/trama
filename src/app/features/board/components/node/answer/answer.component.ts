@@ -14,6 +14,7 @@ import { NodeRequirementsComponent } from '../node-requirements/node-requirement
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { BoardAnchorDirective } from '../../../directives/board-anchor.directive'
 import { RichTextFieldComponent } from '../../rich-text/rich-text-field.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-answer',
@@ -24,6 +25,7 @@ import { RichTextFieldComponent } from '../../rich-text/rich-text-field.componen
     NodeRequirementsComponent,
     BoardAnchorDirective,
     RichTextFieldComponent,
+    TranslatePipe,
   ],
   templateUrl: './answer.component.html',
   styleUrls: ['./answer.component.sass'],

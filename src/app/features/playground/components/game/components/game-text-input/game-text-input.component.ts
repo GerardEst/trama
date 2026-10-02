@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { node_userTextOptions } from 'src/app/core/interfaces/interfaces'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-game-text-input',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './game-text-input.component.html',
   styleUrl: './game-text-input.component.sass',
 })

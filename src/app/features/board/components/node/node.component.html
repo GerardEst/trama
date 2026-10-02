@@ -4,7 +4,7 @@
     class="node__shortcutImageInput"
     type="file"
     accept="image/*"
-    aria-label="Add image"
+    [attr.aria-label]="'board.node.addImage' | t"
     hidden
     (change)="onAddImage($event)"
   />
@@ -27,19 +27,19 @@
     <div class="node__heading">
       <polo-editable-name
         class="node__name"
-        [label]="'Name of ' + type + ' node ' + nodeId"
+        [label]="'board.node.nameLabel' | t: { type: kindName(), id: nodeId }"
         [value]="name === nodeId ? '' : name || ''"
         [placeholder]="nodeId"
         (valueChanged)="saveNodeName($event)"
       ></polo-editable-name>
-      <span class="node__type">{{ type | titlecase }} node</span>
+      <span class="node__type">{{ typeName() }}</span>
     </div>
 
     <polo-basic-button
       class="node__menuButton"
       size="s"
       [transparent]="true"
-      title="Node options"
+      [title]="'board.node.options' | t"
       icon="/assets/icons/hamburger-menu.svg"
       (pointerdown)="$event.stopPropagation()"
       (click)="optionsOpen = true"
@@ -98,12 +98,20 @@
           [canDelete]="true"
         ></polo-image>
       }
-      <polo-rich-text-field label="End node text" [text]="text" placeholder="Write the ending…" (saved)="saveRichText($event)" />
+      <polo-rich-text-field
+        [label]="'board.node.endText' | t"
+        [text]="text"
+        [placeholder]="'board.node.endPlaceholder' | t"
+        (saved)="saveRichText($event)"
+      />
       <div class="node__linkoptions">
         @if (database.user()?.profile?.subscription_status === 'active') {
           <div class="node__linkoptions__header">
-            <p class="node__linkoptions__header__title">External links</p>
-            <polo-basic-button (click)="addExternalLink()" text="add">add</polo-basic-button>
+            <p class="node__linkoptions__header__title">{{ 'board.node.externalLinks' | t }}</p>
+            <polo-basic-button
+              (click)="addExternalLink()"
+              [text]="'board.node.addLink' | t"
+            ></polo-basic-button>
           </div>
           <label class="node__linkoptions__link">
             @for (link of links | keyvalue; track $index) {
@@ -111,38 +119,35 @@
                 (change)="updateLinks()"
                 [(ngModel)]="links[$index].name"
                 type="text"
-                placeholder="Link text"
+                [placeholder]="'board.node.linkText' | t"
               /><input
                 (change)="updateLinks()"
                 [(ngModel)]="links[$index].url"
                 type="text"
-                placeholder="Link URL"
+                [placeholder]="'board.node.linkUrl' | t"
               />
             }
           </label>
         } @else {
-          <p class="node__linkoptions__header__title">External links</p>
-          <p>
-            With external links, you can lead your users to your products, websites or social
-            network as part of your story.
-          </p>
-          <p>External links are not allowed in the free plan.</p>
+          <p class="node__linkoptions__header__title">{{ 'board.node.externalLinks' | t }}</p>
+          <p>{{ 'board.node.linksPitch' | t }}</p>
+          <p>{{ 'board.node.linksFree' | t }}</p>
         }
       </div>
       @if (activeStory.storyConfiguration().sharing) {
         <div class="node__shareoptions">
           <label class="node__shareoptions__toggle">
-            <p class="node__shareoptions__toggle__title">Share customizations</p>
+            <p class="node__shareoptions__toggle__title">{{ 'board.node.shareCustomizations' | t }}</p>
             <input [(ngModel)]="openedShareOptions" type="checkbox" />
           </label>
           @if (openedShareOptions) {
             <div class="node__shareoptions__option">
-              <label [for]="nodeId + '-shared-text'">Custom shared text</label>
+              <label [for]="nodeId + '-shared-text'">{{ 'board.node.sharedText' | t }}</label>
               <textarea [id]="nodeId + '-shared-text'" (change)="updateShareOptions()" [(ngModel)]="shareOptions.sharedText">
               </textarea>
             </div>
             <label class="node__shareoptions__option">
-              <p>Custom share button text</p>
+              <p>{{ 'board.node.shareButtonText' | t }}</p>
               <input
                 type="text"
                 (change)="updateShareOptions()"
@@ -170,7 +175,11 @@
           [class.union_point--hasJoin]="join && join.length > 0"
         ></div>
       }
-      <polo-rich-text-field label="Node text" [text]="text" (saved)="saveRichText($event)" />
+      <polo-rich-text-field
+        [label]="'board.node.text' | t"
+        [text]="text"
+        (saved)="saveRichText($event)"
+      />
       @if (answers && answers.length > 0) {
         <div
           class="node__answers"
@@ -208,15 +217,20 @@
         [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"
       ></div>
-      <polo-form-field label="Prompt" [showOptional]="false">
-        <polo-rich-text-field label="Prompt" [text]="text" placeholder="Ask the player something…" (saved)="saveRichText($event)" />
+      <polo-form-field [label]="'board.node.prompt' | t" [showOptional]="false">
+        <polo-rich-text-field
+          [label]="'board.node.prompt' | t"
+          [text]="text"
+          [placeholder]="'board.node.promptPlaceholder' | t"
+          (saved)="saveRichText($event)"
+        />
       </polo-form-field>
       <polo-form-field
         #propertyField
-        label="Property"
+        [label]="'board.node.property' | t"
         [controlId]="nodeId + '-property'"
         [showOptional]="false"
-        description="Stores the player's answer under this property for use later in the story."
+        [description]="'board.node.propertyHelp' | t"
       >
         <input
           class="node__fieldControl"
@@ -230,10 +244,10 @@
       </polo-form-field>
       <polo-form-field
         #placeholderField
-        label="Placeholder"
+        [label]="'board.node.placeholder' | t"
         [controlId]="nodeId + '-placeholder'"
         [showOptional]="false"
-        description="Shown inside the player's text box before they type."
+        [description]="'board.node.placeholderHelp' | t"
       >
         <input
           class="node__fieldControl"
@@ -247,10 +261,10 @@
       </polo-form-field>
       <polo-form-field
         #buttonTextField
-        label="Button text"
+        [label]="'board.node.buttonText' | t"
         [controlId]="nodeId + '-buttonText'"
         [showOptional]="false"
-        description="Saved for this node, but the playground currently uses a fixed Continue button."
+        [description]="'board.node.buttonTextHelp' | t"
       >
         <input
           class="node__fieldControl"
@@ -264,10 +278,10 @@
       </polo-form-field>
       <polo-form-field
         #descriptionField
-        label="Description"
+        [label]="'board.node.description' | t"
         [controlId]="nodeId + '-description'"
         [showOptional]="false"
-        description="Saved as extra guidance for this input; not currently shown in the playground."
+        [description]="'board.node.descriptionHelp' | t"
       >
         <textarea
           class="node__fieldControl"
@@ -283,9 +297,15 @@
   @if (type === 'distributor' || type === 'content') {
     <footer class="node__footer">
       @if (type === 'distributor') {
-        <polo-basic-button (click)="addCondition()" text="Add route"></polo-basic-button>
+        <polo-basic-button
+          (click)="addCondition()"
+          [text]="'board.node.addRoute' | t"
+        ></polo-basic-button>
       } @else {
-        <polo-basic-button (click)="addAnswer()" text="Add answer"></polo-basic-button>
+        <polo-basic-button
+          (click)="addAnswer()"
+          [text]="'board.node.addAnswer' | t"
+        ></polo-basic-button>
       }
     </footer>
   }

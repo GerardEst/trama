@@ -127,7 +127,7 @@ describe('MenuTopComponent', () => {
 
     download.and.stub()
     component.exportTree()
-    expect(component.exportError).toBe('')
+    expect(component.exportError).toBeNull()
     expect(component.showOptions).toBeFalse()
   })
 

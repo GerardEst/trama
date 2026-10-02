@@ -7,19 +7,19 @@
 >
   <header class="addEvent__header">
     <div>
-      <p class="addEvent__eyebrow">Player state</p>
+      <p class="addEvent__eyebrow">{{ 'board.event.eyebrow' | t }}</p>
       <h2 id="event-dialog-title">
-        {{ canBeDeleted ? 'Edit event' : 'Add event' }}
+        {{ (canBeDeleted ? 'board.event.edit' : 'board.event.add') | t }}
       </h2>
       <p id="event-dialog-description" class="addEvent__description">
-        Update the player when this part of the story is reached.
+        {{ 'board.event.description' | t }}
       </p>
     </div>
     <button
       class="addEvent__close"
       type="button"
-      aria-label="Close event editor"
-      title="Close"
+      [attr.aria-label]="'board.event.close' | t"
+      [title]="'common.close' | t"
       (click)="onCancel()"
     >
       <img src="/assets/icons/close.svg" alt="" />
@@ -27,30 +27,30 @@
   </header>
 
   <div class="addEvent__body">
-    <div class="addEvent__type" role="group" aria-label="Event type">
-      <p class="addEvent__label">What should change?</p>
+    <div class="addEvent__type" role="group" [attr.aria-label]="'board.event.typeLabel' | t">
+      <p class="addEvent__label">{{ 'board.event.question' | t }}</p>
       <div class="addEvent__typeOptions">
         <polo-choice-card
           #typeOption
           icon="/assets/icons/stat.svg"
-          label="Stat"
-          description="Adjust a number"
+          [label]="'board.event.stat' | t"
+          [description]="'board.event.statHelp' | t"
           [selected]="type === 'stat'"
           (chosen)="selectType('stat')"
         ></polo-choice-card>
         <polo-choice-card
           #typeOption
           icon="/assets/icons/condition.svg"
-          label="Condition"
-          description="Grant or remove"
+          [label]="'board.event.condition' | t"
+          [description]="'board.event.conditionHelp' | t"
           [selected]="type === 'condition'"
           (chosen)="selectType('condition')"
         ></polo-choice-card>
         <polo-choice-card
           #typeOption
           icon="/assets/icons/tag.svg"
-          label="Property"
-          description="Set a text value"
+          [label]="'board.event.property' | t"
+          [description]="'board.event.propertyHelp' | t"
           [selected]="type === 'property'"
           (chosen)="selectType('property')"
         ></polo-choice-card>
@@ -73,21 +73,21 @@
   <footer class="addEvent__actions">
     @if (confirmingDelete) {
       <p class="addEvent__deletePrompt" aria-live="polite">
-        Delete this event?
+        {{ 'board.event.deletePrompt' | t }}
       </p>
       <button
         class="addEvent__button addEvent__button--secondary"
         type="button"
         (click)="confirmingDelete = false"
       >
-        Keep event
+        {{ 'board.event.keep' | t }}
       </button>
       <button
         class="addEvent__button addEvent__button--confirmDelete"
         type="button"
         (click)="deleteEvent()"
       >
-        Delete
+        {{ 'common.delete' | t }}
       </button>
     } @else {
       @if (canBeDeleted) {
@@ -97,7 +97,7 @@
           (click)="requestDelete()"
         >
           <img src="/assets/icons/trash.svg" alt="" />
-          Delete
+          {{ 'common.delete' | t }}
         </button>
       }
       <span class="addEvent__actionsSpacer"></span>
@@ -106,16 +106,16 @@
         type="button"
         (click)="onCancel()"
       >
-        Cancel
+        {{ 'common.cancel' | t }}
       </button>
       <button
         class="addEvent__button addEvent__button--primary"
         type="button"
         [disabled]="!canSave"
-        [attr.title]="canSave ? null : 'Choose a target and complete the event details'"
+        [attr.title]="canSave ? null : ('board.event.incomplete' | t)"
         (click)="saveEvent()"
       >
-        {{ canBeDeleted ? 'Save changes' : 'Add event' }}
+        {{ (canBeDeleted ? 'board.event.save' : 'board.event.add') | t }}
       </button>
     }
   </footer>

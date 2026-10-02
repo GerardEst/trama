@@ -8,11 +8,12 @@ import {
   OnInit,
 } from '@angular/core'
 import { PopupBaseComponent } from '../popup-base/popup-base.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-select-or-create',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './select-or-create.component.html',
   styleUrl: './select-or-create.component.sass',
 })

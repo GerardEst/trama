@@ -27,6 +27,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env['CI'] ? 'https://trama.app' : 'http://localhost:4200',
 
+    /* The app follows the browser language; existing assertions are written in English. */
+    locale: 'en-US',
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },

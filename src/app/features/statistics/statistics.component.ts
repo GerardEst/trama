@@ -7,11 +7,13 @@ import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { stat } from 'src/app/core/interfaces/interfaces'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-stadistics',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent, SeparatorComponent],
+  imports: [CommonModule, BasicButtonComponent, SeparatorComponent, TranslatePipe],
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.sass'],
 })
@@ -24,7 +26,8 @@ export class StatisticsComponent implements OnInit {
   constructor(
     private db: DatabaseService,
     private stadistics: StatisticsService,
-    private router: Router
+    private router: Router,
+    private i18n: I18nService
   ) {}
 
   ngOnInit() {
@@ -64,7 +67,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   normalizeDate(date: Date) {
-    return new Date(date).toLocaleString()
+    return this.i18n.formatDate(date, { dateStyle: 'short', timeStyle: 'short' })
   }
 
   goBack() {

@@ -24,13 +24,16 @@ interface Joinable {
 }
 
 /** Owns graph and node editing rules for the authoring board. */
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+
 @Injectable({
   providedIn: 'root',
 })
 export class StoryEditorService {
   constructor(
     private activeStory: ActiveStoryService,
-    private mutations: StoryMutationService
+    private mutations: StoryMutationService,
+    private i18n: I18nService
   ) {}
 
   duplicateNode(nodeId: string, newNodeId: string) {
@@ -149,7 +152,7 @@ export class StoryEditorService {
       tree.nodes.push({
         id: groupId,
         type: 'group',
-        text: 'Group',
+        text: this.i18n.t('board.groups.defaultName'),
         left,
         top,
         groupId: parentGroupId,
@@ -196,7 +199,12 @@ export class StoryEditorService {
       // A node belongs to at most one visual frame at a given level.
       this.detachFromFrames(tree, nodeIds)
       tree.frames ??= []
-      tree.frames.push({ id, name: 'Frame', nodeIds: [...nodeIds], groupId })
+      tree.frames.push({
+        id,
+        name: this.i18n.t('board.frames.defaultName'),
+        nodeIds: [...nodeIds],
+        groupId,
+      })
     })
     return id
   }

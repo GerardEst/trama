@@ -6,13 +6,13 @@
       type="button"
       aria-haspopup="dialog"
       [attr.aria-expanded]="addEventPopover.isOpen"
-      aria-label="Add event"
-      title="Add event"
+      [attr.aria-label]="'board.event.add' | t"
+      [title]="'board.event.add' | t"
       (click)="addEventPopover.open()"
     >
       <img src="/assets/icons/plus.svg" alt="" />
       @if (!events || events.length === 0) {
-        <p>Add event</p>
+        <p>{{ 'board.event.add' | t }}</p>
       }
     </button>
     <ng-template poloPopoverContent>

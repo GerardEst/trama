@@ -1,5 +1,5 @@
 <form (submit)="$event.preventDefault(); submit()">
-  <label for="playground-answer">{{ options?.description || 'Your answer' }}</label>
+  <label for="playground-answer">{{ options?.description || ('playground.yourAnswer' | t) }}</label>
   <div class="field">
     <input
       id="playground-answer"
@@ -12,15 +12,15 @@
       [attr.aria-describedby]="userText.invalid && userText.touched ? 'playground-answer-error' : null"
     />
     <button type="submit" [disabled]="userText.invalid">
-      {{ options?.buttonText || 'Continue' }}
+      {{ options?.buttonText || ('playground.continue' | t) }}
     </button>
   </div>
   @if (userText.invalid && userText.touched) {
     <p id="playground-answer-error" role="alert">
       @if (userText.errors?.['required']) {
-        Please enter an answer.
+        {{ 'playground.answerRequired' | t }}
       } @else if (userText.errors?.['maxlength']) {
-        Use 100 characters or fewer.
+        {{ 'playground.answerTooLong' | t }}
       }
     </p>
   }

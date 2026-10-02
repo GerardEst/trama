@@ -5,11 +5,12 @@ import { NodeAddEventComponent } from '../context-menus/node-add-event/node-add-
 import { event } from 'src/app/core/interfaces/interfaces'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { NodeEventComponent } from './node-event/node-event.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-node-events',
   standalone: true,
-  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent],
+  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent, TranslatePipe],
   templateUrl: './node-events.component.html',
   styleUrl: './node-events.component.sass',
 })

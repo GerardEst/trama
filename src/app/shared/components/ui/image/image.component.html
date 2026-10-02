@@ -8,7 +8,7 @@
     <img
       class="image__preview"
       [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + storageRoute"
-      alt="Node illustration"
+      [alt]="'common.image.alt' | t"
     />
     @if (canDelete) {
       <polo-basic-button
@@ -16,8 +16,8 @@
         size="s"
         type="danger"
         icon="/assets/icons/trash.svg"
-        text="Remove"
-        title="Remove image"
+        [text]="'common.image.remove' | t"
+        [title]="'common.image.removeTitle' | t"
         (click)="onRemoveImage.emit()"
       ></polo-basic-button>
     }

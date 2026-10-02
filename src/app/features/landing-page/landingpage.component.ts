@@ -1,6 +1,22 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
+import { DOCUMENT } from '@angular/common'
+import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import { Title, Meta } from '@angular/platform-browser'
+import { Meta } from '@angular/platform-browser'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { isLang, Lang, LANGS } from 'src/app/core/i18n/i18n.types'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
 import { LandingFeaturesComponent } from './components/landing-features/landing-features.component'
 import { PricingComponent } from 'src/app/shared/components/pricing/pricing.component'
@@ -14,6 +30,8 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
     LandingFeaturesComponent,
     PricingComponent,
     BillingCycleComponent,
+    LanguageSelectorComponent,
+    TranslatePipe,
   ],
   templateUrl: './landingpage.component.html',
   styleUrls: [
@@ -24,28 +42,56 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
 export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('closingSection') closingSection?: ElementRef<HTMLElement>
 
+  // Set by the /es and /ca routes. The plain landing URL is the English page.
+  @Input() lang?: Lang
+
   loggedUserEmail?: string
   loggedUserPlan?: string
   payAnnually = false
+
+  private readonly i18n = inject(I18nService)
+  private readonly router = inject(Router)
+  private readonly document = inject(DOCUMENT)
+  private alternateLinks: HTMLLinkElement[] = []
 
   get creationUrl() {
     return this.loggedUserEmail ? '/dashboard' : '/login?mode=register'
   }
 
+  get homeUrl() {
+    return landingUrl(this.i18n.lang())
+  }
+
+  get licenseEnquiryUrl() {
+    const subject = encodeURIComponent(this.i18n.t('landing.pricing.license.subject'))
+    return `mailto:gesteve.12@gmail.com?subject=${subject}`
+  }
+
   constructor(
-    private titleService: Title,
     private meta: Meta,
     public db: DatabaseService
-  ) {}
-
-  ngOnInit() {
-    this.checkLoggedUser()
-    this.titleService.setTitle('Trama — You write the story. They choose the way.')
-    this.meta.updateTag({
-      name: 'description',
-      content:
-        'You write the story. They choose the way. Build interactive stories on a visual canvas, share them with a single link, and see where your readers go.',
+  ) {
+    // The route title follows the language too (see I18nTitleStrategy).
+    effect(() => {
+      this.meta.updateTag({ name: 'description', content: this.i18n.t('landing.meta.description') })
     })
+  }
+
+  async ngOnInit() {
+    this.checkLoggedUser()
+    this.addAlternateLinks()
+
+    const routeLang = isLang(this.lang) ? this.lang : 'en'
+    // Visitors who prefer another language land on its own URL.
+    if (routeLang === 'en' && this.i18n.lang() !== 'en') {
+      this.router.navigate([landingUrl(this.i18n.lang())], { replaceUrl: true, preserveFragment: true })
+    } else if (routeLang !== this.i18n.lang()) {
+      await this.i18n.setLang(routeLang, { persist: false })
+    }
+  }
+
+  changeLanguage(lang: Lang) {
+    this.router.navigate([landingUrl(lang)])
   }
 
   private closingObserver?: IntersectionObserver
@@ -56,6 +102,21 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.closingObserver?.disconnect()
+    this.alternateLinks.forEach((link) => link.remove())
+  }
+
+  // Tells search engines about the other translations of the landing page.
+  private addAlternateLinks() {
+    const origin = 'https://trama.app'
+    const alternates = [...LANGS, 'x-default'].map((hreflang) => {
+      const link = this.document.createElement('link')
+      link.rel = 'alternate'
+      link.hreflang = hreflang
+      link.href = origin + landingUrl(isLang(hreflang) ? hreflang : 'en')
+      return link
+    })
+    this.alternateLinks = alternates
+    this.document.head.append(...alternates)
   }
 
   // The section only starts hidden once we know it can be revealed, so it never stays invisible.
@@ -86,4 +147,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
         loggedUser.profile.plan) ||
       'free'
   }
+}
+
+function landingUrl(lang: Lang) {
+  return lang === 'en' ? '/' : `/${lang}`
 }

@@ -4,11 +4,12 @@ import { GameAnswerComponent } from '../game-answer/game-answer.component'
 import { GameTextInputComponent } from '../game-text-input/game-text-input.component'
 import { GameEndActionsComponent } from '../game-end-actions/game-end-actions.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-game-node',
   standalone: true,
-  imports: [GameAnswerComponent, GameTextInputComponent, GameEndActionsComponent],
+  imports: [GameAnswerComponent, GameTextInputComponent, GameEndActionsComponent, TranslatePipe],
   templateUrl: './game-node.component.html',
   styleUrl: './game-node.component.sass',
 })

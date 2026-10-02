@@ -15,11 +15,12 @@ export interface SelectorOption {
   id: string
   name: string
 }
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-selector',
   standalone: true,
-  imports: [SelectOrCreateComponent],
+  imports: [SelectOrCreateComponent, TranslatePipe],
   templateUrl: './selector.component.html',
   styleUrl: './selector.component.sass',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,7 +29,7 @@ export class SelectorComponent {
   @Input() options: SelectorOption[] = []
   @Input() selected?: string
   @Input() message?: string
-  @Input() placeholder: string = 'Choose an option'
+  @Input() placeholder?: string
   @Input() controlId: string = `polo-selector-${nextSelectorId++}`
   @Input() describedBy?: string
   @Input() required: boolean = false

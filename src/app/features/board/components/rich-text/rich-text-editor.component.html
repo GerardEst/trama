@@ -1,29 +1,35 @@
-<dialog #dialog class="focusEditor richTextEditor" [attr.aria-label]="'Focus on ' + label()"
+<dialog #dialog class="focusEditor richTextEditor" [attr.aria-label]="'board.editor.focusOn' | t: { label: label() }"
   (close)="onClosed()" (pointerdown)="onBackdropPointerDown($event)">
   <header class="focusEditor__header">
-    <button type="button" aria-label="Close focus mode" (click)="close()">Close</button>
+    <button type="button" [attr.aria-label]="'board.editor.closeFocus' | t" (click)="close()">
+      {{ 'board.editor.close' | t }}
+    </button>
   </header>
   <main class="focusEditor__body">
-    <div class="richTextEditor__toolbar" role="toolbar" aria-label="Text formatting">
-      <button type="button" aria-label="Bold" (click)="toggle('bold')"><strong>B</strong></button>
-      <button type="button" aria-label="Italic" (click)="toggle('italic')"><em>I</em></button>
+    <div class="richTextEditor__toolbar" role="toolbar" [attr.aria-label]="'board.editor.formatting' | t">
+      <button type="button" [attr.aria-label]="'board.editor.bold' | t" (click)="toggle('bold')"><strong>B</strong></button>
+      <button type="button" [attr.aria-label]="'board.editor.italic' | t" (click)="toggle('italic')"><em>I</em></button>
       @if (!inlineOnly()) {
-        <button type="button" aria-label="Paragraph" (click)="paragraph()">P</button>
-        <button type="button" aria-label="Heading 1" (click)="heading(1)">H1</button>
-        <button type="button" aria-label="Heading 2" (click)="heading(2)">H2</button>
-        <button type="button" aria-label="Heading 3" (click)="heading(3)">H3</button>
-        <button type="button" aria-label="Bullet list" (click)="toggle('bulletList')">• List</button>
-        <button type="button" aria-label="Numbered list" (click)="toggle('orderedList')">1. List</button>
+        <button type="button" [attr.aria-label]="'board.editor.paragraph' | t" (click)="paragraph()">P</button>
+        <button type="button" [attr.aria-label]="'board.editor.heading1' | t" (click)="heading(1)">H1</button>
+        <button type="button" [attr.aria-label]="'board.editor.heading2' | t" (click)="heading(2)">H2</button>
+        <button type="button" [attr.aria-label]="'board.editor.heading3' | t" (click)="heading(3)">H3</button>
+        <button type="button" [attr.aria-label]="'board.editor.bulletList' | t" (click)="toggle('bulletList')">
+          {{ 'board.editor.bulletListShort' | t }}
+        </button>
+        <button type="button" [attr.aria-label]="'board.editor.numberedList' | t" (click)="toggle('orderedList')">
+          {{ 'board.editor.numberedListShort' | t }}
+        </button>
       }
-      <select #variableSelect aria-label="Insert variable" (change)="insertVariable(variableSelect.value, variableSelect)">
-        <option value="">Insert variable…</option>
+      <select #variableSelect [attr.aria-label]="'board.editor.insertVariable' | t" (change)="insertVariable(variableSelect.value, variableSelect)">
+        <option value="">{{ 'board.editor.insertVariableOption' | t }}</option>
         @for (variable of variables(); track variable.kind + ':' + variable.key) {
           <option [value]="variable.kind + ':' + variable.key">{{ variable.label }}</option>
         }
       </select>
       @if (!inlineOnly() && categories().length) {
-        <select #categorySelect aria-label="Insert category" (change)="insertCategory(categorySelect.value, categorySelect)">
-          <option value="">Insert category…</option>
+        <select #categorySelect [attr.aria-label]="'board.editor.insertCategory' | t" (change)="insertCategory(categorySelect.value, categorySelect)">
+          <option value="">{{ 'board.editor.insertCategoryOption' | t }}</option>
           @for (category of categories(); track category.id) {
             <option [value]="category.id">{{ category.name }}</option>
           }

@@ -12,11 +12,12 @@ import {
 import { ChoiceCardComponent } from 'src/app/shared/components/ui/choice-card/choice-card.component'
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
 import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modify-ref.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-node-add-event',
   standalone: true,
-  imports: [ChoiceCardComponent, NodeAddModifyRefComponent],
+  imports: [ChoiceCardComponent, NodeAddModifyRefComponent, TranslatePipe],
   templateUrl: './node-add-event.component.html',
   styleUrl: './node-add-event.component.sass',
 })

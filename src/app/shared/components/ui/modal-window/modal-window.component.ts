@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { BasicButtonComponent } from '../basic-button/basic-button.component'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-modal-window',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent],
+  imports: [CommonModule, BasicButtonComponent, TranslatePipe],
   templateUrl: './modal-window.component.html',
   styleUrls: ['./modal-window.component.sass'],
   animations: [

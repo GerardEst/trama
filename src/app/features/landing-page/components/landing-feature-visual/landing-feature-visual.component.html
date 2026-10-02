@@ -1,7 +1,7 @@
 @switch (kind) {
   @case ('events') {
     <div class="events">
-      @for (row of eventRows; track $index) {
+      @for (row of eventRows(); track $index) {
         <div class="events__row" [class.events__row--reverse]="$odd">
           @for (copy of [0, 1]; track copy) {
             <div class="events__track">
@@ -17,19 +17,19 @@
 
   @case ('distributor') {
     <div class="node distributor">
-      <p class="node__title">Distributor</p>
-      <p class="route route--match"><span>trust &gt; 2 AND has_key</span><span>Secret entrance</span></p>
-      <p class="route"><span>trust &gt; 2</span><span>Front entrance</span></p>
-      <p class="route route--fallback"><span>Otherwise</span><span>Gatekeeper</span></p>
+      <p class="node__title">{{ 'landing.visuals.distributor' | t }}</p>
+      <p class="route route--match"><span>{{ 'landing.visuals.secretRule' | t }}</span><span>{{ 'landing.visuals.secretEntrance' | t }}</span></p>
+      <p class="route"><span>{{ 'landing.visuals.frontRule' | t }}</span><span>{{ 'landing.visuals.frontEntrance' | t }}</span></p>
+      <p class="route route--fallback"><span>{{ 'landing.visuals.otherwise' | t }}</span><span>{{ 'landing.visuals.gatekeeper' | t }}</span></p>
     </div>
   }
 
   @case ('player-input') {
     <div class="node player-input">
-      <p class="node__title">What should we call you?</p>
+      <p class="node__title">{{ 'landing.visuals.askName' | t }}</p>
       <p class="player-input__field"><span class="player-input__typed">Morgan</span></p>
       <p class="player-input__result">
-        Welcome back, <span class="token">#name</span>
+        {{ 'landing.visuals.welcomeBack' | t }} <span class="token">{{ 'landing.visuals.nameToken' | t }}</span>
         <span class="player-input__arrow">→</span> <strong>Morgan</strong>.
       </p>
     </div>
@@ -37,11 +37,11 @@
 
   @case ('requirements') {
     <div class="requirements">
-      <p class="requirements__stats"><span class="chip">coins 2</span><span class="chip">has_key ✓</span></p>
+      <p class="requirements__stats"><span class="chip">{{ 'landing.visuals.coins' | t }}</span><span class="chip">{{ 'landing.visuals.hasKey' | t }}</span></p>
       <div class="requirements__choices">
-        <p class="choice choice--available">Open the archive <small>requires has_key</small></p>
-        <p class="choice choice--locked">Buy the map <small>requires 3 coins</small></p>
-        <p class="choice choice--available">Walk away</p>
+        <p class="choice choice--available">{{ 'landing.visuals.openArchive' | t }} <small>{{ 'landing.visuals.requiresKey' | t }}</small></p>
+        <p class="choice choice--locked">{{ 'landing.visuals.buyMap' | t }} <small>{{ 'landing.visuals.requiresCoins' | t }}</small></p>
+        <p class="choice choice--available">{{ 'landing.visuals.walkAway' | t }}</p>
       </div>
     </div>
   }
@@ -50,14 +50,14 @@
     <div class="editor">
       <p class="editor__toolbar">
         <b>B</b><i>I</i><span>H</span><span>•</span><span class="token">#</span>
-        <span class="editor__close">Close</span>
+        <span class="editor__close">{{ 'landing.visuals.close' | t }}</span>
       </p>
       <div class="editor__page">
-        <p class="editor__heading">Chapter 2 · The Archive</p>
+        <p class="editor__heading">{{ 'landing.visuals.chapterHeading' | t }}</p>
         <p>
-          The door gave way with a sigh, as if it had been waiting for <span class="token">#name</span> all
-          along. Dust drifted through the lantern light, settling on shelves that ran deeper than the
-          building should allow.
+          {{ 'landing.visuals.passageStart' | t }}
+          <span class="token">{{ 'landing.visuals.nameToken' | t }}</span>
+          {{ 'landing.visuals.passageEnd' | t }}
         </p>
         <span class="editor__line"></span>
         <span class="editor__line editor__line--short"></span>
@@ -68,7 +68,7 @@
   @case ('organisation') {
     <div class="organisation">
       <div class="frame">
-        <p class="frame__name">Chapter 2</p>
+        <p class="frame__name">{{ 'landing.visuals.chapter2' | t }}</p>
         <span class="mini-node mini-node--a"></span>
         <span class="mini-node mini-node--b"></span>
         <span class="mini-node mini-node--c"></span>
@@ -78,8 +78,8 @@
         </svg>
       </div>
       <div class="group-node">
-        <p>Chapter 3</p>
-        <small>6 scenes</small>
+        <p>{{ 'landing.visuals.chapter3' | t }}</p>
+        <small>{{ 'landing.visuals.scenes' | t }}</small>
       </div>
     </div>
   }

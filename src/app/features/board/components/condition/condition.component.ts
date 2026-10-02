@@ -11,11 +11,12 @@ import { StoryReferencesService } from '../../services/story-references.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { node_condition_rule, ref } from 'src/app/core/interfaces/interfaces'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-condition',
   standalone: true,
-  imports: [BasicButtonComponent, BoardAnchorDirective],
+  imports: [BasicButtonComponent, BoardAnchorDirective, TranslatePipe],
   templateUrl: './condition.component.html',
   styleUrl: './condition.component.sass',
   changeDetection: ChangeDetectionStrategy.OnPush,

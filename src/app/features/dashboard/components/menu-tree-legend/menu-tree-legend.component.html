@@ -9,24 +9,24 @@
             ? '/assets/icons/chevron-down.svg'
             : '/assets/icons/chevron-up.svg'
         "
-        title="Toggle legend"
+        [title]="'dashboard.legend.toggle' | t"
       ></polo-basic-button>
-      <p>Legend</p>
+      <p>{{ 'dashboard.legend.title' | t }}</p>
       <div class="legend__content__title__buttons">
         <polo-basic-button
           (click)="mode = 'refs'"
           [selected]="mode === 'refs'"
           icon="/assets/icons/tag.svg"
-          text="Stats"
-          title="Stats and conditions"
+          [text]="'dashboard.legend.stats' | t"
+          [title]="'dashboard.legend.statsTitle' | t"
         ></polo-basic-button>
         @if (db.userPlanIs('pro')) {
         <polo-basic-button
           (click)="mode = 'games'"
           [selected]="mode === 'games'"
-          text="Activity"
+          [text]="'dashboard.legend.activity' | t"
           icon="/assets/icons/user-info.svg"
-          title="Games played by users"
+          [title]="'dashboard.legend.activityTitle' | t"
         ></polo-basic-button>
         }
       </div>
@@ -43,20 +43,21 @@
 
         <div class="tag__names">
           <polo-editable-name
-            [label]="'Name of ' + ref.type + ' ' + ref.id"
+            [label]="'dashboard.legend.refName' | t: { type: refTypeName(ref.type), id: ref.id }"
             [value]="ref.name"
             (valueChanged)="updateRefName($event, ref.id)"
           ></polo-editable-name>
           <p class="tag__names__id">{{ ref.id }}</p>
         </div>
         <p class="tag__times">
-          Used <span>{{ ref.times }}</span> times
+          {{ 'dashboard.legend.usedBefore' | t }} <span>{{ ref.times }}</span>
+          {{ 'dashboard.legend.usedAfter' | t }}
         </p>
         <polo-basic-button
           class="tag__category"
           [class.tag__category--empty]="!ref.category"
           (click)="openSelectorFor($event, ref.id)"
-          text="{{ ref.category || 'Add category' }}"
+          [text]="ref.category || ('dashboard.legend.addCategory' | t)"
         >
         </polo-basic-button>
       </div>
@@ -65,7 +66,7 @@
         <span class="tag__type tag__type--{{ ref.type }}"></span>
         <div class="tag__names">
           <polo-editable-name
-            [label]="'Name of ' + ref.type + ' ' + ref.id"
+            [label]="'dashboard.legend.refName' | t: { type: refTypeName(ref.type), id: ref.id }"
             [value]="ref.name"
             (valueChanged)="updateRefName($event, ref.id)"
           ></polo-editable-name>
@@ -91,18 +92,18 @@
           ? '/assets/icons/chevron-down.svg'
           : '/assets/icons/chevron-up.svg'
       "
-      title="Toggle legend"
+      [title]="'dashboard.legend.toggle' | t"
     ></polo-basic-button>
-    <p>Legend</p>
+    <p>{{ 'dashboard.legend.title' | t }}</p>
     }
     <div class="legend__header__buttons">
       <polo-basic-button
         (click)="goToPlayground()"
-        text="Preview"
+        [text]="'dashboard.legend.preview' | t"
       ></polo-basic-button>
       <polo-basic-button
         (click)="openShareModal()"
-        text="Share"
+        [text]="'dashboard.legend.share' | t"
       ></polo-basic-button>
     </div>
   </div>

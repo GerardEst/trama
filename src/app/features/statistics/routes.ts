@@ -4,7 +4,7 @@ import { authGuard } from 'src/app/core/guards/auth.guard'
 export const statisticsRoutes: Routes = [
   {
     path: 'stadistics/:storyId',
-    title: 'Statistics',
+    title: 'dashboard.statistics.title',
     loadComponent: () =>
       import('./statistics.component').then((m) => m.StatisticsComponent),
     canActivate: [authGuard],

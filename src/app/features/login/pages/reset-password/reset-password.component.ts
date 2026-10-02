@@ -5,6 +5,8 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 @Component({
   selector: 'polo-reset-password',
@@ -14,6 +16,7 @@ import { environment } from 'src/environments/environment'
     SeparatorComponent,
     CommonModule,
     ReactiveFormsModule,
+    TranslatePipe,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.sass',
@@ -22,10 +25,10 @@ export class ResetPasswordComponent {
   constructor(private db: DatabaseService) {}
 
   feedbackMessages = {
-    success: 'We have sent the link to your email',
-    error: 'There was an error sending the link, try again later',
-  }
-  feedback: string | null = null
+    success: 'login.reset.success',
+    error: 'login.reset.error',
+  } as const
+  feedback: TranslationKey | null = null
   email_address = new FormControl('', [Validators.required, Validators.email])
 
   async resetPasswordFor(event: Event, address: FormControl) {

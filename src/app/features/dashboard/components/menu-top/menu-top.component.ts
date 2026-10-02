@@ -9,18 +9,20 @@ import { DeleteStoryComponent } from '../delete-story/delete-story.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 import { StoryExportService } from 'src/app/shared/services/story-export.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [BasicButtonComponent, EditableNameComponent],
+  imports: [BasicButtonComponent, EditableNameComponent, TranslatePipe],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.sass',
 })
 export class MenuTopComponent {
   showOptions: boolean = false
   takenCustomId = false
-  exportError = ''
+  exportError: TranslationKey | null = null
 
   @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
 
@@ -111,13 +113,13 @@ export class MenuTopComponent {
   exportTree() {
     if (!this.activeStory.storyId()) return
 
-    this.exportError = ''
+    this.exportError = null
     try {
       this.storyExport.downloadJson()
       this.closePopup()
     } catch (error: unknown) {
       console.error('Could not export the story', error)
-      this.exportError = 'Could not export the story. Please try again.'
+      this.exportError = 'dashboard.top.exportError'
     }
   }
 

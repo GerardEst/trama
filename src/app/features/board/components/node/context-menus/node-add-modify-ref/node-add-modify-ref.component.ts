@@ -11,11 +11,14 @@ import { SelectorComponent } from 'src/app/shared/components/ui/selector/selecto
 import { StoryReferencesService } from '../../../../services/story-references.service'
 
 let nextReferenceEditorId = 0
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { TranslationKey, TranslationParams } from 'src/app/core/i18n/i18n.types'
 
 @Component({
   selector: 'polo-node-add-modify-ref',
   standalone: true,
-  imports: [FormFieldComponent, SelectorComponent],
+  imports: [FormFieldComponent, SelectorComponent, TranslatePipe],
   templateUrl: './node-add-modify-ref.component.html',
   styleUrl: './node-add-modify-ref.component.sass',
 })
@@ -42,19 +45,29 @@ export class NodeAddModifyRefComponent implements OnChanges {
   @Input() selectedOption?: string
 
   options: Array<{ id: string; name: string }> = []
-  message?: string
 
-  constructor(private storyReferences: StoryReferencesService) {}
+  constructor(
+    private storyReferences: StoryReferencesService,
+    private i18n: I18nService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['type']) {
       this.options = this.storyReferences.getByType(this.type)
-      this.message = `Choose or create a ${this.type}`
     }
   }
 
+  get message() {
+    return this.i18n.t(`board.reference.choose.${this.type}`)
+  }
+
   get typeLabel() {
-    return this.type.charAt(0).toUpperCase() + this.type.slice(1)
+    return this.i18n.t(`board.reference.types.${this.type}`)
+  }
+
+  get referenceHelp() {
+    const mode = this.i18n.t(`board.reference.modes.${this.mode}`)
+    return this.i18n.t(`board.reference.help.${this.type}`, { mode })
   }
 
   get selectedOptionName() {
@@ -69,43 +82,47 @@ export class NodeAddModifyRefComponent implements OnChanges {
   }
 
   get eventSummary() {
-    const targetName = this.selectedOptionName
-    if (!targetName) return ''
+    const name = this.selectedOptionName
+    if (!name) return ''
+    const t = (key: TranslationKey, params: TranslationParams = {}) =>
+      this.i18n.t(key, { name, ...params })
 
     if (this.mode === 'requirement') {
       if (this.type === 'condition') {
         return this.isConditionActive
-          ? `Show this answer when “${targetName}” is active.`
-          : `Show this answer when “${targetName}” is inactive.`
+          ? t('board.reference.summary.showWhenActive')
+          : t('board.reference.summary.showWhenInactive')
       }
 
       if (this.amount === undefined || this.amount === '') {
-        return `Enter the minimum value for “${targetName}”.`
+        return t('board.reference.summary.enterMinimum')
       }
 
-      return `Show this answer when “${targetName}” is at least ${this.amount}.`
+      return t('board.reference.summary.showWhenAtLeast', { amount: this.amount })
     }
 
     if (this.type === 'condition') {
       return this.isConditionActive
-        ? `Grant “${targetName}” to the player.`
-        : `Remove “${targetName}” from the player.`
+        ? t('board.reference.summary.grant')
+        : t('board.reference.summary.remove')
     }
 
     if (this.type === 'property') {
       return this.property
-        ? `Set “${targetName}” to “${this.property}”.`
-        : `Clear the value of “${targetName}”.`
+        ? t('board.reference.summary.set', { value: this.property })
+        : t('board.reference.summary.clear')
     }
 
     if (this.amount === undefined || this.amount === '') {
-      return `Enter how much “${targetName}” should change.`
+      return t('board.reference.summary.enterChange')
     }
 
     const amount = Number(this.amount)
-    if (amount === 0) return `Keep “${targetName}” unchanged.`
+    if (amount === 0) return t('board.reference.summary.keep')
 
-    return `${amount > 0 ? 'Increase' : 'Decrease'} “${targetName}” by ${Math.abs(amount)}.`
+    return t(amount > 0 ? 'board.reference.summary.increase' : 'board.reference.summary.decrease', {
+      amount: Math.abs(amount),
+    })
   }
 
   onNewOption(option: string) {

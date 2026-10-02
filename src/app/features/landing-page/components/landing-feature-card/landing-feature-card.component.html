@@ -10,6 +10,6 @@
     <p class="card__description">{{ description }}</p>
   </div>
   <a class="card__link" routerLink="/docs/features" [fragment]="docsFragment"
-    >{{ linkLabel }} <span aria-hidden="true">→</span></a
+    >{{ linkLabel ?? ('landing.features.readGuide' | t) }} <span aria-hidden="true">→</span></a
   >
 </article>

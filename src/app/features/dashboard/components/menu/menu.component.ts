@@ -15,11 +15,12 @@ import { ModalService } from 'src/app/core/services/modal.service'
 import { CreatorPaywallComponent } from 'src/app/features/dashboard/modals/creator-paywall/creator-paywall.component'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { FeedbackModalComponent } from 'src/app/features/feedback/feedback-modal/feedback-modal.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent],
+  imports: [CommonModule, BasicButtonComponent, TranslatePipe],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.sass'],
 })

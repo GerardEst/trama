@@ -2,25 +2,25 @@
   <polo-basic-button
     (click)="goBack()"
     icon="/assets/icons/chevron-left.svg"
-    title="Go back"
+    [title]="'dashboard.statistics.back' | t"
   ></polo-basic-button>
   <p>
-    Statistics - <span class="txt-weight-bold">{{ historyName }}</span>
+    {{ 'dashboard.statistics.title' | t }} - <span class="txt-weight-bold">{{ historyName }}</span>
   </p>
 </div>
 <div class="allResponses">
-  <p class="txt-weight-bold">All responses</p>
+  <p class="txt-weight-bold">{{ 'dashboard.statistics.all' | t }}</p>
   <polo-separator [space]="20"></polo-separator>
   <table>
     <thead>
       <tr>
-        <th class="name" onclick="sortTable(0)">Name</th>
+        <th class="name" onclick="sortTable(0)">{{ 'dashboard.statistics.name' | t }}</th>
         @for (ref of statRefs; track ref.id) {
           <th [class.stat]="ref.type === 'stat'" [class.condition]="ref.type === 'condition'">
             {{ ref.name }}
           </th>
         }
-        <th class="date" onclick="sortTable(1)">Date</th>
+        <th class="date" onclick="sortTable(1)">{{ 'dashboard.statistics.date' | t }}</th>
       </tr>
     </thead>
     <tbody>

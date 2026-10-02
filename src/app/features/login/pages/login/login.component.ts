@@ -8,6 +8,8 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { environment } from 'src/environments/environment'
 import { LOGIN_FEEDBACKS } from '../../constants'
 import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/google-login.component'
+import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-login',
@@ -18,6 +20,8 @@ import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/
     SeparatorComponent,
     BasicButtonComponent,
     GoogleLoginComponent,
+    LanguageSelectorComponent,
+    TranslatePipe,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],

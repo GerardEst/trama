@@ -18,11 +18,13 @@ interface DisplayedRef {
   category?: string
   times?: number
 }
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent],
+  imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent, TranslatePipe],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.sass',
 })
@@ -37,7 +39,8 @@ export class MenuTreeLegendComponent {
     public activeStory: ActiveStoryService,
     public contextMenu: ContextMenusService,
     private modal: ModalService,
-    private storyReferences: StoryReferencesService
+    private storyReferences: StoryReferencesService,
+    private i18n: I18nService
   ) {
     effect(() => {
       this.unusedRefs = []
@@ -100,6 +103,10 @@ export class MenuTreeLegendComponent {
     this.unusedRefs = this.unusedRefs.filter((ref: any) => ref.id !== refId)
   }
 
+  refTypeName(type: refType) {
+    return this.i18n.t(`common.refTypes.${type}`)
+  }
+
   async goToPlayground() {
     window.open('/private/' + this.activeStory.storyId(), '_blank')
   }
@@ -111,7 +118,7 @@ export class MenuTreeLegendComponent {
     )
 
     contextMenu.setInput('options', this.getCategories())
-    contextMenu.setInput('message', 'Select a category or create a new one')
+    contextMenu.setInput('message', this.i18n.t('dashboard.legend.categoryMessage'))
     contextMenu.setInput('selectedOption', refId)
 
     contextMenu.instance.onSelectOption.subscribe(

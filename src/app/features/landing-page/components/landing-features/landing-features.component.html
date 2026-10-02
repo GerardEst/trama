@@ -1,19 +1,18 @@
 <section class="features" aria-labelledby="features-title">
   <div class="features__heading">
-    <p class="features__eyebrow">BEYOND BRANCHING</p>
-    <h2 id="features-title">Stories that <em>remember.</em></h2>
-    <p class="features__description">
-      Choices that matter, paths that adapt and a board that stays readable as your world grows.
-      All without writing a line of code.
-    </p>
+    <p class="features__eyebrow">{{ 'landing.features.eyebrow' | t }}</p>
+    <h2 id="features-title">
+      {{ 'landing.features.titleStart' | t }} <em>{{ 'landing.features.titleEnd' | t }}</em>
+    </h2>
+    <p class="features__description">{{ 'landing.features.description' | t }}</p>
   </div>
   <div class="features__grid">
     @for (feature of features; track feature.docsFragment) {
       <polo-landing-feature-card
-        [title]="feature.title"
-        [description]="feature.description"
-        [label]="feature.label"
-        [linkLabel]="feature.linkLabel"
+        [title]="copyKey(feature, 'title') | t"
+        [description]="copyKey(feature, 'description') | t"
+        [label]="copyKey(feature, 'label') | t"
+        [linkLabel]="copyKey(feature, 'link') | t"
         [docsFragment]="feature.docsFragment"
         [wide]="feature.wide"
       >

@@ -49,6 +49,8 @@ interface BoardJoinTarget {
   toAnswer: boolean
   anchor: HTMLElement
 }
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-board',
@@ -60,6 +62,7 @@ interface BoardJoinTarget {
     BoardFlowsComponent,
     BoardAnchorDirective,
     EditableNameComponent,
+    TranslatePipe,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.sass'],
@@ -297,7 +300,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     private storyEditor: StoryEditorService,
     private preferences: BoardPreferencesService,
     private storage: StorageService,
-    private anchorRegistry: BoardAnchorRegistryService
+    private anchorRegistry: BoardAnchorRegistryService,
+    private i18n: I18nService
   ) {}
 
   ngOnInit() {
@@ -478,7 +482,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   renameGroup(groupId: string, value: string) {
-    this.storyEditor.updateNodeText(groupId, value.trim() || 'Group')
+    this.storyEditor.updateNodeText(groupId, value.trim() || this.i18n.t('board.groups.defaultName'))
   }
 
   openContextMenu(event: MouseEvent) {

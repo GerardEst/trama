@@ -1,19 +1,29 @@
 @if (groupControls) {
-  <nav class="groupToolbar" aria-label="Board groups">
+  <nav class="groupToolbar" [attr.aria-label]="'board.groups.label' | t">
     @if (currentGroupId) {
       <button type="button" (click)="leaveGroup()">
-        ← Exit {{ currentGroup()?.text || 'group' }}
+        {{ 'board.groups.exit' | t: { name: currentGroup()?.text || ('board.groups.group' | t) } }}
       </button>
     }
-    <button type="button" title="Group selected nodes (Ctrl+G / ⌘G)" [disabled]="!canGroupSelection()" (click)="groupSelection()">
-      Group selected nodes
+    <button
+      type="button"
+      [title]="'board.groups.groupShortcut' | t"
+      [disabled]="!canGroupSelection()"
+      (click)="groupSelection()"
+    >
+      {{ 'board.groups.groupSelection' | t }}
     </button>
-    <button type="button" title="Frame selected nodes (Ctrl+F / ⌘F)" [disabled]="!canFrameSelection()" (click)="frameSelection()">
-      Frame selected nodes
+    <button
+      type="button"
+      [title]="'board.groups.frameShortcut' | t"
+      [disabled]="!canFrameSelection()"
+      (click)="frameSelection()"
+    >
+      {{ 'board.groups.frameSelection' | t }}
     </button>
     @if (!canGroupSelection()) {
       <span>
-        {{ selectedNodeIds.has('node_0') ? 'The start node cannot be grouped' : 'Ctrl + drag to select at least 2 nodes' }}
+        {{ (selectedNodeIds.has('node_0') ? 'board.groups.startNode' : 'board.groups.selectHint') | t }}
       </span>
     }
   </nav>
@@ -36,12 +46,12 @@
     [style.top.px]="contextMenuPosition.y"
   >
     <header>
-      <p>Create new node</p>
+      <p>{{ 'board.create.title' | t }}</p>
     </header>
-    <li (click)="addNode($event, 'text')">Free text node</li>
-    <li (click)="addNode($event, 'content')">Answers node</li>
-    <li (click)="addNode($event, 'distributor')">Distributor node</li>
-    <li (click)="addNode($event, 'end')">End node</li>
+    <li (click)="addNode($event, 'text')">{{ 'board.create.text' | t }}</li>
+    <li (click)="addNode($event, 'content')">{{ 'board.create.content' | t }}</li>
+    <li (click)="addNode($event, 'distributor')">{{ 'board.create.distributor' | t }}</li>
+    <li (click)="addNode($event, 'end')">{{ 'board.create.end' | t }}</li>
   </div>
 
   @for (frame of visibleFrames(); track frame.id) {
@@ -61,13 +71,18 @@
         <div class="boardFrame__header" cdkDragHandle (pointerdown)="panzoom.pauseDrag()">
           <span class="boardFrame__grip" aria-hidden="true">⠿</span>
           <input
-            aria-label="Frame name"
+            [attr.aria-label]="'board.frames.name' | t"
             [value]="frame.name"
             (pointerdown)="$event.stopPropagation()"
             (change)="renameFrame(frame.id, $event)"
           />
-          <span class="boardFrame__count">{{ frame.nodeIds.length }} nodes</span>
-          <button type="button" aria-label="Remove frame" title="Remove frame (keep nodes)"
+          <span class="boardFrame__count">{{
+            'board.frames.nodes' | t: { count: frame.nodeIds.length }
+          }}</span>
+          <button
+            type="button"
+            [attr.aria-label]="'board.frames.remove' | t"
+            [title]="'board.frames.removeTitle' | t"
             (pointerdown)="$event.stopPropagation()" (click)="removeFrame(frame.id)">×</button>
         </div>
       </div>
@@ -96,8 +111,11 @@
           [style.top.px]="boundaryPosition('in').top"
         >
           <span class="boundaryNode__anchor boundaryNode__anchor--in" [poloBoardAnchor]="currentGroupId + '_boundary-in'"></span>
-          <strong>From outside</strong>
-          <span>{{ connections.incoming }} incoming {{ connections.incoming === 1 ? 'join' : 'joins' }}</span>
+          <strong>{{ 'board.groups.fromOutside' | t }}</strong>
+          <span>{{
+            (connections.incoming === 1 ? 'board.groups.incomingOne' : 'board.groups.incomingMany')
+              | t: { count: connections.incoming }
+          }}</span>
         </div>
       }
       @if (connections.outgoing) {
@@ -107,8 +125,11 @@
           [style.top.px]="boundaryPosition('out').top"
         >
           <span class="boundaryNode__anchor boundaryNode__anchor--out" [poloBoardAnchor]="currentGroupId + '_boundary-out'"></span>
-          <strong>To outside</strong>
-          <span>{{ connections.outgoing }} outgoing {{ connections.outgoing === 1 ? 'join' : 'joins' }}</span>
+          <strong>{{ 'board.groups.toOutside' | t }}</strong>
+          <span>{{
+            (connections.outgoing === 1 ? 'board.groups.outgoingOne' : 'board.groups.outgoingMany')
+              | t: { count: connections.outgoing }
+          }}</span>
         </div>
       }
     }
@@ -135,27 +156,39 @@
             <span class="groupNode__port groupNode__port--exit" [poloBoardAnchor]="node.id + '_group-exit'"></span>
             <div class="groupNode__header" cdkDragHandle tabindex="0">
               <polo-editable-name
-                label="Group name"
-                [value]="node.text || 'Group'"
+                [label]="'board.groups.name' | t"
+                [value]="node.text || ('board.groups.defaultName' | t)"
                 (click)="activateNode(node.id)"
                 (valueChanged)="renameGroup(node.id, $event)"
               ></polo-editable-name>
-              <span class="groupNode__type">Group node</span>
+              <span class="groupNode__type">{{ 'board.groups.nodeType' | t }}</span>
             </div>
-            <span>{{ nodeChildCount(node.id) }} nodes</span>
+            <span>{{ 'board.groups.nodes' | t: { count: nodeChildCount(node.id) } }}</span>
             @if (groupPortCounts(node.id); as ports) {
-              <span>{{ ports.incoming }} in · {{ ports.outgoing }} out</span>
+              <span>{{
+                'board.groups.ports' | t: { incoming: ports.incoming, outgoing: ports.outgoing }
+              }}</span>
             }
             <div class="groupNode__actions">
               <button type="button" (pointerdown)="$event.stopPropagation()" (click)="enterGroup(node.id)">
-                Enter group
+                {{ 'board.groups.enter' | t }}
               </button>
-              <button type="button" title="Ungroup (Supr)" (pointerdown)="$event.stopPropagation()" (click)="ungroup(node.id)">
-                Ungroup
+              <button
+                type="button"
+                [title]="'board.groups.ungroupShortcut' | t"
+                (pointerdown)="$event.stopPropagation()"
+                (click)="ungroup(node.id)"
+              >
+                {{ 'board.groups.ungroup' | t }}
               </button>
               @if (frameForNode(node.id)) {
-                <button type="button" title="Remove from frame (Ctrl+U / ⌘U)" (pointerdown)="$event.stopPropagation()" (click)="activateNode(node.id); removeNodeFromFrame(node.id)">
-                  Remove from frame
+                <button
+                  type="button"
+                  [title]="'board.groups.removeFromFrameShortcut' | t"
+                  (pointerdown)="$event.stopPropagation()"
+                  (click)="activateNode(node.id); removeNodeFromFrame(node.id)"
+                >
+                  {{ 'board.groups.removeFromFrame' | t }}
                 </button>
               }
             </div>

@@ -4,7 +4,7 @@
     [label]="typeLabel"
     [controlId]="controlIdPrefix + '-target'"
     [required]="true"
-    [description]="'Select an existing ' + type + ' or create one without leaving this ' + mode + '.'"
+    [description]="referenceHelp"
   >
     <polo-selector
       [controlId]="controlIdPrefix + '-target'"
@@ -13,7 +13,7 @@
       [options]="options"
       [message]="message"
       [selected]="selectedOption"
-      [placeholder]="'Choose or create a ' + type"
+      [placeholder]="message"
       (optionCreated)="onNewOption($event)"
       (selectionChanged)="onSelectOption($event)"
     ></polo-selector>
@@ -22,12 +22,12 @@
   @if (type === 'stat') {
     <polo-form-field
       #amountField
-      [label]="mode === 'requirement' ? 'Minimum value' : 'Change by'"
+      [label]="(mode === 'requirement' ? 'board.reference.minimum' : 'board.reference.changeBy') | t"
       [controlId]="controlIdPrefix + '-amount'"
       [required]="true"
-      [description]="mode === 'requirement'
-        ? 'The answer is available when the player has at least this value.'
-        : 'Use a positive number to increase it, or a negative one to decrease it.'"
+      [description]="
+        (mode === 'requirement' ? 'board.reference.minimumHelp' : 'board.reference.changeHelp') | t
+      "
     >
       <input
         class="eventDetail__input"
@@ -36,24 +36,32 @@
         type="number"
         inputmode="numeric"
         required
-        [placeholder]="mode === 'requirement' ? 'e.g. 5' : 'e.g. 5 or -2'"
+        [placeholder]="
+          (mode === 'requirement' ? 'board.reference.minimumExample' : 'board.reference.changeExample')
+            | t
+        "
         [value]="amount ?? ''"
         (input)="changeAmount($event)"
       />
     </polo-form-field>
   } @else if (type === 'condition') {
     <polo-form-field
-      label="Condition state"
+      [label]="'board.reference.conditionState' | t"
       [required]="true"
       [showOptional]="false"
     >
       <label class="eventDetail__switchRow" [for]="controlIdPrefix + '-condition-active'">
         <span>
-          <strong>{{ mode === 'requirement' ? 'Must be active' : 'Active after this event' }}</strong>
+          <strong>{{
+            (mode === 'requirement' ? 'board.reference.mustBeActive' : 'board.reference.activeAfter') | t
+          }}</strong>
           <small>
-            {{ mode === 'requirement'
-              ? 'Turn this off to require the condition to be inactive.'
-              : 'Turn this off to remove the condition.' }}
+            {{
+              (mode === 'requirement'
+                ? 'board.reference.mustBeActiveHelp'
+                : 'board.reference.activeAfterHelp'
+              ) | t
+            }}
           </small>
         </span>
         <input
@@ -67,16 +75,16 @@
   } @else {
     <polo-form-field
       #propertyField
-      label="New value"
+      [label]="'board.reference.newValue' | t"
       [controlId]="controlIdPrefix + '-property'"
-      description="This replaces the property's current value. Leave empty to clear it."
+      [description]="'board.reference.newValueHelp' | t"
     >
       <input
         class="eventDetail__input"
         [id]="controlIdPrefix + '-property'"
         [attr.aria-describedby]="propertyField.descriptionId"
         type="text"
-        placeholder="Enter a value"
+        [placeholder]="'board.reference.enterValue' | t"
         [value]="property ?? ''"
         (input)="changeProperty($event)"
       />

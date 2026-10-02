@@ -1,25 +1,22 @@
-<polo-modal-window mode="dialog" name="Share options">
+<polo-modal-window mode="dialog" [name]="'dashboard.share.title' | t">
   <ng-container modal-header></ng-container>
   <ng-container modal-content>
     <div class="content">
       <div class="linkContainer">
-        <p class="txt-weight-bold">Share with a private link</p>
+        <p class="txt-weight-bold">{{ 'dashboard.share.private' | t }}</p>
         <div class="linkBox">
           <p>{{ environment.baseRoute }}/private/{{ activeStory.storyId() }}</p>
           <polo-basic-button
-            [text]="copiedLinks.private ? 'Copied' : 'Copy'"
+            [text]="(copiedLinks.private ? 'common.copied' : 'common.copy') | t"
             icon="/assets/icons/copy.svg"
             (click)="copyLink('private')"
           ></polo-basic-button>
         </div>
-        <p class="txt-ralewayItalic">
-          This link is not alterable and will exist as long as the story exists,
-          be careful when sharing it
-        </p>
+        <p class="txt-ralewayItalic">{{ 'dashboard.share.privateNote' | t }}</p>
       </div>
       <div class="linkContainer">
         @if(activeStory.storyConfiguration().customId){
-        <p class="txt-weight-bold">Share with your customized path</p>
+        <p class="txt-weight-bold">{{ 'dashboard.share.custom' | t }}</p>
         <div class="linkBox">
           <p>
             {{ environment.baseRoute }}/{{
@@ -27,7 +24,7 @@
             }}
           </p>
           <polo-basic-button
-            [text]="copiedLinks.custom ? 'Copied' : 'Copy'"
+            [text]="(copiedLinks.custom ? 'common.copied' : 'common.copy') | t"
             icon="/assets/icons/copy.svg"
             (click)="copyLink('custom')"
           ></polo-basic-button>
@@ -37,7 +34,7 @@
       ></polo-basic-button-->
         </div>
         }@else {
-        <p>Beautify the path adding a custom ID</p>
+        <p>{{ 'dashboard.share.beautify' | t }}</p>
         <input
           [class.alert]="takenCustomId"
           (change)="updateCustomId($event)"
@@ -45,12 +42,9 @@
         />
         <p></p>
         @if (takenCustomId) {
-        <p>ID already taken</p>
+        <p>{{ 'dashboard.share.idTaken' | t }}</p>
         } }
-        <p class="txt-ralewayItalic">
-          Removing or changing the custom ID, users using this link will loose
-          access to the story
-        </p>
+        <p class="txt-ralewayItalic">{{ 'dashboard.share.customNote' | t }}</p>
       </div>
     </div>
   </ng-container>

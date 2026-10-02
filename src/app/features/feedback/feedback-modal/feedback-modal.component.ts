@@ -6,6 +6,8 @@ import { BasicButtonComponent } from '../../../shared/components/ui/basic-button
 import { ModalWindowComponent } from '../../../shared/components/ui/modal-window/modal-window.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import html2canvas from 'html2canvas'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-feedback-modal',
@@ -15,6 +17,7 @@ import html2canvas from 'html2canvas'
     FormsModule,
     BasicButtonComponent,
     ModalWindowComponent,
+    TranslatePipe,
   ],
   templateUrl: './feedback-modal.component.html',
   styleUrls: ['./feedback-modal.component.sass'],
@@ -26,7 +29,8 @@ export class FeedbackModalComponent {
 
   constructor(
     private modalService: ModalService,
-    private db: DatabaseService
+    private db: DatabaseService,
+    private i18n: I18nService
   ) {
     this.takeScreenshot()
   }
@@ -77,7 +81,7 @@ export class FeedbackModalComponent {
       }
     } catch (error) {
       console.error('Error submitting feedback:', error)
-      alert('Failed to send feedback. Please try again later.')
+      alert(this.i18n.t('dashboard.feedback.failed'))
     } finally {
       this.modalService.close()
       this.isSubmitting = false

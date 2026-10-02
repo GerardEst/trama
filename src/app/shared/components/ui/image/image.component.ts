@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core'
 import { BasicButtonComponent } from '../basic-button/basic-button.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-image',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './image.component.html',
   styleUrl: './image.component.sass',
 })

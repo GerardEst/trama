@@ -1,24 +1,28 @@
-<div class="options" role="menu" aria-label="Node actions">
-  <p class="options__title">Node actions</p>
+<div class="options" role="menu" [attr.aria-label]="'board.nodeOptions.title' | t">
+  <p class="options__title">{{ 'board.nodeOptions.title' | t }}</p>
   <polo-basic-button
     [transparent]="true"
     size="s"
-    title="Duplicate node (Ctrl+D / ⌘D)"
-    text="Duplicate"
+    [title]="'board.nodeOptions.duplicateShortcut' | t"
+    [text]="'board.nodeOptions.duplicate' | t"
     icon="/assets/icons/duplicate.svg"
     (click)="onDuplicateNode.emit()"
     align="left"
   ></polo-basic-button>
   @if (type !== 'distributor') {
     <form>
-      <label class="options__addImage" role="menuitem" title="Add image (Ctrl+I / ⌘I)">
+      <label
+        class="options__addImage"
+        role="menuitem"
+        [title]="'board.nodeOptions.addImageShortcut' | t"
+      >
         <img src="/assets/icons/camera.svg" alt="" />
-        <span>Add image</span>
+        <span>{{ 'board.nodeOptions.addImage' | t }}</span>
         <input
           type="file"
           name="image"
           accept="image/*"
-          aria-label="Add image"
+          [attr.aria-label]="'board.nodeOptions.addImage' | t"
           (change)="onAddImage.emit($event)"
         />
       </label>
@@ -28,8 +32,8 @@
     <polo-basic-button
       [transparent]="true"
       size="s"
-      [title]="'Remove from ' + frameName + ' (Ctrl+U / ⌘U; keep the node)'"
-      text="Remove from frame"
+      [title]="'board.nodeOptions.removeFromFrameShortcut' | t: { frame: frameName }"
+      [text]="'board.nodeOptions.removeFromFrame' | t"
       icon="/assets/icons/minus.svg"
       (click)="removeFromFrame.emit()"
       align="left"
@@ -40,8 +44,8 @@
       [transparent]="true"
       size="s"
       type="danger"
-      title="Delete node (Supr)"
-      text="Delete"
+      [title]="'board.nodeOptions.deleteShortcut' | t"
+      [text]="'board.nodeOptions.delete' | t"
       icon="/assets/icons/trash.svg"
       (click)="onRemoveNode.emit()"
       align="left"

@@ -39,11 +39,12 @@ interface JoinContextMenuInfo {
   destiny?: string
   toAnswer?: boolean
 }
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-board-flows',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './board-flows.component.html',
   styleUrls: ['./board-flows.component.sass'],
   changeDetection: ChangeDetectionStrategy.OnPush,

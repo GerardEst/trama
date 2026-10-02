@@ -8,7 +8,7 @@
     [class.node__event--negative]="isNegative"
     [class.node__event--condition]="type === 'condition'"
     [class.node__event--property]="type === 'property'"
-    [attr.aria-label]="'Edit event ' + displayTarget + ', ' + displayValue"
+    [attr.aria-label]="'board.event.editLabel' | t: { target: displayTarget, value: displayValue }"
     (click)="editEventPopover.open()"
   >
     <img

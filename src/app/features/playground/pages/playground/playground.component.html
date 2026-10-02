@@ -3,7 +3,7 @@
     <h1 class="storyHeader__title">{{ activeStory.storyName() }}</h1>
     <polo-toggle
       class="storyHeader__theme"
-      label="Dark mode"
+      [label]="'playground.darkMode' | t"
       [checked]="theme.dark()"
       (checkedChange)="theme.setDark($event)"
     ></polo-toggle>
@@ -26,7 +26,9 @@
         }
       }
       @if (activeStory.storyConfiguration().tapLink) {
-        <p>Created with <a target="_blank" rel="noopener noreferrer" href="https://trama.app">Trama</a></p>
+        <p>
+          {{ 'playground.createdWith' | t }}
+          <a target="_blank" rel="noopener noreferrer" href="https://trama.app">Trama</a></p>
       }
     </footer>
   }

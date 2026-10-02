@@ -2,18 +2,18 @@
   <div #preview class="richTextField__preview" [attr.tabindex]="inlineEditor ? -1 : 0"
     [attr.role]="inlineEditor ? null : 'textbox'" [attr.aria-label]="label()"
     [attr.aria-multiline]="inlineEditor ? null : true"
-    [attr.aria-placeholder]="inlineEditor ? null : placeholder()" [attr.data-placeholder]="placeholder()"
+    [attr.aria-placeholder]="inlineEditor ? null : placeholderText()" [attr.data-placeholder]="placeholderText()"
     [attr.aria-busy]="loadingEditor || null" [class.richTextField__preview--loading]="loadingEditor"
     (pointerdown)="prepareInlineEdit()" (focusin)="startInlineEdit()" (keydown)="onKeydown($event)"
     [innerHTML]="currentHtml"></div>
   <polo-basic-button class="richTextField__button" size="s" [transparent]="true"
-    [title]="'Focus on ' + label() + ' (Ctrl+F / ⌘F)'"
+    [title]="'board.editor.focusShortcut' | t: { label: label() }"
     icon="/assets/icons/maximize.svg" (pointerdown)="$event.stopPropagation()"
     (click)="open()" />
   @if (openEditor) {
     @defer (on immediate) {
-      <polo-rich-text-editor [label]="label()" [text]="draft" [placeholder]="placeholder()"
+      <polo-rich-text-editor [label]="label()" [text]="draft" [placeholder]="placeholderText()"
         [inlineOnly]="inlineOnly()" (closed)="onClosed($event)" />
-    } @placeholder { <span>Loading editor…</span> }
+    } @placeholder { <span>{{ 'board.editor.loading' | t }}</span> }
   }
 </div>

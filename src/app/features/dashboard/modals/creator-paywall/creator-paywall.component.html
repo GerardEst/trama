@@ -1,9 +1,9 @@
 <polo-modal-window mode="dialog">
   <ng-container modal-content>
     <p>
-      You have reached the maximum number of stories allowed in the free plan<br />
-      Upgrade your plan to creator or pro to have
-      <strong>unlimited</strong> stories
+      {{ 'dashboard.paywall.limit' | t }}<br />
+      {{ 'dashboard.paywall.upgradeStart' | t }}
+      <strong>{{ 'dashboard.paywall.unlimited' | t }}</strong> {{ 'dashboard.paywall.upgradeEnd' | t }}
     </p>
   </ng-container>
 </polo-modal-window>

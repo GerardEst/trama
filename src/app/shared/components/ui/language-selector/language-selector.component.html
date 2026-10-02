@@ -1,0 +1,16 @@
+<div class="languageSelector" role="group" [attr.aria-label]="'common.language' | t">
+  @for (option of options; track option.lang) {
+    <button
+      type="button"
+      class="languageSelector__option"
+      [class.languageSelector__option--active]="i18n.lang() === option.lang"
+      [attr.lang]="option.lang"
+      [attr.aria-label]="option.name"
+      [attr.aria-pressed]="i18n.lang() === option.lang"
+      [title]="option.name"
+      (click)="select(option.lang)"
+    >
+      {{ option.code }}
+    </button>
+  }
+</div>

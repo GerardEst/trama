@@ -6,13 +6,13 @@
       type="button"
       aria-haspopup="dialog"
       [attr.aria-expanded]="addRequirementPopover.isOpen"
-      aria-label="Add requirement"
-      title="Add requirement"
+      [attr.aria-label]="'board.requirement.add' | t"
+      [title]="'board.requirement.add' | t"
       (click)="addRequirementPopover.open()"
     >
       <img src="/assets/icons/plus.svg" alt="" />
       @if (!requirements || requirements.length === 0) {
-        <p>Add requirement</p>
+        <p>{{ 'board.requirement.add' | t }}</p>
       }
     </button>
     <ng-template poloPopoverContent>

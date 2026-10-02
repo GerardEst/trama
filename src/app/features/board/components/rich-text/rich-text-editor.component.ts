@@ -3,10 +3,12 @@ import type { Editor } from '@tiptap/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { createStoryEditor } from './story-editor-runtime'
 import { storyEditorValue } from './story-editor-html'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-rich-text-editor',
   standalone: true,
+  imports: [TranslatePipe],
   templateUrl: './rich-text-editor.component.html',
   styleUrl: './rich-text-editor.component.sass',
   host: { '(keydown.escape)': 'onEscape($event)' },

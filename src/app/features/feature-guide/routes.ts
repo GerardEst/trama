@@ -4,7 +4,7 @@ export const featureGuideRoutes: Routes = [
   {
     // Keep single-segment public story links (including /docs) available.
     path: 'docs/features',
-    title: 'Feature guide — Trama',
+    title: 'guide.meta.title',
     loadComponent: () =>
       import('./feature-guide.component').then((m) => m.FeatureGuideComponent),
   },

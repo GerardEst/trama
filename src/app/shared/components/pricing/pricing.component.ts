@@ -5,11 +5,13 @@ import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-pricing',
   standalone: true,
-  imports: [LandingLinkComponent, BasicButtonComponent],
+  imports: [LandingLinkComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './pricing.component.html',
   styleUrl: './pricing.component.sass',
 })
@@ -29,8 +31,13 @@ export class PricingComponent {
 
   constructor(
     private router: Router,
-    public db: DatabaseService
+    public db: DatabaseService,
+    private i18n: I18nService
   ) {}
+
+  price(value: number) {
+    return this.i18n.formatNumber(value, { minimumFractionDigits: 2 })
+  }
 
   subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
     if (this.email) {
@@ -92,14 +99,14 @@ export class PricingComponent {
           const user = this.db.user()
           if (user) user.profile.subscription_status = 'canceled'
         } else {
-          alert('Failed to cancel subscription')
+          alert(this.i18n.t('pricing.cancelFailed'))
         }
 
         this.cancelingSubscription = false
       })
       .catch((error) => {
         console.error(error)
-        alert('Failed to cancel subscription')
+        alert(this.i18n.t('pricing.cancelFailed'))
 
         this.cancelingSubscription = false
       })

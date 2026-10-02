@@ -10,7 +10,7 @@
   (click)="toggleOptions()"
 >
   <span [class.selector__placeholder]="!selectedOptionName">
-    {{ selectedOptionName || placeholder }}
+    {{ selectedOptionName || placeholder || ('common.select.choose' | t) }}
   </span>
   <img src="/assets/icons/chevron-down.svg" alt="" />
 </button>

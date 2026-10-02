@@ -11,6 +11,7 @@ import { StatisticsService } from 'src/app/shared/services/statistics.service'
 import { BoardPreferencesService } from '../board/services/board-preferences.service'
 import { StoryEditorLoader } from '../board/components/rich-text/story-editor-loader.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-dashboard',
@@ -39,7 +40,8 @@ export class DashboardComponent implements OnInit {
     private stadistics: StatisticsService,
     private boardPreferences: BoardPreferencesService,
     private editorLoader: StoryEditorLoader,
-    private mutations: StoryMutationService
+    private mutations: StoryMutationService,
+    private i18n: I18nService
   ) {}
 
   ngOnInit(): void {
@@ -119,7 +121,7 @@ export class DashboardComponent implements OnInit {
   async createNewStory() {
     const newTreeData = [
       {
-        name: 'My new tree',
+        name: this.i18n.t('dashboard.newStoryName'),
         tree: {
           nodes: [],
           refs: {},

@@ -3,38 +3,38 @@
 }
 <div class="menu">
   <polo-editable-name
-    label="Story name"
+    [label]="'dashboard.top.storyName' | t"
     [value]="activeStory.storyName()"
     (valueChanged)="updateStoryName($event)"
   ></polo-editable-name>
   <polo-basic-button
     icon="/assets/icons/configuration.svg"
     (click)="toggleOptions()"
-    text="Story options"
+    [text]="'dashboard.top.options' | t"
   ></polo-basic-button>
   @if (db.authenticationRequired()) {
     <div class="saveStatus saveStatus--error" role="alert">
-      <span>Your session has ended. Export your changes before signing in again with the same account.</span>
-      <polo-basic-button text="Sign in again" size="s" (click)="signInAgain()"></polo-basic-button>
-      <polo-basic-button text="Export JSON" size="s" (click)="exportTree()" [disabled]="!activeStory.storyId()"></polo-basic-button>
+      <span>{{ 'dashboard.top.sessionEnded' | t }}</span>
+      <polo-basic-button [text]="'dashboard.top.signInAgain' | t" size="s" (click)="signInAgain()"></polo-basic-button>
+      <polo-basic-button [text]="'dashboard.top.exportJson' | t" size="s" (click)="exportTree()" [disabled]="!activeStory.storyId()"></polo-basic-button>
     </div>
   }
   @if (mutations.saveState() !== 'idle') {
     <div class="saveStatus" [class.saveStatus--error]="mutations.saveState() === 'error'" role="status" aria-live="polite">
       @switch (mutations.saveState()) {
         @case ('saving') {
-          <span>Saving board changes…</span>
+          <span>{{ 'dashboard.top.saving' | t }}</span>
         }
         @case ('saved') {
-          <span>Board changes saved</span>
+          <span>{{ 'dashboard.top.saved' | t }}</span>
         }
         @case ('error') {
           <span>
-            {{ mutations.recoveredDraft() ? 'Unsaved edits recovered from this tab.' : 'Board changes not saved.' }}
-            Keep this tab open until saved.
+            {{ (mutations.recoveredDraft() ? 'dashboard.top.recovered' : 'dashboard.top.notSaved') | t }}
+            {{ 'dashboard.top.keepOpen' | t }}
           </span>
-          <polo-basic-button text="Retry save" size="s" (click)="mutations.retry()"></polo-basic-button>
-          <polo-basic-button text="Export JSON" size="s" (click)="exportTree()"></polo-basic-button>
+          <polo-basic-button [text]="'dashboard.top.retry' | t" size="s" (click)="mutations.retry()"></polo-basic-button>
+          <polo-basic-button [text]="'dashboard.top.exportJson' | t" size="s" (click)="exportTree()"></polo-basic-button>
         }
       }
     </div>
@@ -44,7 +44,7 @@
       <div class="dropdown__section">
         @if (db.userPlanIs('pro')) {
           <label>
-            <span>Enable tracking</span>
+            <span>{{ 'dashboard.top.tracking' | t }}</span>
             <input
               (change)="toggleTracking()"
               type="checkbox"
@@ -53,7 +53,7 @@
           </label>
         } @else {
           <label>
-            <span>🚫 Enable tracking</span>
+            <span>🚫 {{ 'dashboard.top.tracking' | t }}</span>
             <input
               [disabled]="true"
               [checked]="activeStory.storyConfiguration().tracking"
@@ -63,7 +63,7 @@
         }
         @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
           <label>
-            <span>Enable sharing</span>
+            <span>{{ 'dashboard.top.sharing' | t }}</span>
             <input
               (change)="toggleSharing()"
               type="checkbox"
@@ -72,7 +72,7 @@
           </label>
         } @else {
           <label>
-            <span>🚫 Enable sharing</span>
+            <span>🚫 {{ 'dashboard.top.sharing' | t }}</span>
             <input
               [disabled]="true"
               [checked]="activeStory.storyConfiguration().sharing"
@@ -81,7 +81,7 @@
           </label>
         }
         <label>
-          <span>Cumulative mode</span>
+          <span>{{ 'dashboard.top.cumulative' | t }}</span>
           <input
             type="checkbox"
             (change)="toggleCumulativeMode()"
@@ -91,7 +91,7 @@
       </div>
       <div class="dropdown__section">
         <label class="label--column">
-          <span>Custom ID</span>
+          <span>{{ 'dashboard.top.customId' | t }}</span>
           <input
             [class.alert]="takenCustomId"
             (change)="updateCustomId($event)"
@@ -99,15 +99,15 @@
             [value]="activeStory.storyConfiguration().customId"
           />
           @if (takenCustomId) {
-            <p>ID already taken</p>
+            <p>{{ 'dashboard.top.idTaken' | t }}</p>
           }
         </label>
       </div>
       <div class="dropdown__section">
-        <p class="txt-weight-bold">Footer</p>
+        <p class="txt-weight-bold">{{ 'dashboard.top.footer' | t }}</p>
         @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
           <label>
-            <span>Hide Trama link</span>
+            <span>{{ 'dashboard.top.hideLink' | t }}</span>
             <input
               (change)="toggleAppLink()"
               type="checkbox"
@@ -116,7 +116,7 @@
           </label>
 
           <label class="label--column">
-            <span>Footer text</span>
+            <span>{{ 'dashboard.top.footerText' | t }}</span>
             <input
               (change)="updateFooter('text', $event)"
               type="text"
@@ -124,7 +124,7 @@
             />
           </label>
           <label class="label--column">
-            <span>Footer link</span>
+            <span>{{ 'dashboard.top.footerLink' | t }}</span>
             <input
               (change)="updateFooter('link', $event)"
               type="text"
@@ -132,25 +132,33 @@
             />
           </label>
         } @else {
-          <p>You can modify the footer to show your logo, brand and link</p>
-          <p>Footer options are not allowed for free users</p>
+          <p>{{ 'dashboard.top.footerPitch' | t }}</p>
+          <p>{{ 'dashboard.top.footerFree' | t }}</p>
         }
       </div>
       @if (db.userPlanIs('pro')) {
-        <polo-basic-button (click)="openStadistics()" text="Open analytics"></polo-basic-button>
+        <polo-basic-button
+          (click)="openStadistics()"
+          [text]="'dashboard.top.analytics' | t"
+        ></polo-basic-button>
       } @else {
-        <polo-basic-button [disabled]="true" text="🚫 Open analytics"></polo-basic-button>
+        <polo-basic-button
+          [disabled]="true"
+          [text]="'🚫 ' + ('dashboard.top.analytics' | t)"
+        ></polo-basic-button>
       }
       <polo-basic-button
         (click)="exportTree()"
         icon="/assets/icons/export.svg"
-        text="Export JSON"
+        [text]="'dashboard.top.exportJson' | t"
         [disabled]="!activeStory.storyId()"
       ></polo-basic-button>
       @if (exportError) {
-        <p role="alert">{{ exportError }}</p>
+        <p role="alert">{{ exportError | t }}</p>
       }
-      <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg" text="Delete tree">
+      <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg"
+        [text]="'dashboard.top.deleteTree' | t"
+      >
       </polo-basic-button>
     </div>
   }
