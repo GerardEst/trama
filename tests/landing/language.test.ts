@@ -10,7 +10,7 @@ test.describe('with a Spanish browser', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'es')
     await expect(page.locator('h1')).toContainText('Tú escribes la historia.')
     await expect(page.locator('#try-it')).toContainText(
-      'llegas a la Ciudadela Hueca'
+      'te guía hasta la Ciudadela Hueca'
     )
     await expect(
       page.locator('link[rel="alternate"][hreflang="ca"]')
@@ -20,7 +20,7 @@ test.describe('with a Spanish browser', () => {
   test('remembers a language chosen in the selector', async ({ page }) => {
     await page.goto('/es')
     await page
-      .locator('.nav-language')
+      .locator('.footer polo-language-selector')
       .getByRole('button', { name: 'Català' })
       .click()
 
@@ -31,14 +31,14 @@ test.describe('with a Spanish browser', () => {
     await page.goto('/')
     await expect(page).toHaveURL(/\/ca$/)
     await expect(page.locator('#try-it')).toContainText(
-      'arribes a la Ciutadella Buida'
+      'et guia fins a la Ciutadella Buida'
     )
   })
 
   test('keeps English when the reader chooses it', async ({ page }) => {
     await page.goto('/es')
     await page
-      .locator('.nav-language')
+      .locator('.footer polo-language-selector')
       .getByRole('button', { name: 'English' })
       .click()
 
@@ -52,6 +52,19 @@ test.describe('with a Spanish browser', () => {
 
 test.describe('with a Catalan browser', () => {
   test.use({ locale: 'ca-ES' })
+
+  test('plays the shorter rich-text adventure in Catalan', async ({ page }) => {
+    await page.goto('/ca')
+    const demo = page.locator('#try-it')
+    await expect(demo.locator('strong', { hasText: 'Ciutadella Buida' })).toBeVisible()
+    await demo.getByRole('button', { name: 'Espasa — creua el pont dels sentinelles' }).click()
+    await demo.getByRole('button', { name: 'Obre’t pas lluitant. Allibera l’esperit.' }).click()
+    await expect(demo.locator('strong', { hasText: 'la Darrera Espasa' })).toBeVisible()
+    await demo.getByRole('button', { name: 'Deixa que l’esperit pronunciï el teu veritable nom' }).click()
+    await expect(demo.locator('strong', { hasText: 'La corona s’esmicola' })).toBeVisible()
+    await expect(demo.locator('em', { hasText: 'sortiu plegats' })).toBeVisible()
+    await expect(demo.locator('[data-trama-variable]')).toHaveCount(0)
+  })
 
   test('shows the reader interface in Catalan', async ({ page }) => {
     await page.goto('/not-found')

@@ -26,7 +26,6 @@ describe('LandingpageComponent', () => {
   const finishWithSpirit = async () => {
     await choose('Blade — cross the bridge of sentries')
     await choose('Fight through. Cut the spirit free.')
-    await choose('Approach the throne together')
     await choose('Sever its shadow with your blade')
   }
 
@@ -71,7 +70,7 @@ describe('LandingpageComponent', () => {
     expect(demoImage.getAttribute('height')).toBe('768')
     const demo = fixture.debugElement.query(By.directive(LandingStoryDemoComponent))
     expect(demo.injector.get(ActiveStoryService).entireTree().nodes[0].text).toContain(
-      'you reach the Hollow Citadel'
+      'leads you to the <strong>Hollow Citadel</strong>'
     )
     expect(TestBed.inject(ActiveStoryService).entireTree().nodes).toEqual([])
   })
@@ -133,7 +132,7 @@ describe('LandingpageComponent', () => {
     const demo = fixture.nativeElement.querySelector('#try-it') as HTMLElement
     await choose('Shadow — climb the haunted stair')
     await choose('Steal the moon sigil')
-    expect(demo.textContent).toContain('The crown is a prison')
+    expect(demo.textContent).toContain('a key to the prison')
     const player = fixture.debugElement.query(By.directive(LandingStoryDemoComponent)).injector.get(PlayerService)
     expect(player.playerConditions()).toEqual([{ id: 'condition_sigil' }])
 
@@ -145,8 +144,8 @@ describe('LandingpageComponent', () => {
     await fixture.whenStable()
     fixture.detectChanges()
 
-    expect(demo.textContent).toContain('you reach the Hollow Citadel')
-    expect(demo.textContent).not.toContain('The crown is a prison')
+    expect(demo.textContent).toContain('leads you to the Hollow Citadel')
+    expect(demo.textContent).not.toContain('a key to the prison')
     expect(player.playerProperties()).toEqual({})
     expect(player.playerStats()).toEqual([])
     expect(player.playerConditions()).toEqual([])
@@ -154,7 +153,6 @@ describe('LandingpageComponent', () => {
 
     await choose('Blade — cross the bridge of sentries')
     await choose('Cut the bridge loose. Leap alone.')
-    await choose('Face what waits inside')
     expect(demo.textContent).not.toContain('Fit the stolen sigil')
     expect(demo.textContent).not.toContain('Slip into its shadow and strike')
     await choose('Sever its shadow with your blade')

@@ -17,9 +17,6 @@ export interface ExampleStoryCopy {
     bridge: { name: string; text: string; free: string; cut: string }
     stair: { name: string; text: string; steal: string; hide: string }
     gate: { name: string; text: string; tame: string; walk: string }
-    light: { name: string; text: string; approach: string }
-    sigil: { name: string; text: string; carry: string }
-    haste: { name: string; text: string; face: string }
     brought: { name: string }
     guardianLight: { name: string; text: string; speak: string; deed: string }
     guardianKey: { name: string; text: string; fit: string; deed: string }
@@ -50,88 +47,73 @@ export const exampleStoryEn: ExampleStoryCopy = {
   skills: {
     blade: {
       answer: 'Sever its shadow with your blade',
-      deed: 'Your blade severs the shadow binding the throne.',
+      deed: 'Your blade cuts through the guardian’s shadow.',
     },
     shadow: {
       answer: 'Slip into its shadow and strike',
-      deed: 'You slip through its shadow and shatter the darkness from within.',
+      deed: 'You slip into the guardian’s shadow and strike from within.',
     },
     ember: {
       answer: 'Burn the darkness with your last ember',
-      deed: 'Your last ember burns the darkness out of the crown.',
+      deed: 'Your last ember burns through the guardian’s shadow.',
     },
   },
   retreat: 'Leave the crown. Choose the dawn.',
   nodes: {
     citadel: {
       name: 'At last, the citadel',
-      text: 'After years following a voice in your dreams, you reach the Hollow Citadel. Beneath your hood, an old scar burns. You remember no name, only a promise: reach the crown before dawn. Three ways in. One gift you still trust.',
-      blade: 'Blade — cross the bridge of sentries',
-      shadow: 'Shadow — climb the haunted stair',
-      ember: 'Ember — enter the gate of living fire',
+      text: '<p>“You promised to come back.” The voice in your dreams leads you to the <strong>Hollow Citadel</strong>, where a crown imprisons stolen souls.</p><p>You escaped once, but lost your memory. <em>Free the others before dawn seals the gates for a year.</em> Which gift will get you inside?</p>',
+      blade: '<strong>Blade</strong> — cross the bridge of sentries',
+      shadow: '<strong>Shadow</strong> — climb the haunted stair',
+      ember: '<strong>Ember</strong> — enter the gate of living fire',
     },
     bridge: {
       name: 'The bridge of sentries',
-      text: 'Stone sentries raise their swords. Behind them, a lantern-spirit hangs in chains. Your blade finds the weak point: one stroke can free it, or drop the bridge and its guardians into the abyss.',
+      text: '<p>Stone sentries block the bridge. A chained <strong>lantern-spirit</strong> calls for help behind them.</p><p>You can fight through to free it, or cut the bridge’s chains and leap to the far side as the sentries fall.</p>',
       free: 'Fight through. Cut the spirit free.',
       cut: 'Cut the bridge loose. Leap alone.',
     },
     stair: {
       name: 'The haunted stair',
-      text: 'Hungry ghosts sweep the stair. You slip between their shadows, unseen. A moon sigil glints in their keeper’s hand; beside it, a trapped lantern-spirit flickers. You can take one before they turn.',
+      text: '<p>You climb unseen among sleeping ghosts. Their keeper holds a <strong>moon sigil</strong>; a caged lantern-spirit glows beside it.</p><p>One ghost stirs. You have time to take the key or free the captive.</p>',
       steal: 'Steal the moon sigil',
       hide: 'Hide the spirit in your shadow',
     },
     gate: {
       name: 'The gate of living fire',
-      text: 'The gate breathes fire. A moon sigil holds its jaws apart. The ember in your palm can quiet the flames long enough to take it, or turn their fury into a path straight through.',
+      text: '<p>A <strong>moon sigil</strong> feeds the fire across the gate. Your ember can quiet the flames while you remove it, or shield you as you rush through.</p><p>Taking the sigil costs precious time.</p>',
       tame: 'Tame the fire. Take the sigil.',
       walk: 'Walk through the blaze',
-    },
-    light: {
-      name: 'A light remembers',
-      text: 'You clear the danger with a small light beside you. “They called you #property_title,” the spirit whispers. “You came here once to break the crown. This time, let me help.” Beyond the inner door, something wakes.',
-      approach: 'Approach the throne together',
-    },
-    sigil: {
-      name: 'The stolen sigil',
-      text: 'You slip inside, the moon sigil cold against your palm. Its inscription calls you #property_title. Beneath it: “The crown is a prison. This is its key.” Beyond the inner door, something wakes.',
-      carry: 'Carry the sigil to the throne',
-    },
-    haste: {
-      name: 'The price of haste',
-      text: 'You land inside, cloak torn, still alive. No ally. No relic. On the inner door, a carving names you #property_title. A warning follows: “Whoever defeats the crowned guardian takes its place.” The handle begins to turn.',
-      face: 'Face what waits inside',
     },
     brought: { name: 'What you brought with you' },
     guardianLight: {
       name: 'The guardian and the light',
-      text: 'On the throne sits a shadow wearing your face. It lunges. The spirit you saved flares between you. “I remember your true name,” it says. “Hold it back, or trust me to speak.” Dawn touches the windows.',
+      text: '<p>Your own shadow guards the throne: the part of you the crown kept when you escaped.</p><p>“They called you <strong><span data-trama-variable="" data-kind="property" data-key="property_title">#property_title</span></strong>,” whispers the spirit. “Your true name can break the crown. Fight to give me time, or trust me to speak now.”</p><p><em>The shadow lunges. Dawn is near.</em> A door behind you leads outside.</p>',
       speak: 'Let the spirit speak your true name',
-      deed: 'The spirit speaks your true name. The shadow kneels; the crown cracks.',
+      deed: 'You lower your guard. The spirit steps between you and your shadow.',
     },
     guardianKey: {
       name: 'The guardian and the key',
-      text: 'On the throne sits a shadow wearing your face. It lunges. The stolen sigil pulls toward a hollow in its crown. Your gift can defeat the guardian, but the key could end its curse. Dawn touches the windows.',
+      text: '<p>Your own shadow guards the throne: the part of you the crown kept when you escaped.</p><p>The sigil reads <strong><span data-trama-variable="" data-kind="property" data-key="property_title">#property_title</span></strong>. It fits a hollow in the crown: <em>a key to the prison</em>.</p><p>Destroy the guardian and take its place, or use the key to free everyone. A door behind you leads outside.</p>',
       fit: 'Fit the stolen sigil into the crown',
-      deed: 'You dodge its grasp and turn the stolen sigil in the crown. The prison opens.',
+      deed: 'You dodge its grasp and turn the sigil in the crown. Your true name rings out.',
     },
     guardianAlone: {
       name: 'The guardian alone',
-      text: 'On the throne sits a shadow wearing your face. It lunges. You have only your gift, and the warning on the door: victory will bind you here. Behind you, a window opens onto the waking world.',
+      text: '<p>Your own shadow guards the throne: the part of you the crown kept when you escaped.</p><p>“Welcome back, <strong><span data-trama-variable="" data-kind="property" data-key="property_title">#property_title</span></strong>.” It points to the crown. “Destroy me, and you take my place.”</p><p>You brought no key and no ally. <em>Fight, or leave through the door behind you before dawn.</em></p>',
     },
     kindness: { name: 'A kindness returned' },
     promise: {
       name: 'The promise kept',
-      text: '#property_deed The light you brought into this place keeps the crown from claiming you. You remember now: you were its first prisoner, and you promised to free the rest. At dawn, a thousand sleeping souls walk home beside you.',
+      text: '<p><span data-trama-variable="" data-kind="property" data-key="property_deed">#property_deed</span></p><p>Your name rings out, breaking the spell. <strong>The crown crumbles</strong>; your shadow rejoins you, and your memories return.</p><p>You remember every face among the freed souls. This time, <em>you all leave together</em>.</p>',
     },
     nextGuardian: {
       name: 'The next guardian',
-      text: '#property_deed The guardian falls. The crown settles on your brow. You remember now: this is how you lost your name the first time. Outside, dawn breaks. Inside, #property_title waits for the next footsteps.',
+      text: '<p><span data-trama-variable="" data-kind="property" data-key="property_deed">#property_deed</span> The guardian falls. <strong>The crown settles on your brow.</strong></p><p>The gates close with the dawn. You won the fight, but the souls remain imprisoned. Now <span data-trama-variable="" data-kind="property" data-key="property_title">#property_title</span> guards them.</p>',
     },
     ownName: {
       name: 'A name of your own',
-      text: 'You leap into the morning. Behind you, the crown screams a name you no longer need. Let the citadel remember #property_title. You choose the road, the living world, and a name you have yet to earn.',
+      text: '<p>You step outside as the gates close. The souls remain behind; <em>your promise must wait</em>.</p><p>Let the citadel remember <span data-trama-variable="" data-kind="property" data-key="property_title">#property_title</span>. You are free, with a year to find a way back.</p>',
     },
   },
 }
@@ -165,7 +147,7 @@ const choosePath = (copy: ExampleStoryCopy, skill: Skill, index: number): node_a
   join: [{ node: `node_${index + 1}` }],
 })
 
-// Five visible scenes per playthrough; two invisible distributors remember
+// Four visible scenes per playthrough; two invisible distributors remember
 // earlier choices. All state belongs to the landing demo's local player.
 export const buildExampleStory = (copy: ExampleStoryCopy) => {
   const { nodes } = copy
@@ -202,8 +184,12 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         left: 420,
         text: nodes.bridge.text,
         answers: [
-          { id: 'answer_1_0', text: nodes.bridge.free, join: [{ node: 'node_4' }] },
-          { id: 'answer_1_1', text: nodes.bridge.cut, join: [{ node: 'node_6' }] },
+          {
+            id: 'answer_1_0', text: nodes.bridge.free,
+            events: [{ id: 'event_1_spirit', action: 'alterCondition', type: 'condition', target: 'condition_spirit', amount: '1' }],
+            join: [{ node: 'node_7' }],
+          },
+          { id: 'answer_1_1', text: nodes.bridge.cut, join: [{ node: 'node_7' }] },
         ],
       },
       {
@@ -214,8 +200,16 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         left: 420,
         text: nodes.stair.text,
         answers: [
-          { id: 'answer_2_0', text: nodes.stair.steal, join: [{ node: 'node_5' }] },
-          { id: 'answer_2_1', text: nodes.stair.hide, join: [{ node: 'node_4' }] },
+          {
+            id: 'answer_2_0', text: nodes.stair.steal,
+            events: [{ id: 'event_2_sigil', action: 'alterCondition', type: 'condition', target: 'condition_sigil', amount: '1' }],
+            join: [{ node: 'node_7' }],
+          },
+          {
+            id: 'answer_2_1', text: nodes.stair.hide,
+            events: [{ id: 'event_2_spirit', action: 'alterCondition', type: 'condition', target: 'condition_spirit', amount: '1' }],
+            join: [{ node: 'node_7' }],
+          },
         ],
       },
       {
@@ -226,45 +220,20 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         left: 420,
         text: nodes.gate.text,
         answers: [
-          { id: 'answer_3_0', text: nodes.gate.tame, join: [{ node: 'node_5' }] },
-          { id: 'answer_3_1', text: nodes.gate.walk, join: [{ node: 'node_6' }] },
+          {
+            id: 'answer_3_0', text: nodes.gate.tame,
+            events: [{ id: 'event_3_sigil', action: 'alterCondition', type: 'condition', target: 'condition_sigil', amount: '1' }],
+            join: [{ node: 'node_7' }],
+          },
+          { id: 'answer_3_1', text: nodes.gate.walk, join: [{ node: 'node_7' }] },
         ],
-      },
-      {
-        id: 'node_4',
-        name: nodes.light.name,
-        type: 'content',
-        top: 0,
-        left: 840,
-        text: nodes.light.text,
-        events: [{ id: 'event_4_spirit', action: 'alterCondition', type: 'condition', target: 'condition_spirit', amount: '1' }],
-        answers: [{ id: 'answer_4_0', text: nodes.light.approach, join: [{ node: 'node_7' }] }],
-      },
-      {
-        id: 'node_5',
-        name: nodes.sigil.name,
-        type: 'content',
-        top: 700,
-        left: 840,
-        text: nodes.sigil.text,
-        events: [{ id: 'event_5_sigil', action: 'alterCondition', type: 'condition', target: 'condition_sigil', amount: '1' }],
-        answers: [{ id: 'answer_5_0', text: nodes.sigil.carry, join: [{ node: 'node_7' }] }],
-      },
-      {
-        id: 'node_6',
-        name: nodes.haste.name,
-        type: 'content',
-        top: 1400,
-        left: 840,
-        text: nodes.haste.text,
-        answers: [{ id: 'answer_6_0', text: nodes.haste.face, join: [{ node: 'node_7' }] }],
       },
       {
         id: 'node_7',
         name: nodes.brought.name,
         type: 'distributor',
         top: 700,
-        left: 1260,
+        left: 840,
         conditions: [
           { id: 'condition_7_0', ref: 'condition_spirit', comparator: 'equalto', value: 1, join: [{ node: 'node_8' }] },
           { id: 'condition_7_1', ref: 'condition_sigil', comparator: 'equalto', value: 1, join: [{ node: 'node_9' }] },
@@ -276,7 +245,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.guardianLight.name,
         type: 'content',
         top: 0,
-        left: 1680,
+        left: 1260,
         text: nodes.guardianLight.text,
         answers: [
           ...skillAnswers(copy, 8),
@@ -294,7 +263,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.guardianKey.name,
         type: 'content',
         top: 700,
-        left: 1680,
+        left: 1260,
         text: nodes.guardianKey.text,
         answers: [
           ...skillAnswers(copy, 9),
@@ -312,7 +281,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.guardianAlone.name,
         type: 'content',
         top: 1400,
-        left: 1680,
+        left: 1260,
         text: nodes.guardianAlone.text,
         answers: [...skillAnswers(copy, 10), retreatAnswer(copy, 10)],
       },
@@ -321,7 +290,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.kindness.name,
         type: 'distributor',
         top: 0,
-        left: 2100,
+        left: 1680,
         conditions: [
           { id: 'condition_11_0', ref: 'condition_spirit', comparator: 'equalto', value: 1, join: [{ node: 'node_12' }] },
         ],
@@ -332,7 +301,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.promise.name,
         type: 'end',
         top: 0,
-        left: 2520,
+        left: 2100,
         text: nodes.promise.text,
       },
       {
@@ -340,7 +309,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.nextGuardian.name,
         type: 'end',
         top: 700,
-        left: 2520,
+        left: 2100,
         text: nodes.nextGuardian.text,
       },
       {
@@ -348,7 +317,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         name: nodes.ownName.name,
         type: 'end',
         top: 1400,
-        left: 2520,
+        left: 2100,
         text: nodes.ownName.text,
       },
     ],
