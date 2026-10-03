@@ -112,11 +112,15 @@ export const board: Dictionary['board'] = {
     deleteShortcut: 'Elimina el node (Supr)',
   },
   answer: {
+    reorder: 'Arrossega per reordenar la resposta, o fes servir les fletxes amunt/avall, Inici o Fi',
+    moved: 'Resposta moguda a la posició {position} de {count}',
     delete: 'Elimina la resposta',
     text: 'Text de la resposta',
     placeholder: 'Escriu una resposta…',
   },
   route: {
+    reorder: 'Arrossega per reordenar la ruta, o fes servir les fletxes amunt/avall, Inici o Fi',
+    moved: 'Ruta moguda a la posició {position} de {count}',
     otherwise: 'En cas contrari',
     otherwiseHelp: 'S’usa quan no es compleix cap ruta',
     title: 'Ruta {number}',

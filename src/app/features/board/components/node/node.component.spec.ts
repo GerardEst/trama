@@ -21,6 +21,61 @@ describe('NodeComponent', () => {
     fixture.detectChanges()
   })
 
+  it('reorders only from answer handles, refreshes joins and retains keyboard focus', () => {
+    const editor = TestBed.inject(StoryEditorService)
+    const reorder = spyOn(editor, 'reorderAnswer').and.returnValue(true)
+    const refresh = spyOn(TestBed.inject(BoardAnchorRegistryService), 'invalidate')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    const answers = [{ id: 'answer_7_0', text: 'First' }, { id: 'answer_7_1', text: 'Second' }]
+    fixture.componentRef.setInput('answers', answers)
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const handle = host.querySelector<HTMLButtonElement>('[data-sortable-handle]')!
+    handle.focus()
+    handle.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    expect(reorder).toHaveBeenCalledOnceWith('node_7', 'answer_7_0', 1)
+    expect(refresh).toHaveBeenCalled()
+    fixture.componentRef.setInput('answers', [...answers].reverse())
+    fixture.detectChanges()
+    expect(document.activeElement).toBe(handle)
+    expect(host.querySelector('[role="status"]')?.textContent).toContain('position 2 of 2')
+    expect(host.querySelector('polo-answer')?.getAttribute('data-sortable-id')).toBe('answer_7_1')
+
+    fixture.componentRef.setInput('answers', [answers[0]])
+    fixture.detectChanges()
+    expect(host.querySelector('[data-sortable-handle]')).toBeNull()
+  })
+
+  it('reorders distributor routes, updates numbering and keeps the fallback outside the sortable list', () => {
+    const reorder = spyOn(TestBed.inject(StoryEditorService), 'reorderCondition').and.returnValue(true)
+    const refresh = spyOn(TestBed.inject(BoardAnchorRegistryService), 'invalidate')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('type', 'distributor')
+    const conditions = [{ id: 'condition_7_0', value: 1 }, { id: 'condition_7_1', value: 2 }]
+    fixture.componentRef.setInput('conditions', conditions)
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const handle = host.querySelector<HTMLButtonElement>('[data-sortable-handle]')!
+    handle.focus()
+    handle.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }))
+    expect(reorder).toHaveBeenCalledOnceWith('node_7', 'condition_7_0', 1)
+    expect(refresh).toHaveBeenCalled()
+    fixture.componentRef.setInput('conditions', [...conditions].reverse())
+    fixture.detectChanges()
+    expect(document.activeElement).toBe(handle)
+    const routes = host.querySelectorAll('[data-sortable-id]')
+    expect(routes[0].getAttribute('data-sortable-id')).toBe('condition_7_1')
+    expect(routes[0].querySelector('strong')?.textContent).toBe('Route 1')
+    expect(routes[1].querySelector('strong')?.textContent).toBe('Route 2')
+    expect(host.querySelector('[role="status"]')?.textContent).toContain('position 2 of 2')
+    const fallback = host.querySelector('.condition--fallback')!.parentElement!
+    expect(fallback.closest('[poloSortableList]')).toBeNull()
+    expect(fallback.querySelector('[data-sortable-handle]')).toBeNull()
+    fixture.componentRef.setInput('conditions', [conditions[0]])
+    fixture.detectChanges()
+    expect(host.querySelector('[data-sortable-handle]')).toBeNull()
+  })
+
   it('should create', () => {
     expect(component).toBeTruthy()
   })

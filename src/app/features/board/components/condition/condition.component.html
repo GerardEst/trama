@@ -7,6 +7,9 @@
     </div>
   } @else {
     <div class="condition__header">
+      @if (routeCount > 1) {
+        <polo-sortable-handle [label]="'board.route.reorder' | t" />
+      }
       <div class="condition__heading">
         <strong>{{ 'board.route.title' | t: { number: routeNumber } }}</strong>
         <span>{{ 'board.route.allRules' | t }}</span>

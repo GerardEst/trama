@@ -12,11 +12,12 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { node_condition_rule, ref } from 'src/app/core/interfaces/interfaces'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-handle/sortable-handle.component'
 
 @Component({
   selector: 'polo-condition',
   standalone: true,
-  imports: [BasicButtonComponent, BoardAnchorDirective, TranslatePipe],
+  imports: [BasicButtonComponent, BoardAnchorDirective, TranslatePipe, SortableHandleComponent],
   templateUrl: './condition.component.html',
   styleUrl: './condition.component.sass',
   changeDetection: ChangeDetectionStrategy.OnPush,

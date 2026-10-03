@@ -50,6 +50,35 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('persists answer order without rewriting IDs, connections, events or requirements', () => {
+    const initial = structuredClone(activeStory.entireTree())
+    initial.nodes[0].answers!.push(
+      { id: 'answer_0_1', text: 'Second', events: [{ id: 'event-1', action: 'alterStat', type: 'stat', amount: '1', target: 'score' }], requirements: [{ type: 'stat', target: 'score', amount: 2 }] },
+      { id: 'answer_0_2', text: 'Third' }
+    )
+    activeStory.load('story-1', 'Story', initial)
+    const before = structuredClone(activeStory.entireTree().nodes[0].answers!)
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    save.calls.reset()
+    expect(editor.reorderAnswer('node_0', 'answer_0_0', 2)).toBeTrue()
+    const reordered = activeStory.entireTree().nodes[0].answers!
+    expect(reordered).toEqual([before[1], before[2], before[0]])
+    expect(save.calls.mostRecent().args[1].nodes[0].answers).toEqual(reordered)
+    expect(editor.reorderAnswer('node_0', 'answer_0_0', 0)).toBeTrue()
+    expect(activeStory.entireTree().nodes[0].answers).toEqual(before)
+  })
+
+  it('does not save invalid, unchanged or cross-node answer moves', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    for (const index of [-1, 0, 1, 0.5, NaN]) {
+      expect(editor.reorderAnswer('node_0', 'answer_0_0', index)).toBeFalse()
+    }
+    expect(editor.reorderAnswer('node_1', 'answer_0_0', 0)).toBeFalse()
+    expect(editor.reorderAnswer('missing', 'answer_0_0', 0)).toBeFalse()
+    expect(editor.reorderAnswer('node_0', 'missing', 0)).toBeFalse()
+    expect(save).not.toHaveBeenCalled()
+  })
+
   it('persists node names without changing story text or legacy unnamed nodes', () => {
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
     expect(activeStory.entireTree().nodes[0].name).toBeUndefined()
@@ -376,6 +405,46 @@ describe('StoryEditorService', () => {
     expect(activeStory.entireTree().nodes[0].conditions?.[0].rules).toEqual([
       { ref: 'condition_key', comparator: 'equalto', value: 1 },
     ])
+  })
+
+  it('persists arbitrary route moves without changing rules, connections or the fallback', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [{
+        id: 'node_0', top: 0, left: 0, type: 'distributor',
+        conditions: [
+          { id: 'condition_0_0', ref: 'stat_gold', comparator: 'morethan', value: 3, join: [{ node: 'node_1' }] },
+          { id: 'condition_0_1', rules: [{ ref: 'condition_key', comparator: 'equalto', value: 1 }], join: [{ node: 'node_2', toAnswer: true }] },
+          { id: 'condition_0_2', rules: [{ ref: 'stat_gold', comparator: 'equalto', value: 0 }] },
+        ],
+        fallbackCondition: { id: 'condition_0_fallback', join: [{ node: 'node_3' }] },
+      }],
+    })
+    const before = structuredClone(activeStory.entireTree().nodes[0])
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(editor.reorderCondition('node_0', 'condition_0_0', 2)).toBeTrue()
+    const after = activeStory.entireTree().nodes[0]
+    expect(after.conditions).toEqual([before.conditions![1], before.conditions![2], before.conditions![0]])
+    expect(after.fallbackCondition).toEqual(before.fallbackCondition)
+    expect(save.calls.mostRecent().args[1].nodes[0]).toEqual(after)
+    expect(editor.reorderCondition('node_0', 'condition_0_0', 0)).toBeTrue()
+    expect(activeStory.entireTree().nodes[0]).toEqual(before)
+  })
+
+  it('rejects unchanged, invalid, cross-node and fallback route moves without saving', () => {
+    activeStory.load('story-1', 'Story', {
+      nodes: [{ id: 'node_0', top: 0, left: 0, type: 'distributor',
+        conditions: [{ id: 'condition_0_0' }], fallbackCondition: { id: 'condition_0_fallback' } }],
+    })
+    const before = activeStory.entireTree()
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    for (const index of [-1, 0, 1, 0.5, NaN]) {
+      expect(editor.reorderCondition('node_0', 'condition_0_0', index)).toBeFalse()
+    }
+    expect(editor.reorderCondition('node_0', 'condition_0_fallback', 0)).toBeFalse()
+    expect(editor.reorderCondition('node_1', 'condition_0_0', 0)).toBeFalse()
+    expect(editor.reorderCondition('node_0', 'missing', 0)).toBeFalse()
+    expect(activeStory.entireTree()).toBe(before)
+    expect(save).not.toHaveBeenCalled()
   })
 
   it('reorders routes while retaining their connections', () => {

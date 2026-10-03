@@ -451,6 +451,17 @@ describe('GameEngineService', () => {
       expect(result).toBe(firstJoin)
     })
 
+    it('uses reordered route priority while leaving the fallback as a last resort', () => {
+      player.playerStats.set([{ id: 'stat_gold', amount: 10 }])
+      const first = { id: 'condition_1_0', ref: 'stat_gold', comparator: 'morethan', value: 5, join: [{ node: 'node_first' }] }
+      const second = { id: 'condition_1_1', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 5 }], join: [{ node: 'node_second' }] }
+      const fallbackCondition = { id: 'condition_1_fallback', join: [{ node: 'node_fallback' }] }
+      expect(engine.distributeNode(distributor({ conditions: [first, second], fallbackCondition }))).toBe(first.join)
+      expect(engine.distributeNode(distributor({ conditions: [second, first], fallbackCondition }))).toBe(second.join)
+      player.playerStats.set([{ id: 'stat_gold', amount: 0 }])
+      expect(engine.distributeNode(distributor({ conditions: [second, first], fallbackCondition }))).toBe(fallbackCondition.join)
+    })
+
     it('falls back when no condition is met', () => {
       player.playerStats.set([{ id: 'stat_gold', amount: 1 }])
       const fallbackJoin = [{ node: 'node_poor' }]

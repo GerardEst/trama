@@ -443,6 +443,18 @@ export class StoryEditorService {
     })
   }
 
+  reorderCondition(nodeId: string, conditionId: string, toIndex: number) {
+    return this.mutations.update((tree) => {
+      const routes = findNodeInTree(nodeId, tree)?.conditions
+      const fromIndex = routes?.findIndex(route => route.id === conditionId) ?? -1
+      if (!routes || fromIndex < 0 || !Number.isInteger(toIndex) ||
+        toIndex < 0 || toIndex >= routes.length || fromIndex === toIndex) return false
+      const [route] = routes.splice(fromIndex, 1)
+      routes.splice(toIndex, 0, route)
+      return true
+    })
+  }
+
   moveCondition(nodeId: string, conditionId: string, direction: -1 | 1) {
     this.withNode(nodeId, (storyNode) => {
       const routes = storyNode.conditions
@@ -480,6 +492,18 @@ export class StoryEditorService {
       }
       storyNode.answers = [...(storyNode.answers ?? []), answer]
       delete storyNode.join
+    })
+  }
+
+  reorderAnswer(nodeId: string, answerId: string, toIndex: number) {
+    return this.mutations.update((tree) => {
+      const answers = findNodeInTree(nodeId, tree)?.answers
+      const fromIndex = answers?.findIndex(answer => answer.id === answerId) ?? -1
+      if (!answers || fromIndex < 0 || !Number.isInteger(toIndex) ||
+        toIndex < 0 || toIndex >= answers.length || fromIndex === toIndex) return false
+      const [answer] = answers.splice(fromIndex, 1)
+      answers.splice(toIndex, 0, answer)
+      return true
     })
   }
 

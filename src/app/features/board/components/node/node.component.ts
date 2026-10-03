@@ -41,10 +41,12 @@ import { NodeOptionsComponent } from './context-menus/node-options/node-options.
 import { NodeEventsComponent } from './node-events/node-events.component'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
+import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 import { RichTextFieldComponent } from '../rich-text/rich-text-field.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { SortableListDirective, SortableMove } from 'src/app/shared/directives/sortable-list.directive'
 
 @Component({
   selector: 'polo-node',
@@ -64,6 +66,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     BoardAnchorDirective,
     CdkDragHandle,
     TranslatePipe,
+    SortableListDirective,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.sass'],
@@ -116,6 +119,8 @@ export class NodeComponent {
   readonly loading = signal(false)
   readonly loadingMessage = signal<string | undefined>(undefined)
   optionsOpen: boolean = false
+  readonly answerOrderAnnouncement = signal('')
+  readonly routeOrderAnnouncement = signal('')
 
   @Input() type: 'text' | 'content' | 'distributor' | 'end' = 'content'
   @Output() duplicateNode = new EventEmitter<string>()
@@ -136,6 +141,7 @@ export class NodeComponent {
     private apis: ApisService,
     private storage: StorageService,
     private storyEditor: StoryEditorService,
+    private anchorRegistry: BoardAnchorRegistryService,
     private i18n: I18nService
   ) {}
 
@@ -237,6 +243,31 @@ export class NodeComponent {
 
   updateLinks() {
     this.storyEditor.updateNodeLinks(this.nodeId, this.links)
+  }
+
+  reorderAnswer(move: SortableMove) {
+    if (this.storyEditor.reorderAnswer(this.nodeId, move.id, move.toIndex)) {
+      this.anchorRegistry.invalidate()
+      this.answerOrderAnnouncement.set(this.i18n.t('board.answer.moved', {
+        position: move.toIndex + 1,
+        count: this.answers?.length ?? 0,
+      }))
+    }
+  }
+
+  reorderCondition(move: SortableMove) {
+    if (this.storyEditor.reorderCondition(this.nodeId, move.id, move.toIndex)) {
+      this.anchorRegistry.invalidate()
+      this.routeOrderAnnouncement.set(this.i18n.t('board.route.moved', {
+        position: move.toIndex + 1,
+        count: this.conditions?.length ?? 0,
+      }))
+    }
+  }
+
+  listSorting(active: boolean) {
+    if (active) this.panzoom.pauseDrag()
+    else this.panzoom.resumeDrag()
   }
 
   removeAnswer(id: string) {

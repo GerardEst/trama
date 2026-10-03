@@ -107,11 +107,15 @@ export const board = {
     deleteShortcut: 'Delete node (Supr)',
   },
   answer: {
+    reorder: 'Drag to reorder answer, or use Up/Down arrow keys, Home or End',
+    moved: 'Answer moved to position {position} of {count}',
     delete: 'Delete answer',
     text: 'Answer text',
     placeholder: 'Write an answer…',
   },
   route: {
+    reorder: 'Drag to reorder route, or use Up/Down arrow keys, Home or End',
+    moved: 'Route moved to position {position} of {count}',
     otherwise: 'Otherwise',
     otherwiseHelp: 'Used when no route matches',
     title: 'Route {number}',

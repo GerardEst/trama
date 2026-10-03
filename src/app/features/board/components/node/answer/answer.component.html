@@ -1,4 +1,7 @@
 <div class="top-bar">
+  @if (reorderable) {
+    <polo-sortable-handle [label]="'board.answer.reorder' | t" />
+  }
   <polo-node-requirements
     [requirements]="requirements"
     [answerId]="answerId"

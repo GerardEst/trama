@@ -66,9 +66,10 @@
   <main class="node__body">
     @if (type === 'distributor') {
       @if (conditions && conditions.length > 0) {
-        <div class="node__answers">
+        <div class="node__answers" poloSortableList (sorted)="reorderCondition($event)" (sorting)="listSorting($event)">
           @for (condition of conditions; track condition.id; let i = $index) {
             <polo-condition
+              [attr.data-sortable-id]="condition.id"
               [conditionId]="condition.id"
               [selectedRef]="condition.ref || ''"
               [comparator]="condition.comparator || ''"
@@ -82,6 +83,7 @@
             ></polo-condition>
           }
         </div>
+        <span class="node__sortAnnouncement" role="status" aria-live="polite">{{ routeOrderAnnouncement() }}</span>
       }
       <polo-condition
         [conditionId]="'condition_' + nodeId.split('_')[1] + '_fallback'"
@@ -184,6 +186,9 @@
       @if (answers && answers.length > 0) {
         <div
           class="node__answers"
+          poloSortableList
+          (sorted)="reorderAnswer($event)"
+          (sorting)="listSorting($event)"
           [attr.data-board-join-node]="nodeId"
           [attr.data-board-join-anchor]="nodeId + '_joiner--answers'"
           data-board-join-to-answers="true"
@@ -194,6 +199,8 @@
           ></span>
           @for (answer of answers; track answer.id) {
             <polo-answer
+              [attr.data-sortable-id]="answer.id"
+              [reorderable]="answers.length > 1"
               [answerId]="answer.id"
               [text]="answer.text || ''"
               [hasJoin]="!!(answer.join && answer.join.length > 0)"
@@ -201,6 +208,7 @@
             ></polo-answer>
           }
         </div>
+        <span class="node__sortAnnouncement" role="status" aria-live="polite">{{ answerOrderAnnouncement() }}</span>
       }
     } @else if (type === 'text') {
       @if (image || loading() || loadingMessage()) {
