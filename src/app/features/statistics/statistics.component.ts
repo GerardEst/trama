@@ -15,7 +15,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
   standalone: true,
   imports: [CommonModule, BasicButtonComponent, SeparatorComponent, TranslatePipe],
   templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.sass'],
+  styleUrls: ['./statistics.component.css'],
 })
 export class StatisticsComponent implements OnInit {
   @Input() storyId!: string

@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: var(--polo-color-border-strong);
+}
+.separator--space {
+  margin: 1rem 0;
+}
+
+.separator__word {
+  margin: 0;
+  font-size: 1.3rem;
+}

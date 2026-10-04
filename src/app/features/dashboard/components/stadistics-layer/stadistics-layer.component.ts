@@ -8,7 +8,7 @@ import { StatisticsService } from 'src/app/shared/services/statistics.service'
   standalone: true,
   imports: [BasicButtonComponent],
   templateUrl: './stadistics-layer.component.html',
-  styleUrl: './stadistics-layer.component.sass',
+  styleUrl: './stadistics-layer.component.css',
 })
 export class StadisticsLayerComponent implements OnInit {
   games?: any

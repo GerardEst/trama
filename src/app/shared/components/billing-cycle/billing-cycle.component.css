@@ -1,0 +1,52 @@
+.period__toggle {
+  display: flex;
+}
+.period__toggle__monthly, .period__toggle__annually {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 2px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  background: var(--polo-color-canvas);
+  cursor: pointer;
+}
+.period__toggle__monthly .period__label, .period__toggle__annually .period__label {
+  color: var(--polo-color-text-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+.period__toggle__monthly.active, .period__toggle__annually.active {
+  background: var(--polo-color-action);
+  border-color: var(--polo-color-action);
+}
+.period__toggle__monthly.active .period__label, .period__toggle__annually.active .period__label {
+  color: var(--polo-color-text-on-action);
+}
+.period__toggle__monthly:hover:not(.active), .period__toggle__annually:hover:not(.active) {
+  background: color-mix(in srgb, var(--polo-color-action) 7%, transparent);
+}
+.period__toggle__monthly:focus-visible, .period__toggle__annually:focus-visible {
+  outline: 3px solid var(--polo-color-action);
+  outline-offset: 4px;
+}
+.period__toggle.small .period__toggle__monthly, .period__toggle.small .period__toggle__annually {
+  padding: 0.5rem 1rem;
+}
+.period__toggle__annually {
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+}
+.period__toggle__annually .period__label span {
+  color: var(--polo-color-text-secondary);
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: var(--polo-color-canvas);
+  margin-left: 0.5rem;
+  font-size: 10px;
+}
+.period__toggle__monthly {
+  border-right: 0;
+  border-radius: 8px 0 0 8px;
+}

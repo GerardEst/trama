@@ -25,7 +25,7 @@ import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language
     TranslatePipe,
   ],
   templateUrl: './profile-modal.component.html',
-  styleUrl: './profile-modal.component.sass',
+  styleUrl: './profile-modal.component.css',
 })
 export class ProfileModalComponent {
   payAnnually: boolean = false

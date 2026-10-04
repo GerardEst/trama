@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   standalone: true,
   imports: [],
   templateUrl: './choice-card.component.html',
-  styleUrl: './choice-card.component.sass',
+  styleUrl: './choice-card.component.css',
 })
 export class ChoiceCardComponent {
   @Input() icon?: string

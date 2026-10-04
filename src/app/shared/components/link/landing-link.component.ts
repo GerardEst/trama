@@ -6,7 +6,7 @@ import { Router } from '@angular/router'
   standalone: true,
   imports: [],
   templateUrl: './landing-link.component.html',
-  styleUrl: './landing-link.component.sass',
+  styleUrl: './landing-link.component.css',
 })
 export class LandingLinkComponent {
   @Input() behaviour?: 'link' | 'buttonlink' | 'button' = 'button'

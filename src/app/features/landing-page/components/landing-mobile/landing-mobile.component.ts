@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core'
   standalone: true,
   imports: [],
   templateUrl: './landing-mobile.component.html',
-  styleUrl: './landing-mobile.component.sass',
+  styleUrl: './landing-mobile.component.css',
 })
 export class LandingMobileComponent {
   @Input() topSpacing?: boolean

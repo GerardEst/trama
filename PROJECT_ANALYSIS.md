@@ -20,7 +20,7 @@ Supabase backend.
 - **Framework:** Angular 18.2 (standalone components, partial signals adoption)
 - **Backend:** Supabase (Postgres + Auth + Edge Functions)
 - **Auxiliary:** AWS Lambda (image resizing), Stripe (payments)
-- **Styling:** SASS (indented syntax), per-component stylesheets
+- **Styling:** native CSS, shared light/dark tokens in `src/styles/tokens.css`, per-component stylesheets
 - **Repo state:** branch `claude/awesome-curie-c6snch`, working tree clean
 
 ---

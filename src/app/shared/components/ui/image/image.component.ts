@@ -7,7 +7,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './image.component.html',
-  styleUrl: './image.component.sass',
+  styleUrl: './image.component.css',
 })
 export class ImageComponent {
   @Input() storageRoute?: string

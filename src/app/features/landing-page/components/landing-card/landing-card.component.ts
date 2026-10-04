@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core'
   standalone: true,
   imports: [],
   templateUrl: './landing-card.component.html',
-  styleUrl: './landing-card.component.sass',
+  styleUrl: './landing-card.component.css',
 })
 export class LandingCardComponent {
   @Input() image?: string

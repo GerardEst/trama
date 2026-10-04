@@ -19,7 +19,7 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
     TranslatePipe,
   ],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.sass',
+  styleUrl: '../login-shared.css',
 })
 export class ResetPasswordComponent {
   constructor(private db: DatabaseService) {}

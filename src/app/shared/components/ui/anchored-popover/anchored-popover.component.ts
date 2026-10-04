@@ -15,7 +15,7 @@ import { AnchoredPopoverContentDirective } from './anchored-popover-content.dire
   standalone: true,
   imports: [NgTemplateOutlet],
   templateUrl: './anchored-popover.component.html',
-  styleUrl: './anchored-popover.component.sass',
+  styleUrl: './anchored-popover.component.css',
 })
 export class AnchoredPopoverComponent {
   // Editors with multi-step Escape behavior can dismiss themselves instead.

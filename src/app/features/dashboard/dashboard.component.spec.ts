@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { provideRouter } from '@angular/router'
 
 import { DashboardComponent } from './dashboard.component'
 
@@ -9,6 +10,7 @@ describe('DashboardComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [DashboardComponent],
+      providers: [provideRouter([])],
     })
     fixture = TestBed.createComponent(DashboardComponent)
     component = fixture.componentInstance

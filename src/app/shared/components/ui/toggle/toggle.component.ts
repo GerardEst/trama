@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   standalone: true,
   imports: [],
   templateUrl: './toggle.component.html',
-  styleUrl: './toggle.component.sass',
+  styleUrl: './toggle.component.css',
 })
 export class ToggleComponent {
   @Input({ required: true }) label = ''

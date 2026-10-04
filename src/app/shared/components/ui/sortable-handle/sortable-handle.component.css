@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2.75rem;
+  padding: 0;
+  color: var(--polo-color-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+  opacity: 0.45;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+button:hover, button:focus-visible {
+  opacity: 1;
+}
+button:active {
+  cursor: grabbing;
+}
+button:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  button {
+    width: 2.75rem;
+  }
+}

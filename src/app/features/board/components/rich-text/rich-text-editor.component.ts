@@ -10,7 +10,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './rich-text-editor.component.html',
-  styleUrl: './rich-text-editor.component.sass',
+  styleUrl: './rich-text-editor.component.css',
   host: { '(keydown.escape)': 'onEscape($event)' },
 })
 export class RichTextEditorComponent implements AfterViewInit, OnDestroy {

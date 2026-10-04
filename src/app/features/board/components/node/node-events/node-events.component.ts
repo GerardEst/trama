@@ -12,7 +12,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent, TranslatePipe],
   templateUrl: './node-events.component.html',
-  styleUrl: './node-events.component.sass',
+  styleUrl: './node-events.component.css',
 })
 export class NodeEventsComponent {
   @Input() nodeId?: string

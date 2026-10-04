@@ -19,7 +19,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [ChoiceCardComponent, NodeAddModifyRefComponent, TranslatePipe],
   templateUrl: './node-add-event.component.html',
-  styleUrl: './node-add-event.component.sass',
+  styleUrl: './node-add-event.component.css',
 })
 export class NodeAddEventComponent
   extends PopupBaseComponent

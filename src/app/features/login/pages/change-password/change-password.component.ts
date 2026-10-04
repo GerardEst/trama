@@ -24,7 +24,7 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
     TranslatePipe,
   ],
   templateUrl: './change-password.component.html',
-  styleUrl: './change-password.component.sass',
+  styleUrl: '../login-shared.css',
 })
 export class ChangePasswordComponent {
   constructor(

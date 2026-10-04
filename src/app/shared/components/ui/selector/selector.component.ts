@@ -22,7 +22,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [SelectOrCreateComponent, TranslatePipe],
   templateUrl: './selector.component.html',
-  styleUrl: './selector.component.sass',
+  styleUrl: './selector.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectorComponent {

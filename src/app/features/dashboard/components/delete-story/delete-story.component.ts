@@ -9,7 +9,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [AlertWindowComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './delete-story.component.html',
-  styleUrl: './delete-story.component.sass',
+  styleUrl: './delete-story.component.css',
 })
 export class DeleteStoryComponent {
   resolve: (value: boolean) => void = () => {}

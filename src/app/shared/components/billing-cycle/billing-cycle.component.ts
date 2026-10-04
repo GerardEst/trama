@@ -6,7 +6,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './billing-cycle.component.html',
-  styleUrl: './billing-cycle.component.sass',
+  styleUrl: './billing-cycle.component.css',
 })
 export class BillingCycleComponent {
   @Output() onChangePayingPeriod: EventEmitter<string> = new EventEmitter()

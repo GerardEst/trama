@@ -1,8 +1,5 @@
-describe('authoring theme', () => {
-  let dashboard: HTMLElement
-  let statistics: HTMLElement
-  let account: HTMLElement
-  let playground: HTMLElement
+describe('shared application theme', () => {
+  let pages: HTMLElement[]
   let previousTheme: string | undefined
   let previousStorybookTheme: string | undefined
 
@@ -11,79 +8,95 @@ describe('authoring theme', () => {
     previousStorybookTheme = document.documentElement.dataset['storybookTheme']
     delete document.documentElement.dataset['poloTheme']
     delete document.documentElement.dataset['storybookTheme']
-    dashboard = document.createElement('polo-dashboard')
-    statistics = document.createElement('polo-stadistics')
-    account = document.createElement('polo-profile-modal')
-    playground = document.createElement('polo-playground')
-    document.body.append(dashboard, statistics, account, playground)
+    pages = [
+      'polo-dashboard', 'polo-stadistics', 'polo-profile-modal', 'polo-playground',
+      'polo-landingpage', 'polo-login', 'polo-feature-guide', 'polo-share-story',
+    ].map(selector => document.createElement(selector))
+    document.body.append(...pages)
   })
 
   afterEach(() => {
-    dashboard.remove()
-    statistics.remove()
-    account.remove()
-    playground.remove()
+    pages.forEach(page => page.remove())
     if (previousTheme) document.documentElement.dataset['poloTheme'] = previousTheme
     else delete document.documentElement.dataset['poloTheme']
     if (previousStorybookTheme) document.documentElement.dataset['storybookTheme'] = previousStorybookTheme
     else delete document.documentElement.dataset['storybookTheme']
   })
 
-  const surface = (element: HTMLElement) =>
-    getComputedStyle(element).getPropertyValue('--polo-color-surface').trim()
+  // Resolve native light-dark() through a real color property, not its CSS source text.
+  const color = (element: HTMLElement, token: string) => {
+    const sample = document.createElement('span')
+    sample.style.color = `var(${token})`
+    element.append(sample)
+    const value = getComputedStyle(sample).color
+    sample.remove()
+    return value
+  }
+  const surface = (element: HTMLElement) => color(element, '--polo-color-surface')
 
-  it('uses the same system palette for the dashboard and default playground', () => {
-    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    expect(surface(dashboard)).toBe(dark ? '#232d3d' : '#ffffff')
-    expect(surface(playground)).toBe(surface(dashboard))
+  it('uses one system palette for public pages, the editor, player and dialogs', () => {
+    const expected = window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'rgb(38, 46, 40)' : 'rgb(255, 254, 250)'
+    pages.forEach(page => expect(surface(page)).toBe(expected))
   })
 
-  it('allows a saved preference to override the system on both authoring pages', () => {
+  it('applies an explicit preference to every page without page-specific overrides', () => {
     document.documentElement.dataset['poloTheme'] = 'dark'
-    expect(surface(dashboard)).toBe('#232d3d')
-    expect(surface(statistics)).toBe('#232d3d')
-    expect(surface(account)).toBe('#232d3d')
-    expect(surface(playground)).toBe('#232d3d')
-
+    pages.forEach(page => expect(surface(page)).toBe('rgb(38, 46, 40)'))
     document.documentElement.dataset['poloTheme'] = 'light'
-    expect(surface(dashboard)).toBe('#ffffff')
-    expect(surface(statistics)).toBe('#ffffff')
-    expect(surface(account)).toBe('#ffffff')
-    expect(surface(playground)).toBe('#ffffff')
+    pages.forEach(page => expect(surface(page)).toBe('rgb(255, 254, 250)'))
   })
 
-  it('turns only authoring icons white in dark mode', () => {
+  it('keeps legacy aliases and semantic tokens on the same palette in both variants', () => {
+    for (const variant of ['light', 'dark'] as const) {
+      document.documentElement.dataset['poloTheme'] = variant
+      const page = pages[0]
+      expect(color(page, '--light-gray')).toBe(surface(page))
+      expect(color(page, '--text-color')).toBe(color(page, '--polo-color-text'))
+      expect(color(page, '--important-color')).toBe(color(page, '--polo-color-focus'))
+      expect(color(page, '--polo-color-canvas')).toBe(variant === 'light' ? 'rgb(251, 249, 244)' : 'rgb(27, 33, 29)')
+    }
+  })
+
+  it('keeps amber actions readable in both variants', () => {
+    for (const variant of ['light', 'dark'] as const) {
+      document.documentElement.dataset['poloTheme'] = variant
+      expect(color(pages[0], '--polo-color-accent')).toBe('rgb(246, 206, 106)')
+      expect(color(pages[0], '--polo-color-text-on-accent')).toBe('rgb(37, 39, 32)')
+    }
+  })
+
+  it('changes UI icons globally without filtering story images', () => {
     const icon = document.createElement('img')
     icon.setAttribute('src', '/assets/icons/plus.svg')
     const storyImage = document.createElement('img')
     storyImage.setAttribute('src', '/assets/images/landing/background.webp')
-    dashboard.append(icon, storyImage)
+    pages[0].append(icon, storyImage)
 
     document.documentElement.dataset['poloTheme'] = 'dark'
     expect(getComputedStyle(icon).filter).toBe('brightness(0) invert(1)')
     expect(getComputedStyle(storyImage).filter).toBe('none')
-    expect(getComputedStyle(dashboard).getPropertyValue('--polo-icon-play')).toContain('play-white.svg')
-    expect(getComputedStyle(dashboard).getPropertyValue('--polo-icon-drag')).toContain('drag-white.svg')
+    expect(getComputedStyle(pages[0]).getPropertyValue('--polo-icon-play')).toContain('play-white.svg')
+    expect(getComputedStyle(pages[0]).getPropertyValue('--polo-icon-drag')).toContain('drag-white.svg')
 
     document.documentElement.dataset['poloTheme'] = 'light'
     expect(getComputedStyle(icon).filter).toBe('none')
-    expect(getComputedStyle(dashboard).getPropertyValue('--polo-icon-play')).toBe('')
+    expect(getComputedStyle(pages[0]).getPropertyValue('--polo-icon-play')).toContain("'/assets/icons/play.svg'")
+    expect(getComputedStyle(pages[0]).getPropertyValue('--polo-icon-drag')).toContain("'/assets/icons/drag.svg'")
   })
 
-  it('themes the Storybook canvas independently of the app preference', () => {
+  it('lets Storybook choose a preference independently while sharing the same tokens', () => {
     const icon = document.createElement('img')
     icon.setAttribute('src', '/assets/icons/plus.svg')
-    document.body.append(icon)
-    try {
-      document.documentElement.dataset['storybookTheme'] = 'dark'
-      expect(surface(document.documentElement)).toBe('#232d3d')
-      expect(getComputedStyle(icon).filter).toBe('brightness(0) invert(1)')
+    pages[0].append(icon)
+    document.documentElement.dataset['poloTheme'] = 'dark'
+    document.documentElement.dataset['storybookTheme'] = 'light'
+    expect(surface(document.documentElement)).toBe('rgb(255, 254, 250)')
+    expect(getComputedStyle(icon).filter).toBe('none')
 
-      document.documentElement.dataset['storybookTheme'] = 'light'
-      expect(surface(document.documentElement)).toBe('#ffffff')
-      expect(getComputedStyle(icon).filter).toBe('none')
-    } finally {
-      icon.remove()
-    }
+    document.documentElement.dataset['poloTheme'] = 'light'
+    document.documentElement.dataset['storybookTheme'] = 'dark'
+    expect(surface(document.documentElement)).toBe('rgb(38, 46, 40)')
+    expect(getComputedStyle(icon).filter).toBe('brightness(0) invert(1)')
   })
 })

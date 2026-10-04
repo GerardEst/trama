@@ -9,7 +9,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [ModalWindowComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './creator-paywall.component.html',
-  styleUrl: './creator-paywall.component.sass',
+  styleUrl: './creator-paywall.component.css',
 })
 export class CreatorPaywallComponent {
   creatorPrice = PRICING.CREATOR_MONTHLY_PRICE

@@ -20,7 +20,7 @@ import { TranslationKey, TranslationParams } from 'src/app/core/i18n/i18n.types'
   standalone: true,
   imports: [FormFieldComponent, SelectorComponent, TranslatePipe],
   templateUrl: './node-add-modify-ref.component.html',
-  styleUrl: './node-add-modify-ref.component.sass',
+  styleUrl: './node-add-modify-ref.component.css',
 })
 export class NodeAddModifyRefComponent implements OnChanges {
   readonly controlIdPrefix = `reference-editor-${nextReferenceEditorId++}`

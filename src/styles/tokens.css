@@ -1,0 +1,148 @@
+/* The single theme for pages, components, dialogs and Storybook.
+   Native light-dark() follows color-scheme; page styles never redefine a palette. */
+:root {
+  color-scheme: light dark;
+
+  /* Brand primitives: stable colors, not page-specific variants. */
+  --polo-ink-900: #252720;
+  --polo-paper-50: #fbf9f4;
+  --polo-forest-700: #294b3e;
+  --polo-amber-300: #f6ce6a;
+  --polo-amber-400: #f3c24c;
+  --polo-amber-600: #d79829;
+
+  /* Surfaces and readable text. */
+  --polo-color-canvas: light-dark(var(--polo-paper-50), #1b211d);
+  --polo-color-surface: light-dark(#fffefa, #262e28);
+  --polo-color-surface-subtle: light-dark(#f8f6ef, #2b342d);
+  --polo-color-surface-muted: light-dark(#eeece3, #354037);
+  --polo-color-surface-accent: light-dark(#f8edcc, #45422c);
+  --polo-color-text-strong: light-dark(var(--polo-ink-900), #f3f0e5);
+  --polo-color-text: var(--polo-color-text-strong);
+  --polo-color-text-secondary: light-dark(#5c625a, #c1c6b8);
+  --polo-color-text-muted: light-dark(#707569, #b0b9a8);
+  --polo-color-text-on-action: var(--polo-color-surface);
+  --polo-color-text-on-accent: var(--polo-ink-900);
+  --polo-color-text-on-media: #fff4da;
+  --polo-color-placeholder: var(--polo-color-text-muted);
+
+  /* Borders, actions and the amber brand accent. */
+  --polo-color-border: light-dark(#deded1, #465044);
+  --polo-color-border-strong: light-dark(#c5c8b9, #64715f);
+  --polo-color-border-hover: var(--polo-color-action);
+  --polo-color-action: light-dark(var(--polo-forest-700), #b6d3b0);
+  --polo-color-action-hover: light-dark(#1b352b, #d3e7ce);
+  --polo-color-action-soft: light-dark(#e9eee5, #344636);
+  --polo-color-action-soft-hover: light-dark(#dce5d7, #405641);
+  --polo-color-focus: var(--polo-color-action);
+  --polo-color-focus-ring: color-mix(in srgb, var(--polo-color-focus) 18%, transparent);
+  --polo-color-accent: var(--polo-amber-300);
+  --polo-color-accent-hover: var(--polo-amber-400);
+  --polo-color-accent-border: #d8b354;
+  --polo-color-wordmark-dot: var(--polo-amber-600);
+  --polo-color-control-disabled: light-dark(#c5c8b9, #64715f);
+
+  /* Feedback roles remain distinct from the brand action colors. */
+  --polo-color-danger: light-dark(#b83a3a, #ff9090);
+  --polo-color-danger-hover: light-dark(#9f2f2f, #ffb2b2);
+  --polo-color-danger-text: light-dark(#a23636, #ffb2b2);
+  --polo-color-danger-text-strong: light-dark(#8f2e2e, #ffd0d0);
+  --polo-color-danger-soft: light-dark(#ffefef, #503038);
+  --polo-color-danger-border: light-dark(#ffcaca, #8c505a);
+  --polo-color-success: light-dark(#32754a, #8bd79e);
+  --polo-color-success-soft: light-dark(#e8f9e6, #254632);
+  --polo-color-text-on-success: light-dark(#fffefa, #1b211d);
+  --polo-color-warning: light-dark(#a05a2c, #efb880);
+
+  /* Elevations and texture are shared, with theme-aware contrast. */
+  --polo-color-shadow: light-dark(#252720, #000000);
+  --polo-color-overlay: #00000088;
+  --polo-color-media-scrim: #000000aa;
+  --polo-color-media-shadow: #00000088;
+  --polo-color-grid: color-mix(in srgb, var(--polo-color-text) 4%, transparent);
+  --polo-color-grid-fine: color-mix(in srgb, var(--polo-color-text) 2%, transparent);
+  --polo-color-grid-dot: color-mix(in srgb, var(--polo-color-text) 14%, transparent);
+  --polo-background-grid: linear-gradient(var(--polo-color-grid) 1px, transparent 1px), linear-gradient(90deg, var(--polo-color-grid) 1px, transparent 1px), radial-gradient(circle, var(--polo-color-grid-dot) 1px, transparent 1.5px);
+  --polo-background-paper: linear-gradient(var(--polo-color-grid-fine) 1px, transparent 1px), linear-gradient(90deg, var(--polo-color-grid-fine) 1px, transparent 1px), linear-gradient(var(--polo-color-grid) 1px, transparent 1px), linear-gradient(90deg, var(--polo-color-grid) 1px, transparent 1px), radial-gradient(circle, var(--polo-color-grid-dot) 1px, transparent 1.5px);
+  --polo-shadow-floating: 0 12px 32px color-mix(in srgb, var(--polo-color-shadow) 12%, transparent), 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  --polo-shadow-popover: 0 14px 36px color-mix(in srgb, var(--polo-color-shadow) 18%, transparent), 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 6%, transparent);
+  --polo-shadow-control: 0 2px 0 color-mix(in srgb, var(--polo-color-shadow) 8%, transparent);
+  --polo-shadow-dialog: 0 5px 15px color-mix(in srgb, var(--polo-color-shadow) 50%, transparent);
+
+  /* Shared type, spacing and corners; story typography remains configurable. */
+  --polo-font-ui: Raleway, sans-serif;
+  --polo-font-story: Baskerville, serif;
+  --polo-space-1: 4px;
+  --polo-space-2: 8px;
+  --polo-space-3: 12px;
+  --polo-space-4: 16px;
+  --polo-space-6: 24px;
+  --polo-radius-control: 10px;
+  --polo-radius-panel: 12px;
+  --polo-radius-card: 14px;
+
+  --polo-icon-filter: none;
+  --polo-icon-edit: url('/assets/icons/edit.svg');
+  --polo-icon-play: url('/assets/icons/play.svg');
+  --polo-icon-drag: url('/assets/icons/drag.svg');
+
+  /* Compatibility aliases for legacy components and flow-rendering code.
+     Every alias points to this theme, never to an independent palette. */
+  --text-color: var(--polo-color-text);
+  --light-text: var(--polo-color-text-muted);
+  --light-gray: var(--polo-color-surface);
+  --medium-gray: var(--polo-color-surface-muted);
+  --dark-gray: var(--polo-color-border-strong);
+  --grid-color: var(--polo-color-grid-dot);
+  --important-color: var(--polo-color-focus);
+  --important-color-shade: var(--polo-color-action);
+  --important-color-tint: var(--polo-color-action-soft);
+  --important-color-tint-gradient: linear-gradient(25deg, var(--polo-color-action-soft-hover), var(--polo-color-action-soft));
+  --danger: var(--polo-color-danger);
+  --danger-light: var(--polo-color-danger-soft);
+  --success: var(--polo-color-success);
+  --success-light: var(--polo-color-success-soft);
+  --shadow-color: color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+  --shadow-color-light: color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  --shadow-elevation-low: var(--polo-shadow-control);
+  --shadow-elevation-medium: var(--polo-shadow-floating);
+  --shadow-elevation-medium-light: var(--polo-shadow-control);
+  --shadow-elevation-high: var(--polo-shadow-popover);
+  --shadow-elevation-omph: var(--polo-shadow-dialog);
+  --menu-shadow: var(--polo-shadow-floating);
+}
+
+:root[data-polo-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-polo-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* Storybook chooses its own preference, but uses exactly the same tokens. */
+:root[data-storybook-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-storybook-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* Image URLs/filters cannot use light-dark(); only these assets need selectors. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-polo-theme='light']):not([data-storybook-theme='light']) {
+    --polo-icon-filter: brightness(0) invert(1);
+    --polo-icon-edit: url('/assets/icons/edit-white.svg');
+    --polo-icon-play: url('/assets/icons/play-white.svg');
+    --polo-icon-drag: url('/assets/icons/drag-white.svg');
+  }
+}
+
+:root[data-polo-theme='dark']:not([data-storybook-theme='light']),
+:root[data-storybook-theme='dark'] {
+  --polo-icon-filter: brightness(0) invert(1);
+  --polo-icon-edit: url('/assets/icons/edit-white.svg');
+  --polo-icon-play: url('/assets/icons/play-white.svg');
+  --polo-icon-drag: url('/assets/icons/drag-white.svg');
+}

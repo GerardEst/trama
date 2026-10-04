@@ -17,7 +17,7 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
   standalone: true,
   imports: [BasicButtonComponent, EditableNameComponent, TranslatePipe],
   templateUrl: './menu-top.component.html',
-  styleUrl: './menu-top.component.sass',
+  styleUrl: './menu-top.component.css',
 })
 export class MenuTopComponent {
   showOptions: boolean = false

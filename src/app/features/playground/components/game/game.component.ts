@@ -17,7 +17,7 @@ import { GameNodeComponent } from './components/game-node/game-node.component'
   standalone: true,
   imports: [GameNodeComponent],
   templateUrl: './game.component.html',
-  styleUrl: './game.component.sass',
+  styleUrl: './game.component.css',
 })
 export class GameComponent {
   @ViewChild('game') DOMgame!: ElementRef

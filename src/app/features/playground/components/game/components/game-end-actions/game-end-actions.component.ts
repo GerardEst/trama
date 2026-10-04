@@ -10,7 +10,7 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './game-end-actions.component.html',
-  styleUrl: './game-end-actions.component.sass',
+  styleUrl: './game-end-actions.component.css',
 })
 export class GameEndActionsComponent {
   @Input() links: link[] = []

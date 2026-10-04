@@ -7,7 +7,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [RouterLink, TranslatePipe],
   templateUrl: './landing-feature-card.component.html',
-  styleUrl: './landing-feature-card.component.sass',
+  styleUrl: './landing-feature-card.component.css',
 })
 export class LandingFeatureCardComponent {
   @Input({ required: true }) title!: string

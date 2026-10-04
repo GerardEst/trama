@@ -39,8 +39,8 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
   ],
   templateUrl: './landingpage.component.html',
   styleUrls: [
-    './landingpage.component.sass',
-    './landingpage-conversion.sass',
+    './landingpage.component.css',
+    './landingpage-conversion.css',
   ],
 })
 export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {

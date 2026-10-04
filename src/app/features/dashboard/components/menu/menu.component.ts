@@ -8,6 +8,7 @@ import {
   OnInit,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { RouterLink } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
@@ -20,9 +21,9 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule, BasicButtonComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, BasicButtonComponent, TranslatePipe],
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.sass'],
+  styleUrls: ['./menu.component.css'],
 })
 export class MenuComponent implements OnInit {
   fixedMenu: boolean = true

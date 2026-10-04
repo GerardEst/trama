@@ -20,7 +20,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     TranslatePipe,
   ],
   templateUrl: './feedback-modal.component.html',
-  styleUrls: ['./feedback-modal.component.sass'],
+  styleUrls: ['./feedback-modal.component.css'],
 })
 export class FeedbackModalComponent {
   feedbackMessage = ''

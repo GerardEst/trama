@@ -24,7 +24,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     MenuTreeLegendComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.sass'],
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
   @ViewChild('board') board?: BoardComponent

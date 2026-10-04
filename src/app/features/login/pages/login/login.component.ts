@@ -24,7 +24,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
     TranslatePipe,
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.sass'],
+  styleUrls: ['../login-shared.css', './login.component.css'],
 })
 export class LoginComponent implements OnInit {
   LOGIN_FEEDBACKS = LOGIN_FEEDBACKS

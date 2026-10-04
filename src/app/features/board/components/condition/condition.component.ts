@@ -19,7 +19,7 @@ import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-h
   standalone: true,
   imports: [BasicButtonComponent, BoardAnchorDirective, TranslatePipe, SortableHandleComponent],
   templateUrl: './condition.component.html',
-  styleUrl: './condition.component.sass',
+  styleUrl: './condition.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConditionComponent implements OnInit {

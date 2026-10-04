@@ -1,37 +1,45 @@
 <div [class.fixedMenu]="fixedMenu" class="menu">
-  <nav>
-    <section>
+  <nav [attr.aria-label]="'dashboard.menu.stories' | t">
+    <div class="nav__brand">
+      <a class="wordmark" routerLink="/" aria-label="Trama">trama<span aria-hidden="true">.</span></a>
+      @if (fixedMenu) {
+        <polo-basic-button
+          class="menuToggler"
+          icon="/assets/icons/chevron-left.svg"
+          (click)="toggleMenu()"
+          [title]="'dashboard.menu.toggle' | t"
+          [transparent]="true"
+        ></polo-basic-button>
+      }
+    </div>
+
+    <section class="account">
       <div class="nav__title">
         <h4>{{ db.user()?.profile?.user_name }}</h4>
-        @if (fixedMenu) {
-          <polo-basic-button
-            class="menuToggler"
-            icon="/assets/icons/chevron-left.svg"
-            (click)="toggleMenu()"
-          ></polo-basic-button>
-        }
       </div>
       <ul>
-        <li (click)="openProfile()">
-          <img width="12px" src="/assets/icons/configuration.svg" alt="" />
-          {{ 'dashboard.menu.account' | t }}
+        <li>
+          <button type="button" class="nav__item" (click)="openProfile()">
+            <img width="14" src="/assets/icons/configuration.svg" alt="" />
+            {{ 'dashboard.menu.account' | t }}
+          </button>
         </li>
         <li>
-          <img width="12px" src="/assets/icons/docs.svg" alt="" />
-          {{ 'dashboard.menu.docs' | t }}<img
-            class="action"
-            width="15px"
-            src="/assets/icons/external-link.svg"
-          />
+          <a class="nav__item" routerLink="/docs/features">
+            <img width="14" src="/assets/icons/docs.svg" alt="" />
+            {{ 'dashboard.menu.docs' | t }}
+            <img class="action" width="14" src="/assets/icons/arrow-right.svg" alt="" />
+          </a>
         </li>
       </ul>
     </section>
 
-    <section>
+    <section class="stories">
       <div class="nav__title">
         <h4>{{ 'dashboard.menu.stories' | t }}</h4>
         <polo-basic-button
-          [iconSize]="10"
+          class="newStory"
+          [iconSize]="12"
           icon="/assets/icons/plus.svg"
           (click)="createNewTree()"
           [title]="'dashboard.menu.newStory' | t"
@@ -39,29 +47,39 @@
       </div>
       <ul>
         @for (story of stories(); track story.id) {
-          <li (click)="loadTree(story.id)" [class.active]="story.id === activeStory.storyId()">
-            {{ story.name }}
-            <img class="action" width="15px" src="/assets/icons/arrow-right.svg" />
+          <li>
+            <button
+              type="button"
+              class="nav__item story"
+              (click)="loadTree(story.id)"
+              [class.active]="story.id === activeStory.storyId()"
+              [attr.aria-current]="story.id === activeStory.storyId() ? 'true' : null"
+            >
+              <span class="story__dot" aria-hidden="true"></span>
+              <span class="story__name">{{ story.name }}</span>
+              <img class="action" width="14" src="/assets/icons/arrow-right.svg" alt="" />
+            </button>
           </li>
         }
       </ul>
     </section>
 
-    <section>
+    <section class="feedback">
       <polo-basic-button
         [text]="'dashboard.menu.feedback' | t"
         icon="/assets/icons/user-info.svg"
         (click)="openFeedbackModal()"
         [transparent]="true"
         [border]="true"
-      >
-      </polo-basic-button>
+      ></polo-basic-button>
     </section>
   </nav>
   @if (!fixedMenu) {
+    <div class="menu__edge" aria-hidden="true"></div>
     <polo-basic-button
       class="openMenu"
       icon="/assets/icons/hamburger-menu.svg"
+      [title]="'dashboard.menu.toggle' | t"
       (click)="toggleMenu()"
     ></polo-basic-button>
   }

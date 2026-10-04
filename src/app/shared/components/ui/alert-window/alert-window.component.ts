@@ -7,7 +7,7 @@ import { BasicButtonComponent } from '../basic-button/basic-button.component'
   standalone: true,
   imports: [BasicButtonComponent],
   templateUrl: './alert-window.component.html',
-  styleUrl: './alert-window.component.sass',
+  styleUrl: './alert-window.component.css',
 })
 export class AlertWindowComponent {
   constructor(private alertService: AlertService) {}

@@ -29,6 +29,16 @@ Un component es manté aquí quan coneix conceptes com nodes, events, requiremen
 - **Event editor — Board / Organism:** edita estat del jugador i persisteix events.
 - **Node — Board / Organism:** agrega tota l'edició d'un node.
 
+## Tema compartit i CSS
+
+`src/styles/tokens.css` és l'única font de veritat del tema: colors, elevacions, tipografia i tokens comuns d'espaiat i cantonades. Home, login, documentació, dashboard, playground i diàlegs hereten els mateixos tokens.
+
+El tema utilitza CSS natiu (`light-dark()`, `color-scheme` i custom properties), sense Sass. La preferència del sistema s'aplica per defecte; `data-polo-theme` selecciona una variant explícita i `data-storybook-theme` permet provar-la a Storybook.
+
+Els components consumeixen `--polo-color-*`; no defineixen una paleta pròpia. Les variants de component, com un botó groc, utilitzen tokens de component (`--polo-button-background`, `--polo-button-text`) que referencien els tokens compartits. El text sobre fotografies i les màscares són rols diferents del text de la interfície.
+
+`npm run lint` comprova també que no tornin a aparèixer fitxers Sass, colors literals fora del tema ni paletes locals als components.
+
 ## Regla per a components nous
 
 Un component nou entra al **Design System** si es pot demostrar sense mocks de serveis de negoci i el seu API no utilitza tipus del domini. Si no compleix aquesta regla, es documenta dins de la secció funcional corresponent.

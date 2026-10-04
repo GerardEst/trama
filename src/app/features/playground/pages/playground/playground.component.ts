@@ -20,7 +20,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [CommonModule, GameComponent, ToggleComponent, TranslatePipe],
   templateUrl: './playground.component.html',
-  styleUrls: ['./playground.component.sass'],
+  styleUrls: ['./playground.component.css'],
 })
 export class PlaygroundComponent implements OnInit {
   // Complex id, used for private stories

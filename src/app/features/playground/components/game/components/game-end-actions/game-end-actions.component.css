@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+a, button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: 0.75rem;
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text-strong);
+  font: 600 1.1rem/1.5 var(--polo-font-ui);
+  text-decoration: none;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+a:hover, button:hover {
+  background: var(--polo-color-action-soft);
+  border-color: var(--polo-color-border-hover);
+}
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 3px;
+}
+
+.feedback {
+  color: var(--polo-color-text-secondary);
+  margin-top: 0.75rem;
+  font-size: 1rem;
+}
+.feedback:empty {
+  display: none;
+}

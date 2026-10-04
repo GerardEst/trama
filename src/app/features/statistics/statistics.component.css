@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--polo-color-canvas);
+}
+
+.menu {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--light-gray);
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.allResponses, .timeline {
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 1em;
+}
+table tr th.stat, table tr td.stat, table tr th.condition, table tr td.condition {
+  width: 50px;
+  text-align: center;
+}
+table tr th.condition, table tr td.condition {
+  text-align: center;
+}
+table tr th.date, table tr td.date {
+  width: 150px;
+  text-align: left;
+}
+table tr th.name, table tr td.name {
+  text-align: left;
+}

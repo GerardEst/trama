@@ -1,0 +1,31 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.profileContainer section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.profileContainer section div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.profileContainer section div.themePreference, .profileContainer section div.languagePreference {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 20rem;
+  padding: 0.5rem 0;
+}
+.profileContainer section div.themePreference input, .profileContainer section div.languagePreference input {
+  width: 1.4rem;
+  height: 1.4rem;
+  cursor: pointer;
+  accent-color: var(--polo-color-action);
+}
+.profileContainer section div.profileOptions {
+  width: 150px;
+}

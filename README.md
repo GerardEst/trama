@@ -11,7 +11,7 @@ Lambda for image optimization.
 
 ## Tech stack
 
-- **Frontend:** Angular 18.2, standalone components, RxJS, SASS (indented)
+- **Frontend:** Angular 18.2, standalone components, RxJS, native CSS and shared light/dark theme tokens
 - **Backend:** Supabase (`@supabase/supabase-js`) — auth, Postgres, storage, edge functions
 - **Payments:** Stripe (subscription links + edge functions)
 - **Testing:** Playwright (e2e), Karma + Jasmine (unit)

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "eslint \"src/**/*.{ts,html}\"",
+    "lint": "eslint \"src/**/*.{ts,html}\" && node scripts/check-styles.mjs",
     "tests-e2e-dashboard": "npx playwright test --project=dashboard",
     "tests-e2e-playground": "npx playwright test --project=playground",
     "ts-coverage": "typescript-coverage-report",

@@ -10,7 +10,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [CommonModule, BasicButtonComponent, TranslatePipe],
   templateUrl: './modal-window.component.html',
-  styleUrls: ['./modal-window.component.sass'],
+  styleUrls: ['./modal-window.component.css'],
   animations: [
     trigger('toggleModal', [
       transition(':enter', [

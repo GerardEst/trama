@@ -8,7 +8,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './node-options.component.html',
-  styleUrl: './node-options.component.sass',
+  styleUrl: './node-options.component.css',
 })
 export class NodeOptionsComponent extends PopupBaseComponent {
   @Input() type?: string

@@ -11,7 +11,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [GameAnswerComponent, GameTextInputComponent, GameEndActionsComponent, TranslatePipe],
   templateUrl: './game-node.component.html',
-  styleUrl: './game-node.component.sass',
+  styleUrl: './game-node.component.css',
 })
 export class GameNodeComponent {
   @ViewChild('node') node!: ElementRef<HTMLElement>

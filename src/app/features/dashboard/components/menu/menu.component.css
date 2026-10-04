@@ -1,0 +1,190 @@
+.menu {
+  --width: min(240px, calc(100vw - 32px));
+  position: fixed;
+  z-index: 6;
+  top: 16px;
+  width: calc(var(--width) + 16px);
+  left: calc((var(--width) + 16px) * -1);
+  transition: left 200ms ease;
+}
+/* Mouse focus must not keep a floating menu open after the pointer leaves. */
+.menu.fixedMenu, .menu:has(nav :focus-visible), .menu:not(.fixedMenu):hover {
+  left: 16px;
+}
+.menu.fixedMenu {
+  bottom: 16px;
+}
+/* Invisible reveal target remains at the viewport edge when the menu is hidden. */
+.menu__edge {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 16px;
+}
+.menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-6);
+  box-sizing: border-box;
+  width: var(--width);
+  margin-top: 48px;
+  max-height: calc(100dvh - 80px);
+  padding: 18px 12px 12px;
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-floating);
+  overflow-y: auto;
+}
+.menu.fixedMenu nav {
+  margin-top: 0;
+  max-height: 100%;
+  height: 100%;
+}
+
+.nav__brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--polo-color-border);
+}
+
+.wordmark {
+  color: var(--polo-color-text-strong);
+  font: 800 27px/1 var(--polo-font-ui);
+  letter-spacing: -0.075em;
+  text-decoration: none;
+}
+.wordmark span {
+  color: var(--polo-color-wordmark-dot);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-3);
+}
+
+.nav__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-2);
+  padding-inline: 10px;
+}
+.nav__title h4 {
+  min-width: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-1);
+}
+
+.nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  color: var(--polo-color-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.5;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.nav__item:hover {
+  background: var(--polo-color-surface-subtle);
+  border-color: var(--polo-color-border);
+}
+.nav__item.active {
+  color: var(--polo-color-action);
+  background: var(--polo-color-action-soft);
+  border-color: var(--polo-color-border-strong);
+  font-weight: 800;
+}
+.nav__item .action {
+  flex: none;
+  margin-left: auto;
+  opacity: 0;
+}
+.nav__item:hover .action, .nav__item:focus-visible .action, .nav__item.active .action {
+  opacity: 1;
+}
+
+.story__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--polo-color-border-strong);
+}
+.active .story__dot {
+  background: var(--polo-color-action);
+}
+
+.story__name {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.newStory {
+  --polo-button-text: var(--polo-color-text-on-accent);
+  --polo-button-background: var(--polo-color-accent);
+  --polo-button-background-hover: var(--polo-color-accent-hover);
+  --polo-icon-filter: none;
+}
+
+.feedback {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--polo-color-border);
+}
+.feedback polo-basic-button {
+  width: 100%;
+}
+
+.wordmark:focus-visible, .nav__item:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.openMenu {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: 9px;
+  box-shadow: var(--polo-shadow-control);
+}
+
+@media (max-width: 760px) {
+  .menu {
+    top: 88px;
+  }
+  .menu nav {
+    margin-top: 0;
+    max-height: calc(100dvh - 104px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu, .nav__item {
+    transition: none;
+  }
+}

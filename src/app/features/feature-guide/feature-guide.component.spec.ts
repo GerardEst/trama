@@ -21,9 +21,10 @@ describe('FeatureGuideComponent', () => {
   it('uses the shared landing theme and readable documentation typography', () => {
     const page = fixture.nativeElement as HTMLElement
     const style = getComputedStyle(page)
-    expect(style.getPropertyValue('--paper').trim()).toBe('#fbf9f4')
-    expect(style.getPropertyValue('--blue').trim()).toBe('#294b3e')
-    expect(style.getPropertyValue('--accent').trim()).toBe('#f6ce6a')
+    const theme = getComputedStyle(document.documentElement)
+    expect(style.backgroundColor).toBe(getComputedStyle(document.body).backgroundColor)
+    expect(style.getPropertyValue('--polo-color-action')).toBe(theme.getPropertyValue('--polo-color-action'))
+    expect(style.getPropertyValue('--polo-color-accent').trim()).toBe('#f6ce6a')
     expect(style.backgroundImage).toContain('linear-gradient')
     expect(getComputedStyle(page.querySelector('h1')!).fontFamily).toContain('Raleway')
     expect(page.querySelector('.guide-header polo-language-selector')).toBeNull()

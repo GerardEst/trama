@@ -1,0 +1,78 @@
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  anchor-scope: --selector-trigger;
+}
+
+.selector {
+  display: flex;
+  width: 100%;
+  min-height: 3.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--polo-color-text);
+  text-align: left;
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: 0.65rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  anchor-name: --selector-trigger;
+}
+.selector span {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selector img {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+  opacity: 0.55;
+  transition: transform 160ms ease;
+}
+.selector:hover:not(:disabled) {
+  border-color: var(--polo-color-border-hover);
+}
+.selector:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.selector:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+.selector[aria-expanded=true] {
+  border-color: var(--polo-color-focus);
+  box-shadow: 0 0 0 3px var(--polo-color-focus-ring);
+}
+.selector[aria-expanded=true] img {
+  transform: rotate(180deg);
+}
+.selector__placeholder {
+  color: var(--polo-color-text-muted);
+  font-weight: 500 !important;
+}
+.selector__popover {
+  position: fixed;
+  inset: auto;
+  top: calc(anchor(bottom) + 0.5rem);
+  left: anchor(left);
+  position-anchor: --selector-trigger;
+  position-try-fallbacks: flip-block;
+  z-index: 30;
+  width: anchor-size(width);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selector,
+  .selector img {
+    transition: none;
+  }
+}

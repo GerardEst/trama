@@ -7,14 +7,14 @@ test('default playground shares the dashboard palette and remembers night mode',
 
   const playground = page.locator('main.playground')
   const toggle = page.getByRole('switch', { name: 'Dark mode' })
-  await expect(playground).toHaveCSS('background-color', 'rgb(244, 246, 249)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(251, 249, 244)')
   await expect(toggle).not.toBeChecked()
   await toggle.click()
   await expect(toggle).toBeChecked()
-  await expect(playground).toHaveCSS('background-color', 'rgb(22, 29, 42)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(27, 33, 29)')
 
   await page.reload()
-  await expect(playground).toHaveCSS('background-color', 'rgb(22, 29, 42)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(27, 33, 29)')
   await expect(toggle).toBeChecked()
 
   // A native switch button supports both Space and Enter, with a visible focus ring.
@@ -23,12 +23,12 @@ test('default playground shares the dashboard palette and remembers night mode',
   await expect(toggle).toHaveCSS('outline-style', 'solid')
   await toggle.press('Space')
   await expect(toggle).not.toBeChecked()
-  await expect(playground).toHaveCSS('background-color', 'rgb(244, 246, 249)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(251, 249, 244)')
 
   await page.reload()
   await expect(toggle).not.toBeChecked()
-  await expect(playground).toHaveCSS('background-color', 'rgb(244, 246, 249)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(251, 249, 244)')
   await toggle.press('Enter')
   await expect(toggle).toBeChecked()
-  await expect(playground).toHaveCSS('background-color', 'rgb(22, 29, 42)')
+  await expect(playground).toHaveCSS('background-color', 'rgb(27, 33, 29)')
 })

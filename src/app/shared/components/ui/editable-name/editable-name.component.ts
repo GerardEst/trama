@@ -4,7 +4,7 @@ import { Component, HostListener, input, output } from '@angular/core'
   selector: 'polo-editable-name',
   standalone: true,
   templateUrl: './editable-name.component.html',
-  styleUrl: './editable-name.component.sass',
+  styleUrl: './editable-name.component.css',
 })
 export class EditableNameComponent {
   readonly value = input('')

@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
   selector: 'polo-sortable-handle',
   standalone: true,
   templateUrl: './sortable-handle.component.html',
-  styleUrl: './sortable-handle.component.sass',
+  styleUrl: './sortable-handle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SortableHandleComponent {

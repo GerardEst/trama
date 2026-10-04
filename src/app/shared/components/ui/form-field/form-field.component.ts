@@ -8,7 +8,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './form-field.component.html',
-  styleUrl: './form-field.component.sass',
+  styleUrl: './form-field.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormFieldComponent {

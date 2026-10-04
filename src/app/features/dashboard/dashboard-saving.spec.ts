@@ -1,5 +1,6 @@
 import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed, tick } from '@angular/core/testing'
 import { signal } from '@angular/core'
+import { provideRouter } from '@angular/router'
 import { appUser, tree } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -39,7 +40,7 @@ describe('Dashboard save/load races', () => {
     database.saveTreeToDB.and.resolveTo(true)
     TestBed.configureTestingModule({
       imports: [DashboardComponent],
-      providers: [{ provide: DatabaseService, useValue: database }],
+      providers: [provideRouter([]), { provide: DatabaseService, useValue: database }],
     })
     // No lifecycle rendering is needed to test the async loading boundary.
     fixture = TestBed.createComponent(DashboardComponent)

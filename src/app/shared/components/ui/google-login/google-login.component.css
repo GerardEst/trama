@@ -1,0 +1,27 @@
+.google-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text-secondary);
+  border: 1px solid var(--polo-color-border);
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+.google-login img {
+  width: 20px;
+  height: 20px;
+}
+
+.google-login:hover {
+  background-color: var(--polo-color-surface-muted);
+}
+
+.google-login:active {
+  background-color: var(--polo-color-surface-muted);
+}

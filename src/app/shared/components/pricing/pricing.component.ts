@@ -13,7 +13,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [LandingLinkComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './pricing.component.html',
-  styleUrl: './pricing.component.sass',
+  styleUrl: './pricing.component.css',
 })
 export class PricingComponent {
   pricing = PRICING

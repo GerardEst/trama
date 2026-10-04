@@ -69,7 +69,7 @@ import { SortableListDirective, SortableMove } from 'src/app/shared/directives/s
     SortableListDirective,
   ],
   templateUrl: './node.component.html',
-  styleUrls: ['./node.component.sass'],
+  styleUrls: ['./node.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

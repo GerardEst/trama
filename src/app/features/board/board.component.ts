@@ -65,7 +65,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     TranslatePipe,
   ],
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.sass'],
+  styleUrls: ['./board.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [PanzoomService, BoardAnchorRegistryService],
 })

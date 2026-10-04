@@ -11,7 +11,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [ModalWindowComponent, BasicButtonComponent, TranslatePipe],
   templateUrl: './share-story.component.html',
-  styleUrl: './share-story.component.sass',
+  styleUrl: './share-story.component.css',
 })
 export class ShareStoryComponent {
   takenCustomId = false

@@ -1,0 +1,153 @@
+:host {
+  --transition: cubic-bezier(0.000, 1.000, 0.950, 0.995);
+}
+
+.loginBox {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--polo-color-canvas);
+  background-size: 10px 10px;
+  background-image: radial-gradient(var(--polo-color-grid-dot) 5%, transparent 14%);
+  position: relative;
+}
+
+.box {
+  position: relative;
+  z-index: 1;
+  padding: 3rem;
+  border-radius: var(--polo-radius-control);
+  border: 1px solid var(--text-color);
+  background: color-mix(in srgb, var(--polo-color-surface) 80%, transparent);
+  box-shadow: 5px 5px var(--text-color);
+  transition: 0.1s ease;
+  max-width: 400px;
+  width: 100%;
+}
+.box .logo {
+  font-family: "LibreBaskerville", serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-color);
+  text-align: center;
+}
+.box h3 {
+  font-family: "LibreBaskerville", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.box > p {
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+form .form__row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+form .form__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+form label p {
+  font-family: var(--polo-font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+form label input {
+  padding: 12px 16px;
+  border: 1px solid var(--dark-gray);
+  border-radius: 6px;
+  font-family: var(--polo-font-ui);
+  font-size: 1rem;
+  background: var(--polo-color-surface);
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+form label input:focus {
+  border-color: var(--important-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--polo-color-focus) 20%, transparent);
+}
+form label input::placeholder {
+  color: var(--light-text);
+}
+form polo-basic-button {
+  margin-top: 0.5rem;
+}
+form a {
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+form p {
+  font-family: var(--polo-font-ui);
+  font-size: 0.9rem;
+}
+
+.change {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.change p {
+  font-family: var(--polo-font-ui);
+  font-size: 1rem;
+  color: var(--text-color);
+  margin: 0;
+  text-align: center;
+}
+
+.feedbackMessage {
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid;
+}
+.feedbackMessage p {
+  font-family: var(--polo-font-ui);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+}
+.feedbackMessage--success {
+  background: color-mix(in srgb, var(--polo-color-success) 10%, transparent);
+  border-color: var(--success);
+  color: var(--success);
+}
+.feedbackMessage--error {
+  background: color-mix(in srgb, var(--polo-color-danger) 10%, transparent);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+@media screen and (max-width: 768px) {
+  .box {
+    padding: 2rem;
+    margin: 0 10px;
+  }
+  .box .header .logo {
+    font-size: 1.5rem;
+  }
+  .box .header h3 {
+    font-size: 1.25rem;
+  }
+}

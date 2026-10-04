@@ -30,7 +30,7 @@ import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-h
     SortableHandleComponent,
   ],
   templateUrl: './answer.component.html',
-  styleUrls: ['./answer.component.sass'],
+  styleUrls: ['./answer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerComponent implements OnInit {

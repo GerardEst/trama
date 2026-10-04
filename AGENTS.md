@@ -10,7 +10,7 @@ Main technologies:
 
 - Angular 18 with standalone components
 - TypeScript 5.5 and RxJS
-- Indented SASS
+- Native CSS with a shared token-based theme
 - Supabase for Postgres, authentication, storage, and Deno edge functions
 - Stripe subscription integration
 - Playwright for end-to-end tests
@@ -52,7 +52,8 @@ Do not run `npm run deploy-edge` unless the user explicitly requests a deploymen
 - Follow the existing Angular standalone-component architecture and local file organization.
 - Preserve established naming conventions even where they differ from current Angular style guidance. Component selectors use `polo-`; directive selectors use `polo`.
 - Match the existing formatting: two-space indentation, no semicolons, and single quotes in TypeScript.
-- Use indented `.sass`, not SCSS syntax.
+- Use native `.css` files, with two-space indentation. Do not introduce Sass/SCSS or a parallel page-specific palette.
+- `src/styles/tokens.css` is the single source of truth for the light/dark theme. Components consume semantic CSS variables; add shared tokens there rather than hardcoding theme colors.
 - Treat `interfaces.ts` as a compatibility boundary. Changes to persisted story types must account for existing Supabase data and older stories with optional or missing fields.
 - Avoid introducing more `any`; narrow values at data boundaries when practical, but do not broaden the task into a type-system rewrite.
 - Keep business logic out of templates. Put shared behavior in services or utilities rather than duplicating it across components.

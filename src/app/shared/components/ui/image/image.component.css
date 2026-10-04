@@ -1,0 +1,50 @@
+.image {
+  position: relative;
+  display: grid;
+  min-height: 10rem;
+  overflow: hidden;
+  place-items: center;
+  background: var(--polo-color-surface-muted);
+  border: 1px solid var(--polo-color-border);
+  border-radius: 0.8rem;
+}
+.image--loading {
+  background: var(--polo-color-text-strong);
+}
+.image__preview {
+  display: block;
+  width: 100%;
+  max-height: 18rem;
+  object-fit: cover;
+}
+.image__spinner {
+  width: 2rem;
+  height: 2rem;
+}
+.image__message {
+  max-width: 16rem;
+  padding: 1rem;
+  color: var(--polo-color-text-on-action);
+  line-height: 1.45;
+  text-align: center;
+  white-space: pre-line;
+}
+.image__remove {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(0.35rem);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.image:hover .image__remove, .image:focus-within .image__remove {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image__remove {
+    transition: none;
+  }
+}

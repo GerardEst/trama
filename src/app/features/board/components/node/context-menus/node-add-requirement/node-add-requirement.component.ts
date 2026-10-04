@@ -15,7 +15,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [ChoiceCardComponent, NodeAddModifyRefComponent, TranslatePipe],
   templateUrl: './node-add-requirement.component.html',
-  styleUrl: './node-add-requirement.component.sass',
+  styleUrl: './node-add-requirement.component.css',
 })
 export class NodeAddRequirementComponent extends PopupBaseComponent {
   @Output() onSaveRequirement = new EventEmitter<{

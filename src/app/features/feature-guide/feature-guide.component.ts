@@ -23,7 +23,7 @@ import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language
   standalone: true,
   imports: [RouterLink, NgTemplateOutlet, TranslatePipe, LanguageSelectorComponent],
   templateUrl: './feature-guide.component.html',
-  styleUrl: './feature-guide.component.sass',
+  styleUrl: './feature-guide.component.css',
 })
 export class FeatureGuideComponent implements OnInit {
   private readonly i18n = inject(I18nService)

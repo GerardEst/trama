@@ -9,7 +9,7 @@ import { ThemeService } from './shared/services/theme.service'
   standalone: true,
   imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass'],
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   constructor() {

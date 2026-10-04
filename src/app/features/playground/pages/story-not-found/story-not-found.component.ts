@@ -6,6 +6,6 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './story-not-found.component.html',
-  styleUrl: './story-not-found.component.sass',
+  styleUrl: './story-not-found.component.css',
 })
 export class StoryNotFoundComponent {}

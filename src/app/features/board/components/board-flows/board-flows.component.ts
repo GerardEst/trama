@@ -46,7 +46,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './board-flows.component.html',
-  styleUrls: ['./board-flows.component.sass'],
+  styleUrls: ['./board-flows.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardFlowsComponent {

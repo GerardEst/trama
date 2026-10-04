@@ -1,0 +1,148 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+p, h3, a {
+  color: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+a:focus-visible {
+  outline: 3px solid var(--polo-color-action);
+  outline-offset: 5px;
+}
+
+.card {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border-radius: var(--polo-radius-card);
+  background: var(--polo-color-surface);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--polo-color-shadow) 6%, transparent), 0 2px 4px color-mix(in srgb, var(--polo-color-shadow) 5%, transparent), 0 12px 24px color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  transition: box-shadow 0.3s;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  mask-image: radial-gradient(120% 80% at 80% 0%, black, transparent);
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: transparent;
+  transition: background 0.3s;
+}
+.card:hover, .card:focus-within {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--polo-color-shadow) 12%, transparent), 0 4px 8px color-mix(in srgb, var(--polo-color-shadow) 5%, transparent), 0 18px 36px color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+}
+.card:hover::after, .card:focus-within::after {
+  background: color-mix(in srgb, var(--polo-color-action) 2%, transparent);
+}
+
+.card__visual {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 70%, transparent);
+}
+
+.card__copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 24px 24px;
+  transition: transform 0.3s;
+}
+
+.card__label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--polo-color-action) !important;
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+h3 {
+  font: 800 22px/1.2 var(--polo-font-ui);
+  letter-spacing: -0.035em;
+}
+
+.card__description {
+  max-width: 520px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--polo-color-text-secondary) !important;
+}
+
+.card__link {
+  position: absolute;
+  z-index: 1;
+  bottom: 22px;
+  left: 24px;
+  font-size: 13px;
+  font-weight: 800;
+  border-bottom: 1px solid currentColor;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.card__link span {
+  margin-left: 6px;
+}
+.card__link:hover {
+  color: var(--polo-color-action) !important;
+}
+
+.card:hover .card__copy, .card:focus-within .card__copy {
+  transform: translateY(-36px);
+}
+.card:hover .card__label, .card:focus-within .card__label {
+  transform: scale(0.9);
+}
+.card:hover .card__link, .card:focus-within .card__link {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: none), (max-width: 760px) {
+  .card__copy {
+    padding-bottom: 12px;
+  }
+  .card__link {
+    position: static;
+    align-self: flex-start;
+    margin: 0 24px 22px;
+    opacity: 1;
+    transform: none;
+  }
+  .card:hover .card__copy, .card:focus-within .card__copy {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card__copy, .card__label, .card__link {
+    transition: none;
+  }
+}

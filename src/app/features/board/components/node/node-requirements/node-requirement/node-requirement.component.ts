@@ -16,7 +16,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     TranslatePipe,
   ],
   templateUrl: './node-requirement.component.html',
-  styleUrl: './node-requirement.component.sass',
+  styleUrl: './node-requirement.component.css',
 })
 export class NodeRequirementComponent {
   constructor(

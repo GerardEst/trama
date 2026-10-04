@@ -1,0 +1,395 @@
+@charset "UTF-8";
+:host {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: inherit;
+}
+
+.chip {
+  flex-shrink: 0;
+  padding: 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 13%, transparent);
+  border-radius: 999px;
+  background: var(--polo-color-surface-muted);
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.token {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--polo-color-accent) 40%, transparent);
+  color: var(--polo-color-text-strong);
+  font-weight: 800;
+}
+
+.node {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  width: min(100% - 40px, 300px);
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-surface);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+  transform: translateX(-50%) rotate(-1.5deg);
+  transition: transform 0.3s;
+}
+:host-context(.card:hover) .node {
+  transform: translateX(-50%) rotate(0deg) translateY(-4px);
+}
+
+.node__title {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 28px;
+  overflow: hidden;
+}
+
+.events__row {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+}
+:host-context(.card:hover) .events__row .events__track {
+  animation-play-state: paused;
+}
+
+.events__track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  animation: marquee 32s linear infinite;
+}
+
+.events__row--reverse .events__track {
+  animation-direction: reverse;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-100% - 10px));
+  }
+}
+.route {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--polo-color-text-secondary);
+}
+.route span:last-child {
+  color: var(--polo-color-text-strong);
+  white-space: nowrap;
+}
+.route span:last-child::before {
+  content: "→ ";
+  color: var(--polo-color-text-secondary);
+}
+.route + .route {
+  margin-top: var(--polo-space-1);
+}
+
+.route--match {
+  background: color-mix(in srgb, var(--polo-color-action) 7%, transparent);
+  box-shadow: inset 3px 0 0 var(--polo-color-action);
+  color: var(--polo-color-action);
+}
+
+.route--fallback {
+  border-top: 1px dashed color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  border-radius: 0 0 8px 8px;
+}
+
+.player-input__field {
+  position: relative;
+  padding: 9px 12px;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 20%, transparent);
+  border-radius: 8px;
+  background: var(--polo-color-surface);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.player-input__typed {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  border-right: 2px solid var(--polo-color-action);
+  animation: typing 4s steps(6) infinite, caret 0.8s step-end infinite;
+}
+
+.player-input__result {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.8;
+  color: var(--polo-color-text-secondary);
+}
+.player-input__result strong {
+  color: var(--polo-color-text-strong);
+}
+
+.player-input__arrow {
+  color: var(--polo-color-action);
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  40%, 90% {
+    width: 6.2ch;
+  }
+  100% {
+    width: 0;
+  }
+}
+@keyframes caret {
+  50% {
+    border-color: transparent;
+  }
+}
+.requirements {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  width: min(100% - 40px, 420px);
+  transform: translateX(-50%);
+}
+
+.requirements__stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--polo-space-2);
+  margin-bottom: 14px;
+}
+
+.requirements__choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+}
+
+.choice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--polo-space-3);
+  padding: 11px 14px;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface);
+  font-size: 13px;
+  font-weight: 800;
+  transition: transform 0.3s;
+}
+.choice small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--polo-color-action);
+}
+
+.choice--available {
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+}
+
+.choice--locked {
+  border-style: dashed;
+  background: transparent;
+  color: color-mix(in srgb, var(--polo-color-text-strong) 40%, transparent);
+}
+.choice--locked small {
+  color: var(--polo-color-warning);
+}
+.choice--locked small::before {
+  content: "🔒 ";
+}
+
+:host-context(.card:hover) .choice--available {
+  transform: translateX(4px);
+}
+
+.editor {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  width: min(100% - 40px, 520px);
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-surface);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--polo-color-shadow) 6%, transparent);
+  transform: translateX(-50%);
+}
+
+.editor__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 10%, transparent);
+  font-size: 13px;
+  color: var(--polo-color-text-secondary);
+}
+
+.editor__close {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--polo-color-action);
+}
+
+.editor__page {
+  padding: 16px 22px;
+  font: 400 14px/1.7 Baskerville, serif;
+  color: var(--polo-color-text-strong);
+}
+
+.editor__heading {
+  margin-bottom: 6px;
+  font: 800 15px var(--polo-font-ui);
+  letter-spacing: -0.02em;
+}
+
+.editor__line {
+  display: block;
+  height: 8px;
+  margin-top: var(--polo-space-3);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--polo-color-text-strong) 6%, transparent);
+}
+
+.editor__line--short {
+  width: 60%;
+}
+
+.organisation {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  width: min(100% - 72px, 280px);
+  transform: translateX(-50%);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 200/110;
+  border: 1.5px dashed color-mix(in srgb, var(--polo-color-action) 40%, transparent);
+  border-radius: var(--polo-radius-panel);
+  background: color-mix(in srgb, var(--polo-color-action) 3%, transparent);
+  transition: transform 0.3s;
+}
+:host-context(.card:hover) .frame {
+  transform: translate(-6px, -4px);
+}
+
+.frame__name {
+  position: absolute;
+  top: -11px;
+  left: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--polo-color-action);
+  color: var(--polo-color-text-on-action);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.frame__links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.frame__links path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--polo-color-action) 50%, transparent);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.mini-node {
+  position: absolute;
+  z-index: 1;
+  height: 18%;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 20%, transparent);
+  border-radius: 6px;
+  background: var(--polo-color-surface);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+}
+
+.mini-node--a {
+  top: 20%;
+  left: 8%;
+  width: 21%;
+}
+
+.mini-node--b {
+  top: 64%;
+  left: 34%;
+  width: 26%;
+}
+
+.mini-node--c {
+  top: 13%;
+  left: 69%;
+  width: 22%;
+}
+
+.group-node {
+  position: absolute;
+  right: -16px;
+  bottom: -26px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 52%;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 20%, transparent);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface);
+  box-shadow: 4px 4px 0 -1px var(--polo-color-surface), 4px 4px 0 0 color-mix(in srgb, var(--polo-color-shadow) 20%, transparent);
+}
+.group-node p {
+  font-size: 12px;
+  font-weight: 800;
+}
+.group-node small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--polo-color-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .events__track, .player-input__typed {
+    animation: none;
+  }
+  .node, .frame, .choice {
+    transition: none;
+  }
+}

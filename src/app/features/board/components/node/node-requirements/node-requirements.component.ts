@@ -13,7 +13,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent, TranslatePipe],
   templateUrl: './node-requirements.component.html',
-  styleUrl: './node-requirements.component.sass',
+  styleUrl: './node-requirements.component.css',
 })
 export class NodeRequirementsComponent {
   @Input() answerId: string = ''

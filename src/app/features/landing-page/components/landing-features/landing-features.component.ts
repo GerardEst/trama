@@ -31,7 +31,7 @@ const LANDING_FEATURES: readonly LandingFeature[] = [
   standalone: true,
   imports: [LandingFeatureCardComponent, LandingFeatureVisualComponent, TranslatePipe],
   templateUrl: './landing-features.component.html',
-  styleUrl: './landing-features.component.sass',
+  styleUrl: './landing-features.component.css',
 })
 export class LandingFeaturesComponent {
   readonly features = LANDING_FEATURES

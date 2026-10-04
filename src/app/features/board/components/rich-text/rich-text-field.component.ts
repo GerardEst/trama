@@ -12,7 +12,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
   standalone: true,
   imports: [BasicButtonComponent, RichTextEditorComponent, TranslatePipe],
   templateUrl: './rich-text-field.component.html',
-  styleUrl: './rich-text-field.component.sass',
+  styleUrl: './rich-text-field.component.css',
 })
 export class RichTextFieldComponent implements OnChanges, OnDestroy {
   readonly label = input.required<string>()

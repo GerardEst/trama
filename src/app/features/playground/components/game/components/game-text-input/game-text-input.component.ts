@@ -8,7 +8,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './game-text-input.component.html',
-  styleUrl: './game-text-input.component.sass',
+  styleUrl: './game-text-input.component.css',
 })
 export class GameTextInputComponent {
   @Input() options?: node_userTextOptions

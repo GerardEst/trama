@@ -1,0 +1,205 @@
+:host {
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+  background-color: var(--polo-color-canvas);
+  background-image: var(--polo-background-paper);
+  background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px, 20px 20px;
+  display: block;
+}
+
+:host * {
+  box-sizing: border-box;
+}
+
+.loginBox {
+  min-height: 100dvh;
+  height: auto;
+  padding: 36px 24px;
+  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--polo-color-canvas) 91%, transparent), transparent);
+}
+
+.login-layout {
+  width: min(100%, 1080px);
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(30px, 7vw, 110px);
+}
+
+.login-intro {
+  color: var(--polo-color-text-strong);
+}
+.login-intro__brand {
+  color: var(--polo-color-text-strong);
+  font: 800 27px var(--polo-font-ui);
+  letter-spacing: -0.075em;
+  text-decoration: none;
+}
+.login-intro__brand span {
+  color: var(--polo-color-wordmark-dot);
+}
+.login-intro__eyebrow {
+  margin-top: 100px;
+  color: var(--polo-color-action);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+.login-intro__title {
+  margin: 22px 0;
+  font: 800 clamp(36px, 4vw, 54px)/1.12 var(--polo-font-ui);
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+.login-intro__title em {
+  position: relative;
+  isolation: isolate;
+  font-style: normal;
+  color: var(--polo-color-text-strong);
+}
+.login-intro__title em::after {
+  content: "";
+  position: absolute;
+  inset: auto 1% 0.03em;
+  height: 0.16em;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--polo-color-accent);
+  transform: rotate(-1deg);
+}
+.login-intro > p:not(.login-intro__eyebrow):not(.login-intro__title) {
+  max-width: 420px;
+  color: var(--polo-color-text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.login-intro__note {
+  margin-top: 42px;
+  padding-top: 20px;
+  border-top: 1px solid var(--polo-color-border);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.box {
+  min-width: 0;
+  max-width: 480px;
+  margin: 0;
+  padding: clamp(28px, 4vw, 48px);
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: var(--polo-radius-card);
+  background: var(--polo-color-surface);
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  color: var(--polo-color-text-strong);
+}
+.box h1 {
+  margin: 0 0 24px;
+  font: 800 28px/1.3 var(--polo-font-ui);
+  letter-spacing: -0.04em;
+}
+.box .login-subtitle {
+  margin: -15px 0 27px;
+  color: var(--polo-color-text-secondary);
+  font-size: 14px;
+  text-align: left;
+}
+.box form {
+  gap: 17px;
+}
+.box form .form__row {
+  grid-template-columns: 1fr;
+}
+.box form .form__footer {
+  flex-wrap: wrap;
+  gap: var(--polo-space-4);
+}
+.box form label p {
+  font-size: 13px;
+}
+.box form label input {
+  min-width: 0;
+  border-color: var(--polo-color-border-strong);
+  border-radius: var(--polo-radius-control);
+  color: var(--polo-color-text-strong);
+  background: var(--polo-color-surface);
+}
+.box form label input:focus {
+  box-shadow: 0 0 0 2px var(--polo-color-focus-ring);
+}
+.box form label input:focus-visible {
+  outline: 2px solid var(--polo-color-action);
+  outline-offset: 2px;
+}
+.box form a {
+  color: var(--polo-color-action);
+}
+.box form > polo-basic-button, .box form .form__footer polo-basic-button {
+  --polo-button-text: var(--polo-color-text-on-accent);
+  --polo-button-background: var(--polo-color-accent);
+  --polo-button-background-hover: var(--polo-color-accent-hover);
+  display: block;
+  border: 1px solid var(--polo-color-accent-border);
+  border-radius: var(--polo-radius-control);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+}
+.box .change {
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--polo-space-3);
+}
+.box .change p {
+  font-size: 13px;
+}
+.box .change polo-basic-button {
+  margin: 0;
+}
+.box a:focus-visible {
+  outline: 3px solid var(--polo-color-action);
+  outline-offset: 5px;
+}
+
+.login-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 28px;
+}
+
+.login-back {
+  color: var(--polo-color-action);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .loginBox {
+    align-items: flex-start;
+    padding: 28px 18px 50px;
+  }
+  .login-layout {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .login-intro__eyebrow {
+    margin-top: 25px;
+  }
+  .login-intro__title {
+    margin: 12px 0;
+    font-size: 32px;
+  }
+  .login-intro > p:not(.login-intro__eyebrow):not(.login-intro__title) {
+    font-size: 14px;
+  }
+  .login-intro__note {
+    margin-top: 18px;
+  }
+  .box {
+    width: 100%;
+    max-width: none;
+    padding: 25px;
+  }
+}

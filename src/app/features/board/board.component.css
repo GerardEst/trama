@@ -1,0 +1,258 @@
+* {
+  user-select: none;
+}
+
+.board {
+  position: relative;
+  width: 20000px;
+  height: 10000px;
+  background-position: 20px 20px;
+  background-size: 40px 40px;
+  background-color: var(--polo-color-canvas);
+}
+.board--grid {
+  background-image: var(--polo-board-grid-image, radial-gradient(var(--grid-color) 5%, transparent 5%));
+  background-size: var(--polo-board-grid-size, 40px 40px);
+}
+.board.isJoining {
+  cursor: crosshair;
+}
+
+.selectionBox {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  border: 1px dashed var(--polo-color-border-hover);
+  background: color-mix(in srgb, var(--polo-color-border-hover) 12%, transparent);
+  pointer-events: none;
+}
+
+.groupToolbar {
+  position: fixed;
+  top: 88px;
+  left: 272px;
+  max-width: calc(100vw - 288px);
+  flex-wrap: wrap;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--polo-color-text-secondary);
+  font-size: 0.85rem;
+}
+.groupToolbar button {
+  cursor: pointer;
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: 8px;
+  background: var(--polo-color-surface);
+  color: var(--text-color);
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  box-shadow: var(--polo-shadow-control);
+}
+.groupToolbar button:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 3px;
+}
+.groupToolbar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.groupToolbar span {
+  border: 1px solid var(--polo-color-border);
+  border-radius: 8px;
+  background: var(--polo-color-surface);
+  padding: 0.7rem 1rem;
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .groupToolbar {
+    left: 16px;
+    max-width: calc(100vw - 32px);
+    top: 88px;
+  }
+}
+
+.boardFrame {
+  position: absolute;
+  z-index: 0;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 2px solid color-mix(in srgb, var(--polo-color-border-hover) 65%, transparent);
+  border-radius: var(--polo-radius-panel);
+  background: color-mix(in srgb, var(--polo-color-border-hover) 7%, transparent);
+}
+.boardFrame__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+  pointer-events: auto;
+  cursor: grab;
+  border-radius: 10px 10px 0 0;
+  background: color-mix(in srgb, var(--polo-color-border-hover) 16%, var(--polo-color-surface));
+  color: var(--text-color);
+}
+.boardFrame__header:active {
+  cursor: grabbing;
+}
+.boardFrame__grip {
+  font-size: 1.3rem;
+}
+.boardFrame__count {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+.boardFrame input {
+  min-width: 60px;
+  max-width: 200px;
+  flex: 1;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+}
+.boardFrame input:focus {
+  outline: none;
+  border-bottom-color: currentColor;
+}
+.boardFrame button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.groupNode {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 230px;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: var(--polo-color-surface);
+  color: var(--text-color);
+  border: 1px solid var(--polo-color-border-hover);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+}
+.groupNode.node--selected {
+  outline: 2px solid var(--polo-color-border-hover);
+}
+.groupNode.node--active {
+  outline: 3px solid var(--polo-color-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--polo-color-focus-ring), 0 4px 16px color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+}
+.groupNode__port {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--polo-color-border-hover);
+  transform: translateY(-50%);
+}
+.groupNode__port--entry {
+  left: -5px;
+}
+.groupNode__port--exit {
+  right: -5px;
+}
+.groupNode__header {
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+}
+.groupNode polo-editable-name {
+  font-weight: bold;
+}
+.groupNode__type {
+  color: var(--polo-color-text-muted);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.4rem 0;
+}
+.groupNode span {
+  font-size: 0.8rem;
+}
+.groupNode__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.groupNode__actions button {
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+.boundaryNode {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 170px;
+  box-sizing: border-box;
+  padding: 0.8rem;
+  background: var(--polo-color-surface);
+  color: var(--text-color);
+  border: 1px dashed var(--polo-color-border-hover);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+.boundaryNode__anchor {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--polo-color-border-hover);
+  transform: translateY(-50%);
+}
+.boundaryNode__anchor--in {
+  right: -5px;
+}
+.boundaryNode__anchor--out {
+  left: -5px;
+}
+
+.contextMenu {
+  display: none;
+  position: fixed;
+  background-color: var(--polo-color-surface);
+  z-index: 2;
+  flex-direction: column;
+  padding: 0.2rem;
+  border-radius: 5px;
+  border: 1px solid var(--dark-gray);
+  gap: 0.2rem;
+}
+.contextMenu header {
+  border-bottom: 1px solid var(--medium-gray);
+  padding: 0.4rem;
+  color: var(--light-text);
+  border-radius: 3px 3px 0 0;
+}
+.contextMenu li {
+  list-style: none;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+.contextMenu li:hover {
+  background-color: var(--medium-gray);
+}
+.contextMenu.active {
+  display: flex;
+}

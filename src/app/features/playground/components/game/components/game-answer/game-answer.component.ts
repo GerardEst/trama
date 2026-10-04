@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   selector: 'polo-game-answer',
   standalone: true,
   templateUrl: './game-answer.component.html',
-  styleUrl: './game-answer.component.sass',
+  styleUrl: './game-answer.component.css',
 })
 export class GameAnswerComponent {
   @Input() text = ''

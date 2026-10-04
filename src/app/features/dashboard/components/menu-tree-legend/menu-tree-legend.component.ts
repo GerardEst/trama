@@ -26,7 +26,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
   standalone: true,
   imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent, TranslatePipe],
   templateUrl: './menu-tree-legend.component.html',
-  styleUrl: './menu-tree-legend.component.sass',
+  styleUrl: './menu-tree-legend.component.css',
 })
 export class MenuTreeLegendComponent {
   @Input() showLegend: boolean = true

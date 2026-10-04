@@ -54,7 +54,7 @@ interface ColorTokenGroup {
       }
     </main>
   `,
-  styleUrl: './color-tokens.stories.sass',
+  styleUrl: './color-tokens.stories.css',
 })
 class ColorTokensStoryComponent implements OnInit {
   groups: ColorTokenGroup[] = [
@@ -122,7 +122,7 @@ class ColorTokensStoryComponent implements OnInit {
     },
     {
       name: 'Borders and actions',
-      description: 'Interactive states use a shared blue accent and focus color.',
+      description: 'Interactive states use the shared forest-green action and focus colors.',
       tokens: [
         {
           name: 'Border',

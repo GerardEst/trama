@@ -15,7 +15,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './select-or-create.component.html',
-  styleUrl: './select-or-create.component.sass',
+  styleUrl: './select-or-create.component.css',
 })
 export class SelectOrCreateComponent
   extends PopupBaseComponent

@@ -13,7 +13,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   imports: [GameComponent, TranslatePipe],
   providers: [ActiveStoryService, GameEngineService, PlayerService],
   templateUrl: './landing-story-demo.component.html',
-  styleUrl: './landing-story-demo.component.sass',
+  styleUrl: './landing-story-demo.component.css',
 })
 export class LandingStoryDemoComponent implements OnInit {
   @Input() creationUrl = '/login?mode=register'

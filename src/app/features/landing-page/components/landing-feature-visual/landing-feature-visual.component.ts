@@ -16,7 +16,7 @@ export type LandingFeatureVisualKind =
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './landing-feature-visual.component.html',
-  styleUrl: './landing-feature-visual.component.sass',
+  styleUrl: './landing-feature-visual.component.css',
 })
 export class LandingFeatureVisualComponent {
   @Input({ required: true }) kind!: LandingFeatureVisualKind

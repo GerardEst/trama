@@ -19,7 +19,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
   standalone: true,
   imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, TranslatePipe],
   templateUrl: './node-event.component.html',
-  styleUrl: './node-event.component.sass',
+  styleUrl: './node-event.component.css',
 })
 export class NodeEventComponent implements OnInit, OnChanges {
   constructor(

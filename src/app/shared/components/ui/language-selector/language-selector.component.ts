@@ -15,7 +15,7 @@ const OPTIONS: readonly { lang: Lang; code: string; name: string }[] = [
   standalone: true,
   imports: [TranslatePipe],
   templateUrl: './language-selector.component.html',
-  styleUrl: './language-selector.component.sass',
+  styleUrl: './language-selector.component.css',
 })
 export class LanguageSelectorComponent {
   readonly i18n = inject(I18nService)
