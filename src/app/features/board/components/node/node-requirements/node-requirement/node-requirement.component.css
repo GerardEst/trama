@@ -13,7 +13,7 @@
   color: var(--polo-color-text);
   background: var(--polo-color-surface-muted);
   border: 1px solid var(--polo-color-border-hover);
-  border-radius: 999px;
+  border-radius: var(--polo-radius-control);
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
@@ -24,14 +24,14 @@
 }
 .node__requirement span {
   overflow: hidden;
-  font-size: 0.74rem;
+  font-size: 1rem;
   font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .node__requirement strong {
   color: var(--polo-color-text-strong);
-  font-size: 0.7rem;
+  font-size: 1rem;
   white-space: nowrap;
 }
 .node__requirement:hover {

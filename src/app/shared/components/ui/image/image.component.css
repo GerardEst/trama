@@ -1,14 +1,16 @@
+:host {
+  display: block;
+  width: 100%;
+}
 .image {
   position: relative;
   display: grid;
-  min-height: 10rem;
+  margin: 0;
   overflow: hidden;
   place-items: center;
-  background: var(--polo-color-surface-muted);
-  border: 1px solid var(--polo-color-border);
-  border-radius: 0.8rem;
 }
 .image--loading {
+  min-height: 10rem;
   background: var(--polo-color-text-strong);
 }
 .image__preview {

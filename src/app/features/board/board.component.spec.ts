@@ -226,8 +226,8 @@ describe('BoardComponent', () => {
     const board = component.boardElement!.nativeElement
     for (const trigger of [
       '.node > .node__events .node__event',
-      'polo-answer .node__addEventButton',
-      'polo-answer .node__addRequirementButton',
+      'polo-answer polo-node-events polo-contextual-button button',
+      'polo-answer polo-node-requirements polo-contextual-button button',
       'polo-answer .node__requirement',
     ]) {
       host.querySelector<HTMLButtonElement>(trigger)!.click()

@@ -65,9 +65,10 @@ export class AnchoredPopoverComponent {
   }
 
   private focusTrigger() {
-    this.elementRef.nativeElement
-      .querySelector<HTMLElement>('[popoverTrigger]')
-      ?.focus()
+    const trigger = this.elementRef.nativeElement.querySelector<HTMLElement>('[popoverTrigger]')
+    // A projected button component exposes its native control inside the host.
+    const control = trigger?.querySelector<HTMLButtonElement>('button:not([disabled])') ?? trigger
+    control?.focus()
   }
 
   @HostListener('document:pointerdown', ['$event'])

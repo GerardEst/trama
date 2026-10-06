@@ -2,16 +2,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.65rem;
-  background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border);
-  border-radius: 0.8rem;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-}
-:host:hover {
-  border-color: var(--polo-color-border-hover);
-  box-shadow: var(--polo-shadow-control);
+  gap: 0.25rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--polo-color-border);
 }
 :host:hover .delete-answer, :host:focus-within .delete-answer {
   opacity: 1;
@@ -35,8 +28,8 @@
 
 .top-bar {
   display: flex;
-  min-height: 2.75rem;
-  align-items: flex-start;
+  min-height: 2rem;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 }

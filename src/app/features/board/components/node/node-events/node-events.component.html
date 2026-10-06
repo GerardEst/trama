@@ -1,20 +1,15 @@
 <div class="node__events">
   <polo-anchored-popover #addEventPopover [closeOnEscape]="false">
-    <button
+    <polo-contextual-button
       popoverTrigger
-      class="node__addEventButton"
-      type="button"
-      aria-haspopup="dialog"
-      [attr.aria-expanded]="addEventPopover.isOpen"
-      [attr.aria-label]="'board.event.add' | t"
+      icon="/assets/icons/plus.svg"
+      ariaHasPopup="dialog"
+      [ariaExpanded]="addEventPopover.isOpen"
+      [ariaLabel]="'board.event.add' | t"
       [title]="'board.event.add' | t"
+      [text]="events.length === 0 ? ('board.event.add' | t) : undefined"
       (click)="addEventPopover.open()"
-    >
-      <img src="/assets/icons/plus.svg" alt="" />
-      @if (!events || events.length === 0) {
-        <p>{{ 'board.event.add' | t }}</p>
-      }
-    </button>
+    ></polo-contextual-button>
     <ng-template poloPopoverContent>
       <polo-node-add-event
         class="anchoredAddEvent"

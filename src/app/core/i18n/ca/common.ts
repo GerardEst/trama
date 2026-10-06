@@ -25,7 +25,7 @@ export const common: Dictionary['common'] = {
   },
   image: {
     alt: 'Il·lustració del node',
-    remove: 'Treu',
-    removeTitle: 'Treu la imatge',
+    remove: 'Elimina la imatge',
+    removeTitle: 'Elimina la imatge',
   },
 }

@@ -1,0 +1,52 @@
+:host {
+  display: inline-flex;
+}
+
+button {
+  display: inline-flex;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--polo-space-1);
+  padding: var(--polo-space-1) var(--polo-space-2);
+  color: var(--polo-color-action);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--polo-radius-control);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+button img {
+  width: 0.85rem;
+  height: 0.85rem;
+  opacity: 0.72;
+  filter: var(--polo-icon-filter);
+}
+button span {
+  color: var(--polo-color-text-secondary);
+}
+button:hover:not(:disabled) {
+  background: var(--polo-color-action-soft);
+  border-color: var(--polo-color-focus);
+}
+button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+button:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}

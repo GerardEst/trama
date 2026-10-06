@@ -1,0 +1,15 @@
+<button
+  type="button"
+  [disabled]="disabled"
+  [attr.title]="title"
+  [attr.aria-label]="ariaLabel || (!text ? title : null)"
+  [attr.aria-haspopup]="ariaHasPopup"
+  [attr.aria-expanded]="ariaExpanded"
+>
+  @if (icon) {
+    <img [src]="icon" alt="" />
+  }
+  @if (text) {
+    <span>{{ text }}</span>
+  }
+</button>
