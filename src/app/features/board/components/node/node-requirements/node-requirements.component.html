@@ -1,20 +1,15 @@
 <div class="node__requirements">
   <polo-anchored-popover #addRequirementPopover [closeOnEscape]="false">
-    <button
+    <polo-contextual-button
       popoverTrigger
-      class="node__addRequirementButton"
-      type="button"
-      aria-haspopup="dialog"
-      [attr.aria-expanded]="addRequirementPopover.isOpen"
-      [attr.aria-label]="'board.requirement.add' | t"
+      icon="/assets/icons/plus.svg"
+      ariaHasPopup="dialog"
+      [ariaExpanded]="addRequirementPopover.isOpen"
+      [ariaLabel]="'board.requirement.add' | t"
       [title]="'board.requirement.add' | t"
+      [text]="!requirements || requirements.length === 0 ? ('board.requirement.add' | t) : undefined"
       (click)="addRequirementPopover.open()"
-    >
-      <img src="/assets/icons/plus.svg" alt="" />
-      @if (!requirements || requirements.length === 0) {
-        <p>{{ 'board.requirement.add' | t }}</p>
-      }
-    </button>
+    ></polo-contextual-button>
     <ng-template poloPopoverContent>
       <polo-node-add-requirement
         class="anchoredAddRequirement"

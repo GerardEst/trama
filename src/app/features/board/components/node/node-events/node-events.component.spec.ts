@@ -37,20 +37,20 @@ describe('NodeEventsComponent', () => {
   it('opens the Add event panel as an anchored popover', async () => {
     const host: HTMLElement = fixture.nativeElement
     document.body.appendChild(host)
-    host.querySelector<HTMLButtonElement>('.node__addEventButton')!.click()
+    host.querySelector<HTMLButtonElement>('polo-contextual-button button')!.click()
     fixture.detectChanges()
     await new Promise<void>((resolve) => setTimeout(resolve, 50))
 
     const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
     expect(panel.matches(':popover-open')).toBeTrue()
     expect(panel.querySelector('.addEvent')).not.toBeNull()
-    expect(host.querySelector('.node__addEventButton')?.getAttribute('aria-expanded')).toBe('true')
+    expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('true')
   })
 
   it('lets the selector dropdown extend beyond the editor without scrolling the popover', async () => {
     const host: HTMLElement = fixture.nativeElement
     document.body.appendChild(host)
-    host.querySelector<HTMLButtonElement>('.node__addEventButton')!.click()
+    host.querySelector<HTMLButtonElement>('polo-contextual-button button')!.click()
     fixture.detectChanges()
     await new Promise<void>((resolve) => setTimeout(resolve, 0))
 

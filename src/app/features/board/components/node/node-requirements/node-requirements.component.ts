@@ -7,11 +7,12 @@ import { answer_requirement } from 'src/app/core/interfaces/interfaces'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { ContextualButtonComponent } from 'src/app/shared/components/ui/contextual-button/contextual-button.component'
 
 @Component({
   selector: 'polo-node-requirements',
   standalone: true,
-  imports: [AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent, TranslatePipe],
+  imports: [ContextualButtonComponent, AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeRequirementComponent, NodeAddRequirementComponent, TranslatePipe],
   templateUrl: './node-requirements.component.html',
   styleUrl: './node-requirements.component.css',
 })

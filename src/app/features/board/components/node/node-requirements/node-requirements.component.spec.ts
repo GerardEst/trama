@@ -29,14 +29,14 @@ describe('NodeRequirementsComponent', () => {
   it('opens the Add requirement panel as an anchored popover', async () => {
     const host: HTMLElement = fixture.nativeElement
     document.body.appendChild(host)
-    host.querySelector<HTMLButtonElement>('.node__addRequirementButton')!.click()
+    host.querySelector<HTMLButtonElement>('polo-contextual-button button')!.click()
     fixture.detectChanges()
     await new Promise<void>((resolve) => setTimeout(resolve, 50))
 
     const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
     expect(panel.matches(':popover-open')).toBeTrue()
     expect(panel.querySelector('.addRequirement')).not.toBeNull()
-    expect(host.querySelector('.node__addRequirementButton')?.getAttribute('aria-expanded')).toBe('true')
+    expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('true')
   })
 
   it('should create', () => {
