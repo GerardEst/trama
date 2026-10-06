@@ -63,6 +63,15 @@
   <div class="node__events">
     <polo-node-events [events]="events" [nodeId]="nodeId"></polo-node-events>
   </div>
+  @if (type !== 'distributor' && (image || loading() || loadingMessage())) {
+    <polo-image
+      (onRemoveImage)="removeNodeImage()"
+      [storageRoute]="image"
+      [loading]="loading()"
+      [loadingMessage]="loadingMessage()"
+      [canDelete]="true"
+    ></polo-image>
+  }
   <main class="node__body">
     @if (type === 'distributor') {
       @if (conditions && conditions.length > 0) {
@@ -92,16 +101,8 @@
         (onRemoveCondition)="removeCondition($event)"
       ></polo-condition>
     } @else if (type === 'end') {
-      @if (image || loading() || loadingMessage()) {
-        <polo-image
-          (onRemoveImage)="removeNodeImage()"
-          [storageRoute]="image"
-          [loading]="loading()"
-          [loadingMessage]="loadingMessage()"
-          [canDelete]="true"
-        ></polo-image>
-      }
       <polo-rich-text-field
+        class="richTextField--plain"
         [label]="'board.node.endText' | t"
         [text]="text"
         [placeholder]="'board.node.endPlaceholder' | t"
@@ -161,15 +162,6 @@
         </div>
       }
     } @else if (type === 'content') {
-      @if (image || loading() || loadingMessage()) {
-        <polo-image
-          (onRemoveImage)="removeNodeImage()"
-          [storageRoute]="image"
-          [loading]="loading()"
-          [loadingMessage]="loadingMessage()"
-          [canDelete]="true"
-        ></polo-image>
-      }
       @if (!answers || answers.length === 0) {
         <div
           class="union_point"
@@ -179,6 +171,7 @@
         ></div>
       }
       <polo-rich-text-field
+        class="richTextField--plain"
         [label]="'board.node.text' | t"
         [text]="text"
         (saved)="saveRichText($event)"
@@ -211,15 +204,6 @@
         <span class="node__sortAnnouncement" role="status" aria-live="polite">{{ answerOrderAnnouncement() }}</span>
       }
     } @else if (type === 'text') {
-      @if (image || loading() || loadingMessage()) {
-        <polo-image
-          (onRemoveImage)="removeNodeImage()"
-          [storageRoute]="image"
-          [loading]="loading()"
-          [loadingMessage]="loadingMessage()"
-          [canDelete]="true"
-        ></polo-image>
-      }
       <div
         class="union_point"
         [attr.data-board-origin]="nodeId"
@@ -228,6 +212,7 @@
       ></div>
       <polo-form-field [label]="'board.node.prompt' | t" [showOptional]="false">
         <polo-rich-text-field
+          class="richTextField--plain"
           [label]="'board.node.prompt' | t"
           [text]="text"
           [placeholder]="'board.node.promptPlaceholder' | t"

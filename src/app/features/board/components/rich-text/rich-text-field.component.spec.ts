@@ -23,6 +23,20 @@ describe('RichTextFieldComponent', () => {
     fixture.detectChanges()
   })
 
+  it('integrates plain text into the node and keeps an editing focus indicator', async () => {
+    const host = fixture.nativeElement as HTMLElement
+    host.classList.add('richTextField--plain')
+    const preview = host.querySelector('.richTextField__preview') as HTMLElement
+    const style = getComputedStyle(preview)
+    expect(style.backgroundColor).toBe('rgba(0, 0, 0, 0)')
+    expect(style.borderTopWidth).toBe('0px')
+    expect(style.cursor).toBe('text')
+    await editInline()
+    expect(fixture.componentInstance.inlineEditor).toBeDefined()
+    expect(getComputedStyle(preview).outlineStyle).toBe('solid')
+    expect(getComputedStyle(preview).outlineWidth).toBe('2px')
+  })
+
   it('edits inline with Tiptap shortcuts and saves HTML when focus leaves', async () => {
     const field = fixture.componentInstance
     const save = jasmine.createSpy('save')

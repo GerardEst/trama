@@ -17,6 +17,20 @@
   white-space: break-spaces;
   line-height: 1.5;
 }
+:host(.richTextField--plain) .richTextField__preview {
+  min-height: 4rem;
+  padding: 0.5rem 2.5rem 0.5rem 0;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  cursor: text;
+}
+:host(.richTextField--answer) .richTextField__preview {
+  min-height: 2.5rem;
+}
+:host(.richTextField--plain) .richTextField__preview--loading {
+  cursor: progress;
+}
 .richTextField__preview:focus-visible, .richTextField__preview:focus-within {
   outline: 2px solid var(--polo-color-focus);
 }

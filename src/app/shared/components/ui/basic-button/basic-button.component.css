@@ -11,10 +11,11 @@ button {
   gap: 0.5rem;
   padding: 0.65rem 1rem;
   color: var(--polo-button-text, var(--polo-color-text));
+  font-size: var(--polo-button-font-size, 1rem);
   font-weight: 650;
   background: var(--polo-button-background, var(--polo-color-surface-muted));
   border: 1px solid transparent;
-  border-radius: 0.65rem;
+  border-radius: var(--polo-button-radius, 0.65rem);
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
