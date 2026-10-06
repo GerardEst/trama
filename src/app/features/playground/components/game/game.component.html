@@ -1,16 +1,9 @@
 <div #game class="gameContainer">
-  <div class="game" [class.game--cumulative]="mode === 'cumulative'">
-    @if (mode === 'cumulative') {
-      @for (inactiveNode of inactiveNodes; track inactiveNode.key) {
-        <polo-game-node [data]="inactiveNode" [disabled]="true"></polo-game-node>
-      }
-    }
-    @for (activeNode of activeNodes; track activeNode.key) {
-      <polo-game-node
-        [data]="activeNode"
-        (onSelectAnswer)="selectAnswer($event)"
-        (onContinue)="continueFlow($event)"
-      ></polo-game-node>
-    }
-  </div>
+  @if (mode === 'cumulative') {
+    <polo-cumulative-game [nodes]="activeNodes" [previousNodes]="inactiveNodes"
+      (answerSelected)="selectAnswer($event)" (continued)="continueFlow($event)" />
+  } @else {
+    <polo-single-game [nodes]="activeNodes"
+      (answerSelected)="selectAnswer($event)" (continued)="continueFlow($event)" />
+  }
 </div>

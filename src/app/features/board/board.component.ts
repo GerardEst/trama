@@ -75,6 +75,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('nodeDrag') nodeDrags?: QueryList<CdkDrag<string>>
   @ViewChildren(NodeComponent) nodeComponents?: QueryList<NodeComponent>
 
+  @Input() playingNodeId?: string
+  @Input() embedded = false
+  private revealFrame?: number
+
   @Input() grid?: boolean
   @Input() groupControls = false
   @Input() initialZoom?: number
@@ -227,6 +231,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const target = event.target
+    // A split workspace has other keyboard controls: board shortcuts must not
+    // act on an editing selection while focus is in the linear view or menus.
+    if (target instanceof Element && target !== document.body &&
+      !this.boardElement?.nativeElement.parentElement?.contains(target)) return
     if (
       event.repeat || event.altKey || event.shiftKey ||
       this.isDrawingJoin || this.selectionPointerId !== undefined ||
@@ -318,7 +326,28 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.cancelNodeReveal()
     this.panzoom.destroy()
+  }
+
+  /** Reveal a playthrough node without changing the author's editing selection. */
+  public revealNode(nodeId: string) {
+    const node = this.activeStory.entireTree().nodes.find(node => node.id === nodeId)
+    if (!node) return
+    this.cancelNodeReveal()
+    this.currentGroupId = node.groupId
+    this.revealFrame = requestAnimationFrame(() => {
+      this.revealFrame = undefined
+      const current = this.activeStory.entireTree().nodes.find(node => node.id === nodeId)
+      if (current) this.panzoom.centerToNode(current, true)
+      this.refreshFlows()
+    })
+  }
+
+  public cancelNodeReveal() {
+    if (this.revealFrame !== undefined) cancelAnimationFrame(this.revealFrame)
+    this.revealFrame = undefined
+    this.panzoom.stopCentering()
   }
 
   public centerToNode(node: node | undefined) {

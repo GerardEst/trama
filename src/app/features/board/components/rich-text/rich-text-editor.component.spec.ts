@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { RichTextEditorComponent } from './rich-text-editor.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
@@ -15,7 +15,7 @@ describe('RichTextEditorComponent', () => {
   })
 
   afterEach(async () => {
-    const dialog = fixture.componentInstance.dialog.nativeElement
+    const dialog = fixture.componentInstance.dialog!.nativeElement
     if (dialog.open) {
       const closed = new Promise<void>(resolve => dialog.addEventListener('close', () => resolve(), { once: true }))
       fixture.componentInstance.close()
@@ -90,7 +90,7 @@ describe('RichTextEditorComponent', () => {
     const paragraph = content.querySelector('p') as HTMLElement
     expect(paragraph.classList).toContain('is-editor-empty')
     expect(getComputedStyle(paragraph, '::before').content).toContain('Write a passage…')
-    const dialog = component.dialog.nativeElement
+    const dialog = component.dialog!.nativeElement
     const dialogClosed = new Promise<void>(resolve => dialog.addEventListener('close', () => resolve(), { once: true }))
     component.close()
     await dialogClosed
@@ -101,4 +101,80 @@ describe('RichTextEditorComponent', () => {
     const surface = (fixture.nativeElement as HTMLElement).querySelector('.richTextEditor__surface') as HTMLElement
     expect(parseFloat(getComputedStyle(surface).marginTop)).toBeGreaterThanOrEqual(18)
   })
+})
+
+describe('RichTextEditorComponent embedded sheet', () => {
+  let fixture: ComponentFixture<RichTextEditorComponent>
+  let component: RichTextEditorComponent
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [RichTextEditorComponent] })
+    fixture = TestBed.createComponent(RichTextEditorComponent)
+    fixture.componentRef.setInput('label', 'Passage')
+    fixture.componentRef.setInput('text', '<p>A passage</p>')
+    fixture.componentRef.setInput('embedded', true)
+    fixture.detectChanges()
+    component = fixture.componentInstance
+  })
+
+  it('offers the same writing tools without a modal or automatic focus', () => {
+    const host = fixture.nativeElement as HTMLElement
+    expect(host.querySelector('dialog')).toBeNull()
+    expect(host.querySelector('[contenteditable="true"][role="textbox"][aria-label="Passage"]')).not.toBeNull()
+    expect(host.querySelector('[aria-label="Heading 1"]')).not.toBeNull()
+    expect(component.editor!.isFocused).toBeFalse()
+    const surface = host.querySelector('.richTextEditor__surface')!
+    expect(component.editor!.view.dom.getBoundingClientRect().height).toBeCloseTo(surface.getBoundingClientRect().height, 0)
+  })
+
+  it('autosaves after a typing pause rather than once per keystroke', fakeAsync(() => {
+    const saved = jasmine.createSpy('saved')
+    component.saved.subscribe(saved)
+    component.editor!.commands.setContent('<p>First edit</p>')
+    tick(200)
+    component.editor!.commands.setContent('<p>Second edit</p>')
+    tick(299)
+    expect(saved).not.toHaveBeenCalled()
+    tick(1)
+    expect(saved).toHaveBeenCalledOnceWith('<p>Second edit</p>')
+    expect(component.dirty).toBeFalse()
+  }))
+
+  it('flushes immediately before navigation and does not repeat the save on blur', fakeAsync(() => {
+    const saved = jasmine.createSpy('saved')
+    component.saved.subscribe(saved)
+    component.editor!.commands.setContent('<p>Draft</p>')
+    component.commit()
+    component.editor!.view.dom.dispatchEvent(new FocusEvent('blur'))
+    tick(300)
+    expect(saved).toHaveBeenCalledOnceWith('<p>Draft</p>')
+  }))
+
+  it('preserves the selection on its own save echo but accepts external board corrections', () => {
+    const saved = jasmine.createSpy('saved')
+    component.saved.subscribe(html => {
+      saved(html)
+      fixture.componentRef.setInput('text', html)
+    })
+    component.editor!.commands.setTextSelection(3)
+    component.editor!.commands.insertContent('x')
+    const position = component.editor!.state.selection.from
+    component.commit()
+    fixture.detectChanges()
+    expect(component.editor!.state.selection.from).toBe(position)
+    expect(saved).toHaveBeenCalledTimes(1)
+    fixture.componentRef.setInput('text', '<p>Board correction</p>')
+    fixture.detectChanges()
+    expect(component.editor!.getHTML()).toBe('<p>Board correction</p>')
+    expect(saved).toHaveBeenCalledTimes(1)
+  })
+
+  it('cancels a pending autosave when the owning node is removed', fakeAsync(() => {
+    const saved = jasmine.createSpy('saved')
+    component.saved.subscribe(saved)
+    component.editor!.commands.setContent('<p>Removed node draft</p>')
+    fixture.destroy()
+    tick(300)
+    expect(saved).not.toHaveBeenCalled()
+  }))
 })

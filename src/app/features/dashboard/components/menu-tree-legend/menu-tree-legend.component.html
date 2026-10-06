@@ -98,7 +98,7 @@
     }
     <div class="legend__header__buttons">
       <polo-basic-button
-        (click)="goToPlayground()"
+        (click)="linearRequested.emit()"
         [text]="'dashboard.legend.preview' | t"
       ></polo-basic-button>
       <polo-basic-button

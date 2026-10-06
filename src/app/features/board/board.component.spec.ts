@@ -41,6 +41,55 @@ describe('BoardComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('reveals a playthrough node inside its group without replacing the editing selection', async () => {
+    TestBed.inject(ActiveStoryService).load('story', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+      { id: 'node_1', type: 'content', groupId: 'node_2', top: 100, left: 200 },
+      { id: 'node_2', type: 'group', top: 0, left: 0 },
+    ] })
+    fixture.detectChanges()
+    const center = spyOn(component.panzoom, 'centerToNode')
+    component.activateNode('node_0')
+    fixture.componentRef.setInput('playingNodeId', 'node_1')
+    component.revealNode('node_1')
+    fixture.detectChanges()
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+    expect(component.currentGroupId).toBe('node_2')
+    expect(component.activeNodeId()).toBe('node_0')
+    expect(center).toHaveBeenCalledWith(jasmine.objectContaining({ id: 'node_1' }), true)
+    expect(fixture.nativeElement.querySelector('polo-node.node--playing')).not.toBeNull()
+  })
+
+  it('cancels a pending node reveal and any ongoing centering when following stops', async () => {
+    TestBed.inject(ActiveStoryService).load('story', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+    ] })
+    fixture.detectChanges()
+    const center = spyOn(component.panzoom, 'centerToNode')
+    const stop = spyOn(component.panzoom, 'stopCentering')
+    component.revealNode('node_0')
+    stop.calls.reset()
+    component.cancelNodeReveal()
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+    expect(center).not.toHaveBeenCalled()
+    expect(stop).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not run node shortcuts while keyboard focus is in a sibling view', () => {
+    TestBed.inject(ActiveStoryService).load('story', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+      { id: 'node_1', type: 'content', top: 0, left: 0 },
+    ] })
+    fixture.detectChanges()
+    component.activateNode('node_1')
+    const remove = spyOn(component, 'removeNode')
+    const button = document.createElement('button')
+    document.body.appendChild(button)
+    button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }))
+    button.remove()
+    expect(remove).not.toHaveBeenCalled()
+  })
+
   it('focuses a newly created node, not every node and answer loaded onto the board', async () => {
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
     await TestBed.inject(StoryEditorLoader).load()

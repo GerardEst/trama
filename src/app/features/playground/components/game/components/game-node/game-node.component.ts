@@ -5,6 +5,7 @@ import { GameTextInputComponent } from '../game-text-input/game-text-input.compo
 import { GameEndActionsComponent } from '../game-end-actions/game-end-actions.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { PlayableNode } from '../../../../services/game-session.types'
 
 @Component({
   selector: 'polo-game-node',
@@ -15,8 +16,9 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 })
 export class GameNodeComponent {
   @ViewChild('node') node!: ElementRef<HTMLElement>
-  @Input() data!: any
+  @Input() data!: PlayableNode
   @Input() disabled = false
+  @Input() endActions = true
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onContinue = new EventEmitter<{ property: string; value: string; join?: join[] }>()
 

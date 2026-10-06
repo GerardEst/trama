@@ -6,6 +6,7 @@ import { StoryEditorLoader, StoryEditorRuntime } from './story-editor-loader.ser
 import { storyEditorValue } from './story-editor-html'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 @Component({
   selector: 'polo-rich-text-field',
@@ -21,6 +22,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
   readonly inlineOnly = input(false)
   readonly saved = output<string>()
   @ViewChild('preview') preview?: ElementRef<HTMLElement>
+  @ViewChild('focusEditor') focusEditor?: RichTextEditorComponent
   openEditor = false
   draft = ''
   currentHtml = ''
@@ -34,7 +36,8 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
 
   constructor(
     private editorLoader: StoryEditorLoader,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private activeStory: ActiveStoryService
   ) {}
 
   placeholderText() {
@@ -51,6 +54,18 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
   }
 
   focusPreview() { this.preview?.nativeElement.focus() }
+
+  /** Flush before navigation removes this field, even if blur has not fired. */
+  commit() {
+    if (this.inlineEditor && this.inlineDirty) {
+      this.currentHtml = storyEditorValue(this.inlineEditor)
+      this.inlineDirty = false
+      this.saved.emit(this.currentHtml)
+    }
+    if (this.openEditor && this.focusEditor?.editor && this.focusEditor.dirty) {
+      this.onClosed(storyEditorValue(this.focusEditor.editor))
+    }
+  }
 
   // A press on the preview comes just before its focus; start downloading the editor then.
   prepareInlineEdit() { this.editorLoader.prefetch() }
@@ -79,6 +94,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
     const editor = runtime.createStoryEditor({
       element: preview,
       content: this.currentHtml,
+      refs: this.activeStory.entireTree().refs,
       label: this.label(),
       placeholder: this.placeholderText(),
       inlineOnly: this.inlineOnly(),

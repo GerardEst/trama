@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+.richTextEditor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--polo-color-border);
+}
+button, select {
+  max-width: 100%;
+  padding: 0.4rem 0.7rem;
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.richTextEditor__toolbar--embedded button,
+.richTextEditor__toolbar--embedded select {
+  min-height: 44px;
+}
+button:disabled, select:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button:focus-visible, select:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}

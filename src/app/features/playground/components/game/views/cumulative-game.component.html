@@ -1,0 +1,3 @@
+<polo-game-step [nodes]="previousNodes()" [disabled]="true" />
+<polo-game-step [nodes]="nodes()" (answerSelected)="answerSelected.emit($event)"
+  (continued)="continued.emit($event)" />

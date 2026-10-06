@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 50rem;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: var(--polo-game-padding, 1rem 1.5rem);
+}
+polo-game-step:first-child {
+  flex: none;
+}
+polo-game-step:first-child:empty {
+  display: none;
+}
+polo-game-step:last-child {
+  /* Only the current step fills a viewport; history keeps its natural height.
+     Subtract the view's 1rem top and bottom padding, not the page's chrome. */
+  min-height: max(0px, calc(var(--polo-game-viewport-height, 0px) - 2rem));
+}

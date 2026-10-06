@@ -61,20 +61,30 @@
     animation: none;
   }
 }
-.richTextEditor__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--polo-color-border);
+.embeddedEditor {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-.richTextEditor__toolbar button, .richTextEditor__toolbar select {
-  padding: 0.4rem 0.7rem;
-  color: var(--polo-color-text);
+.embeddedEditor .focusEditor__body {
+  width: 100%;
+  margin: 0;
+}
+.embeddedEditor polo-rich-text-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-top: 0.5rem;
   background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border);
-  border-radius: 0.4rem;
-  cursor: pointer;
+}
+.embeddedEditor .richTextEditor__surface {
+  display: grid;
+  flex: none;
+  min-height: 8rem;
+  overflow: visible;
+}
+.embeddedEditor--bare .richTextEditor__surface {
+  margin-top: 0;
+  min-height: 3rem;
 }
 .richTextEditor__surface {
   flex: 1;

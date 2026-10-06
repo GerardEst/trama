@@ -12,7 +12,7 @@
     (click)="open()" />
   @if (openEditor) {
     @defer (on immediate) {
-      <polo-rich-text-editor [label]="label()" [text]="draft" [placeholder]="placeholderText()"
+      <polo-rich-text-editor #focusEditor [label]="label()" [text]="draft" [placeholder]="placeholderText()"
         [inlineOnly]="inlineOnly()" (closed)="onClosed($event)" />
     } @placeholder { <span>{{ 'board.editor.loading' | t }}</span> }
   }

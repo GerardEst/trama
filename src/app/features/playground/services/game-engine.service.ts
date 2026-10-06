@@ -13,19 +13,15 @@ import {
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { storyInlineHtml, storyPlainText } from 'src/app/shared/utils/story-html'
-import { PlayerService } from './player.service'
-
-interface playableNode extends node {
-  jumpToAnswers?: boolean
-  key?: number
-}
+import { PlayerService, PlayerSnapshot } from './player.service'
+import { PlayableNode } from './game-session.types'
 
 /**
  * Runtime engine for playing a story tree. Resolves the next node, evaluates
  * distributor conditions and answer requirements, interpolates node texts and
  * applies events. Reads the story from ActiveStoryService and reads/mutates the
- * player state through PlayerService. View concerns (scheduling, animations,
- * scrolling, sharing) live in GameComponent.
+ * player state through PlayerService. Navigation and scheduling belong to
+ * GameSessionService; rendering, scrolling and sharing belong to the views.
  */
 @Injectable({
   providedIn: 'root',
@@ -54,7 +50,7 @@ export class GameEngineService {
     if (!storedNode || storedNode.type === 'group') throw new Error('Next node not found')
 
     // The runtime copy can be enriched without changing the authored story.
-    const nextNode = structuredClone(storedNode) as playableNode
+    const nextNode = structuredClone(storedNode) as PlayableNode
 
     // Li afegim el valor de toAnswer, que farem servir per saltar-nos o no el text quan el pintem
     nextNode.jumpToAnswers = originJoin.toAnswer
@@ -65,15 +61,22 @@ export class GameEngineService {
     return nextNode
   }
 
-  filterAvailableAnswers(storyNode: playableNode) {
+  /** Refresh presentation without executing arrival events or transitions. */
+  renderNode(storedNode: node, entry: join, state: PlayerSnapshot): PlayableNode {
+    const copy: PlayableNode = { ...structuredClone(storedNode), jumpToAnswers: entry.toAnswer }
+    this.filterAvailableAnswers(copy, state)
+    return this.interpolateNodeTexts(copy, state)
+  }
+
+  filterAvailableAnswers(storyNode: PlayableNode, state = this.player.snapshot()) {
     // Keep authored text visible even when its answer is unfinished. The view
     // disables disconnected answers; only empty placeholders are hidden.
     storyNode.answers = storyNode.answers?.filter((answer: node_answer) =>
       ((answer.join?.length ?? 0) > 0 || storyPlainText(answer.text).trim().length > 0) &&
       this.playerHasAnswerRequirements(
-        this.player.playerProperties(),
-        this.player.playerStats(),
-        this.player.playerConditions(),
+        state.properties,
+        state.stats,
+        state.conditions,
         answer.requirements
       )
     )
@@ -83,20 +86,20 @@ export class GameEngineService {
     if (!storyNode.answers?.length) storyNode.jumpToAnswers = false
   }
 
-  interpolateNodeTexts(node: node) {
+  interpolateNodeTexts(node: PlayableNode, state = this.player.snapshot()) {
     const interpolateAnswers = node.answers?.map((answer) => {
-      return { ...answer, text: storyInlineHtml(this.getTextWithFinalParameters(answer.text)) }
+      return { ...answer, text: storyInlineHtml(this.getTextWithFinalParameters(answer.text, state)) }
     })
     return {
       ...node,
       answers: interpolateAnswers || [],
-      text: this.getTextWithFinalParameters(node.text),
+      text: this.getTextWithFinalParameters(node.text, state),
     }
   }
 
-  getTextWithFinalParameters(text: string = '') {
-    // Rich text uses explicit tokens; never run the legacy text regex across HTML attributes.
-    if (/<[a-z][\s/>]/i.test(text) || text.includes('data-trama-')) {
+  getTextWithFinalParameters(text: string = '', state = this.player.snapshot()) {
+    // Rich text uses explicit tokens; never interpolate ordinary HTML or attributes.
+    if (/<[a-z][\w-]*[\s/>]/i.test(text) || text.includes('data-trama-')) {
       const document = new DOMParser().parseFromString(text, 'text/html')
       for (const variable of Array.from(document.querySelectorAll('[data-trama-variable]'))) {
         const kind = variable.getAttribute('data-kind')
@@ -105,9 +108,9 @@ export class GameEngineService {
         // Resolve through the same player-state rules as plain story text, but only
         // replace a text node: player-provided values must never become HTML.
         let value: string | number | undefined
-        if (kind === 'property') value = this.player.playerProperties()[key]
-        if (kind === 'stat') value = this.player.playerStats().find(stat => stat.id === key)?.amount
-        if (kind === 'condition') value = this.player.playerConditions().some(condition => condition.id === key) ? 'true' : undefined
+        if (kind === 'property') value = state.properties[key]
+        if (kind === 'stat') value = state.stats.find(stat => stat.id === key)?.amount
+        if (kind === 'condition') value = state.conditions.some(condition => condition.id === key) ? 'true' : undefined
         variable.replaceWith(document.createTextNode(String(value ?? '-')))
       }
       for (const category of Array.from(document.querySelectorAll('[data-trama-category]'))) {
@@ -115,25 +118,25 @@ export class GameEngineService {
         if (!key) continue
         const expanded = document.createElement('div')
         expanded.className = 'storyCategory__entries'
-        expanded.textContent = this.getTextWithFinalParameters(`[${key}]`).trim()
+        expanded.textContent = this.getTextWithFinalParameters(`[${key}]`, state).trim()
         category.replaceWith(expanded)
       }
       return document.body.innerHTML
     }
+    return this.interpolatePlainText(text, state)
+  }
+
+  private interpolatePlainText(text: string, state: PlayerSnapshot) {
     const withInlineReplacements = text.replace(
       /#([a-zA-Z0-9_]+)/g,
-      (_match: string, p1: string): any => {
-        const property = this.player.playerProperties()[p1]
+      (_match: string, p1: string) => {
+        const property = state.properties[p1]
         if (property) return property
 
-        const condition = this.player
-          .playerConditions()
-          .find((condition: any) => condition.id === p1)
-        if (condition) return true
+        const condition = state.conditions.find(condition => condition.id === p1)
+        if (condition) return 'true'
 
-        const stat = this.player
-          .playerStats()
-          .find((stat: any) => stat.id === p1)
+        const stat = state.stats.find(stat => stat.id === p1)
         if (stat) return stat.amount.toString()
 
         return '-'
@@ -150,9 +153,7 @@ export class GameEngineService {
 
         let string = ' '
         for (const refWithCategory of refsWithCategory) {
-          const playerStat = this.player
-            .playerStats()
-            .find((stat: any) => stat.id === refWithCategory.id)
+          const playerStat = state.stats.find(stat => stat.id === refWithCategory.id)
           if (playerStat) {
             string =
               string +
@@ -165,9 +166,7 @@ export class GameEngineService {
           }
         }
         for (const refWithCategory of refsWithCategory) {
-          const playerCondition = this.player
-            .playerConditions()
-            .find((condition: any) => condition.id === refWithCategory.id)
+          const playerCondition = state.conditions.find(condition => condition.id === refWithCategory.id)
           if (playerCondition) {
             string =
               string +
@@ -292,38 +291,23 @@ export class GameEngineService {
     const amount = Number(event.amount)
     if (!Number.isFinite(amount)) return
 
-    const statIndex = this.player
-      .playerStats()
-      .findIndex((element: stat) => element.id === event.target)
-    const stat = this.player.playerStats()[statIndex]
-
-    if (stat) {
-      stat.amount += amount
-      if (stat.amount <= 0) this.player.playerStats().splice(statIndex, 1)
-    } else {
-      if (amount <= 0) return
-      this.player.playerStats().push({
-        id: event.target,
-        amount,
-      })
-    }
+    this.player.playerStats.update(stats => {
+      const existing = stats.find(stat => stat.id === event.target)
+      const nextAmount = (existing?.amount ?? 0) + amount
+      if (nextAmount <= 0) return stats.filter(stat => stat.id !== event.target)
+      return existing
+        ? stats.map(stat => stat.id === event.target ? { ...stat, amount: nextAmount } : stat)
+        : [...stats, { id: event.target, amount: nextAmount }]
+    })
   }
 
   private alterCondition(event: event) {
-    if (Number(event.amount) === 1) {
-      const condition = this.player
-        .playerConditions()
-        .find((element: condition) => element.id === event.target)
-
-      if (!condition) this.player.playerConditions().push({ id: event.target })
-    } else {
-      const conditionIndex = this.player
-        .playerConditions()
-        .findIndex((condition: condition) => condition.id === event.target)
-
-      if (conditionIndex !== -1)
-        this.player.playerConditions().splice(conditionIndex, 1)
-    }
+    this.player.playerConditions.update(conditions => {
+      if (Number(event.amount) !== 1) return conditions.filter(condition => condition.id !== event.target)
+      return conditions.some(condition => condition.id === event.target)
+        ? conditions
+        : [...conditions, { id: event.target }]
+    })
   }
 
   private capitalize(string: string) {

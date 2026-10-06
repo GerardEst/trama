@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: 50rem;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: var(--polo-game-padding, 1rem 1.5rem);
+}

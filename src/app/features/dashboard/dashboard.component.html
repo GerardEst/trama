@@ -1,4 +1,20 @@
-<polo-board #board [grid]="true" [groupControls]="true"></polo-board>
-<polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)"></polo-menu-top>
-<polo-menu #menuSide (onNewStory)="createNewStory()" (onChangeTree)="initBoard($event)"></polo-menu>
-<polo-menu-tree-legend [showLegend]="false"></polo-menu-tree-legend>
+<div class="workspace" [class.workspace--linear]="linearOpen()" [class.workspace--mobile-board]="mobileBoard()" [class.workspace--resizing]="resizing()"
+  [style.--board-width]="boardWidth() + 'vw'" [style.--workspace-toolbar-top]="toolbarTop() + 'px'">
+  <div class="boardPane">
+    <polo-board #board [grid]="true" [groupControls]="true" [embedded]="linearOpen()" [playingNodeId]="playingNodeId()" />
+  </div>
+  @if (linearOpen()) {
+    <button type="button" class="workspaceDivider" role="separator" aria-orientation="vertical"
+      [attr.aria-label]="'dashboard.linear.resize' | t" aria-valuemin="35" aria-valuemax="75"
+      [attr.aria-valuenow]="boardWidth()" (pointerdown)="startResize($event)" (keydown)="resizeWithKeyboard($event)">
+      <span aria-hidden="true"></span>
+    </button>
+    <aside class="linearPane" [attr.aria-label]="'dashboard.linear.title' | t">
+      <polo-linear-editor #linear (closed)="closeLinearView()" (nodeRequested)="revealPlayingNode($event)"
+        (highlightedNodeChanged)="highlightPlayingNode($event)" (boardRequested)="mobileBoard.set(true)" />
+    </aside>
+  }
+  <polo-menu-tree-legend [showLegend]="false" (linearRequested)="openLinearView()" />
+  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" />
+  <polo-menu #menuSide (onNewStory)="createNewStory()" (onChangeTree)="initBoard($event)" />
+</div>

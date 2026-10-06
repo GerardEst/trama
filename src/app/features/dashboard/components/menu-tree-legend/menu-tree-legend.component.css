@@ -2,6 +2,8 @@
   position: fixed;
   bottom: 16px;
   right: 16px;
+  translate: var(--polo-board-controls-offset, 0px) 0;
+  transition: translate var(--polo-workspace-motion-duration, 0s) var(--polo-workspace-motion-easing, ease);
   z-index: 5;
   box-sizing: border-box;
   color: var(--polo-color-text);
@@ -10,7 +12,7 @@
   padding: var(--polo-space-3);
   border-radius: var(--polo-radius-panel);
   border: 1px solid var(--polo-color-border);
-  width: min(350px, 100vw - 32px);
+  width: var(--polo-legend-width, min(350px, 100vw - 32px));
   max-height: calc(100dvh - 180px);
   overflow-y: auto;
 }

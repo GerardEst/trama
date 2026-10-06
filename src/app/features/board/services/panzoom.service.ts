@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core'
 import { node } from 'src/app/core/interfaces/interfaces'
 import createPanZoom, { PanZoom } from 'panzoom'
 
+const CENTERING_DURATION_MS = 320
+
 @Injectable()
 export class PanzoomService {
   private boardReference?: PanZoom
   private boardElement?: HTMLElement
   private initialPositionTimer?: ReturnType<typeof setTimeout>
+  private centeringFrame?: number
 
   focusElements: boolean = true
 
@@ -44,10 +47,12 @@ export class PanzoomService {
 
     // Let open popovers distinguish a completed board pan from an outside click.
     this.boardReference.on('panstart', () => {
+      this.stopCentering()
       this.boardElement?.dispatchEvent(
         new CustomEvent('poloBoardPanStart', { bubbles: true })
       )
     })
+    this.boardReference.on('zoom', () => this.stopCentering())
 
     this.initialPositionTimer = setTimeout(() => {
       this.boardReference?.moveTo(
@@ -62,13 +67,16 @@ export class PanzoomService {
   }
 
   pauseDrag() {
+    this.stopCentering()
     this.boardReference?.pause()
   }
 
-  centerToNode(node: node) {
-    if (!this.boardReference) return
+  centerToNode(node: node, smooth = false) {
+    this.stopCentering()
+    const board = this.boardReference
+    if (!board) return
 
-    const scale = this.boardReference.getTransform().scale
+    const { scale, x, y } = board.getTransform()
     const viewport = this.boardElement?.parentElement?.getBoundingClientRect()
     const viewportWidth = viewport?.width ?? window.innerWidth
     const viewportHeight = viewport?.height ?? window.innerHeight
@@ -76,10 +84,30 @@ export class PanzoomService {
     const finalX = viewportWidth / 2 - (Number(node.left) + 100) * scale
     const finalY = viewportHeight / 2 - (Number(node.top) + 200) * scale
 
-    this.boardReference.moveTo(finalX, finalY)
+    if (!smooth || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      board.moveTo(finalX, finalY)
+      return
+    }
+
+    // Own the frame so a new target, manual pan or teardown can cancel the move.
+    let started: number | undefined
+    const animate = (now: number) => {
+      started ??= now
+      const progress = Math.min((now - started) / CENTERING_DURATION_MS, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      board.moveTo(x + (finalX - x) * eased, y + (finalY - y) * eased)
+      this.centeringFrame = progress < 1 ? requestAnimationFrame(animate) : undefined
+    }
+    this.centeringFrame = requestAnimationFrame(animate)
+  }
+
+  stopCentering() {
+    if (this.centeringFrame !== undefined) cancelAnimationFrame(this.centeringFrame)
+    this.centeringFrame = undefined
   }
 
   goTo(x: number, y: number) {
+    this.stopCentering()
     this.boardReference?.moveTo(x, y)
   }
 
@@ -88,6 +116,7 @@ export class PanzoomService {
   }
 
   destroy() {
+    this.stopCentering()
     if (this.initialPositionTimer) {
       clearTimeout(this.initialPositionTimer)
       this.initialPositionTimer = undefined

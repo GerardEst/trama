@@ -8,6 +8,7 @@ import {
   node_answer,
 } from 'src/app/core/interfaces/interfaces'
 import { PlayerService } from '../../services/player.service'
+import { GameEngineService } from '../../services/game-engine.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { Router } from '@angular/router'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
@@ -19,6 +20,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
   selector: 'polo-playground',
   standalone: true,
   imports: [CommonModule, GameComponent, ToggleComponent, TranslatePipe],
+  providers: [PlayerService, GameEngineService],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.css'],
 })

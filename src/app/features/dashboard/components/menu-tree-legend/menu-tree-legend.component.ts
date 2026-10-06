@@ -1,4 +1,4 @@
-import { Component, effect, Input } from '@angular/core'
+import { Component, effect, Input, output } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { ContextMenusService } from 'src/app/core/services/context-menus.service'
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
@@ -30,6 +30,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
 })
 export class MenuTreeLegendComponent {
   @Input() showLegend: boolean = true
+  readonly linearRequested = output<void>()
   arrayOfRefs: DisplayedRef[] = []
   unusedRefs: DisplayedRef[] = []
   mode: 'refs' | 'games' = 'refs'
@@ -105,10 +106,6 @@ export class MenuTreeLegendComponent {
 
   refTypeName(type: refType) {
     return this.i18n.t(`common.refTypes.${type}`)
-  }
-
-  async goToPlayground() {
-    window.open('/private/' + this.activeStory.storyId(), '_blank')
   }
 
   openSelectorFor(clickEvent: Event, refId: string) {

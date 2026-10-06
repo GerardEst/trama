@@ -1,115 +1,97 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  effect,
-  Input,
-  ViewChild,
-  ElementRef,
-} from '@angular/core'
+import { AfterViewInit, Component, Output, EventEmitter, Input, ViewChild, ElementRef, OnDestroy, DestroyRef } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { join, node, node_answer } from 'src/app/core/interfaces/interfaces'
-import { GameEngineService } from 'src/app/features/playground/services/game-engine.service'
+import { GameEngineService } from '../../services/game-engine.service'
+import { GameSessionService } from '../../services/game-session.service'
+import { TextContinuation } from '../../services/game-session.types'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { GameNodeComponent } from './components/game-node/game-node.component'
+import { SingleGameComponent } from './views/single-game.component'
+import { CumulativeGameComponent } from './views/cumulative-game.component'
 
+/** Public player shell. The linear editor imports neither this nor cumulative mode. */
 @Component({
   selector: 'polo-game',
   standalone: true,
-  imports: [GameNodeComponent],
+  imports: [SingleGameComponent, CumulativeGameComponent],
+  providers: [GameSessionService],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css',
 })
-export class GameComponent {
-  @ViewChild('game') DOMgame!: ElementRef
+export class GameComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('game') DOMgame!: ElementRef<HTMLElement>
   @Input() mode: 'cumulative' | 'single' = 'cumulative'
-
-  activeNodes: any[] = []
-  inactiveNodes: any[] = []
-
-  gameInitialized: boolean = false
-
   @Output() onEndGame = new EventEmitter<void>()
   @Output() onSelectAnswer = new EventEmitter<node_answer>()
   @Output() onDrawNode = new EventEmitter<node>()
+  private scrollTimer?: ReturnType<typeof setTimeout>
+  private viewportObserver?: ResizeObserver
+  private viewportHeight = 0
+  private viewportScrollTop = 0
+  private readonly rememberScroll = () => {
+    const container = this.DOMgame.nativeElement
+    // Ignore the browser's temporary clamp while a resize is being measured.
+    if (container.clientHeight === this.viewportHeight) this.viewportScrollTop = container.scrollTop
+  }
+
+  get activeNodes() { return this.session.activeNodes() }
+  get inactiveNodes() { return this.session.inactiveNodes() }
 
   constructor(
     public gameEngine: GameEngineService,
-    public activeStory: ActiveStoryService
+    public activeStory: ActiveStoryService,
+    public session: GameSessionService,
+    destroyRef: DestroyRef
   ) {
-    effect(() => {
-      if (this.activeStory.entireTree().nodes.length > 0) {
-        this.initializeGame()
-      }
+    this.session.events.pipe(takeUntilDestroyed(destroyRef)).subscribe(event => {
+      if (event.type === 'node') {
+        this.scrollToNewNode()
+        this.onDrawNode.emit(event.node)
+      } else if (event.type === 'answer') this.onSelectAnswer.emit(event.answer)
+      else this.onEndGame.emit()
     })
   }
 
-  initializeGame() {
-    if (!this.gameInitialized) {
-      this.gameInitialized = true
-      this.nextStep([{ node: 'node_0' }])
+  ngAfterViewInit() {
+    const container = this.DOMgame.nativeElement
+    // Cumulative history can exceed the viewport. Size only the current step
+    // against the real reading area, including responsive header/footer changes.
+    const measure = () => {
+      const height = container.clientHeight
+      const resized = this.viewportHeight > 0 && height !== this.viewportHeight
+      const atBottom = container.scrollHeight - this.viewportScrollTop - this.viewportHeight <= 2
+      const scrollTop = this.viewportScrollTop
+      this.viewportHeight = height
+      container.style.setProperty('--polo-game-viewport-height', `${height}px`)
+      // Growing the viewport can clamp scrolling before the new step height is
+      // applied. Restore the reading position, or keep the answers at the end.
+      if (resized) container.scrollTop = atBottom ? container.scrollHeight : scrollTop
+      this.viewportScrollTop = container.scrollTop
     }
+    container.addEventListener('scroll', this.rememberScroll)
+    measure()
+    this.viewportObserver = new ResizeObserver(measure)
+    this.viewportObserver.observe(container)
   }
 
-  selectAnswer(answer: node_answer) {
-    if (!answer.join?.length) return
-
-    this.gameEngine.applyEvents(answer.events ?? [])
-    this.registerAnswer(answer)
-    this.nextStep(answer.join ?? [])
+  ngOnDestroy() {
+    this.viewportObserver?.disconnect()
+    this.DOMgame?.nativeElement.removeEventListener('scroll', this.rememberScroll)
+    if (this.scrollTimer !== undefined) clearTimeout(this.scrollTimer)
   }
 
-  continueFlow(continueInfo: { property: string; value: string; join?: join[] }) {
-    if (!continueInfo.join?.length) return
-    this.gameEngine.alterProperty(continueInfo.property, continueInfo.value)
-    this.nextStep(continueInfo.join)
-  }
-
-  // Each step can contain multiple nodes. Automatic transitions yield to the
-  // browser to avoid recursing through a long (or cyclic) chain in one stack.
-  nextStep(possibleJoins: Array<join>, addToCurrentStep: boolean = false) {
-    if (!possibleJoins.length) return
-    const chosenJoin = this.gameEngine.getRandomJoin(possibleJoins)
-    let activeNode = this.gameEngine.buildNextNodeFromJoin(chosenJoin)
-
-    if (activeNode.type === 'distributor') {
-      this.gameEngine.applyEvents(activeNode.events ?? [])
-      setTimeout(() => this.nextStep(this.gameEngine.distributeNode(activeNode), addToCurrentStep))
-      return
-    }
-
-    if (!addToCurrentStep) {
-      this.inactiveNodes = this.inactiveNodes.concat(this.activeNodes)
-      this.activeNodes = []
-    }
-
-    this.gameEngine.applyEvents(activeNode.events ?? [])
-    this.gameEngine.filterAvailableAnswers(activeNode)
-    activeNode = this.gameEngine.interpolateNodeTexts(activeNode)
-    this.activeNodes.push(activeNode)
-    this.scrollToNewNode()
-    this.notifyNodeDrawn(activeNode)
-
-    if (activeNode.join?.length && activeNode.type !== 'text') {
-      setTimeout(() => this.nextStep(activeNode.join ?? [], true))
-    }
-  }
+  initializeGame() { this.session.initialize() }
+  selectAnswer(answer: node_answer) { this.session.selectAnswer(answer) }
+  continueFlow(info: TextContinuation) { this.session.continueFlow(info) }
+  nextStep(joins: join[], addToCurrentStep = false) { this.session.nextStep(joins, addToCurrentStep) }
 
   scrollToNewNode() {
-    setTimeout(() => {
-      const container = this.DOMgame?.nativeElement as HTMLElement | undefined
+    if (this.scrollTimer !== undefined) clearTimeout(this.scrollTimer)
+    this.scrollTimer = setTimeout(() => {
+      const container = this.DOMgame?.nativeElement
       const nodes = container?.querySelectorAll('polo-game-node')
       const latest = nodes?.item(nodes.length - 1) as HTMLElement | null
       if (!container || !latest) return
       container.scrollTo({ top: latest.offsetTop - container.offsetTop - 24, behavior: 'auto' })
     })
-  }
-
-  registerAnswer(answer: node_answer) {
-    this.onSelectAnswer.emit(answer)
-  }
-
-  notifyNodeDrawn(node: node) {
-    if (node.type !== 'distributor') this.onDrawNode.emit(node)
-    if (node.type === 'end') this.onEndGame.emit()
   }
 }

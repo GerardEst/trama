@@ -15,7 +15,9 @@ export function storyEditorExtensions(inlineOnly: boolean, placeholder = '') {
       } : {}),
     }),
     StoryVariable,
-    ...(inlineOnly ? [] : [StoryCategory]),
+    // Existing category tokens must survive correction even in answer fields.
+    // The inline-only toolbar still does not offer block/category insertion.
+    StoryCategory,
   ]
 }
 

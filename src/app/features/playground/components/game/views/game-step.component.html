@@ -1,0 +1,4 @@
+@for (node of nodes(); track node.key) {
+  <polo-game-node [data]="node" [disabled]="disabled()"
+    (onSelectAnswer)="answerSelected.emit($event)" (onContinue)="continued.emit($event)" />
+}

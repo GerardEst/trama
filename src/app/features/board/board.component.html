@@ -1,5 +1,5 @@
 @if (groupControls) {
-  <nav class="groupToolbar" [attr.aria-label]="'board.groups.label' | t">
+  <nav class="groupToolbar" [class.groupToolbar--embedded]="embedded" [attr.aria-label]="'board.groups.label' | t">
     @if (currentGroupId) {
       <button type="button" (click)="leaveGroup()">
         {{ 'board.groups.exit' | t: { name: currentGroup()?.text || ('board.groups.group' | t) } }}
@@ -203,6 +203,8 @@
             [class.node--active]="activeNodeId() === node.id"
             [cdkDragConstrainPosition]="constrainNodePosition"
             [cdkDragFreeDragPosition]="getNodeDragPosition(node)"
+            [class.node--playing]="playingNodeId === node.id"
+            [attr.data-playing-label]="playingNodeId === node.id ? ('dashboard.linear.currentNode' | t) : null"
             [nodeId]="node.id"
             [name]="node.name"
             [frameName]="frameForNode(node.id)?.name"

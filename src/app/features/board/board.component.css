@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  position: relative;
+  height: 100%;
+}
+
 * {
   user-select: none;
 }
@@ -40,6 +46,26 @@
   color: var(--polo-color-text-secondary);
   font-size: 0.85rem;
 }
+.groupToolbar--embedded {
+  position: absolute;
+  top: var(--workspace-toolbar-top, 88px);
+  max-width: calc(100% - 288px);
+}
+polo-node.node--playing {
+  box-shadow: 0 0 0 5px var(--polo-color-accent);
+}
+polo-node.node--playing::before {
+  content: attr(data-playing-label);
+  position: absolute;
+  top: -28px;
+  left: 0;
+  padding: 4px 8px;
+  border-radius: 6px 6px 0 0;
+  background: var(--polo-color-accent);
+  color: var(--polo-color-text-on-accent);
+  font: 700 11px/1.5 var(--polo-font-ui);
+  pointer-events: none;
+}
 .groupToolbar button {
   cursor: pointer;
   border: 1px solid var(--polo-color-border-strong);
@@ -70,6 +96,10 @@
     left: 16px;
     max-width: calc(100vw - 32px);
     top: 88px;
+  }
+  .groupToolbar--embedded {
+    top: var(--workspace-toolbar-top, 88px);
+    max-width: calc(100% - 32px);
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild, OnInit, OnDestroy, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -12,6 +12,8 @@ import { BoardPreferencesService } from '../board/services/board-preferences.ser
 import { StoryEditorLoader } from '../board/components/rich-text/story-editor-loader.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { LinearEditorComponent } from '../linear-editor/linear-editor.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-dashboard',
@@ -22,14 +24,84 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     MenuComponent,
     MenuTopComponent,
     MenuTreeLegendComponent,
+    LinearEditorComponent,
+    TranslatePipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('board') board?: BoardComponent
   @ViewChild('menuTop') menuTop?: MenuTopComponent
+  @ViewChild('menuTop', { read: ElementRef }) menuTopElement?: ElementRef<HTMLElement>
   @ViewChild('menuSide') menuSide?: MenuComponent
+  @ViewChild('linear') linear?: LinearEditorComponent
+  readonly linearOpen = signal(false)
+  readonly mobileBoard = signal(false)
+  readonly boardWidth = signal(70)
+  readonly resizing = signal(false)
+  readonly toolbarTop = signal(88)
+  private headerResize?: ResizeObserver
+  readonly playingNodeId = signal<string | undefined>(undefined)
+  private resizePointer?: number
+
+  openLinearView() {
+    this.linearOpen.set(true)
+    this.mobileBoard.set(false)
+    // The pinned story list must not cover the full-width mobile reading pane.
+    if (window.matchMedia('(max-width: 760px)').matches && this.menuSide) this.menuSide.fixedMenu = false
+  }
+
+  closeLinearView() {
+    this.linearOpen.set(false)
+    this.mobileBoard.set(false)
+    this.highlightPlayingNode(undefined)
+  }
+
+  highlightPlayingNode(nodeId: string | undefined) {
+    this.playingNodeId.set(nodeId)
+    if (nodeId === undefined) this.board?.cancelNodeReveal()
+  }
+
+  revealPlayingNode(nodeId: string) {
+    this.board?.revealNode(nodeId)
+  }
+
+  startResize(event: PointerEvent) {
+    if (event.button !== 0) return
+    event.preventDefault()
+    this.resizePointer = event.pointerId
+    this.resizing.set(true)
+    const target = event.currentTarget as HTMLElement
+    target.setPointerCapture(event.pointerId)
+  }
+
+  @HostListener('document:pointermove', ['$event'])
+  resizeWorkspace(event: PointerEvent) {
+    if (event.pointerId !== this.resizePointer) return
+    this.setBoardWidth(event.clientX / window.innerWidth * 100)
+  }
+
+  @HostListener('document:pointerup', ['$event'])
+  @HostListener('document:pointercancel', ['$event'])
+  stopResize(event: PointerEvent) {
+    if (event.pointerId !== this.resizePointer) return
+    this.resizePointer = undefined
+    this.resizing.set(false)
+    if (this.linear?.followNode()) this.linear.locateNode()
+  }
+
+  resizeWithKeyboard(event: KeyboardEvent) {
+    if (!['ArrowLeft', 'ArrowRight', 'Home'].includes(event.key)) return
+    event.preventDefault()
+    this.setBoardWidth(event.key === 'Home' ? 70 : this.boardWidth() + (event.key === 'ArrowLeft' ? -5 : 5))
+    if (this.linear?.followNode()) this.linear.locateNode()
+  }
+
+  private setBoardWidth(width: number) {
+    this.boardWidth.set(Math.max(35, Math.min(75, width)))
+    this.board?.refreshFlows()
+  }
 
   id?: string
   private loadRequest = 0
@@ -52,7 +124,20 @@ export class DashboardComponent implements OnInit {
     this.initBoard(localStoryId)
   }
 
+  ngAfterViewInit() {
+    const menu = this.menuTopElement?.nativeElement.querySelector('.menu')
+    if (menu && typeof ResizeObserver !== 'undefined') {
+      this.headerResize = new ResizeObserver(() => this.toolbarTop.set(Math.max(88, menu.getBoundingClientRect().bottom + 8)))
+      this.headerResize.observe(menu)
+    }
+  }
+
+  ngOnDestroy() {
+    this.headerResize?.disconnect()
+  }
+
   async initBoard(storyId: string | null) {
+    this.linear?.commitEdits()
     const request = ++this.loadRequest
     const currentId = this.activeStory.storyId()
     const currentTree = this.activeStory.entireTree()
@@ -86,8 +171,6 @@ export class DashboardComponent implements OnInit {
   }
 
   setInitialBoardPositionFor(storyId: string) {
-    console.log('Setting initial board position for story:', storyId)
-
     const activeNodeId = this.boardPreferences.getActiveNode(storyId)
     if (activeNodeId) {
       const activeNode = findNodeInTree(
@@ -96,7 +179,6 @@ export class DashboardComponent implements OnInit {
       )
       this.board?.centerToNode(activeNode)
     } else {
-      console.log('No active node found, centering to first node')
       setTimeout(() => {
         this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
       }, 0)

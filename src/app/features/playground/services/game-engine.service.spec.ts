@@ -81,6 +81,12 @@ describe('GameEngineService', () => {
     expect(storyNode.answers?.[0].text).toContain('<p>')
   })
 
+  it('does not interpolate inserted player values a second time', () => {
+    player.playerProperties.set({ name: '<Ada> #secret', secret: 'hidden' })
+    expect(engine.getTextWithFinalParameters('<p><span data-trama-variable="" data-kind="property" data-key="name">#name</span></p>'))
+      .toBe('<p>&lt;Ada&gt; #secret</p>')
+  })
+
   describe('getRandomJoin', () => {
     it('returns the only join available', () => {
       const join = { node: 'node_1' }

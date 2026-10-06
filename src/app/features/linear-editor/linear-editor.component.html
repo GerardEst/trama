@@ -1,0 +1,78 @@
+<header class="linearHeader">
+  <div>
+    <h2>{{ 'dashboard.linear.title' | t }}</h2>
+    <p>{{ 'dashboard.linear.subtitle' | t }}</p>
+  </div>
+  <button type="button" class="closeButton" (click)="close()" [attr.aria-label]="'dashboard.linear.close' | t">×</button>
+</header>
+<nav class="linearTools" [attr.aria-label]="'dashboard.linear.navigation' | t">
+  <button type="button" (click)="back()" [disabled]="!session.canGoBack()">{{ 'dashboard.linear.back' | t }}</button>
+  <button type="button" (click)="restart()">{{ 'dashboard.linear.restart' | t }}</button>
+  <button type="button" (click)="toggleEditing()" [disabled]="!sourceNode()" [attr.aria-pressed]="editing()">
+    {{ (editing() ? 'dashboard.linear.preview' : 'dashboard.linear.edit') | t }}
+  </button>
+  <button type="button" class="mobileBoard" (click)="showBoard()">{{ 'dashboard.linear.board' | t }}</button>
+</nav>
+<div class="linearContext">
+  <label><input type="checkbox" [checked]="followNode()" (change)="followNode.set(!followNode())" />{{ 'dashboard.linear.follow' | t }}</label>
+  <button type="button" (click)="locateNode()" [disabled]="!sourceNode()">{{ sourceNode()?.name || session.currentNodeId() || '—' }}</button>
+  @if (history().length) {
+    <details class="history">
+      <summary>{{ 'dashboard.linear.history' | t: { count: session.cursor() + 1 } }}</summary>
+      <ol>
+        @for (visit of history(); track visit.id) {
+          <li><button type="button" (click)="goToVisit(visit.index)" [disabled]="!visit.exists"
+            [attr.aria-current]="visit.index === session.cursor() ? 'step' : null">
+            <span>{{ visit.index + 1 }}.</span> {{ visit.label }}
+          </button></li>
+        }
+      </ol>
+    </details>
+  }
+</div>
+<div #content class="linearContent">
+  @if (session.problem(); as problem) {
+    <p class="notice" role="status">{{ (problem === 'missingNode' ? 'dashboard.linear.missingNode' : 'dashboard.linear.automaticLoop') | t }}</p>
+  }
+  @for (node of currentNodes(); track node.key) {
+    <article class="authorSheet" [class.authorSheet--editing]="editing()">
+      @if (editing()) {
+        <polo-rich-text-toolbar class="generalToolbar" [embedded]="true" [showBlockTools]="true" [target]="toolbarEditor()" />
+        @if (node.image) {
+          <img class="storyImage" [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + node.image.path"
+            [alt]="'playground.illustration' | t" loading="lazy" />
+        }
+        @defer (on immediate) {
+          <polo-rich-text-editor #textEditor [embedded]="true" [showToolbar]="false" [label]="'dashboard.linear.passage' | t"
+            [text]="node.source.text || ''" [placeholder]="'board.editor.placeholder' | t"
+            (ready)="activateEditor(textEditor)" (focused)="activateEditor(textEditor)"
+            (saved)="savePassage(node.storyId, node.id, $event)" />
+        } @placeholder {
+          <p class="notice">{{ 'board.editor.loading' | t }}</p>
+        }
+        <div class="authorAnswers" [attr.aria-label]="'playground.chooseAnswer' | t">
+          @for (answer of node.authoredAnswers; track answer.source.id) {
+            @defer (on immediate) {
+              <polo-rich-text-editor #textEditor [embedded]="true" [showToolbar]="false" [inlineOnly]="true"
+                [label]="'dashboard.linear.answer' | t: { count: answer.index + 1 }" [text]="answer.source.text || ''"
+                [placeholder]="'board.editor.placeholder' | t" (focused)="activateEditor(textEditor)"
+                (saved)="saveAnswer(node.storyId, node.id, answer.source.id, $event)" />
+            } @placeholder {
+              <p class="notice">{{ 'board.editor.loading' | t }}</p>
+            }
+          }
+        </div>
+      } @else {
+        <polo-game-node [data]="node" [endActions]="false" (onSelectAnswer)="selectAnswer($event)"
+          (onContinue)="continueFlow($event.value)" />
+      }
+      @if (node.type === 'end') {
+        <p class="ending">{{ 'dashboard.linear.end' | t }}</p>
+      } @else if (!editing() && node.type !== 'text' && node.join?.length) {
+        <button type="button" class="continueButton" (click)="continueAutomatic()">{{ 'dashboard.linear.continue' | t }}</button>
+      }
+    </article>
+  } @empty {
+    <p class="emptyState">{{ 'dashboard.linear.empty' | t }}</p>
+  }
+</div>

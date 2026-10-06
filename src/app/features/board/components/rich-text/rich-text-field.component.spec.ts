@@ -43,6 +43,34 @@ describe('RichTextFieldComponent', () => {
     expect(preview.textContent).toBe('Bold')
   })
 
+  it('flushes a focused draft before navigation and does not save it again on blur', async () => {
+    const field = fixture.componentInstance
+    const save = jasmine.createSpy('save')
+    field.saved.subscribe(save)
+    await editInline()
+    field.inlineEditor!.commands.setContent('<p>Corrected</p>')
+    field.commit()
+    expect(save).toHaveBeenCalledOnceWith('<p>Corrected</p>')
+    field.inlineEditor!.view.dom.dispatchEvent(new FocusEvent('blur'))
+    await settle()
+    expect(save).toHaveBeenCalledTimes(1)
+  })
+
+  it('flushes a focus-mode draft before the field is removed', async () => {
+    const field = fixture.componentInstance
+    const save = jasmine.createSpy('save')
+    field.saved.subscribe(save)
+    field.open()
+    fixture.detectChanges()
+    const [block] = await fixture.getDeferBlocks()
+    await block.render(DeferBlockState.Complete)
+    fixture.detectChanges()
+    field.focusEditor!.editor!.commands.setContent('<p>Focused correction</p>')
+    field.commit()
+    expect(save).toHaveBeenCalledOnceWith('<p>Focused correction</p>')
+    expect(field.openEditor).toBeFalse()
+  })
+
   it('keeps the same line wrapping when inline editing starts', async () => {
     const html = '<p>A moderately long passage where the last few words  should wrap at exactly the same place.</p>'
     fixture.componentRef.setInput('text', html)

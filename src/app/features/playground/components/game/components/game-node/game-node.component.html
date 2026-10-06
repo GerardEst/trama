@@ -35,7 +35,7 @@
         ></polo-game-text-input>
       }
     }
-    @if (data.type === 'end' && !disabled) {
+    @if (data.type === 'end' && !disabled && endActions) {
       <polo-game-end-actions
         [links]="data.links || []"
         [share]="data.share"
