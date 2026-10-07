@@ -22,6 +22,8 @@ export interface tree {
   categories: Array<refCategory>
   /** Editor-only visual frames; older stories may not have any. */
   frames?: boardFrame[]
+  /** Story-owned palette, shared by frames and included in exports. */
+  frameColors?: storyColor[]
 }
 
 export interface storyFooter {
@@ -47,10 +49,18 @@ export interface storyReferenceUsage extends ref {
   on: 'event' | 'requirement'
 }
 
+export interface storyColor {
+  id: string
+  name: string
+  value: `#${string}`
+}
+
 export interface boardFrame {
   id: string
   name: string
   nodeIds: string[]
+  /** Stable story palette ID, or an unedited built-in preset ID. */
+  colorId?: string
   /** Board level containing the framed nodes. */
   groupId?: string
 }

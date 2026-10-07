@@ -1,0 +1,8 @@
+<polo-color-picker
+  [label]="'board.frames.color' | t"
+  [hint]="'board.frames.paletteHint' | t"
+  [options]="colors.options()"
+  [value]="frame.colorId ?? 'default'"
+  (valueChange)="select($event)"
+  (colorSave)="save($event)"
+></polo-color-picker>

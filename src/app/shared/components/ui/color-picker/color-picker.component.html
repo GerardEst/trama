@@ -1,0 +1,84 @@
+<polo-anchored-popover #popover [closeOnEscape]="false" initialFocusSelector=".colorPicker__option[aria-pressed='true']">
+  <button
+    #trigger
+    popoverTrigger
+    type="button"
+    class="colorPicker__trigger"
+    [attr.aria-label]="(label || ('common.colorPicker.choose' | t)) + ': ' + (selectedColor?.name || '')"
+    [title]="selectedColor?.name"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="popover.isOpen"
+    (click)="toggle()"
+  >
+    <span class="colorPicker__swatch" [style.background]="selectedColor?.swatch" aria-hidden="true"></span>
+  </button>
+  <ng-template poloPopoverContent>
+    <section
+      class="colorPicker__panel"
+      role="dialog"
+      [attr.aria-label]="'common.colorPicker.choose' | t"
+      cdkTrapFocus
+    >
+      <header class="colorPicker__header">
+        <strong>{{ (editing ? 'common.colorPicker.edit' : creating ? 'common.colorPicker.create' : 'common.colorPicker.choose') | t }}</strong>
+        <button type="button" class="colorPicker__close" [attr.aria-label]="'common.close' | t" (click)="popover.close()">×</button>
+      </header>
+      @if (creating) {
+        <form class="colorPicker__form" (ngSubmit)="save()">
+          <label class="colorPicker__field">
+            {{ 'common.colorPicker.name' | t }}
+            <input #nameInput name="name" [(ngModel)]="name" maxlength="40" required [placeholder]="'common.colorPicker.namePlaceholder' | t" />
+          </label>
+          <div class="colorPicker__preview">
+            <input type="color" name="color" [ngModel]="hex" (ngModelChange)="hex = $event" [attr.aria-label]="'common.colorPicker.color' | t" />
+            <label class="colorPicker__field">
+              {{ 'common.colorPicker.hex' | t }}
+              <input name="hex" [(ngModel)]="hex" maxlength="7" pattern="#[0-9a-fA-F]{6}" required spellcheck="false" placeholder="#AABBCC" />
+            </label>
+          </div>
+          @if (hint) { <p class="colorPicker__hint">{{ hint }}</p> }
+          <div class="colorPicker__actions">
+            <button type="button" (click)="cancelCreate()">{{ 'common.cancel' | t }}</button>
+            <button type="submit" class="colorPicker__save" [disabled]="!canSave">{{ 'common.colorPicker.save' | t }}</button>
+          </div>
+        </form>
+      } @else {
+        <div #choices class="colorPicker__choices">
+          <ul class="colorPicker__list">
+            @for (color of options; track color.value) {
+              <li>
+                <button
+                  type="button"
+                  class="colorPicker__option"
+                  [attr.data-color]="color.value"
+                  [attr.aria-pressed]="value === color.value"
+                  (keydown)="navigate($event)"
+                  (click)="select(color.value)"
+                >
+                  <span class="colorPicker__swatch" [style.background]="color.swatch" aria-hidden="true"></span>
+                  <span class="colorPicker__name">{{ color.name }}</span>
+                  @if (value === color.value) { <span class="colorPicker__check" aria-hidden="true">✓</span> }
+                </button>
+                @if (color.editable !== false) {
+                  <button
+                    type="button"
+                    class="colorPicker__edit"
+                    [attr.data-key]="color.value"
+                    [attr.aria-label]="'common.colorPicker.editNamed' | t: { name: color.name }"
+                    [title]="'common.colorPicker.editNamed' | t: { name: color.name }"
+                    (keydown)="navigate($event)"
+                    (click)="edit(color, $event)"
+                  ><span class="colorPicker__editIcon" aria-hidden="true"></span></button>
+                }
+              </li>
+            }
+          </ul>
+          <button #createButton type="button" class="colorPicker__create" (keydown)="navigate($event)" (click)="create()">
+            <span class="colorPicker__plus" aria-hidden="true">+</span>
+            {{ 'common.colorPicker.create' | t }}
+          </button>
+        </div>
+      }
+    </section>
+  </ng-template>
+</polo-anchored-popover>

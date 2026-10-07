@@ -68,6 +68,7 @@
     @if (frameBounds(frame); as bounds) {
       <div
         class="boardFrame"
+        [style.--frame-color]="frameColors.token(frame.colorId)"
         cdkDrag
         [cdkDragData]="frame.id"
         [cdkDragConstrainPosition]="constrainNodePosition"
@@ -89,7 +90,9 @@
           <span class="boardFrame__count">{{
             'board.frames.nodes' | t: { count: frame.nodeIds.length }
           }}</span>
+          <polo-frame-color-picker [frame]="frame"></polo-frame-color-picker>
           <button
+            class="boardFrame__remove"
             type="button"
             [attr.aria-label]="'board.frames.remove' | t"
             [title]="'board.frames.removeTitle' | t"

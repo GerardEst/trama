@@ -29,6 +29,17 @@ export const board = {
   frames: {
     defaultName: 'Frame',
     name: 'Frame name',
+    color: 'Frame color',
+    paletteHint: 'Saved with this story. Editing updates every frame using this color.',
+    colors: {
+      default: 'Default',
+      rose: 'Rose',
+      peach: 'Peach',
+      yellow: 'Yellow',
+      mint: 'Mint',
+      blue: 'Blue',
+      lavender: 'Lavender',
+    },
     nodes: '{count} nodes',
     remove: 'Remove frame',
     removeTitle: 'Remove frame (keep nodes)',

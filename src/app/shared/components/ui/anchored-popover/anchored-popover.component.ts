@@ -20,6 +20,7 @@ import { AnchoredPopoverContentDirective } from './anchored-popover-content.dire
 export class AnchoredPopoverComponent {
   // Editors with multi-step Escape behavior can dismiss themselves instead.
   @Input() closeOnEscape = true
+  @Input() initialFocusSelector = ''
 
   @ContentChild(AnchoredPopoverContentDirective)
   popoverContent?: AnchoredPopoverContentDirective
@@ -37,7 +38,11 @@ export class AnchoredPopoverComponent {
         if (!panel.isConnected || !this.isOpen) return
 
         panel.showPopover()
-        if (!panel.contains(document.activeElement)) {
+        const preferredControl = this.initialFocusSelector
+          ? panel.querySelector<HTMLElement>(this.initialFocusSelector)
+          : null
+        if (preferredControl) preferredControl.focus()
+        else if (!panel.contains(document.activeElement)) {
           const firstControl = panel.querySelector<HTMLElement>(
             '[autofocus], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
           )

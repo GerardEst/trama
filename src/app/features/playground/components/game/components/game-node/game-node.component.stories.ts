@@ -12,7 +12,7 @@ const meta: Meta<GameNodeComponent> = {
   )],
   args: {
     data: {
-      id: 'node_0', type: 'content', text: '<p>The path divides at the edge of the wood.</p><p>What will you do?</p>',
+      id: 'node_0', type: 'content', top: 0, left: 0, text: '<p>The path divides at the edge of the wood.</p><p>What will you do?</p>',
       answers: [
         { id: 'left', text: 'Follow the lanterns', join: [{ node: 'node_1' }] },
         { id: 'right', text: 'Take the unlit trail', join: [{ node: 'node_2' }] },
@@ -30,19 +30,19 @@ export const WithAnswers: Story = {}
 export const WithHeading: Story = {
   args: {
     data: {
-      id: 'node_heading', type: 'content',
+      id: 'node_heading', type: 'content', top: 0, left: 0,
       text: '<h2>The forest gate</h2><p>Two paths lead away from the clearing.</p>',
       answers: [{ id: 'continue', text: 'Enter the forest', join: [{ node: 'node_next' }] }],
     },
   },
 }
 export const InHistory: Story = {
-  args: { disabled: true, data: { ...meta.args!.data, selectedAnswerId: 'left' } },
+  args: { disabled: true, data: { ...meta.args!.data!, selectedAnswerId: 'left' } },
 }
 export const TextQuestion: Story = {
   args: {
     data: {
-      id: 'node_3', type: 'text', text: '<p>What is your name?</p>',
+      id: 'node_3', type: 'text', top: 0, left: 0, text: '<p>What is your name?</p>',
       userTextOptions: { property: 'name', placeholder: 'Your name', description: 'Name', buttonText: 'Continue' },
       join: [{ node: 'node_4' }],
     },
@@ -51,7 +51,7 @@ export const TextQuestion: Story = {
 export const LongPassage: Story = {
   args: {
     data: {
-      id: 'node_5', type: 'content',
+      id: 'node_5', type: 'content', top: 0, left: 0,
       text: '<p>You have walked for hours. The rain has stopped, but the trail still winds through the trees.</p><p>A light appears in the distance. It could be a house or something else entirely.</p>',
       answers: [{ id: 'continue', text: 'Approach the light', join: [{ node: 'node_6' }] }],
     },
@@ -59,6 +59,6 @@ export const LongPassage: Story = {
 }
 export const Ending: Story = {
   args: {
-    data: { id: 'node_7', type: 'end', text: '<p>You found your way home.</p>', links: [{ name: 'Visit Trama', url: 'https://trama.app' }] },
+    data: { id: 'node_7', type: 'end', top: 0, left: 0, text: '<p>You found your way home.</p>', links: [{ name: 'Visit Trama', url: 'https://trama.app' }] },
   },
 }

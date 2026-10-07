@@ -23,6 +23,17 @@ export const common: Dictionary['common'] = {
     empty: 'No hi ha cap opció que coincideixi',
     choose: 'Tria una opció',
   },
+  colorPicker: {
+    choose: 'Tria un color',
+    create: 'Crea un color',
+    edit: 'Edita el color',
+    editNamed: 'Edita {name}',
+    name: 'Nom del color',
+    namePlaceholder: 'p. ex. Verd marí',
+    color: 'Color personalitzat',
+    hex: 'Codi hexadecimal',
+    save: 'Desa i aplica',
+  },
   image: {
     alt: 'Il·lustració del node',
     remove: 'Elimina la imatge',

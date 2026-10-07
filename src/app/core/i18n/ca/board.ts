@@ -31,6 +31,17 @@ export const board: Dictionary['board'] = {
   frames: {
     defaultName: 'Marc',
     name: 'Nom del marc',
+    color: 'Color del marc',
+    paletteHint: 'Es desa amb aquesta història. En editar-lo, s’actualitzen tots els marcs que fan servir aquest color.',
+    colors: {
+      default: 'Per defecte',
+      rose: 'Rosa',
+      peach: 'Préssec',
+      yellow: 'Groc',
+      mint: 'Menta',
+      blue: 'Blau',
+      lavender: 'Lavanda',
+    },
     nodes: '{count} nodes',
     remove: 'Treu el marc',
     removeTitle: 'Treu el marc (conserva els nodes)',

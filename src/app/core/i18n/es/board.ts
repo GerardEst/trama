@@ -31,6 +31,17 @@ export const board: Dictionary['board'] = {
   frames: {
     defaultName: 'Marco',
     name: 'Nombre del marco',
+    color: 'Color del marco',
+    paletteHint: 'Se guarda con esta historia. Al editarlo, se actualizan todos los marcos que usan este color.',
+    colors: {
+      default: 'Predeterminado',
+      rose: 'Rosa',
+      peach: 'Melocotón',
+      yellow: 'Amarillo',
+      mint: 'Menta',
+      blue: 'Azul',
+      lavender: 'Lavanda',
+    },
     nodes: '{count} nodos',
     remove: 'Quitar marco',
     removeTitle: 'Quitar marco (conservar los nodos)',

@@ -33,6 +33,8 @@ import { BoardAnchorRegistryService } from './services/board-anchor-registry.ser
 import { BoardPreferencesService } from './services/board-preferences.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 import { BoardJoinStroke, BoardPoint } from './board-interactions'
+import { FrameColorsService } from './services/frame-colors.service'
+import { FrameColorPickerComponent } from './components/frame-color-picker/frame-color-picker.component'
 import { projectBoardJoins } from './board-join-projection'
 import { BoardAnchorDirective } from './directives/board-anchor.directive'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
@@ -66,6 +68,7 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
     EditableNameComponent,
     TranslatePipe,
     ContextHelpComponent,
+    FrameColorPickerComponent,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
@@ -314,7 +317,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     private preferences: BoardPreferencesService,
     private storage: StorageService,
     private anchorRegistry: BoardAnchorRegistryService,
-    private i18n: I18nService
+    private i18n: I18nService,
+    public frameColors: FrameColorsService
   ) {}
 
   ngOnInit() {

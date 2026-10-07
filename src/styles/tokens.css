@@ -42,6 +42,14 @@
   --polo-color-wordmark-dot: var(--polo-amber-600);
   --polo-color-control-disabled: light-dark(#c5c8b9, #64715f);
 
+  /* Pastel palette for editor-only visual frames. */
+  --polo-color-frame-rose: #f1b8c8;
+  --polo-color-frame-peach: #f3c4a5;
+  --polo-color-frame-yellow: #ecdc9e;
+  --polo-color-frame-mint: #b2d9c2;
+  --polo-color-frame-blue: #b3d0ed;
+  --polo-color-frame-lavender: #cfc1ed;
+
   /* Feedback roles remain distinct from the brand action colors. */
   --polo-color-danger: light-dark(#b83a3a, #ff9090);
   --polo-color-danger-hover: light-dark(#9f2f2f, #ffb2b2);

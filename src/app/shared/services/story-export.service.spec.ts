@@ -37,7 +37,8 @@ describe('StoryExportService', () => {
       }, { id: 'node_1', type: 'end', top: 30, left: 40 }],
       refs: { energy: { name: 'Energia', type: 'stat', category: 'stats' } },
       categories: [{ id: 'stats', name: 'Estadístiques' }],
-      frames: [{ id: 'frame_0', name: 'Inici', nodeIds: ['node_0'] }],
+      frames: [{ id: 'frame_0', name: 'Inici', nodeIds: ['node_0'], colorId: 'battle' }],
+      frameColors: [{ id: 'battle', name: 'Batalla', value: '#aabbcc' }],
     })
     activeStory.updateTree((draft) => { draft.nodes[1].text = 'Canvi encara no desat' })
     activeStory.patchConfiguration({
@@ -62,7 +63,11 @@ describe('StoryExportService', () => {
     })
     expect(Number.isNaN(Date.parse(exported.exportedAt))).toBeFalse()
     expect(json).toContain('\n  "tree": {')
+    expect(exported.tree.frameColors).toEqual([{ id: 'battle', name: 'Batalla', value: '#aabbcc' }])
     expect(activeStory.entireTree()).toBe(originalTree)
+    activeStory.load('imported-story', exported.name, exported.tree)
+    expect(activeStory.entireTree().frames?.[0].colorId).toBe('battle')
+    expect(activeStory.entireTree().frameColors).toEqual(exported.tree.frameColors)
     expect(downloadedAnchor.download).toBe('l-illa-deserta.json')
     expect(click).toHaveBeenCalledTimes(1)
   })

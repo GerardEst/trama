@@ -11,6 +11,7 @@ import { node } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryEditorService } from './services/story-editor.service'
+import { FrameColorsService } from './services/frame-colors.service'
 import { BoardComponent } from './board.component'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
@@ -627,7 +628,7 @@ describe('BoardComponent', () => {
     expect(host.querySelector('.groupNode')).toBeNull()
   })
 
-  it('frames nodes in place, edits the label and drags all members in one save', () => {
+  it('frames nodes in place, edits the label and drags all members in one save', async () => {
     component.groupControls = true
     const database = TestBed.inject(DatabaseService)
     const save = spyOn(database, 'saveTreeToDB').and.resolveTo(true)
@@ -661,6 +662,27 @@ describe('BoardComponent', () => {
     fixture.detectChanges()
     expect(activeStory.entireTree().frames![0].name).toBe('Act one')
 
+    const color = host.querySelector<HTMLButtonElement>('polo-color-picker [popoverTrigger]')!
+    expect(color.getAttribute('aria-expanded')).toBe('false')
+    const pauseDrag = spyOn(component.panzoom, 'pauseDrag')
+    color.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(pauseDrag).not.toHaveBeenCalled()
+    color.click()
+    fixture.detectChanges()
+    expect(host.querySelectorAll('.colorPicker__option').length).toBe(7)
+    host.querySelector<HTMLButtonElement>('[data-color="lavender"]')!.click()
+    fixture.detectChanges()
+    expect(activeStory.entireTree().frames![0].colorId).toBe('lavender')
+    await Promise.resolve()
+    expect(save.calls.mostRecent().args[1].frames?.[0].colorId).toBe('lavender')
+    expect(host.querySelector<HTMLElement>('.boardFrame')!.style.getPropertyValue('--frame-color'))
+      .toBe('var(--polo-color-frame-lavender)')
+    color.click()
+    fixture.detectChanges()
+    host.querySelector<HTMLButtonElement>('[data-color="default"]')!.click()
+    fixture.detectChanges()
+    expect(activeStory.entireTree().frames![0].colorId).toBeUndefined()
+
     const frameDrag = fixture.debugElement.query(By.css('.boardFrame'))
       .injector.get(CdkDrag) as CdkDrag<string>
     const start = component.getFrameDragPosition(frame)
@@ -683,10 +705,75 @@ describe('BoardComponent', () => {
     ])
     expect(save).toHaveBeenCalled()
     fixture.detectChanges()
-    host.querySelector<HTMLButtonElement>('.boardFrame button')!.click()
+    host.querySelector<HTMLButtonElement>('.boardFrame__remove')!.click()
     fixture.detectChanges()
     expect(activeStory.entireTree().frames).toEqual([])
     expect(host.querySelectorAll('polo-node').length).toBe(3)
+  })
+
+  it('creates story colors and propagates palette edits to every frame and picker', async () => {
+    fixture.componentRef.setInput('focusElements', false)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    const activeStory = TestBed.inject(ActiveStoryService)
+    activeStory.load('palette-story', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 10, top: 20 },
+        { id: 'node_1', type: 'end', left: 300, top: 100 },
+      ],
+      frames: [
+        { id: 'first', name: 'First', nodeIds: ['node_0'] },
+        { id: 'second', name: 'Second', nodeIds: ['node_1'] },
+      ],
+    })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    document.body.appendChild(host)
+    const pickers = host.querySelectorAll<HTMLElement>('polo-color-picker')
+    async function open(index: number) {
+      pickers[index].querySelector<HTMLButtonElement>('[popoverTrigger]')!.click()
+      fixture.detectChanges()
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+    }
+    async function saveForm(nameValue: string, hexValue: string) {
+      fixture.detectChanges()
+      // Wait for form registration/focus, not unrelated database session timers.
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      const name = host.querySelector<HTMLInputElement>('input[name="name"]')!
+      name.value = nameValue
+      name.dispatchEvent(new Event('input', { bubbles: true }))
+      const hex = host.querySelector<HTMLInputElement>('input[name="hex"]')!
+      hex.value = hexValue
+      hex.dispatchEvent(new Event('input', { bubbles: true }))
+      fixture.detectChanges()
+      host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+      fixture.detectChanges()
+    }
+    await open(0)
+    expect(host.querySelector('.colorPicker__edit[data-key="default"]')).toBeNull()
+    host.querySelector<HTMLButtonElement>('.colorPicker__create')!.click()
+    await saveForm('Battle', '#aabbcc')
+    const id = activeStory.entireTree().frames![0].colorId!
+    expect(activeStory.entireTree().frameColors).toEqual([{ id, name: 'Battle', value: '#aabbcc' }])
+    await open(1)
+    pickers[1].querySelector<HTMLButtonElement>(`[data-color="${id}"]`)!.click()
+    fixture.detectChanges()
+    await open(0)
+    host.querySelector<HTMLButtonElement>(`.colorPicker__edit[data-key="${id}"]`)!.click()
+    await saveForm('Conversation', '#112233')
+    expect(activeStory.entireTree().frames?.map(frame => frame.colorId)).toEqual([id, id])
+    for (const frame of Array.from(host.querySelectorAll<HTMLElement>('.boardFrame'))) {
+      expect(frame.style.getPropertyValue('--frame-color')).toBe('#112233')
+      expect(frame.querySelector('[popoverTrigger]')?.getAttribute('title')).toBe('Conversation')
+    }
+    await open(1)
+    expect(pickers[1].querySelector(`[data-color="${id}"]`)?.getAttribute('aria-pressed')).toBe('true')
+    pickers[1].querySelector<HTMLButtonElement>('[data-color="default"]')!.click()
+    fixture.detectChanges()
+    expect(activeStory.entireTree().frames![1].colorId).toBeUndefined()
+    expect(activeStory.entireTree().frames![0].colorId).toBe(id)
+    activeStory.load('other-story', 'Other', { nodes: [] })
+    fixture.detectChanges()
+    expect(TestBed.inject(FrameColorsService).options().some(color => color.value === id)).toBeFalse()
   })
 
   it('offers a remove-from-frame action on a framed node without removing the node', () => {

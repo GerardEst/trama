@@ -21,6 +21,17 @@ export const common = {
     empty: 'No matching options',
     choose: 'Choose an option',
   },
+  colorPicker: {
+    choose: 'Choose a color',
+    create: 'Create a color',
+    edit: 'Edit color',
+    editNamed: 'Edit {name}',
+    name: 'Color name',
+    namePlaceholder: 'e.g. Sea glass',
+    color: 'Custom color',
+    hex: 'Hex code',
+    save: 'Save and apply',
+  },
   image: {
     alt: 'Node illustration',
     remove: 'Remove',
