@@ -1,10 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common'
 import {
+  ChangeDetectorRef,
   Component,
   ContentChild,
+  DestroyRef,
   ElementRef,
-  HostListener,
   Input,
+  Renderer2,
   ViewChild,
 } from '@angular/core'
 import { AnchoredPopoverContentDirective } from './anchored-popover-content.directive'
@@ -28,6 +30,7 @@ export class AnchoredPopoverComponent {
   private panelElement?: HTMLElement
   private pointerStart?: { x: number; y: number }
   private boardPanned = false
+  private stopListening?: () => void
 
   @ViewChild('panel')
   set panel(element: ElementRef<HTMLElement> | undefined) {
@@ -55,10 +58,18 @@ export class AnchoredPopoverComponent {
 
   isOpen = false
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
+  constructor(
+    private elementRef: ElementRef<HTMLElement>,
+    private renderer: Renderer2,
+    private changeDetector: ChangeDetectorRef,
+    destroyRef: DestroyRef
+  ) {
+    destroyRef.onDestroy(() => this.stopListening?.())
+  }
 
   open() {
     this.isOpen = true
+    this.listenToDocument()
   }
 
   close() {
@@ -66,7 +77,33 @@ export class AnchoredPopoverComponent {
     this.pointerStart = undefined
     this.boardPanned = false
     this.isOpen = false
+    this.stopListening?.()
     if (focusWasInside) this.focusTrigger()
+  }
+
+  // A board renders hundreds of closed popovers. Permanent document listeners
+  // would run change detection once per popover on every click and keypress,
+  // and every handler is a no-op while closed.
+  private listenToDocument() {
+    if (this.stopListening) return
+    // Like a HostListener, mark OnPush ancestors so a dismissal re-renders them.
+    const listen = <T extends Event>(eventName: string, handler: (event: T) => void) =>
+      this.renderer.listen('document', eventName, (event: T) => {
+        handler(event)
+        this.changeDetector.markForCheck()
+      })
+    const listeners = [
+      listen('pointerdown', (event: PointerEvent) => this.onPointerDown(event)),
+      listen('poloBoardPanStart', () => this.onBoardPanStart()),
+      listen('pointercancel', () => this.onPointerCancel()),
+      listen('keydown', () => this.onKeyDown()),
+      listen('click', (event: MouseEvent) => this.onDocumentClick(event)),
+      listen('keydown.escape', () => this.onEscape()),
+    ]
+    this.stopListening = () => {
+      listeners.forEach((stop) => stop())
+      this.stopListening = undefined
+    }
   }
 
   private focusTrigger() {
@@ -76,32 +113,27 @@ export class AnchoredPopoverComponent {
     control?.focus()
   }
 
-  @HostListener('document:pointerdown', ['$event'])
-  onPointerDown(event: PointerEvent) {
+  private onPointerDown(event: PointerEvent) {
     if (this.isOpen) {
       this.boardPanned = false
       this.pointerStart = { x: event.clientX, y: event.clientY }
     }
   }
 
-  @HostListener('document:poloBoardPanStart')
-  onBoardPanStart() {
+  private onBoardPanStart() {
     if (this.isOpen) this.boardPanned = true
   }
 
-  @HostListener('document:pointercancel')
-  onPointerCancel() {
+  private onPointerCancel() {
     this.pointerStart = undefined
   }
 
-  @HostListener('document:keydown')
-  onKeyDown() {
+  private onKeyDown() {
     this.pointerStart = undefined
     this.boardPanned = false
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
+  private onDocumentClick(event: MouseEvent) {
     const start = this.pointerStart
     const boardPanned = this.boardPanned
     this.pointerStart = undefined
@@ -120,8 +152,7 @@ export class AnchoredPopoverComponent {
     }
   }
 
-  @HostListener('document:keydown.escape')
-  onEscape() {
+  private onEscape() {
     if (!this.isOpen || !this.closeOnEscape) return
 
     this.close()

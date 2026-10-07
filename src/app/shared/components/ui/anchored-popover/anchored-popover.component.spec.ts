@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { AnchoredPopoverComponent } from './anchored-popover.component'
 import { AnchoredPopoverContentDirective } from './anchored-popover-content.directive'
 
@@ -39,6 +40,32 @@ describe('AnchoredPopoverComponent', () => {
   })
 
   afterEach(() => fixture.nativeElement.remove())
+
+  it('only listens to document events while open', () => {
+    const popover = fixture.debugElement.query(By.directive(AnchoredPopoverComponent))
+      .componentInstance as AnchoredPopoverComponent
+    const handlers = [
+      spyOn(popover as any, 'onPointerDown').and.callThrough(),
+      spyOn(popover as any, 'onKeyDown').and.callThrough(),
+      spyOn(popover as any, 'onDocumentClick').and.callThrough(),
+    ]
+    const dispatchAll = () => {
+      document.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }))
+      document.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    }
+
+    dispatchAll()
+    handlers.forEach((handler) => expect(handler).not.toHaveBeenCalled())
+
+    popover.open()
+    dispatchAll()
+    handlers.forEach((handler) => expect(handler).toHaveBeenCalledTimes(1))
+    expect(popover.isOpen).toBeFalse()
+
+    dispatchAll()
+    handlers.forEach((handler) => expect(handler).toHaveBeenCalledTimes(1))
+  })
 
   it('renders its content lazily in the top layer and closes on outside click', async () => {
     const host: HTMLElement = fixture.nativeElement
