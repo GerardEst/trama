@@ -9,7 +9,9 @@
       [title]="'board.event.add' | t"
       [text]="events.length === 0 ? ('board.event.add' | t) : undefined"
       (click)="addEventPopover.open()"
-    ></polo-contextual-button>
+    >
+      <polo-context-help contextualButtonAccessory topic="board.events"></polo-context-help>
+    </polo-contextual-button>
     <ng-template poloPopoverContent>
       <polo-node-add-event
         class="anchoredAddEvent"

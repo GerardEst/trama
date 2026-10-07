@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { NodeRequirementsComponent } from './node-requirements.component'
+import { ContextHelpService } from 'src/app/shared/context-help/context-help.service'
 
 describe('NodeRequirementsComponent', () => {
   let component: NodeRequirementsComponent
@@ -37,6 +38,45 @@ describe('NodeRequirementsComponent', () => {
     expect(panel.matches(':popover-open')).toBeTrue()
     expect(panel.querySelector('.addRequirement')).not.toBeNull()
     expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('explains Add requirement without opening the editor or changing story data', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    const help = TestBed.inject(ContextHelpService)
+    const host = fixture.nativeElement as HTMLElement
+    document.body.appendChild(host)
+    try {
+      help.setEnabled(true)
+      fixture.detectChanges()
+      const action = host.querySelector('polo-contextual-button')!
+      const surface = action.querySelector('.contextualButton')!
+      expect(getComputedStyle(surface).alignItems).toBe('center')
+      expect(surface.querySelector('polo-context-help')).not.toBeNull()
+      expect(action.querySelector('button button')).toBeNull()
+      action.querySelector<HTMLButtonElement>('polo-context-help button')!.click()
+      fixture.detectChanges()
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      const popup = action.querySelector<HTMLElement>('.contextHelp__panel')!
+      expect(popup.matches(':popover-open')).toBeTrue()
+      expect(popup.querySelector('strong')?.textContent).toBe('Requirements')
+      expect(popup.querySelector('a')?.getAttribute('href')).toBe('/docs/features#requirements')
+      expect(host.querySelector('.addRequirement')).toBeNull()
+      expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('false')
+      expect(storyEditor.saveAnswerRequirements).not.toHaveBeenCalled()
+
+      help.setEnabled(false)
+      fixture.detectChanges()
+      expect(action.querySelector('polo-context-help button')).toBeNull()
+      expect(action.querySelector('.contextHelp__panel')).toBeNull()
+      action.querySelector<HTMLButtonElement>('.contextualButton > button')!.click()
+      fixture.detectChanges()
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      expect(host.querySelector('.addRequirement')).not.toBeNull()
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
   })
 
   it('should create', () => {

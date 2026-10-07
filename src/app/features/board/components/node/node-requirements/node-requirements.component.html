@@ -9,7 +9,9 @@
       [title]="'board.requirement.add' | t"
       [text]="!requirements || requirements.length === 0 ? ('board.requirement.add' | t) : undefined"
       (click)="addRequirementPopover.open()"
-    ></polo-contextual-button>
+    >
+      <polo-context-help contextualButtonAccessory topic="board.requirements"></polo-context-help>
+    </polo-contextual-button>
     <ng-template poloPopoverContent>
       <polo-node-add-requirement
         class="anchoredAddRequirement"

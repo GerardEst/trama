@@ -17,7 +17,11 @@ Optional authoring explanations, independent of story data and execution.
 </span>
 ```
 
-Place it next to labels or controls, never inside another button/link or a form label.
+Place it next to labels or controls, never inside a native button/link or a form label.
+For integrated button help, project it into `ContextualButtonComponent` with the
+`contextualButtonAccessory` attribute. The component groups both controls inside
+one visual button surface while keeping their native buttons as siblings; it has
+no dependency on the help system.
 The help component owns the question mark, delayed hover, keyboard focus, touch/click,
 Escape, viewport placement and teardown. Copy is plain text, not injected HTML.
 Only one explanation can be open. Native manual popovers render in the top layer

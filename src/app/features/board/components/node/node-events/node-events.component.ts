@@ -7,11 +7,12 @@ import { StoryEditorService } from '../../../services/story-editor.service'
 import { NodeEventComponent } from './node-event/node-event.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { ContextualButtonComponent } from 'src/app/shared/components/ui/contextual-button/contextual-button.component'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 
 @Component({
   selector: 'polo-node-events',
   standalone: true,
-  imports: [ContextualButtonComponent, AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent, TranslatePipe],
+  imports: [ContextualButtonComponent, AnchoredPopoverComponent, AnchoredPopoverContentDirective, NodeAddEventComponent, NodeEventComponent, TranslatePipe, ContextHelpComponent],
   templateUrl: './node-events.component.html',
   styleUrl: './node-events.component.css',
 })

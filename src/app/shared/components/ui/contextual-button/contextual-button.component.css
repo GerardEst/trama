@@ -2,6 +2,15 @@
   display: inline-flex;
 }
 
+.contextualButton {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--polo-radius-control);
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
 button {
   display: inline-flex;
   min-width: 2.5rem;
@@ -12,13 +21,12 @@ button {
   padding: var(--polo-space-1) var(--polo-space-2);
   color: var(--polo-color-action);
   background: transparent;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: var(--polo-radius-control);
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 button img {
   width: 0.85rem;
@@ -29,11 +37,11 @@ button img {
 button span {
   color: var(--polo-color-text-secondary);
 }
-button:hover:not(:disabled) {
+.contextualButton:has(> button:not(:disabled)):hover {
   background: var(--polo-color-action-soft);
   border-color: var(--polo-color-focus);
 }
-button:active:not(:disabled) {
+.contextualButton:has(> button:active:not(:disabled)) {
   transform: scale(0.96);
 }
 button:focus-visible {
@@ -46,7 +54,7 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  button {
+  .contextualButton {
     transition: none;
   }
 }
