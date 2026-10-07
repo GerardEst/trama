@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild, OnInit, OnDestroy, signal } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -76,14 +76,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     target.setPointerCapture(event.pointerId)
   }
 
-  @HostListener('document:pointermove', ['$event'])
+  // The divider captures the pointer, so its own events cover the whole resize
+  // without a document listener running change detection on every move.
   resizeWorkspace(event: PointerEvent) {
     if (event.pointerId !== this.resizePointer) return
     this.setBoardWidth(event.clientX / window.innerWidth * 100)
   }
 
-  @HostListener('document:pointerup', ['$event'])
-  @HostListener('document:pointercancel', ['$event'])
   stopResize(event: PointerEvent) {
     if (event.pointerId !== this.resizePointer) return
     this.resizePointer = undefined

@@ -1,4 +1,4 @@
-import { Component, HostListener, input, output } from '@angular/core'
+import { Component, DestroyRef, NgZone, inject, input, output } from '@angular/core'
 
 @Component({
   selector: 'polo-editable-name',
@@ -16,6 +16,12 @@ export class EditableNameComponent {
   editing = false
   private pointerStart?: { id: number; x: number; y: number }
   private moved = false
+  private stopTracking?: () => void
+  private readonly zone = inject(NgZone)
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.stopTracking?.())
+  }
 
   onPointerDown(event: PointerEvent) {
     if (!this.dragHandle() || this.editing || (event.pointerType === 'mouse' && event.button !== 0)) {
@@ -24,6 +30,28 @@ export class EditableNameComponent {
     }
     this.pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY }
     this.moved = false
+    this.trackPointer()
+  }
+
+  // Every board node has a name, so permanent document listeners would run
+  // change detection once per node on every pointer move. Listen only while
+  // pressed, and outside Angular: the tracked state is never rendered.
+  private trackPointer() {
+    this.stopTracking?.()
+    const move = (event: PointerEvent) => this.onPointerMove(event)
+    const up = (event: PointerEvent) => this.onPointerUp(event)
+    const cancel = (event: PointerEvent) => this.onPointerCancel(event)
+    this.zone.runOutsideAngular(() => {
+      document.addEventListener('pointermove', move)
+      document.addEventListener('pointerup', up)
+      document.addEventListener('pointercancel', cancel)
+    })
+    this.stopTracking = () => {
+      document.removeEventListener('pointermove', move)
+      document.removeEventListener('pointerup', up)
+      document.removeEventListener('pointercancel', cancel)
+      this.stopTracking = undefined
+    }
   }
 
   onMouseDown(event: MouseEvent) {
@@ -35,17 +63,16 @@ export class EditableNameComponent {
     if (!this.dragHandle() || this.editing) event.stopPropagation()
   }
 
-  @HostListener('document:pointermove', ['$event'])
-  onPointerMove(event: PointerEvent) {
+  private onPointerMove(event: PointerEvent) {
     if (this.pointerStart?.id !== event.pointerId) return
     if (Math.hypot(event.clientX - this.pointerStart.x, event.clientY - this.pointerStart.y) > 5) {
       this.moved = true
     }
   }
 
-  @HostListener('document:pointerup', ['$event'])
-  onPointerUp(event: PointerEvent) {
+  private onPointerUp(event: PointerEvent) {
     if (this.pointerStart?.id !== event.pointerId) return
+    this.stopTracking?.()
     // A click follows pointerup; retain the movement result until it has fired.
     setTimeout(() => {
       if (this.pointerStart?.id === event.pointerId) {
@@ -55,9 +82,9 @@ export class EditableNameComponent {
     }, 0)
   }
 
-  @HostListener('document:pointercancel', ['$event'])
-  onPointerCancel(event: PointerEvent) {
+  private onPointerCancel(event: PointerEvent) {
     if (this.pointerStart?.id === event.pointerId) {
+      this.stopTracking?.()
       this.pointerStart = undefined
       this.moved = false
     }

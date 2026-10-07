@@ -6,7 +6,8 @@
   @if (linearOpen()) {
     <button type="button" class="workspaceDivider" role="separator" aria-orientation="vertical"
       [attr.aria-label]="'dashboard.linear.resize' | t" aria-valuemin="35" aria-valuemax="75"
-      [attr.aria-valuenow]="boardWidth()" (pointerdown)="startResize($event)" (keydown)="resizeWithKeyboard($event)">
+      [attr.aria-valuenow]="boardWidth()" (pointerdown)="startResize($event)" (pointermove)="resizeWorkspace($event)"
+      (pointerup)="stopResize($event)" (pointercancel)="stopResize($event)" (keydown)="resizeWithKeyboard($event)">
       <span aria-hidden="true"></span>
     </button>
     <aside class="linearPane" [attr.aria-label]="'dashboard.linear.title' | t">

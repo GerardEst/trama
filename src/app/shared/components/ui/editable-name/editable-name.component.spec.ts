@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { EditableNameComponent } from './editable-name.component'
 
@@ -74,6 +75,32 @@ describe('EditableNameComponent', () => {
     } finally {
       input.blur()
       header.remove()
+    }
+  })
+
+  it('does not run change detection for document pointer moves, pressed or not', () => {
+    fixture.componentRef.setInput('dragHandle', true)
+    fixture.detectChanges()
+    const input = (fixture.nativeElement as HTMLElement).querySelector('input')!
+    let turns = 0
+    const subscription = TestBed.inject(NgZone).onMicrotaskEmpty.subscribe(() => turns++)
+    const move = (pointerId: number) => document.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, pointerId, clientX: 30, clientY: 10,
+    }))
+    try {
+      move(1)
+      expect(turns).toBe(0)
+
+      input.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true, pointerId: 1, clientX: 10, clientY: 10,
+      }))
+      turns = 0
+      move(1)
+      document.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1 }))
+      move(1)
+      expect(turns).toBe(0)
+    } finally {
+      subscription.unsubscribe()
     }
   })
 

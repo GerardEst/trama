@@ -37,6 +37,25 @@ describe('DashboardComponent', () => {
     expect(component.boardWidth()).toBe(35)
   })
 
+  it('resizes from the divider without reacting to every document pointer move', () => {
+    component.openLinearView()
+    fixture.detectChanges()
+    const divider = fixture.nativeElement.querySelector('.workspaceDivider') as HTMLElement
+    spyOn(divider, 'setPointerCapture')
+    const resize = spyOn(component, 'resizeWorkspace').and.callThrough()
+
+    document.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 5 }))
+    expect(resize).not.toHaveBeenCalled()
+
+    divider.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 5 }))
+    divider.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, pointerId: 5, clientX: window.innerWidth / 2,
+    }))
+    expect(component.boardWidth()).toBe(50)
+    divider.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 5 }))
+    expect(component.resizing()).toBeFalse()
+  })
+
   it('opens the linear view only from the legend action, without a duplicate top button', () => {
     const open = spyOn(component, 'openLinearView')
     const legend = fixture.debugElement.query(By.directive(MenuTreeLegendComponent)).componentInstance as MenuTreeLegendComponent
