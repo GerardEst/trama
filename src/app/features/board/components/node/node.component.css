@@ -62,8 +62,12 @@
   font-size: 0.88rem;
   font-weight: 700;
 }
+.node__typeRow {
+  display: flex;
+  align-items: center;
+}
 .node__type {
-  padding: 0 0.35rem 0.2rem;
+  padding: 0 0.35rem;
   color: var(--polo-color-text-muted);
   font-size: 0.75rem;
 }

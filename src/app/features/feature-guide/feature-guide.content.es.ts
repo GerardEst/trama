@@ -8,6 +8,26 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
       'Configura los cambios de estado, los requisitos de las respuestas y las conexiones entre nodos.',
     features: [
       {
+        id: 'content-nodes',
+        title: 'Nodos de contenido',
+        summary:
+          'Un nodo de contenido es una escena: muestra un pasaje y puede ofrecer respuestas para que el jugador elija su camino.',
+        steps: [
+          'Crea un nodo de contenido en el tablero y escribe su pasaje.',
+          'Añade respuestas con las decisiones que puede tomar el jugador.',
+          'Conecta cada respuesta con su nodo de destino. Si no hay respuestas, conecta el nodo directamente con la siguiente escena.',
+        ],
+        example: {
+          label: 'Una escena con dos caminos',
+          lines: [
+            'Pasaje: Llegas a una encrucijada.',
+            'Respuesta: Entrar en el bosque → escena del bosque',
+            'Respuesta: Seguir el río → escena del río',
+          ],
+        },
+        note: 'También puedes añadir una imagen y eventos a la escena. Las respuestas necesitan un destino conectado para poder elegirlas; los requisitos pueden limitar qué respuestas están disponibles.',
+      },
+      {
         id: 'events',
         title: 'Eventos en escenas y decisiones',
         summary:

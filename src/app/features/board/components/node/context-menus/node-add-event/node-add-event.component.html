@@ -28,7 +28,10 @@
 
   <div class="addEvent__body">
     <div class="addEvent__type" role="group" [attr.aria-label]="'board.event.typeLabel' | t">
-      <p class="addEvent__label">{{ 'board.event.question' | t }}</p>
+      <p class="addEvent__label">
+        {{ 'board.event.question' | t }}
+        <polo-context-help topic="board.events"></polo-context-help>
+      </p>
       <div class="addEvent__typeOptions">
         <polo-choice-card
           #typeOption

@@ -20,11 +20,12 @@ interface DisplayedRef {
 }
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 
 @Component({
   selector: 'polo-menu-tree-legend',
   standalone: true,
-  imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent, TranslatePipe],
+  imports: [BasicButtonComponent, StadisticsLayerComponent, EditableNameComponent, TranslatePipe, ContextHelpComponent],
   templateUrl: './menu-tree-legend.component.html',
   styleUrl: './menu-tree-legend.component.css',
 })

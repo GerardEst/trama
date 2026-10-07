@@ -9,11 +9,12 @@ import { ChoiceCardComponent } from 'src/app/shared/components/ui/choice-card/ch
 import { PopupBaseComponent } from 'src/app/shared/components/ui/popup-base/popup-base.component'
 import { NodeAddModifyRefComponent } from '../node-add-modify-ref/node-add-modify-ref.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 
 @Component({
   selector: 'polo-node-add-requirement',
   standalone: true,
-  imports: [ChoiceCardComponent, NodeAddModifyRefComponent, TranslatePipe],
+  imports: [ChoiceCardComponent, NodeAddModifyRefComponent, TranslatePipe, ContextHelpComponent],
   templateUrl: './node-add-requirement.component.html',
   styleUrl: './node-add-requirement.component.css',
 })

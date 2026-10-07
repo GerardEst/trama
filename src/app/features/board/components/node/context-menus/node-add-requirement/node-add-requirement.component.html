@@ -28,7 +28,10 @@
 
   <div class="addRequirement__body">
     <div class="addRequirement__type" role="group" [attr.aria-label]="'board.requirement.typeLabel' | t">
-      <p class="addRequirement__label">{{ 'board.requirement.question' | t }}</p>
+      <p class="addRequirement__label">
+        {{ 'board.requirement.question' | t }}
+        <polo-context-help topic="board.requirements"></polo-context-help>
+      </p>
       <div class="addRequirement__typeOptions">
         <polo-choice-card
           icon="/assets/icons/stat.svg"

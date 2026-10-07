@@ -7,6 +7,7 @@ import { dashboard } from './dashboard'
 import { board } from './board'
 import { playground } from './playground'
 import { guide } from './guide'
+import { contextHelp } from './context-help'
 
 export const es: Dictionary = {
   common,
@@ -17,4 +18,5 @@ export const es: Dictionary = {
   board,
   playground,
   guide,
+  contextHelp,
 }

@@ -47,7 +47,7 @@ describe('FeatureGuideComponent', () => {
         expect(page.querySelector('h1')?.textContent?.trim()).toBe(title)
         expect(page.querySelector('.guide-chapter h3')?.textContent?.trim()).toBe(setup)
         expect(page.querySelector('.guide-note span')?.textContent?.trim()).toBe(notes)
-        expect(page.querySelectorAll('.guide-chapter').length).toBe(11)
+        expect(page.querySelectorAll('.guide-chapter').length).toBe(12)
       }
     } finally {
       await i18n.setLang('en', { persist: false })
@@ -66,12 +66,12 @@ describe('FeatureGuideComponent', () => {
     expect(footer.querySelector('polo-language-selector')).toBeTruthy()
   })
 
-  it('documents all eleven features with unique, linkable chapters and practical instructions', () => {
+  it('documents all twelve features with unique, linkable chapters and practical instructions', () => {
     const page = fixture.nativeElement as HTMLElement
     const features = FEATURE_GUIDE.flatMap((group) => group.features)
-    expect(features.length).toBe(11)
-    expect(new Set(features.map((feature) => feature.id)).size).toBe(11)
-    expect(page.querySelectorAll('.guide-chapter').length).toBe(11)
+    expect(features.length).toBe(12)
+    expect(new Set(features.map((feature) => feature.id)).size).toBe(12)
+    expect(page.querySelectorAll('.guide-chapter').length).toBe(12)
     for (const feature of features) {
       const chapter = page.querySelector(`#${feature.id}`)
       expect(chapter?.querySelector('h2')?.textContent).toBe(feature.title)
@@ -92,6 +92,9 @@ describe('FeatureGuideComponent', () => {
 
   it('explains current limitations instead of advertising unsupported behaviour', () => {
     const page = fixture.nativeElement as HTMLElement
+    expect(page.querySelector('#content-nodes')?.textContent).toContain(
+      'Answers need a connected destination'
+    )
     expect(page.querySelector('#requirements')?.textContent).toContain(
       'filtered out'
     )

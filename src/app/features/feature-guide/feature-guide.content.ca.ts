@@ -8,6 +8,26 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
       'Configura els canvis d’estat, els requisits de les respostes i les connexions entre nodes.',
     features: [
       {
+        id: 'content-nodes',
+        title: 'Nodes de contingut',
+        summary:
+          'Un node de contingut és una escena: mostra un passatge i pot oferir respostes perquè el jugador triï el seu camí.',
+        steps: [
+          'Crea un node de contingut al tauler i escriu-hi el passatge.',
+          'Afegeix respostes amb les decisions que pot prendre el jugador.',
+          'Connecta cada resposta amb el seu node de destinació. Si no hi ha respostes, connecta el node directament amb l’escena següent.',
+        ],
+        example: {
+          label: 'Una escena amb dos camins',
+          lines: [
+            'Passatge: Arribes a una cruïlla.',
+            'Resposta: Entrar al bosc → escena del bosc',
+            'Resposta: Seguir el riu → escena del riu',
+          ],
+        },
+        note: 'També pots afegir una imatge i esdeveniments a l’escena. Les respostes necessiten una destinació connectada per poder-les triar; els requisits poden limitar quines respostes estan disponibles.',
+      },
+      {
         id: 'events',
         title: 'Esdeveniments a escenes i decisions',
         summary:

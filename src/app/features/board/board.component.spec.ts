@@ -17,6 +17,10 @@ import { StorageService } from 'src/app/shared/services/storage.service'
 import { RichTextFieldComponent } from './components/rich-text/rich-text-field.component'
 import { StoryEditorLoader } from './components/rich-text/story-editor-loader.service'
 import { NodeComponent } from './components/node/node.component'
+import { ContextHelpService } from 'src/app/shared/context-help/context-help.service'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
+import { CONTEXT_HELP_TOPICS, NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 describe('BoardComponent', () => {
   let component: BoardComponent
@@ -39,6 +43,103 @@ describe('BoardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('uses the same canonical names in the creation menu and node headers in every language', async () => {
+    const i18n = TestBed.inject(I18nService)
+    const previousLang = i18n.lang()
+    fixture.componentRef.setInput('focusElements', false)
+    TestBed.inject(ActiveStoryService).load('node-names', 'Story', { nodes:
+      component.creatableNodeTypes.map((type, index) => ({
+        id: `node_${index}`, type, top: 0, left: index * 400,
+      })),
+    })
+    component.contextMenuActive = true
+    fixture.detectChanges()
+    try {
+      for (const [lang, names] of [
+        ['en', ['Content node - Free text', 'Content node - Selection', 'Distributor node', 'End node']],
+        ['ca', ['Node de contingut - Text lliure', 'Node de contingut - Selecció', 'Node distribuidor', 'Node final']],
+        ['es', ['Nodo de contenido - Texto libre', 'Nodo de contenido - Selección', 'Nodo distribuidor', 'Nodo final']],
+      ] as const) {
+        await i18n.setLang(lang, { persist: false })
+        fixture.detectChanges()
+        const host = fixture.nativeElement as HTMLElement
+        const options = Array.from(host.querySelectorAll('.contextMenu__create'))
+        const headers = Array.from(host.querySelectorAll('polo-node .node__type'))
+        expect(options.map(option => option.textContent?.trim())).toEqual([...names])
+        expect(headers.map(header => header.textContent?.trim())).toEqual([...names])
+      }
+    } finally {
+      await i18n.setLang(previousLang, { persist: false })
+    }
+  })
+
+  it('reuses node help in the right-click menu without creating a node or closing the menu', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    const help = TestBed.inject(ContextHelpService)
+    const create = spyOn(component, 'createNode')
+    fixture.detectChanges()
+    const board = fixture.nativeElement.querySelector('.board') as HTMLElement
+    try {
+      help.setEnabled(true)
+      board.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 80, clientY: 100 }))
+      fixture.detectChanges()
+      expect(component.contextMenuActive).toBeTrue()
+      const menu = fixture.nativeElement.querySelector('.contextMenu') as HTMLElement
+      expect(menu.querySelector('header')?.textContent).toContain('Create new node')
+      for (const type of component.creatableNodeTypes) {
+        const row = menu.querySelector(`[data-node-type="${type}"]`)!
+        const explanation = fixture.debugElement.queryAll(By.directive(ContextHelpComponent))
+          .find(item => row.contains(item.nativeElement))!.componentInstance as ContextHelpComponent
+        expect(explanation.topic).toBe(NODE_CONTEXT_HELP_TOPICS[type])
+        row.querySelector<HTMLButtonElement>('polo-context-help button')!.click()
+        fixture.detectChanges()
+        await new Promise<void>(resolve => setTimeout(resolve, 0))
+        const popup = row.querySelector<HTMLElement>('.contextHelp__panel')!
+        expect(popup.matches(':popover-open')).toBeTrue()
+        expect(popup.querySelector('strong')?.textContent).toBe(component.nodeTypeName(type))
+        expect(popup.querySelector('.contextHelp__body')?.textContent).toBe(
+          TestBed.inject(I18nService).t(CONTEXT_HELP_TOPICS[explanation.topic].body)
+        )
+        expect(component.contextMenuActive).toBeTrue()
+        expect(create).not.toHaveBeenCalled()
+      }
+      board.click()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('.contextMenu')).toBeNull()
+      expect(help.activeId()).toBeNull()
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
+  })
+
+  it('keeps node creation available when contextual help is disabled', () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    const create = spyOn(component, 'createNode')
+    fixture.detectChanges()
+    const board = fixture.nativeElement.querySelector('.board') as HTMLElement
+    try {
+      TestBed.inject(ContextHelpService).setEnabled(false)
+      for (const type of component.creatableNodeTypes) {
+        board.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }))
+        component.contextMenuPosition = { x: 120, y: 240 }
+        fixture.detectChanges()
+        const row = fixture.nativeElement.querySelector(`[data-node-type="${type}"]`) as HTMLElement
+        expect(row.querySelector('polo-context-help button')).toBeNull()
+        row.querySelector<HTMLButtonElement>('.contextMenu__create')!.click()
+        expect(create).toHaveBeenCalledWith({ left: 120, top: 240 }, type)
+        expect(component.contextMenuActive).toBeFalse()
+        fixture.detectChanges()
+        expect(fixture.nativeElement.querySelector('.contextMenu')).toBeNull()
+      }
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
   })
 
   it('reveals a playthrough node inside its group without replacing the editing selection', async () => {

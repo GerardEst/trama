@@ -19,6 +19,26 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
     description: 'Configure state changes, answer requirements and connections between nodes.',
     features: [
       {
+        id: 'content-nodes',
+        title: 'Content nodes',
+        summary:
+          'A content node is a scene: it shows a passage and can offer answers that let the player choose their path.',
+        steps: [
+          'Create a content node on the board and write its passage.',
+          'Add answers for the choices the player can make.',
+          'Connect each answer to its destination node. If there are no answers, connect the node directly to the next scene.',
+        ],
+        example: {
+          label: 'A scene with two paths',
+          lines: [
+            'Passage: You reach a crossroads.',
+            'Answer: Enter the forest → forest scene',
+            'Answer: Follow the river → river scene',
+          ],
+        },
+        note: 'You can also add an image and events to the scene. Answers need a connected destination to be playable; requirements can limit which answers are available.',
+      },
+      {
         id: 'events',
         title: 'Events on scenes and choices',
         summary:

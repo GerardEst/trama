@@ -1,0 +1,48 @@
+@if (help.enabled()) {
+  <button
+    #trigger
+    class="contextHelp__trigger"
+    type="button"
+    [attr.aria-label]="i18n.t('contextHelp.explain', { topic: i18n.t(copy.title) })"
+    aria-haspopup="dialog"
+    [attr.aria-controls]="isOpen() ? id : null"
+    [attr.aria-describedby]="isOpen() ? id + '-body' : null"
+    [attr.aria-expanded]="isOpen()"
+    (pointerenter)="onPointerEnter($event)"
+    (pointerleave)="onPointerLeave()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (click)="onClick()"
+  >
+    <span aria-hidden="true">?</span>
+  </button>
+  @if (isOpen()) {
+    <span
+      #panel
+      class="contextHelp__panel"
+      popover="manual"
+      role="dialog"
+      aria-modal="false"
+      [id]="id"
+      [attr.aria-labelledby]="id + '-title'"
+      [attr.aria-describedby]="id + '-body'"
+      (pointerenter)="onPanelEnter()"
+      (pointerleave)="onPointerLeave()"
+      (focusin)="onFocus()"
+      (focusout)="onBlur()"
+    >
+      <strong class="contextHelp__title" [id]="id + '-title'">{{ i18n.t(copy.title) }}</strong>
+      <span class="contextHelp__body" [id]="id + '-body'">{{ i18n.t(copy.body) }}</span>
+      <a
+        class="contextHelp__docs"
+        [href]="'/docs/features#' + copy.docsFragment"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.aria-label]="i18n.t('contextHelp.documentation') + ' · ' + i18n.t('contextHelp.newTab')"
+      >
+        {{ i18n.t('contextHelp.documentation') }}
+        <span aria-hidden="true">↗</span>
+      </a>
+    </span>
+  }
+}

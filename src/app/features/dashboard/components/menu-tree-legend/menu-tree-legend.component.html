@@ -11,7 +11,10 @@
         "
         [title]="'dashboard.legend.toggle' | t"
       ></polo-basic-button>
-      <p>{{ 'dashboard.legend.title' | t }}</p>
+      <p>
+        {{ 'dashboard.legend.title' | t }}
+        <polo-context-help topic="board.references"></polo-context-help>
+      </p>
       <div class="legend__content__title__buttons">
         <polo-basic-button
           (click)="mode = 'refs'"
@@ -94,7 +97,10 @@
       "
       [title]="'dashboard.legend.toggle' | t"
     ></polo-basic-button>
-    <p>{{ 'dashboard.legend.title' | t }}</p>
+    <p>
+      {{ 'dashboard.legend.title' | t }}
+      <polo-context-help topic="board.references"></polo-context-help>
+    </p>
     }
     <div class="legend__header__buttons">
       <polo-basic-button

@@ -1,0 +1,103 @@
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+:host.contextHelp--disabled {
+  display: none;
+}
+
+.contextHelp__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--polo-color-text-muted);
+  background: transparent;
+  cursor: help;
+  font: 600 1rem var(--polo-font-ui);
+}
+
+.contextHelp__trigger span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.85rem;
+}
+
+.contextHelp__trigger:hover, .contextHelp__trigger[aria-expanded='true'] {
+  color: var(--polo-color-action);
+  background: var(--polo-color-action-soft);
+}
+
+.contextHelp__trigger:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.contextHelp__panel {
+  position: fixed;
+  inset: auto;
+  box-sizing: border-box;
+  width: min(22rem, 100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--polo-space-4);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-popover);
+  font: 400 1rem / 1.5 var(--polo-font-ui);
+  text-align: left;
+  cursor: auto;
+}
+
+.contextHelp__title, .contextHelp__body {
+  display: block;
+}
+
+.contextHelp__title {
+  margin-bottom: var(--polo-space-2);
+  color: var(--polo-color-text-strong);
+  font-weight: 700;
+}
+
+.contextHelp__body {
+  color: var(--polo-color-text-secondary);
+}
+
+.contextHelp__docs {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: var(--polo-space-2);
+  margin-top: var(--polo-space-3);
+  margin-left: auto;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  color: var(--polo-color-action);
+  background: var(--polo-color-action-soft);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contextHelp__docs:hover {
+  color: var(--polo-color-action-hover);
+  background: var(--polo-color-action-soft-hover);
+}
+
+.contextHelp__docs:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}

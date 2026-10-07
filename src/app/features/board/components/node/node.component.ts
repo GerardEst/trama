@@ -47,6 +47,8 @@ import { EditableNameComponent } from 'src/app/shared/components/ui/editable-nam
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { SortableListDirective, SortableMove } from 'src/app/shared/directives/sortable-list.directive'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
+import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
 
 @Component({
   selector: 'polo-node',
@@ -67,6 +69,7 @@ import { SortableListDirective, SortableMove } from 'src/app/shared/directives/s
     CdkDragHandle,
     TranslatePipe,
     SortableListDirective,
+    ContextHelpComponent,
   ],
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.css'],
@@ -79,6 +82,8 @@ import { SortableListDirective, SortableMove } from 'src/app/shared/directives/s
  * are detected and node is updated
  */
 export class NodeComponent {
+  readonly nodeHelpTopics = NODE_CONTEXT_HELP_TOPICS
+
   @Input() nodeId: string = ''
   @Input() name?: string
   @Input() frameName?: string

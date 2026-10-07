@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 const featureIds = [
+  'content-nodes',
   'events',
   'conditional-paths',
   'requirements',
@@ -20,7 +21,7 @@ test('the simplified landing keeps the guide accessible through Docs', async ({ 
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Docs' }).click()
   await expect(page).toHaveURL(/\/docs\/features$/)
   await expect(page).toHaveTitle('Feature guide — Trama')
-  await expect(page.locator('.guide-chapter')).toHaveCount(11)
+  await expect(page.locator('.guide-chapter')).toHaveCount(featureIds.length)
   await expect(page.locator('.guide-chapter__summary').first()).toHaveCSS(
     'font-size',
     '16px'
@@ -33,12 +34,22 @@ test('the simplified landing keeps the guide accessible through Docs', async ({ 
     name: 'Feature index',
     exact: true,
   })
-  await expect(index.getByRole('link')).toHaveCount(11)
+  await expect(index.getByRole('link')).toHaveCount(featureIds.length)
   for (const id of featureIds) {
     await expect(page.locator(`#${id}`)).toHaveCount(1)
     await expect(index.locator(`a[href$="#${id}"]`)).toHaveCount(1)
   }
   await expect(page.locator('polo-board, polo-game')).toHaveCount(0)
+})
+
+test('content-node help has a directly linkable documentation chapter', async ({ page }) => {
+  await page.goto('/docs/features#content-nodes')
+  const chapter = page.getByRole('region', { name: 'Content nodes', exact: true })
+  await expect(chapter).toBeInViewport()
+  await expect(chapter).toBeFocused()
+  await expect(chapter).toContainText('A content node is a scene')
+  await expect(chapter).toContainText('Connect each answer to its destination node')
+  await expect(chapter).toContainText('Answers need a connected destination')
 })
 
 test('feature links and direct URLs land on the relevant chapter without loading a story or text editor', async ({
@@ -94,14 +105,14 @@ for (const width of [375, 820]) {
       await page.evaluate(() => document.documentElement.scrollWidth)
     ).toBe(width)
     await page.locator('.footer a[href="/docs/features"]').click()
-    await expect(page.locator('.guide-chapter')).toHaveCount(11)
+    await expect(page.locator('.guide-chapter')).toHaveCount(featureIds.length)
     if (width < 761) {
       const contents = page.locator('.guide-mobile-index')
       await contents.locator('summary').click()
       const index = page.getByRole('navigation', {
         name: 'Mobile feature index',
       })
-      await expect(index.getByRole('link')).toHaveCount(11)
+      await expect(index.getByRole('link')).toHaveCount(featureIds.length)
       await index
         .getByRole('link', { name: 'Groups and movable frames', exact: true })
         .click()

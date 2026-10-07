@@ -39,20 +39,30 @@
   (pointercancel)="cancelJoin($event)"
   (click)="closeContextMenu()"
 >
-  <div
-    class="contextMenu"
-    [class.active]="contextMenuActive"
-    [style.left.px]="contextMenuPosition.x"
-    [style.top.px]="contextMenuPosition.y"
-  >
-    <header>
-      <p>{{ 'board.create.title' | t }}</p>
-    </header>
-    <li (click)="addNode($event, 'text')">{{ 'board.create.text' | t }}</li>
-    <li (click)="addNode($event, 'content')">{{ 'board.create.content' | t }}</li>
-    <li (click)="addNode($event, 'distributor')">{{ 'board.create.distributor' | t }}</li>
-    <li (click)="addNode($event, 'end')">{{ 'board.create.end' | t }}</li>
-  </div>
+  @if (contextMenuActive) {
+    <div
+      class="contextMenu active"
+      role="group"
+      [attr.aria-label]="'board.create.title' | t"
+      (pointerdown)="$event.stopPropagation()"
+      (mousedown)="$event.stopPropagation()"
+      (touchstart)="$event.stopPropagation()"
+      [style.left.px]="contextMenuPosition.x"
+      [style.top.px]="contextMenuPosition.y"
+    >
+      <header>
+        <p>{{ 'board.create.title' | t }}</p>
+      </header>
+      @for (type of creatableNodeTypes; track type) {
+        <div class="contextMenu__item" [attr.data-node-type]="type">
+          <button type="button" class="contextMenu__create" (click)="addNode($event, type)">
+            {{ nodeTypeName(type) }}
+          </button>
+          <polo-context-help [topic]="nodeHelpTopics[type]"></polo-context-help>
+        </div>
+      }
+    </div>
+  }
 
   @for (frame of visibleFrames(); track frame.id) {
     @if (frameBounds(frame); as bounds) {

@@ -11,6 +11,7 @@ import { ThemeService } from 'src/app/shared/services/theme.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
+import { ContextHelpPreferenceComponent } from 'src/app/shared/context-help/context-help-preference.component'
 
 @Component({
   selector: 'polo-profile-modal',
@@ -22,6 +23,7 @@ import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language
     BillingCycleComponent,
     SeparatorComponent,
     LanguageSelectorComponent,
+    ContextHelpPreferenceComponent,
     TranslatePipe,
   ],
   templateUrl: './profile-modal.component.html',

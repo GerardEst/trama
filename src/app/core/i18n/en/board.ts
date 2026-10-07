@@ -35,10 +35,6 @@ export const board = {
   },
   create: {
     title: 'Create new node',
-    text: 'Free text node',
-    content: 'Answers node',
-    distributor: 'Distributor node',
-    end: 'End node',
   },
   joins: {
     title: 'Join options',
@@ -46,8 +42,8 @@ export const board = {
   },
   node: {
     types: {
-      text: 'Text node',
-      content: 'Content node',
+      text: 'Content node - Free text',
+      content: 'Content node - Selection',
       distributor: 'Distributor node',
       end: 'End node',
       group: 'Group node',

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { NodeAddRequirementComponent } from './node-add-requirement.component'
+import { ContextHelpService } from 'src/app/shared/context-help/context-help.service'
 
 describe('NodeAddRequirementComponent', () => {
   let component: NodeAddRequirementComponent
@@ -18,6 +19,36 @@ describe('NodeAddRequirementComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('does not replace the editor’s initial focus target with a help button', () => {
+    expect(fixture.nativeElement.querySelector('button').classList).toContain('addRequirement__close')
+  })
+
+  it('dismisses help before dismissing the requirement editor on Escape', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    document.body.appendChild(fixture.nativeElement)
+    spyOn(component.onClose, 'emit')
+    try {
+      TestBed.inject(ContextHelpService).setEnabled(true)
+      fixture.detectChanges()
+      const trigger = fixture.nativeElement.querySelector('polo-context-help button') as HTMLButtonElement
+      trigger.click()
+      fixture.detectChanges()
+      await new Promise<void>((resolve) => setTimeout(resolve, 0))
+      expect(fixture.nativeElement.querySelector('.contextHelp__panel')).not.toBeNull()
+      trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('.contextHelp__panel')).toBeNull()
+      expect(component.onClose.emit).not.toHaveBeenCalled()
+      trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      expect(component.onClose.emit).toHaveBeenCalled()
+    } finally {
+      fixture.nativeElement.remove()
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
   })
 
   it('requires a target and a numeric stat threshold', () => {

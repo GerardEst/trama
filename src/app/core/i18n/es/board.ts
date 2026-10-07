@@ -37,10 +37,6 @@ export const board: Dictionary['board'] = {
   },
   create: {
     title: 'Crear nodo',
-    text: 'Nodo de texto libre',
-    content: 'Nodo de respuestas',
-    distributor: 'Nodo distribuidor',
-    end: 'Nodo final',
   },
   joins: {
     title: 'Opciones de la conexión',
@@ -48,8 +44,8 @@ export const board: Dictionary['board'] = {
   },
   node: {
     types: {
-      text: 'Nodo de texto',
-      content: 'Nodo de contenido',
+      text: 'Nodo de contenido - Texto libre',
+      content: 'Nodo de contenido - Selección',
       distributor: 'Nodo distribuidor',
       end: 'Nodo final',
       group: 'Nodo de grupo',

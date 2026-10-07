@@ -33,7 +33,10 @@
         [placeholder]="nodeId"
         (valueChanged)="saveNodeName($event)"
       ></polo-editable-name>
-      <span class="node__type">{{ typeName() }}</span>
+      <div class="node__typeRow">
+        <span class="node__type">{{ typeName() }}</span>
+        <polo-context-help [topic]="nodeHelpTopics[type]"></polo-context-help>
+      </div>
     </div>
 
     <polo-basic-button

@@ -51,6 +51,8 @@ interface BoardJoinTarget {
 }
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
+import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
 
 @Component({
   selector: 'polo-board',
@@ -63,6 +65,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
     BoardAnchorDirective,
     EditableNameComponent,
     TranslatePipe,
+    ContextHelpComponent,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
@@ -87,6 +90,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() zoomable: boolean = true
 
   // Context menu
+  readonly creatableNodeTypes = ['text', 'content', 'distributor', 'end'] as const
+  readonly nodeHelpTopics = NODE_CONTEXT_HELP_TOPICS
   contextMenuPosition = { x: 0, y: 0 }
   contextMenuActive = false
   // Drags to join
@@ -512,6 +517,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   renameGroup(groupId: string, value: string) {
     this.storyEditor.updateNodeText(groupId, value.trim() || this.i18n.t('board.groups.defaultName'))
+  }
+
+  nodeTypeName(type: (typeof this.creatableNodeTypes)[number]) {
+    return this.i18n.t(`board.node.types.${type}`)
   }
 
   openContextMenu(event: MouseEvent) {

@@ -1,0 +1,9 @@
+<label [for]="id">{{ 'contextHelp.preference' | t }}</label>
+<input
+  #toggle
+  [id]="id"
+  type="checkbox"
+  role="switch"
+  [checked]="help.enabled()"
+  (change)="help.setEnabled(toggle.checked)"
+/>

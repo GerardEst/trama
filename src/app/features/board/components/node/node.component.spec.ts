@@ -6,6 +6,7 @@ import { PanzoomService } from '../../services/panzoom.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ApisService } from 'src/app/core/services/apis.service'
 import { StoryEditorService } from '../../services/story-editor.service'
+import { ContextHelpService } from 'src/app/shared/context-help/context-help.service'
 
 describe('NodeComponent', () => {
   let component: NodeComponent
@@ -113,6 +114,81 @@ describe('NodeComponent', () => {
     fixture.detectChanges()
     expect(input.value).toBe('')
     expect(host.querySelector('.node__footer')?.textContent).not.toContain('node_7')
+  })
+
+  it('explains content nodes next to their type without triggering the drag handle', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    const host = fixture.nativeElement as HTMLElement
+    try {
+      TestBed.inject(ContextHelpService).setEnabled(true)
+      fixture.componentRef.setInput('type', 'content')
+      fixture.detectChanges()
+      const row = host.querySelector('.node__typeRow')!
+      expect(row.querySelector('.node__type')?.textContent).toBe('Content node - Selection')
+      const trigger = row.querySelector<HTMLButtonElement>('polo-context-help button')!
+      expect(trigger.getAttribute('aria-label')).toBe('Help: Content node - Selection')
+      expect(getComputedStyle(row).alignItems).toBe('center')
+      const typeRect = row.querySelector('.node__type')!.getBoundingClientRect()
+      const triggerRect = trigger.getBoundingClientRect()
+      expect(typeRect.top + typeRect.height / 2).toBeCloseTo(triggerRect.top + triggerRect.height / 2, 1)
+      const pointerDown = jasmine.createSpy('pointerDown')
+      const mouseDown = jasmine.createSpy('mouseDown')
+      host.addEventListener('pointerdown', pointerDown)
+      host.addEventListener('mousedown', mouseDown)
+      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+      trigger.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      expect(pointerDown).not.toHaveBeenCalled()
+      expect(mouseDown).not.toHaveBeenCalled()
+      trigger.click()
+      fixture.detectChanges()
+      await new Promise<void>((resolve) => setTimeout(resolve, 0))
+      const panel = row.querySelector<HTMLElement>('.contextHelp__panel')!
+      expect(panel.matches(':popover-open')).toBeTrue()
+      expect(panel.textContent).toContain('A content node is a scene')
+      expect(panel.querySelector('a')?.getAttribute('href')).toBe('/docs/features#content-nodes')
+      expect(component.optionsOpen).toBeFalse()
+      TestBed.inject(ContextHelpService).setEnabled(false)
+      fixture.detectChanges()
+      expect(row.querySelector('button')).toBeNull()
+      expect(row.querySelector('.node__type')?.textContent).toBe('Content node - Selection')
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
+  })
+
+  it('uses the matching explanation and canonical name for every node type', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    try {
+      TestBed.inject(ContextHelpService).setEnabled(true)
+      for (const [type, name, fragment, description] of [
+        ['text', 'Content node - Free text', 'player-input', 'open-ended question'],
+        ['content', 'Content node - Selection', 'content-nodes', 'a scene in your story'],
+        ['distributor', 'Distributor node', 'distributors', 'first matching route'],
+        ['end', 'End node', 'share-node', 'end of a story path'],
+      ]) {
+        fixture.componentRef.setInput('type', type)
+        fixture.detectChanges()
+        const row = fixture.nativeElement.querySelector('.node__typeRow') as HTMLElement
+        expect(row.querySelector('.node__type')?.textContent).toBe(name)
+        const trigger = row.querySelector<HTMLButtonElement>('button')!
+        expect(trigger.getAttribute('aria-label')).toBe(`Help: ${name}`)
+        trigger.click()
+        fixture.detectChanges()
+        await new Promise<void>(resolve => setTimeout(resolve, 0))
+        const panel = row.querySelector('.contextHelp__panel')!
+        expect(panel.querySelector('strong')?.textContent).toBe(name)
+        expect(panel.textContent).toContain(description)
+        expect(panel.querySelector('a')?.getAttribute('href')).toBe(`/docs/features#${fragment}`)
+        TestBed.inject(ContextHelpService).close(panel.id)
+        fixture.detectChanges()
+      }
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
   })
 
   it('opens the shortcut image input through the existing upload handler', () => {
