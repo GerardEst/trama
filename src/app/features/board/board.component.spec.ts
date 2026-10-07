@@ -460,6 +460,49 @@ describe('BoardComponent', () => {
     expect(component.panzoom.resumeDrag).toHaveBeenCalled()
   })
 
+  it('measures the board only when a Ctrl-marquee starts, not on every move', () => {
+    TestBed.inject(ActiveStoryService).load('marquee-measure', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 350, top: 0 },
+      ],
+    })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const nodes = Array.from(board.querySelectorAll<HTMLElement>('polo-node'))
+    const boardRect = spyOn(board, 'getBoundingClientRect').and.returnValue(
+      new DOMRect(0, 0, board.offsetWidth, 5000)
+    )
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(false)
+    const nodeRects = [
+      spyOn(nodes[0], 'getBoundingClientRect').and.returnValue(new DOMRect(50, 50, 30, 30)),
+      spyOn(nodes[1], 'getBoundingClientRect').and.returnValue(new DOMRect(200, 50, 30, 30)),
+    ]
+
+    board.dispatchEvent(new PointerEvent('pointerdown', {
+      bubbles: true, button: 0, ctrlKey: true, pointerId: 4,
+      clientX: 10, clientY: 10,
+    }))
+    boardRect.calls.reset()
+    nodeRects.forEach((rect) => rect.calls.reset())
+
+    board.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, pointerId: 4, clientX: 100, clientY: 100,
+    }))
+    expect([...component.selectedNodeIds]).toEqual(['node_0'])
+    board.dispatchEvent(new PointerEvent('pointermove', {
+      bubbles: true, pointerId: 4, clientX: 250, clientY: 100,
+    }))
+    expect([...component.selectedNodeIds]).toEqual(['node_0', 'node_1'])
+    expect(component.selectionBox).toEqual({
+      left: 10, top: 10, width: 240, height: 90,
+    })
+
+    expect(boardRect).not.toHaveBeenCalled()
+    nodeRects.forEach((rect) => expect(rect).not.toHaveBeenCalled())
+  })
+
   it('shows a disabled group button on dashboard boards until selection is valid', () => {
     component.groupControls = true
     fixture.detectChanges()

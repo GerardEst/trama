@@ -46,6 +46,20 @@ interface JoinCounts {
 
 const EMPTY_JOIN_COUNTS: JoinCounts = { incoming: 0, outgoing: 0 }
 
+interface BoardOrigin {
+  left: number
+  top: number
+  scale: number
+}
+
+interface SelectionTarget {
+  nodeId: string
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
 interface BoardJoinTarget {
   nodeId: string
   toAnswer: boolean
@@ -188,6 +202,10 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   private selectionPointerId?: number
   private selectionStart?: BoardPoint
   private selectionScreenStart?: BoardPoint
+  // Measured once per marquee: panzoom is paused, so nothing moves meanwhile
+  // and pointer moves can hit-test without forcing a layout.
+  private selectionOrigin?: BoardOrigin
+  private selectionTargets: SelectionTarget[] = []
   private groupDrag?: {
     sourceId: string
     positions: Map<string, Point>
@@ -546,7 +564,9 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.target === board) {
       if (event.ctrlKey) {
         this.selectionPointerId = event.pointerId
-        this.selectionStart = this.getBoardPosition(event)
+        this.selectionOrigin = this.getBoardOrigin()
+        this.selectionTargets = this.measureSelectionTargets()
+        this.selectionStart = this.getBoardPosition(event, this.selectionOrigin)
         this.selectionScreenStart = { x: event.clientX, y: event.clientY }
         this.selectedNodeIds = new Set()
         this.selectionBox = {
@@ -584,7 +604,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   checkDrag(event: PointerEvent) {
     if (event.pointerId === this.selectionPointerId && this.selectionStart) {
-      const position = this.getBoardPosition(event)
+      const position = this.getBoardPosition(event, this.selectionOrigin)
       this.selectionBox = {
         left: Math.min(this.selectionStart.x, position.x),
         top: Math.min(this.selectionStart.y, position.y),
@@ -677,6 +697,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectionPointerId = undefined
     this.selectionStart = undefined
     this.selectionScreenStart = undefined
+    this.selectionOrigin = undefined
+    this.selectionTargets = []
     this.selectionBox = undefined
     if (
       board &&
@@ -696,18 +718,30 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     const bottom = Math.max(start.y, event.clientY)
     const selected = new Set<string>()
 
-    for (const drag of this.nodeDrags ?? []) {
-      const rect = drag.element.nativeElement.getBoundingClientRect()
+    for (const target of this.selectionTargets) {
       if (
-        rect.left <= right &&
-        rect.right >= left &&
-        rect.top <= bottom &&
-        rect.bottom >= top
+        target.left <= right &&
+        target.right >= left &&
+        target.top <= bottom &&
+        target.bottom >= top
       ) {
-        selected.add(drag.data)
+        selected.add(target.nodeId)
       }
     }
     this.selectedNodeIds = selected
+  }
+
+  private measureSelectionTargets(): SelectionTarget[] {
+    return (this.nodeDrags?.toArray() ?? []).map((drag) => {
+      const rect = drag.element.nativeElement.getBoundingClientRect()
+      return {
+        nodeId: drag.data,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+      }
+    })
   }
 
   nodePointerDown(nodeId: string, event?: PointerEvent) {
@@ -953,15 +987,24 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private getBoardPosition(event: BoardPoint) {
+  private getBoardPosition(event: BoardPoint, origin = this.getBoardOrigin()) {
+    if (!origin) return { x: 0, y: 0 }
+
+    return {
+      x: (event.x - origin.left) / origin.scale,
+      y: (event.y - origin.top) / origin.scale,
+    }
+  }
+
+  private getBoardOrigin(): BoardOrigin | undefined {
     const boardElement = this.boardElement?.nativeElement
-    if (!boardElement) return { x: 0, y: 0 }
+    if (!boardElement) return undefined
 
     const boardRect = boardElement.getBoundingClientRect()
-    const scale = boardRect.width / boardElement.offsetWidth || 1
     return {
-      x: (event.x - boardRect.left) / scale,
-      y: (event.y - boardRect.top) / scale,
+      left: boardRect.left,
+      top: boardRect.top,
+      scale: boardRect.width / boardElement.offsetWidth || 1,
     }
   }
 
