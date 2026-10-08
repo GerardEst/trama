@@ -863,6 +863,33 @@ describe('BoardComponent', () => {
     expect(framedNode.textContent).not.toContain('Remove from frame')
   })
 
+  it('reuses frame bounds between checks and follows rendered node sizes', async () => {
+    const activeStory = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    activeStory.load('frame-size', 'Story', {
+      nodes: [
+        { id: 'node_0', type: 'content', left: 0, top: 0 },
+        { id: 'node_1', type: 'end', left: 300, top: 0 },
+      ],
+    })
+    storyEditor.frameNodes(new Set(['node_0', 'node_1']))
+    fixture.detectChanges()
+    const resized = () => new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    )
+    await resized()
+    const frame = activeStory.entireTree().frames![0]
+    const bounds = component.frameBounds(frame)
+    fixture.detectChanges()
+    expect(component.frameBounds(frame)).toBe(bounds)
+
+    const tallNode = component.nodeDrags!.toArray()[1].element.nativeElement
+    tallNode.style.minHeight = '1000px'
+    await resized()
+    expect(component.frameBounds(frame).height).toBe(tallNode.offsetHeight + 88)
+    expect(component.frameBounds(frame).width).toBe(bounds.width)
+  })
+
   it('adds a dragged node to a frame when its header is dropped inside at half zoom', () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)

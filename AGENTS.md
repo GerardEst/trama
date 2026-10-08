@@ -57,6 +57,7 @@ Do not run `npm run deploy-edge` unless the user explicitly requests a deploymen
 - Treat `interfaces.ts` as a compatibility boundary. Changes to persisted story types must account for existing Supabase data and older stories with optional or missing fields.
 - Avoid introducing more `any`; narrow values at data boundaries when practical, but do not broaden the task into a type-system rewrite.
 - Keep business logic out of templates. Put shared behavior in services or utilities rather than duplicating it across components.
+- Never add always-on global listeners (`@HostListener('document:…')`, `window:…`, or `document.addEventListener`) to components that can render many times. Every listener invocation triggers change detection, so one per instance multiplies the cost of each pointer move, click, or keypress by the number of instances. Register them only while needed (e.g. while pressed or open), outside Angular when the state is not rendered, and remove them on close and destroy. The board is the priority: real stories render hundreds of nodes, answers, and popovers, and efficiency comes first there.
 - Do not leave `console.log` or `console.debug` calls. ESLint permits `console.warn` and `console.error`.
 - Never commit credentials, service-role keys, Stripe secrets, authenticated Playwright state, or local `.env` files. Supabase anon keys are public client configuration, but privileged keys are not.
 - Do not edit production infrastructure or deploy application/backend changes unless explicitly asked.

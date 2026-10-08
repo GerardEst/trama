@@ -38,6 +38,7 @@ import { FrameColorPickerComponent } from './components/frame-color-picker/frame
 import { projectBoardJoins } from './board-join-projection'
 import { BoardAnchorDirective } from './directives/board-anchor.directive'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
+import { Subscription } from 'rxjs'
 
 interface JoinCounts {
   incoming: number
@@ -58,6 +59,18 @@ interface SelectionTarget {
   right: number
   top: number
   bottom: number
+}
+
+interface NodeSize {
+  width: number
+  height: number
+}
+
+interface FrameBounds {
+  left: number
+  top: number
+  width: number
+  height: number
 }
 
 interface BoardJoinTarget {
@@ -137,6 +150,39 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       (frame) => frame.groupId === this.currentGroupId &&
         frame.nodeIds.some((id) => visibleIds.has(id))
     )
+  })
+
+  /**
+   * Rendered node sizes. A ResizeObserver keeps them current so change
+   * detection never has to read layout from the DOM.
+   */
+  private readonly nodeSizes = signal(new Map<string, NodeSize>())
+  private nodeResize?: ResizeObserver
+  private nodeResizeChanges?: Subscription
+  private readonly observedNodes = new Map<Element, string>()
+
+  // Template bindings run on every check of the board (each pointer move over
+  // it), so frame geometry is derived once per tree, frame or size change.
+  private readonly frameBoundsById = computed(() => {
+    const nodes = new Map(
+      this.visibleBoardNodes().map((storyNode) => [storyNode.id, storyNode])
+    )
+    const sizes = this.nodeSizes()
+    const bounds = new Map<string, FrameBounds>()
+    for (const frame of this.visibleFrames()) {
+      bounds.set(frame.id, measureFrame(frame, nodes, sizes))
+    }
+    return bounds
+  })
+
+  private readonly frameByNode = computed(() => {
+    const frames = new Map<string, boardFrame>()
+    for (const frame of this.visibleFrames()) {
+      for (const nodeId of frame.nodeIds) {
+        if (!frames.has(nodeId)) frames.set(nodeId, frame)
+      }
+    }
+    return frames
   })
 
   private readonly visibleBoardNodes = computed(() =>
@@ -350,11 +396,61 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       initialZoom: this.initialZoom,
       zoomable: this.zoomable,
     })
+    if (typeof ResizeObserver !== 'undefined') {
+      this.nodeResize = new ResizeObserver((entries) => this.measureNodes(entries))
+      this.observeNodes()
+      this.nodeResizeChanges = this.nodeDrags?.changes.subscribe(() => this.observeNodes())
+    }
   }
 
   ngOnDestroy() {
     this.cancelNodeReveal()
     this.panzoom.destroy()
+    this.nodeResizeChanges?.unsubscribe()
+    this.nodeResize?.disconnect()
+  }
+
+  private observeNodes() {
+    const current = new Map<Element, string>(
+      (this.nodeDrags?.toArray() ?? []).map((drag) => [drag.element.nativeElement, drag.data])
+    )
+    let removed = false
+    for (const element of this.observedNodes.keys()) {
+      if (!current.has(element)) {
+        this.nodeResize?.unobserve(element)
+        this.observedNodes.delete(element)
+        removed = true
+      }
+    }
+    for (const [element, nodeId] of current) {
+      if (this.observedNodes.get(element) === nodeId) continue
+      this.observedNodes.set(element, nodeId)
+      // Observing reports the initial size, so new nodes get measured too.
+      this.nodeResize?.observe(element)
+    }
+    if (removed) {
+      const ids = new Set(current.values())
+      this.nodeSizes.update((sizes) =>
+        new Map([...sizes].filter(([nodeId]) => ids.has(nodeId)))
+      )
+    }
+  }
+
+  private measureNodes(entries: ResizeObserverEntry[]) {
+    let sizes: Map<string, NodeSize> | undefined
+    for (const entry of entries) {
+      const nodeId = this.observedNodes.get(entry.target)
+      if (!nodeId) continue
+      // Layout is already fresh when observers run, so this read is cheap.
+      const element = entry.target as HTMLElement
+      const width = element.offsetWidth
+      const height = element.offsetHeight
+      const previous = (sizes ?? this.nodeSizes()).get(nodeId)
+      if (previous?.width === width && previous.height === height) continue
+      sizes ??= new Map(this.nodeSizes())
+      sizes.set(nodeId, { width, height })
+    }
+    if (sizes) this.nodeSizes.set(sizes)
   }
 
   /** Reveal a playthrough node without changing the author's editing selection. */
@@ -442,7 +538,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   frameForNode(nodeId: string): boardFrame | undefined {
-    return this.visibleFrames().find((frame) => frame.nodeIds.includes(nodeId))
+    return this.frameByNode().get(nodeId)
   }
 
   removeNodeFromFrame(nodeId: string) {
@@ -457,21 +553,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshFlows()
   }
 
-  frameBounds(frame: boardFrame) {
-    const members = new Set(frame.nodeIds)
-    const nodes = this.visibleNodes().filter((storyNode) => members.has(storyNode.id))
-    const drags = new Map(
-      (this.nodeDrags?.toArray() ?? []).map((drag) => [drag.data, drag])
+  frameBounds(frame: boardFrame): FrameBounds {
+    return this.frameBoundsById().get(frame.id) ?? measureFrame(
+      frame,
+      new Map(this.visibleNodes().map((storyNode) => [storyNode.id, storyNode])),
+      this.nodeSizes()
     )
-    const left = Math.min(...nodes.map((node) => Number(node.left) || 0)) - 32
-    const top = Math.min(...nodes.map((node) => Number(node.top) || 0)) - 56
-    const right = Math.max(...nodes.map((node) =>
-      (Number(node.left) || 0) + (drags.get(node.id)?.element.nativeElement.offsetWidth || 260)
-    )) + 32
-    const bottom = Math.max(...nodes.map((node) =>
-      (Number(node.top) || 0) + (drags.get(node.id)?.element.nativeElement.offsetHeight || 160)
-    )) + 32
-    return { left, top, width: right - left, height: bottom - top }
   }
 
   getFrameDragPosition(frame: boardFrame): Point {
@@ -1053,4 +1140,21 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   private setNodeZIndex(target: EventTarget | null, zIndex: number) {
     if (target instanceof HTMLElement) target.style.zIndex = String(zIndex)
   }
+}
+
+function measureFrame(
+  frame: boardFrame,
+  nodes: ReadonlyMap<string, node>,
+  sizes: ReadonlyMap<string, NodeSize>
+): FrameBounds {
+  const members = frame.nodeIds.flatMap((nodeId) => nodes.get(nodeId) ?? [])
+  const left = Math.min(...members.map((member) => Number(member.left) || 0)) - 32
+  const top = Math.min(...members.map((member) => Number(member.top) || 0)) - 56
+  const right = Math.max(...members.map((member) =>
+    (Number(member.left) || 0) + (sizes.get(member.id)?.width || 260)
+  )) + 32
+  const bottom = Math.max(...members.map((member) =>
+    (Number(member.top) || 0) + (sizes.get(member.id)?.height || 160)
+  )) + 32
+  return { left, top, width: right - left, height: bottom - top }
 }
