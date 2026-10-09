@@ -43,6 +43,43 @@ describe('BoardComponent', () => {
     fixture.destroy()
   })
 
+  it('explains the entry with the shared help without starting a drag or changing the story', async () => {
+    const key = 'polo-context-help'
+    const previous = localStorage.getItem(key)
+    const help = TestBed.inject(ContextHelpService)
+    const story = TestBed.inject(ActiveStoryService)
+    story.load('entry-help', 'Story', { nodes: [] })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const capture = spyOn(board, 'setPointerCapture')
+    const before = story.entireTree()
+    try {
+      help.setEnabled(false)
+      fixture.detectChanges()
+      expect(board.querySelector('polo-entry-point polo-context-help button')).toBeNull()
+      help.setEnabled(true)
+      fixture.detectChanges()
+      const trigger = board.querySelector<HTMLButtonElement>('polo-entry-point polo-context-help button')!
+      trigger.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+      trigger.click()
+      fixture.detectChanges()
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      const panel = board.querySelector<HTMLElement>('polo-entry-point .contextHelp__panel')!
+      const copy = CONTEXT_HELP_TOPICS['board.entryPoint']
+      const i18n = TestBed.inject(I18nService)
+      expect(panel.matches(':popover-open')).toBeTrue()
+      expect(panel.querySelector('strong')?.textContent).toBe(i18n.t(copy.title))
+      expect(panel.querySelector('.contextHelp__body')?.textContent).toBe(i18n.t(copy.body))
+      expect(panel.querySelector('a')?.getAttribute('href')).toContain('#connections')
+      expect(capture).not.toHaveBeenCalled()
+      expect(component.isDrawingJoin).toBeFalse()
+      expect(story.entireTree()).toBe(before)
+    } finally {
+      if (previous === null) localStorage.removeItem(key)
+      else localStorage.setItem(key, previous)
+    }
+  })
+
   it('renders one movable entry outside node selections, frames and groups', () => {
     const story = TestBed.inject(ActiveStoryService)
     const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)

@@ -4,6 +4,9 @@ export const contextHelp = {
   documentation: 'Verlo en la documentación',
   newTab: 'Se abre en una pestaña nueva',
   topics: {
+    entryPoint: {
+      body: 'Inicio indica dónde comienza la aventura. No es una escena ni se muestra al jugador: arrastra el conector hasta el nodo que quieres ejecutar primero. Puedes cambiar esta conexión en cualquier momento. Si queda desconectado, no se puede iniciar la partida.',
+    },
     contentNode: {
       body: 'Un nodo de contenido es una escena de tu historia. Escribe el pasaje que leerá el jugador y añade respuestas para que pueda elegir qué ocurre después. Conecta cada respuesta con otro nodo para crear caminos diferentes. Si no hay respuestas, puedes conectar el nodo directamente con la siguiente escena.',
     },

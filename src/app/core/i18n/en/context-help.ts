@@ -4,6 +4,9 @@ export const contextHelp = {
   documentation: 'View in the documentation',
   newTab: 'Opens in a new tab',
   topics: {
+    entryPoint: {
+      body: 'Start marks where the adventure begins. It is not a scene and is not shown to the player: drag its connector to the node you want to run first. You can change this connection at any time. If it is disconnected, the playthrough cannot start.',
+    },
     contentNode: {
       body: 'A content node is a scene in your story. Write the passage the player will read and add answers so they can choose what happens next. Connect each answer to another node to create different paths. Without answers, you can connect the node directly to the next scene.',
     },

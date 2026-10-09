@@ -4,6 +4,9 @@ export const contextHelp = {
   documentation: 'Veure-ho a la documentació',
   newTab: 'S’obre en una pestanya nova',
   topics: {
+    entryPoint: {
+      body: 'Inici indica on comença l’aventura. No és una escena ni es mostra al jugador: arrossega el connector fins al node que vols executar primer. Pots canviar aquesta connexió en qualsevol moment. Si queda desconnectat, no es pot iniciar la partida.',
+    },
     contentNode: {
       body: 'Un node de contingut és una escena de la teva història. Escriu el passatge que llegirà el jugador i afegeix respostes perquè pugui triar què passa després. Connecta cada resposta amb un altre node per crear camins diferents. Si no hi ha respostes, pots connectar el node directament amb l’escena següent.',
     },

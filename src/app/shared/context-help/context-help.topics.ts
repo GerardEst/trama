@@ -2,6 +2,11 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 // Adding a topic only requires translated copy and an explicit template placement.
 export const CONTEXT_HELP_TOPICS = {
+  'board.entryPoint': {
+    title: 'board.entryPoint.label',
+    body: 'contextHelp.topics.entryPoint.body',
+    docsFragment: 'connections',
+  },
   'board.events': {
     title: 'contextHelp.topics.events.title',
     body: 'contextHelp.topics.events.body',
