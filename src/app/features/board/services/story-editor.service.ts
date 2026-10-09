@@ -19,6 +19,8 @@ import {
   generateIDForNewNode,
 } from 'src/app/shared/utils/tree-searching'
 
+import { ENTRY_POINT_ORIGIN } from '../board-interactions'
+
 interface Joinable {
   join?: join[]
 }
@@ -90,7 +92,7 @@ export class StoryEditorService {
   removeNode(nodeId: string) {
     this.mutations.update((tree) => {
       const existing = findNodeInTree(nodeId, tree)
-      if (!existing || nodeId === 'node_0') return false
+      if (!existing) return false
       const moved = new Set<string>([nodeId])
       if (existing.type === 'group') {
         for (const child of tree.nodes) {
@@ -102,6 +104,7 @@ export class StoryEditorService {
       }
 
       tree.nodes = tree.nodes.filter((storyNode) => storyNode.id !== nodeId)
+      if (tree.entryPoint?.targetNodeId === nodeId) delete tree.entryPoint.targetNodeId
       this.detachFromFrames(tree, moved)
 
       for (const storyNode of tree.nodes) {
@@ -132,7 +135,7 @@ export class StoryEditorService {
       selected.length !== nodeIds.size ||
       selected.some(
         (storyNode) =>
-          storyNode.id === 'node_0' || storyNode.groupId !== parentGroupId
+          storyNode.groupId !== parentGroupId
       ) ||
       (parentGroupId &&
         !nodes.some(
@@ -323,6 +326,13 @@ export class StoryEditorService {
     positions: ReadonlyMap<string, { x: number; y: number }>
   ): boolean {
     let changed = false
+    const entryPosition = positions.get(ENTRY_POINT_ORIGIN)
+    if (entryPosition && tree.entryPoint &&
+      (tree.entryPoint.left !== entryPosition.x || tree.entryPoint.top !== entryPosition.y)) {
+      tree.entryPoint.left = entryPosition.x
+      tree.entryPoint.top = entryPosition.y
+      changed = true
+    }
     const offsets = new Map<string, { x: number; y: number }>()
     for (const storyNode of tree.nodes) {
       const position = positions.get(storyNode.id)
@@ -554,6 +564,13 @@ export class StoryEditorService {
     toAnswer = false
   ) {
     this.mutations.update((tree) => {
+      if (originId === ENTRY_POINT_ORIGIN) {
+        const target = findNodeInTree(destinyNodeId, tree)
+        if (!tree.entryPoint || !target || target.type === 'group' || toAnswer ||
+          tree.entryPoint.targetNodeId === destinyNodeId) return false
+        tree.entryPoint.targetNodeId = destinyNodeId
+        return true
+      }
       const option = this.findOrCreateJoinOrigin(originId, tree)
       if (!option) return false
 
@@ -572,6 +589,11 @@ export class StoryEditorService {
     toAnswer: boolean | undefined
   ) {
     return this.mutations.update((tree) => {
+      if (originId === ENTRY_POINT_ORIGIN) {
+        if (!tree.entryPoint || tree.entryPoint.targetNodeId !== destinyNodeId || toAnswer) return false
+        delete tree.entryPoint.targetNodeId
+        return true
+      }
       const origin = this.findJoinOrigin(originId, tree)
       if (!origin?.join) return false
 

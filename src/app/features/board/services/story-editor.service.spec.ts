@@ -3,6 +3,7 @@ import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { StoryEditorService } from './story-editor.service'
+import { ENTRY_POINT_ORIGIN } from '../board-interactions'
 
 class DatabaseStub {
   saveTreeToDB = jasmine.createSpy('saveTreeToDB').and.resolveTo(true)
@@ -48,6 +49,47 @@ describe('StoryEditorService', () => {
         },
       ],
     })
+  })
+
+  it('moves and reconnects the entry through existing operations and persists just one destination', () => {
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    editor.updateNodePosition(ENTRY_POINT_ORIGIN, 50, 70)
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'node_1')
+    expect(activeStory.entireTree().entryPoint).toEqual({ left: 50, top: 70, targetNodeId: 'node_1' })
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'node_0')
+    expect(activeStory.entireTree().entryPoint?.targetNodeId).toBe('node_0')
+    expect(activeStory.entireTree().nodes).toHaveSize(2)
+    expect(save.calls.mostRecent().args[1].entryPoint.targetNodeId).toBe('node_0')
+    expect(editor.removeJoin(ENTRY_POINT_ORIGIN, 'node_1', false)).toBeFalse()
+    expect(editor.removeJoin(ENTRY_POINT_ORIGIN, 'node_0', false)).toBeTrue()
+    expect(activeStory.entireTree().entryPoint).toEqual({ left: 50, top: 70 })
+    activeStory.load('story-1', 'Story', activeStory.entireTree())
+    expect(activeStory.initialNode()).toBeUndefined()
+  })
+
+  it('rejects invalid entry destinations, answer ports and unchanged edits without saving', () => {
+    activeStory.updateTree(draft => {
+      draft.nodes.push({ id: 'node_2', type: 'group', left: 0, top: 0 })
+    })
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'missing')
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'node_2')
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'node_1', true)
+    editor.updateJoinOfOption(ENTRY_POINT_ORIGIN, 'node_0')
+    editor.updateNodePosition(ENTRY_POINT_ORIGIN, -180, -100)
+    expect(save).not.toHaveBeenCalled()
+    expect(activeStory.initialNode()?.id).toBe('node_0')
+  })
+
+  it('allows deleting node_0, cleans incoming links and leaves the entry disconnected', () => {
+    activeStory.updateTree(draft => { draft.nodes[1].join = [{ node: 'node_0' }] })
+    editor.removeNode('node_0')
+    expect(activeStory.entireTree().nodes.map(node => node.id)).toEqual(['node_1'])
+    expect(activeStory.entireTree().nodes[0].join).toEqual([])
+    expect(activeStory.entireTree().entryPoint?.targetNodeId).toBeUndefined()
+    expect(activeStory.initialNode()).toBeUndefined()
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(save.calls.mostRecent().args[1].entryPoint.targetNodeId).toBeUndefined()
   })
 
   it('persists answer order without rewriting IDs, connections, events or requirements', () => {
@@ -122,9 +164,13 @@ describe('StoryEditorService', () => {
     expect(activeStory.entireTree().nodes[0].join).toEqual([{ node: 'node_1' }])
   })
 
-  it('does not group the starting node or nodes from different levels', () => {
+  it('allows grouping node_0 without changing the entry and rejects nodes from different levels', () => {
+    const group = editor.groupNodes(new Set(['node_0', 'node_1']))!
+    expect(group).toBeTruthy()
+    expect(activeStory.initialNode()?.id).toBe('node_0')
+    expect(activeStory.initialNode()?.groupId).toBe(group)
     const before = activeStory.entireTree()
-    expect(editor.groupNodes(new Set(['node_0', 'node_1']))).toBeUndefined()
+    expect(editor.groupNodes(new Set(['node_0', group]))).toBeUndefined()
     expect(activeStory.entireTree()).toBe(before)
   })
 

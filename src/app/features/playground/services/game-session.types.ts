@@ -29,4 +29,4 @@ export type GameSessionEvent =
   | { type: 'answer'; answer: node_answer }
   | { type: 'end' }
 
-export type GameSessionProblem = 'missingNode' | 'automaticLoop' | null
+export type GameSessionProblem = 'missingStart' | 'missingNode' | 'automaticLoop' | null

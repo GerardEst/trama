@@ -11,3 +11,9 @@
   overflow-y: auto;
   overscroll-behavior: var(--polo-game-overscroll, contain);
 }
+
+.gameNotice {
+  padding: 24px;
+  color: var(--polo-color-text-secondary);
+  text-align: center;
+}

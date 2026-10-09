@@ -162,6 +162,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
       property_deed: { name: copy.refs.deed, type: 'property' },
     },
     categories: [],
+    entryPoint: { left: -180, top: 600, targetNodeId: 'node_0' },
     nodes: [
       {
         id: 'node_0',

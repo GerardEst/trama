@@ -12,11 +12,20 @@ export interface refCategory {
   name: string
 }
 
+/** Story entry configuration; not an executable node. */
+export interface storyEntryPoint {
+  left: number
+  top: number
+  targetNodeId?: string
+}
+
 /**
  * Runtime representation of a story tree. Persisted stories are normalized to
  * this shape when they become active so consumers do not need null checks.
  */
 export interface tree {
+  /** Optional only for compatibility with stories predating the entry marker. */
+  entryPoint?: storyEntryPoint
   refs: Record<string, ref>
   nodes: Array<node>
   categories: Array<refCategory>

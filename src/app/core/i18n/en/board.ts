@@ -1,4 +1,10 @@
 export const board = {
+  entryPoint: {
+    label: 'Start',
+    move: 'Move the starting point',
+    connect: 'Drag to a node to start the story there',
+    disconnected: 'Connect Start to a node to play.',
+  },
   groups: {
     label: 'Board groups',
     exit: '← Exit {name}',
@@ -7,7 +13,6 @@ export const board = {
     groupShortcut: 'Group selected nodes (Ctrl+G / ⌘G)',
     frameSelection: 'Frame selected nodes',
     frameShortcut: 'Frame selected nodes (Ctrl+F / ⌘F)',
-    startNode: 'The start node cannot be grouped',
     selectHint: 'Ctrl + drag to select at least 2 nodes',
     defaultName: 'Group',
     name: 'Group name',
@@ -97,7 +102,6 @@ export const board = {
       'Saved as extra guidance for this input; not currently shown in the playground.',
     addRoute: 'Add route',
     addAnswer: 'Add answer',
-    cannotDeleteStart: 'The start node cannot be deleted',
     optimizingImage: 'Optimizing image',
     imageTooBig: 'The image is too big\nTry again with a smaller image.',
     imageError: 'Error uploading the image',

@@ -78,7 +78,7 @@ export const dashboard: Dictionary['dashboard'] = {
     structureHint: 'Edita las conexiones, los eventos y los requisitos en el tablero.',
     end: 'Final de este camino. Vuelve atrás para explorar otra rama.',
     continue: 'Continuar historia',
-    empty: 'Añade un nodo inicial en el tablero para comenzar.',
+    empty: 'Conecta Inicio a un nodo del tablero para comenzar.',
     missingNode: 'Esta conexión no tiene ningún nodo disponible. Puedes editarla en el tablero o volver atrás.',
     automaticLoop: 'La navegación automática se ha detenido tras una cadena larga. Puedes continuar o volver atrás.',
     resize: 'Ajustar el tamaño del tablero y de la vista previa',

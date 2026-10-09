@@ -78,7 +78,7 @@ export const dashboard: Dictionary['dashboard'] = {
     structureHint: 'Edita les connexions, els esdeveniments i els requisits al tauler.',
     end: 'Final d’aquest camí. Torna enrere per explorar una altra branca.',
     continue: 'Continua la història',
-    empty: 'Afegeix un node inicial al tauler per començar.',
+    empty: 'Connecta Inici a un node del tauler per començar.',
     missingNode: 'Aquesta connexió no té cap node disponible. Pots editar-la al tauler o tornar enrere.',
     automaticLoop: 'La navegació automàtica s’ha aturat després d’una cadena llarga. Pots continuar o tornar enrere.',
     resize: 'Ajusta la mida del tauler i de la previsualització',

@@ -23,7 +23,7 @@
     </button>
     @if (!canGroupSelection()) {
       <span>
-        {{ (selectedNodeIds.has('node_0') ? 'board.groups.startNode' : 'board.groups.selectHint') | t }}
+        {{ 'board.groups.selectHint' | t }}
       </span>
     }
   </nav>
@@ -64,6 +64,20 @@
     </div>
   }
 
+  @if (!currentGroupId) {
+    @if (activeStory.entireTree().entryPoint; as entry) {
+      <polo-entry-point
+        cdkDrag
+        [cdkDragData]="entryOrigin"
+        [cdkDragConstrainPosition]="constrainNodePosition"
+        [cdkDragFreeDragPosition]="getNodeDragPosition(entry)"
+        [connected]="!!activeStory.initialNode()"
+        (pointerdown)="panzoom.pauseDrag()"
+        (cdkDragEnded)="entryDragEnded($event)"
+        (cdkDragMoved)="nodeDragCheck($event)"
+      ></polo-entry-point>
+    }
+  }
   @for (frame of visibleFrames(); track frame.id) {
     @if (frameBounds(frame); as bounds) {
       <div

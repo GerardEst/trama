@@ -4,6 +4,7 @@ export const playground: Dictionary['playground'] = {
   darkMode: 'Modo oscuro',
   createdWith: 'Creado con',
   notFound: 'No se ha encontrado la historia',
+  missingStart: 'Esta historia no tiene ningún punto de inicio conectado.',
   illustration: 'Ilustración de la historia',
   chooseAnswer: 'Elige una respuesta',
   yourAnswer: 'Tu respuesta',

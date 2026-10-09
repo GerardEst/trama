@@ -7,12 +7,13 @@ import { TextContinuation } from '../../services/game-session.types'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { SingleGameComponent } from './views/single-game.component'
 import { CumulativeGameComponent } from './views/cumulative-game.component'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 /** Public player shell. The linear editor imports neither this nor cumulative mode. */
 @Component({
   selector: 'polo-game',
   standalone: true,
-  imports: [SingleGameComponent, CumulativeGameComponent],
+  imports: [SingleGameComponent, CumulativeGameComponent, TranslatePipe],
   providers: [GameSessionService],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css',

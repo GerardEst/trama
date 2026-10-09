@@ -258,7 +258,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
             'Marco → todas las escenas visibles, movidas a la vez',
           ],
         },
-        note: 'Los grupos y los marcos son herramientas para organizar el editor, no escenas jugables. No cambian la lógica de la historia. El nodo inicial se queda en el tablero principal, no dentro de un grupo.',
+        note: 'Los grupos y los marcos son herramientas para organizar el editor, no escenas jugables. No cambian la lógica de la historia. El marcador Inicio se queda en el tablero principal y puede apuntar a una escena dentro de un grupo.',
       },
     ],
   },

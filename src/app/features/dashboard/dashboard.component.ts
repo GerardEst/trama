@@ -171,15 +171,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setInitialBoardPositionFor(storyId: string) {
     const activeNodeId = this.boardPreferences.getActiveNode(storyId)
-    if (activeNodeId) {
-      const activeNode = findNodeInTree(
-        activeNodeId,
-        this.activeStory.entireTree()
-      )
+    const activeNode = activeNodeId
+      ? findNodeInTree(activeNodeId, this.activeStory.entireTree())
+      : undefined
+    if (activeNode) {
       this.board?.centerToNode(activeNode)
     } else {
       setTimeout(() => {
-        this.board?.centerToNode(this.activeStory.entireTree().nodes[0])
+        if (this.activeStory.storyId() !== storyId) return
+        const initial = this.activeStory.initialNode()
+        if (initial) this.board?.centerToNode(initial)
+        else this.board?.centerToEntryPoint()
       }, 0)
     }
   }
@@ -206,6 +208,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         tree: {
           nodes: [],
           refs: {},
+          entryPoint: { left: 5000, top: 5000 },
         },
         profile_id: this.db.user()?.id,
       },
@@ -221,8 +224,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       name: newTree[0].name,
     })
 
-    this.initBoard(newTree[0].id)
-    this.board?.goTo(-5000, -5000)
+    await this.initBoard(newTree[0].id)
+    this.board?.centerToEntryPoint()
   }
 
   async deleteStory(storyId: string) {

@@ -1,4 +1,7 @@
 <div #game class="gameContainer">
+  @if (session.problem() === 'missingStart') {
+    <p class="gameNotice" role="status">{{ 'playground.missingStart' | t }}</p>
+  }
   @if (mode === 'cumulative') {
     <polo-cumulative-game [nodes]="activeNodes" [previousNodes]="inactiveNodes"
       (answerSelected)="selectAnswer($event)" (continued)="continueFlow($event)" />

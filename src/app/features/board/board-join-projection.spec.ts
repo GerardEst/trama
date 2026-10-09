@@ -1,7 +1,30 @@
 import { node } from 'src/app/core/interfaces/interfaces'
 import { projectBoardJoins } from './board-join-projection'
+import { ENTRY_POINT_ORIGIN } from './board-interactions'
 
 describe('projectBoardJoins', () => {
+  it('projects the entry into nested groups without inserting a fake node', () => {
+    const nodes: node[] = [
+      { id: 'node_0', type: 'content', left: 0, top: 0, groupId: 'node_2' },
+      { id: 'node_1', type: 'group', left: 0, top: 0 },
+      { id: 'node_2', type: 'group', left: 0, top: 0, groupId: 'node_1' },
+    ]
+    const entry = { left: -180, top: 0, targetNodeId: 'node_0' }
+    expect(projectBoardJoins(nodes, undefined, entry).map(path => [path.fromAnchor, path.toAnchor])).toEqual([
+      [`${ENTRY_POINT_ORIGIN}_join`, 'node_1_group-entry'],
+    ])
+    expect(projectBoardJoins(nodes, 'node_1', entry).map(path => [path.fromAnchor, path.toAnchor])).toEqual([
+      ['node_1_boundary-in', 'node_2_group-entry'],
+    ])
+    expect(projectBoardJoins(nodes, 'node_2', entry).map(path => [path.fromAnchor, path.toAnchor])).toEqual([
+      ['node_2_boundary-in', 'node_0_joiner'],
+    ])
+    expect(projectBoardJoins(nodes, 'outside', entry)).toEqual([])
+    expect(projectBoardJoins(nodes, undefined, { ...entry, targetNodeId: 'missing' })).toEqual([])
+    expect(projectBoardJoins(nodes, undefined, { ...entry, targetNodeId: 'node_1' })).toEqual([])
+    expect(nodes).toHaveSize(3)
+  })
+
   it('retains answer joins through nested groups at every board level', () => {
     const nodes: node[] = [
       {

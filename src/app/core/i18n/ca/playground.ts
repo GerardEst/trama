@@ -4,6 +4,7 @@ export const playground: Dictionary['playground'] = {
   darkMode: 'Mode fosc',
   createdWith: 'Creat amb',
   notFound: 'No s’ha trobat la història',
+  missingStart: 'Aquesta història no té cap punt d’inici connectat.',
   illustration: 'Il·lustració de la història',
   chooseAnswer: 'Tria una resposta',
   yourAnswer: 'La teva resposta',

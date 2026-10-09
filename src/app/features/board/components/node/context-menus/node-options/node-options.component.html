@@ -39,16 +39,14 @@
       align="left"
     ></polo-basic-button>
   }
-  @if (nodeId !== 'node_0') {
-    <polo-basic-button
-      [transparent]="true"
-      size="s"
-      type="danger"
-      [title]="'board.nodeOptions.deleteShortcut' | t"
-      [text]="'board.nodeOptions.delete' | t"
-      icon="/assets/icons/trash.svg"
-      (click)="onRemoveNode.emit()"
-      align="left"
-    ></polo-basic-button>
-  }
+  <polo-basic-button
+    [transparent]="true"
+    size="s"
+    type="danger"
+    [title]="'board.nodeOptions.deleteShortcut' | t"
+    [text]="'board.nodeOptions.delete' | t"
+    icon="/assets/icons/trash.svg"
+    (click)="onRemoveNode.emit()"
+    align="left"
+  ></polo-basic-button>
 </div>

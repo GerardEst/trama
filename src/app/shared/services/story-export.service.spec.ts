@@ -39,6 +39,7 @@ describe('StoryExportService', () => {
       categories: [{ id: 'stats', name: 'Estadístiques' }],
       frames: [{ id: 'frame_0', name: 'Inici', nodeIds: ['node_0'], colorId: 'battle' }],
       frameColors: [{ id: 'battle', name: 'Batalla', value: '#aabbcc' }],
+      entryPoint: { left: -100, top: 50, targetNodeId: 'node_1' },
     })
     activeStory.updateTree((draft) => { draft.nodes[1].text = 'Canvi encara no desat' })
     activeStory.patchConfiguration({
@@ -66,6 +67,8 @@ describe('StoryExportService', () => {
     expect(exported.tree.frameColors).toEqual([{ id: 'battle', name: 'Batalla', value: '#aabbcc' }])
     expect(activeStory.entireTree()).toBe(originalTree)
     activeStory.load('imported-story', exported.name, exported.tree)
+    expect(activeStory.initialNode()?.id).toBe('node_1')
+    expect(activeStory.entireTree().entryPoint).toEqual({ left: -100, top: 50, targetNodeId: 'node_1' })
     expect(activeStory.entireTree().frames?.[0].colorId).toBe('battle')
     expect(activeStory.entireTree().frameColors).toEqual(exported.tree.frameColors)
     expect(downloadedAnchor.download).toBe('l-illa-deserta.json')
@@ -86,7 +89,9 @@ describe('StoryExportService', () => {
     })()
 
     const blob = createUrl.calls.mostRecent().args[0] as Blob
-    expect(JSON.parse(await blob.text()).tree).toEqual({ nodes: [], refs: {}, categories: [] })
+    expect(JSON.parse(await blob.text()).tree).toEqual({
+      nodes: [], refs: {}, categories: [], entryPoint: { left: 5000, top: 5000 },
+    })
   })
 
   it('uses a safe file name and falls back for empty names', fakeAsync(() => {

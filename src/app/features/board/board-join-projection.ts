@@ -1,4 +1,5 @@
-import { join, node } from 'src/app/core/interfaces/interfaces'
+import { join, node, storyEntryPoint } from 'src/app/core/interfaces/interfaces'
+import { ENTRY_POINT_ORIGIN } from './board-interactions'
 
 export interface ProjectedBoardJoin {
   id: string
@@ -19,7 +20,8 @@ interface JoinOrigin {
 /** Projects story joins onto one editor level without rewriting the playable graph. */
 export function projectBoardJoins(
   nodes: node[],
-  groupId?: string
+  groupId?: string,
+  entryPoint?: storyEntryPoint
 ): ProjectedBoardJoin[] {
   const byId = new Map(nodes.map((storyNode) => [storyNode.id, storyNode]))
   const projected: ProjectedBoardJoin[] = []
@@ -35,6 +37,26 @@ export function projectBoardJoins(
       if (!current) return undefined
     }
     return current.id
+  }
+
+  const entryTarget = entryPoint?.targetNodeId
+  const destination = entryTarget ? byId.get(entryTarget) : undefined
+  if (destination && destination.type !== 'group') {
+    const toNode = visibleEndpoint(destination.id)
+    if (toNode) {
+      projected.push({
+        id: `${ENTRY_POINT_ORIGIN}::${destination.id}::node`,
+        origin: ENTRY_POINT_ORIGIN,
+        destiny: destination.id,
+        toAnswer: false,
+        fromBoundary: groupId !== undefined,
+        toBoundary: false,
+        fromAnchor: groupId ? `${groupId}_boundary-in` : `${ENTRY_POINT_ORIGIN}_join`,
+        toAnchor: toNode === destination.id
+          ? `${destination.id}_joiner`
+          : `${toNode}_group-entry`,
+      })
+    }
   }
 
   const origins = (storyNode: node): JoinOrigin[] => [

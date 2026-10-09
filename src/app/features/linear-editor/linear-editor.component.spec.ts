@@ -59,6 +59,22 @@ describe('LinearEditorComponent', () => {
     fixture.detectChanges()
   })
 
+  it('previews the configured first scene and blocks a disconnected start until reconnected', () => {
+    const nodes = structuredClone(story.entireTree().nodes)
+    story.load('configured', 'Story', { nodes, entryPoint: { left: 0, top: 0, targetNodeId: 'node_1' } })
+    fixture.detectChanges()
+    expect(component.session.currentNodeId()).toBe('node_1')
+    expect(fixture.nativeElement.querySelector('.authorSheet')?.textContent).toContain('Ending')
+    story.updateTree(draft => { delete draft.entryPoint!.targetNodeId })
+    component.restart()
+    fixture.detectChanges()
+    expect(component.session.currentNodeId()).toBeUndefined()
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('Connect Start')
+    story.updateTree(draft => { draft.entryPoint!.targetNodeId = 'node_0' })
+    fixture.detectChanges()
+    expect(component.session.currentNodeId()).toBe('node_0')
+  })
+
   it('defaults to a single interpolated preview without authoring controls or public end actions', () => {
     const host = fixture.nativeElement as HTMLElement
     expect(component.editing()).toBeFalse()

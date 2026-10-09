@@ -32,7 +32,11 @@
 </div>
 <div #content class="linearContent">
   @if (session.problem(); as problem) {
-    <p class="notice" role="status">{{ (problem === 'missingNode' ? 'dashboard.linear.missingNode' : 'dashboard.linear.automaticLoop') | t }}</p>
+    @if (problem === 'missingStart') {
+      <p class="notice" role="status">{{ 'board.entryPoint.disconnected' | t }}</p>
+    } @else {
+      <p class="notice" role="status">{{ (problem === 'missingNode' ? 'dashboard.linear.missingNode' : 'dashboard.linear.automaticLoop') | t }}</p>
+    }
   }
   @for (node of currentNodes(); track node.key) {
     <article class="authorSheet" [class.authorSheet--editing]="editing()">

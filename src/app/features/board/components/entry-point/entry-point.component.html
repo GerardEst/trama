@@ -1,0 +1,15 @@
+<div class="entryPoint" [class.entryPoint--disconnected]="!connected">
+  <div class="entryPoint__handle" cdkDragHandle [title]="'board.entryPoint.move' | t">
+    <span aria-hidden="true">⚑</span>
+    <strong>{{ 'board.entryPoint.label' | t }}</strong>
+  </div>
+  <span
+    class="entryPoint__port"
+    [poloBoardAnchor]="origin + '_join'"
+    [attr.data-board-origin]="origin"
+    [title]="'board.entryPoint.connect' | t"
+  ></span>
+  @if (!connected) {
+    <p class="entryPoint__notice" role="status">{{ 'board.entryPoint.disconnected' | t }}</p>
+  }
+</div>

@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  position: absolute;
+  z-index: 1;
+}
+
+.entryPoint {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 112px;
+  border: 2px solid var(--polo-color-accent);
+  border-radius: 999px;
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  box-shadow: var(--polo-shadow-control);
+  font: 700 14px/1.5 var(--polo-font-ui);
+}
+
+.entryPoint__handle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  cursor: grab;
+}
+
+.entryPoint__handle:active {
+  cursor: grabbing;
+}
+
+.entryPoint__handle span {
+  color: var(--polo-color-accent);
+  font-size: 20px;
+}
+
+.entryPoint__port {
+  position: absolute;
+  right: -12px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--polo-color-surface);
+  border-radius: 50%;
+  background: var(--polo-color-accent);
+  cursor: crosshair;
+}
+
+.entryPoint--disconnected {
+  border-style: dashed;
+}
+
+.entryPoint__notice {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 240px;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  pointer-events: none;
+}

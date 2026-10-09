@@ -74,7 +74,7 @@ export const dashboard = {
     structureHint: 'Edit connections, events and requirements on the board.',
     end: 'End of this path. Go back to explore another branch.',
     continue: 'Continue story',
-    empty: 'Add a starting node on the board to begin.',
+    empty: 'Connect Start to a node on the board to begin.',
     missingNode: 'This connection has no available node. You can edit it on the board or go back.',
     automaticLoop: 'Automatic navigation paused after a long chain. You can continue or go back.',
     resize: 'Resize board and preview',

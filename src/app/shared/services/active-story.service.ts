@@ -49,6 +49,12 @@ export class ActiveStoryService {
 
   readonly storyId = this.activeStoryId.asReadonly()
   readonly entireTree = this.activeTree.asReadonly()
+  readonly initialNode = computed(() => {
+    const storyTree = this.activeTree()
+    return storyTree.nodes.find(node =>
+      node.id === storyTree.entryPoint?.targetNodeId && node.type !== 'group'
+    )
+  })
   readonly storyName = this.activeStoryName.asReadonly()
   readonly storyConfiguration = this.activeConfiguration.asReadonly()
 
@@ -97,7 +103,21 @@ export class ActiveStoryService {
   }
 
   private normalizeTree(storyTree: Partial<tree> | null | undefined): tree {
-    return this.freezeTree(structuredClone(storyTree ?? {}))
+    const normalized = structuredClone(storyTree ?? {})
+    // Temporary compatibility until existing stories have been migrated.
+    // Never reconnect an explicitly disconnected marker.
+    if (!normalized.entryPoint) {
+      const legacyStart = normalized.nodes?.find(node => node.id === 'node_0' && node.type !== 'group')
+      normalized.entryPoint = {
+        left: legacyStart ? (Number(legacyStart.left) || 0) - 180 : 5000,
+        // Above the existing graph so the marker does not cover a scene's controls.
+        top: legacyStart
+          ? Math.min(...(normalized.nodes ?? []).map(node => Number(node.top) || 0)) - 100
+          : 5000,
+        ...(legacyStart ? { targetNodeId: legacyStart.id } : {}),
+      }
+    }
+    return this.freezeTree(normalized)
   }
 
   private freezeTree(storyTree: Partial<tree>): tree {

@@ -71,7 +71,7 @@ export class PanzoomService {
     this.boardReference?.pause()
   }
 
-  centerToNode(node: node, smooth = false) {
+  centerToNode(node: Pick<node, 'left' | 'top'>, smooth = false) {
     this.stopCentering()
     const board = this.boardReference
     if (!board) return

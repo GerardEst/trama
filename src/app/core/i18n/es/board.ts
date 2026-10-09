@@ -1,6 +1,12 @@
 import type { Dictionary } from '../i18n.types'
 
 export const board: Dictionary['board'] = {
+  entryPoint: {
+    label: 'Inicio',
+    move: 'Mueve el punto de inicio',
+    connect: 'Arrastra hasta un nodo para empezar la historia allí',
+    disconnected: 'Conecta Inicio a un nodo para jugar.',
+  },
   groups: {
     label: 'Grupos del tablero',
     exit: '← Salir de {name}',
@@ -9,7 +15,6 @@ export const board: Dictionary['board'] = {
     groupShortcut: 'Agrupar nodos seleccionados (Ctrl+G / ⌘G)',
     frameSelection: 'Enmarcar nodos seleccionados',
     frameShortcut: 'Enmarcar nodos seleccionados (Ctrl+F / ⌘F)',
-    startNode: 'El nodo inicial no se puede agrupar',
     selectHint: 'Ctrl + arrastrar para seleccionar al menos 2 nodos',
     defaultName: 'Grupo',
     name: 'Nombre del grupo',
@@ -100,7 +105,6 @@ export const board: Dictionary['board'] = {
       'Se guarda como guía adicional para este campo; por ahora no se muestra en el modo de juego.',
     addRoute: 'Añadir ruta',
     addAnswer: 'Añadir respuesta',
-    cannotDeleteStart: 'El nodo inicial no se puede eliminar',
     optimizingImage: 'Optimizando la imagen',
     imageTooBig:
       'La imagen es demasiado grande\nInténtalo con una imagen más pequeña.',

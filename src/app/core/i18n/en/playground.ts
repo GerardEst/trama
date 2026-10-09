@@ -2,6 +2,7 @@ export const playground = {
   darkMode: 'Dark mode',
   createdWith: 'Created with',
   notFound: 'Story not found',
+  missingStart: 'This story has no connected starting point.',
   illustration: 'Story illustration',
   chooseAnswer: 'Choose an answer',
   yourAnswer: 'Your answer',

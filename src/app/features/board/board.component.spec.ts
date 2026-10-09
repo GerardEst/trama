@@ -22,6 +22,7 @@ import { ContextHelpService } from 'src/app/shared/context-help/context-help.ser
 import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 import { CONTEXT_HELP_TOPICS, NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { ENTRY_POINT_ORIGIN } from './board-interactions'
 
 describe('BoardComponent', () => {
   let component: BoardComponent
@@ -40,6 +41,79 @@ describe('BoardComponent', () => {
   afterEach(() => {
     fixture.nativeElement.remove()
     fixture.destroy()
+  })
+
+  it('renders one movable entry outside node selections, frames and groups', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    story.load('entry', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', left: 200, top: 100 },
+      { id: 'node_1', type: 'end', left: 400, top: 100 },
+    ] })
+    fixture.detectChanges()
+    const host: HTMLElement = fixture.nativeElement
+    expect(host.querySelectorAll('polo-entry-point')).toHaveSize(1)
+    expect(component.nodeDrags?.map(drag => drag.data)).toEqual(['node_0', 'node_1'])
+    expect(component.projectedJoins().find(path => path.origin === ENTRY_POINT_ORIGIN)?.destiny).toBe('node_0')
+    component.entryDragEnded({ source: { getFreeDragPosition: () => ({ x: 50, y: 80 }) } } as CdkDragEnd<string>)
+    expect(story.entireTree().entryPoint).toEqual({ left: 50, top: 80, targetNodeId: 'node_0' })
+    expect(save.calls.mostRecent().args[1].entryPoint?.left).toBe(50)
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    expect(component.canGroupSelection()).toBeTrue()
+    component.groupSelection()
+    const group = story.entireTree().nodes.find(node => node.type === 'group')!
+    component.enterGroup(group.id)
+    fixture.detectChanges()
+    expect(host.querySelector('polo-entry-point')).toBeNull()
+    expect(component.projectedJoins().some(path => path.origin === ENTRY_POINT_ORIGIN && path.fromBoundary)).toBeTrue()
+    component.leaveGroup()
+    fixture.detectChanges()
+    expect(host.querySelectorAll('polo-entry-point')).toHaveSize(1)
+  })
+
+  it('connects the real entry port with the existing pointer flow and ignores answer ports', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    story.load('entry', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', left: 200, top: 100 },
+      { id: 'node_1', type: 'content', left: 500, top: 100, answers: [{ id: 'answer_1_0', text: 'Answer' }] },
+    ] })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    const origin = board.querySelector<HTMLElement>('polo-entry-point [data-board-origin]')!
+    const target = board.querySelector<HTMLElement>('polo-node [data-board-join-node="node_1"]')!
+    const hit = spyOn(document, 'elementFromPoint').and.returnValue(target)
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(false)
+    const start = () => component.checkDragStart({ button: 0, target: origin, pointerId: 7, clientX: 0, clientY: 0 } as unknown as PointerEvent)
+    const stop = () => component.checkDragStop({ button: 0, pointerId: 7, x: 100, y: 100 } as PointerEvent)
+    start()
+    stop()
+    expect(story.initialNode()?.id).toBe('node_1')
+    const answerTarget = board.querySelector<HTMLElement>('[data-board-join-to-answers="true"]')!
+    expect(answerTarget).not.toBeNull()
+    hit.and.returnValue(answerTarget)
+    start()
+    stop()
+    expect(story.initialNode()?.id).toBe('node_1')
+    expect(story.entireTree().nodes).toHaveSize(2)
+    hit.and.returnValue(board)
+    start()
+    stop()
+    expect(story.initialNode()?.id).toBe('node_2')
+    expect(story.entireTree().nodes).toHaveSize(3)
+  })
+
+  it('allows deleting node_0 from its component and shows the disconnected entry notice', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    story.load('entry', 'Story', { nodes: [{ id: 'node_0', type: 'content', left: 200, top: 100 }] })
+    fixture.detectChanges()
+    const nodeComponent = fixture.debugElement.query(By.directive(NodeComponent)).componentInstance as NodeComponent
+    nodeComponent.onRemoveNode()
+    fixture.detectChanges()
+    expect(story.entireTree().nodes).toEqual([])
+    expect(fixture.nativeElement.querySelector('polo-entry-point [role="status"]')?.textContent).toContain('Connect Start')
   })
 
   it('should create', () => {
@@ -558,13 +632,14 @@ describe('BoardComponent', () => {
     const host: HTMLElement = fixture.nativeElement
     expect(host.querySelectorAll<HTMLButtonElement>('.groupToolbar button')[1].title)
       .toContain('Ctrl+F / ⌘F')
-    component.selectedNodeIds = new Set(['node_0', 'node_1'])
+    component.selectedNodeIds = new Set(['node_0'])
     const invalidGroup = new KeyboardEvent('keydown', {
       key: 'g', ctrlKey: true, bubbles: true, cancelable: true,
     })
     document.dispatchEvent(invalidGroup)
     expect(invalidGroup.defaultPrevented).toBeFalse()
     expect(activeStory.entireTree().nodes).toHaveSize(2)
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
 
     const preview = host.querySelector<HTMLElement>('polo-node .richTextField__preview')!
     const edit = new KeyboardEvent('keydown', {
@@ -639,10 +714,14 @@ describe('BoardComponent', () => {
     component.selectedNodeIds = new Set(['node_0', 'node_1'])
     component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     fixture.detectChanges()
-    const disabledButton = (fixture.nativeElement as HTMLElement)
+    const groupStartButton = (fixture.nativeElement as HTMLElement)
       .querySelector<HTMLButtonElement>('.groupToolbar button')!
-    expect(disabledButton.disabled).toBeTrue()
-    expect(fixture.nativeElement.textContent).toContain('start node cannot be grouped')
+    expect(groupStartButton.disabled).toBeFalse()
+    component.selectedNodeIds = new Set(['node_1'])
+    component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    fixture.detectChanges()
+    expect(groupStartButton.disabled).toBeTrue()
+    expect(fixture.nativeElement.textContent).toContain('Ctrl + drag')
     component.selectedNodeIds = new Set(['node_1', 'node_2'])
     component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     fixture.detectChanges()
@@ -1277,8 +1356,9 @@ describe('BoardComponent', () => {
     expect(shortcut('d', true, { shiftKey: true }).defaultPrevented).toBeFalse()
     expect(activeStory.entireTree().nodes).toHaveSize(4)
     component.activateNode('node_0')
-    expect(shortcut('Delete').defaultPrevented).toBeFalse()
-    expect(activeStory.entireTree().nodes[0].id).toBe('node_0')
+    expect(shortcut('Delete').defaultPrevented).toBeTrue()
+    expect(activeStory.entireTree().nodes.map(node => node.id)).toEqual(['node_2', 'node_3', 'node_4'])
+    expect(activeStory.entireTree().entryPoint?.targetNodeId).toBeUndefined()
   })
 
   it('supports frame removal and ungrouping shortcuts for an active group node', () => {

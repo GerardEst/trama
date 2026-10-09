@@ -37,9 +37,31 @@ describe('ActiveStoryService', () => {
       ],
       refs: {},
       categories: [],
+      entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' },
     })
     expect(Object.isFrozen(service.entireTree())).toBeTrue()
     expect(Object.isFrozen(service.entireTree().nodes)).toBeTrue()
+  })
+
+  it('preserves a migrated destination and an explicitly disconnected entry on reload', () => {
+    const nodes = [
+      { id: 'node_0', type: 'content' as const, left: 0, top: 0 },
+      { id: 'node_1', type: 'end' as const, left: 300, top: 0 },
+    ]
+    service.load('story', 'Story', { nodes, entryPoint: { left: 20, top: 40, targetNodeId: 'node_1' } })
+    expect(service.initialNode()?.id).toBe('node_1')
+    expect(service.entireTree().entryPoint).toEqual({ left: 20, top: 40, targetNodeId: 'node_1' })
+    service.updateTree(draft => { delete draft.entryPoint!.targetNodeId })
+    service.load('story', 'Story', service.entireTree())
+    expect(service.initialNode()).toBeUndefined()
+    expect(service.entireTree().entryPoint).toEqual({ left: 20, top: 40 })
+  })
+
+  it('creates a disconnected marker for an empty story without inventing a node', () => {
+    service.load('story', 'Story', { nodes: [] })
+    expect(service.entireTree().nodes).toEqual([])
+    expect(service.entireTree().entryPoint).toEqual({ left: 5000, top: 5000 })
+    expect(service.initialNode()).toBeUndefined()
   })
 
   it('does not freeze or retain caller-owned tree objects', () => {

@@ -326,10 +326,6 @@ export class NodeComponent {
   }
 
   onRemoveNode() {
-    if (this.nodeId === 'node_0') {
-      alert(this.i18n.t('board.node.cannotDeleteStart'))
-      return
-    }
     const data = {
       nodeId: this.nodeId,
       answers: this.answers?.map((answer) => answer.id),

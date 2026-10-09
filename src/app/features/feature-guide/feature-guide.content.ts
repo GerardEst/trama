@@ -269,7 +269,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
             'Frame → all scenes visible, moved together',
           ],
         },
-        note: 'Groups and frames are editor organisation tools, not playable scenes. They do not change the story’s logic. The starting node stays on the main board rather than inside a group.',
+        note: 'Groups and frames are editor organisation tools, not playable scenes. They do not change the story’s logic. The Start marker stays on the main board and can point to a scene inside a group.',
       },
     ],
   },

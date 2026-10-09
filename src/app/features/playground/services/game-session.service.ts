@@ -62,13 +62,18 @@ export class GameSessionService implements OnDestroy {
 
   initialize() {
     if (this.initialized) return
+    const initial = this.story.initialNode()
+    if (!initial) {
+      this.sessionProblem.set('missingStart')
+      return
+    }
     this.initialized = true
-    this.nextStep([{ node: 'node_0' }])
+    this.nextStep([{ node: initial.id }])
   }
 
   restart() {
     this.reset()
-    if (this.story.entireTree().nodes.some(node => node.id === 'node_0')) this.initialize()
+    this.initialize()
   }
 
   selectAnswer(answer: node_answer) {
@@ -181,7 +186,7 @@ export class GameSessionService implements OnDestroy {
       const previous = this.previousExistingIndex()
       if (previous >= 0) this.goToVisit(previous)
       else this.restart()
-    } else if (!this.initialized && tree.nodes.some(node => node.id === 'node_0')) {
+    } else if (!this.initialized && tree.entryPoint) {
       this.initialize()
     }
   }

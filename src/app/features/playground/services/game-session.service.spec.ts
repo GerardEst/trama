@@ -29,6 +29,59 @@ describe('GameSessionService', () => {
     TestBed.flushEffects()
   }
 
+  it('starts and restarts at the configured destination, including inside a group, without visiting the marker', () => {
+    story.load('story', 'Story', {
+      nodes: [scene('node_0'), scene('node_1', { groupId: 'node_2', events: [gold('3')] }), scene('node_2', { type: 'group' })],
+      entryPoint: { left: 0, top: 0, targetNodeId: 'node_1' },
+    })
+    TestBed.flushEffects()
+    expect(session.currentNodeId()).toBe('node_1')
+    expect(session.visits().map(visit => visit.nodeId)).toEqual(['node_1'])
+    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 3 }])
+    story.updateTree(draft => { draft.entryPoint!.targetNodeId = 'node_0' })
+    TestBed.flushEffects()
+    expect(session.currentNodeId()).toBe('node_1')
+    session.restart()
+    expect(session.currentNodeId()).toBe('node_0')
+    expect(player.playerStats()).toEqual([])
+  })
+
+  it('does not fall back to node_0 when disconnected and recovers when connected', () => {
+    story.load('story', 'Story', { nodes: [scene('node_0'), scene('node_1')], entryPoint: { left: 0, top: 0 } })
+    TestBed.flushEffects()
+    expect(session.problem()).toBe('missingStart')
+    expect(session.visits()).toEqual([])
+    session.restart()
+    expect(session.problem()).toBe('missingStart')
+    story.updateTree(draft => { draft.entryPoint!.targetNodeId = 'node_1' })
+    TestBed.flushEffects()
+    expect(session.problem()).toBeNull()
+    expect(session.currentNodeId()).toBe('node_1')
+    story.updateTree(draft => { delete draft.entryPoint!.targetNodeId })
+    TestBed.flushEffects()
+    expect(session.currentNodeId()).toBe('node_1')
+    session.restart()
+    expect(session.problem()).toBe('missingStart')
+    expect(session.visits()).toEqual([])
+  })
+
+  it('also initializes anonymous stories such as the landing demo', () => {
+    load([scene('node_0')], '')
+    expect(session.currentNodeId()).toBe('node_0')
+  })
+
+  it('reports invalid entry destinations rather than executing groups or falling back', () => {
+    for (const targetNodeId of ['missing', 'node_2']) {
+      story.load(targetNodeId, 'Story', {
+        nodes: [scene('node_0'), scene('node_2', { type: 'group' })],
+        entryPoint: { left: 0, top: 0, targetNodeId },
+      })
+      TestBed.flushEffects()
+      expect(session.problem()).toBe('missingStart')
+      expect(session.visits()).toEqual([])
+    }
+  })
+
   it('restores arrival state without repeating node or answer events and discards the old branch', () => {
     load([
       scene('node_0', { events: [gold('2')], answers: [

@@ -25,14 +25,15 @@ import {
 } from '@angular/cdk/drag-drop'
 import { BoardFlowsComponent } from './components/board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { boardFrame, node } from 'src/app/core/interfaces/interfaces'
+import { boardFrame, node, storyEntryPoint } from 'src/app/core/interfaces/interfaces'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
 import { BoardPreferencesService } from './services/board-preferences.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
-import { BoardJoinStroke, BoardPoint } from './board-interactions'
+import { BoardJoinStroke, BoardPoint, ENTRY_POINT_ORIGIN } from './board-interactions'
+import { EntryPointComponent } from './components/entry-point/entry-point.component'
 import { FrameColorsService } from './services/frame-colors.service'
 import { FrameColorPickerComponent } from './components/frame-color-picker/frame-color-picker.component'
 import { projectBoardJoins } from './board-join-projection'
@@ -88,6 +89,7 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
   standalone: true,
   imports: [
     NodeComponent,
+    EntryPointComponent,
     CdkDrag,
     CdkDragHandle,
     BoardFlowsComponent,
@@ -140,9 +142,11 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.groupNavigation.set({ storyId: this.activeStory.storyId(), groupId })
   }
 
-  readonly projectedJoins = computed(() =>
-    projectBoardJoins(this.activeStory.entireTree().nodes, this.currentGroupId)
-  )
+  readonly entryOrigin = ENTRY_POINT_ORIGIN
+  readonly projectedJoins = computed(() => {
+    const tree = this.activeStory.entireTree()
+    return projectBoardJoins(tree.nodes, this.currentGroupId, tree.entryPoint)
+  })
 
   readonly visibleFrames = computed(() => {
     const visibleIds = new Set(this.visibleBoardNodes().map((node) => node.id))
@@ -331,7 +335,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     const nodeId = this.activeNodeId()
     const storyNode = this.visibleNodes().find((node) => node.id === nodeId)
     if (!storyNode) return
-    if (key === 'delete' && !modifier && storyNode.id !== 'node_0') {
+    if (key === 'delete' && !modifier) {
       event.preventDefault()
       if (storyNode.type === 'group') this.ungroup(storyNode.id)
       else {
@@ -482,6 +486,15 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.panzoom.centerToNode(node)
   }
 
+  public centerToEntryPoint() {
+    const entry = this.activeStory.entireTree().entryPoint
+    if (!entry) return
+    this.currentGroupId = undefined
+    this.selectedNodeIds = new Set()
+    this.clearActiveNode()
+    this.panzoom.centerToNode(entry)
+  }
+
   public goTo(x: number, y: number) {
     this.panzoom.goTo(x, y)
   }
@@ -573,7 +586,6 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   canGroupSelection(): boolean {
     return (
       this.selectedNodeIds.size >= 2 &&
-      !this.selectedNodeIds.has('node_0') &&
       this.visibleNodes().filter((storyNode) => this.selectedNodeIds.has(storyNode.id))
         .length === this.selectedNodeIds.size
     )
@@ -739,7 +751,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
         )
       } else if (
         this.isInsideBoard(elementAtPointer) &&
-        !elementAtPointer?.closest('.groupNode, .boundaryNode')
+        !elementAtPointer?.closest('polo-node, polo-entry-point, .groupNode, .boundaryNode')
       ) {
         this.addNode(event, 'content')
       }
@@ -944,6 +956,13 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     return true
   }
 
+  entryDragEnded(event: CdkDragEnd<string>) {
+    const position = event.source.getFreeDragPosition()
+    this.storyEditor.updateNodePosition(ENTRY_POINT_ORIGIN, position.x, position.y)
+    this.panzoom.resumeDrag()
+    this.refreshFlows()
+  }
+
   nodeDragEnded(event: CdkDragEnd<string>, storyNode: node) {
     const dragPosition = event.source.getFreeDragPosition()
     const frame = this.frameAtDropPoint(event.dropPoint)
@@ -979,17 +998,18 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.boardFlows?.scheduleRefresh()
   }
 
-  getNodeDragPosition(storyNode: node): Point {
+  getNodeDragPosition(storyNode: node | storyEntryPoint): Point {
+    const id = 'id' in storyNode ? storyNode.id : ENTRY_POINT_ORIGIN
     const left = Number(storyNode.left) || 0
     const top = Number(storyNode.top) || 0
-    const cached = this.nodeDragPositions.get(storyNode.id)
+    const cached = this.nodeDragPositions.get(id)
 
     if (cached && cached.left === left && cached.top === top) {
       return cached.position
     }
 
     const position = { x: left, y: top }
-    this.nodeDragPositions.set(storyNode.id, { left, top, position })
+    this.nodeDragPositions.set(id, { left, top, position })
 
     return position
   }
@@ -1070,7 +1090,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const storyId = this.activeStory.storyId()
     if (this.preferences.getActiveNode(storyId) === event.nodeId) {
-      this.preferences.setActiveNode(storyId, 'node_0')
+      this.preferences.setActiveNode(storyId, this.activeStory.initialNode()?.id ?? '')
     }
   }
 
@@ -1113,6 +1133,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     const nodeId = targetArea.dataset['boardJoinNode']
     const anchorId = targetArea.dataset['boardJoinAnchor']
     if (!nodeId || !anchorId) return undefined
+    if (this.joinStroke?.originId === ENTRY_POINT_ORIGIN &&
+      targetArea.dataset['boardJoinToAnswers'] === 'true') return undefined
 
     const anchor = this.anchorRegistry.get(anchorId)
     if (!anchor) return undefined

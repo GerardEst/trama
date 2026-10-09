@@ -258,7 +258,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
             'Marc → totes les escenes visibles, mogudes alhora',
           ],
         },
-        note: 'Els grups i els marcs són eines per organitzar l’editor, no escenes jugables. No canvien la lògica de la història. El node inicial es queda al tauler principal, no dins d’un grup.',
+        note: 'Els grups i els marcs són eines per organitzar l’editor, no escenes jugables. No canvien la lògica de la història. El marcador Inici es queda al tauler principal i pot apuntar a una escena dins d’un grup.',
       },
     ],
   },

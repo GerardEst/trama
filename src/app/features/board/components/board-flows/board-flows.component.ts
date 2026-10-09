@@ -151,7 +151,7 @@ export class BoardFlowsComponent {
   calculatePaths(
     nodes: node[],
     groupId?: string,
-    projectedJoins = projectBoardJoins(nodes, groupId)
+    projectedJoins = projectBoardJoins(nodes, groupId, this.activeStory.entireTree().entryPoint)
   ) {
     const context = this.createCoordinateContext()
     if (!context) return []

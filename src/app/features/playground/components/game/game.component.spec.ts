@@ -21,6 +21,20 @@ describe('GameComponent', () => {
     fixture.detectChanges()
   }
 
+  it('renders the configured first scene rather than node_0 and reports a disconnected start', () => {
+    const nodes = [scene('node_0', { text: 'Old first' }), scene('node_1', { text: 'Chosen first' })]
+    component.activeStory.load('configured', 'Story', {
+      nodes, entryPoint: { left: 0, top: 0, targetNodeId: 'node_1' },
+    })
+    fixture.detectChanges()
+    expect(fixture.nativeElement.textContent).toContain('Chosen first')
+    expect(fixture.nativeElement.textContent).not.toContain('Old first')
+    component.activeStory.load('disconnected', 'Story', { nodes, entryPoint: { left: 0, top: 0 } })
+    fixture.detectChanges()
+    expect(component.activeNodes).toEqual([])
+    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain('no connected starting point')
+  })
+
   it('creates the player shell', () => {
     expect(component).toBeTruthy()
   })

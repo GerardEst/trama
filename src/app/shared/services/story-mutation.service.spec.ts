@@ -144,7 +144,7 @@ describe('StoryMutationService', () => {
 
   it('restores unsaved edits on reload without silently overwriting the server', fakeAsync(() => {
     database.user.set({ id: 'save-test-author' } as appUser)
-    const draft = { nodes: [], refs: {}, categories: [] }
+    const draft = { nodes: [], refs: {}, categories: [], entryPoint: { left: 5000, top: 5000 } }
     sessionStorage.setItem('polo-pending-tree:save-test-author:story-1', JSON.stringify(draft))
     mutations.loadStory('story-1', 'Story', {
       nodes: [{ id: 'node_1', type: 'content', top: 0, left: 0 }],

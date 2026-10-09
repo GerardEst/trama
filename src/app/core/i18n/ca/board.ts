@@ -1,6 +1,12 @@
 import type { Dictionary } from '../i18n.types'
 
 export const board: Dictionary['board'] = {
+  entryPoint: {
+    label: 'Inici',
+    move: 'Mou el punt d’inici',
+    connect: 'Arrossega fins a un node per començar-hi la història',
+    disconnected: 'Connecta Inici a un node per jugar.',
+  },
   groups: {
     label: 'Grups del tauler',
     exit: '← Surt de {name}',
@@ -9,7 +15,6 @@ export const board: Dictionary['board'] = {
     groupShortcut: 'Agrupa els nodes seleccionats (Ctrl+G / ⌘G)',
     frameSelection: 'Emmarca els nodes seleccionats',
     frameShortcut: 'Emmarca els nodes seleccionats (Ctrl+F / ⌘F)',
-    startNode: 'El node inicial no es pot agrupar',
     selectHint: 'Ctrl + arrossega per seleccionar almenys 2 nodes',
     defaultName: 'Grup',
     name: 'Nom del grup',
@@ -100,7 +105,6 @@ export const board: Dictionary['board'] = {
       'Es desa com a guia addicional per a aquest camp; de moment no es mostra al mode de joc.',
     addRoute: 'Afegeix una ruta',
     addAnswer: 'Afegeix una resposta',
-    cannotDeleteStart: 'El node inicial no es pot eliminar',
     optimizingImage: 'Optimitzant la imatge',
     imageTooBig:
       'La imatge és massa gran\nTorna-ho a provar amb una imatge més petita.',
