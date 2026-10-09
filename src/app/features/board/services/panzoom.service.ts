@@ -111,6 +111,24 @@ export class PanzoomService {
     this.boardReference?.moveTo(x, y)
   }
 
+  /** Translate in screen pixels, including while manual panning is paused. */
+  moveBy(dx: number, dy: number): { x: number; y: number } {
+    this.stopCentering()
+    const board = this.boardReference
+    if (!board) return { x: 0, y: 0 }
+    const { x, y } = board.getTransform()
+    board.moveTo(x + dx, y + dy)
+    const applied = board.getTransform()
+    // panzoom normally renders on the NEXT frame. Drag compensation must share
+    // this frame with the camera, otherwise a stationary node visibly drifts.
+    if (this.boardElement) {
+      this.boardElement.style.transformOrigin = '0 0 0'
+      this.boardElement.style.transform =
+        `matrix(${applied.scale}, 0, 0, ${applied.scale}, ${applied.x}, ${applied.y})`
+    }
+    return { x: applied.x - x, y: applied.y - y }
+  }
+
   getScale() {
     return this.boardReference?.getTransform().scale ?? 1
   }

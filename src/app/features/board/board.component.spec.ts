@@ -5,8 +5,9 @@ import {
   CdkDragStart,
   DragRef,
 } from '@angular/cdk/drag-drop'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
+import { NgZone } from '@angular/core'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -1619,6 +1620,109 @@ describe('BoardComponent', () => {
 
     expect(create).not.toHaveBeenCalled()
   })
+
+  for (const kind of ['node', 'selection', 'frame', 'entry'] as const) {
+    it(`auto-pans a real CDK ${kind} drag at half zoom without jumping or losing the drop`, fakeAsync(() => {
+      const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+      spyOn(TestBed.inject(StoryEditorLoader), 'prefetch')
+      const story = TestBed.inject(ActiveStoryService)
+      story.load('auto-pan', 'Story', {
+        nodes: [
+          { id: 'node_0', type: kind === 'node' ? 'content' : 'group', left: 200, top: 200 },
+          { id: 'node_1', type: 'group', left: 500, top: 300 },
+        ],
+        entryPoint: { left: 50, top: 50 },
+        frames: kind === 'frame' ? [{ id: 'frame_0', name: 'Frame', nodeIds: ['node_0', 'node_1'] }] : [],
+      })
+      component.initialZoom = 0.5
+      fixture.nativeElement.style.cssText = 'position: fixed; left: 0; top: 0; width: 800px; height: 600px; overflow: hidden'
+      document.body.appendChild(fixture.nativeElement)
+      fixture.detectChanges()
+      // CDK defers root/handle registration and its initial position until stability.
+      TestBed.inject(NgZone).onStable.emit()
+      tick(32)
+      if (kind === 'selection') component.selectedNodeIds = new Set(['node_0', 'node_1'])
+
+      const id = kind === 'entry' ? ENTRY_POINT_ORIGIN : kind === 'frame' ? 'frame_0' : 'node_0'
+      const source = fixture.debugElement.queryAll(By.directive(CdkDrag))
+        .map((element) => element.injector.get<CdkDrag<string>>(CdkDrag))
+        .find((drag) => drag.data === id)!
+      const root = source.getRootElement()
+      const handle = root.querySelector<HTMLElement>('.node__header, .groupNode__header, .boardFrame__header, .entryPoint__handle')!
+      const start = root.getBoundingClientRect()
+      const downX = start.left + 8
+      const downY = start.top + 8
+      handle.dispatchEvent(new PointerEvent('pointerdown', { clientX: downX, clientY: downY, button: 0, bubbles: true }))
+      handle.dispatchEvent(new MouseEvent('mousedown', { clientX: downX, clientY: downY, button: 0, buttons: 1, detail: 1, bubbles: true }))
+      const edgeX = Math.min(800, window.innerWidth) - 5
+      const pointerY = Math.floor(Math.min(600, window.innerHeight) / 2) - 10
+      const move = (x: number) => document.dispatchEvent(new MouseEvent('mousemove', { clientX: x, clientY: pointerY, bubbles: true }))
+      // One fast move starts the drag at the edge; no further pointer events.
+      move(edgeX)
+      const beforePan = new DOMMatrix(component.boardElement!.nativeElement.style.transform)
+      const originalTree = story.entireTree()
+      tick(96)
+      const afterPan = new DOMMatrix(component.boardElement!.nativeElement.style.transform)
+      expect(afterPan.e).toBeLessThan(beforePan.e)
+      // Just 10 screen pixels above centre now produces vertical camera motion.
+      expect(afterPan.f).toBeGreaterThan(beforePan.f)
+      expect(root.getBoundingClientRect().left + 8).toBeCloseTo(edgeX, 0)
+      expect(root.getBoundingClientRect().top + 8).toBeCloseTo(pointerY, 0)
+      expect(story.entireTree()).toBe(originalTree)
+      expect(save).not.toHaveBeenCalled()
+
+      // Resume pointer movement after several stationary auto-pan frames.
+      move(edgeX - 10)
+      expect(root.getBoundingClientRect().left + 8).toBeCloseTo(edgeX - 10, 0)
+      tick(48)
+      const beforeDrop = root.getBoundingClientRect()
+      document.dispatchEvent(new MouseEvent('mouseup', { clientX: edgeX - 10, clientY: pointerY, bubbles: true }))
+      fixture.detectChanges()
+      tick(64)
+      expect(root.getBoundingClientRect().left).toBeCloseTo(beforeDrop.left, 0)
+      expect(root.getBoundingClientRect().top).toBeCloseTo(beforeDrop.top, 0)
+      expect(save).toHaveBeenCalledTimes(1)
+      const position = source.getFreeDragPosition()
+      if (kind === 'entry') {
+        expect(story.entireTree().entryPoint!.left).toBe(position.x)
+        expect(story.entireTree().entryPoint!.top).toBe(position.y)
+      } else if (kind === 'frame' || kind === 'selection') {
+        const [first, second] = story.entireTree().nodes
+        expect(Number(second.left) - Number(first.left)).toBeCloseTo(300)
+        expect(Number(second.top) - Number(first.top)).toBeCloseTo(100)
+        expect(Number(first.left)).toBeGreaterThan(200)
+      } else {
+        expect(story.entireTree().nodes[0].left).toBe(position.x)
+        expect(story.entireTree().nodes[0].top).toBe(position.y)
+        expect(story.entireTree().nodes[1].left).toBe(500)
+      }
+      const stopped = component.boardElement!.nativeElement.style.transform
+      tick(96)
+      expect(component.boardElement!.nativeElement.style.transform).toBe(stopped)
+      if (kind === 'node') {
+        // A second drag uses the newly saved origin and can drop without another move.
+        const next = root.getBoundingClientRect()
+        handle.dispatchEvent(new PointerEvent('pointerdown', {
+          clientX: next.left + 8, clientY: next.top + 8, button: 0, bubbles: true,
+        }))
+        handle.dispatchEvent(new MouseEvent('mousedown', {
+          clientX: next.left + 8, clientY: next.top + 8, button: 0, buttons: 1, detail: 1, bubbles: true,
+        }))
+        move(edgeX - 20)
+        tick(96)
+        expect(root.getBoundingClientRect().left + 8).toBeCloseTo(edgeX - 20, 0)
+        expect(save).toHaveBeenCalledTimes(1)
+        document.dispatchEvent(new MouseEvent('mouseup', { clientX: edgeX - 20, clientY: pointerY, bubbles: true }))
+        fixture.detectChanges()
+        tick(64)
+        expect(root.getBoundingClientRect().left + 8).toBeCloseTo(edgeX - 20, 0)
+        expect(story.entireTree().nodes[0].left).toBe(source.getFreeDragPosition().x)
+        expect(save).toHaveBeenCalledTimes(2)
+      }
+      fixture.destroy()
+      flush()
+    }))
+  }
 
   it('compensates node dragging for the board zoom', () => {
     spyOn(component.panzoom, 'getScale').and.returnValue(0.5)

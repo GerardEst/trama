@@ -27,6 +27,7 @@ import { BoardFlowsComponent } from './components/board-flows/board-flows.compon
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { boardFrame, node, storyEntryPoint } from 'src/app/core/interfaces/interfaces'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
+import { BoardDragAutoPanService } from './services/board-drag-auto-pan.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
@@ -102,7 +103,7 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [PanzoomService, BoardAnchorRegistryService],
+  providers: [PanzoomService, BoardAnchorRegistryService, BoardDragAutoPanService],
 })
 export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('board') boardElement?: ElementRef<HTMLElement>
@@ -276,10 +277,12 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly constrainNodePosition = (
     pointerPosition: Point,
-    _dragRef: DragRef,
+    dragRef: DragRef,
     dimensions: DOMRect,
     pickupPosition: Point
   ): Point => {
+    const constrained = this.dragAutoPan.constrainPosition(pointerPosition, dragRef, dimensions, pickupPosition)
+    if (constrained) return constrained
     const scale = this.panzoom.getScale()
     const initialPointerX = dimensions.left + pickupPosition.x
     const initialPointerY = dimensions.top + pickupPosition.y
@@ -355,6 +358,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleEscape() {
+    this.dragAutoPan.stop()
     const wasInteracting = this.isDrawingJoin || this.selectionPointerId !== undefined
     if (this.isDrawingJoin) this.stopDragging()
     if (this.selectionPointerId !== undefined) this.stopSelection()
@@ -380,6 +384,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     public panzoom: PanzoomService,
+    private dragAutoPan: BoardDragAutoPanService,
     public activeStory: ActiveStoryService,
     private storyEditor: StoryEditorService,
     private preferences: BoardPreferencesService,
@@ -409,6 +414,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.cancelNodeReveal()
+    this.dragAutoPan.destroy()
     this.panzoom.destroy()
     this.nodeResizeChanges?.unsubscribe()
     this.nodeResize?.disconnect()
@@ -658,6 +664,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   checkDragStart(event: PointerEvent) {
     if (event.button !== 0) return
+    this.dragAutoPan.prepare(event)
 
     const board = this.boardElement?.nativeElement
     if (event.target === board) {
@@ -874,10 +881,16 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   nodeDragStarted(event: CdkDragStart<string>) {
     this.activateNode(event.source.data)
     this.setNodeZIndex(event.source.element.nativeElement, 1)
+    const storyNode = this.visibleNodes().find((node) => node.id === event.source.data)
+    if (!storyNode) return
+    const origin = this.getNodeDragPosition(storyNode)
     if (
       !this.selectedNodeIds.has(event.source.data) ||
       this.selectedNodeIds.size < 2
-    ) return
+    ) {
+      this.startDragAutoPan(event, origin)
+      return
+    }
 
     const positions = new Map<string, Point>()
     const storyNodes = new Map(
@@ -899,6 +912,24 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
         origin: positions.get(event.source.data)!,
       }
     }
+    this.startDragAutoPan(event, origin)
+  }
+
+  private startDragAutoPan(event: CdkDragStart<string>, origin: Point) {
+    const source = event.source
+    const viewport = this.boardElement?.nativeElement.parentElement
+    if (!viewport) return
+    const followers = []
+    for (const drag of this.nodeDrags ?? []) {
+      const position = this.groupDrag?.positions.get(drag.data)
+      if (position && drag !== source) followers.push({ source: drag, origin: position })
+    }
+    this.dragAutoPan.start(source, origin, viewport, followers, () => this.boardFlows?.scheduleRefresh(), event.event)
+  }
+
+  entryDragStarted(event: CdkDragStart<string>) {
+    const entry = this.activeStory.entireTree().entryPoint
+    if (entry) this.startDragAutoPan(event, this.getNodeDragPosition(entry))
   }
 
   frameDragStarted(event: CdkDragStart<string>, frame: boardFrame) {
@@ -919,9 +950,11 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       positions,
       origin: this.getFrameDragPosition(frame),
     }
+    this.startDragAutoPan(event, this.groupDrag.origin)
   }
 
   frameDragEnded(event: CdkDragEnd<string>) {
+    this.dragAutoPan.finish(event.source)
     this.commitGroupDrag(event.source)
     this.groupDrag = undefined
     this.panzoom.resumeDrag()
@@ -957,6 +990,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   entryDragEnded(event: CdkDragEnd<string>) {
+    this.dragAutoPan.finish(event.source)
     const position = event.source.getFreeDragPosition()
     this.storyEditor.updateNodePosition(ENTRY_POINT_ORIGIN, position.x, position.y)
     this.panzoom.resumeDrag()
@@ -964,6 +998,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   nodeDragEnded(event: CdkDragEnd<string>, storyNode: node) {
+    this.dragAutoPan.finish(event.source)
     const dragPosition = event.source.getFreeDragPosition()
     const frame = this.frameAtDropPoint(event.dropPoint)
     if (!this.commitGroupDrag(event.source, frame?.id)) {
@@ -985,16 +1020,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.boardFlows?.scheduleRefresh()
   }
   nodeDragCheck(event: CdkDragMove<string>) {
-    if (this.groupDrag?.sourceId === event.source.data) {
-      const current = event.source.getFreeDragPosition()
-      const dx = current.x - this.groupDrag.origin.x
-      const dy = current.y - this.groupDrag.origin.y
-      for (const drag of this.nodeDrags ?? []) {
-        if (drag === event.source) continue
-        const start = this.groupDrag.positions.get(drag.data)
-        if (start) drag.setFreeDragPosition({ x: start.x + dx, y: start.y + dy })
-      }
-    }
+    this.dragAutoPan.moved(event.source)
     this.boardFlows?.scheduleRefresh()
   }
 

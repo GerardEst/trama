@@ -73,6 +73,7 @@
         [cdkDragFreeDragPosition]="getNodeDragPosition(entry)"
         [connected]="!!activeStory.initialNode()"
         (pointerdown)="panzoom.pauseDrag()"
+        (cdkDragStarted)="entryDragStarted($event)"
         (cdkDragEnded)="entryDragEnded($event)"
         (cdkDragMoved)="nodeDragCheck($event)"
       ></polo-entry-point>

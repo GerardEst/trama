@@ -36,6 +36,20 @@ describe('PanzoomService centering', () => {
     return { x: transform.e, y: transform.f }
   }
 
+  it('applies relative screen deltas synchronously while dragging is paused', fakeAsync(() => {
+    initialize(0.5)
+    service.pauseDrag()
+    expect(service.moveBy(-10, 20)).toEqual({ x: -10, y: 20 })
+    expect(position()).toEqual({ x: -10, y: 20 })
+    expect(service.getScale()).toBe(0.5)
+    tick(32)
+    expect(position()).toEqual({ x: -10, y: 20 })
+  }))
+
+  it('returns no applied delta without an initialized board', () => {
+    expect(service.moveBy(10, 20)).toEqual({ x: 0, y: 0 })
+  })
+
   it('keeps ordinary authoring navigation immediate', fakeAsync(() => {
     initialize()
     service.centerToNode(target)
