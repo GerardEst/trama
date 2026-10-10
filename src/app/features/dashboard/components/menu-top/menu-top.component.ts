@@ -25,6 +25,7 @@ export class MenuTopComponent {
   exportError: TranslationKey | null = null
 
   @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
+  @Output() historyRequested = new EventEmitter<'undo' | 'redo'>()
 
   constructor(
     public db: DatabaseService,

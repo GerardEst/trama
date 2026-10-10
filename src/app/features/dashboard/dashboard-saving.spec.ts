@@ -106,6 +106,33 @@ describe('Dashboard save/load races', () => {
     expect(activeStory.entireTree().nodes).toHaveSize(1)
   }))
 
+  it('treats clicking the loaded current story as a no-op that preserves undo and redo', fakeAsync(() => {
+    component.loadStory(story('story-1'))
+    mutations.update(draft => { draft.nodes[0].left = 10 })
+    mutations.update(draft => { draft.nodes[0].left = 20 })
+    mutations.undo()
+    const before = activeStory.entireTree()
+    void component.initBoard('story-1')
+    flushMicrotasks()
+    tick()
+    expect(database.getStoryWithID).not.toHaveBeenCalled()
+    expect(activeStory.entireTree()).toBe(before)
+    expect(activeStory.canUndo()).toBeTrue()
+    expect(activeStory.canRedo()).toBeTrue()
+  }))
+
+  it('a current-story click invalidates an older in-flight switch to another story', fakeAsync(() => {
+    component.loadStory(story('story-1'))
+    let finishRead: (value: StoryRecord) => void = () => undefined
+    database.getStoryWithID.and.returnValue(new Promise<StoryRecord>(resolve => { finishRead = resolve }))
+    void component.initBoard('other-story')
+    void component.initBoard('story-1')
+    finishRead(story('other-story'))
+    flushMicrotasks()
+    tick()
+    expect(activeStory.storyId()).toBe('story-1')
+  }))
+
   it('does not apply delayed configuration from another story', fakeAsync(() => {
     const configuration = (sharing: boolean) => ({
       custom_id: null, tracking: false, sharing, tapLink: false, cumulativeMode: false, footer: {},

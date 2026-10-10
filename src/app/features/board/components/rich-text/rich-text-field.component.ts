@@ -105,6 +105,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
           this.saved.emit(this.currentHtml)
           this.inlineDirty = false
         }
+        this.activeStory.endHistoryCoalescing()
         queueMicrotask(() => {
           if (this.inlineEditor === editor && !editor.isFocused) this.destroyInlineEditor()
         })
@@ -163,5 +164,6 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
       this.currentHtml = html
       this.saved.emit(html)
     }
+    this.activeStory.endHistoryCoalescing()
   }
 }

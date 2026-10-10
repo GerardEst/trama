@@ -12,6 +12,22 @@
     (click)="toggleOptions()"
     [text]="'dashboard.top.options' | t"
   ></polo-basic-button>
+  <div class="historyControls">
+    <polo-basic-button
+      size="s"
+      [text]="'dashboard.top.undo' | t"
+      [title]="'dashboard.top.undoShortcut' | t"
+      [disabled]="!activeStory.canUndo()"
+      (click)="historyRequested.emit('undo')"
+    ></polo-basic-button>
+    <polo-basic-button
+      size="s"
+      [text]="'dashboard.top.redo' | t"
+      [title]="'dashboard.top.redoShortcut' | t"
+      [disabled]="!activeStory.canRedo()"
+      (click)="historyRequested.emit('redo')"
+    ></polo-basic-button>
+  </div>
   @if (db.authenticationRequired()) {
     <div class="saveStatus saveStatus--error" role="alert">
       <span>{{ 'dashboard.top.sessionEnded' | t }}</span>

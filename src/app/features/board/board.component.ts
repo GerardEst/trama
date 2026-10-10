@@ -32,7 +32,6 @@ import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
 import { BoardPreferencesService } from './services/board-preferences.service'
-import { StorageService } from 'src/app/shared/services/storage.service'
 import { BoardJoinStroke, BoardPoint, ENTRY_POINT_ORIGIN } from './board-interactions'
 import { EntryPointComponent } from './components/entry-point/entry-point.component'
 import { FrameColorsService } from './services/frame-colors.service'
@@ -257,6 +256,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   // and pointer moves can hit-test without forcing a layout.
   private selectionOrigin?: BoardOrigin
   private selectionTargets: SelectionTarget[] = []
+  private nodeDragging = false
   private groupDrag?: {
     sourceId: string
     positions: Map<string, Point>
@@ -388,7 +388,6 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     public activeStory: ActiveStoryService,
     private storyEditor: StoryEditorService,
     private preferences: BoardPreferencesService,
-    private storage: StorageService,
     private anchorRegistry: BoardAnchorRegistryService,
     private i18n: I18nService,
     public frameColors: FrameColorsService
@@ -507,6 +506,23 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public refreshFlows() {
     this.boardFlows?.scheduleRefresh()
+  }
+
+  commitEdits() {
+    this.nodeComponents?.forEach(component => component.commitEdits())
+  }
+
+  historyRestored() {
+    if (this.currentGroupId && !this.currentGroup()) this.currentGroupId = undefined
+    const visibleIds = new Set(this.visibleNodes().map(node => node.id))
+    this.selectedNodeIds = new Set([...this.selectedNodeIds].filter(id => visibleIds.has(id)))
+    if (!visibleIds.has(this.activeNodeId() ?? '')) this.clearActiveNode()
+    this.refreshFlows()
+  }
+
+  get isInteracting(): boolean {
+    return this.isDrawingJoin || this.selectionPointerId !== undefined ||
+      !!this.groupDrag || this.nodeDragging
   }
 
   visibleNodes(): node[] {
@@ -644,6 +660,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   renameGroup(groupId: string, value: string) {
     this.storyEditor.updateNodeText(groupId, value.trim() || this.i18n.t('board.groups.defaultName'))
+    this.activeStory.endHistoryCoalescing()
   }
 
   nodeTypeName(type: (typeof this.creatableNodeTypes)[number]) {
@@ -879,6 +896,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setNodeZIndex(event.currentTarget, 0)
   }
   nodeDragStarted(event: CdkDragStart<string>) {
+    this.nodeDragging = true
     this.activateNode(event.source.data)
     this.setNodeZIndex(event.source.element.nativeElement, 1)
     const storyNode = this.visibleNodes().find((node) => node.id === event.source.data)
@@ -928,6 +946,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   entryDragStarted(event: CdkDragStart<string>) {
+    this.nodeDragging = true
     const entry = this.activeStory.entireTree().entryPoint
     if (entry) this.startDragAutoPan(event, this.getNodeDragPosition(entry))
   }
@@ -991,6 +1010,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   entryDragEnded(event: CdkDragEnd<string>) {
     this.dragAutoPan.finish(event.source)
+    this.nodeDragging = false
     const position = event.source.getFreeDragPosition()
     this.storyEditor.updateNodePosition(ENTRY_POINT_ORIGIN, position.x, position.y)
     this.panzoom.resumeDrag()
@@ -999,6 +1019,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nodeDragEnded(event: CdkDragEnd<string>, storyNode: node) {
     this.dragAutoPan.finish(event.source)
+    this.nodeDragging = false
     const dragPosition = event.source.getFreeDragPosition()
     const frame = this.frameAtDropPoint(event.dropPoint)
     if (!this.commitGroupDrag(event.source, frame?.id)) {
@@ -1062,17 +1083,16 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       return
     }
 
-    if (this.joinStroke) {
+    const stroke = this.joinStroke
+    if (stroke) {
       const position = this.getBoardPosition(event)
-      const newNodeInfo = this.createNode(
-        { top: position.y, left: position.x },
-        type
-      )
-
-      this.storyEditor.updateJoinOfOption(
-        this.joinStroke.originId,
-        newNodeInfo.id
-      )
+      this.storyEditor.batch(() => {
+        const newNodeInfo = this.createNode(
+          { top: position.y, left: position.x },
+          type
+        )
+        this.storyEditor.updateJoinOfOption(stroke.originId, newNodeInfo.id)
+      })
     }
   }
 
@@ -1106,10 +1126,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => this.nodeComponents?.find(component => component.nodeId === nodeId)?.richTextField?.focusPreview(), 0)
   }
 
-  async removeNode(event: { nodeId: string }) {
-    const image = this.storyEditor.getImageFromNode(event.nodeId)
-    if (image) await this.storage.removeImage(image.path)
-
+  removeNode(event: { nodeId: string }) {
     this.storyEditor.removeNode(event.nodeId)
     this.selectedNodeIds.delete(event.nodeId)
     if (this.activeNodeId() === event.nodeId) this.clearActiveNode()

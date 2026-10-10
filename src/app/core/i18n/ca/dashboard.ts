@@ -14,6 +14,10 @@ export const dashboard: Dictionary['dashboard'] = {
   top: {
     storyName: 'Nom de la història',
     options: 'Opcions de la història',
+    undo: 'Desfés',
+    redo: 'Refés',
+    undoShortcut: 'Desfés (Ctrl/Cmd+Z)',
+    redoShortcut: 'Refés (Ctrl/Cmd+Maj+Z o Ctrl+Y)',
     sessionEnded:
       'La teva sessió ha acabat. Exporta els canvis abans de tornar a iniciar sessió amb el mateix compte.',
     signInAgain: 'Torna a iniciar sessió',

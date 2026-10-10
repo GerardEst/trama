@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   Output,
-  OnInit,
 } from '@angular/core'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { StoryReferencesService } from '../../services/story-references.service'
@@ -22,8 +21,10 @@ import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-h
   styleUrl: './condition.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConditionComponent implements OnInit {
-  refOptions: ref[] = []
+export class ConditionComponent {
+  get refOptions(): ref[] {
+    return this.storyReferences.options()
+  }
 
   @Input() conditionId: string = ''
   @Input() fallback: boolean = false
@@ -42,12 +43,6 @@ export class ConditionComponent implements OnInit {
     private storyEditor: StoryEditorService,
     private storyReferences: StoryReferencesService
   ) {}
-
-  ngOnInit() {
-    this.refOptions = Object.entries(this.storyReferences.getAll()).map(
-      ([id, storyRef]) => ({ id, ...storyRef })
-    )
-  }
 
   get displayedRules(): node_condition_rule[] {
     return (

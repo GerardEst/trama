@@ -2,6 +2,7 @@ import { computed, effect, EffectRef, Injectable, OnDestroy, signal, untracked }
 import { tree } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from './active-story.service'
+import { StoryImagesService } from './story-images.service'
 
 interface PendingSave {
   tree: tree
@@ -18,6 +19,8 @@ export class StoryMutationService implements OnDestroy {
   private readonly storyAuthors = new Map<string, string | undefined>()
   private readonly failedStories = new Set<string>()
   private readonly recoveredStories = new Set<string>()
+  private batchDepth = 0
+  private batchChanged = false
   private saveInProgress = false
   private destroyed = false
   private retryTimer?: ReturnType<typeof setTimeout>
@@ -44,7 +47,8 @@ export class StoryMutationService implements OnDestroy {
 
   constructor(
     private activeStory: ActiveStoryService,
-    private database: DatabaseService
+    private database: DatabaseService,
+    private images: StoryImagesService
   ) {
     window.addEventListener('beforeunload', this.warnBeforeUnload)
     window.addEventListener('online', this.retryWhenOnline)
@@ -83,13 +87,52 @@ export class StoryMutationService implements OnDestroy {
       this.recoveredState.set(true)
       this.refreshState()
     }
+    this.images.storyLoaded(storyId, this.activeStory.entireTree(), userId, this.pendingSaves.has(storyId))
   }
 
-  update(mutate: (draft: tree) => boolean | void): boolean {
-    const nextTree = this.activeStory.updateTree(mutate)
+  update(mutate: (draft: tree) => boolean | void, coalescingKey?: string): boolean {
+    const nextTree = this.activeStory.updateTree(mutate, coalescingKey)
     if (!nextTree) return false
 
-    this.enqueueSave(nextTree)
+    if (this.batchDepth > 0) this.batchChanged = true
+    else this.enqueueSave(nextTree)
+    return true
+  }
+
+  beginHistorySession() {
+    this.activeStory.beginHistorySession()
+  }
+
+  endHistorySession() {
+    this.activeStory.endHistorySession()
+    this.images.historyReleased()
+  }
+
+  /** One user gesture can contain several editor mutations. */
+  batch<T>(action: () => T): T {
+    this.batchDepth++
+    try {
+      return this.activeStory.groupTreeChanges(action)
+    } finally {
+      this.batchDepth--
+      if (this.batchDepth === 0 && this.batchChanged) {
+        this.batchChanged = false
+        this.enqueueSave(this.activeStory.entireTree())
+      }
+    }
+  }
+
+  undo(): boolean {
+    const restored = this.activeStory.undoTree()
+    if (!restored) return false
+    this.enqueueSave(restored)
+    return true
+  }
+
+  redo(): boolean {
+    const restored = this.activeStory.redoTree()
+    if (!restored) return false
+    this.enqueueSave(restored)
     return true
   }
 
@@ -111,6 +154,7 @@ export class StoryMutationService implements OnDestroy {
     if (!this.storyAuthors.has(storyId)) this.storyAuthors.set(storyId, this.database.user?.()?.id)
     const userId = this.storyAuthors.get(storyId)
     this.pendingSaves.set(storyId, { tree: storyTree, userId })
+    this.images.saveQueued(storyId, storyTree, userId)
     this.recoveredStories.delete(storyId)
     this.writeDraft(storyId, storyTree, userId)
     this.refreshState()
@@ -159,11 +203,13 @@ export class StoryMutationService implements OnDestroy {
           this.failedStories.add(storyId)
           failedThisAttempt.add(storyId)
         }
+        this.images.saveFinished(storyId, this.pendingSaves.has(storyId))
         this.refreshState()
       }
     } finally {
       this.saveInProgress = false
       this.refreshState()
+      this.images.cleanup()
       const userId = this.database.user?.()?.id
       if (!this.destroyed && Array.from(this.pendingSaves.entries()).some(([id, pending]) =>
         !this.recoveredStories.has(id) && pending.userId === userId

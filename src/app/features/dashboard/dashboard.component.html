@@ -16,6 +16,6 @@
     </aside>
   }
   <polo-menu-tree-legend [showLegend]="false" (linearRequested)="openLinearView()" />
-  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" />
+  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" (historyRequested)="restoreHistory($event)" />
   <polo-menu #menuSide (onNewStory)="createNewStory()" (onChangeTree)="initBoard($event)" />
 </div>

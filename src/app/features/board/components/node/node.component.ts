@@ -35,8 +35,6 @@ import {
   generateIDForNewAnswer,
   generateIDForNewCondition,
 } from 'src/app/shared/utils/tree-searching'
-import { ApisService } from 'src/app/core/services/apis.service'
-import { StorageService } from 'src/app/shared/services/storage.service'
 import { NodeOptionsComponent } from './context-menus/node-options/node-options.component'
 import { NodeEventsComponent } from './node-events/node-events.component'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
@@ -121,6 +119,7 @@ export class NodeComponent {
   @Input() userTextOptions?: node_userTextOptions
 
   openedShareOptions: boolean = false
+  private imageUploadSequence = 0
   readonly loading = signal(false)
   readonly loadingMessage = signal<string | undefined>(undefined)
   optionsOpen: boolean = false
@@ -143,8 +142,6 @@ export class NodeComponent {
     private panzoom: PanzoomService,
     public database: DatabaseService,
     public activeStory: ActiveStoryService,
-    private apis: ApisService,
-    private storage: StorageService,
     private storyEditor: StoryEditorService,
     private anchorRegistry: BoardAnchorRegistryService,
     private i18n: I18nService
@@ -170,58 +167,29 @@ export class NodeComponent {
     const imageFile = imageInput.files?.[0]
     if (!imageFile) return
 
+    const request = ++this.imageUploadSequence
     this.loading.set(true)
     this.loadingMessage.set(this.i18n.t('board.node.optimizingImage'))
 
     try {
-      const {
-        data: { user },
-      } = await this.database.supabase.auth.getUser()
-      if (!user) {
-        this.loadingMessage.set(undefined)
-        return
-      }
-
-      const randomStr = Math.random().toString(36).substring(2, 10)
-      const imagePath = `${user.id}/${this.activeStory.storyId()}/${
-        this.nodeId
-      }-${randomStr}`
-      const optimizedImageBlob = await this.apis.getOptimizedImage(
-        imageFile
-      )
-      if (!optimizedImageBlob) {
-        console.error('Error obtaining optimized image')
-        this.loadingMessage.set(this.i18n.t('board.node.imageTooBig'))
-        imageInput.value = ''
-        return
-      }
-
-      const uploadedImage = await this.storage.uploadImage(
-        imagePath,
-        optimizedImageBlob
-      )
-
-      if (uploadedImage) {
-        this.storyEditor.addImageToNode(this.nodeId, imagePath)
-        this.loadingMessage.set(undefined)
-      } else {
-        console.error('Not possible to upload image')
-        this.loadingMessage.set(this.i18n.t('board.node.imageError'))
-      }
-    } catch (error) {
-      console.error('Not possible to upload image', error)
-      this.loadingMessage.set(this.i18n.t('board.node.imageError'))
+      const result = await this.storyEditor.uploadImageToNode(this.nodeId, imageFile)
+      if (request !== this.imageUploadSequence) return
+      this.loadingMessage.set(result.status === 'optimization-failed'
+        ? this.i18n.t('board.node.imageTooBig')
+        : result.status === 'upload-failed' ? this.i18n.t('board.node.imageError') : undefined)
+    } catch (error: unknown) {
+      console.error('Could not add a node image', error)
+      if (request === this.imageUploadSequence) this.loadingMessage.set(this.i18n.t('board.node.imageError'))
     } finally {
-      this.loading.set(false)
-      imageInput.value = ''
+      if (request === this.imageUploadSequence) {
+        this.loading.set(false)
+        imageInput.value = ''
+      }
     }
   }
 
-  async removeNodeImage() {
-    if (!this.image) return
-    if (await this.storage.removeImage(this.image)) {
-      this.storyEditor.removeImageFromNode(this.nodeId)
-    }
+  removeNodeImage() {
+    this.storyEditor.removeImageFromNode(this.nodeId)
   }
 
   updateShareOptions() {
@@ -286,6 +254,11 @@ export class NodeComponent {
 
   moveCondition(id: string, direction: -1 | 1) {
     this.storyEditor.moveCondition(this.nodeId, id, direction)
+  }
+
+  commitEdits() {
+    this.richTextField?.commit()
+    this.answerComponents?.forEach(answer => answer.richTextField?.commit())
   }
 
   saveNodeName(name: string) {

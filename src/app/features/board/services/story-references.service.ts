@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { computed, Injectable } from '@angular/core'
 import { ref, refCategory, refType } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
@@ -13,6 +13,10 @@ export interface StoryRefOption extends ref {
   providedIn: 'root',
 })
 export class StoryReferencesService {
+  readonly options = computed<StoryRefOption[]>(() =>
+    Object.entries(this.activeStory.references()).map(([id, storyRef]) => ({ id, ...storyRef }))
+  )
+
   constructor(
     private activeStory: ActiveStoryService,
     private mutations: StoryMutationService
@@ -77,17 +81,15 @@ export class StoryReferencesService {
   }
 
   getAll(): Readonly<Record<string, ref>> {
-    return this.activeStory.entireTree().refs
+    return this.activeStory.references()
   }
 
   getName(refId: string): string {
-    return this.activeStory.entireTree().refs[refId]?.name ?? ''
+    return this.activeStory.references()[refId]?.name ?? ''
   }
 
   getByType(type: refType): StoryRefOption[] {
-    return Object.entries(this.activeStory.entireTree().refs)
-      .filter(([, storyRef]) => storyRef.type === type)
-      .map(([id, storyRef]) => ({ id, ...storyRef }))
+    return this.options().filter(storyRef => storyRef.type === type)
   }
 
   getCategories(): readonly refCategory[] {

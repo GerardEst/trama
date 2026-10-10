@@ -18,8 +18,6 @@ describe('AnswerComponent', () => {
         {
           provide: StoryEditorService,
           useValue: {
-            getEventsOfAnswer: () => [],
-            getRequirementsOfAnswer: () => [],
             updateAnswerText: () => undefined,
           },
         },

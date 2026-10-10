@@ -74,7 +74,10 @@ export class RichTextEditorComponent implements AfterViewInit, OnChanges, OnDest
           this.saveTimer = setTimeout(() => this.commit(), 300)
         }
       },
-      onBlur: () => { if (this.embedded()) this.commit() },
+      onBlur: () => {
+        if (this.embedded()) this.commit()
+        this.activeStory.endHistoryCoalescing()
+      }
     })
     this.editor.on('focus', () => this.focused.emit())
     queueMicrotask(() => { if (this.editor && !this.editor.isDestroyed) this.ready.emit() })

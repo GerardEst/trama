@@ -4,7 +4,6 @@ import { NodeComponent } from './node.component'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 import { PanzoomService } from '../../services/panzoom.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import { ApisService } from 'src/app/core/services/apis.service'
 import { StoryEditorService } from '../../services/story-editor.service'
 import { ContextHelpService } from 'src/app/shared/context-help/context-help.service'
 
@@ -370,21 +369,43 @@ describe('NodeComponent', () => {
     }
   })
 
+  it('keeps upload loading and feedback scoped to the latest file selection', async () => {
+    const editor = TestBed.inject(StoryEditorService)
+    let finishFirst: (value: { status: 'optimization-failed' }) => void = () => undefined
+    let finishSecond: (value: { status: 'cancelled' }) => void = () => undefined
+    const upload = spyOn(editor, 'uploadImageToNode').and.returnValues(
+      new Promise(resolve => { finishFirst = resolve }),
+      new Promise(resolve => { finishSecond = resolve })
+    )
+    const input = document.createElement('input')
+    input.type = 'file'
+    const file = new File(['image'], 'image.png', { type: 'image/png' })
+    Object.defineProperty(input, 'files', { value: [file] })
+    const reset = spyOnProperty(input, 'value', 'set').and.callThrough()
+    const first = component.onAddImage({ target: input } as unknown as Event)
+    const second = component.onAddImage({ target: input } as unknown as Event)
+    expect(upload).toHaveBeenCalledTimes(2)
+    finishFirst({ status: 'optimization-failed' })
+    await first
+    expect(component.loading()).toBeTrue()
+    expect(component.loadingMessage()).toBe('Optimizing image')
+    expect(reset).not.toHaveBeenCalled()
+    finishSecond({ status: 'cancelled' })
+    await second
+    expect(component.loading()).toBeFalse()
+    expect(component.loadingMessage()).toBeUndefined()
+    expect(reset).toHaveBeenCalledOnceWith('')
+  })
+
   it('updates OnPush upload state and resets the selected input on optimization failure', async () => {
-    const database = TestBed.inject(DatabaseService)
-    const apis = TestBed.inject(ApisService)
+    const editor = TestBed.inject(StoryEditorService)
     const imageInput = document.createElement('input')
     imageInput.type = 'file'
     Object.defineProperty(imageInput, 'files', {
       value: [new File(['image'], 'image.png', { type: 'image/png' })],
     })
     const valueSetter = spyOnProperty(imageInput, 'value', 'set').and.callThrough()
-    spyOn(database.supabase.auth, 'getUser').and.resolveTo({
-      data: { user: { id: 'user_1' } },
-      error: null,
-    } as never)
-    spyOn(apis, 'getOptimizedImage').and.resolveTo(false)
-    spyOn(console, 'error')
+    spyOn(editor, 'uploadImageToNode').and.resolveTo({ status: 'optimization-failed' })
 
     const upload = component.onAddImage({ target: imageInput } as unknown as Event)
 

@@ -12,6 +12,7 @@ import {
 } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
+import { StoryImagesService, StoryImageUploadResult } from 'src/app/shared/services/story-images.service'
 import {
   findAnswerInTree,
   findConditionsInTree,
@@ -35,8 +36,13 @@ export class StoryEditorService {
   constructor(
     private activeStory: ActiveStoryService,
     private mutations: StoryMutationService,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private images: StoryImagesService
   ) {}
+
+  batch<T>(action: () => T): T {
+    return this.mutations.batch(action)
+  }
 
   duplicateNode(nodeId: string, newNodeId: string) {
     this.mutations.update((tree) => {
@@ -90,7 +96,8 @@ export class StoryEditorService {
   }
 
   removeNode(nodeId: string) {
-    this.mutations.update((tree) => {
+    const image = this.getImageFromNode(nodeId)
+    const changed = this.mutations.update((tree) => {
       const existing = findNodeInTree(nodeId, tree)
       if (!existing) return false
       const moved = new Set<string>([nodeId])
@@ -122,6 +129,10 @@ export class StoryEditorService {
 
       return true
     })
+    if (changed) {
+      this.images.cancelNodeUploads(this.activeStory.storyId(), nodeId)
+      if (image) this.images.retireImage(image.path)
+    }
   }
 
   groupNodes(
@@ -248,7 +259,7 @@ export class StoryEditorService {
   }
 
   updateNodeText(nodeId: string, text: string) {
-    this.withNode(nodeId, (storyNode) => (storyNode.text = text))
+    this.withNode(nodeId, (storyNode) => (storyNode.text = text), `node-text:${nodeId}`)
   }
 
   saveNodeEvents(nodeId: string, events: event[]) {
@@ -372,16 +383,31 @@ export class StoryEditorService {
     )
   }
 
+  async uploadImageToNode(nodeId: string, file: File): Promise<StoryImageUploadResult> {
+    const result = await this.images.uploadForNode(nodeId, file)
+    if (result.status !== 'uploaded') return result
+    if (!this.images.claimUpload(result)) return { status: 'cancelled' }
+    this.addImageToNode(result.nodeId, result.path)
+    return result
+  }
+
   addImageToNode(nodeId: string, imagePath: string) {
+    const previous = this.getImageFromNode(nodeId)
+    if (previous?.path === imagePath) return
     this.withNode(nodeId, (storyNode) => {
       storyNode.image = { path: imagePath }
     })
+    if (previous) this.images.retireImage(previous.path)
   }
 
   removeImageFromNode(nodeId: string) {
+    const image = this.getImageFromNode(nodeId)
+    if (!image) return
     this.withNode(nodeId, (storyNode) => {
       delete storyNode.image
     })
+    this.images.cancelNodeUploads(this.activeStory.storyId(), nodeId)
+    this.images.retireImage(image.path)
   }
 
   getImageFromNode(nodeId: string): node['image'] {
@@ -489,7 +515,7 @@ export class StoryEditorService {
   }
 
   updateAnswerText(answerId: string, text: string) {
-    this.withAnswer(answerId, (answer) => (answer.text = text))
+    this.withAnswer(answerId, (answer) => (answer.text = text), `answer-text:${answerId}`)
   }
 
   createNodeAnswer(nodeId: string, answerId: string) {
@@ -540,22 +566,6 @@ export class StoryEditorService {
       answerId,
       (answer) => (answer.requirements = structuredClone(requirements))
     )
-  }
-
-  getEventsOfAnswer(answerId: string): event[] {
-    const events = findAnswerInTree(
-      answerId,
-      this.activeStory.entireTree()
-    )?.events
-    return structuredClone(events ?? [])
-  }
-
-  getRequirementsOfAnswer(answerId: string): answer_requirement[] {
-    const requirements = findAnswerInTree(
-      answerId,
-      this.activeStory.entireTree()
-    )?.requirements
-    return structuredClone(requirements ?? [])
   }
 
   updateJoinOfOption(
@@ -611,24 +621,24 @@ export class StoryEditorService {
     })
   }
 
-  private withNode(nodeId: string, mutate: (storyNode: node) => void) {
+  private withNode(nodeId: string, mutate: (storyNode: node) => void, coalescingKey?: string) {
     this.mutations.update((tree) => {
       const storyNode = findNodeInTree(nodeId, tree)
       if (!storyNode) return false
 
       mutate(storyNode)
       return true
-    })
+    }, coalescingKey)
   }
 
-  private withAnswer(answerId: string, mutate: (answer: node_answer) => void) {
+  private withAnswer(answerId: string, mutate: (answer: node_answer) => void, coalescingKey?: string) {
     this.mutations.update((tree) => {
       const answer = findAnswerInTree(answerId, tree)
       if (!answer) return false
 
       mutate(answer)
       return true
-    })
+    }, coalescingKey)
   }
 
   private findOrCreateJoinOrigin(
