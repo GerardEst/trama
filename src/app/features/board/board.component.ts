@@ -942,7 +942,11 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
       const position = this.groupDrag?.positions.get(drag.data)
       if (position && drag !== source) followers.push({ source: drag, origin: position })
     }
-    this.dragAutoPan.start(source, origin, viewport, followers, () => this.boardFlows?.scheduleRefresh(), event.event)
+    this.dragAutoPan.start(source, origin, viewport, followers, () => this.refreshDragFlows(source), event.event)
+  }
+
+  private refreshDragFlows(source: CdkDrag<string>) {
+    this.boardFlows?.scheduleRefresh(this.groupDrag?.positions.keys() ?? [source.data])
   }
 
   entryDragStarted(event: CdkDragStart<string>) {
@@ -1042,7 +1046,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   nodeDragCheck(event: CdkDragMove<string>) {
     this.dragAutoPan.moved(event.source)
-    this.boardFlows?.scheduleRefresh()
+    this.refreshDragFlows(event.source)
   }
 
   getNodeDragPosition(storyNode: node | storyEntryPoint): Point {
