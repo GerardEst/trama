@@ -8,6 +8,9 @@ export interface ProjectedBoardJoin {
   toAnswer: boolean
   fromAnchor: string
   toAnchor: string
+  /** Visible owners, not necessarily the original story nodes (collapsed groups). */
+  fromNode?: string
+  toNode?: string
   fromBoundary: boolean
   toBoundary: boolean
 }
@@ -49,6 +52,8 @@ export function projectBoardJoins(
         origin: ENTRY_POINT_ORIGIN,
         destiny: destination.id,
         toAnswer: false,
+        fromNode: groupId ? undefined : ENTRY_POINT_ORIGIN,
+        toNode,
         fromBoundary: groupId !== undefined,
         toBoundary: false,
         fromAnchor: groupId ? `${groupId}_boundary-in` : `${ENTRY_POINT_ORIGIN}_join`,
@@ -96,6 +101,8 @@ export function projectBoardJoins(
           origin: origin.id,
           destiny: storyJoin.node,
           toAnswer,
+          fromNode,
+          toNode,
           fromBoundary,
           toBoundary,
           fromAnchor: fromBoundary

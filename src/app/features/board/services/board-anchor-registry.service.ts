@@ -5,6 +5,9 @@ export class BoardAnchorRegistryService {
   private readonly anchors = new Map<string, HTMLElement>()
   private readonly anchorVersion = signal(0)
   private invalidationFrame?: number
+  private pendingNodes = new Set<string>()
+  private pendingFullRefresh = false
+  private changedNodes?: ReadonlySet<string>
   private readonly resizeObserver =
     typeof ResizeObserver === 'undefined'
       ? undefined
@@ -39,11 +42,21 @@ export class BoardAnchorRegistryService {
     return this.anchors.get(id)
   }
 
-  invalidate() {
+  /** Undefined means a full refresh, including when a consumer skipped frames. */
+  changedNodesSince(version: number): ReadonlySet<string> | undefined {
+    return this.anchorVersion() === version + 1 ? this.changedNodes : undefined
+  }
+
+  invalidate(nodeIds?: Iterable<string>) {
+    if (nodeIds === undefined) this.pendingFullRefresh = true
+    else for (const nodeId of nodeIds) this.pendingNodes.add(nodeId)
     if (this.invalidationFrame !== undefined) return
 
     this.invalidationFrame = requestAnimationFrame(() => {
       this.invalidationFrame = undefined
+      this.changedNodes = this.pendingFullRefresh ? undefined : this.pendingNodes
+      this.pendingNodes = new Set<string>()
+      this.pendingFullRefresh = false
       this.anchorVersion.update((version) => version + 1)
     })
   }

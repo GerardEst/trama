@@ -1746,6 +1746,13 @@ describe('BoardComponent', () => {
         .map((element) => element.injector.get<CdkDrag<string>>(CdkDrag))
         .find((drag) => drag.data === id)!
       const root = source.getRootElement()
+      const movedNodes: string[][] = []
+      const refresh = component.boardFlows!.scheduleRefresh.bind(component.boardFlows!)
+      spyOn(component.boardFlows!, 'scheduleRefresh').and.callFake(nodeIds => {
+        const ids = nodeIds === undefined ? undefined : [...nodeIds]
+        if (ids) movedNodes.push(ids)
+        refresh(ids)
+      })
       const handle = root.querySelector<HTMLElement>('.node__header, .groupNode__header, .boardFrame__header, .entryPoint__handle')!
       const start = root.getBoundingClientRect()
       const downX = start.left + 8
@@ -1769,6 +1776,10 @@ describe('BoardComponent', () => {
       expect(root.getBoundingClientRect().top + 8).toBeCloseTo(pointerY, 0)
       expect(story.entireTree()).toBe(originalTree)
       expect(save).not.toHaveBeenCalled()
+      const expectedMovedNodes = kind === 'entry' ? [ENTRY_POINT_ORIGIN] :
+        kind === 'frame' || kind === 'selection' ? ['node_0', 'node_1'] : ['node_0']
+      expect(movedNodes.length).toBeGreaterThan(0)
+      movedNodes.forEach(ids => expect(ids).toEqual(expectedMovedNodes))
 
       // Resume pointer movement after several stationary auto-pan frames.
       move(edgeX - 10)

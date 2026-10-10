@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { node } from 'src/app/core/interfaces/interfaces'
+import { node, tree } from 'src/app/core/interfaces/interfaces'
 import { projectBoardJoins, ProjectedBoardJoin } from '../../board-join-projection'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { StoryEditorService } from '../../services/story-editor.service'
@@ -77,13 +77,40 @@ export class BoardFlowsComponent {
 
   joinContextMenuInfo: JoinContextMenuInfo = {}
 
+  // SVG/board coordinates survive camera pan and zoom: both anchors and SVG
+  // share the camera transform. Only moved owners need measuring during a drag.
+  private readonly positions = new Map<string, Point | undefined>()
+  private readonly anchorsByNode = new Map<string, Set<string>>()
+  private readonly joinsByAnchor = new Map<string, Set<ProjectedBoardJoin>>()
+  private readonly pathsById = new Map<string, BoardFlowPath>()
+  private cachedJoins: ProjectedBoardJoin[] = []
+  private cachedPaths: BoardFlowPath[] = []
+  private geometryReady = false
+  private previousTree?: tree
+  private previousGroupId?: string
+  private previousProjection?: ProjectedBoardJoin[]
+  private previousVersion = -1
+
   readonly paths: Signal<BoardFlowPath[]> = computed(() => {
-    this.anchorRegistry.version()
-    return this.calculatePaths(
-      this.activeStory.entireTree().nodes,
-      this.currentGroupId(),
-      this.inputProjectedJoins()
-    )
+    const version = this.anchorRegistry.version()
+    const storyTree = this.activeStory.entireTree()
+    const groupId = this.currentGroupId()
+    const projection = this.inputProjectedJoins()
+    const changedNodes = this.anchorRegistry.changedNodesSince(this.previousVersion)
+    // Tree edits still refresh everything: content can move sibling anchors,
+    // and committing positions can also relocate the group's boundary ports.
+    const fullRefresh = !this.geometryReady || changedNodes === undefined ||
+      storyTree !== this.previousTree || groupId !== this.previousGroupId ||
+      projection !== this.previousProjection
+
+    this.previousVersion = version
+    this.previousTree = storyTree
+    this.previousGroupId = groupId
+    this.previousProjection = projection
+
+    return fullRefresh
+      ? this.calculatePaths(storyTree.nodes, groupId, projection)
+      : this.refreshMovedNodes(changedNodes)
   })
 
   constructor(
@@ -92,8 +119,8 @@ export class BoardFlowsComponent {
     private anchorRegistry: BoardAnchorRegistryService
   ) {}
 
-  scheduleRefresh() {
-    this.anchorRegistry.invalidate()
+  scheduleRefresh(nodeIds?: Iterable<string>) {
+    this.anchorRegistry.invalidate(nodeIds)
   }
 
   changeCursorStyle(state: boolean) {
@@ -153,42 +180,96 @@ export class BoardFlowsComponent {
     groupId?: string,
     projectedJoins = projectBoardJoins(nodes, groupId, this.activeStory.entireTree().entryPoint)
   ) {
+    this.geometryReady = false
+    this.positions.clear()
+    this.anchorsByNode.clear()
+    this.joinsByAnchor.clear()
+    this.pathsById.clear()
+    this.cachedJoins = projectedJoins
+    this.cachedPaths = []
     const context = this.createCoordinateContext()
-    if (!context) return []
-
-    const positions = new Map<string, Point>()
-    const paths: BoardFlowPath[] = []
+    if (!context) return this.cachedPaths
 
     for (const storyJoin of projectedJoins) {
-      const startPosition = this.getCachedPosition(
-        storyJoin.fromAnchor, context, positions
-      )
-      const endPosition = this.getCachedPosition(
-        storyJoin.toAnchor, context, positions
-      )
-      if (!startPosition || !endPosition) continue
-      paths.push({
-        id: storyJoin.id,
-        origin: storyJoin.origin,
-        destiny: storyJoin.destiny,
-        toAnswer: storyJoin.toAnswer,
-        svgPath: this.createCurvePath(startPosition, endPosition),
-      })
+      this.indexAnchor(storyJoin.fromNode, storyJoin.fromAnchor, storyJoin)
+      this.indexAnchor(storyJoin.toNode, storyJoin.toAnchor, storyJoin)
+      const path = this.calculateJoinPath(storyJoin, context)
+      if (path) {
+        this.pathsById.set(path.id, path)
+        this.cachedPaths.push(path)
+      }
     }
-
-    return paths
+    this.geometryReady = true
+    return this.cachedPaths
   }
 
-  private getCachedPosition(
-    anchorId: string,
-    context: CoordinateContext,
-    positions: Map<string, Point>
-  ) {
-    const cachedPosition = positions.get(anchorId)
-    if (cachedPosition) return cachedPosition
+  private indexAnchor(nodeId: string | undefined, anchorId: string, storyJoin: ProjectedBoardJoin) {
+    if (nodeId !== undefined) {
+      const anchors = this.anchorsByNode.get(nodeId) ?? new Set<string>()
+      anchors.add(anchorId)
+      this.anchorsByNode.set(nodeId, anchors)
+    }
+    const joins = this.joinsByAnchor.get(anchorId) ?? new Set<ProjectedBoardJoin>()
+    joins.add(storyJoin)
+    this.joinsByAnchor.set(anchorId, joins)
+  }
 
+  private refreshMovedNodes(nodeIds: ReadonlySet<string>) {
+    const affectedJoins = new Set<ProjectedBoardJoin>()
+    for (const nodeId of nodeIds) {
+      for (const anchorId of this.anchorsByNode.get(nodeId) ?? []) {
+        this.positions.delete(anchorId)
+        for (const storyJoin of this.joinsByAnchor.get(anchorId) ?? []) {
+          affectedJoins.add(storyJoin)
+        }
+      }
+    }
+    if (!affectedJoins.size) return this.cachedPaths
+    const context = this.createCoordinateContext()
+    if (!context) {
+      this.geometryReady = false
+      return []
+    }
+
+    let changed = false
+    for (const storyJoin of affectedJoins) {
+      const previous = this.pathsById.get(storyJoin.id)
+      const path = this.calculateJoinPath(storyJoin, context)
+      if (path === previous) continue
+      changed = true
+      if (path) this.pathsById.set(path.id, path)
+      else this.pathsById.delete(storyJoin.id)
+    }
+    if (changed) {
+      this.cachedPaths = []
+      for (const storyJoin of this.cachedJoins) {
+        const path = this.pathsById.get(storyJoin.id)
+        if (path) this.cachedPaths.push(path)
+      }
+    }
+    return this.cachedPaths
+  }
+
+  private calculateJoinPath(storyJoin: ProjectedBoardJoin, context: CoordinateContext) {
+    const start = this.getCachedPosition(storyJoin.fromAnchor, context)
+    const end = this.getCachedPosition(storyJoin.toAnchor, context)
+    if (!start || !end) return undefined
+    const svgPath = this.createCurvePath(start, end)
+    const previous = this.pathsById.get(storyJoin.id)
+    if (previous?.svgPath === svgPath) return previous
+    return {
+      id: storyJoin.id,
+      origin: storyJoin.origin,
+      destiny: storyJoin.destiny,
+      toAnswer: storyJoin.toAnswer,
+      svgPath,
+    }
+  }
+
+  private getCachedPosition(anchorId: string, context: CoordinateContext) {
+    if (this.positions.has(anchorId)) return this.positions.get(anchorId)
     const position = this.getPositionOfElement(anchorId, context)
-    if (position) positions.set(anchorId, position)
+    this.positions.set(anchorId, position)
     return position
   }
 
