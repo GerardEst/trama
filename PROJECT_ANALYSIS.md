@@ -37,7 +37,6 @@ Cross-cutting singletons and contracts.
 |------|-------|
 | `services/database.service.ts` (~390 lines) | Supabase client wrapper; the central data-access layer. Now typed (`SupabaseClient`, `WritableSignal<appUser \| null>`). |
 | `services/auth.service.ts` | Logout / session teardown. |
-| `services/apis.service.ts` | Calls the AWS Lambda image optimizer. |
 | `services/overlay.service.ts` | Shared base for dynamic-component mounting via `ApplicationRef` + `createComponent`. |
 | `services/modal.service.ts`, `alert.service.ts` | Thin subclasses of `OverlayService` (Alert returns a Promise; Modal returns the ref). Previously near-identical, now de-duplicated. |
 | `services/context-menus.service.ts` | Imperative context-menu mounting. |
@@ -55,7 +54,9 @@ Reusable UI and app-wide state.
 - **`services/active-story.service.ts` (674 lines)** — the **largest and most
   central file**: holds the in-memory story tree (nodes, refs, config) as signals
   and is the source of truth for the editor.
-- **`services/statistics.service.ts`, `storage.service.ts`**
+- **`services/statistics.service.ts`**
+- **`services/story-images.service.ts`** — owns image optimization, uploads and
+  deferred deletion; story JSON references stay in `StoryEditorService`.
 - **`utils/tree-searching.ts`, `normalizers.ts`** — pure helpers for locating
   nodes/answers/conditions in the tree and ID generation.
 

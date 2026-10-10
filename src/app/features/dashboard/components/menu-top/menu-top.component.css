@@ -32,6 +32,11 @@
   font-weight: 800;
   letter-spacing: -0.025em;
 }
+.menu .historyControls {
+  display: flex;
+  flex-basis: 100%;
+  gap: var(--polo-space-2);
+}
 .menu .saveStatus {
   display: flex;
   flex-wrap: wrap;

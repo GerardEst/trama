@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router'
 import { authGuard } from 'src/app/core/guards/auth.guard'
+import { pendingEditorGuard } from 'src/app/core/guards/pending-editor.guard'
 
 export const dashboardRoutes: Routes = [
   {
@@ -8,5 +9,6 @@ export const dashboardRoutes: Routes = [
     loadComponent: () =>
       import('./dashboard.component').then((m) => m.DashboardComponent),
     canActivate: [authGuard],
+    canDeactivate: [pendingEditorGuard],
   },
 ]

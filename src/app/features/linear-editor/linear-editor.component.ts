@@ -157,6 +157,7 @@ export class LinearEditorComponent implements OnDestroy {
 
   commitEdits() {
     this.textEditors?.forEach(editor => editor.commit())
+    this.story.endHistoryCoalescing()
   }
 
   private canSave(storyId: string, nodeId: string) {

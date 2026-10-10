@@ -14,10 +14,7 @@ describe('ConditionComponent', () => {
       imports: [ConditionComponent],
       providers: [
         BoardAnchorRegistryService,
-        {
-          provide: ActiveStoryService,
-          useValue: { entireTree: () => ({ refs: {} }) },
-        },
+        ActiveStoryService,
       ],
     }).compileComponents()
 

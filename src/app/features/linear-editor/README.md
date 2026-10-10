@@ -60,7 +60,10 @@ sheet, separated by a neutral divider: no pencils or navigation buttons in edit
 mode. One shared rich-text toolbar follows the last focused surface (block
 formatting remains disabled for inline-only answers). Embedded drafts autosave
 after a short typing pause or blur, and are
-flushed before navigation/closing/story switching. External board corrections
+flushed before navigation/closing/story switching. Consecutive autosaves to the
+same field share one undo step until blur, an explicit commit, another field or
+another authoring action. Leaving the dashboard flushes through CanDeactivate
+before child editors are destroyed. External board corrections
 refresh the sheet without replacing the selection on its own autosave echo.
 Legacy plain-text variables/categories are converted to existing rich-text
 tokens when corrected; ordinary text already authored as HTML stays literal.

@@ -5,7 +5,6 @@ import {
   Input,
   Output,
   ViewChild,
-  OnInit,
 } from '@angular/core'
 import { answer_requirement, event } from 'src/app/core/interfaces/interfaces'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
@@ -33,9 +32,9 @@ import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-h
   styleUrls: ['./answer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnswerComponent implements OnInit {
-  events: Array<event> = []
-  requirements: answer_requirement[] = []
+export class AnswerComponent {
+  @Input() events: event[] = []
+  @Input() requirements: answer_requirement[] = []
 
   @Input() answerId: string = ''
   @Input() text: string = ''
@@ -47,11 +46,6 @@ export class AnswerComponent implements OnInit {
   constructor(
     private storyEditor: StoryEditorService
   ) {}
-
-  ngOnInit() {
-    this.events = this.storyEditor.getEventsOfAnswer(this.answerId)
-    this.requirements = this.storyEditor.getRequirementsOfAnswer(this.answerId)
-  }
 
   focusText() { this.richTextField?.focusPreview() }
 

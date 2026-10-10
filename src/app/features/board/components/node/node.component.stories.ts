@@ -34,15 +34,23 @@ type Story = StoryObj<NodeComponent>
 export const Content: Story = {
   args: {
     answers: [
-      { id: 'answer_12_0', text: 'Climb toward the light', join: [] },
-      { id: 'answer_12_1', text: 'Search the entrance first', join: [] },
+      {
+        id: 'answer_12_0', text: 'Climb toward the light', join: [],
+        events: [{ id: 'event_answer_12_0', action: 'alterStat', type: 'stat', target: 'stat_courage', amount: '2' }],
+        requirements: [{ target: 'stat_courage', type: 'stat', amount: 3 }],
+      },
+      {
+        id: 'answer_12_1', text: 'Search the entrance first', join: [],
+        events: [{ id: 'event_answer_12_1', action: 'alterStat', type: 'stat', target: 'stat_courage', amount: '2' }],
+        requirements: [{ target: 'stat_courage', type: 'stat', amount: 3 }],
+      },
     ],
     events: [
       {
         id: 'event_1',
         action: 'alterStat',
         type: 'stat',
-        target: 'courage',
+        target: 'stat_courage',
         amount: '2',
       },
     ],

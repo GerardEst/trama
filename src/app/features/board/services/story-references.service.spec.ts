@@ -50,6 +50,20 @@ describe('StoryReferencesService', () => {
     expect(activeStory.entireTree()).toBe(currentTree)
   })
 
+  it('shares one options list that stays stable on node edits and refreshes on reference edits and undo', () => {
+    activeStory.load('story-1', 'Story', { nodes: [{ id: 'node_0', type: 'content', top: 0, left: 0 }] })
+    activeStory.beginHistorySession()
+    references.create('Gold', 'stat')
+    const original = references.options()
+    activeStory.updateTree(draft => { draft.nodes[0].text = 'Unrelated text' })
+    expect(references.options()).toBe(original)
+    references.rename('stat_0', 'Coins')
+    expect(references.options()).not.toBe(original)
+    expect(references.options()[0].name).toBe('Coins')
+    activeStory.undoTree()
+    expect(references.options()[0].name).toBe('Gold')
+  })
+
   it('creates each category only once', () => {
     references.createCategory('Inventory')
     references.createCategory('Inventory')

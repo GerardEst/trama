@@ -1,8 +1,6 @@
 import { Provider } from '@angular/core'
-import { ApisService } from 'src/app/core/services/apis.service'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { StorageService } from 'src/app/shared/services/storage.service'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 import { PanzoomService } from '../../services/panzoom.service'
 import { StoryEditorService } from '../../services/story-editor.service'
@@ -15,6 +13,8 @@ const refs = {
   condition_guard: { name: 'Guard is distracted', type: 'condition' },
   property_alias: { name: 'Player alias', type: 'property' },
 }
+
+const referenceOptions = Object.entries(refs).map(([id, storyRef]) => ({ id, ...storyRef }))
 
 export const nodeStoryProviders: Provider[] = [
   BoardAnchorRegistryService,
@@ -29,6 +29,7 @@ export const nodeStoryProviders: Provider[] = [
     provide: StoryReferencesService,
     useValue: {
       getAll: () => refs,
+      options: () => referenceOptions,
       getByType: (type: string) =>
         Object.entries(refs)
           .filter(([, storyRef]) => storyRef.type === type)
@@ -44,18 +45,6 @@ export const nodeStoryProviders: Provider[] = [
   {
     provide: StoryEditorService,
     useValue: {
-      getEventsOfAnswer: () => [
-        {
-          id: 'event_answer',
-          action: 'alterStat',
-          type: 'stat',
-          target: 'stat_courage',
-          amount: '2',
-        },
-      ],
-      getRequirementsOfAnswer: () => [
-        { target: 'stat_courage', type: 'stat', amount: 3 },
-      ],
       createNodeAnswer: () => undefined,
       createNodeCondition: () => undefined,
       addConditionRule: () => undefined,
@@ -64,6 +53,7 @@ export const nodeStoryProviders: Provider[] = [
       removeAnswer: () => undefined,
       removeCondition: () => undefined,
       updateNodeText: () => undefined,
+      updateAnswerText: () => undefined,
       updateNodeProperty: () => undefined,
       updateNodePlaceholder: () => undefined,
       updateNodeDescription: () => undefined,
@@ -74,7 +64,7 @@ export const nodeStoryProviders: Provider[] = [
       saveNodeEvents: () => undefined,
       saveAnswerEvents: () => undefined,
       saveAnswerRequirements: () => undefined,
-      addImageToNode: () => undefined,
+      uploadImageToNode: async () => ({ status: 'optimization-failed' }),
       removeImageFromNode: () => undefined,
     },
   },
@@ -93,19 +83,9 @@ export const nodeStoryProviders: Provider[] = [
     provide: ActiveStoryService,
     useValue: {
       storyId: () => 'storybook-story',
+      endHistoryCoalescing: () => undefined,
       storyConfiguration: () => ({ sharing: true }),
       entireTree: () => ({ refs, categories: [], nodes: [] }),
-    },
-  },
-  {
-    provide: ApisService,
-    useValue: { getOptimizedImage: async () => undefined },
-  },
-  {
-    provide: StorageService,
-    useValue: {
-      uploadImage: async () => undefined,
-      removeImage: async () => true,
     },
   },
 ]

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, signal } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, HostListener, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -104,6 +104,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   id?: string
   private loadRequest = 0
+  private loadedStoryId?: string
 
   constructor(
     private db: DatabaseService,
@@ -112,8 +113,36 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private boardPreferences: BoardPreferencesService,
     private editorLoader: StoryEditorLoader,
     private mutations: StoryMutationService,
-    private i18n: I18nService
-  ) {}
+    private i18n: I18nService,
+    private host: ElementRef<HTMLElement>
+  ) {
+    this.mutations.beginHistorySession()
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleHistoryShortcut(event: KeyboardEvent) {
+    if (event.defaultPrevented || event.repeat || event.altKey ||
+      !(event.ctrlKey || event.metaKey)) return
+    const key = event.key.toLowerCase()
+    const direction = key === 'z' ? (event.shiftKey ? 'redo' : 'undo')
+      : key === 'y' && !event.shiftKey ? 'redo' : undefined
+    if (!direction) return
+    const target = event.target
+    if (target instanceof Element) {
+      if (target !== document.body && !this.host.nativeElement.contains(target)) return
+      if (target.closest('input, textarea, select, [contenteditable], [role="textbox"], dialog, [role="dialog"]')) return
+    }
+    if (document.querySelector('dialog[open]')) return
+    if (this.restoreHistory(direction)) event.preventDefault()
+  }
+
+  restoreHistory(direction: 'undo' | 'redo'): boolean {
+    if (this.resizing() || this.board?.isInteracting) return false
+    this.commitEdits()
+    const changed = direction === 'undo' ? this.mutations.undo() : this.mutations.redo()
+    if (changed) this.board?.historyRestored()
+    return changed
+  }
 
   ngOnInit(): void {
     // Authors are here to edit, so have the editor ready before the first click.
@@ -131,14 +160,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /** Called by CanDeactivate while the fields and their output subscriptions are alive. */
+  commitEdits() {
+    this.board?.commitEdits()
+    this.linear?.commitEdits()
+    this.activeStory.endHistoryCoalescing()
+  }
+
   ngOnDestroy() {
+    this.loadRequest++
+    this.mutations.endHistorySession()
     this.headerResize?.disconnect()
   }
 
   async initBoard(storyId: string | null) {
-    this.linear?.commitEdits()
+    this.commitEdits()
     const request = ++this.loadRequest
     const currentId = this.activeStory.storyId()
+    if (storyId && storyId === currentId && storyId === this.loadedStoryId) return
     const currentTree = this.activeStory.entireTree()
     const hadPendingChanges = this.mutations.hasUnsavedChanges()
     const story = storyId
@@ -160,6 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.setItem('polo-id', story.id)
 
     this.mutations.loadStory(story.id, story.name, story.tree)
+    this.loadedStoryId = story.id
 
     this.stadistics.clean()
     this.setInitialBoardPositionFor(story.id)

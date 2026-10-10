@@ -12,6 +12,10 @@ export const dashboard = {
   top: {
     storyName: 'Story name',
     options: 'Story options',
+    undo: 'Undo',
+    redo: 'Redo',
+    undoShortcut: 'Undo (Ctrl/Cmd+Z)',
+    redoShortcut: 'Redo (Ctrl/Cmd+Shift+Z or Ctrl+Y)',
     sessionEnded:
       'Your session has ended. Export your changes before signing in again with the same account.',
     signInAgain: 'Sign in again',

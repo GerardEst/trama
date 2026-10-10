@@ -199,6 +199,8 @@
               [reorderable]="answers.length > 1"
               [answerId]="answer.id"
               [text]="answer.text || ''"
+              [events]="answer.events || []"
+              [requirements]="answer.requirements || []"
               [hasJoin]="!!(answer.join && answer.join.length > 0)"
               (onRemoveAnswer)="removeAnswer($event)"
             ></polo-answer>

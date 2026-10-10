@@ -4,6 +4,7 @@ import { appUser, tree } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from './active-story.service'
 import { StoryMutationService } from './story-mutation.service'
+import { StoryImagesService } from './story-images.service'
 
 describe('StoryMutationService', () => {
   let activeStory: ActiveStoryService
@@ -39,6 +40,135 @@ describe('StoryMutationService', () => {
   const addNode = (draft: tree) => {
     draft.nodes.push({ id: 'node_1', type: 'content', top: 0, left: 0 })
   }
+
+  it('persists undo and redo snapshots without adding history fields to the tree or draft', fakeAsync(() => {
+    database.user.set({ id: 'save-test-author' } as appUser)
+    mutations.beginHistorySession()
+    const before = activeStory.entireTree()
+    mutations.update(addNode)
+    const after = activeStory.entireTree()
+    flushMicrotasks()
+    database.saveTreeToDB.calls.reset()
+    expect(mutations.undo()).toBeTrue()
+    expect(activeStory.entireTree()).toBe(before)
+    expect(database.saveTreeToDB).toHaveBeenCalledOnceWith('story-1', before)
+    const draft = JSON.parse(sessionStorage.getItem('polo-pending-tree:save-test-author:story-1')!)
+    expect(Object.keys(draft).sort()).toEqual(['categories', 'nodes', 'refs'])
+    flushMicrotasks()
+    expect(mutations.redo()).toBeTrue()
+    flushMicrotasks()
+    expect(database.saveTreeToDB.calls.mostRecent().args[1]).toBe(after)
+    expect(mutations.redo()).toBeFalse()
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(2)
+  }))
+
+  it('does not let an older in-flight save overwrite the latest undo', fakeAsync(() => {
+    mutations.beginHistorySession()
+    let finish: (saved: boolean) => void = () => undefined
+    database.saveTreeToDB.and.returnValues(
+      new Promise<boolean>(resolve => { finish = resolve }), Promise.resolve(true)
+    )
+    const before = activeStory.entireTree()
+    mutations.update(addNode)
+    mutations.undo()
+    finish(true)
+    flushMicrotasks()
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(2)
+    expect(database.saveTreeToDB.calls.mostRecent().args[1]).toBe(before)
+    expect(activeStory.entireTree()).toBe(before)
+    expect(mutations.saveState()).toBe('saved')
+  }))
+
+  it('saves a compound gesture once and undoes all its mutations together', fakeAsync(() => {
+    mutations.beginHistorySession()
+    const before = activeStory.entireTree()
+    mutations.batch(() => {
+      mutations.update(addNode)
+      mutations.update(draft => { draft.nodes[0].text = 'Connected' })
+    })
+    flushMicrotasks()
+    expect(database.saveTreeToDB).toHaveBeenCalledTimes(1)
+    expect(mutations.undo()).toBeTrue()
+    expect(activeStory.entireTree()).toBe(before)
+    expect(mutations.undo()).toBeFalse()
+    flushMicrotasks()
+  }))
+
+  it('starts recovered drafts and switched stories with an empty undo history', fakeAsync(() => {
+    mutations.beginHistorySession()
+    mutations.update(addNode)
+    flushMicrotasks()
+    mutations.loadStory('story-2', 'Other story', { nodes: [] })
+    expect(mutations.undo()).toBeFalse()
+    database.user.set({ id: 'save-test-author' } as appUser)
+    sessionStorage.setItem('polo-pending-tree:save-test-author:story-1', JSON.stringify({ nodes: [], refs: {}, categories: [] }))
+    mutations.loadStory('story-1', 'Recovered', { nodes: [] })
+    expect(mutations.undo()).toBeFalse()
+    expect(activeStory.canRedo()).toBeFalse()
+  }))
+
+  it('keeps image files available for undo and cleans them up only after history ends and saving succeeds', fakeAsync(() => {
+    database.user.set({ id: 'save-test-author' } as appUser)
+    activeStory.load('story-1', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', top: 0, left: 0, image: { path: 'image.webp' } }],
+    })
+    mutations.beginHistorySession()
+    const images = TestBed.inject(StoryImagesService)
+    const remove = spyOn(images, 'removeImage').and.resolveTo(true)
+    let finish: (saved: boolean) => void = () => undefined
+    database.saveTreeToDB.and.returnValue(new Promise<boolean>(resolve => { finish = resolve }))
+    mutations.update(draft => { delete draft.nodes[0].image })
+    images.retireImage('image.webp')
+    mutations.endHistorySession()
+    expect(remove).not.toHaveBeenCalled()
+    finish(true)
+    flushMicrotasks()
+    expect(remove).toHaveBeenCalledOnceWith('image.webp')
+  }))
+
+  it('does not delete images restored by undo or still shared by another node', fakeAsync(() => {
+    database.user.set({ id: 'save-test-author' } as appUser)
+    activeStory.load('story-1', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', top: 0, left: 0, image: { path: 'image.webp' } }],
+    })
+    mutations.beginHistorySession()
+    const images = TestBed.inject(StoryImagesService)
+    const remove = spyOn(images, 'removeImage').and.resolveTo(true)
+    mutations.update(draft => { delete draft.nodes[0].image })
+    images.retireImage('image.webp')
+    flushMicrotasks()
+    expect(remove).not.toHaveBeenCalled()
+    mutations.undo()
+    flushMicrotasks()
+    mutations.endHistorySession()
+    expect(remove).not.toHaveBeenCalled()
+    mutations.update(draft => {
+      draft.nodes.push({ id: 'node_1', type: 'content', top: 0, left: 0, image: { path: 'image.webp' } })
+      delete draft.nodes[0].image
+    })
+    images.retireImage('image.webp')
+    flushMicrotasks()
+    expect(remove).not.toHaveBeenCalled()
+  }))
+
+  it('cleans up a removed image when its last referencing snapshot falls outside the 15-step limit', fakeAsync(() => {
+    database.user.set({ id: 'save-test-author' } as appUser)
+    activeStory.load('story-1', 'Story', {
+      nodes: [{ id: 'node_0', type: 'content', top: 0, left: 0, image: { path: 'image.webp' } }],
+    })
+    mutations.beginHistorySession()
+    const images = TestBed.inject(StoryImagesService)
+    const remove = spyOn(images, 'removeImage').and.resolveTo(true)
+    mutations.update(draft => { delete draft.nodes[0].image })
+    images.retireImage('image.webp')
+    flushMicrotasks()
+    for (let left = 1; left <= 14; left++) mutations.update(draft => { draft.nodes[0].left = left })
+    flushMicrotasks()
+    expect(remove).not.toHaveBeenCalled()
+    mutations.update(draft => { draft.nodes[0].left = 15 })
+    flushMicrotasks()
+    expect(remove).toHaveBeenCalledOnceWith('image.webp')
+  }))
 
   it('retains failed saves and retries automatically instead of dropping edits', fakeAsync(() => {
     database.saveTreeToDB.and.returnValues(Promise.resolve(false), Promise.resolve(true))

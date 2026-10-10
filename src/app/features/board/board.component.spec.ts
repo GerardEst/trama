@@ -10,11 +10,15 @@ import { By } from '@angular/platform-browser'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { StoryEditorService } from './services/story-editor.service'
+import { StoryReferencesService } from './services/story-references.service'
+import { AnswerComponent } from './components/node/answer/answer.component'
+import { ConditionComponent } from './components/condition/condition.component'
 import { FrameColorsService } from './services/frame-colors.service'
 import { BoardComponent } from './board.component'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
-import { StorageService } from 'src/app/shared/services/storage.service'
+import { StoryImagesService } from 'src/app/shared/services/story-images.service'
 import { RichTextFieldComponent } from './components/rich-text/rich-text-field.component'
 import { StoryEditorLoader } from './components/rich-text/story-editor-loader.service'
 import { NodeComponent } from './components/node/node.component'
@@ -44,6 +48,19 @@ describe('BoardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('keeps separate group-name commits as separate undo steps', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    story.load('group-names', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+      { id: 'node_1', type: 'group', text: 'Original', top: 0, left: 0 },
+    ] })
+    story.beginHistorySession()
+    component.renameGroup('node_1', 'First name')
+    component.renameGroup('node_1', 'Second name')
+    expect(story.undoTree()?.nodes[1].text).toBe('First name')
+    expect(story.undoTree()?.nodes[1].text).toBe('Original')
   })
 
   it('uses the same canonical names in the creation menu and node headers in every language', async () => {
@@ -1313,7 +1330,82 @@ describe('BoardComponent', () => {
     expect(component.activeNodeId()).toBeUndefined()
   })
 
-  it('deletes an active node image through the usual storage cleanup on Supr', async () => {
+  it('updates reused answer events, requirements and condition reference options when history is restored', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    const event = { id: 'event_1', type: 'stat' as const, action: 'alterStat' as const, target: 'stat_gold', amount: '1' }
+    story.load('answer-history', 'Story', {
+      refs: { stat_gold: { name: 'Gold', type: 'stat' } },
+      nodes: [
+        { id: 'node_0', type: 'content', top: 0, left: 0, answers: [
+          { id: 'answer_0_0', text: 'Continue', events: [event], requirements: [{ target: 'stat_gold', type: 'stat', amount: 1 }] },
+        ] },
+        { id: 'node_1', type: 'distributor', top: 0, left: 300, conditions: [{ id: 'condition_1_0', ref: 'stat_gold', value: 1 }] },
+      ],
+    })
+    story.beginHistorySession()
+    fixture.detectChanges()
+    const answer = fixture.debugElement.query(By.directive(AnswerComponent)).componentInstance as AnswerComponent
+    const condition = fixture.debugElement.query(By.directive(ConditionComponent)).componentInstance as ConditionComponent
+    storyEditor.saveAnswerEvents('answer_0_0', [{ ...event, amount: '5' }])
+    storyEditor.saveAnswerRequirements('answer_0_0', [{ target: 'stat_gold', type: 'stat', amount: 2 }])
+    TestBed.inject(StoryReferencesService).rename('stat_gold', 'Coins')
+    fixture.detectChanges()
+    expect(answer.events[0].amount).toBe('5')
+    expect(answer.requirements[0].amount).toBe(2)
+    expect(condition.refOptions[0].name).toBe('Coins')
+    for (let index = 0; index < 3; index++) TestBed.inject(StoryMutationService).undo()
+    component.historyRestored()
+    fixture.detectChanges()
+    expect(fixture.debugElement.query(By.directive(AnswerComponent)).componentInstance).toBe(answer)
+    expect(answer.events[0].amount).toBe('1')
+    expect(answer.requirements[0].amount).toBe(1)
+    expect(condition.refOptions[0].name).toBe('Gold')
+  })
+
+  it('reconciles group navigation and invisible selections after undoing and redoing grouping', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    story.load('group-history', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+      { id: 'node_1', type: 'content', top: 0, left: 300 },
+      { id: 'node_2', type: 'content', top: 0, left: 600 },
+    ] })
+    story.beginHistorySession()
+    const groupId = storyEditor.groupNodes(new Set(['node_1', 'node_2']))!
+    component.currentGroupId = groupId
+    component.activateNode('node_1')
+    component.selectedNodeIds = new Set(['node_1'])
+    expect(TestBed.inject(StoryMutationService).undo()).toBeTrue()
+    component.historyRestored()
+    expect(component.currentGroupId).toBeUndefined()
+    expect(component.activeNodeId()).toBe('node_1')
+    expect(TestBed.inject(StoryMutationService).redo()).toBeTrue()
+    component.historyRestored()
+    expect(component.activeNodeId()).toBeUndefined()
+    expect(component.selectedNodeIds.size).toBe(0)
+  })
+
+  it('creates a node and its dragged connection as one undo step', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    story.load('joined-node-history', 'Story', { nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0 },
+    ] })
+    story.beginHistorySession()
+    const before = story.entireTree()
+    fixture.detectChanges()
+    component.joinStroke = { originId: 'node_0', from: fixture.nativeElement, to: { x: 500, y: 300 } }
+    component.addNode(new MouseEvent('click', { clientX: 500, clientY: 300 }), 'content')
+    expect(story.entireTree().nodes).toHaveSize(2)
+    expect(story.entireTree().nodes[0].join).toEqual([{ node: 'node_1', toAnswer: false }])
+    expect(save).toHaveBeenCalledTimes(1)
+    expect(TestBed.inject(StoryMutationService).undo()).toBeTrue()
+    expect(story.entireTree()).toBe(before)
+    expect(story.canUndo()).toBeFalse()
+  })
+
+  it('keeps an active node image available for undo when deleting with Supr', async () => {
     const activeStory = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
     activeStory.load('delete-image', 'Story', {
@@ -1322,17 +1414,23 @@ describe('BoardComponent', () => {
         { id: 'node_1', type: 'end', left: 300, top: 0, image: { path: 'image.png' } },
       ],
     })
+    activeStory.beginHistorySession()
     fixture.detectChanges()
-    const removeImage = spyOn(TestBed.inject(StorageService), 'removeImage').and.resolveTo(true)
+    const removeImage = spyOn(TestBed.inject(StoryImagesService), 'removeImage').and.resolveTo(true)
     component.activateNode('node_1')
     const event = new KeyboardEvent('keydown', {
       key: 'Delete', bubbles: true, cancelable: true,
     })
     document.dispatchEvent(event)
     expect(event.defaultPrevented).toBeTrue()
-    expect(removeImage).toHaveBeenCalledWith('image.png')
+    expect(removeImage).not.toHaveBeenCalled()
     await new Promise<void>((resolve) => setTimeout(resolve, 0))
     expect(activeStory.entireTree().nodes.map((node) => node.id)).toEqual(['node_0'])
+    expect(TestBed.inject(StoryMutationService).undo()).toBeTrue()
+    component.historyRestored()
+    fixture.detectChanges()
+    expect(activeStory.entireTree().nodes[1].image?.path).toBe('image.png')
+    expect(removeImage).not.toHaveBeenCalled()
   })
 
   it('uses Ctrl+I to open the active node image picker and does not intercept editing', () => {
