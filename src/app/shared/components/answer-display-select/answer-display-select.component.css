@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+select {
+  width: 100%;
+  min-height: 44px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--polo-color-border-strong);
+  font: inherit;
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+}
+select:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}

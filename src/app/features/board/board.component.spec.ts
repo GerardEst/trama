@@ -455,14 +455,19 @@ describe('BoardComponent', () => {
     const host: HTMLElement = fixture.nativeElement
     document.body.appendChild(host)
     const board = component.boardElement!.nativeElement
-    for (const trigger of [
-      '.node > .node__events .node__event',
-      'polo-answer polo-node-events polo-contextual-button button',
-      'polo-answer polo-node-requirements polo-contextual-button button',
-      'polo-answer .node__requirement',
+    for (const [trigger, action] of [
+      ['.node > .node__events .node__event', ''],
+      ['polo-answer .answer__menuTrigger', 'Add event'],
+      ['polo-answer .answer__menuTrigger', 'Add requirement'],
+      ['polo-answer .node__requirement', ''],
     ]) {
       host.querySelector<HTMLButtonElement>(trigger)!.click()
       fixture.detectChanges()
+      if (action) {
+        Array.from(host.querySelectorAll<HTMLButtonElement>('[role="menuitem"]'))
+          .find(button => button.textContent?.includes(action))!.click()
+        fixture.detectChanges()
+      }
       await new Promise<void>((resolve) => setTimeout(resolve, 0))
 
       const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!

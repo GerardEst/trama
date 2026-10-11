@@ -5,7 +5,6 @@ import {
   event,
   join,
   node,
-  node_answer,
   node_condition_rule,
   property,
   stat,
@@ -14,6 +13,8 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { storyInlineHtml, storyPlainText } from 'src/app/shared/utils/story-html'
 import { PlayerService, PlayerSnapshot } from './player.service'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { answerDisplay } from 'src/app/shared/utils/answer-display'
 import { PlayableNode } from './game-session.types'
 
 /**
@@ -29,7 +30,8 @@ import { PlayableNode } from './game-session.types'
 export class GameEngineService {
   constructor(
     private player: PlayerService,
-    private activeStory: ActiveStoryService
+    private activeStory: ActiveStoryService,
+    private i18n: I18nService
   ) {}
 
   // Step resolution
@@ -71,15 +73,23 @@ export class GameEngineService {
   filterAvailableAnswers(storyNode: PlayableNode, state = this.player.snapshot()) {
     // Keep authored text visible even when its answer is unfinished. The view
     // disables disconnected answers; only empty placeholders are hidden.
-    storyNode.answers = storyNode.answers?.filter((answer: node_answer) =>
-      ((answer.join?.length ?? 0) > 0 || storyPlainText(answer.text).trim().length > 0) &&
-      this.playerHasAnswerRequirements(
-        state.properties,
-        state.stats,
-        state.conditions,
-        answer.requirements
+    storyNode.answers = storyNode.answers?.flatMap(answer => {
+      if (!answer.join?.length && !storyPlainText(answer.text).trim()) return []
+      const locked = !this.playerHasAnswerRequirements(
+        state.properties, state.stats, state.conditions, answer.requirements
       )
-    )
+      const display = answerDisplay(answer.unavailableAnswerDisplay ??
+        this.activeStory.entireTree().unavailableAnswerDisplay)
+      if (locked && display === 'hidden') return []
+      const missingRequirements = locked && display === 'requirements'
+        ? (answer.requirements ?? [])
+          .filter(requirement => !this.playerHasAnswerRequirements(
+            state.properties, state.stats, state.conditions, [requirement]
+          ))
+          .map(requirement => this.describeRequirement(requirement, state))
+        : []
+      return [{ ...answer, locked, missingRequirements }]
+    })
 
     // An answers-only join must not hide the passage if all answers are empty
     // or locked by requirements, leaving the player with a blank node.
@@ -263,6 +273,21 @@ export class GameEngineService {
       }
     }
     return true
+  }
+
+  private describeRequirement(requirement: answer_requirement, state: PlayerSnapshot): string {
+    const refId = getRequirementRefId(requirement)
+    const name = refId ? this.activeStory.entireTree().refs[refId]?.name : undefined
+    const amount = Number(requirement.amount)
+    // Never expose internal IDs for deleted or malformed references.
+    if (!name || !Number.isFinite(amount)) return this.i18n.t('common.answerDisplay.unknown')
+    if (requirement.type === 'stat') {
+      return this.i18n.t('common.answerDisplay.stat', {
+        name, amount, current: state.stats.find(stat => stat.id === refId)?.amount ?? 0,
+      })
+    }
+    return this.i18n.t(amount === 1
+      ? 'common.answerDisplay.condition' : 'common.answerDisplay.absentCondition', { name })
   }
 
   // Events / player state mutation

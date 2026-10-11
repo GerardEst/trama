@@ -19,11 +19,17 @@
 }
 :host(.richTextField--plain) .richTextField__preview {
   min-height: 4rem;
-  padding: 0.5rem 2.5rem 0.5rem 0;
+  padding: 0.5rem 3rem 0.5rem 0;
   border: none;
   border-radius: 3px;
   background: transparent;
   cursor: text;
+}
+.richTextField--noFocusButton .richTextField__preview {
+  padding-right: 0.8rem;
+}
+:host(.richTextField--plain) .richTextField--noFocusButton .richTextField__preview {
+  padding-right: 0;
 }
 :host(.richTextField--answer) .richTextField__preview {
   min-height: 2.5rem;
@@ -47,4 +53,8 @@
   top: 0.45rem;
   right: 0.45rem;
   z-index: 1;
+}
+:host(.richTextField--plain) .richTextField__button {
+  top: 0;
+  right: 0;
 }

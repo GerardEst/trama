@@ -9,6 +9,15 @@
     (click)="onDuplicateNode.emit()"
     align="left"
   ></polo-basic-button>
+  <polo-basic-button
+    [transparent]="true"
+    size="s"
+    [title]="'board.event.add' | t"
+    [text]="'board.event.add' | t"
+    icon="/assets/icons/plus.svg"
+    (click)="addEvent.emit()"
+    align="left"
+  ></polo-basic-button>
   @if (type !== 'distributor') {
     <form>
       <label

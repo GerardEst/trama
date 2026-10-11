@@ -19,6 +19,7 @@ export class NodeOptionsComponent extends PopupBaseComponent {
   @Output() onRemoveNode = new EventEmitter<void>()
   @Output() removeFromFrame = new EventEmitter<void>()
   @Output() onAddImage = new EventEmitter<Event>()
+  @Output() addEvent = new EventEmitter<void>()
 
   protected override closePopup(): void {
     super.closePopup()

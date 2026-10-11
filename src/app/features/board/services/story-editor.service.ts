@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import {
   answer_requirement,
+  UnavailableAnswerDisplay,
   event,
   join,
   link,
@@ -21,6 +22,8 @@ import {
 } from 'src/app/shared/utils/tree-searching'
 
 import { ENTRY_POINT_ORIGIN } from '../board-interactions'
+import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
+import { EventChange, RequirementChange } from './story-logic-changes'
 
 interface Joinable {
   join?: join[]
@@ -554,11 +557,91 @@ export class StoryEditorService {
     })
   }
 
+  upsertNodeEvent(nodeId: string, change: EventChange) {
+    this.withNode(nodeId, storyNode => {
+      storyNode.events = this.upsertEvent(storyNode.events ?? [], change)
+    })
+  }
+
+  deleteNodeEvent(nodeId: string, target: string) {
+    this.withNode(nodeId, storyNode => {
+      storyNode.events = (storyNode.events ?? []).filter(event => event.target !== target)
+    })
+  }
+
+  upsertAnswerEvent(answerId: string, change: EventChange) {
+    this.withAnswer(answerId, answer => {
+      answer.events = this.upsertEvent(answer.events ?? [], change)
+    })
+  }
+
+  deleteAnswerEvent(answerId: string, target: string) {
+    this.withAnswer(answerId, answer => {
+      answer.events = (answer.events ?? []).filter(event => event.target !== target)
+    })
+  }
+
+  upsertAnswerRequirement(answerId: string, change: RequirementChange) {
+    this.withAnswer(answerId, answer => {
+      const requirements = answer.requirements ?? []
+      const previousTarget = change.previousValue ?? change.target
+      const existingIndex = requirements.findIndex(requirement =>
+        getRequirementRefId(requirement) === previousTarget
+      )
+      const updated: answer_requirement = {
+        target: change.target,
+        type: change.type,
+        amount: Number(change.amount),
+      }
+      // Keep an edited requirement in place and remove any target collision.
+      answer.requirements = requirements
+        .filter((requirement, index) => index === existingIndex ||
+          (getRequirementRefId(requirement) !== previousTarget &&
+            getRequirementRefId(requirement) !== change.target))
+        .map(requirement => existingIndex !== -1 &&
+          getRequirementRefId(requirement) === previousTarget ? updated : requirement)
+      if (existingIndex === -1) answer.requirements.push(updated)
+    })
+  }
+
+  deleteAnswerRequirement(answerId: string, target: string) {
+    this.withAnswer(answerId, answer => {
+      answer.requirements = (answer.requirements ?? []).filter(requirement =>
+        getRequirementRefId(requirement) !== target
+      )
+    })
+  }
+
+  private upsertEvent(events: event[], change: EventChange): event[] {
+    const previousTarget = change.previousTarget ?? change.target
+    const existing = events.find(event => event.target === previousTarget)
+    const updated: event = {
+      id: existing?.id ?? `event_${change.target}`,
+      target: change.target,
+      type: change.type,
+      amount: String(change.amount ?? ''),
+      property: change.property,
+      action: change.type === 'stat' ? 'alterStat'
+        : change.type === 'condition' ? 'alterCondition' : 'alterProperty',
+    }
+    // A target can only have one event, including after an edited target changes.
+    return [...events.filter(event =>
+      event.target !== previousTarget && event.target !== change.target
+    ), updated]
+  }
+
   saveAnswerEvents(answerId: string, events: event[]) {
     this.withAnswer(
       answerId,
       (answer) => (answer.events = structuredClone(events))
     )
+  }
+
+  saveAnswerDisplay(answerId: string, value: UnavailableAnswerDisplay | undefined) {
+    this.withAnswer(answerId, answer => {
+      if (value) answer.unavailableAnswerDisplay = value
+      else delete answer.unavailableAnswerDisplay
+    })
   }
 
   saveAnswerRequirements(answerId: string, requirements: answer_requirement[]) {

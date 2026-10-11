@@ -37,8 +37,12 @@ import {
 } from 'src/app/shared/utils/tree-searching'
 import { NodeOptionsComponent } from './context-menus/node-options/node-options.component'
 import { NodeEventsComponent } from './node-events/node-events.component'
+import { NodeAddEventComponent } from './context-menus/node-add-event/node-add-event.component'
+import { AnchoredPopoverComponent } from 'src/app/shared/components/ui/anchored-popover/anchored-popover.component'
+import { AnchoredPopoverContentDirective } from 'src/app/shared/components/ui/anchored-popover/anchored-popover-content.directive'
 import { BoardAnchorDirective } from '../../directives/board-anchor.directive'
 import { StoryEditorService } from '../../services/story-editor.service'
+import { EventChange } from '../../services/story-logic-changes'
 import { BoardAnchorRegistryService } from '../../services/board-anchor-registry.service'
 import { RichTextFieldComponent } from '../rich-text/rich-text-field.component'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
@@ -61,6 +65,9 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
     FormFieldComponent,
     NodeOptionsComponent,
     NodeEventsComponent,
+    NodeAddEventComponent,
+    AnchoredPopoverComponent,
+    AnchoredPopoverContentDirective,
     RichTextFieldComponent,
     EditableNameComponent,
     BoardAnchorDirective,
@@ -135,6 +142,7 @@ export class NodeComponent {
   }>()
 
   @ViewChild(RichTextFieldComponent) richTextField?: RichTextFieldComponent
+  @ViewChild('nodeEventPopover') nodeEventPopover!: AnchoredPopoverComponent
   @ViewChildren(AnswerComponent) answerComponents?: QueryList<AnswerComponent>
   @ViewChild('shortcutImageInput') shortcutImageInput?: ElementRef<HTMLInputElement>
 
@@ -153,6 +161,20 @@ export class NodeComponent {
 
   kindName() {
     return this.i18n.t(`board.node.kinds.${this.type}`)
+  }
+
+  toggleNodeOptions() {
+    this.nodeEventPopover.close()
+    this.optionsOpen = !this.optionsOpen
+  }
+
+  saveEvent(change: EventChange) {
+    this.storyEditor.upsertNodeEvent(this.nodeId, change)
+  }
+
+  openNodeEvent() {
+    this.optionsOpen = false
+    this.nodeEventPopover.open()
   }
 
   openImagePicker(): boolean {

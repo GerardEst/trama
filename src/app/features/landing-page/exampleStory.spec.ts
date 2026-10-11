@@ -1,3 +1,4 @@
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { join } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { GameEngineService } from '../playground/services/game-engine.service'
@@ -10,7 +11,7 @@ describe('The Last Threshold demo', () => {
       const exampleStory = buildExampleStory(copy)
       const story = new ActiveStoryService()
       const player = new PlayerService()
-      const engine = new GameEngineService(player, story)
+      const engine = new GameEngineService(player, story, new I18nService())
       story.load('', copy.title, exampleStory)
       const reached = new Set<string>()
       const endings = new Set<string>()
@@ -96,7 +97,7 @@ describe('The Last Threshold demo', () => {
       for (const route of routes) {
         const story = new ActiveStoryService()
         const player = new PlayerService()
-        const engine = new GameEngineService(player, story)
+        const engine = new GameEngineService(player, story, new I18nService())
         story.load('', copy.title, buildExampleStory(copy))
         const entry = engine.buildNextNodeFromJoin({ node: 'node_0' })
         const path = entry.answers?.[route.path]

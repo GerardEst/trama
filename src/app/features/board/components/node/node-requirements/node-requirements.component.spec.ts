@@ -12,7 +12,7 @@ describe('NodeRequirementsComponent', () => {
   beforeEach(async () => {
     storyEditor = jasmine.createSpyObj<StoryEditorService>(
       'StoryEditorService',
-      ['saveAnswerRequirements']
+      ['upsertAnswerRequirement', 'deleteAnswerRequirement']
     )
 
     await TestBed.configureTestingModule({
@@ -63,7 +63,7 @@ describe('NodeRequirementsComponent', () => {
       expect(popup.querySelector('a')?.getAttribute('href')).toBe('/docs/features#requirements')
       expect(host.querySelector('.addRequirement')).toBeNull()
       expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('false')
-      expect(storyEditor.saveAnswerRequirements).not.toHaveBeenCalled()
+      expect(storyEditor.upsertAnswerRequirement).not.toHaveBeenCalled()
 
       help.setEnabled(false)
       fixture.detectChanges()
@@ -83,7 +83,7 @@ describe('NodeRequirementsComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('deletes a legacy requirement and persists the empty list', () => {
+  it('delegates deletion of a legacy requirement without mutating its input', () => {
     component.answerId = 'answer_0_0'
     component.requirements = [
       { id: 'condition_1', type: 'condition', amount: 1 },
@@ -91,24 +91,22 @@ describe('NodeRequirementsComponent', () => {
 
     component.deleteRequirement('condition_1')
 
-    expect(component.requirements).toEqual([])
-    expect(storyEditor.saveAnswerRequirements).toHaveBeenCalledWith(
-      'answer_0_0',
-      []
-    )
+    expect(component.requirements).toEqual([{ id: 'condition_1', type: 'condition', amount: 1 }])
+    expect(storyEditor.deleteAnswerRequirement).toHaveBeenCalledOnceWith('answer_0_0', 'condition_1')
   })
 
-  it('updates rather than duplicates a requirement on the same target', () => {
+  it('delegates updates without mutating its presentation input', () => {
     component.requirements = [{ target: 'stat_1', type: 'stat', amount: 1 }]
 
     component.saveRequirement({ target: 'stat_1', type: 'stat', amount: '3' })
 
-    expect(component.requirements).toEqual([
-      { target: 'stat_1', type: 'stat', amount: 3 },
-    ])
+    expect(component.requirements).toEqual([{ target: 'stat_1', type: 'stat', amount: 1 }])
+    expect(storyEditor.upsertAnswerRequirement).toHaveBeenCalledOnceWith('', {
+      target: 'stat_1', type: 'stat', amount: '3',
+    })
   })
 
-  it('replaces a legacy id-only requirement when it is edited', () => {
+  it('delegates edits of legacy id-only requirements', () => {
     component.answerId = 'answer_0_0'
     component.requirements = [{ id: 'stat_1', type: 'stat', amount: 1 }]
 
@@ -119,12 +117,9 @@ describe('NodeRequirementsComponent', () => {
       amount: '2',
     })
 
-    expect(component.requirements).toEqual([
-      { target: 'stat_2', type: 'stat', amount: 2 },
-    ])
-    expect(storyEditor.saveAnswerRequirements).toHaveBeenCalledWith(
-      'answer_0_0',
-      component.requirements
-    )
+    expect(component.requirements).toEqual([{ id: 'stat_1', type: 'stat', amount: 1 }])
+    expect(storyEditor.upsertAnswerRequirement).toHaveBeenCalledOnceWith('answer_0_0', {
+      target: 'stat_2', previousValue: 'stat_1', type: 'stat', amount: '2',
+    })
   })
 })

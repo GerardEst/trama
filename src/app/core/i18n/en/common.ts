@@ -1,4 +1,17 @@
 export const common = {
+  answerDisplay: {
+    storyLabel: 'When an answer is unavailable',
+    answerLabel: 'If requirements are not met',
+    inherit: 'Use story setting',
+    hidden: 'Hide the answer',
+    locked: 'Show locked',
+    requirements: 'Show locked with requirements',
+    unavailable: 'Unavailable',
+    stat: 'Requires {name}: at least {amount} (you have {current})',
+    condition: 'Requires: {name}',
+    absentCondition: 'Requires not having: {name}',
+    unknown: 'A requirement is not met',
+  },
   language: 'Language',
   cancel: 'Cancel',
   delete: 'Delete',

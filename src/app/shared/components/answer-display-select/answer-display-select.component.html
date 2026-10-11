@@ -1,0 +1,11 @@
+<label>
+  <span>{{ (inherit ? 'common.answerDisplay.answerLabel' : 'common.answerDisplay.storyLabel') | t }}</span>
+  <select [value]="value || (inherit ? 'inherit' : 'hidden')" (change)="change($event)">
+    @if (inherit) {
+      <option value="inherit">{{ 'common.answerDisplay.inherit' | t }} — {{ inheritedLabel | t }}</option>
+    }
+    <option value="hidden">{{ 'common.answerDisplay.hidden' | t }}</option>
+    <option value="locked">{{ 'common.answerDisplay.locked' | t }}</option>
+    <option value="requirements">{{ 'common.answerDisplay.requirements' | t }}</option>
+  </select>
+</label>

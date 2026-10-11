@@ -16,6 +16,8 @@
         @for (answer of data.answers; track answer.id) {
           <polo-game-answer
             [text]="answer.text || ''"
+            [locked]="!!answer.locked"
+            [missingRequirements]="answer.missingRequirements || []"
             [disabled]="isAnswerDisabled(answer)"
             [selected]="data.selectedAnswerId === answer.id"
             (chosen)="chooseAnswer(answer)"

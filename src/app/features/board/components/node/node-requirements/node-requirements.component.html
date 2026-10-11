@@ -1,26 +1,28 @@
 <div class="node__requirements">
-  <polo-anchored-popover #addRequirementPopover [closeOnEscape]="false">
-    <polo-contextual-button
-      popoverTrigger
-      icon="/assets/icons/plus.svg"
-      ariaHasPopup="dialog"
-      [ariaExpanded]="addRequirementPopover.isOpen"
-      [ariaLabel]="'board.requirement.add' | t"
-      [title]="'board.requirement.add' | t"
-      [text]="!requirements || requirements.length === 0 ? ('board.requirement.add' | t) : undefined"
-      (click)="addRequirementPopover.open()"
-    >
-      <polo-context-help contextualButtonAccessory topic="board.requirements"></polo-context-help>
-    </polo-contextual-button>
-    <ng-template poloPopoverContent>
-      <polo-node-add-requirement
-        class="anchoredAddRequirement"
-        [closeOnOutsideClick]="false"
-        (onSaveRequirement)="saveRequirement($event)"
-        (onClose)="addRequirementPopover.close()"
-      ></polo-node-add-requirement>
-    </ng-template>
-  </polo-anchored-popover>
+  @if (showAddButton) {
+    <polo-anchored-popover #addRequirementPopover [closeOnEscape]="false">
+      <polo-contextual-button
+        popoverTrigger
+        icon="/assets/icons/plus.svg"
+        ariaHasPopup="dialog"
+        [ariaExpanded]="addRequirementPopover.isOpen"
+        [ariaLabel]="'board.requirement.add' | t"
+        [title]="'board.requirement.add' | t"
+        [text]="!requirements || requirements.length === 0 ? ('board.requirement.add' | t) : undefined"
+        (click)="addRequirementPopover.open()"
+      >
+        <polo-context-help contextualButtonAccessory topic="board.requirements"></polo-context-help>
+      </polo-contextual-button>
+      <ng-template poloPopoverContent>
+        <polo-node-add-requirement
+          class="anchoredAddRequirement"
+          [closeOnOutsideClick]="false"
+          (onSaveRequirement)="saveRequirement($event)"
+          (onClose)="addRequirementPopover.close()"
+        ></polo-node-add-requirement>
+      </ng-template>
+    </polo-anchored-popover>
+  }
   @for (requirement of requirements; track getRefId(requirement)) {
     <polo-node-requirement
       [type]="requirement.type"

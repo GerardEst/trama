@@ -1,3 +1,5 @@
+import { By } from '@angular/platform-browser'
+import { NodeAddEventComponent } from './context-menus/node-add-event/node-add-event.component'
 import { ComponentFixture, DeferBlockState, TestBed } from '@angular/core/testing'
 
 import { NodeComponent } from './node.component'
@@ -225,6 +227,63 @@ describe('NodeComponent', () => {
       new PointerEvent('pointerdown', { bubbles: true })
     )
     expect(pointerDown).toHaveBeenCalledTimes(1)
+  })
+
+  it('adds node events from the node menu and hides the empty event row', async () => {
+    const save = spyOn(TestBed.inject(StoryEditorService), 'upsertNodeEvent')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    expect(host.querySelector('.node__events polo-contextual-button')).toBeNull()
+    expect(getComputedStyle(host.querySelector('.node__events')!).display).toBe('none')
+    host.querySelector<HTMLButtonElement>('.node__menuButton button')!.click()
+    fixture.detectChanges()
+    Array.from(host.querySelectorAll<HTMLButtonElement>('.node__options button'))
+      .find(button => button.textContent?.includes('Add event'))!.click()
+    fixture.detectChanges()
+    await new Promise<void>(resolve => setTimeout(resolve, 0))
+    expect(host.querySelector('.node__options')).toBeNull()
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+    expect(panel.matches(':popover-open')).toBeTrue()
+    expect(getComputedStyle(panel.querySelector('.addEvent')!).position).toBe('relative')
+    expect(panel.getBoundingClientRect().height).toBeGreaterThan(0)
+    const editor = fixture.debugElement.query(By.directive(NodeAddEventComponent)).componentInstance as NodeAddEventComponent
+    editor.target = 'stat_gold'
+    editor.amount = 2
+    editor.saveEvent()
+    fixture.detectChanges()
+    expect(save).toHaveBeenCalledOnceWith('node_7', { target: 'stat_gold', previousTarget: undefined, type: 'stat', amount: 2, property: undefined })
+    expect(host.querySelector('.anchoredPopover__panel')).toBeNull()
+    fixture.componentRef.setInput('events', [{ id: 'event_stat_gold', target: 'stat_gold', type: 'stat', amount: '2', action: 'alterStat' }])
+    fixture.detectChanges()
+    expect(host.querySelector('.node__event')).not.toBeNull()
+    expect(getComputedStyle(host.querySelector('.node__events')!).display).toBe('flex')
+  })
+
+  it('centers circular outgoing ports on the node edge for nodes, answers and routes', () => {
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    const host = fixture.nativeElement as HTMLElement
+    const checkPorts = () => {
+      const node = host.querySelector<HTMLElement>('.node')!
+      const edge = node.getBoundingClientRect().right - parseFloat(getComputedStyle(node).borderRightWidth) / 2
+      const ports = Array.from(host.querySelectorAll<HTMLElement>('.union_point'))
+      expect(ports.length).toBeGreaterThan(0)
+      for (const port of ports) {
+        const rect = port.getBoundingClientRect()
+        expect(rect.width).toBeCloseTo(rect.height, 1)
+        expect(rect.left + rect.width / 2).toBeCloseTo(edge, 1)
+        expect(getComputedStyle(port).borderTopLeftRadius).toBe('50%')
+      }
+    }
+    fixture.detectChanges()
+    checkPorts()
+    fixture.componentRef.setInput('answers', [{ id: 'answer_7_0', text: 'Continue' }])
+    fixture.detectChanges()
+    checkPorts()
+    fixture.componentRef.setInput('type', 'distributor')
+    fixture.componentRef.setInput('conditions', [{ id: 'condition_7_0' }])
+    fixture.detectChanges()
+    checkPorts()
   })
 
   it('opens a large focus editor and saves the draft when dismissed', async () => {

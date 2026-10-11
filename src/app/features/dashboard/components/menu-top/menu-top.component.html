@@ -96,6 +96,10 @@
             />
           </label>
         }
+        <polo-answer-display-select
+          [value]="activeStory.entireTree().unavailableAnswerDisplay"
+          (changed)="setAnswerDisplay($event)"
+        />
         <label>
           <span>{{ 'dashboard.top.cumulative' | t }}</span>
           <input

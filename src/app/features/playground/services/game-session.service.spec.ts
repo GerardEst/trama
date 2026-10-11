@@ -65,6 +65,22 @@ describe('GameSessionService', () => {
     expect(session.visits()).toEqual([])
   })
 
+  it('rejects locked answer selection without applying events or navigating', () => {
+    load([
+      scene('node_0', { answers: [{ id: 'locked', text: 'Buy',
+        unavailableAnswerDisplay: 'locked', requirements: [{ target: 'stat_gold', type: 'stat', amount: 3 }],
+        events: [gold('10')], join: [{ node: 'node_1' }],
+      }] }), scene('node_1'),
+    ])
+    const events = jasmine.createSpy('events')
+    session.events.subscribe(events)
+    session.selectAnswer(story.entireTree().nodes[0].answers![0])
+    expect(session.currentNodeId()).toBe('node_0')
+    expect(player.playerStats()).toEqual([])
+    expect(events).not.toHaveBeenCalled()
+    expect(session.visits()).toHaveSize(1)
+  })
+
   it('also initializes anonymous stories such as the landing demo', () => {
     load([scene('node_0')], '')
     expect(session.currentNodeId()).toBe('node_0')

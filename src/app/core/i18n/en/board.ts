@@ -118,6 +118,9 @@ export const board = {
     deleteShortcut: 'Delete node (Supr)',
   },
   answer: {
+    options: 'Answer options',
+    display: 'Display',
+    displayNeedsRequirement: 'Add a requirement to configure this option.',
     reorder: 'Drag to reorder answer, or use Up/Down arrow keys, Home or End',
     moved: 'Answer moved to position {position} of {count}',
     delete: 'Delete answer',

@@ -20,6 +20,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
   readonly text = input('')
   readonly placeholder = input<string>()
   readonly inlineOnly = input(false)
+  readonly showFocusButton = input(true)
   readonly saved = output<string>()
   @ViewChild('preview') preview?: ElementRef<HTMLElement>
   @ViewChild('focusEditor') focusEditor?: RichTextEditorComponent

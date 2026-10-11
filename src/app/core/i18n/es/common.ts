@@ -1,6 +1,19 @@
 import type { Dictionary } from '../i18n.types'
 
 export const common: Dictionary['common'] = {
+  answerDisplay: {
+    storyLabel: 'Cuando una respuesta no está disponible',
+    answerLabel: 'Si no se cumplen los requisitos',
+    inherit: 'Usar la configuración de la historia',
+    hidden: 'Ocultar la respuesta',
+    locked: 'Mostrar bloqueada',
+    requirements: 'Mostrar bloqueada con los requisitos',
+    unavailable: 'No disponible',
+    stat: 'Requiere {name}: al menos {amount} (tienes {current})',
+    condition: 'Requiere: {name}',
+    absentCondition: 'Requiere no tener: {name}',
+    unknown: 'No se cumple un requisito',
+  },
   language: 'Idioma',
   cancel: 'Cancelar',
   delete: 'Eliminar',

@@ -123,6 +123,9 @@ export const board: Dictionary['board'] = {
     deleteShortcut: 'Eliminar nodo (Supr)',
   },
   answer: {
+    options: 'Opciones de la respuesta',
+    display: 'Visualización',
+    displayNeedsRequirement: 'Añade un requisito para configurar esta opción.',
     reorder: 'Arrastra para reordenar la respuesta, o usa las flechas arriba/abajo, Inicio o Fin',
     moved: 'Respuesta movida a la posición {position} de {count}',
     delete: 'Eliminar respuesta',

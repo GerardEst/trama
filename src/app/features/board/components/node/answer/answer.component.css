@@ -6,11 +6,6 @@
   padding: 0.6rem 0;
   border-top: 1px solid var(--polo-color-border);
 }
-:host:hover .delete-answer, :host:focus-within .delete-answer {
-  opacity: 1;
-  pointer-events: auto;
-}
-
 :host.highlighted {
   outline: 2px solid var(--polo-color-success);
   outline-offset: 2px;
@@ -20,18 +15,111 @@
   opacity: 0.35;
 }
 
-.delete-answer {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease;
-}
-
-.top-bar {
+.answer__content {
   display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.answer__content polo-rich-text-field {
+  flex: 1;
+  min-width: 0;
+}
+.answer__options {
+  flex: none;
+}
+.answer__emptyPills {
+  display: none;
+}
+.answer__menuTrigger {
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
   min-height: 2rem;
+  padding: 0.35rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--polo-color-text-muted);
+  cursor: pointer;
+}
+.answer__menuTrigger img {
+  width: 1rem;
+  height: 1rem;
+  filter: var(--polo-icon-filter);
+}
+.answer__menu,
+.answer__display {
+  padding: 0.5rem;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  box-shadow: var(--polo-shadow-popover);
+}
+.answer__menu button,
+.answer__close {
+  display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.answer__menu button img {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  filter: var(--polo-icon-filter);
+}
+.answer__menuTrigger:hover,
+.answer__menuTrigger[aria-expanded='true'],
+.answer__menu button:hover:not([aria-disabled='true']),
+.answer__close:hover {
+  background: var(--polo-color-surface-muted);
+}
+.answer__menuTrigger:focus-visible,
+.answer__menu button:focus-visible,
+.answer__close:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.answer__menu button[aria-disabled='true'] {
+  color: var(--polo-color-text-muted);
+  cursor: default;
+}
+.answer__menu .answer__delete {
+  color: var(--polo-color-danger-text);
+}
+.answer__menuHint {
+  padding: 0 0.65rem 0.5rem;
+  color: var(--polo-color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.answer__menuDivider {
+  margin: 0.25rem 0;
+  border-top: 1px solid var(--polo-color-border);
+}
+.answer__display {
+  padding: 1rem;
+}
+.answer__close {
+  margin-top: 0.5rem;
+}
+@media (pointer: coarse) {
+  .answer__menuTrigger {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
 }
 
 textarea {
@@ -62,14 +150,15 @@ textarea:focus {
 .union_point {
   position: absolute;
   top: 50%;
-  right: 0;
-  width: 1.75rem;
-  height: 1.15rem;
+  right: calc(-1 * var(--polo-node-body-inset, 0.75rem) - 0.5px);
+  width: var(--polo-board-port-size, 1.25rem);
+  height: var(--polo-board-port-size, 1.25rem);
+  box-sizing: border-box;
   background: var(--polo-color-surface);
   border: 1px solid var(--polo-color-border-hover);
-  border-radius: 999px;
+  border-radius: 50%;
   cursor: crosshair;
-  transform: translate(62%, -50%);
+  transform: translate(50%, -50%);
   transition: background-color 160ms ease, border-color 160ms ease;
 }
 .union_point--hasJoin, .union_point:hover {
@@ -79,7 +168,6 @@ textarea:focus {
 
 @media (prefers-reduced-motion: reduce) {
   :host,
-  .delete-answer,
   .union_point {
     transition: none;
   }

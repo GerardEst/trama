@@ -51,6 +51,138 @@ describe('StoryEditorService', () => {
     })
   })
 
+  it('adds answer events from the latest tree, normalizes amounts and persists queued commands', async () => {
+    const before = activeStory.entireTree()
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    editor.upsertAnswerEvent('answer_0_0', { target: 'stat_gold', type: 'stat', amount: 2 })
+    await Promise.resolve()
+    editor.upsertAnswerEvent('answer_0_0', { target: 'condition_key', type: 'condition', amount: 1 })
+    await Promise.resolve()
+    editor.upsertAnswerEvent('answer_0_0', { target: 'property_name', type: 'property', property: 'Alice' })
+    const events = activeStory.entireTree().nodes[0].answers![0].events!
+    expect(events).toEqual([
+      { id: 'event_stat_gold', target: 'stat_gold', type: 'stat', amount: '2', property: undefined, action: 'alterStat' },
+      { id: 'event_condition_key', target: 'condition_key', type: 'condition', amount: '1', property: undefined, action: 'alterCondition' },
+      { id: 'event_property_name', target: 'property_name', type: 'property', amount: '', property: 'Alice', action: 'alterProperty' },
+    ])
+    expect(before.nodes[0].answers![0].events).toBeUndefined()
+    expect(save).toHaveBeenCalledTimes(3)
+    expect(save.calls.mostRecent().args[1].nodes[0].answers[0].events).toEqual(events)
+    expect(activeStory.entireTree().nodes[0].events).toBeUndefined()
+  })
+
+  it('updates answer events, retains the original ID and removes target collisions', () => {
+    editor.saveAnswerEvents('answer_0_0', [
+      { id: 'original', target: 'condition_key', type: 'condition', amount: '1', action: 'alterCondition' },
+      { id: 'collision', target: 'stat_gold', type: 'stat', amount: '3', action: 'alterStat' },
+      { id: 'unrelated', target: 'stat_health', type: 'stat', amount: '4', action: 'alterStat' },
+    ])
+    editor.upsertAnswerEvent('answer_0_0', {
+      previousTarget: 'condition_key', target: 'stat_gold', type: 'stat', amount: -2,
+    })
+    editor.upsertAnswerEvent('answer_0_0', { target: 'stat_gold', type: 'stat', amount: 5 })
+    expect(activeStory.entireTree().nodes[0].answers![0].events).toEqual([
+      { id: 'unrelated', target: 'stat_health', type: 'stat', amount: '4', action: 'alterStat' },
+      { id: 'original', target: 'stat_gold', type: 'stat', amount: '5', property: undefined, action: 'alterStat' },
+    ])
+    editor.deleteAnswerEvent('answer_0_0', 'stat_gold')
+    editor.deleteAnswerEvent('answer_0_0', 'stat_health')
+    expect(activeStory.entireTree().nodes[0].answers![0].events).toEqual([])
+  })
+
+  it('applies the same event rules to nodes without touching answer events', async () => {
+    editor.upsertNodeEvent('node_0', { target: 'condition_key', type: 'condition', amount: 1 })
+    editor.upsertNodeEvent('node_0', {
+      previousTarget: 'condition_key', target: 'property_name', type: 'property', property: 'Alice',
+    })
+    expect(activeStory.entireTree().nodes[0].events).toEqual([
+      { id: 'event_condition_key', target: 'property_name', type: 'property', amount: '', property: 'Alice', action: 'alterProperty' },
+    ])
+    expect(activeStory.entireTree().nodes[0].answers![0].events).toBeUndefined()
+    editor.deleteNodeEvent('node_0', 'property_name')
+    await Promise.resolve()
+    expect(activeStory.entireTree().nodes[0].events).toEqual([])
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(save.calls.mostRecent().args[1].nodes[0].events).toEqual([])
+  })
+
+  it('adds and updates requirements from the latest tree without duplicating targets', async () => {
+    editor.upsertAnswerRequirement('answer_0_0', { target: 'stat_gold', type: 'stat', amount: '1' })
+    await Promise.resolve()
+    editor.upsertAnswerRequirement('answer_0_0', { target: 'condition_key', type: 'condition', amount: 1 })
+    await Promise.resolve()
+    editor.upsertAnswerRequirement('answer_0_0', { target: 'stat_gold', type: 'stat', amount: '3' })
+    expect(activeStory.entireTree().nodes[0].answers![0].requirements).toEqual([
+      { target: 'stat_gold', type: 'stat', amount: 3 },
+      { target: 'condition_key', type: 'condition', amount: 1 },
+    ])
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(save).toHaveBeenCalledTimes(3)
+    expect(save.calls.mostRecent().args[1].nodes[0].answers[0].requirements)
+      .toEqual(activeStory.entireTree().nodes[0].answers![0].requirements)
+  })
+
+  it('replaces legacy requirements in place and removes target collisions', async () => {
+    editor.saveAnswerRequirements('answer_0_0', [
+      { id: 'stat_gold', type: 'stat', amount: 1 },
+      { target: 'condition_key', type: 'condition', amount: 1 },
+      { target: 'stat_health', type: 'stat', amount: 2 },
+    ])
+    editor.upsertAnswerRequirement('answer_0_0', {
+      previousValue: 'stat_gold', target: 'condition_key', type: 'condition', amount: '0',
+    })
+    expect(activeStory.entireTree().nodes[0].answers![0].requirements).toEqual([
+      { target: 'condition_key', type: 'condition', amount: 0 },
+      { target: 'stat_health', type: 'stat', amount: 2 },
+    ])
+    editor.saveAnswerRequirements('answer_0_0', [{ id: 'condition_key', type: 'condition', amount: 1 }])
+    editor.deleteAnswerRequirement('answer_0_0', 'condition_key')
+    await Promise.resolve()
+    expect(activeStory.entireTree().nodes[0].answers![0].requirements).toEqual([])
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(save.calls.mostRecent().args[1].nodes[0].answers[0].requirements).toEqual([])
+  })
+
+  it('records independent logic commands in undo history without changing unrelated answer fields', () => {
+    activeStory.beginHistorySession()
+    const original = activeStory.entireTree()
+    editor.upsertAnswerEvent('answer_0_0', { target: 'stat_gold', type: 'stat', amount: 2 })
+    const withEvent = activeStory.entireTree()
+    editor.upsertAnswerRequirement('answer_0_0', { target: 'stat_gold', type: 'stat', amount: 3 })
+    editor.deleteAnswerEvent('answer_0_0', 'stat_gold')
+    activeStory.undoTree()
+    expect(activeStory.entireTree().nodes[0].answers![0].events).toEqual(withEvent.nodes[0].answers![0].events)
+    activeStory.undoTree()
+    expect(activeStory.entireTree()).toEqual(withEvent)
+    activeStory.undoTree()
+    expect(activeStory.entireTree()).toEqual(original)
+  })
+
+  it('ignores logic commands for missing nodes and answers without persisting', () => {
+    const before = activeStory.entireTree()
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    editor.upsertNodeEvent('missing', { target: 'stat_gold', type: 'stat', amount: 1 })
+    editor.deleteNodeEvent('missing', 'stat_gold')
+    editor.upsertAnswerEvent('missing', { target: 'stat_gold', type: 'stat', amount: 1 })
+    editor.deleteAnswerEvent('missing', 'stat_gold')
+    editor.upsertAnswerRequirement('missing', { target: 'stat_gold', type: 'stat', amount: 1 })
+    editor.deleteAnswerRequirement('missing', 'stat_gold')
+    expect(activeStory.entireTree()).toBe(before)
+    expect(save).not.toHaveBeenCalled()
+  })
+
+  it('persists answer display overrides and restores inheritance with undo support', () => {
+    activeStory.beginHistorySession()
+    editor.saveAnswerDisplay('answer_0_0', 'requirements')
+    expect(activeStory.entireTree().nodes[0].answers![0].unavailableAnswerDisplay).toBe('requirements')
+    const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
+    expect(save.calls.mostRecent().args[1].nodes[0].answers[0].unavailableAnswerDisplay).toBe('requirements')
+    editor.saveAnswerDisplay('answer_0_0', undefined)
+    expect(activeStory.entireTree().nodes[0].answers![0].unavailableAnswerDisplay).toBeUndefined()
+    activeStory.undoTree()
+    expect(activeStory.entireTree().nodes[0].answers![0].unavailableAnswerDisplay).toBe('requirements')
+  })
+
   it('moves and reconnects the entry through existing operations and persists just one destination', () => {
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
     editor.updateNodePosition(ENTRY_POINT_ORIGIN, 50, 70)

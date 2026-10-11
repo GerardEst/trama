@@ -1,29 +1,114 @@
-<div class="top-bar">
+<div class="answer__content">
   @if (reorderable) {
     <polo-sortable-handle [label]="'board.answer.reorder' | t" />
   }
-  <polo-node-requirements
-    [requirements]="requirements"
-    [answerId]="answerId"
-  ></polo-node-requirements>
-  <polo-basic-button
-    class="delete-answer"
-    size="s"
-    [title]="'board.answer.delete' | t"
-    (click)="removeAnswer()"
-    icon="/assets/icons/trash.svg"
-    [transparent]="true"
-  ></polo-basic-button>
+  <polo-rich-text-field
+    class="richTextField--plain richTextField--answer"
+    [label]="'board.answer.text' | t"
+    [text]="text"
+    [inlineOnly]="true"
+    [showFocusButton]="false"
+    [placeholder]="'board.answer.placeholder' | t"
+    (saved)="saveAnswerText($event)"
+  />
+  <polo-anchored-popover
+    #answerOptions
+    class="answer__options"
+    [style.--polo-popover-width]="panel === 'menu' ? '16rem' : '32rem'"
+    [closeOnEscape]="panel === 'menu' || panel === 'display'"
+  >
+    <button
+      popoverTrigger
+      class="answer__menuTrigger"
+      type="button"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="answerOptions.isOpen"
+      [attr.aria-label]="'board.answer.options' | t"
+      [title]="'board.answer.options' | t"
+      (click)="toggleOptions()"
+    >
+      <img src="/assets/icons/more-options.svg" alt="" />
+    </button>
+    <ng-template poloPopoverContent>
+      <div #optionsPanel>
+        @switch (panel) {
+          @case ('menu') {
+            <div class="answer__menu" role="menu" tabindex="-1" [attr.aria-label]="'board.answer.options' | t" (keydown)="onMenuKeydown($event)">
+              <button type="button" role="menuitem" tabindex="-1"
+                [title]="'board.editor.focusShortcut' | t: { label: ('board.answer.text' | t) }"
+                (click)="openFocusEditor()">
+                <img src="/assets/icons/maximize.svg" alt="" />
+                {{ 'board.editor.focusOn' | t: { label: ('board.answer.text' | t) } }}
+              </button>
+              <button type="button" role="menuitem" tabindex="-1" (click)="showPanel('requirement')">
+                {{ 'board.requirement.add' | t }}…
+              </button>
+              <button type="button" role="menuitem" tabindex="-1" (click)="showPanel('event')">
+                {{ 'board.event.add' | t }}…
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                tabindex="-1"
+                [attr.aria-disabled]="!requirements.length"
+                [attr.aria-describedby]="!requirements.length ? answerId + '-display-hint' : null"
+                [title]="!requirements.length ? ('board.answer.displayNeedsRequirement' | t) : ''"
+                (click)="showPanel('display')"
+              >
+                {{ 'board.answer.display' | t }}…
+              </button>
+              @if (!requirements.length) {
+                <p class="answer__menuHint" [id]="answerId + '-display-hint'">{{ 'board.answer.displayNeedsRequirement' | t }}</p>
+              }
+              <div class="answer__menuDivider" role="separator"></div>
+              <button class="answer__delete" type="button" role="menuitem" tabindex="-1" (click)="removeAnswer()">
+                {{ 'board.answer.delete' | t }}
+              </button>
+            </div>
+          }
+          @case ('event') {
+            <polo-node-add-event
+              class="anchoredAddEvent"
+              [closeOnOutsideClick]="false"
+              (onSaveEvent)="saveEvent($event)"
+              (onClose)="optionsPopover.close()"
+            />
+          }
+          @case ('requirement') {
+            <polo-node-add-requirement
+              class="anchoredAddRequirement"
+              [closeOnOutsideClick]="false"
+              (onSaveRequirement)="saveRequirement($event)"
+              (onClose)="optionsPopover.close()"
+            />
+          }
+          @case ('display') {
+            <section class="answer__display" role="dialog" [attr.aria-label]="'board.answer.display' | t">
+              <polo-answer-display-select
+                [inherit]="true"
+                [value]="unavailableAnswerDisplay"
+                (changed)="saveAnswerDisplay($event)"
+              />
+              <button class="answer__close" type="button" (click)="optionsPopover.close()">{{ 'common.close' | t }}</button>
+            </section>
+          }
+        }
+      </div>
+    </ng-template>
+  </polo-anchored-popover>
 </div>
-<polo-rich-text-field
-  class="richTextField--plain richTextField--answer"
-  [label]="'board.answer.text' | t"
-  [text]="text"
-  [inlineOnly]="true"
-  [placeholder]="'board.answer.placeholder' | t"
-  (saved)="saveAnswerText($event)"
+<polo-node-requirements
+  [class.answer__emptyPills]="!requirements.length"
+  [showAddButton]="false"
+  [requirements]="requirements"
+  [answerId]="answerId"
 />
-<polo-node-events [events]="events" [answerId]="answerId"></polo-node-events>
+<polo-node-events
+  [class.answer__emptyPills]="!events.length"
+  [showAddButton]="false"
+  [events]="events"
+  [answerId]="answerId"
+/>
 <div
   class="union_point"
   [attr.data-board-origin]="answerId"

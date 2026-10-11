@@ -1,3 +1,5 @@
+import { UnavailableAnswerDisplay } from 'src/app/core/interfaces/interfaces'
+import { AnswerDisplaySelectComponent } from 'src/app/shared/components/answer-display-select/answer-display-select.component'
 import { Component, Output, EventEmitter } from '@angular/core'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { Router } from '@angular/router'
@@ -15,7 +17,7 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 @Component({
   selector: 'polo-menu-top',
   standalone: true,
-  imports: [BasicButtonComponent, EditableNameComponent, TranslatePipe],
+  imports: [BasicButtonComponent, EditableNameComponent, TranslatePipe, AnswerDisplaySelectComponent],
   templateUrl: './menu-top.component.html',
   styleUrl: './menu-top.component.css',
 })
@@ -66,6 +68,10 @@ export class MenuTopComponent {
     const sharing = !this.activeStory.storyConfiguration().sharing
     this.activeStory.patchConfiguration({ sharing })
     this.db.setSharingOf(this.activeStory.storyId(), sharing)
+  }
+
+  setAnswerDisplay(value: UnavailableAnswerDisplay | undefined) {
+    this.mutations.update(tree => { tree.unavailableAnswerDisplay = value })
   }
 
   toggleCumulativeMode() {

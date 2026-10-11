@@ -19,11 +19,15 @@ export interface storyEntryPoint {
   targetNodeId?: string
 }
 
+export type UnavailableAnswerDisplay = 'hidden' | 'locked' | 'requirements'
+
 /**
  * Runtime representation of a story tree. Persisted stories are normalized to
  * this shape when they become active so consumers do not need null checks.
  */
 export interface tree {
+  /** Defaults to hidden for stories saved before this option existed. */
+  unavailableAnswerDisplay?: UnavailableAnswerDisplay
   /** Optional only for compatibility with stories predating the entry marker. */
   entryPoint?: storyEntryPoint
   refs: Record<string, ref>
@@ -96,6 +100,8 @@ export interface node {
 }
 
 export interface node_answer {
+  /** Omitted means inherit the story setting. */
+  unavailableAnswerDisplay?: UnavailableAnswerDisplay
   id: string
   join?: Array<join>
   text?: string

@@ -61,6 +61,50 @@ describe('GameEngineService', () => {
     player = TestBed.inject(PlayerService)
   })
 
+  it('inherits the story display, supports exceptions and only explains unmet requirements', () => {
+    tree.unavailableAnswerDisplay = 'requirements'
+    tree.refs = {
+      gold: { name: 'Gold', type: 'stat' },
+      key: { name: 'Bronze key', type: 'condition' },
+    }
+    const stored: node = {
+      id: 'node_0', type: 'content', left: 0, top: 0,
+      answers: [
+        { id: 'inherited', text: 'Enter', requirements: [statRequirement('gold', 3), conditionRequirement('key', 1)] },
+        { id: 'hidden', text: 'Secret', unavailableAnswerDisplay: 'hidden', requirements: [conditionRequirement('key', 1)] },
+        { id: 'locked', text: 'Door', unavailableAnswerDisplay: 'locked', requirements: [conditionRequirement('key', 1)] },
+      ],
+    }
+    const rendered = engine.renderNode(stored, { node: stored.id }, {
+      properties: {}, stats: [{ id: 'gold', amount: 5 }], conditions: [],
+    })
+    expect(rendered.answers?.map(answer => answer.id)).toEqual(['inherited', 'locked'])
+    expect(rendered.answers?.[0].locked).toBeTrue()
+    expect(rendered.answers?.[0].missingRequirements).toEqual(['Requires: Bronze key'])
+    expect(rendered.answers?.[1].missingRequirements).toEqual([])
+    expect(stored.answers?.[0]).not.toEqual(jasmine.objectContaining({ locked: true }))
+    const unlocked = engine.renderNode(stored, { node: stored.id }, {
+      properties: {}, stats: [{ id: 'gold', amount: 5 }], conditions: [{ id: 'key' }],
+    })
+    expect(unlocked.answers).toHaveSize(3)
+    expect(unlocked.answers?.every(answer => !answer.locked && !answer.missingRequirements?.length)).toBeTrue()
+  })
+
+  it('explains legacy stat and absent-condition requirements without leaking missing reference IDs', () => {
+    tree.unavailableAnswerDisplay = 'requirements'
+    tree.refs = { gold: { name: 'Gold' }, curse: { name: 'Curse' } }
+    const rendered = engine.renderNode({
+      id: 'node_0', type: 'content', left: 0, top: 0,
+      answers: [{ id: 'a', text: 'Go', requirements: [
+        { id: 'gold', type: 'stat', amount: 3 },
+        conditionRequirement('curse', 0), conditionRequirement('secret_internal_id', 1),
+      ] }],
+    }, { node: 'node_0' }, { properties: {}, stats: [], conditions: [{ id: 'curse' }] })
+    expect(rendered.answers?.[0].missingRequirements).toEqual([
+      'Requires Gold: at least 3 (you have 0)', 'Requires not having: Curse', 'A requirement is not met',
+    ])
+  })
+
   it('is created', () => {
     expect(engine).toBeTruthy()
   })

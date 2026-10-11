@@ -1,3 +1,4 @@
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { storyEditorHtml, storyEditorValue } from './story-editor-html'
 import { createStoryEditor } from './story-editor-runtime'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -18,7 +19,7 @@ describe('Legacy story text correction', () => {
     const story = new ActiveStoryService()
     const player = new PlayerService()
     player.playerStats.set([{ id: 'stat_gold', amount: 4 }])
-    const engine = new GameEngineService(player, story)
+    const engine = new GameEngineService(player, story, new I18nService())
     const corrected = storyEditorHtml('Gold: #stat_gold!')
     expect(engine.getTextWithFinalParameters(corrected)).toBe('<p>Gold: 4!</p>')
   })

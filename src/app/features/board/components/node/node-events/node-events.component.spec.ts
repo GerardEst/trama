@@ -20,7 +20,7 @@ describe('NodeEventsComponent', () => {
   beforeEach(async () => {
     storyEditor = jasmine.createSpyObj<StoryEditorService>(
       'StoryEditorService',
-      ['saveNodeEvents', 'saveAnswerEvents']
+      ['upsertNodeEvent', 'upsertAnswerEvent', 'deleteNodeEvent', 'deleteAnswerEvent']
     )
     await TestBed.configureTestingModule({
       imports: [NodeEventsComponent],
@@ -71,8 +71,8 @@ describe('NodeEventsComponent', () => {
       expect(popup.querySelector('a')?.getAttribute('href')).toBe('/docs/features#events')
       expect(host.querySelector('.addEvent')).toBeNull()
       expect(host.querySelector('polo-contextual-button button')?.getAttribute('aria-expanded')).toBe('false')
-      expect(storyEditor.saveNodeEvents).not.toHaveBeenCalled()
-      expect(storyEditor.saveAnswerEvents).not.toHaveBeenCalled()
+      expect(storyEditor.upsertNodeEvent).not.toHaveBeenCalled()
+      expect(storyEditor.upsertAnswerEvent).not.toHaveBeenCalled()
 
       help.setEnabled(false)
       fixture.detectChanges()
@@ -130,7 +130,7 @@ describe('NodeEventsComponent', () => {
     expect(
       host.querySelector('.addEvent__button--confirmDelete')
     ).not.toBeNull()
-    expect(storyEditor.saveNodeEvents).not.toHaveBeenCalled()
+    expect(storyEditor.deleteNodeEvent).not.toHaveBeenCalled()
   })
 
   it('still closes the editor when clicking outside', () => {
@@ -145,7 +145,7 @@ describe('NodeEventsComponent', () => {
     fixture.detectChanges()
 
     expect(host.querySelector('.addEvent')).toBeNull()
-    expect(storyEditor.saveNodeEvents).not.toHaveBeenCalled()
+    expect(storyEditor.upsertNodeEvent).not.toHaveBeenCalled()
   })
 
   it('deletes a node event through the editor and persists it', () => {
@@ -161,19 +161,20 @@ describe('NodeEventsComponent', () => {
       .click()
     fixture.detectChanges()
 
-    expect(host.querySelector('button.node__event')).toBeNull()
-    expect(storyEditor.saveNodeEvents).toHaveBeenCalledWith('node_1', [])
+    expect(host.querySelector('.addEvent')).toBeNull()
+    expect(storyEditor.deleteNodeEvent).toHaveBeenCalledOnceWith('node_1', 'condition_1')
   })
 
-  it('deletes a node event and persists the empty list', () => {
+  it('delegates node deletion without mutating its presentation input', () => {
     component.events = [conditionEvent]
     component.deleteEvent(conditionEvent)
 
-    expect(component.events).toEqual([])
-    expect(storyEditor.saveNodeEvents).toHaveBeenCalledWith('node_1', [])
+    expect(component.events).toEqual([conditionEvent])
+    expect(storyEditor.deleteNodeEvent).toHaveBeenCalledOnceWith('node_1', 'condition_1')
+    expect(storyEditor.deleteAnswerEvent).not.toHaveBeenCalled()
   })
 
-  it('replaces the original event when its target or type changes', () => {
+  it('delegates an edited target or type without mutating its input', () => {
     component.events = [conditionEvent]
     component.saveEvent({
       ...conditionEvent,
@@ -183,23 +184,14 @@ describe('NodeEventsComponent', () => {
       amount: '-2',
     })
 
-    expect(component.events).toEqual([
-      {
-        id: 'event_1',
-        target: 'stat_2',
-        type: 'stat',
-        amount: '-2',
-        action: 'alterStat',
-        property: undefined,
-      },
-    ])
-    expect(storyEditor.saveNodeEvents).toHaveBeenCalledWith(
-      'node_1',
-      component.events
-    )
+    expect(component.events).toEqual([conditionEvent])
+    expect(storyEditor.upsertNodeEvent).toHaveBeenCalledOnceWith('node_1', {
+      ...conditionEvent, previousTarget: 'condition_1', target: 'stat_2', type: 'stat', amount: '-2',
+    })
+    expect(storyEditor.upsertAnswerEvent).not.toHaveBeenCalled()
   })
 
-  it('saves property events with the action the game engine handles', () => {
+  it('delegates answer events and deletion to the editor', () => {
     component.answerId = 'answer_1_1'
     component.nodeId = undefined
     component.saveEvent({
@@ -209,10 +201,11 @@ describe('NodeEventsComponent', () => {
       property: 'Alice',
     })
 
-    expect(component.events[0].action).toBe('alterProperty')
-    expect(storyEditor.saveAnswerEvents).toHaveBeenCalledWith(
-      'answer_1_1',
-      component.events
-    )
+    expect(component.events).toEqual([])
+    expect(storyEditor.upsertAnswerEvent).toHaveBeenCalledOnceWith('answer_1_1', {
+      ...conditionEvent, target: 'property_1', type: 'property', property: 'Alice',
+    })
+    component.deleteEvent({ target: 'property_1' })
+    expect(storyEditor.deleteAnswerEvent).toHaveBeenCalledOnceWith('answer_1_1', 'property_1')
   })
 })

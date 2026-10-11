@@ -77,7 +77,10 @@ export class GameSessionService implements OnDestroy {
   }
 
   selectAnswer(answer: node_answer) {
-    if (!answer.join?.length) return
+    const state = this.player.snapshot()
+    if (!answer.join?.length || !this.engine.playerHasAnswerRequirements(
+      state.properties, state.stats, state.conditions, answer.requirements
+    )) return
     this.markCurrent({ selectedAnswerId: answer.id })
     this.engine.applyEvents(answer.events ?? [])
     this.eventSubject.next({ type: 'answer', answer })

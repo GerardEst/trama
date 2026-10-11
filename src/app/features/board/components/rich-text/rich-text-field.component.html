@@ -1,4 +1,4 @@
-<div class="richTextField">
+<div class="richTextField" [class.richTextField--noFocusButton]="!showFocusButton()">
   <div #preview class="richTextField__preview" [attr.tabindex]="inlineEditor ? -1 : 0"
     [attr.role]="inlineEditor ? null : 'textbox'" [attr.aria-label]="label()"
     [attr.aria-multiline]="inlineEditor ? null : true"
@@ -6,10 +6,12 @@
     [attr.aria-busy]="loadingEditor || null" [class.richTextField__preview--loading]="loadingEditor"
     (pointerdown)="prepareInlineEdit()" (focusin)="startInlineEdit()" (keydown)="onKeydown($event)"
     [innerHTML]="currentHtml"></div>
-  <polo-basic-button class="richTextField__button" size="s" [transparent]="true"
-    [title]="'board.editor.focusShortcut' | t: { label: label() }"
-    icon="/assets/icons/maximize.svg" (pointerdown)="$event.stopPropagation()"
-    (click)="open()" />
+  @if (showFocusButton()) {
+    <polo-basic-button class="richTextField__button" size="s" [transparent]="true"
+      [title]="'board.editor.focusShortcut' | t: { label: label() }"
+      icon="/assets/icons/maximize.svg" (pointerdown)="$event.stopPropagation()"
+      (click)="open()" />
+  }
   @if (openEditor) {
     @defer (on immediate) {
       <polo-rich-text-editor #focusEditor [label]="label()" [text]="draft" [placeholder]="placeholderText()"

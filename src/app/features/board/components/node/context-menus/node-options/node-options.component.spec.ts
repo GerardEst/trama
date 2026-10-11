@@ -20,6 +20,19 @@ describe('NodeOptionsComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('offers adding an event for every executable node type', () => {
+    const add = spyOn(component.addEvent, 'emit')
+    for (const type of ['content', 'text', 'distributor', 'end']) {
+      component.type = type
+      fixture.detectChanges()
+      const button = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button'))
+        .find(button => button.textContent?.includes('Add event'))!
+      expect(button).toBeDefined()
+      button.click()
+    }
+    expect(add).toHaveBeenCalledTimes(4)
+  })
+
   it('shows the shortcuts on available actions only', () => {
     component.nodeId = 'node_1'
     component.type = 'content'

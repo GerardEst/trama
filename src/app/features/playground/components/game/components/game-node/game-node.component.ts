@@ -5,7 +5,7 @@ import { GameTextInputComponent } from '../game-text-input/game-text-input.compo
 import { GameEndActionsComponent } from '../game-end-actions/game-end-actions.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
-import { PlayableNode } from '../../../../services/game-session.types'
+import { PlayableAnswer, PlayableNode } from '../../../../services/game-session.types'
 
 @Component({
   selector: 'polo-game-node',
@@ -24,8 +24,8 @@ export class GameNodeComponent {
 
   constructor(public activeStory: ActiveStoryService) {}
 
-  isAnswerDisabled(answer: node_answer): boolean {
-    return this.disabled || !answer.join?.length
+  isAnswerDisabled(answer: PlayableAnswer): boolean {
+    return this.disabled || !!answer.locked || !answer.join?.length
   }
 
   chooseAnswer(answer: node_answer) {

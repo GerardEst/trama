@@ -37,6 +37,26 @@ describe('RichTextFieldComponent', () => {
     expect(getComputedStyle(preview).outlineWidth).toBe('2px')
   })
 
+  it('pins the visible focus button to the plain text field margins', () => {
+    const host = fixture.nativeElement as HTMLElement
+    host.classList.add('richTextField--plain')
+    const button = host.querySelector<HTMLElement>('.richTextField__button')!
+    expect(getComputedStyle(button).top).toBe('0px')
+    expect(getComputedStyle(button).right).toBe('0px')
+  })
+
+  it('can hide the focus button without reserving space or removing the keyboard shortcut', () => {
+    const host = fixture.nativeElement as HTMLElement
+    host.classList.add('richTextField--plain')
+    fixture.componentRef.setInput('showFocusButton', false)
+    fixture.detectChanges()
+    expect(host.querySelector('.richTextField__button')).toBeNull()
+    const preview = host.querySelector<HTMLElement>('.richTextField__preview')!
+    expect(getComputedStyle(preview).paddingRight).toBe('0px')
+    preview.dispatchEvent(new KeyboardEvent('keydown', { key: 'f', ctrlKey: true, bubbles: true, cancelable: true }))
+    expect(fixture.componentInstance.openEditor).toBeTrue()
+  })
+
   it('edits inline with Tiptap shortcuts and saves HTML when focus leaves', async () => {
     const field = fixture.componentInstance
     const save = jasmine.createSpy('save')
