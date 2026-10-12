@@ -260,7 +260,7 @@ describe('NodeComponent', () => {
     expect(getComputedStyle(host.querySelector('.node__events')!).display).toBe('flex')
   })
 
-  it('centers circular outgoing ports on the node edge for nodes, answers and routes', () => {
+  it('centers directional connection tabs on the edge for nodes, answers and routes', () => {
     fixture.componentRef.setInput('nodeId', 'node_7')
     const host = fixture.nativeElement as HTMLElement
     const checkPorts = () => {
@@ -272,11 +272,27 @@ describe('NodeComponent', () => {
         const rect = port.getBoundingClientRect()
         expect(rect.width).toBeCloseTo(rect.height, 1)
         expect(rect.left + rect.width / 2).toBeCloseTo(edge, 1)
-        expect(getComputedStyle(port).borderTopLeftRadius).toBe('50%')
+        const radius = parseFloat(getComputedStyle(port).borderTopLeftRadius)
+        expect(radius).toBeGreaterThan(0)
+        expect(radius).toBeLessThan(rect.width / 2)
+        expect(getComputedStyle(port, '::after').getPropertyValue('mask-image')).toContain('arrow-right.svg')
+        expect(getComputedStyle(port, '::before').left).toBe('0px')
+        expect(parseFloat(getComputedStyle(port, '::before').right)).toBeLessThan(0)
+        expect(port.title).toBe('Drag to a node to connect the story')
+      }
+      const incomingEdge = node.getBoundingClientRect().left + parseFloat(getComputedStyle(node).borderLeftWidth) / 2
+      for (const port of Array.from(host.querySelectorAll<HTMLElement>('.joiner'))) {
+        const rect = port.getBoundingClientRect()
+        expect(rect.left + rect.width / 2).toBeCloseTo(incomingEdge, 1)
+        expect(rect.width).toBeLessThan(rect.height)
       }
     }
     fixture.detectChanges()
     checkPorts()
+    fixture.componentRef.setInput('type', 'text')
+    fixture.detectChanges()
+    checkPorts()
+    fixture.componentRef.setInput('type', 'content')
     fixture.componentRef.setInput('answers', [{ id: 'answer_7_0', text: 'Continue' }])
     fixture.detectChanges()
     checkPorts()

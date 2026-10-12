@@ -89,6 +89,10 @@
   --polo-radius-panel: 12px;
   --polo-radius-card: 14px;
 
+  /* Board connections use compact directional tabs, not round sockets. */
+  --polo-board-port-size: 1.5rem;
+  --polo-board-port-radius: 0.375rem;
+
   --polo-icon-filter: none;
   --polo-icon-edit: url('/assets/icons/edit.svg');
   --polo-icon-play: url('/assets/icons/play.svg');

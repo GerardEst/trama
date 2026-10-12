@@ -53,6 +53,7 @@ export const board = {
     title: 'Create new node',
   },
   joins: {
+    connect: 'Drag to a node to connect the story',
     title: 'Join options',
     delete: 'Delete join',
   },

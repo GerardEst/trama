@@ -77,7 +77,7 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
     ContextHelpComponent,
   ],
   templateUrl: './node.component.html',
-  styleUrls: ['./node.component.css'],
+  styleUrls: ['./node.component.css', '../connection-port.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

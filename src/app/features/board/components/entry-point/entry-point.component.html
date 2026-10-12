@@ -5,7 +5,8 @@
     <polo-context-help topic="board.entryPoint"></polo-context-help>
   </div>
   <span
-    class="entryPoint__port"
+    class="entryPoint__port union_point"
+    [class.union_point--hasJoin]="connected"
     [poloBoardAnchor]="origin + '_join'"
     [attr.data-board-origin]="origin"
     [title]="'board.entryPoint.connect' | t"

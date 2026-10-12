@@ -129,30 +129,10 @@
 }
 
 .union_point {
-  position: absolute;
   top: 1.35rem;
   right: calc(-1 * var(--polo-node-body-inset, 0.75rem) - 0.5px);
-  width: var(--polo-board-port-size, 1.25rem);
-  height: var(--polo-board-port-size, 1.25rem);
-  box-sizing: border-box;
-  background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border-hover);
-  border-radius: 50%;
-  cursor: crosshair;
-  transform: translate(50%, -50%);
-  transition: background-color 160ms ease, border-color 160ms ease;
-}
-.union_point--hasJoin, .union_point:hover {
-  background: var(--polo-color-action-soft);
-  border-color: var(--polo-color-focus);
 }
 
 .condition--fallback + .union_point {
   top: 50%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .union_point {
-    transition: none;
-  }
 }

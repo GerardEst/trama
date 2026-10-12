@@ -11,7 +11,7 @@ import { ENTRY_POINT_ORIGIN } from '../../board-interactions'
   standalone: true,
   imports: [CdkDragHandle, BoardAnchorDirective, TranslatePipe, ContextHelpComponent],
   templateUrl: './entry-point.component.html',
-  styleUrl: './entry-point.component.css',
+  styleUrls: ['./entry-point.component.css', '../connection-port.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntryPointComponent {

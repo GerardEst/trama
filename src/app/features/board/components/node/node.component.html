@@ -181,6 +181,7 @@
       @if (!answers || answers.length === 0) {
         <div
           class="union_point"
+          [title]="'board.joins.connect' | t"
           [attr.data-board-origin]="nodeId"
           [poloBoardAnchor]="nodeId + '_join'"
           [class.union_point--hasJoin]="join && join.length > 0"
@@ -225,6 +226,7 @@
     } @else if (type === 'text') {
       <div
         class="union_point"
+        [title]="'board.joins.connect' | t"
         [attr.data-board-origin]="nodeId"
         [poloBoardAnchor]="nodeId + '_join'"
         [class.union_point--hasJoin]="join && join.length > 0"

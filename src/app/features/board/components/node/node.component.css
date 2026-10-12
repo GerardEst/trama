@@ -16,7 +16,6 @@
 
 .node {
   --polo-node-body-inset: 0.75rem;
-  --polo-board-port-size: 1.25rem;
   position: relative;
   width: 24rem;
   box-sizing: border-box;
@@ -196,18 +195,18 @@
 }
 .node .joiner {
   position: absolute;
-  left: -1.25rem;
-  z-index: -1;
-  width: 1.75rem;
-  height: 1.15rem;
+  left: -0.5px;
+  z-index: 1;
+  width: 0.6rem;
+  height: 1.25rem;
   align-self: center;
-  background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border-hover);
-  border-radius: 999px;
-  cursor: pointer;
+  background: var(--polo-color-surface-subtle);
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: 0.25rem;
+  transform: translateX(-50%);
 }
 .node .joiner--answers {
-  left: -1.5rem;
+  left: calc(-1 * var(--polo-node-body-inset) - 0.5px);
 }
 
 .node:hover {
@@ -231,28 +230,13 @@
 }
 
 .union_point {
-  position: absolute;
   top: 5rem;
   right: -0.5px;
-  width: var(--polo-board-port-size);
-  height: var(--polo-board-port-size);
-  box-sizing: border-box;
-  background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border-hover);
-  border-radius: 50%;
-  cursor: crosshair;
-  transform: translate(50%, -50%);
-  transition: background-color 160ms ease, border-color 160ms ease;
-}
-.union_point--hasJoin, .union_point:hover {
-  background: var(--polo-color-action-soft);
-  border-color: var(--polo-color-focus);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .node,
-  .node__header,
-  .union_point {
+  .node__header {
     transition: none;
   }
 }

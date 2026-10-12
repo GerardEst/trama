@@ -55,6 +55,7 @@ export const board: Dictionary['board'] = {
     title: 'Crear nodo',
   },
   joins: {
+    connect: 'Arrastra hasta un nodo para conectar la historia',
     title: 'Opciones de la conexión',
     delete: 'Eliminar conexión',
   },
