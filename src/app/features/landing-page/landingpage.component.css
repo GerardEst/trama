@@ -259,7 +259,7 @@
   background: var(--polo-color-action);
 }
 
-#pricing, #features {
+#pricing, #features, #authoring {
   scroll-margin-top: 96px;
 }
 

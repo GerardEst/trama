@@ -210,9 +210,10 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
           'End nodes can offer a story-sharing button and external links. The message and button label are configured for each ending.',
         steps: [
           'Create an end node and write the final passage.',
-          'Enable sharing in the story settings to offer Share this story.',
+          'Open Share your story to copy the reading link. Anyone with it can play without an account.',
+          'Enable Show a share button at the end of the story in the same window.',
           'Use Share customizations to set the message and button label for that ending.',
-          'On a paid subscription, add External links with your own labels and URLs, such as your website or creator profiles.',
+          'Add External links with your own labels and URLs, such as your website or creator profiles.',
         ],
         example: {
           label: 'After the final scene',
@@ -222,7 +223,7 @@ export const FEATURE_GUIDE: readonly GuideGroup[] = [
             'External links: More stories / Meet the creator',
           ],
         },
-        note: 'Sharing uses the device’s share sheet when available, with a copy-link fallback. External links require a paid subscription. These are links to your profiles, not built-in integrations with each social network.',
+        note: 'Reading links show the latest saved story, not a separate published copy. The end-of-story share button uses the device’s share sheet or copies the link, with a spoiler-free message by default. External links take readers to your profiles, rather than integrating with each social network.',
       },
     ],
   },

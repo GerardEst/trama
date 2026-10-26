@@ -1,0 +1,178 @@
+:host {
+  display: block;
+}
+
+.authoring {
+  padding: 72px 0 8px;
+}
+
+.authoring__heading {
+  max-width: 780px;
+  margin-bottom: 36px;
+}
+
+.authoring__eyebrow {
+  color: var(--polo-color-action);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+h2 {
+  margin-top: 16px;
+  color: var(--polo-color-text);
+  font: 800 clamp(32px, 4vw, 50px)/1.15 var(--polo-font-ui);
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.authoring__heading > p:last-child {
+  max-width: 640px;
+  margin-top: 20px;
+  color: var(--polo-color-text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+.authoring__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.authoring__steps li {
+  min-width: 0;
+}
+
+.authoring__steps button {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  text-align: left;
+  font-family: var(--polo-font-ui);
+  cursor: pointer;
+}
+
+.authoring__steps button:hover {
+  border-color: var(--polo-color-action);
+}
+
+.authoring__steps button[aria-pressed='true'] {
+  border-color: var(--polo-color-action);
+  background: var(--polo-color-action-soft);
+  box-shadow: inset 0 3px 0 var(--polo-color-action);
+}
+
+.authoring__number {
+  color: var(--polo-color-action);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.authoring__step-title {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+
+.authoring__step-description {
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.authoring__capture {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: var(--polo-radius-card);
+  background: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-floating);
+}
+
+.authoring__capture a {
+  display: block;
+}
+
+.authoring__capture img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--polo-color-border);
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.authoring__real {
+  flex-shrink: 0;
+  color: var(--polo-color-action);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:is(a, button):focus-visible {
+  outline: 3px solid var(--polo-color-action);
+  outline-offset: 5px;
+}
+
+.authoring__capture a:focus-visible {
+  outline-offset: -5px;
+}
+
+@media (max-width: 1000px) {
+  .authoring__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .authoring {
+    padding-top: 48px;
+  }
+
+  .authoring__steps button {
+    padding: 16px;
+  }
+
+  .authoring__step-title {
+    font-size: 18px;
+  }
+
+  figcaption {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .authoring__steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -82,6 +82,26 @@ describe('NodeComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  it('allows external ending links without an active subscription', () => {
+    TestBed.inject(DatabaseService).user.set(null)
+    const update = spyOn(TestBed.inject(StoryEditorService), 'updateNodeLinks')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('type', 'end')
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const add = host.querySelector<HTMLButtonElement>('.node__linkoptions button')!
+    expect(add).toBeDefined()
+    expect(add.disabled).toBeFalse()
+    add.click()
+    fixture.detectChanges()
+    const inputs = host.querySelectorAll<HTMLInputElement>('.node__linkoptions input')
+    expect(inputs.length).toBe(2)
+    inputs[0].value = 'My website'
+    inputs[0].dispatchEvent(new Event('input'))
+    inputs[0].dispatchEvent(new Event('change'))
+    expect(update).toHaveBeenCalledWith('node_7', [{ name: 'My website', url: '' }])
+  })
+
   it('shows a saved name above the node type, drags from the name and edits on click', () => {
     const editor = TestBed.inject(StoryEditorService)
     const update = spyOn(editor, 'updateNodeName')

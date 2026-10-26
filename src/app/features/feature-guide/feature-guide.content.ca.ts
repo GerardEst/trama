@@ -199,9 +199,10 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
           'Els nodes finals poden oferir un botó per compartir la història i enllaços externs. El missatge i el text del botó es configuren per a cada final.',
         steps: [
           'Crea un node final i escriu el passatge final.',
-          'Activa Permet compartir a les opcions de la història per oferir Comparteix aquesta història.',
+          'Obre Comparteix la història per copiar l’enllaç de lectura. Qualsevol persona amb l’enllaç pot jugar sense registrar-se.',
+          'Activa Mostra un botó per compartir al final de la història a la mateixa finestra.',
           'Fes servir Personalitza en compartir per definir el missatge i el text del botó d’aquell final.',
-          'Amb una subscripció de pagament, afegeix Enllaços externs amb els teus propis textos i URL, com ara el teu web o els teus perfils de creador.',
+          'Afegeix Enllaços externs amb els teus propis textos i URL, com ara el teu web o els teus perfils de creador.',
         ],
         example: {
           label: 'Després de l’escena final',
@@ -211,7 +212,7 @@ export const FEATURE_GUIDE_CA: readonly GuideGroup[] = [
             'Enllaços externs: Més històries / Coneix el creador',
           ],
         },
-        note: 'Per compartir es fa servir el menú de compartir del dispositiu quan està disponible i, si no, es copia l’enllaç. Els enllaços externs requereixen una subscripció de pagament. Són enllaços als teus perfils, no integracions amb cada xarxa social.',
+        note: 'Els enllaços de lectura mostren la darrera història desada, no una còpia publicada separada. El botó del final fa servir el menú de compartir del dispositiu o copia l’enllaç, amb un missatge sense espòilers per defecte. Els enllaços externs porten als teus perfils, no són integracions amb cada xarxa social.',
       },
     ],
   },

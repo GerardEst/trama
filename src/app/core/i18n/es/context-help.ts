@@ -17,7 +17,7 @@ export const contextHelp = {
       body: 'Este nodo elige automáticamente el siguiente camino sin mostrar una escena al jugador. Comprueba las rutas en orden según estadísticas o condiciones y sigue la primera que se cumple. Conecta la salida En otro caso para los casos que no cumplan ninguna ruta.',
     },
     endNode: {
-      body: 'Este nodo marca el final de un camino de la historia y muestra el pasaje de despedida al jugador. Puedes crear finales diferentes según las decisiones tomadas. También puedes configurar opciones para compartir la historia y, con una suscripción de pago, añadir enlaces externos.',
+      body: 'Este nodo marca el final de un camino de la historia y muestra el pasaje de despedida al jugador. Puedes crear finales diferentes según las decisiones tomadas. También puedes configurar opciones para compartir la historia y añadir enlaces externos.',
     },
     events: {
       title: 'Eventos',

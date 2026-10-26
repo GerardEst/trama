@@ -318,19 +318,21 @@ export class DatabaseService implements OnDestroy {
     return true
   }
 
-  async setSharingOf(storyId: string, sharing: boolean) {
-    if (!environment.production)
-      console.log(
-        '%cdb call to set the sharing status of a story',
-        'color: #9999ff'
-      )
-    const { data, error } = await this.supabase
-      .from('stories')
-      .update({ sharing: sharing })
-      .eq('id', storyId)
-
-    if (error) return false
-    return true
+  async setSharingOf(storyId: string, sharing: boolean): Promise<boolean> {
+    const userId = this.user()?.id
+    if (!userId) return false
+    try {
+      const { data, error } = await this.supabase
+        .from('stories')
+        .update({ sharing })
+        .eq('id', storyId)
+        .eq('profile_id', userId)
+        .select('id, sharing')
+        .single()
+      return !error && data?.id === storyId && data.sharing === sharing
+    } catch {
+      return false
+    }
   }
 
   async setCumulativeModeOf(storyId: string, cumulativeMode: boolean) {
@@ -348,16 +350,24 @@ export class DatabaseService implements OnDestroy {
     return true
   }
 
-  async updateCustomIdOf(storyId: string, customId: string) {
-    if (!environment.production)
-      console.log('%cdb call to set the custom ID of a story', 'color: #9999ff')
-    const { data, error } = await this.supabase
-      .from('stories')
-      .update({ custom_id: customId })
-      .eq('id', storyId)
-
-    if (error) return false
-    return true
+  async updateCustomIdOf(storyId: string, customId: string | null): Promise<'saved' | 'taken' | 'unauthorized' | 'error'> {
+    const userId = this.user()?.id
+    if (!userId) return 'unauthorized'
+    try {
+      const { data, error, status } = await this.supabase
+        .from('stories')
+        .update({ custom_id: customId })
+        .eq('id', storyId)
+        .eq('profile_id', userId)
+        .select('id, custom_id')
+        .single()
+      if (error?.code === '23505') return 'taken'
+      if (status === 401 || status === 403) return 'unauthorized'
+      if (error || data?.id !== storyId || data.custom_id !== customId) return 'error'
+      return 'saved'
+    } catch {
+      return 'error'
+    }
   }
 
   async updateFooterOf(

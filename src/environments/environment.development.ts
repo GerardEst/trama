@@ -7,7 +7,5 @@ export const environment = {
   subscriptionLinks: {
     CREATOR_MONTHLY_LINK: 'https://buy.stripe.com/3csdRbbJW5E48VycMV',
     CREATOR_YEARLY_LINK: 'https://buy.stripe.com/8wM00lg0caYo0p228i',
-    PRO_MONTHLY_LINK: 'https://buy.stripe.com/fZe8wR01e3vW1t6bIM',
-    PRO_YEARLY_LINK: 'https://buy.stripe.com/eVaaEZ4hu7McfjW4gr',
   },
 }

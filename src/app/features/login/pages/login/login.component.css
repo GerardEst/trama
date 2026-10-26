@@ -82,6 +82,33 @@
   font-weight: 700;
 }
 
+.checkoutSummary,
+.checkoutNotice {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface-accent);
+}
+
+.checkoutSummary strong {
+  font-size: 14px;
+}
+
+.checkoutSummary p,
+.checkoutNotice p,
+.checkoutNotice a {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.checkoutNotice a {
+  color: var(--polo-color-action);
+  text-underline-offset: 3px;
+}
+
 .box {
   min-width: 0;
   max-width: 480px;

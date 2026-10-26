@@ -18,11 +18,12 @@
   --pricing-link-highlight-hover-background: var(--polo-color-accent-hover);
   --pricing-link-focus: var(--polo-color-action);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
   gap: var(--polo-space-6);
   color: var(--polo-color-text-strong);
 }
 .pricing__plan {
+  min-width: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -51,6 +52,7 @@
 }
 .pricing__plan__header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   gap: var(--polo-space-3);
@@ -137,18 +139,27 @@
   margin-top: var(--polo-space-3);
 }
 
-.pricing__limit {
-  flex: 0 0 20px;
-  text-align: center;
-  font-size: 25px;
-  line-height: 16px;
-  color: var(--polo-color-text-muted);
+.pricing__plan > .pricing__planned,
+.pricing__plan > .pricing__price-note {
+  min-height: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--polo-color-text-secondary);
 }
 
-.pricing__planned {
-  color: var(--polo-color-text-secondary);
-  font-size: 12px;
-  font-weight: 700;
+.legacySubscription {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-surface-subtle);
+}
+
+.legacySubscription p {
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .pricing__coming-soon {

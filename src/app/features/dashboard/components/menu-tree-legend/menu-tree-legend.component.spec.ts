@@ -46,6 +46,15 @@ describe('MenuTreeLegendComponent', () => {
     expect(rename).toHaveBeenCalledWith('stat_2', 'Luck updated')
   })
 
+  it('offers player activity without checking a paid plan', () => {
+    const host = fixture.nativeElement as HTMLElement
+    const activity = Array.from(host.querySelectorAll('button')).find(button => button.textContent?.includes('Activity'))!
+    expect(activity).toBeDefined()
+    expect(activity.disabled).toBeFalse()
+    activity.click()
+    expect(component.mode).toBe('games')
+  })
+
   it('only shows scrollbars when the legend content overflows', () => {
     const refs = fixture.nativeElement.querySelector('.legend__content__refs') as HTMLElement
     const styles = getComputedStyle(refs)

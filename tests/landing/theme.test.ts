@@ -9,7 +9,7 @@ for (const theme of ['light', 'dark'] as const) {
     const canvas = theme === 'light' ? 'rgb(251, 249, 244)' : 'rgb(27, 33, 29)'
     const surface = theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)'
     for (const [path, host, action, card] of [
-      ['/', 'polo-landingpage', '.hero .button--primary', '.pricing__plan'],
+      ['/', 'polo-landingpage', '.hero .button--primary', '.pricing__plan--pro'],
       ['/login', 'polo-login', '.form__footer button', '.box'],
       ['/docs/features', 'polo-feature-guide', '.guide-button', '.guide-sidebar'],
     ]) {
@@ -29,7 +29,8 @@ test('a saved theme applies consistently to public pages, including mobile prici
   await page.addInitScript(() => localStorage.setItem('polo-theme', 'dark'))
   await page.goto('/')
   await expect(page.locator('polo-landingpage')).toHaveCSS('background-color', 'rgb(27, 33, 29)')
-  await expect(page.locator('.pricing__plan').first()).toHaveCSS('background-color', 'rgb(38, 46, 40)')
+  await expect(page.locator('.pricing__plan--pro')).toHaveCSS('background-color', 'rgb(38, 46, 40)')
+  await expect(page.locator('.pricing__plan.recommendedPlan')).toHaveCSS('background-color', 'rgb(52, 70, 54)')
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(375)
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Log in', exact: true }).click()
   await expect(page.locator('polo-login')).toHaveCSS('background-color', 'rgb(27, 33, 29)')

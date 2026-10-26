@@ -13,5 +13,7 @@ export const playground: Dictionary['playground'] = {
   answerTooLong: 'Usa 100 caracteres como máximo.',
   share: 'Compartir esta historia',
   linkCopied: 'Enlace copiado al portapapeles.',
-  copyManually: 'Copia la URL de la página para compartir esta historia.',
+  copyManually: 'Selecciona y copia el enlace de abajo para compartir esta historia.',
+  shareLink: 'Enlace de la historia',
+  shareMessage: 'Juega a «{title}» y elige tu propio camino.',
 }

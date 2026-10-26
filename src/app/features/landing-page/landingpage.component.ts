@@ -22,6 +22,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
 import { LandingFeaturesComponent } from './components/landing-features/landing-features.component'
+import { LandingAuthoringComponent } from './components/landing-authoring/landing-authoring.component'
 import { PricingComponent } from 'src/app/shared/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/billing-cycle.component'
 
@@ -31,6 +32,7 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
   imports: [
     LandingStoryDemoComponent,
     LandingFeaturesComponent,
+    LandingAuthoringComponent,
     PricingComponent,
     BillingCycleComponent,
     LanguageSelectorComponent,
@@ -41,6 +43,7 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
   styleUrls: [
     './landingpage.component.css',
     './landingpage-conversion.css',
+    './landingpage-author-trust.css',
   ],
 })
 export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -52,6 +55,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   loggedUserEmail?: string
   loggedUserPlan?: string
   payAnnually = false
+  canceledSubscription = false
 
   private readonly i18n = inject(I18nService)
   private readonly router = inject(Router)
@@ -61,16 +65,12 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   private alternateLinks: HTMLLinkElement[] = []
 
   get creationUrl() {
-    return this.loggedUserEmail ? '/dashboard' : '/login?mode=register'
+    return this.loggedUserEmail ? '/dashboard'
+      : `/login?mode=register&plan=creator&period=${this.payAnnually ? 'yearly' : 'monthly'}`
   }
 
   get homeUrl() {
     return landingUrl(this.i18n.lang())
-  }
-
-  get licenseEnquiryUrl() {
-    const subject = encodeURIComponent(this.i18n.t('landing.pricing.license.subject'))
-    return `mailto:gesteve.12@gmail.com?subject=${subject}`
   }
 
   constructor(
@@ -79,7 +79,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Scope anchor scrolling to the landing so editor navigation is unaffected.
     this.route.fragment.pipe(takeUntilDestroyed()).subscribe((fragment) => {
-      if (!fragment || !['main-content', 'features', 'pricing', 'try-it'].includes(fragment)) return
+      if (!fragment || !['main-content', 'authoring', 'features', 'pricing', 'try-it'].includes(fragment)) return
       afterNextRender(() => {
         this.document.getElementById(fragment)?.scrollIntoView({ block: 'start' })
       }, { injector: this.injector })
@@ -156,10 +156,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!loggedUser) return
 
     this.loggedUserEmail = loggedUser.email
-    this.loggedUserPlan =
-      (loggedUser.profile.subscription_status === 'active' &&
-        loggedUser.profile.plan) ||
-      'free'
+    this.loggedUserPlan = loggedUser.profile.plan
+    this.canceledSubscription = loggedUser.profile.subscription_status === 'canceled'
   }
 }
 

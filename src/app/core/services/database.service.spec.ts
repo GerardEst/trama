@@ -41,6 +41,35 @@ describe('DatabaseService story saves', () => {
     spyOn(console, 'error')
   })
 
+  it('confirms a custom address and scopes the write to its author', async () => {
+    fetchRequest.and.resolveTo(new Response('{"id":"story-1","custom_id":"the-island"}', { status: 200 }))
+    expect(await database.updateCustomIdOf('story-1', 'the-island')).toBe('saved')
+    const [url, request] = fetchRequest.calls.mostRecent().args
+    expect(new URL(String(url)).searchParams.get('profile_id')).toBe('eq.author-1')
+    expect(new URL(String(url)).searchParams.get('select')).toBe('id,custom_id')
+    expect(JSON.parse(String(request?.body))).toEqual({ custom_id: 'the-island' })
+  })
+
+  it('distinguishes duplicate links and access failures from unconfirmed updates', async () => {
+    fetchRequest.and.resolveTo(new Response('{"code":"23505"}', { status: 409 }))
+    expect(await database.updateCustomIdOf('story-1', 'taken')).toBe('taken')
+    fetchRequest.and.resolveTo(new Response('{"code":"42501"}', { status: 403 }))
+    expect(await database.updateCustomIdOf('story-1', 'island')).toBe('unauthorized')
+    for (const body of ['[]', '{"id":"other-story","custom_id":"island"}', '{"id":"story-1","custom_id":"other"}']) {
+      fetchRequest.and.resolveTo(new Response(body, { status: 200 }))
+      expect(await database.updateCustomIdOf('story-1', 'island')).toBe('error')
+    }
+  })
+
+  it('removes an alias with null and requires confirmation for the player share toggle', async () => {
+    fetchRequest.and.resolveTo(new Response('{"id":"story-1","custom_id":null}', { status: 200 }))
+    expect(await database.updateCustomIdOf('story-1', null)).toBe('saved')
+    fetchRequest.and.resolveTo(new Response('[]', { status: 200 }))
+    expect(await database.setSharingOf('story-1', true)).toBeFalse()
+    fetchRequest.and.resolveTo(new Response('{"id":"story-1","sharing":true}', { status: 200 }))
+    expect(await database.setSharingOf('story-1', true)).toBeTrue()
+  })
+
   it('confirms the updated row through the real Supabase request builder', async () => {
     expect(await database.saveTreeToDB('story-1', storyTree)).toBeTrue()
     const [url, request] = fetchRequest.calls.mostRecent().args

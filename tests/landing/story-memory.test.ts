@@ -31,7 +31,7 @@ test('clears skills and remembered allies on restart, changing the next outcome'
   await expect(demo).toContainText('you all leave together')
 
   await demo.getByRole('button', { name: 'Start over' }).click()
-  await expect(demo.getByRole('link', { name: /Create your first story free/ })).toHaveCount(0)
+  await expect(demo.getByRole('link', { name: /Create your first story/ })).toHaveCount(0)
   await demo.getByRole('button', { name: 'Ember — enter the gate of living fire' }).click()
   await demo.getByRole('button', { name: 'Walk through the blaze' }).click()
   await expect(demo.getByRole('button', { name: 'Slip into its shadow and strike' })).toHaveCount(0)
@@ -58,6 +58,6 @@ test('uses a remembered relic to break the curse and offers a way to walk away',
   await demo.getByRole('button', { name: 'Cut the bridge loose. Leap alone.' }).click()
   await demo.getByRole('button', { name: 'Leave the crown. Choose the dawn.' }).click()
   await expect(demo).toContainText('Let the citadel remember the Last Blade')
-  await expect(demo.getByRole('link', { name: /Create your first story free/ })).toBeVisible()
+  await expect(demo.getByRole('link', { name: /Create your first story/ })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(375)
 })

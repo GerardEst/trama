@@ -4,30 +4,31 @@ export const landing: Dictionary['landing'] = {
   meta: {
     title: 'Trama — Tu escrius la història. Ells trien el camí.',
     description:
-      'Tu escrius la història. Ells trien el camí. Crea històries interactives en un llenç visual, comparteix-les amb un sol enllaç i descobreix cap on van els teus lectors.',
+      'Escriu ficció interactiva sense programar. Connecta escenes i decisions, prova’n les conseqüències, corregeix mentre jugues i comparteix la història amb un enllaç.',
   },
   nav: {
     label: 'Navegació principal',
     home: 'Inici de Trama',
     skip: 'Salta al contingut',
+    authoring: 'Com funciona',
     features: 'Funcions',
     pricing: 'Preus',
     docs: 'Documentació',
     login: 'Inicia sessió',
     dashboard: 'Panell',
-    start: 'Comença gratis',
+    start: 'Tria Creator',
   },
   hero: {
-    eyebrow: 'UNA LLAR PER A HISTÒRIES INTERACTIVES',
+    eyebrow: 'PER A AUTORS DE FICCIÓ INTERACTIVA',
     titleStart: 'Tu escrius la història.',
     titleEnd: 'Els lectors trien el camí.',
     description:
-      'Construeix un món narratiu i interactiu. Comparteix la teva història amb un sol enllaç i deixa que els lectors explorin el mon que has creat.',
+      'Escriu escenes, connecta decisions i prova com canvia la història amb cada camí. Corregeix els passatges mentre la recorres i comparteix-la amb un enllaç. Sense programar.',
     openDashboard: 'Obre el teu panell',
-    startStory: 'Comença la teva història',
-    tryStory: 'Prova una història',
-    free: '✓ Gratis per començar',
-    noCard: '✓ Sense targeta de crèdit',
+    startStory: 'Crea la teva primera història',
+    tryStory: 'Juga una història',
+    free: '✓ Totes les funcions de l’editor incloses',
+    noCard: '✓ Facturació mensual o anual',
     noAccount: '✓ Els lectors no necessiten compte',
     demoLabel: 'Juga a El darrer llindar',
   },
@@ -38,17 +39,69 @@ export const landing: Dictionary['landing'] = {
     endingStart: 'Aquest final era teu.',
     endingEnd: 'Ara escriu el començament d’algú altre.',
     makeAnother: 'Crea una altra història',
-    createFirst: 'Crea la teva primera història gratis',
+    createFirst: 'Crea la teva primera història',
     ended: 'Cada decisió porta a un altre lloc.',
     intro: 'Sense registre. Tria un camí.',
     restart: 'Torna a començar',
+  },
+  demoBridge: {
+    description: 'Alliberar l’esperit o agafar el segell lunar canvia què pots fer més endavant. Tu decideixes quines decisions recorda la teva història.',
+    action: 'Mira com es construeix',
+  },
+  authoring: {
+    eyebrow: 'LA TEVA HISTÒRIA, PAS A PAS',
+    title: 'De la primera escena a una història per compartir.',
+    description: 'Escriu els passatges. Dona forma als camins al mapa. Recorre’ls i corregeix sobre la marxa, sense sortir de la teva història.',
+    enlarge: 'Obre la captura de l’editor a mida completa (pestanya nova)',
+    realCapture: 'Editor real · Història d’exemple',
+    write: {
+      title: 'Escriu',
+      description: 'Dona espai als passatges llargs a l’editor de text.',
+      caption: 'Edita passatges i respostes al panell de lectura. Crea escenes noves i connexions al mapa.',
+      alt: 'L’editor de Trama amb el mapa de la història al costat d’un passatge editable i les seves respostes.',
+    },
+    map: {
+      title: 'Connecta',
+      description: 'Enllaça decisions amb escenes i organitza els camins al mapa.',
+      caption: 'El tauler mostra les escenes, les respostes i les connexions entre elles.',
+      alt: 'El tauler de Trama amb escenes connectades i dos camins diferents en una història d’exemple.',
+    },
+    preview: {
+      title: 'Prova i corregeix',
+      description: 'Segueix un camí, torna enrere i passa a editar quan un passatge ho necessiti.',
+      caption: 'La previsualització recorre la història al costat del mapa. Passa a Edita per corregir el passatge actual.',
+      alt: 'La previsualització de lectura de Trama al costat del mapa, amb decisions i botons per tornar enrere i editar.',
+    },
+    share: {
+      title: 'Comparteix',
+      description: 'Envia un enllaç directe als lectors. No necessiten compte.',
+      caption: 'Copia l’enllaç de la història des de la finestra de compartir i envia’l als teus lectors.',
+      alt: 'La finestra de compartir de Trama amb l’enllaç d’una història i el botó per copiar-lo.',
+    },
+  },
+  trust: {
+    eyebrow: 'CREADA PER TU',
+    title: 'Tu poses la veu. Trama posa les eines.',
+    description: 'Les paraules, els personatges i les decisions els escrius tu. Trama no genera el text per tu.',
+    saving: {
+      title: 'Saps quan s’ha desat',
+      description: 'Els canvis es desen automàticament. Si un desat falla, l’editor mostra un avís i et permet tornar-ho a provar.',
+    },
+    history: {
+      title: 'Pots canviar d’idea',
+      description: 'Desfés i refés canvis recents mentre treballes. L’historial de la sessió no és un arxiu permanent de versions.',
+    },
+    data: {
+      title: 'Descarrega les dades de la història',
+      description: 'Descarrega un JSON des de les opcions de la història. Conté el text, l’estructura i la configuració, no un joc independent ni les imatges empaquetades.',
+    },
   },
   features: {
     eyebrow: 'MÉS ENLLÀ DE LES BRANQUES',
     titleStart: 'Històries que',
     titleEnd: 'recorden.',
     description:
-      'Decisions que importen, camins que s’adapten i un tauler que continua sent llegible a mesura que el teu món creix. Tot sense escriure ni una línia de codi.',
+      'Una promesa complerta, una clau trobada, una amistat guanyada. Fes que les decisions anteriors canviïn el que passa després, sense escriure codi.',
     readGuide: 'Consulta la documentació',
     events: {
       label: 'ESDEVENIMENTS',
@@ -59,21 +112,21 @@ export const landing: Dictionary['landing'] = {
     },
     distributors: {
       label: 'DISTRIBUÏDORS',
-      title: 'Camins que depenen del jugador',
+      title: 'El passat canvia el que passa després',
       description:
-        'Dirigeix els lectors segons el que han fet. Guanya la primera ruta que es compleix, i la resta passa a «En cas contrari».',
+        'Un aliat que confia en el lector el deixa entrar. Un desconegut ha de trobar una altra entrada. Defineix rutes diferents segons el que ha fet el lector.',
       link: 'Coneix els nodes distribuïdors',
     },
     playerInput: {
       label: 'TEXT DEL JUGADOR',
-      title: 'Les paraules del lector, a la teva història',
+      title: 'Fes lloc al lector dins de la història',
       description:
         'Demana un nom o una idea i entrellaça’l en passatges posteriors amb una variable.',
       link: 'Pregunta al jugador',
     },
     requirements: {
       label: 'REQUISITS',
-      title: 'Respostes que cal guanyar-se',
+      title: 'No totes les opcions s’obren des del principi',
       description:
         'Una clau trobada obre la porta. Prou monedes compren el mapa. Les respostes només apareixen quan el jugador compleix tots els requisits.',
       link: 'Afegeix requisits',
@@ -87,7 +140,7 @@ export const landing: Dictionary['landing'] = {
     },
     organisation: {
       label: 'GRUPS I MARCS',
-      title: 'Històries grans, encara llegibles',
+      title: 'Dona un lloc a cada capítol',
       description:
         'Plega un capítol en un grup o mantén-lo visible dins d’un marc mòbil.',
       link: 'Organitza el teu tauler',
@@ -122,46 +175,40 @@ export const landing: Dictionary['landing'] = {
     scenes: '6 escenes',
   },
   pricing: {
-    titleStart: 'Comença gratis.',
-    titleEnd: 'Creix a partir d’aquí.',
-    description: 'Més espai quan el necessitis.',
-    license: {
-      audience: 'PER A PROFESSIONALS',
-      badge: 'Aviat',
-      title: 'Llicència d’exportació',
-      preview: 'Llicència proposada. Encara no es pot comprar.',
-      frequencyStart: 'Un únic pagament.',
-      frequencyEnd: 'Sense subscripció.',
-      description:
-        'Totes les eines de creació. Exportacions il·limitades. Allotja, distribueix o ven les teves històries en els teus propis termes.',
-      ownership: 'La teva plataforma. Els teus ingressos. Sense royalties.',
-      limit:
-        'Només exportació. Sense jocs allotjats a Trama, enllaços per compartir ni analítiques de jugadors.',
-      ask: 'Pregunta per la llicència',
-      subject: 'Consulta sobre la llicència d’exportació',
-    },
+    titleStart: 'Crea amb Creator.',
+    titleEnd: 'Pro vindrà després.',
+    description: 'Creator inclou totes les funcions actuals de l’editor. El selector de facturació només s’aplica a Creator. Pro serà de pagament únic i encara no està a la venda.',
   },
   questions: {
     title: 'Alguns caps per lligar.',
+    code: {
+      question: 'He de saber programar?',
+      answer: 'No. Escriu passatges a l’editor de text, connecta escenes al tauler i configura esdeveniments i requisits visualment. La documentació explica les eines amb exemples.',
+    },
     free: {
-      question: 'Puc començar gratis?',
-      answer:
-        'Sí. El pla Basic és gratuït, així que pots crear i compartir les teves primeres històries abans de decidir si necessites més espai.',
+      question: 'Quins plans estan disponibles?',
+      answer: 'Creator està disponible amb facturació mensual o anual i totes les funcions actuals de l’editor incloses. Pro està previst com un pagament únic d’uns 200 € amb exportació d’històries, però encara no està disponible. El preu, el format i l’abast de l’exportació no són definitius.',
     },
     readers: {
       question: 'Els lectors necessiten un compte?',
-      answer:
-        'No. Comparteix un enllaç i els lectors poden entrar directament a la teva història sense registrar-se ni instal·lar res.',
+      answer: 'No. Comparteix un enllaç i els lectors poden entrar directament a la teva història sense registrar-se ni instal·lar res.',
+    },
+    download: {
+      question: 'Puc descarregar les dades de la història?',
+      answer: 'Sí. Obre les opcions de la història al panell i tria Exporta JSON. El fitxer inclou el text, l’estructura i la configuració. Les imatges continuen sent referències externes; no s’empaqueten. Encara no hi ha una eina d’importació o restauració per a l’usuari.',
     },
     export: {
-      question: 'Puc exportar o allotjar les meves històries pel meu compte?',
-      answer:
-        'Les històries viuen a Trama i es comparteixen amb un enllaç. Per als estudis i autors que les vulguin allotjar o vendre a la seva pròpia plataforma, estem preparant una llicència d’exportació de pagament únic.',
+      question: 'Puc allotjar una història jugable al meu web?',
+      answer: 'Encara no. Avui els lectors juguen amb un enllaç de Trama. La descàrrega JSON conté dades de la història, no un joc HTML independent. L’exportació jugable està prevista per a Pro, però el format, l’abast i la data de llançament encara s’han de decidir.',
+    },
+    cancel: {
+      question: 'Què passa si cancel·lo Creator?',
+      answer: 'Pots sol·licitar la cancel·lació des del teu compte. Descarrega les dades de la història en JSON abans de canviar de pla. Si necessites confirmar la data efectiva de cancel·lació o l’accés a les històries i els enllaços, escriu-nos abans de cancel·lar. Pro és una proposta futura separada, no una migració automàtica.',
+      contact: 'Consulta la teva subscripció',
     },
     create: {
       question: 'Què puc crear amb Trama?',
-      answer:
-        'Ficció interactiva, aventures amb branques, qüestionaris i altres experiències de «tria el teu propi camí». Comença amb una escena i descobreix on et porta.',
+      answer: 'Ficció interactiva i aventures amb branques i conseqüències. Comença amb una escena, ofereix una decisió al lector i tria què recorda la història.',
     },
   },
   closing: {

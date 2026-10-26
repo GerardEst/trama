@@ -18,27 +18,27 @@
   width: calc(100% - 100px);
   max-width: 1000px;
   height: calc(100% - 100px);
-  box-shadow: 0 5px 15px color-mix(in srgb, var(--polo-color-shadow) 50%, transparent);
+  box-shadow: var(--polo-modal-shadow, var(--polo-shadow-dialog));
   background-color: var(--polo-color-surface);
   z-index: 11;
-  border-radius: var(--polo-radius-control);
+  border-radius: var(--polo-modal-radius, var(--polo-radius-control));
   display: flex;
-  max-height: calc(100% - 50px);
+  max-height: var(--polo-modal-max-height, calc(100% - 50px));
   flex-direction: column;
-  padding: calc(var(--spacing) / 2);
-  gap: 1.5rem;
+  padding: var(--polo-modal-padding, calc(var(--spacing) / 2));
+  gap: var(--polo-modal-gap, 1.5rem);
   box-sizing: border-box;
 }
 .modal.dialog {
   --spacing: 1rem;
-  width: unset;
+  width: var(--polo-dialog-width, unset);
   height: unset;
-  max-width: 900px;
+  max-width: var(--polo-dialog-max-width, 900px);
 }
 .modal__header {
   display: flex;
   align-items: center;
-  padding-left: var(--spacing);
+  padding-left: var(--polo-modal-content-inset, var(--spacing));
 }
 .modal__header .close-modal-button {
   cursor: pointer;
@@ -49,12 +49,16 @@
   max-height: calc(100% - 30px);
   display: flex;
   flex-direction: column;
-  padding: 0 var(--spacing);
-  overflow: scroll;
+  min-height: 0;
+  padding: 0 var(--polo-modal-content-inset, var(--spacing));
+  overflow: var(--polo-modal-body-overflow, scroll);
 }
 .modal__options {
   display: flex;
   gap: calc(var(--spacing) / 2);
   justify-content: flex-end;
-  padding: 0 var(--spacing);
+  padding: 0 var(--polo-modal-content-inset, var(--spacing));
+}
+.modal__options:empty {
+  display: var(--polo-modal-empty-options-display, flex);
 }

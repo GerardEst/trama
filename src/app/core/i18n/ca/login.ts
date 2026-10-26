@@ -7,7 +7,14 @@ export const login: Dictionary['login'] = {
   titleEnd: 'tu pots explicar.',
   intro:
     'Dona-li un lloc on començar. Escriu-la, deixa que els teus lectors hi trobin el seu propi camí i comparteix-la quan estiguis a punt.',
-  note: 'Pla gratuït disponible · Sense targeta de crèdit',
+  note: 'Creator · Totes les funcions actuals de l’editor incloses',
+  checkout: {
+    continue: 'Inicia sessió o crea un compte per continuar al pagament segur amb Stripe. La subscripció només comença quan es confirma el pagament.',
+    unavailable: 'Aquest pagament no està disponible. Pro està previst com un pagament únic i encara no es pot comprar. Els antics enllaços de subscripció Pro ja no s’ofereixen.',
+    viewPlans: 'Consulta els plans actuals',
+    authError: 'No s’ha pogut iniciar sessió o crear el compte. Revisa les dades i torna-ho a provar.',
+    confirmEmail: 'Revisa el correu i confirma el compte abans de continuar al pagament.',
+  },
   back: '← Torna a Trama',
   or: 'o',
   google: {
@@ -17,7 +24,7 @@ export const login: Dictionary['login'] = {
   },
   register: {
     title: 'Crea el teu compte',
-    subtitle: 'Comença a crear la teva primera història gratis.',
+    subtitle: 'Crea un compte per a les teves històries. Si has triat Creator, el pagament és el pas següent.',
     username: 'Nom d’usuari',
     email: 'El teu correu electrònic',
     password: 'Contrasenya nova',

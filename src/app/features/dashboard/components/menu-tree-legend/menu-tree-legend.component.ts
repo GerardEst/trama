@@ -4,9 +4,6 @@ import { ContextMenusService } from 'src/app/core/services/context-menus.service
 import { SelectOrCreateComponent } from 'src/app/shared/components/ui/select-or-create/select-or-create.component'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.component'
-import { DatabaseService } from 'src/app/core/services/database.service'
-import { ShareStoryComponent } from 'src/app/features/dashboard/modals/share-story/share-story.component'
-import { ModalService } from 'src/app/core/services/modal.service'
 import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 import { refType } from 'src/app/core/interfaces/interfaces'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
@@ -32,15 +29,14 @@ import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.c
 export class MenuTreeLegendComponent {
   @Input() showLegend: boolean = true
   readonly linearRequested = output<void>()
+  readonly shareRequested = output<void>()
   arrayOfRefs: DisplayedRef[] = []
   unusedRefs: DisplayedRef[] = []
   mode: 'refs' | 'games' = 'refs'
 
   constructor(
-    public db: DatabaseService,
     public activeStory: ActiveStoryService,
     public contextMenu: ContextMenusService,
-    private modal: ModalService,
     private storyReferences: StoryReferencesService,
     private i18n: I18nService
   ) {
@@ -147,6 +143,6 @@ export class MenuTreeLegendComponent {
   }
 
   openShareModal() {
-    this.modal.launch(ShareStoryComponent)
+    this.shareRequested.emit()
   }
 }

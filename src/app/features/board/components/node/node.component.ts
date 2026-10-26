@@ -16,7 +16,6 @@ import { AnswerComponent } from './answer/answer.component'
 import { ConditionComponent } from '../condition/condition.component'
 import { FormsModule } from '@angular/forms'
 import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
-import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ImageComponent } from 'src/app/shared/components/ui/image/image.component'
@@ -148,7 +147,6 @@ export class NodeComponent {
 
   constructor(
     private panzoom: PanzoomService,
-    public database: DatabaseService,
     public activeStory: ActiveStoryService,
     private storyEditor: StoryEditorService,
     private anchorRegistry: BoardAnchorRegistryService,

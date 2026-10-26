@@ -3,6 +3,7 @@
   <nav class="nav-shell" [attr.aria-label]="'landing.nav.label' | t">
     <a class="wordmark" [href]="homeUrl" [attr.aria-label]="'landing.nav.home' | t">Trama<span>.</span></a>
     <div class="nav-links">
+      <a [routerLink]="homeUrl" fragment="authoring">{{ 'landing.nav.authoring' | t }}</a>
       <a [routerLink]="homeUrl" fragment="features">{{ 'landing.nav.features' | t }}</a>
       <a [routerLink]="homeUrl" fragment="pricing">{{ 'landing.nav.pricing' | t }}</a>
       <a href="/docs/features">{{ 'landing.nav.docs' | t }}</a>
@@ -52,7 +53,43 @@
     </div>
   </section>
 
+  <div class="demo-bridge section-container">
+    <p>{{ 'landing.demoBridge.description' | t }}</p>
+    <a class="text-link" [routerLink]="homeUrl" fragment="authoring">
+      {{ 'landing.demoBridge.action' | t }} <span aria-hidden="true">↓</span>
+    </a>
+  </div>
+
+  <polo-landing-authoring id="authoring" class="section-container"></polo-landing-authoring>
+
   <polo-landing-features id="features" class="section-container"></polo-landing-features>
+
+  <section id="trust" class="author-trust" aria-labelledby="trust-title">
+    <div class="section-container">
+      <div class="author-trust__heading">
+        <p class="eyebrow">{{ 'landing.trust.eyebrow' | t }}</p>
+        <h2 id="trust-title">{{ 'landing.trust.title' | t }}</h2>
+        <p>{{ 'landing.trust.description' | t }}</p>
+      </div>
+      <div class="author-trust__points">
+        <article>
+          <span class="author-trust__mark" aria-hidden="true">✓</span>
+          <h3>{{ 'landing.trust.saving.title' | t }}</h3>
+          <p>{{ 'landing.trust.saving.description' | t }}</p>
+        </article>
+        <article>
+          <span class="author-trust__mark" aria-hidden="true">↶</span>
+          <h3>{{ 'landing.trust.history.title' | t }}</h3>
+          <p>{{ 'landing.trust.history.description' | t }}</p>
+        </article>
+        <article>
+          <span class="author-trust__mark" aria-hidden="true">↓</span>
+          <h3>{{ 'landing.trust.data.title' | t }}</h3>
+          <p>{{ 'landing.trust.data.description' | t }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
   <section id="pricing" class="landing-pricing" aria-labelledby="pricing-title">
     <div class="section-container">
@@ -73,37 +110,19 @@
           [payAnnually]="payAnnually"
           [email]="loggedUserEmail"
           [preventEasyDowngrading]="true"
-          [showUpcomingPlan]="false"
+          [canceledSubscription]="canceledSubscription"
           [compactFeatures]="true"
         ></polo-pricing>
-        <article class="export-license" aria-labelledby="export-license-title">
-          <p class="export-license__audience">
-            <span>{{ 'landing.pricing.license.audience' | t }}</span>
-            <span class="export-license__badge">{{ 'landing.pricing.license.badge' | t }}</span>
-          </p>
-          <h3 id="export-license-title">{{ 'landing.pricing.license.title' | t }}</h3>
-          <p class="export-license__preview">{{ 'landing.pricing.license.preview' | t }}</p>
-          <div class="export-license__payment">
-            <p class="export-license__price">299<span>€</span></p>
-            <p class="export-license__frequency">
-              {{ 'landing.pricing.license.frequencyStart' | t }}<br />{{
-                'landing.pricing.license.frequencyEnd' | t
-              }}
-            </p>
-          </div>
-          <p class="export-license__description">{{ 'landing.pricing.license.description' | t }}</p>
-          <p class="export-license__ownership">{{ 'landing.pricing.license.ownership' | t }}</p>
-          <p class="export-license__limit">{{ 'landing.pricing.license.limit' | t }}</p>
-          <a class="text-link export-license__action" [href]="licenseEnquiryUrl">
-            {{ 'landing.pricing.license.ask' | t }} <span aria-hidden="true">↗</span>
-          </a>
-        </article>
       </div>
       <div class="questions" aria-labelledby="questions-title">
         <div>
           <h3 id="questions-title">{{ 'landing.questions.title' | t }}</h3>
         </div>
         <div class="questions__list">
+          <details>
+            <summary>{{ 'landing.questions.code.question' | t }}</summary>
+            <p>{{ 'landing.questions.code.answer' | t }}</p>
+          </details>
           <details>
             <summary>{{ 'landing.questions.free.question' | t }}</summary>
             <p>{{ 'landing.questions.free.answer' | t }}</p>
@@ -113,8 +132,17 @@
             <p>{{ 'landing.questions.readers.answer' | t }}</p>
           </details>
           <details>
+            <summary>{{ 'landing.questions.download.question' | t }}</summary>
+            <p>{{ 'landing.questions.download.answer' | t }}</p>
+          </details>
+          <details>
             <summary>{{ 'landing.questions.export.question' | t }}</summary>
             <p>{{ 'landing.questions.export.answer' | t }}</p>
+          </details>
+          <details>
+            <summary>{{ 'landing.questions.cancel.question' | t }}</summary>
+            <p>{{ 'landing.questions.cancel.answer' | t }}</p>
+            <a class="questions__contact" href="mailto:gesteve.12@gmail.com">{{ 'landing.questions.cancel.contact' | t }}</a>
           </details>
           <details>
             <summary>{{ 'landing.questions.create.question' | t }}</summary>

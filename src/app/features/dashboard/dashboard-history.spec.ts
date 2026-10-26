@@ -6,6 +6,8 @@ import { ActiveStoryService } from 'src/app/shared/services/active-story.service
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { BoardComponent } from '../board/board.component'
 import { DashboardComponent } from './dashboard.component'
+import { ModalService } from 'src/app/core/services/modal.service'
+import { ShareStoryComponent } from './modals/share-story/share-story.component'
 
 describe('Dashboard history shortcuts', () => {
   let fixture: ComponentFixture<DashboardComponent>
@@ -96,6 +98,14 @@ describe('Dashboard history shortcuts', () => {
     expect(shortcut().defaultPrevented).toBeFalse()
     flushMicrotasks()
   }))
+
+  it('commits focused edits before opening the sharing dialog', () => {
+    const commit = spyOn(component, 'commitEdits')
+    const launch = spyOn(TestBed.inject(ModalService), 'launch')
+    component.openShare()
+    expect(commit).toHaveBeenCalledBefore(launch)
+    expect(launch).toHaveBeenCalledWith(ShareStoryComponent)
+  })
 
   it('flushes pending text and reconciles board selection, group navigation and flows when restoring', fakeAsync(() => {
     const board = jasmine.createSpyObj<BoardComponent>('Board', ['commitEdits', 'historyRestored'], { isInteracting: false })

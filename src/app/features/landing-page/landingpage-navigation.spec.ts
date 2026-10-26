@@ -33,7 +33,7 @@ describe('Localised landing navigation', () => {
       const page = harness.routeNativeElement!
       const scroll = spyOn(HTMLElement.prototype, 'scrollIntoView')
 
-      for (const id of ['features', 'pricing', 'try-it', 'main-content']) {
+      for (const id of ['authoring', 'features', 'pricing', 'try-it', 'main-content']) {
         const link = page.querySelector<HTMLAnchorElement>(`a[href="${path}#${id}"]`)!
         expect(link).toBeTruthy()
         scroll.calls.reset()
@@ -52,12 +52,14 @@ describe('Localised landing navigation', () => {
     })
   }
 
-  it('preserves the selected section when changing language', async () => {
-    await TestBed.inject(I18nService).setLang('ca', { persist: false })
-    const harness = await RouterTestingHarness.create()
-    const component = await harness.navigateByUrl('/ca#pricing', LandingpageComponent)
-    component.changeLanguage('es')
-    await harness.fixture.whenStable()
-    expect(TestBed.inject(Router).url).toBe('/es#pricing')
-  })
+  for (const section of ['pricing', 'authoring']) {
+    it(`preserves ${section} when changing language`, async () => {
+      await TestBed.inject(I18nService).setLang('ca', { persist: false })
+      const harness = await RouterTestingHarness.create()
+      const component = await harness.navigateByUrl(`/ca#${section}`, LandingpageComponent)
+      component.changeLanguage('es')
+      await harness.fixture.whenStable()
+      expect(TestBed.inject(Router).url).toBe(`/es#${section}`)
+    })
+  }
 })

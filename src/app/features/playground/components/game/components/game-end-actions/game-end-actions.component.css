@@ -43,3 +43,23 @@ a:focus-visible, button:focus-visible {
 .feedback:empty {
   display: none;
 }
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--polo-space-3);
+  border: 1px solid var(--polo-color-border-strong);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+}
+
+input:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 3px;
+}

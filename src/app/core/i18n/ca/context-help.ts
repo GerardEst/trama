@@ -17,7 +17,7 @@ export const contextHelp = {
       body: 'Aquest node tria automàticament el camí següent sense mostrar una escena al jugador. Comprova les rutes en ordre segons estadístiques o condicions i segueix la primera que es compleix. Connecta la sortida En cas contrari per als casos que no compleixin cap ruta.',
     },
     endNode: {
-      body: 'Aquest node marca el final d’un camí de la història i mostra el passatge de comiat al jugador. Pots crear finals diferents segons les decisions preses. També pots configurar opcions per compartir la història i, amb una subscripció de pagament, afegir enllaços externs.',
+      body: 'Aquest node marca el final d’un camí de la història i mostra el passatge de comiat al jugador. Pots crear finals diferents segons les decisions preses. També pots configurar opcions per compartir la història i afegir enllaços externs.',
     },
     events: {
       title: 'Esdeveniments',

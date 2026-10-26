@@ -47,10 +47,8 @@
             <p>{{ 'dashboard.profile.incomplete' | t }}</p>
           }
           @if (user.profile.subscription_status === 'canceled') {
-            <p>
-              {{ 'dashboard.profile.expires' | t: { date: paymentDate(user.profile.next_payment) } }}
-            </p>
-          } @else {
+            <p>{{ 'pricing.canceledPlan' | t }}</p>
+          } @else if (user.profile.subscription_status === 'active' && user.profile.next_payment) {
             <p>
               {{ 'dashboard.profile.nextPayment' | t: { date: paymentDate(user.profile.next_payment) } }}
             </p>

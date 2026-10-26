@@ -102,8 +102,9 @@ describe('FeatureGuideComponent', () => {
       'first matching route wins'
     )
     expect(page.querySelector('#share-node')?.textContent).toContain(
-      'External links require a paid subscription'
+      'External links take readers to your profiles'
     )
+    expect(page.querySelector('#share-node')?.textContent).not.toContain('paid subscription')
     expect(page.querySelector('#organisation')?.textContent).toContain(
       'do not change the story’s logic'
     )

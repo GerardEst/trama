@@ -5,167 +5,149 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
-import { environment } from 'src/environments/environment'
 import { LOGIN_FEEDBACKS } from '../../constants'
 import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/google-login.component'
 import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { CheckoutService, isCreatorCheckout } from 'src/app/core/services/checkout.service'
+import { PRICING } from 'src/app/core/constants'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 
 @Component({
   selector: 'polo-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    SeparatorComponent,
-    BasicButtonComponent,
-    GoogleLoginComponent,
-    LanguageSelectorComponent,
-    TranslatePipe,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, SeparatorComponent, BasicButtonComponent, GoogleLoginComponent, LanguageSelectorComponent, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrls: ['../login-shared.css', './login.component.css'],
 })
 export class LoginComponent implements OnInit {
   LOGIN_FEEDBACKS = LOGIN_FEEDBACKS
-
   @Input() mode?: 'register' | 'login'
-  @Input() period?: 'yearly' | 'monthly'
-  @Input() plan?: 'creator' | 'pro'
-
-  constructor(
-    private db: DatabaseService,
-    private router: Router
-  ) {}
+  // Treat route inputs as untrusted, including old Pro subscription URLs.
+  @Input() period?: string
+  @Input() plan?: string
+  @Input() checkout?: string
 
   login_email = new FormControl('', [Validators.required, Validators.email])
   login_password = new FormControl('', Validators.required)
   register_email = new FormControl('', [Validators.required, Validators.email])
   register_password = new FormControl('', Validators.required)
   register_username = new FormControl('', Validators.required)
-  emailAlreadyRegistered?: boolean = false
-  //checkMail: boolean = false
-  //mailNotConfirmed?: boolean = false
+  emailAlreadyRegistered = false
+  waitingForSignUp = false
+  subscribing = false
+  checkoutUnavailable = false
+  authenticationError = false
+  checkMail = false
 
-  waitingForSignUp: boolean = false
-  subscribing: boolean = false
-  paymentLink?: string
+  constructor(
+    private db: DatabaseService,
+    private router: Router,
+    private checkoutService: CheckoutService,
+    private i18n: I18nService
+  ) {}
 
-  ngOnInit() {
-    if (this.period && this.plan) {
-      this.subscribing = true
-      if (this.period === 'monthly' && this.plan === 'creator') {
-        this.paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
-      } else if (this.period === 'monthly' && this.plan === 'pro') {
-        this.paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
-      } else if (this.period === 'yearly' && this.plan === 'creator') {
-        this.paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
-      } else if (this.period === 'yearly' && this.plan === 'pro') {
-        this.paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
-      } else {
-        throw new Error('Cant get an according plan')
+  get selectedPrice() {
+    return this.i18n.formatNumber(this.period === 'yearly' ? PRICING.CREATOR_YEARLY_PRICE : PRICING.CREATOR_MONTHLY_PRICE, {
+      minimumFractionDigits: 2,
+    })
+  }
+
+  async ngOnInit() {
+    this.subscribing = isCreatorCheckout(this.plan, this.period)
+    this.checkoutUnavailable = !!(this.plan || this.period) && !this.subscribing
+    if (this.checkout === 'continue' && this.subscribing) {
+      // OAuth and email confirmation return to the app first, never straight to Stripe.
+      try {
+        const user = await this.db.getUser()
+        if (user && user.email) {
+          await this.router.navigate([], { queryParams: { checkout: null }, queryParamsHandling: 'merge', replaceUrl: true })
+          this.checkoutService.start(this.plan, this.period, user.email)
+        }
+      } catch {
+        this.authenticationError = true
       }
     }
   }
 
-  async signUpNewUser(
-    event: Event,
-    email: FormControl,
-    password: FormControl,
-    username: FormControl
-  ) {
-    event.preventDefault()
-    if (email.invalid || password.invalid) return
-
-    this.waitingForSignUp = true
-
-    try {
-      const { data: registered_data, error: registered_error } =
-        await this.db.supabase.auth.signUp({
-          email: email.value,
-          password: password.value,
-          options: {
-            //emailRedirectTo: 'https://trama.app/dashboard',
-            data: {
-              user_name: username.value,
-            },
-          },
-        })
-
-      if (registered_error) {
-        if (registered_error.message === 'User already registered') {
-          console.error('Email already being used')
-          this.emailAlreadyRegistered = true
-          this.waitingForSignUp = false
-        }
-        throw registered_error
-      }
-    } catch (error) {
-      console.error('Error during sign up:', error)
-      this.waitingForSignUp = false
-      return
-    }
-
+  private completeAuthentication(email?: string) {
+    if (this.checkoutUnavailable) return
     if (this.subscribing) {
-      window.open(this.paymentLink + '?prefilled_email=' + email.value)
+      if (!email || !this.checkoutService.start(this.plan, this.period, email)) this.authenticationError = true
     } else {
       this.router.navigate(['/dashboard'])
     }
+  }
 
-    // The email confirmation has been disabled in supabase to improve signup process (especally for paid plans)
-    // If this proves to be a mistake, I'll go back to this old code
-    // this.waitingForSignUp = false
-    // this.checkMail = true
+  async signUpNewUser(event: Event, email: FormControl, password: FormControl, username: FormControl) {
+    event.preventDefault()
+    if (email.invalid || password.invalid || username.invalid || this.waitingForSignUp) return
+    this.waitingForSignUp = true
+    this.authenticationError = false
+    this.emailAlreadyRegistered = false
+    this.checkMail = false
+    try {
+      const { data, error } = await this.db.supabase.auth.signUp({
+        email: email.value,
+        password: password.value,
+        options: {
+          emailRedirectTo: this.checkoutService.authReturnUrl(this.plan, this.period),
+          data: { user_name: username.value },
+        },
+      })
+      if (error) {
+        this.emailAlreadyRegistered = error.message === 'User already registered'
+        this.authenticationError = !this.emailAlreadyRegistered
+        return
+      }
+      if (!data.session) {
+        this.checkMail = true
+        return
+      }
+      this.completeAuthentication(data.session.user.email)
+    } catch {
+      this.authenticationError = true
+    } finally {
+      this.waitingForSignUp = false
+    }
   }
 
   async signInWithGoogle() {
-    localStorage.setItem('oauth', '1')
-    this.db.supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: this.subscribing
-          ? this.paymentLink
-          : 'https://trama.app/dashboard',
-      },
-    })
-  }
-
-  async signInWithEmail(
-    event: Event,
-    email: FormControl,
-    password: FormControl
-  ) {
-    event.preventDefault()
-    if (email.invalid || password.invalid) return
-
-    const { data, error } = await this.db.supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    })
-
-    // The email confirmation has been disabled in supabase to improve signup process (especally for paid plans)
-    // If this proves to be a mistake, I'll go back to this old code
-    // if (error) {
-    //   // TODO - Supabase is not giving the error code, so we have to check the message by now.
-    //   // https://github.com/supabase/auth/issues/1631
-    //   if (error.message === 'Email not confirmed') {
-    //     console.log('Email not confirmed')
-    //     this.mailNotConfirmed = true
-    //   }
-    //   return console.error(error)
-    // }
-
-    if (this.subscribing) {
-      window.open(this.paymentLink + '?prefilled_email=' + email.value)
-    } else {
-      this.router.navigate(['/dashboard'])
+    if (this.waitingForSignUp) return
+    this.waitingForSignUp = true
+    this.authenticationError = false
+    try {
+      const { error } = await this.db.supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: this.checkoutService.authReturnUrl(this.plan, this.period) },
+      })
+      if (error) this.authenticationError = true
+    } catch {
+      this.authenticationError = true
+    } finally {
+      this.waitingForSignUp = false
     }
   }
 
-  goToRegister() {
-    this.mode = 'register'
+  async signInWithEmail(event: Event, email: FormControl, password: FormControl) {
+    event.preventDefault()
+    if (email.invalid || password.invalid || this.waitingForSignUp) return
+    this.waitingForSignUp = true
+    this.authenticationError = false
+    try {
+      const { data, error } = await this.db.supabase.auth.signInWithPassword({ email: email.value, password: password.value })
+      if (error || !data.session) {
+        this.authenticationError = true
+        return
+      }
+      this.completeAuthentication(data.session.user.email)
+    } catch {
+      this.authenticationError = true
+    } finally {
+      this.waitingForSignUp = false
+    }
   }
-  goToLogin() {
-    this.mode = 'login'
-  }
+
+  goToRegister() { this.mode = 'register' }
+  goToLogin() { this.mode = 'login' }
 }

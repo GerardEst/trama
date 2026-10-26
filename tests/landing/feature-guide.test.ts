@@ -15,12 +15,14 @@ const featureIds = [
   'organisation',
 ]
 
-test('the simplified landing keeps the guide accessible through Docs', async ({ page }) => {
+test('the author landing keeps the guide accessible through Docs', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('#toolkit, polo-landing-features, .hero__foot')).toHaveCount(0)
+  await expect(page.locator('#toolkit, .hero__foot, polo-board')).toHaveCount(0)
+  await expect(page.locator('#authoring')).toHaveCount(1)
+  await expect(page.locator('#features polo-landing-feature-card')).toHaveCount(6)
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Docs' }).click()
   await expect(page).toHaveURL(/\/docs\/features$/)
-  await expect(page).toHaveTitle('Feature guide — Trama')
+  await expect(page).toHaveTitle('Docs — Trama')
   await expect(page.locator('.guide-chapter')).toHaveCount(featureIds.length)
   await expect(page.locator('.guide-chapter__summary').first()).toHaveCSS(
     'font-size',
@@ -90,7 +92,7 @@ test('feature links and direct URLs land on the relevant chapter without loading
   ).toHaveCount(0)
   expect(storyRequests).toEqual([])
   await page
-    .getByRole('link', { name: 'Create your first story', exact: true })
+    .getByRole('link', { name: 'Open the editor', exact: true }).first()
     .click()
   await expect(page).toHaveURL(/\/login\?mode=register$/)
 })

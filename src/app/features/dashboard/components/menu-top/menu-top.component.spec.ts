@@ -21,10 +21,10 @@ describe('MenuTopComponent', () => {
         {
           provide: DatabaseService,
           useValue: {
-            userPlanIs: () => false,
             authenticationRequired: signal(false),
             saveNewStoryName: () => Promise.resolve(true),
             saveTreeToDB: () => Promise.resolve(true),
+            setTrackingOf: () => Promise.resolve(true),
           },
         },
         { provide: AlertService, useValue: {} },
@@ -98,7 +98,7 @@ describe('MenuTopComponent', () => {
     expect(activeStory.storyId()).toBe('story-1')
   })
 
-  it('offers JSON export for free users in story options', () => {
+  it('offers JSON export without a plan check in story options', () => {
     TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
     component.toggleOptions()
     fixture.detectChanges()
@@ -109,6 +109,26 @@ describe('MenuTopComponent', () => {
     const exportButton = buttons.find((button) => button.textContent?.includes('Export JSON'))
     expect(exportButton).toBeDefined()
     expect(exportButton?.disabled).toBeFalse()
+  })
+
+  it('unlocks tracking, footer customization and analytics without subscription metadata', () => {
+    TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
+    const tracking = spyOn(TestBed.inject(DatabaseService), 'setTrackingOf').and.resolveTo(true)
+    component.toggleOptions()
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    for (const name of ['Enable tracking', 'Hide Trama link', 'Footer text', 'Footer link']) {
+      const label = Array.from(host.querySelectorAll('label')).find(label => label.textContent?.includes(name))!
+      expect(label).withContext(name).toBeDefined()
+      expect(label.querySelector('input')!.disabled).withContext(name).toBeFalse()
+    }
+    const analytics = Array.from(host.querySelectorAll('button')).find(button => button.textContent?.includes('Open analytics'))!
+    expect(analytics.disabled).toBeFalse()
+    component.toggleTracking()
+    expect(tracking).toHaveBeenCalledWith('story-1', true)
+    TestBed.inject(DatabaseService).authenticationRequired.set(true)
+    component.toggleTracking()
+    expect(tracking).toHaveBeenCalledTimes(1)
   })
 
   it('disables JSON export when there is no active story', () => {

@@ -1,85 +1,87 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { PricingComponent } from './pricing.component'
-import { provideRouter } from '@angular/router'
+import { provideRouter, Router } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
+import { CHECKOUT_REDIRECT } from 'src/app/core/services/checkout.service'
 
 describe('PricingComponent', () => {
   let component: PricingComponent
   let fixture: ComponentFixture<PricingComponent>
+  let redirect: jasmine.Spy
 
   beforeEach(async () => {
+    redirect = jasmine.createSpy('redirect')
     await TestBed.configureTestingModule({
       imports: [PricingComponent],
-      providers: [
-        provideRouter([]),
+      providers: [provideRouter([]),
         { provide: DatabaseService, useValue: { user: () => undefined } },
+        { provide: CHECKOUT_REDIRECT, useValue: redirect },
       ],
     }).compileComponents()
-
     fixture = TestBed.createComponent(PricingComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
-
-  it('uses the same card and action styles regardless of its container', () => {
+  it('offers Creator and a clearly unavailable one-time Pro reference, never Basic', () => {
     const host = fixture.nativeElement as HTMLElement
-    const plan = host.querySelector('.pricing__plan') as HTMLElement
-    const link = host.querySelector('polo-landing-link a') as HTMLElement
-    const styles = () => ({
-      card: [getComputedStyle(plan).backgroundColor, getComputedStyle(plan).padding],
-      action: [getComputedStyle(link).backgroundColor, getComputedStyle(link).borderRadius],
-    })
-
-    const outsideLanding = styles()
-    host.classList.add('landing-pricing')
-    expect(styles()).toEqual(outsideLanding)
+    expect(Array.from(host.querySelectorAll('.pricing__plan h2')).map(node => node.textContent?.trim())).toEqual(['Creator', 'Pro'])
+    const pro = host.querySelector('.pricing__plan--pro')!
+    expect(pro.textContent).toContain('Around 200€')
+    expect(pro.textContent).toContain('One-time payment')
+    expect(pro.textContent).toContain('not a final offer')
+    expect(pro.querySelector('a, button')).toBeNull()
+    expect(host.textContent).not.toContain('Basic')
   })
 
-  it('retains all plans and expanded features by default outside the landing page', () => {
-    expect(
-      fixture.nativeElement.querySelectorAll('.pricing__plan').length
-    ).toBe(3)
-    expect(
-      fixture.nativeElement.querySelectorAll('.pricing__details[open]').length
-    ).toBe(2)
-  })
-
-  it('can omit the upcoming plan from the landing comparison', () => {
-    component.showUpcomingPlan = false
+  it('changes only Creator when switching to annual billing', () => {
+    component.payAnnually = true
     fixture.detectChanges()
-    expect(
-      fixture.nativeElement.querySelectorAll('.pricing__plan').length
-    ).toBe(2)
+    expect(fixture.nativeElement.textContent).toContain('49.95€/year')
+    expect(fixture.nativeElement.querySelector('.pricing__plan--pro').textContent).toContain('Around 200€')
   })
 
-  it('does not hide an existing Pro subscriber’s current plan', () => {
-    fixture.componentRef.setInput('showUpcomingPlan', false)
-    fixture.componentRef.setInput('userPlan', 'pro')
+  it('takes unauthenticated buyers to registration with their selected period', () => {
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
+    component.subscribe('creator', true)
+    expect(navigate).toHaveBeenCalledWith(['/login'], { queryParams: { mode: 'register', plan: 'creator', period: 'yearly' } })
+    expect(redirect).not.toHaveBeenCalled()
+  })
+
+  it('takes a signed-in author to Creator checkout without opening a popup', () => {
+    component.email = 'author@example.com'
+    component.subscribe('creator', false)
+    expect(redirect).toHaveBeenCalledTimes(1)
+    expect(new URL(redirect.calls.mostRecent().args[0]).searchParams.get('prefilled_email')).toBe('author@example.com')
+  })
+
+  it('does not mislabel a legacy Pro subscription as owning the planned one-time offer', () => {
+    fixture.componentRef.setInput('userPlan', 'pro_yearly')
     fixture.detectChanges()
-    expect(
-      fixture.nativeElement.querySelectorAll('.pricing__plan').length
-    ).toBe(3)
-    expect(
-      fixture.nativeElement.querySelector('.pricing__plan.currentPlan h2')
-        .textContent
-    ).toBe('Pro')
+    expect(fixture.nativeElement.querySelector('.legacySubscription').textContent).toContain('has not been migrated automatically')
+    expect(fixture.nativeElement.querySelector('.pricing__plan--pro.currentPlan')).toBeNull()
   })
 
-  it('makes every feature available in the compact comparison', () => {
+  it('keeps current editor features in the compact Creator comparison', () => {
     component.compactFeatures = true
     fixture.detectChanges()
-    const details = fixture.nativeElement.querySelector(
-      '.pricing__details'
-    ) as HTMLDetailsElement
+    const details = fixture.nativeElement.querySelector('.pricing__details') as HTMLDetailsElement
     expect(details.open).toBeFalse()
     expect(details.querySelector('summary')?.hidden).toBeFalse()
-    expect(details.textContent).toContain('Up to 3 stories')
     details.querySelector('summary')?.click()
     expect(details.open).toBeTrue()
+    expect(details.textContent).toContain('Player tracking and story analytics')
+    expect(details.textContent).toContain('JSON')
+  })
+
+  it('keeps the same styles regardless of its container', () => {
+    const host = fixture.nativeElement as HTMLElement
+    const plan = host.querySelector('.pricing__plan')!
+    const link = host.querySelector('polo-landing-link button')!
+    const background = getComputedStyle(plan).backgroundColor
+    const radius = getComputedStyle(link).borderRadius
+    host.classList.add('landing-pricing')
+    expect(getComputedStyle(plan).backgroundColor).toBe(background)
+    expect(getComputedStyle(link).borderRadius).toBe(radius)
   })
 })

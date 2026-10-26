@@ -69,6 +69,7 @@ export class PlaygroundComponent implements OnInit {
 
     this.activeStory.load(story.id, story.name, story.tree)
     this.activeStory.patchConfiguration({
+      customId: configuration.custom_id,
       tracking: configuration.tracking,
       sharing: configuration.sharing,
       tapLink: configuration.tapLink,

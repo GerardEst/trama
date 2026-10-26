@@ -1,189 +1,57 @@
-<div class="pricing" [class.pricing--compact]="compactFeatures">
-  <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'free'">
-    <div class="pricing__plan__header">
-      <h2 class="txt-baskerville txt-2">Basic</h2>
-      <p class="txt-ralewayItalic">{{ 'pricing.basic.price' | t }}</p>
-    </div>
-    @if (userPlan === 'free') {
-      <p class="currentPlan">{{ 'pricing.currentPlan' | t }}</p>
-    }
-    <p>
-      @if (compactFeatures) {
-        {{ 'pricing.basic.compact' | t }}
-      } @else {
-        {{ 'pricing.basic.description' | t }}
-      }
-    </p>
-    <details class="pricing__details" [open]="!compactFeatures">
-      <summary [hidden]="!compactFeatures">{{ 'pricing.basic.included' | t }}</summary>
-      <ul class="pricing__plan__features">
-        <li>
-          <img src="/assets/images/drawn_icons/tick_3.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.basic.nodes' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_3.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.basic.flow' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_3.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.basic.interpolations' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_3.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.basic.customization' | t }}
-        </li>
-        <li>
-          <span class="pricing__limit" aria-hidden="true">·</span>
-          {{ 'pricing.basic.stories' | t }}
-        </li>
-        <li>
-          <span class="pricing__limit" aria-hidden="true">·</span>
-          {{ 'pricing.basic.images' | t }}
-        </li>
-        <li>
-          <span class="pricing__limit" aria-hidden="true">·</span>
-          {{ 'pricing.basic.brand' | t }}
-        </li>
-      </ul>
-    </details>
-    @if (!email) {
-      <polo-landing-link
-        destiny="/login?mode=register"
-        behaviour="link"
-        [text]="'pricing.basic.start' | t"
-      ></polo-landing-link>
+@if (userPlan === 'legacy-pro') {
+  <div class="legacySubscription" role="status">
+    <p>{{ 'pricing.legacyPro' | t }}</p>
+    @if (!preventEasyDowngrading && !canceledSubscription) {
+      <polo-basic-button (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" type="danger" />
     }
   </div>
-  <div
-    class="pricing__plan recommendedPlan"
-    [class.dashed]="dashed"
-    [class.currentPlan]="userPlan === 'creator'"
-  >
+}
+<div class="pricing" [class.pricing--compact]="compactFeatures">
+  <div class="pricing__plan recommendedPlan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'creator'">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
-      @if (payAnnually) {
-        <p class="txt-ralewayItalic">{{ 'pricing.perYear' | t: { price: price(pricing.CREATOR_YEARLY_PRICE) } }}</p>
-      } @else {
-        <p class="txt-ralewayItalic">{{ 'pricing.perMonth' | t: { price: price(pricing.CREATOR_MONTHLY_PRICE) } }}</p>
-      }
-    </div>
-    @if (userPlan === 'creator' && canceledSubscription) {
-      <p class="currentPlan currentPlan--canceled">
-        {{ 'pricing.canceledPlan' | t }}
+      <p class="txt-ralewayItalic">
+        {{ (payAnnually ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: price(payAnnually ? pricing.CREATOR_YEARLY_PRICE : pricing.CREATOR_MONTHLY_PRICE) } }}
       </p>
-    } @else if (userPlan === 'creator') {
-      <p class="currentPlan">{{ 'pricing.currentPlan' | t }}</p>
+    </div>
+    @if (userPlan === 'creator') {
+      <p class="currentPlan" [class.currentPlan--canceled]="canceledSubscription">
+        {{ (canceledSubscription ? 'pricing.canceledPlan' : 'pricing.currentPlan') | t }}
+      </p>
     }
     <p>{{ 'pricing.creator.description' | t }}</p>
     <details class="pricing__details" [open]="!compactFeatures">
       <summary [hidden]="!compactFeatures">{{ 'pricing.creator.included' | t }}</summary>
       <ul class="pricing__plan__features">
         <li class="txt-gray">{{ 'pricing.creator.everything' | t }}</li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.creator.stories' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.creator.images' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.creator.brand' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" />
-          {{ 'pricing.creator.sharing' | t }}
-        </li>
-        <!--li><img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" /> Vote and propose new features</li-->
-        <!--li><img src="/assets/images/drawn_icons/heart.webp" [alt]="'pricing.successIcon' | t" /> Help to keep the project going</li>-->
+        @for (feature of creatorFeatures; track feature) {
+          <li>
+            <img src="/assets/images/drawn_icons/tick_4.webp" [alt]="'pricing.successIcon' | t" />
+            {{ feature | t }}
+          </li>
+        }
       </ul>
     </details>
-    @if (userPlan === 'creator') {
-      @if (!preventEasyDowngrading && !canceledSubscription) {
-        <polo-basic-button
-          (click)="cancelSubscription()"
-          [waiting]="cancelingSubscription"
-          [text]="'pricing.cancel' | t"
-          type="danger"
-        ></polo-basic-button>
+    @if (userPlan === 'creator' && !canceledSubscription) {
+      @if (!preventEasyDowngrading) {
+        <polo-basic-button (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" type="danger" />
       }
-    }
-    @if (userPlan === 'free' || !userPlan) {
-      <polo-landing-link
-        (click)="subscribe('creator', payAnnually)"
-        [highlight]="true"
-        [text]="'pricing.creator.choose' | t"
-      ></polo-landing-link>
+    } @else if (userPlan !== 'legacy-pro') {
+      <polo-landing-link (click)="subscribe('creator', payAnnually)" [highlight]="true" [text]="'pricing.creator.choose' | t" />
     }
   </div>
-  @if (showUpcomingPlan || userPlan === 'pro') {
-    <div class="pricing__plan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'pro'">
-      <div class="pricing__plan__header">
-        <h2 class="txt-baskerville txt-2">Pro</h2>
-        @if (userPlan === 'pro') {
-          <p class="txt-ralewayItalic">
-            {{
-              (payAnnually ? 'pricing.perYear' : 'pricing.perMonth')
-                | t
-                  : {
-                      price: price(
-                        payAnnually ? pricing.PRO_YEARLY_PRICE : pricing.PRO_MONTHLY_PRICE
-                      ),
-                    }
-            }}
-          </p>
-        } @else {
-          <p class="pricing__planned">{{ 'pricing.pro.inDevelopment' | t }}</p>
-        }
-      </div>
-      @if (userPlan === 'pro' && canceledSubscription) {
-        <p class="currentPlan currentPlan--canceled">
-          {{ 'pricing.canceledPlan' | t }}
-        </p>
-      } @else if (userPlan === 'pro') {
-        <p class="currentPlan">{{ 'pricing.currentPlan' | t }}</p>
-      }
-      <p>{{ 'pricing.pro.description' | t }}</p>
-      <ul class="pricing__plan__features">
-        <li class="txt-gray">{{ 'pricing.pro.planned' | t }}</li>
-        <li>
-          <img src="/assets/images/drawn_icons/star_3.webp" [alt]="'pricing.starIcon' | t" />
-          {{ 'pricing.pro.analytics' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/star_3.webp" [alt]="'pricing.starIcon' | t" />
-          {{ 'pricing.pro.tracking' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/star_3.webp" [alt]="'pricing.starIcon' | t" />
-          {{ 'pricing.pro.embed' | t }}
-        </li>
-        <li>
-          <img src="/assets/images/drawn_icons/star_3.webp" [alt]="'pricing.starIcon' | t" />
-          {{ 'pricing.pro.support' | t }}
-        </li>
-        <!--li><img src="/assets/images/drawn_icons/star_3.webp" [alt]="'pricing.starIcon' | t" /> Access to creative writting service
-          </li-->
-      </ul>
-      @if (userPlan === 'pro') {
-        @if (!preventEasyDowngrading && !canceledSubscription) {
-          <polo-basic-button
-            (click)="cancelSubscription()"
-            [waiting]="cancelingSubscription"
-            [text]="'pricing.cancel' | t"
-            type="danger"
-          ></polo-basic-button>
-        }
-      }
-      @if (userPlan === 'free' || !userPlan) {
-        <!--polo-landing-link
-      (click)="subscribe('pro', payAnnually)"
-      text="Upgrade to pro"
-    ></polo-landing-link-->
-        <span class="pricing__coming-soon">{{ 'pricing.pro.comingSoon' | t }}</span>
-      }
+  <div class="pricing__plan pricing__plan--pro" [class.dashed]="dashed">
+    <div class="pricing__plan__header">
+      <h2 class="txt-baskerville txt-2">Pro</h2>
+      <p class="txt-ralewayItalic">{{ 'pricing.pro.referencePrice' | t: { price: indicativeProPrice } }}</p>
     </div>
-  }
+    <p class="pricing__planned">{{ 'pricing.pro.oneTime' | t }}</p>
+    <p>{{ 'pricing.pro.description' | t }}</p>
+    <ul class="pricing__plan__features">
+      <li>{{ 'pricing.pro.export' | t }}</li>
+      <li>{{ 'pricing.pro.format' | t }}</li>
+    </ul>
+    <p class="pricing__price-note">{{ 'pricing.pro.priceNote' | t }}</p>
+    <p class="pricing__coming-soon" role="note">{{ 'pricing.pro.comingSoon' | t }}</p>
+  </div>
 </div>

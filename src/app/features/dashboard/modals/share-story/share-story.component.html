@@ -1,51 +1,139 @@
-<polo-modal-window mode="dialog" [name]="'dashboard.share.title' | t">
-  <ng-container modal-header></ng-container>
+<polo-modal-window #window mode="dialog"
+  role="dialog" aria-modal="true" [attr.aria-label]="'dashboard.share.title' | t"
+  cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="window.close(); $event.stopPropagation()">
+  <div modal-header class="shareHeader">
+    <span class="shareMark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="5" r="2.5" /><circle cx="18" cy="19" r="2.5" />
+        <path d="m8.2 10.7 7.6-4.4m-7.6 7 7.6 4.4" />
+      </svg>
+    </span>
+    <div class="headerCopy">
+      <p class="eyebrow">{{ 'dashboard.share.title' | t }}</p>
+      <h2 [title]="activeStory.storyName()">{{ activeStory.storyName() || ('dashboard.share.title' | t) }}</h2>
+    </div>
+  </div>
   <ng-container modal-content>
-    <div class="content">
-      <div class="linkContainer">
-        <p class="txt-weight-bold">{{ 'dashboard.share.private' | t }}</p>
-        <div class="linkBox">
-          <p>{{ environment.baseRoute }}/private/{{ activeStory.storyId() }}</p>
-          <polo-basic-button
-            [text]="(copiedLinks.private ? 'common.copied' : 'common.copy') | t"
-            icon="/assets/icons/copy.svg"
-            (click)="copyLink('private')"
-          ></polo-basic-button>
+    <div class="shareContent" [attr.aria-busy]="loading">
+      <p class="intro">{{ 'dashboard.share.accessNote' | t }}</p>
+      @if (loading) {
+        <p class="loadingState" role="status">{{ 'dashboard.share.loading' | t }}</p>
+      } @else if (loadError) {
+        <p class="error" role="alert">{{ 'dashboard.share.loadError' | t }}</p>
+        <polo-basic-button [text]="'dashboard.share.retry' | t" (click)="loadConfiguration()" />
+      } @else {
+        <section class="readingLink">
+          <label for="story-reading-link" class="fieldLabel">{{ 'dashboard.share.readingLink' | t }}</label>
+          <div class="linkBox">
+            <svg class="linkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="m10 13 4-4m-6 7-1 1a4.2 4.2 0 0 1-6-6l4-4a4.2 4.2 0 0 1 6 0m2 2 1-1a4.2 4.2 0 0 1 6 6l-4 4a4.2 4.2 0 0 1-6 0" transform="translate(1 0)" />
+            </svg>
+            <input id="story-reading-link" type="text" inputmode="url" readonly [value]="readingUrl()" (focus)="selectLink($event)" />
+          </div>
+          <div class="shareActions">
+            <button type="button" class="primaryButton" [disabled]="unavailable || copying" [attr.aria-busy]="copying" (click)="copyLink()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+              </svg>
+              {{ 'dashboard.share.copy' | t }}
+            </button>
+            <button type="button" class="secondaryButton" [disabled]="unavailable || sharingLink" [attr.aria-busy]="sharingLink" (click)="shareLink()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <path d="M12 16V3m-5 5 5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" />
+              </svg>
+              {{ 'dashboard.share.nativeShare' | t }}
+            </button>
+          </div>
+          <div class="linkMeta">
+            <div class="saveState" role="status" aria-live="polite">
+              @if (mutations.saveState() === 'saving') {
+                <span class="statusDot statusDot--pending" aria-hidden="true"></span>
+                <span>{{ 'dashboard.share.savingStory' | t }}</span>
+              } @else if (mutations.saveState() === 'error') {
+                <span class="statusDot statusDot--error" aria-hidden="true"></span>
+                <span class="error">{{ 'dashboard.share.unsavedStory' | t }}</span>
+                <polo-basic-button [text]="'dashboard.top.retry' | t" size="s" (click)="mutations.retry()" />
+              } @else {
+                <svg class="savedIcon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m3.5 8 3 3 6-6" /></svg>
+                <span>{{ 'dashboard.share.savedStory' | t }}</span>
+              }
+            </div>
+            <a [attr.href]="unavailable ? null : readingUrl()" target="_blank" rel="noopener noreferrer"
+              [attr.aria-disabled]="unavailable" class="openLink">
+              {{ 'dashboard.share.openPlayer' | t }}
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" /></svg>
+            </a>
+          </div>
+          <p role="status" aria-live="polite" class="feedback" [class.feedback--manual]="feedback === 'dashboard.share.copyManually'">{{ feedback ? (feedback | t) : '' }}</p>
+        </section>
+
+        <div class="readiness" role="status" aria-live="polite">
+          @if (db.authenticationRequired()) {
+            <p class="error notice">{{ 'dashboard.share.sessionError' | t }}</p>
+          }
+          @if (!activeStory.initialNode()) {
+            <p class="warning notice">{{ 'dashboard.share.missingStart' | t }}</p>
+          }
+          @if (brokenAnswers()) {
+            <p class="warning notice">{{ 'dashboard.share.brokenAnswers' | t: { count: brokenAnswers() } }}</p>
+          }
         </div>
-        <p class="txt-ralewayItalic">{{ 'dashboard.share.privateNote' | t }}</p>
-      </div>
-      <div class="linkContainer">
-        @if(activeStory.storyConfiguration().customId){
-        <p class="txt-weight-bold">{{ 'dashboard.share.custom' | t }}</p>
-        <div class="linkBox">
-          <p>
-            {{ environment.baseRoute }}/{{
-              activeStory.storyConfiguration().customId
-            }}
-          </p>
-          <polo-basic-button
-            [text]="(copiedLinks.custom ? 'common.copied' : 'common.copy') | t"
-            icon="/assets/icons/copy.svg"
-            (click)="copyLink('custom')"
-          ></polo-basic-button>
-          <!--polo-basic-button
-        (click)="cleanCustomId()"
-        text="Remove link"
-      ></polo-basic-button-->
-        </div>
-        }@else {
-        <p>{{ 'dashboard.share.beautify' | t }}</p>
-        <input
-          [class.alert]="takenCustomId"
-          (change)="updateCustomId($event)"
-          type="text"
-        />
-        <p></p>
-        @if (takenCustomId) {
-        <p>{{ 'dashboard.share.idTaken' | t }}</p>
-        } }
-        <p class="txt-ralewayItalic">{{ 'dashboard.share.customNote' | t }}</p>
-      </div>
+
+        <section class="customLink">
+          <label for="story-custom-id" class="fieldLabel">{{ 'dashboard.share.custom' | t }}</label>
+          <div class="customControls">
+            <div class="slugBox">
+              <span aria-hidden="true">{{ baseRoute }}/</span>
+              <input id="story-custom-id" type="text" [(ngModel)]="customId" (ngModelChange)="editSlug()"
+                [disabled]="savingSlug" [attr.aria-invalid]="!!slugError" aria-describedby="story-custom-help story-custom-error"
+                autocomplete="off" autocapitalize="none" spellcheck="false" (keydown.enter)="saveCustomId()" />
+            </div>
+            <button type="button" class="secondaryButton saveButton" [attr.aria-busy]="savingSlug"
+              [disabled]="savingSlug || !slugChanged || db.authenticationRequired()" (click)="saveCustomId()">
+              {{ (confirmChange ? 'dashboard.share.confirmChange' : 'dashboard.share.saveUrl') | t }}
+            </button>
+          </div>
+          <p id="story-custom-help" class="note">{{ 'dashboard.share.slugHelp' | t }}</p>
+          <p id="story-custom-error" class="error" role="alert">{{ slugError ? (slugError | t) : '' }}</p>
+          @if (confirmChange) {
+            <p class="warning notice" role="alert">{{ 'dashboard.share.changeWarning' | t }}</p>
+          }
+        </section>
+
+        <section class="resharing">
+          <label class="sharingToggle">
+            <span>{{ 'dashboard.share.playerSharing' | t }}</span>
+            <input type="checkbox" [checked]="activeStory.storyConfiguration().sharing" aria-describedby="player-sharing-note"
+              [disabled]="savingSharing || db.authenticationRequired()"
+              (change)="toggleSharing()" />
+          </label>
+          <p id="player-sharing-note" class="note">{{ 'dashboard.share.playerSharingNote' | t }}</p>
+          @if (sharingError) {
+            <p class="error" role="alert">{{ 'dashboard.share.saveError' | t }}</p>
+          }
+        </section>
+
+        @if (readingUrl() !== stableUrl) {
+          <details class="stableLink">
+            <summary>
+              <svg class="detailsChevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+              {{ 'dashboard.share.stableLink' | t }}
+            </summary>
+            <div class="stableContent">
+              <p class="note">{{ 'dashboard.share.stableNote' | t }}</p>
+              <div class="linkBox">
+                <input type="text" inputmode="url" [attr.aria-label]="'dashboard.share.stableLink' | t" readonly [value]="stableUrl" (focus)="selectLink($event)" />
+                <polo-basic-button size="s" [text]="'common.copy' | t" [disabled]="unavailable" (click)="copyLink(stableUrl)" />
+              </div>
+            </div>
+          </details>
+        }
+
+        <p class="liveNote">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="6" /><path d="M8 7v4m0-7v1" /></svg>
+          <span>{{ 'dashboard.share.liveNote' | t }}</span>
+        </p>
+      }
     </div>
   </ng-container>
 </polo-modal-window>

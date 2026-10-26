@@ -23,11 +23,11 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 })
 export class MenuTopComponent {
   showOptions: boolean = false
-  takenCustomId = false
   exportError: TranslationKey | null = null
 
   @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
   @Output() historyRequested = new EventEmitter<'undo' | 'redo'>()
+  @Output() shareRequested = new EventEmitter<void>()
 
   constructor(
     public db: DatabaseService,
@@ -57,17 +57,11 @@ export class MenuTopComponent {
   }
 
   toggleTracking() {
-    if (this.db.user()?.profile.subscription_status !== 'active') return
+    if (this.db.authenticationRequired() || !this.activeStory.storyId()) return
 
     const tracking = !this.activeStory.storyConfiguration().tracking
     this.activeStory.patchConfiguration({ tracking })
     this.db.setTrackingOf(this.activeStory.storyId(), tracking)
-  }
-
-  toggleSharing() {
-    const sharing = !this.activeStory.storyConfiguration().sharing
-    this.activeStory.patchConfiguration({ sharing })
-    this.db.setSharingOf(this.activeStory.storyId(), sharing)
   }
 
   setAnswerDisplay(value: UnavailableAnswerDisplay | undefined) {
@@ -84,17 +78,6 @@ export class MenuTopComponent {
     const tapLink = !this.activeStory.storyConfiguration().tapLink
     this.activeStory.patchConfiguration({ tapLink })
     this.db.setTapLinkOf(this.activeStory.storyId(), tapLink)
-  }
-
-  async updateCustomId(event: any) {
-    const customId = event.target.value
-    this.activeStory.patchConfiguration({ customId })
-
-    const couldUpdate = await this.db.updateCustomIdOf(
-      this.activeStory.storyId(),
-      customId
-    )
-    this.takenCustomId = !couldUpdate
   }
 
   updateFooter(option: 'text' | 'link', event: any) {

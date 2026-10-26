@@ -17,7 +17,7 @@ export const contextHelp = {
       body: 'This node automatically chooses the next path without showing a scene to the player. It checks routes in order using stats or conditions and follows the first matching route. Connect the Otherwise output for cases where no route matches.',
     },
     endNode: {
-      body: 'This node marks the end of a story path and shows the final passage to the player. You can create different endings based on their choices. You can also configure story-sharing options and, with a paid subscription, add external links.',
+      body: 'This node marks the end of a story path and shows the final passage to the player. You can create different endings based on their choices. You can also configure story-sharing options and add external links.',
     },
     events: {
       title: 'Events',

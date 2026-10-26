@@ -199,9 +199,10 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
           'Los nodos finales pueden ofrecer un botón para compartir la historia y enlaces externos. El mensaje y el texto del botón se configuran para cada final.',
         steps: [
           'Crea un nodo final y escribe el pasaje final.',
-          'Activa Permitir compartir en las opciones de la historia para ofrecer Compartir esta historia.',
+          'Abre Comparte tu historia para copiar el enlace de lectura. Cualquier persona con el enlace puede jugar sin registrarse.',
+          'Activa Muestra un botón para compartir al final de la historia en la misma ventana.',
           'Usa Personalizar al compartir para definir el mensaje y el texto del botón de ese final.',
-          'Con una suscripción de pago, añade Enlaces externos con tus propios textos y URL, como tu web o tus perfiles de creador.',
+          'Añade Enlaces externos con tus propios textos y URL, como tu web o tus perfiles de creador.',
         ],
         example: {
           label: 'Después de la escena final',
@@ -211,7 +212,7 @@ export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
             'Enlaces externos: Más historias / Conoce al creador',
           ],
         },
-        note: 'Para compartir se usa el menú para compartir del dispositivo cuando está disponible y, si no, se copia el enlace. Los enlaces externos requieren una suscripción de pago. Son enlaces a tus perfiles, no integraciones con cada red social.',
+        note: 'Los enlaces de lectura muestran la última historia guardada, no una copia publicada aparte. El botón del final usa el menú para compartir del dispositivo o copia el enlace, con un mensaje sin espóilers por defecto. Los enlaces externos llevan a tus perfiles, no son integraciones con cada red social.',
       },
     ],
   },

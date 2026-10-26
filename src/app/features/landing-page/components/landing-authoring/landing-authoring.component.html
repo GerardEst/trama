@@ -1,0 +1,30 @@
+<section class="authoring" aria-labelledby="authoring-title">
+  <div class="authoring__heading">
+    <p class="authoring__eyebrow">{{ 'landing.authoring.eyebrow' | t }}</p>
+    <h2 id="authoring-title">{{ 'landing.authoring.title' | t }}</h2>
+    <p>{{ 'landing.authoring.description' | t }}</p>
+  </div>
+  <ol class="authoring__steps">
+    @for (view of views; track view; let index = $index) {
+      <li>
+        <button type="button" [attr.aria-pressed]="selected() === view"
+          aria-controls="authoring-capture" (click)="selected.set(view)">
+          <span class="authoring__number" aria-hidden="true">0{{ index + 1 }}</span>
+          <span class="authoring__step-title">{{ copyKey(view, 'title') | t }}</span>
+          <span class="authoring__step-description">{{ copyKey(view, 'description') | t }}</span>
+        </button>
+      </li>
+    }
+  </ol>
+  <figure id="authoring-capture" class="authoring__capture">
+    <a [href]="captureSrc()" target="_blank" rel="noopener"
+      [attr.aria-label]="'landing.authoring.enlarge' | t">
+      <img [src]="captureSrc()" [alt]="copyKey(selected(), 'alt') | t"
+        width="1600" height="1000" loading="lazy" decoding="async" />
+    </a>
+    <figcaption aria-live="polite">
+      <span>{{ copyKey(selected(), 'caption') | t }}</span>
+      <span class="authoring__real">{{ 'landing.authoring.realCapture' | t }}</span>
+    </figcaption>
+  </figure>
+</section>

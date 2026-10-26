@@ -23,7 +23,6 @@
           [text]="'dashboard.legend.stats' | t"
           [title]="'dashboard.legend.statsTitle' | t"
         ></polo-basic-button>
-        @if (db.userPlanIs('pro')) {
         <polo-basic-button
           (click)="mode = 'games'"
           [selected]="mode === 'games'"
@@ -31,7 +30,6 @@
           icon="/assets/icons/user-info.svg"
           [title]="'dashboard.legend.activityTitle' | t"
         ></polo-basic-button>
-        }
       </div>
     </div>
     @if (mode === 'refs' && showLegend) {
@@ -109,6 +107,7 @@
       ></polo-basic-button>
       <polo-basic-button
         (click)="openShareModal()"
+        [disabled]="!activeStory.storyId()"
         [text]="'dashboard.legend.share' | t"
       ></polo-basic-button>
     </div>

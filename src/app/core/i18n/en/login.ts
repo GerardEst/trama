@@ -5,7 +5,14 @@ export const login = {
   titleEnd: 'you can tell.',
   intro:
     "Give it a place to begin. Write it, let your readers find their own way through it, and share it when you're ready.",
-  note: 'Free plan available · No credit card required',
+  note: 'Creator · All current editor features included',
+  checkout: {
+    continue: 'Sign in or create an account to continue to secure payment with Stripe. Your subscription starts only after payment is confirmed.',
+    unavailable: 'This checkout is not available. Pro is planned as a one-time purchase and cannot be bought yet. Old Pro subscription links are no longer offered.',
+    viewPlans: 'View current plans',
+    authError: 'Could not sign in or create the account. Check your details and try again.',
+    confirmEmail: 'Check your inbox to confirm your account before continuing to payment.',
+  },
   back: '← Back to Trama',
   or: 'or',
   google: {
@@ -15,7 +22,7 @@ export const login = {
   },
   register: {
     title: 'Create your account',
-    subtitle: 'Start making your first story for free.',
+    subtitle: 'Create an account for your stories. If you chose Creator, payment comes next.',
     username: 'User name',
     email: 'Your email',
     password: 'New password',

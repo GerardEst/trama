@@ -7,7 +7,14 @@ export const login: Dictionary['login'] = {
   titleEnd: 'tú puedes contar.',
   intro:
     'Dale un lugar donde empezar. Escríbela, deja que tus lectores encuentren su propio camino y compártela cuando quieras.',
-  note: 'Plan gratuito disponible · Sin tarjeta de crédito',
+  note: 'Creator · Todas las funciones actuales del editor incluidas',
+  checkout: {
+    continue: 'Inicia sesión o crea una cuenta para continuar al pago seguro con Stripe. La suscripción solo empieza cuando se confirma el pago.',
+    unavailable: 'Este pago no está disponible. Pro está previsto como un pago único y aún no se puede comprar. Los antiguos enlaces de suscripción Pro ya no se ofrecen.',
+    viewPlans: 'Consulta los planes actuales',
+    authError: 'No se ha podido iniciar sesión o crear la cuenta. Revisa los datos e inténtalo de nuevo.',
+    confirmEmail: 'Revisa el correo y confirma la cuenta antes de continuar al pago.',
+  },
   back: '← Volver a Trama',
   or: 'o',
   google: {
@@ -17,7 +24,7 @@ export const login: Dictionary['login'] = {
   },
   register: {
     title: 'Crea tu cuenta',
-    subtitle: 'Empieza a crear tu primera historia gratis.',
+    subtitle: 'Crea una cuenta para tus historias. Si has elegido Creator, el pago es el siguiente paso.',
     username: 'Nombre de usuario',
     email: 'Tu correo electrónico',
     password: 'Nueva contraseña',

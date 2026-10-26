@@ -14,6 +14,8 @@ import { StoryMutationService } from 'src/app/shared/services/story-mutation.ser
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { LinearEditorComponent } from '../linear-editor/linear-editor.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { ModalService } from 'src/app/core/services/modal.service'
+import { ShareStoryComponent } from './modals/share-story/share-story.component'
 
 @Component({
   selector: 'polo-dashboard',
@@ -50,6 +52,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mobileBoard.set(false)
     // The pinned story list must not cover the full-width mobile reading pane.
     if (window.matchMedia('(max-width: 760px)').matches && this.menuSide) this.menuSide.fixedMenu = false
+  }
+
+  openShare() {
+    this.commitEdits()
+    this.modal.launch(ShareStoryComponent)
   }
 
   closeLinearView() {
@@ -114,6 +121,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private editorLoader: StoryEditorLoader,
     private mutations: StoryMutationService,
     private i18n: I18nService,
+    private modal: ModalService,
     private host: ElementRef<HTMLElement>
   ) {
     this.mutations.beginHistorySession()

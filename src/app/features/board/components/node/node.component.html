@@ -125,34 +125,28 @@
         (saved)="saveRichText($event)"
       />
       <div class="node__linkoptions">
-        @if (database.user()?.profile?.subscription_status === 'active') {
-          <div class="node__linkoptions__header">
-            <p class="node__linkoptions__header__title">{{ 'board.node.externalLinks' | t }}</p>
-            <polo-basic-button
-              (click)="addExternalLink()"
-              [text]="'board.node.addLink' | t"
-            ></polo-basic-button>
-          </div>
-          <label class="node__linkoptions__link">
-            @for (link of links | keyvalue; track $index) {
-              <input
-                (change)="updateLinks()"
-                [(ngModel)]="links[$index].name"
-                type="text"
-                [placeholder]="'board.node.linkText' | t"
-              /><input
-                (change)="updateLinks()"
-                [(ngModel)]="links[$index].url"
-                type="text"
-                [placeholder]="'board.node.linkUrl' | t"
-              />
-            }
-          </label>
-        } @else {
+        <div class="node__linkoptions__header">
           <p class="node__linkoptions__header__title">{{ 'board.node.externalLinks' | t }}</p>
-          <p>{{ 'board.node.linksPitch' | t }}</p>
-          <p>{{ 'board.node.linksFree' | t }}</p>
-        }
+          <polo-basic-button
+            (click)="addExternalLink()"
+            [text]="'board.node.addLink' | t"
+          ></polo-basic-button>
+        </div>
+        <label class="node__linkoptions__link">
+          @for (link of links | keyvalue; track $index) {
+            <input
+              (change)="updateLinks()"
+              [(ngModel)]="links[$index].name"
+              type="text"
+              [placeholder]="'board.node.linkText' | t"
+            /><input
+              (change)="updateLinks()"
+              [(ngModel)]="links[$index].url"
+              type="text"
+              [placeholder]="'board.node.linkUrl' | t"
+            />
+          }
+        </label>
       </div>
       @if (activeStory.storyConfiguration().sharing) {
         <div class="node__shareoptions">

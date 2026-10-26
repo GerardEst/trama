@@ -15,7 +15,7 @@
         (highlightedNodeChanged)="highlightPlayingNode($event)" (boardRequested)="mobileBoard.set(true)" />
     </aside>
   }
-  <polo-menu-tree-legend [showLegend]="false" (linearRequested)="openLinearView()" />
-  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" (historyRequested)="restoreHistory($event)" />
+  <polo-menu-tree-legend [showLegend]="false" (linearRequested)="openLinearView()" (shareRequested)="openShare()" />
+  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" (historyRequested)="restoreHistory($event)" (shareRequested)="openShare()" />
   <polo-menu #menuSide (onNewStory)="createNewStory()" (onChangeTree)="initBoard($event)" />
 </div>

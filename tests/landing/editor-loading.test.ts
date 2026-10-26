@@ -26,7 +26,7 @@ test.describe('Landing story experience', () => {
     expect(editorScripts).toEqual([])
   })
 
-  test('finishes a story and takes readers to free registration', async ({ page }) => {
+  test('finishes a story and takes readers to Creator registration', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Blade — cross the bridge of sentries' }).click()
     await expect(page.locator('#try-it')).toContainText('Stone sentries block the bridge')
@@ -34,12 +34,12 @@ test.describe('Landing story experience', () => {
     await page.getByRole('button', { name: 'Sever its shadow with your blade' }).click()
     await expect(page.locator('#try-it')).toContainText('you all leave together')
 
-    const create = page.getByRole('link', { name: /Create your first story free/ })
+    const create = page.locator('#try-it').getByRole('link', { name: /Create your first story/ })
     await expect(create).toBeVisible()
     await create.click()
     await expect(page).toHaveURL(/\/login\?mode=register/)
     await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
-    await expect(page.getByText('No credit card required')).toBeVisible()
+    await expect(page.locator('.checkoutSummary')).toContainText('Creator · 5.95€/month')
   })
 
   test('follows the other ending and restarts without a board', async ({ page }) => {
@@ -49,11 +49,11 @@ test.describe('Landing story experience', () => {
     await expect(page.locator('#try-it')).toContainText('You climb unseen among sleeping ghosts')
     await page.getByRole('button', { name: 'Steal the moon sigil' }).click()
     await page.getByRole('button', { name: 'Fit the stolen sigil into the crown' }).click()
-    await expect(page.getByRole('link', { name: /Create your first story free/ })).toBeVisible()
+    await expect(page.locator('#try-it').getByRole('link', { name: /Create your first story/ })).toBeVisible()
     await page.getByRole('button', { name: 'Start over' }).click()
     await expect(page.getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Shadow — climb the haunted stair' })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Create your first story free/ })).toHaveCount(0)
+    await expect(page.locator('#try-it').getByRole('link', { name: /Create your first story/ })).toHaveCount(0)
     await expect(page.locator('polo-board')).toHaveCount(0)
   })
 
@@ -61,39 +61,33 @@ test.describe('Landing story experience', () => {
     test(`keeps the demo and expanded plans usable at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 })
       await page.goto('/')
-      await page.getByRole('link', { name: 'Try a story' }).click()
+      await page.getByRole('link', { name: 'Play a story' }).click()
       await page.getByRole('button', { name: 'Shadow — climb the haunted stair' }).click()
       await expect(page.locator('#try-it')).toContainText('You climb unseen among sleeping ghosts')
       await expect(page.locator('polo-board')).toHaveCount(0)
       await expect(page.locator('#features')).toBeVisible()
-      await page.getByText('What’s included in Basic', { exact: true }).click()
-      await expect(page.locator('.pricing__details li').filter({ hasText: 'Up to 3 stories' })).toBeVisible()
-      const license = page.getByRole('article', { name: 'Export License' })
-      await license.scrollIntoViewIfNeeded()
-      await expect(license.getByText('299€', { exact: true })).toBeVisible()
+      await page.getByText('What’s included in Creator', { exact: true }).click()
+      await expect(page.locator('.pricing__details li').filter({ hasText: 'Player tracking and story analytics' })).toBeVisible()
+      const pro = page.locator('.pricing__plan--pro')
+      await pro.scrollIntoViewIfNeeded()
+      await expect(pro).toContainText('Pro is not available yet')
+      await expect(page.locator('.export-license')).toHaveCount(0)
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
     })
   }
 
-  test('separates the professional export license from subscriptions and keeps its payment one-time', async ({ page }) => {
+  test('keeps the planned one-time Pro reference separate from Creator subscription billing', async ({ page }) => {
     await page.goto('/')
     const pricing = page.locator('#pricing')
-    const license = pricing.getByRole('article', { name: 'Export License' })
-    await license.scrollIntoViewIfNeeded()
+    const pro = pricing.locator('.pricing__plan--pro')
     await expect(pricing.locator('.pricing__plan')).toHaveCount(2)
-    await expect(license.getByText('299€', { exact: true })).toBeVisible()
-    await expect(license.getByText(/One payment\.\s*No subscription\./)).toBeVisible()
-    await expect(license.getByText('FOR PROFESSIONALS', { exact: true })).toBeVisible()
-    await expect(license).toContainText('No royalties.')
-    await expect(license).toContainText('No Trama-hosted games, share links or player analytics.')
-    await expect(license).toContainText('Not available to buy yet.')
-    const enquiry = license.getByRole('link', { name: 'Ask about the license' })
-    await expect(enquiry).toHaveAttribute('href', 'mailto:gesteve.12@gmail.com?subject=Export%20License%20enquiry')
-    await enquiry.focus()
-    await expect(enquiry).toBeFocused()
+    await expect(pro).toContainText('Around 200€')
+    await expect(pro).toContainText('not a final offer')
+    await expect(pro.locator('button, a')).toHaveCount(0)
     await pricing.getByRole('button', { name: /Annual billing/ }).click()
     await expect(pricing.getByText('49.95€/year', { exact: true })).toBeVisible()
-    await expect(license.getByText('299€', { exact: true })).toBeVisible()
+    await expect(pro).toContainText('Around 200€')
+    await expect(pricing).not.toContainText('Basic')
   })
 
   test('offers available plans and keyboard-accessible annual billing', async ({ page }) => {

@@ -68,6 +68,18 @@ describe('MenuComponent', () => {
     expect(launch).toHaveBeenCalledOnceWith(ProfileModalComponent)
   })
 
+  it('creates further stories without an active subscription or a three-story limit', async () => {
+    await fixture.whenStable()
+    TestBed.inject(DatabaseService).user.update(user => user ? {
+      ...user, profile: { ...user.profile, plan: 'free', subscription_status: 'canceled' },
+    } : null)
+    component.stories.set(Array.from({ length: 4 }, (_, index) => ({ id: `story-${index}`, name: 'Story' })))
+    const create = spyOn(component.onNewStory, 'emit')
+    component.createNewTree()
+    expect(create).toHaveBeenCalledTimes(1)
+    expect(launch).not.toHaveBeenCalled()
+  })
+
   it('can collapse and reopen the sidebar', () => {
     const host = fixture.nativeElement as HTMLElement
     host.querySelector<HTMLButtonElement>('.menuToggler button')!.click()

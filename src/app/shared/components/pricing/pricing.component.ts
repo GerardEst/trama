@@ -4,9 +4,10 @@ import { PRICING } from 'src/app/core/constants'
 import { Router } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { BasicButtonComponent } from '../ui/basic-button/basic-button.component'
-import { environment } from 'src/environments/environment'
+import { CheckoutService, CreatorBillingPeriod } from 'src/app/core/services/checkout.service'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 @Component({
   selector: 'polo-pricing',
@@ -17,6 +18,10 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 })
 export class PricingComponent {
   pricing = PRICING
+  readonly creatorFeatures: TranslationKey[] = [
+    'pricing.creator.stories', 'pricing.creator.images', 'pricing.creator.brand',
+    'pricing.creator.sharing', 'pricing.creator.analytics', 'pricing.creator.data',
+  ]
 
   @Input({ transform: checkPlan }) userPlan?: string | undefined
   @Input() canceledSubscription: boolean = false
@@ -24,7 +29,6 @@ export class PricingComponent {
   @Input() email?: string
   @Input() preventEasyDowngrading: boolean = false
   @Input() dashed: boolean = false
-  @Input() showUpcomingPlan: boolean = true
   @Input() compactFeatures: boolean = false
 
   cancelingSubscription: boolean = false
@@ -32,14 +36,20 @@ export class PricingComponent {
   constructor(
     private router: Router,
     public db: DatabaseService,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private checkout: CheckoutService
   ) {}
 
   price(value: number) {
     return this.i18n.formatNumber(value, { minimumFractionDigits: 2 })
   }
 
-  subscribe(plan: 'creator' | 'pro', isYearlyPlan: boolean) {
+  get indicativeProPrice() {
+    return this.i18n.formatNumber(PRICING.PRO_INDICATIVE_PRICE)
+  }
+
+  subscribe(plan: 'creator', isYearlyPlan: boolean) {
+    if (plan !== 'creator') return
     if (this.email) {
       this.upgradePlan(plan, isYearlyPlan ? 'yearly' : 'monthly', this.email)
     } else {
@@ -54,26 +64,11 @@ export class PricingComponent {
   }
 
   upgradePlan(
-    plan: 'creator' | 'pro',
-    period: 'monthly' | 'yearly',
+    plan: 'creator',
+    period: CreatorBillingPeriod,
     email: string
   ) {
-    let paymentLink: string | undefined = undefined
-
-    if (period === 'monthly' && plan === 'creator') {
-      paymentLink = environment.subscriptionLinks.CREATOR_MONTHLY_LINK
-    }
-    if (period === 'monthly' && plan === 'pro') {
-      paymentLink = environment.subscriptionLinks.PRO_MONTHLY_LINK
-    }
-    if (period === 'yearly' && plan === 'creator') {
-      paymentLink = environment.subscriptionLinks.CREATOR_YEARLY_LINK
-    }
-    if (period === 'yearly' && plan === 'pro') {
-      paymentLink = environment.subscriptionLinks.PRO_YEARLY_LINK
-    }
-
-    window.open(paymentLink + '?prefilled_email=' + email)
+    return this.checkout.start(plan, period, email)
   }
 
   cancelSubscription() {
@@ -116,6 +111,6 @@ export class PricingComponent {
 function checkPlan(value: string | undefined) {
   if (!value) return
   if (value.includes('creator')) return 'creator'
-  if (value.includes('pro')) return 'pro'
-  return 'free'
+  if (value.includes('pro')) return 'legacy-pro'
+  return undefined
 }

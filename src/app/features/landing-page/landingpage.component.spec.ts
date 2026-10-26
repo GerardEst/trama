@@ -59,9 +59,9 @@ describe('LandingpageComponent', () => {
     expect(hero.querySelectorAll('h1').length).toBe(1)
     expect(hero.querySelector('h1')?.textContent).toContain('You write the story.')
     expect(hero.querySelector('.hero__description')?.textContent).toContain('interactive story')
-    expect(hero.querySelector('.hero__reassurance')?.textContent).toContain('No credit card')
+    expect(hero.querySelector('.hero__reassurance')?.textContent).toContain('All editor features included')
     expect(hero.querySelectorAll('.hero__reassurance span').length).toBe(3)
-    expect(primaryAction.getAttribute('href')).toBe('/login?mode=register')
+    expect(primaryAction.getAttribute('href')).toBe('/login?mode=register&plan=creator&period=monthly')
     expect(storyAction.getAttribute('href')).toBe('/#try-it')
     expect(hero.querySelector('#try-it polo-game')).toBeTruthy()
     const demoImage = hero.querySelector('.story-player__scene img') as HTMLImageElement
@@ -75,11 +75,14 @@ describe('LandingpageComponent', () => {
     expect(TestBed.inject(ActiveStoryService).entireTree().nodes).toEqual([])
   })
 
-  it('goes from the demo to the features and pricing without a board or dead navigation links', () => {
+  it('goes from the demo to authoring, features, trust and pricing without loading a board', () => {
     const main = fixture.nativeElement.querySelector('main') as HTMLElement
-    const blocks = Array.from(main.querySelectorAll(':scope > section, :scope > polo-landing-features'))
+    const blocks = Array.from(main.querySelectorAll(':scope > section, :scope > polo-landing-features, :scope > polo-landing-authoring'))
 
-    expect(blocks.map((block) => block.id)).toEqual(['', 'features', 'pricing', ''])
+    expect(blocks.map((block) => block.id)).toEqual(['', 'authoring', 'features', 'trust', 'pricing', ''])
+    expect(main.querySelector('.demo-bridge a')?.getAttribute('href')).toBe('/#authoring')
+    expect(main.querySelector('#authoring img')).toBeTruthy()
+    expect(main.querySelector('#trust')?.textContent).toContain('JSON')
     expect(main.querySelector('polo-board, #toolkit, .hero__foot')).toBeNull()
     expect(main.textContent).not.toContain('Here’s how')
     const featuresLink = fixture.nativeElement.querySelector('.nav-links a[href="/#features"]')
@@ -103,8 +106,8 @@ describe('LandingpageComponent', () => {
     await finishWithSpirit()
 
     const next = demo.querySelector('.story-player__next a') as HTMLAnchorElement
-    expect(next.getAttribute('href')).toBe('/login?mode=register')
-    expect(next.textContent).toContain('Create your first story free')
+    expect(next.getAttribute('href')).toBe('/login?mode=register&plan=creator&period=monthly')
+    expect(next.textContent).toContain('Create your first story')
   })
 
   it('only offers to start over once a choice has been made', () => {
@@ -159,34 +162,36 @@ describe('LandingpageComponent', () => {
     expect(demo.textContent).toContain('The crown settles on your brow')
   })
 
-  it('keeps only available subscriptions in the boxed comparison', () => {
+  it('compares Creator with the unavailable future Pro purchase without a Basic plan', () => {
     expect(fixture.nativeElement.querySelectorAll('.pricing__plan').length).toBe(2)
-    expect(fixture.nativeElement.querySelector('.pricing__coming-soon')).toBeNull()
-    expect(fixture.nativeElement.querySelectorAll('.pricing__details:not([open])').length).toBe(2)
+    expect(fixture.nativeElement.querySelector('.pricing__coming-soon').textContent).toContain('not available yet')
+    expect(fixture.nativeElement.querySelectorAll('.pricing__details:not([open])').length).toBe(1)
+    expect(fixture.nativeElement.textContent).not.toContain('Basic')
   })
 
-  it('presents a separate professional export license with a fixed one-time price and an enquiry link', () => {
-    const license = fixture.nativeElement.querySelector('.export-license') as HTMLElement
-    const price = license.querySelector('.export-license__price') as HTMLElement
-    const enquiry = license.querySelector('a') as HTMLAnchorElement
-
-    expect(license.getAttribute('aria-labelledby')).toBe('export-license-title')
-    expect(license.querySelector('h3')?.textContent).toContain('Export License')
-    expect(license.textContent).toContain('FOR PROFESSIONALS')
-    expect(price.textContent).toBe('299€')
-    expect(license.querySelector('.export-license__frequency')?.textContent).toContain('One payment.')
-    expect(license.querySelector('.export-license__frequency')?.textContent).toContain('No subscription.')
-    expect(license.textContent).toContain('No royalties.')
-    expect(license.textContent).toContain('No Trama-hosted games, share links or player analytics.')
-    expect(license.textContent).toContain('Not available to buy yet.')
-    expect(enquiry.getAttribute('href')).toBe('mailto:gesteve.12@gmail.com?subject=Export%20License%20enquiry')
-    expect(enquiry.textContent).toContain('Ask about the license')
-    expect(license.classList).not.toContain('pricing__plan')
-    expect(license.closest('polo-pricing')).toBeNull()
-
+  it('keeps the Pro reference price independent of Creator billing and does not sell export', () => {
+    const page = fixture.nativeElement as HTMLElement
+    const pro = page.querySelector('.pricing__plan--pro')!
+    expect(page.querySelector('.portability-enquiry')).toBeNull()
+    expect(pro.textContent).toContain('Around 200€')
+    expect(pro.textContent).toContain('not implemented')
+    expect(pro.querySelector('a, button')).toBeNull()
     component.payAnnually = true
     fixture.detectChanges()
-    expect(price.textContent).toBe('299€')
+    expect(pro.textContent).toContain('Around 200€')
+    expect(component.creationUrl).toContain('period=yearly')
+    expect(page.querySelectorAll('.pricing__plan').length).toBe(2)
+  })
+
+  it('explains Creator, the future Pro purchase, JSON limitations and cancellation in the FAQ', () => {
+    const questions = fixture.nativeElement.querySelector('.questions__list') as HTMLElement
+    expect(questions.querySelectorAll('details').length).toBe(7)
+    expect(questions.textContent).toContain('around 200€')
+    expect(questions.textContent).not.toContain('Basic')
+    expect(questions.textContent).toContain('not a standalone HTML game')
+    expect(questions.textContent).toContain('not yet a user-facing import or restore tool')
+    expect(questions.textContent).toContain('contact us before cancelling')
+    expect(questions.querySelector('.questions__contact')?.getAttribute('href')).toBe('mailto:gesteve.12@gmail.com')
   })
 
   it('routes returning authors to their dashboard', () => {

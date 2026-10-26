@@ -11,5 +11,7 @@ export const playground = {
   answerTooLong: 'Use 100 characters or fewer.',
   share: 'Share this story',
   linkCopied: 'Link copied to clipboard.',
-  copyManually: 'Copy the page URL to share this story.',
+  copyManually: 'Select and copy the link below to share this story.',
+  shareLink: 'Story link',
+  shareMessage: 'Play “{title}” and choose your own path.',
 }

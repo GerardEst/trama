@@ -58,44 +58,15 @@
   @if (showOptions) {
     <div class="dropdown">
       <div class="dropdown__section">
-        @if (db.userPlanIs('pro')) {
-          <label>
-            <span>{{ 'dashboard.top.tracking' | t }}</span>
-            <input
-              (change)="toggleTracking()"
-              type="checkbox"
-              [checked]="activeStory.storyConfiguration().tracking"
-            />
-          </label>
-        } @else {
-          <label>
-            <span>🚫 {{ 'dashboard.top.tracking' | t }}</span>
-            <input
-              [disabled]="true"
-              [checked]="activeStory.storyConfiguration().tracking"
-              type="checkbox"
-            />
-          </label>
-        }
-        @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-          <label>
-            <span>{{ 'dashboard.top.sharing' | t }}</span>
-            <input
-              (change)="toggleSharing()"
-              type="checkbox"
-              [checked]="activeStory.storyConfiguration().sharing"
-            />
-          </label>
-        } @else {
-          <label>
-            <span>🚫 {{ 'dashboard.top.sharing' | t }}</span>
-            <input
-              [disabled]="true"
-              [checked]="activeStory.storyConfiguration().sharing"
-              type="checkbox"
-            />
-          </label>
-        }
+        <label>
+          <span>{{ 'dashboard.top.tracking' | t }}</span>
+          <input
+            (change)="toggleTracking()"
+            type="checkbox"
+            [disabled]="db.authenticationRequired() || !activeStory.storyId()"
+            [checked]="activeStory.storyConfiguration().tracking"
+          />
+        </label>
         <polo-answer-display-select
           [value]="activeStory.entireTree().unavailableAnswerDisplay"
           (changed)="setAnswerDisplay($event)"
@@ -110,63 +81,42 @@
         </label>
       </div>
       <div class="dropdown__section">
-        <label class="label--column">
-          <span>{{ 'dashboard.top.customId' | t }}</span>
-          <input
-            [class.alert]="takenCustomId"
-            (change)="updateCustomId($event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().customId"
-          />
-          @if (takenCustomId) {
-            <p>{{ 'dashboard.top.idTaken' | t }}</p>
-          }
-        </label>
+        <polo-basic-button [text]="'dashboard.share.title' | t" [disabled]="!activeStory.storyId()"
+          (click)="closePopup(); shareRequested.emit()" />
       </div>
       <div class="dropdown__section">
         <p class="txt-weight-bold">{{ 'dashboard.top.footer' | t }}</p>
-        @if (db.userPlanIs('creator') || db.userPlanIs('pro')) {
-          <label>
-            <span>{{ 'dashboard.top.hideLink' | t }}</span>
-            <input
-              (change)="toggleAppLink()"
-              type="checkbox"
-              [checked]="!activeStory.storyConfiguration().tapLink"
-            />
-          </label>
+        <label>
+          <span>{{ 'dashboard.top.hideLink' | t }}</span>
+          <input
+            (change)="toggleAppLink()"
+            type="checkbox"
+            [checked]="!activeStory.storyConfiguration().tapLink"
+          />
+        </label>
 
-          <label class="label--column">
-            <span>{{ 'dashboard.top.footerText' | t }}</span>
-            <input
-              (change)="updateFooter('text', $event)"
-              type="text"
-              [value]="activeStory.storyConfiguration().footer.text || ''"
-            />
-          </label>
-          <label class="label--column">
-            <span>{{ 'dashboard.top.footerLink' | t }}</span>
-            <input
-              (change)="updateFooter('link', $event)"
-              type="text"
-              [value]="activeStory.storyConfiguration().footer.link || ''"
-            />
-          </label>
-        } @else {
-          <p>{{ 'dashboard.top.footerPitch' | t }}</p>
-          <p>{{ 'dashboard.top.footerFree' | t }}</p>
-        }
+        <label class="label--column">
+          <span>{{ 'dashboard.top.footerText' | t }}</span>
+          <input
+            (change)="updateFooter('text', $event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().footer.text || ''"
+          />
+        </label>
+        <label class="label--column">
+          <span>{{ 'dashboard.top.footerLink' | t }}</span>
+          <input
+            (change)="updateFooter('link', $event)"
+            type="text"
+            [value]="activeStory.storyConfiguration().footer.link || ''"
+          />
+        </label>
       </div>
-      @if (db.userPlanIs('pro')) {
-        <polo-basic-button
-          (click)="openStadistics()"
-          [text]="'dashboard.top.analytics' | t"
-        ></polo-basic-button>
-      } @else {
-        <polo-basic-button
-          [disabled]="true"
-          [text]="'🚫 ' + ('dashboard.top.analytics' | t)"
-        ></polo-basic-button>
-      }
+      <polo-basic-button
+        (click)="openStadistics()"
+        [disabled]="!activeStory.storyId()"
+        [text]="'dashboard.top.analytics' | t"
+      ></polo-basic-button>
       <polo-basic-button
         (click)="exportTree()"
         icon="/assets/icons/export.svg"

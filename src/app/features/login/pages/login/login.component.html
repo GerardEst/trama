@@ -14,6 +14,24 @@
         <a class="login-back" href="/">{{ 'login.back' | t }}</a>
         <polo-language-selector></polo-language-selector>
       </div>
+      @if (subscribing) {
+        <div class="checkoutSummary" role="status">
+          <strong>Creator · {{ (period === 'yearly' ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: selectedPrice } }}</strong>
+          <p>{{ 'login.checkout.continue' | t }}</p>
+        </div>
+      }
+      @if (checkoutUnavailable) {
+        <div class="checkoutNotice" role="alert">
+          <p>{{ 'login.checkout.unavailable' | t }}</p>
+          <a href="/#pricing">{{ 'login.checkout.viewPlans' | t }}</a>
+        </div>
+      }
+      @if (authenticationError) {
+        <p class="feedbackMessage feedbackMessage--error" role="alert">{{ 'login.checkout.authError' | t }}</p>
+      }
+      @if (checkMail) {
+        <p class="feedbackMessage" role="status">{{ 'login.checkout.confirmEmail' | t }}</p>
+      }
       @if (mode === 'register') {
         <h1>{{ 'login.register.title' | t }}</h1>
         <p class="login-subtitle">{{ 'login.register.subtitle' | t }}</p>
@@ -63,7 +81,6 @@
       } -->
           <polo-basic-button
             (click)="signUpNewUser($event, register_email, register_password, register_username)"
-            [disabled]="false"
             [waiting]="waitingForSignUp"
             [text]="'login.register.submit' | t"
           >
@@ -105,7 +122,7 @@
             <a href="/reset-password">{{ 'login.signIn.forgot' | t }}</a>
             <polo-basic-button
               (click)="signInWithEmail($event, login_email, login_password)"
-              [disabled]="false"
+              [waiting]="waitingForSignUp"
               [text]="'login.signIn.submit' | t"
             >
             </polo-basic-button>
