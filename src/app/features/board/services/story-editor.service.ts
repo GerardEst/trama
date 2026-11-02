@@ -22,7 +22,6 @@ import {
 } from 'src/app/shared/utils/tree-searching'
 
 import { ENTRY_POINT_ORIGIN } from '../board-interactions'
-import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { EventChange, RequirementChange } from './story-logic-changes'
 
 interface Joinable {
@@ -421,7 +420,7 @@ export class StoryEditorService {
     this.withNode(nodeId, (storyNode) => {
       storyNode.conditions = [
         ...(storyNode.conditions ?? []),
-        { id: conditionId },
+        { id: conditionId, rules: [{}] },
       ]
     })
   }
@@ -438,11 +437,7 @@ export class StoryEditorService {
       )
       if (!route) return
 
-      const rule = route.rules
-        ? route.rules[ruleIndex]
-        : ruleIndex === 0
-          ? route
-          : undefined
+      const rule = route.rules[ruleIndex]
       if (!rule) return
 
       rule.ref = values.ref
@@ -458,15 +453,6 @@ export class StoryEditorService {
         (candidate) => candidate.id === conditionId
       )
       if (!route) return
-
-      if (!route.rules) {
-        route.rules = [
-          { ref: route.ref, comparator: route.comparator, value: route.value },
-        ]
-        delete route.ref
-        delete route.comparator
-        delete route.value
-      }
       route.rules.push({})
     })
   }
@@ -477,7 +463,7 @@ export class StoryEditorService {
       const route = storyNode.conditions?.find(
         (candidate) => candidate.id === conditionId
       )
-      if (!route?.rules || route.rules.length <= 1) return
+      if (!route || route.rules.length <= 1) return
       route.rules.splice(ruleIndex, 1)
     })
   }
@@ -585,9 +571,7 @@ export class StoryEditorService {
     this.withAnswer(answerId, answer => {
       const requirements = answer.requirements ?? []
       const previousTarget = change.previousValue ?? change.target
-      const existingIndex = requirements.findIndex(requirement =>
-        getRequirementRefId(requirement) === previousTarget
-      )
+      const existingIndex = requirements.findIndex(requirement => requirement.target === previousTarget)
       const updated: answer_requirement = {
         target: change.target,
         type: change.type,
@@ -596,19 +580,15 @@ export class StoryEditorService {
       // Keep an edited requirement in place and remove any target collision.
       answer.requirements = requirements
         .filter((requirement, index) => index === existingIndex ||
-          (getRequirementRefId(requirement) !== previousTarget &&
-            getRequirementRefId(requirement) !== change.target))
-        .map(requirement => existingIndex !== -1 &&
-          getRequirementRefId(requirement) === previousTarget ? updated : requirement)
+          (requirement.target !== previousTarget && requirement.target !== change.target))
+        .map(requirement => existingIndex !== -1 && requirement.target === previousTarget ? updated : requirement)
       if (existingIndex === -1) answer.requirements.push(updated)
     })
   }
 
   deleteAnswerRequirement(answerId: string, target: string) {
     this.withAnswer(answerId, answer => {
-      answer.requirements = (answer.requirements ?? []).filter(requirement =>
-        getRequirementRefId(requirement) !== target
-      )
+      answer.requirements = (answer.requirements ?? []).filter(requirement => requirement.target !== target)
     })
   }
 

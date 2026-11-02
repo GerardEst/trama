@@ -31,7 +31,7 @@ describe('StoryExportService', () => {
         answers: [{
           id: 'node_0_answer_0', text: 'Continua',
           join: [{ node: 'node_1' }],
-          requirements: [{ id: 'energy', type: 'stat', amount: 2 }],
+          requirements: [{ target: 'energy', type: 'stat', amount: 2 }],
           events: [{ id: 'event_0', action: 'alterStat', type: 'stat', amount: '-1', target: 'energy' }],
         }],
       }, { id: 'node_1', type: 'end', top: 30, left: 40 }],
@@ -81,7 +81,7 @@ describe('StoryExportService', () => {
     expect(click).not.toHaveBeenCalled()
   })
 
-  it('exports normalized older stories with missing optional fields', async () => {
+  it('exports stories with missing optional collections filled in', async () => {
     activeStory.load('old-story', 'Old story', { nodes: [] })
     fakeAsync(() => {
       service.downloadJson()
@@ -90,7 +90,7 @@ describe('StoryExportService', () => {
 
     const blob = createUrl.calls.mostRecent().args[0] as Blob
     expect(JSON.parse(await blob.text()).tree).toEqual({
-      nodes: [], refs: {}, categories: [], entryPoint: { left: 5000, top: 5000 },
+      nodes: [], refs: {}, categories: [],
     })
   })
 

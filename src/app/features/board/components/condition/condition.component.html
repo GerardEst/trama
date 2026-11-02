@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="condition__rules">
-      @for (rule of displayedRules; track $index; let i = $index) {
+      @for (rule of rules; track $index; let i = $index) {
         @if (i > 0) {
           <span class="condition__and">{{ 'board.route.and' | t }}</span>
         }
@@ -69,7 +69,7 @@
               <span>{{ 'board.route.value' | t }}</span>
               <input id="value" [attr.aria-label]="'board.route.valueLabel' | t" (change)="saveCondition($event, rule, i)" [type]="isProperty(rule.ref) ? 'text' : 'number'" [value]="rule.value ?? 0" />
             </label>
-            @if (displayedRules.length > 1) {
+            @if (rules.length > 1) {
               <polo-basic-button
                 class="condition__deleteRule"
                 size="s"

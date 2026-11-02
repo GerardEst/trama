@@ -1,9 +1,7 @@
-import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { GameEngineService } from './game-engine.service'
 import { GameSessionService } from './game-session.service'
-import { PlayerService } from './player.service'
 
 const scene = (id: string, overrides: Partial<node> = {}): node => ({
   id, type: 'content', top: 0, left: 0, text: id, ...overrides,
@@ -15,19 +13,24 @@ const gold = (amount: string) => ({
 describe('GameSessionService', () => {
   let session: GameSessionService
   let story: ActiveStoryService
-  let player: PlayerService
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [GameSessionService, GameEngineService, PlayerService] })
+    TestBed.configureTestingModule({ providers: [GameSessionService] })
     story = TestBed.inject(ActiveStoryService)
-    player = TestBed.inject(PlayerService)
     session = TestBed.inject(GameSessionService)
   })
 
   function load(nodes: node[], id = 'story') {
-    story.load(id, 'Story', { nodes })
+    story.load(id, 'Story', { nodes, entryPoint: { left: 0, top: 0, targetNodeId: nodes[0]?.id } })
     TestBed.flushEffects()
   }
+
+  function edit(mutate: Parameters<ActiveStoryService['updateTree']>[0]) {
+    story.updateTree(mutate)
+    TestBed.flushEffects()
+  }
+
+  const stats = () => session.player().stats
 
   it('starts and restarts at the configured destination, including inside a group, without visiting the marker', () => {
     story.load('story', 'Story', {
@@ -37,13 +40,12 @@ describe('GameSessionService', () => {
     TestBed.flushEffects()
     expect(session.currentNodeId()).toBe('node_1')
     expect(session.visits().map(visit => visit.nodeId)).toEqual(['node_1'])
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 3 }])
-    story.updateTree(draft => { draft.entryPoint!.targetNodeId = 'node_0' })
-    TestBed.flushEffects()
+    expect(stats()).toEqual({ stat_gold: 3 })
+    edit(draft => { draft.entryPoint!.targetNodeId = 'node_0' })
     expect(session.currentNodeId()).toBe('node_1')
     session.restart()
     expect(session.currentNodeId()).toBe('node_0')
-    expect(player.playerStats()).toEqual([])
+    expect(stats()).toEqual({})
   })
 
   it('does not fall back to node_0 when disconnected and recovers when connected', () => {
@@ -53,12 +55,10 @@ describe('GameSessionService', () => {
     expect(session.visits()).toEqual([])
     session.restart()
     expect(session.problem()).toBe('missingStart')
-    story.updateTree(draft => { draft.entryPoint!.targetNodeId = 'node_1' })
-    TestBed.flushEffects()
+    edit(draft => { draft.entryPoint!.targetNodeId = 'node_1' })
     expect(session.problem()).toBeNull()
     expect(session.currentNodeId()).toBe('node_1')
-    story.updateTree(draft => { delete draft.entryPoint!.targetNodeId })
-    TestBed.flushEffects()
+    edit(draft => { delete draft.entryPoint!.targetNodeId })
     expect(session.currentNodeId()).toBe('node_1')
     session.restart()
     expect(session.problem()).toBe('missingStart')
@@ -72,16 +72,13 @@ describe('GameSessionService', () => {
         events: [gold('10')], join: [{ node: 'node_1' }],
       }] }), scene('node_1'),
     ])
-    const events = jasmine.createSpy('events')
-    session.events.subscribe(events)
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
+    session.selectAnswer('locked')
     expect(session.currentNodeId()).toBe('node_0')
-    expect(player.playerStats()).toEqual([])
-    expect(events).not.toHaveBeenCalled()
+    expect(stats()).toEqual({})
     expect(session.visits()).toHaveSize(1)
   })
 
-  it('also initializes anonymous stories such as the landing demo', () => {
+  it('also initializes anonymous stories', () => {
     load([scene('node_0')], '')
     expect(session.currentNodeId()).toBe('node_0')
   })
@@ -106,13 +103,13 @@ describe('GameSessionService', () => {
       ] }),
       scene('node_1', { events: [gold('5')] }), scene('node_2'),
     ])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 6 }])
+    session.selectAnswer('a')
+    expect(stats()).toEqual({ stat_gold: 6 })
     session.back()
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 2 }])
-    session.selectAnswer(story.entireTree().nodes[0].answers![1])
+    expect(stats()).toEqual({ stat_gold: 2 })
+    session.selectAnswer('b')
     expect(session.visits().map(visit => visit.nodeId)).toEqual(['node_0', 'node_2'])
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 2 }])
+    expect(stats()).toEqual({ stat_gold: 2 })
   })
 
   it('restores free-text properties and conditions, including an input checkpoint', () => {
@@ -120,27 +117,33 @@ describe('GameSessionService', () => {
       scene('node_0', { type: 'text', userTextOptions: { property: 'name' }, join: [{ node: 'node_1' }] }),
       scene('node_1', { events: [{ id: 'key', action: 'alterCondition', type: 'condition', target: 'condition_key', amount: '1' }] }),
     ])
-    session.continueFlow({ property: 'name', value: 'Ada', join: [{ node: 'node_1' }] })
-    expect(player.playerProperties()).toEqual({ name: 'Ada' })
-    expect(player.playerConditions()).toEqual([{ id: 'condition_key' }])
+    session.continueFlow('Ada')
+    expect(session.player().properties).toEqual({ name: 'Ada' })
+    expect(session.player().conditions).toEqual(['condition_key'])
     session.back()
-    expect(player.playerProperties()).toEqual({})
-    expect(player.playerConditions()).toEqual([])
+    expect(session.player().properties).toEqual({})
+    expect(session.player().conditions).toEqual([])
   })
 
   it('keeps the current state after editing events, requirements and a previously followed connection', () => {
     load([scene('node_0', { answers: [{ id: 'a', join: [{ node: 'node_1' }] }] }), scene('node_1', { events: [gold('1')] })])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
-    story.updateTree(draft => {
+    session.selectAnswer('a')
+    edit(draft => {
       draft.nodes[1].events = [gold('99')]
       draft.nodes[0].answers = []
     })
-    TestBed.flushEffects()
     expect(session.currentNodeId()).toBe('node_1')
     expect(session.visits()).toHaveSize(2)
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 1 }])
+    expect(stats()).toEqual({ stat_gold: 1 })
     session.back()
     expect(session.currentNodeId()).toBe('node_0')
+  })
+
+  it('selects answers added after arriving at the node', () => {
+    load([scene('node_0'), scene('node_1')])
+    edit(draft => { draft.nodes[0].answers = [{ id: 'new', text: 'New', join: [{ node: 'node_1' }] }] })
+    session.selectAnswer('new')
+    expect(session.currentNodeId()).toBe('node_1')
   })
 
   it('rewinds to the last existing node when the current node is removed', () => {
@@ -149,18 +152,32 @@ describe('GameSessionService', () => {
       scene('node_1', { answers: [{ id: 'b', join: [{ node: 'node_2' }] }], events: [gold('1')] }),
       scene('node_2', { events: [gold('5')] }),
     ])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
-    session.selectAnswer(story.entireTree().nodes[1].answers![0])
-    story.updateTree(draft => { draft.nodes = draft.nodes.filter(node => node.id === 'node_0') })
-    TestBed.flushEffects()
+    session.selectAnswer('a')
+    session.selectAnswer('b')
+    edit(draft => { draft.nodes = draft.nodes.filter(storyNode => storyNode.id === 'node_0') })
     expect(session.currentNodeId()).toBe('node_0')
-    expect(player.playerStats()).toEqual([])
+    expect(stats()).toEqual({})
+  })
+
+  it('cannot go back to visits whose node was removed', () => {
+    load([
+      scene('node_0', { answers: [{ id: 'a', join: [{ node: 'node_1' }] }] }),
+      scene('node_1', { answers: [{ id: 'b', join: [{ node: 'node_2' }] }] }),
+      scene('node_2'),
+    ], 'removed')
+    session.selectAnswer('a')
+    session.selectAnswer('b')
+    edit(draft => { draft.nodes = draft.nodes.filter(storyNode => storyNode.id !== 'node_1') })
+    expect(session.canGoBack()).toBeTrue()
+    session.back()
+    expect(session.currentNodeId()).toBe('node_0')
+    expect(session.canGoBack()).toBeFalse()
   })
 
   it('identifies repeated visits separately and does not reroll a random route on back', () => {
     const random = spyOn(Math, 'random').and.returnValue(0)
     load([scene('node_0', { answers: [{ id: 'a', join: [{ node: 'node_0' }, { node: 'node_1' }] }] }), scene('node_1')])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
+    session.selectAnswer('a')
     expect(session.visits()[0].id).not.toBe(session.visits()[1].id)
     const calls = random.calls.count()
     session.back()
@@ -168,62 +185,52 @@ describe('GameSessionService', () => {
     expect(session.currentNodeId()).toBe('node_0')
   })
 
-  it('applies distributor events before selecting a route', fakeAsync(() => {
+  it('applies distributor events before selecting a route', () => {
     load([
       scene('node_0', { join: [{ node: 'node_1' }] }),
       scene('node_1', { type: 'distributor', events: [gold('2')],
-        conditions: [{ id: 'r', ref: 'stat_gold', comparator: 'equalto', value: 2, join: [{ node: 'node_2' }] }],
+        conditions: [{ id: 'r', rules: [{ ref: 'stat_gold', comparator: 'equalto', value: 2 }], join: [{ node: 'node_2' }] }],
         fallbackCondition: { id: 'fallback', join: [{ node: 'node_3' }] } }),
       scene('node_2', { type: 'end' }), scene('node_3'),
     ])
-    tick()
     expect(session.currentNodeId()).toBe('node_2')
-    expect(session.activeNodes().map(node => node.id)).toEqual(['node_0', 'node_2'])
+    expect(session.visits().map(visit => visit.nodeId)).toEqual(['node_0', 'node_2'])
     session.back()
-    expect(player.playerStats()).toEqual([])
-    flush()
-  }))
+    expect(stats()).toEqual({})
+  })
 
-  it('cancels a scheduled automatic transition on back', fakeAsync(() => {
-    load([scene('node_0', { answers: [{ id: 'a', join: [{ node: 'node_1' }] }] }),
-      scene('node_1', { join: [{ node: 'node_2' }] }), scene('node_2')])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
-    session.back()
-    tick()
-    expect(session.currentNodeId()).toBe('node_0')
-    expect(session.cursor()).toBe(0)
-  }))
-
-  it('uses a changed automatic connection without replaying arrival events', fakeAsync(() => {
+  it('stops at automatic joins while auto-advance is off and continues with the latest connection', () => {
+    session.setAutoAdvance(false)
     load([scene('node_0', { join: [{ node: 'node_1' }], events: [gold('1')] }), scene('node_1'), scene('node_2')])
-    story.updateTree(draft => { draft.nodes[0].join = [{ node: 'node_2' }] })
-    TestBed.flushEffects()
-    tick()
+    expect(session.currentNodeId()).toBe('node_0')
+    edit(draft => { draft.nodes[0].join = [{ node: 'node_2' }] })
+    session.setAutoAdvance(true)
+    expect(session.currentNodeId()).toBe('node_0')
+    session.advance()
     expect(session.currentNodeId()).toBe('node_2')
-    expect(player.playerStats()).toEqual([{ id: 'stat_gold', amount: 1 }])
-  }))
+    expect(session.visits().map(visit => visit.step)).toEqual([1, 1])
+    expect(stats()).toEqual({ stat_gold: 1 })
+  })
 
-  it('cancels old transitions and clears player state on a story switch', fakeAsync(() => {
+  it('clears player state on a story switch', () => {
     load([scene('node_0', { join: [{ node: 'node_1' }], events: [gold('5')] }), scene('node_1')])
     load([scene('node_0', { text: 'Other story' })], 'other')
-    tick()
     expect(session.visits()).toHaveSize(1)
-    expect(session.activeNodes()[0].text).toBe('Other story')
-    expect(player.playerStats()).toEqual([])
-  }))
+    expect(session.visits()[0].scene.text).toBe('Other story')
+    expect(stats()).toEqual({})
+  })
 
-  it('stops automatic cycles with a recoverable problem', fakeAsync(() => {
+  it('stops automatic cycles with a recoverable problem', () => {
     load([scene('node_0', { join: [{ node: 'node_0' }] })])
-    tick()
     expect(session.problem()).toBe('automaticLoop')
     expect(session.visits()).toHaveSize(256)
     session.back()
     expect(session.problem()).toBeNull()
-  }))
+  })
 
   it('handles dangling connections without losing the current node', () => {
     load([scene('node_0', { answers: [{ id: 'a', join: [{ node: 'missing' }] }] })])
-    session.selectAnswer(story.entireTree().nodes[0].answers![0])
+    session.selectAnswer('a')
     expect(session.problem()).toBe('missingNode')
     expect(session.currentNodeId()).toBe('node_0')
   })

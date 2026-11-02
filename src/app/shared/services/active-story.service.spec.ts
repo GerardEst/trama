@@ -37,13 +37,12 @@ describe('ActiveStoryService', () => {
       ],
       refs: {},
       categories: [],
-      entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' },
     })
     expect(Object.isFrozen(service.entireTree())).toBeTrue()
     expect(Object.isFrozen(service.entireTree().nodes)).toBeTrue()
   })
 
-  it('preserves a migrated destination and an explicitly disconnected entry on reload', () => {
+  it('preserves the destination and an explicitly disconnected entry on reload', () => {
     const nodes = [
       { id: 'node_0', type: 'content' as const, left: 0, top: 0 },
       { id: 'node_1', type: 'end' as const, left: 300, top: 0 },
@@ -57,10 +56,9 @@ describe('ActiveStoryService', () => {
     expect(service.entireTree().entryPoint).toEqual({ left: 20, top: 40 })
   })
 
-  it('creates a disconnected marker for an empty story without inventing a node', () => {
-    service.load('story', 'Story', { nodes: [] })
-    expect(service.entireTree().nodes).toEqual([])
-    expect(service.entireTree().entryPoint).toEqual({ left: 5000, top: 5000 })
+  it('never invents an entry point or a start', () => {
+    service.load('story', 'Story', { nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0 }] })
+    expect(service.entireTree().entryPoint).toBeUndefined()
     expect(service.initialNode()).toBeUndefined()
   })
 
@@ -131,7 +129,7 @@ describe('ActiveStoryService', () => {
     ])
   })
 
-  it('counts legacy and multi-rule distributor references as used', () => {
+  it('counts single and multi-rule distributor references as used', () => {
     service.load('story-1', 'Story', {
       refs: {
         stat_1: { name: 'Gold', type: 'stat' },
@@ -146,9 +144,7 @@ describe('ActiveStoryService', () => {
           conditions: [
             {
               id: 'condition_0_0',
-              ref: 'stat_1',
-              comparator: 'morethan',
-              value: 5,
+              rules: [{ ref: 'stat_1', comparator: 'morethan', value: 5 }],
             },
             {
               id: 'condition_0_1',

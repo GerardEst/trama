@@ -34,7 +34,7 @@ describe('projectBoardJoins', () => {
       { id: 'node_1', type: 'content', left: 100, top: 0, groupId: 'node_3',
         join: [{ node: 'node_2' }] },
       { id: 'node_2', type: 'content', left: 200, top: 0, groupId: 'node_4',
-        conditions: [{ id: 'condition_2_0', join: [{ node: 'node_5' }] }] },
+        conditions: [{ id: 'condition_2_0', rules: [], join: [{ node: 'node_5' }] }] },
       { id: 'node_3', type: 'group', left: 100, top: 0 },
       { id: 'node_4', type: 'group', left: 200, top: 0, groupId: 'node_3' },
       { id: 'node_5', type: 'end', left: 300, top: 0 },

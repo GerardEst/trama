@@ -124,7 +124,7 @@ describe('FeatureGuideComponent', () => {
     ).toContain('Trama’s story-building tools')
     expect(page.querySelectorAll('h1').length).toBe(1)
     expect(
-      page.querySelector('polo-board, polo-game, polo-rich-text-editor')
+      page.querySelector('polo-board, polo-story-player, polo-rich-text-editor')
     ).toBeNull()
     expect(page.querySelector('.guide-next a')?.getAttribute('href')).toBe(
       '/login?mode=register'

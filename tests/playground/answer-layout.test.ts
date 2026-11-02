@@ -18,7 +18,7 @@ for (const cumulativeMode of [false, true]) {
       const story = {
         id: 'answer-layout', name: 'Answer layout regression', cumulativeMode,
         tracking: false, sharing: false, tapLink: false, footer: {},
-        tree: { refs: {}, categories: [], nodes: [
+        tree: { refs: {}, categories: [], entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' }, nodes: [
           { id: 'node_0', type: 'content', top: 0, left: 0, text: 'First short passage',
             answers: [{ id: 'answer_0_0', text: 'Continue', join: [{ node: 'node_1' }] }] },
           { id: 'node_1', type: 'content', top: 0, left: 0, text: 'Automatic passage', join: [{ node: 'node_2' }] },
@@ -52,7 +52,7 @@ for (const cumulativeMode of [false, true]) {
     const story = {
       id: 'long-answer-layout', name: 'Long passage regression', cumulativeMode,
       tracking: false, sharing: false, tapLink: false, footer: {},
-      tree: { refs: {}, categories: [], nodes: [
+      tree: { refs: {}, categories: [], entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' }, nodes: [
         { id: 'node_0', type: 'content', top: 0, left: 0, text: 'A long passage line.\n'.repeat(100),
           answers: [{ id: 'answer_0_0', text: 'Finish long passage', join: [{ node: 'node_1' }] }] },
         { id: 'node_1', type: 'end', top: 0, left: 0, text: 'End' },

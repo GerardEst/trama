@@ -25,7 +25,7 @@ async function openMockedStory(page: Page, refreshWorks: boolean, serverError = 
   const renewed = syntheticSession('renewed')
   const requests = { refreshes: 0, writes: [] as { token: string, tree: tree }[], signOuts: 0 }
   let persistedTree: tree = {
-    nodes: [
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', text: 'Start', top: 5000, left: 5000 },
       { id: 'node_1', type: 'content', text: 'Delete me', top: 5000, left: 5340 },
       { id: 'node_2', type: 'content', text: 'Delete me after session loss', top: 5000, left: 4660 },

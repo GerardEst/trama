@@ -236,8 +236,8 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         top: 700,
         left: 840,
         conditions: [
-          { id: 'condition_7_0', ref: 'condition_spirit', comparator: 'equalto', value: 1, join: [{ node: 'node_8' }] },
-          { id: 'condition_7_1', ref: 'condition_sigil', comparator: 'equalto', value: 1, join: [{ node: 'node_9' }] },
+          { id: 'condition_7_0', rules: [{ ref: 'condition_spirit', comparator: 'equalto', value: 1 }], join: [{ node: 'node_8' }] },
+          { id: 'condition_7_1', rules: [{ ref: 'condition_sigil', comparator: 'equalto', value: 1 }], join: [{ node: 'node_9' }] },
         ],
         fallbackCondition: { id: 'condition_7_fallback', join: [{ node: 'node_10' }] },
       },
@@ -293,7 +293,7 @@ export const buildExampleStory = (copy: ExampleStoryCopy) => {
         top: 0,
         left: 1680,
         conditions: [
-          { id: 'condition_11_0', ref: 'condition_spirit', comparator: 'equalto', value: 1, join: [{ node: 'node_12' }] },
+          { id: 'condition_11_0', rules: [{ ref: 'condition_spirit', comparator: 'equalto', value: 1 }], join: [{ node: 'node_12' }] },
         ],
         fallbackCondition: { id: 'condition_11_fallback', join: [{ node: 'node_13' }] },
       },

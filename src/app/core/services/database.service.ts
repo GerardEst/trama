@@ -1,7 +1,7 @@
 import { Inject, Injectable, InjectionToken, OnDestroy, WritableSignal, signal } from '@angular/core'
 import { createClient, SupabaseClient, Subscription } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
-import { appUser, tree, userProfile } from 'src/app/core/interfaces/interfaces'
+import { appUser, result, tree, userProfile } from 'src/app/core/interfaces/interfaces'
 import { withRetryableRefreshErrors } from './supabase-fetch'
 
 export const SUPABASE_CLIENT = new InjectionToken<SupabaseClient>('Supabase client', {
@@ -412,11 +412,7 @@ export class DatabaseService implements OnDestroy {
 
     const { data, error } = await this.supabase
       .from('games')
-      .select(
-        `id, created_at, result, user_name ${
-          withPath && ', path, external_events'
-        }`
-      )
+      .select(`id, created_at, result, user_name${withPath ? ', path' : ''}`)
       .eq('story', storyId)
 
     if (error) return false
@@ -454,8 +450,7 @@ export class DatabaseService implements OnDestroy {
     username: string,
     story: string,
     path: Array<any>,
-    result: any,
-    externalEvents: Array<any>
+    result: result
   ) {
     if (!environment.production)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
@@ -465,7 +460,6 @@ export class DatabaseService implements OnDestroy {
       user_name: username,
       story,
       path,
-      external_events: externalEvents,
     })
     if (error) {
       console.log(error)

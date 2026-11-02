@@ -1,9 +1,14 @@
 import { test, expect } from '@playwright/test'
+import { entryAt, openMockStory } from './mock-story'
 
 test('default playground shares the dashboard palette and remembers night mode', async ({ page }) => {
   await page.goto('/')
   await page.evaluate(() => localStorage.setItem('polo-theme', 'light'))
-  await page.goto('/private/33a780d7-77ae-40f8-b899-f184d7a9a40c')
+  await openMockStory(page, {
+    id: 'theme', name: 'Theme', tree: { refs: {}, categories: [], entryPoint: entryAt(), nodes: [
+      { id: 'node_0', type: 'end', top: 0, left: 0, text: '<p>A quiet ending</p>' },
+    ] },
+  })
 
   const playground = page.locator('main.playground')
   const toggle = page.getByRole('switch', { name: 'Dark mode' })

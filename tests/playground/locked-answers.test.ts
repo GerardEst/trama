@@ -9,7 +9,7 @@ for (const cumulativeMode of [false, true]) {
       tree: {
         unavailableAnswerDisplay: 'requirements', categories: [],
         refs: { condition_key: { type: 'condition', name: 'Bronze key' } },
-        nodes: [
+        entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' }, nodes: [
           { id: 'node_0', type: 'content', left: 0, top: 0, text: 'At the door', answers: [
             { id: 'inherited', text: 'Enter the door', requirements: [requirement], join: [{ node: 'node_2' }] },
             { id: 'locked', text: 'Open the chest', unavailableAnswerDisplay: 'locked', requirements: [requirement], join: [{ node: 'node_2' }] },
@@ -43,12 +43,12 @@ for (const cumulativeMode of [false, true]) {
     await expect(page.getByText('Inside', { exact: true })).toBeVisible()
   })
 
-  test(`Legacy stories still hide unavailable answers (${cumulativeMode ? 'cumulative' : 'single'})`, async ({ page }) => {
+  test(`Stories without a display setting hide unavailable answers (${cumulativeMode ? 'cumulative' : 'single'})`, async ({ page }) => {
     const story = {
-      id: 'legacy-locked', name: 'Legacy', tracking: false, sharing: false, tapLink: false, footer: {}, cumulativeMode,
-      tree: { refs: {}, categories: [], nodes: [{
+      id: 'default-locked', name: 'Default display', tracking: false, sharing: false, tapLink: false, footer: {}, cumulativeMode,
+      tree: { refs: {}, categories: [], entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' }, nodes: [{
         id: 'node_0', type: 'content', left: 0, top: 0, text: 'A passage', answers: [{
-          id: 'a', text: 'Hidden answer', requirements: [{ id: 'condition_key', type: 'condition', amount: 1 }],
+          id: 'a', text: 'Hidden answer', requirements: [{ target: 'condition_key', type: 'condition', amount: 1 }],
           join: [{ node: 'node_0' }],
         }],
       }] },

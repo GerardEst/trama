@@ -8,12 +8,12 @@
       (checkedChange)="theme.setDark($event)"
     ></polo-toggle>
   </header>
-  <polo-game
-    [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
-    (onEndGame)="endGame()"
-    (onDrawNode)="drawNode($event)"
-    (onSelectAnswer)="selectAnswer($event)"
-  ></polo-game>
+  @if (game) {
+    <polo-story-player
+      [game]="game"
+      [mode]="activeStory.storyConfiguration().cumulativeMode ? 'cumulative' : 'single'"
+    ></polo-story-player>
+  }
   @if (activeStory.storyConfiguration().footer.text || activeStory.storyConfiguration().tapLink) {
     <footer class="storyFooter">
       @if (activeStory.storyConfiguration().footer.text) {

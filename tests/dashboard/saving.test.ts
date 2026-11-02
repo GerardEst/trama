@@ -9,7 +9,7 @@ test('failed batch deletions survive reload and are saved after retry (mocked ba
   let rejectSaves = true
   let failedWrites = 0
   let persistedTree: tree = {
-    nodes: [
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', text: 'Start', top: 5000, left: 5000 },
       { id: 'node_1', type: 'content', text: 'Delete me first', top: 5000, left: 5340 },
       { id: 'node_2', type: 'content', text: 'Delete me next', top: 5000, left: 4660 },

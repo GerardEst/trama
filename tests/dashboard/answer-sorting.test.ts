@@ -7,7 +7,7 @@ test('answer dragging and keyboard sorting persist without moving the node (mock
   const storyId = '00000000-0000-4000-8000-000000000003'
   const user = { id: authorId, email: 'sort-test@example.com', aud: 'authenticated', role: 'authenticated' }
   let persisted: tree = {
-    nodes: [{
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [{
       id: 'node_0', type: 'content', text: 'Choose', top: 5000, left: 5000,
       answers: [
         { id: 'answer_0_0', text: 'First', join: [{ node: 'node_1' }] },

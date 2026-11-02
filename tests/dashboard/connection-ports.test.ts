@@ -18,7 +18,7 @@ async function openStory(page: Page, theme: 'light' | 'dark' = 'light') {
         { id: 'answer_1_1', text: 'Walk away' },
       ] },
       { id: 'node_2', name: 'Check the key', type: 'distributor', left: 5000, top: 5300, conditions: [
-        { id: 'condition_2_0', ref: 'stat_keys', comparator: 'morethan', value: 0, join: [{ node: 'node_3' }] },
+        { id: 'condition_2_0', rules: [{ ref: 'stat_keys', comparator: 'morethan', value: 0 }], join: [{ node: 'node_3' }] },
       ], fallbackCondition: { id: 'condition_2_fallback' } },
       { id: 'node_3', name: 'Ending', type: 'end', left: 5400, top: 5350, text: 'The journey continues.' },
     ],

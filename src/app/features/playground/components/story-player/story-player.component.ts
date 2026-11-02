@@ -1,29 +1,37 @@
-import { AfterViewInit, Component, Output, EventEmitter, Input, ViewChild, ElementRef, OnDestroy, DestroyRef } from '@angular/core'
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { join, node, node_answer } from 'src/app/core/interfaces/interfaces'
-import { GameEngineService } from '../../services/game-engine.service'
-import { GameSessionService } from '../../services/game-session.service'
-import { TextContinuation } from '../../services/game-session.types'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { SingleGameComponent } from './views/single-game.component'
-import { CumulativeGameComponent } from './views/cumulative-game.component'
+import { AfterViewInit, Component, computed, ElementRef, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core'
+import { Game, GameState } from '@trama/engine'
+import { node_answer } from 'src/app/core/interfaces/interfaces'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { TextContinuation } from '../../services/game-session.types'
+import { visitToPlayableNode } from '../../services/engine-adapter'
+import { SingleGameComponent } from '../game/views/single-game.component'
+import { CumulativeGameComponent } from '../game/views/cumulative-game.component'
 
-/** Public player shell. The linear editor imports neither this nor cumulative mode. */
+/**
+ * Reader-facing player for a @trama/engine game, in single or cumulative mode.
+ * Starts the game on init, so subscribe to it before handing it over.
+ */
 @Component({
-  selector: 'polo-game',
+  selector: 'polo-story-player',
   standalone: true,
   imports: [SingleGameComponent, CumulativeGameComponent, TranslatePipe],
-  providers: [GameSessionService],
-  templateUrl: './game.component.html',
-  styleUrl: './game.component.css',
+  templateUrl: './story-player.component.html',
+  styleUrl: './story-player.component.css',
 })
-export class GameComponent implements AfterViewInit, OnDestroy {
+export class StoryPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('game') DOMgame!: ElementRef<HTMLElement>
-  @Input() mode: 'cumulative' | 'single' = 'cumulative'
-  @Output() onEndGame = new EventEmitter<void>()
-  @Output() onSelectAnswer = new EventEmitter<node_answer>()
-  @Output() onDrawNode = new EventEmitter<node>()
+  readonly game = input.required<Game>()
+  readonly mode = input<'cumulative' | 'single'>('cumulative')
+
+  private readonly state = signal<GameState | undefined>(undefined)
+  readonly problem = computed(() => this.state()?.problem)
+  readonly activeNodes = computed(() => this.state()?.activeVisits
+    .map(visit => visitToPlayableNode(visit, this.game().story, this.i18n)) ?? [])
+  readonly previousNodes = computed(() => this.state()?.previousVisits
+    .map(visit => visitToPlayableNode(visit, this.game().story, this.i18n)) ?? [])
+
+  private unsubscribe?: () => void
   private scrollTimer?: ReturnType<typeof setTimeout>
   private viewportObserver?: ResizeObserver
   private viewportHeight = 0
@@ -34,22 +42,15 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     if (container.clientHeight === this.viewportHeight) this.viewportScrollTop = container.scrollTop
   }
 
-  get activeNodes() { return this.session.activeNodes() }
-  get inactiveNodes() { return this.session.inactiveNodes() }
+  constructor(private i18n: I18nService) {}
 
-  constructor(
-    public gameEngine: GameEngineService,
-    public activeStory: ActiveStoryService,
-    public session: GameSessionService,
-    destroyRef: DestroyRef
-  ) {
-    this.session.events.pipe(takeUntilDestroyed(destroyRef)).subscribe(event => {
-      if (event.type === 'node') {
-        this.scrollToNewNode()
-        this.onDrawNode.emit(event.node)
-      } else if (event.type === 'answer') this.onSelectAnswer.emit(event.answer)
-      else this.onEndGame.emit()
+  ngOnInit() {
+    const game = this.game()
+    this.unsubscribe = game.subscribe(event => {
+      if (event.type === 'state') this.state.set(event.state)
+      else if (event.type === 'node') this.scrollToNewNode()
     })
+    this.state.set(game.start())
   }
 
   ngAfterViewInit() {
@@ -75,17 +76,16 @@ export class GameComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.unsubscribe?.()
     this.viewportObserver?.disconnect()
     this.DOMgame?.nativeElement.removeEventListener('scroll', this.rememberScroll)
     if (this.scrollTimer !== undefined) clearTimeout(this.scrollTimer)
   }
 
-  initializeGame() { this.session.initialize() }
-  selectAnswer(answer: node_answer) { this.session.selectAnswer(answer) }
-  continueFlow(info: TextContinuation) { this.session.continueFlow(info) }
-  nextStep(joins: join[], addToCurrentStep = false) { this.session.nextStep(joins, addToCurrentStep) }
+  choose(answer: node_answer) { this.game().choose(answer.id) }
+  submitText(info: TextContinuation) { this.game().submitText(info.value) }
 
-  scrollToNewNode() {
+  private scrollToNewNode() {
     if (this.scrollTimer !== undefined) clearTimeout(this.scrollTimer)
     this.scrollTimer = setTimeout(() => {
       const container = this.DOMgame?.nativeElement

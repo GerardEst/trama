@@ -41,7 +41,7 @@ test('the author landing keeps the guide accessible through Docs', async ({ page
     await expect(page.locator(`#${id}`)).toHaveCount(1)
     await expect(index.locator(`a[href$="#${id}"]`)).toHaveCount(1)
   }
-  await expect(page.locator('polo-board, polo-game')).toHaveCount(0)
+  await expect(page.locator('polo-board, polo-story-player')).toHaveCount(0)
 })
 
 test('content-node help has a directly linkable documentation chapter', async ({ page }) => {
@@ -88,7 +88,7 @@ test('feature links and direct URLs land on the relevant chapter without loading
   await expect(distributor).toBeInViewport()
   await expect(distributor).toContainText('first matching route wins')
   await expect(
-    page.locator('polo-board, polo-game, polo-rich-text-editor')
+    page.locator('polo-board, polo-story-player, polo-rich-text-editor')
   ).toHaveCount(0)
   expect(storyRequests).toEqual([])
   await page

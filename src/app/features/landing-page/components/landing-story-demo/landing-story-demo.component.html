@@ -12,12 +12,8 @@
   <span>{{ 'landing.demo.titleStart' | t }}<br /><strong>{{ 'landing.demo.titleEnd' | t }}</strong></span>
 </div>
 <div class="story-player__game" [class.story-player__game--ended]="demoCompleted">
-  @if (showDemo) {
-    <polo-game
-      mode="single"
-      (onSelectAnswer)="demoStarted = true"
-      (onEndGame)="demoCompleted = true"
-    ></polo-game>
+  @if (showDemo && game) {
+    <polo-story-player [game]="game" mode="single"></polo-story-player>
   }
 </div>
 @if (demoCompleted) {

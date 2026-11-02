@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnChanges, OnDestroy, SimpleChang
 import type { Editor } from '@tiptap/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { createStoryEditor } from './story-editor-runtime'
-import { storyEditorHtml, storyEditorValue } from './story-editor-html'
+import { storyEditorValue } from './story-editor-html'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { RichTextToolbarComponent } from './rich-text-toolbar.component'
 
@@ -51,7 +51,7 @@ export class RichTextEditorComponent implements AfterViewInit, OnChanges, OnDest
       this.cancelSave()
       this.dirty = false
       this.lastText = this.text()
-      this.editor.commands.setContent(storyEditorHtml(this.text(), this.activeStory.entireTree().refs), { emitUpdate: false })
+      this.editor.commands.setContent(this.text(), { emitUpdate: false })
     }
   }
 
@@ -62,7 +62,6 @@ export class RichTextEditorComponent implements AfterViewInit, OnChanges, OnDest
     this.editor = createStoryEditor({
       element: this.surface.nativeElement,
       content: this.text(),
-      refs: this.activeStory.entireTree().refs,
       label: this.label(),
       placeholder: this.placeholder(),
       inlineOnly: this.inlineOnly(),

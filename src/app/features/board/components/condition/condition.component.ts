@@ -28,10 +28,7 @@ export class ConditionComponent {
 
   @Input() conditionId: string = ''
   @Input() fallback: boolean = false
-  @Input() selectedRef: string = ''
-  @Input() comparator: string = ''
-  @Input() value: number = 0
-  @Input() rules?: node_condition_rule[]
+  @Input() rules: node_condition_rule[] = []
   @Input() routeNumber: number = 1
   @Input() routeCount: number = 1
   @Input() hasJoin: boolean = false
@@ -43,18 +40,6 @@ export class ConditionComponent {
     private storyEditor: StoryEditorService,
     private storyReferences: StoryReferencesService
   ) {}
-
-  get displayedRules(): node_condition_rule[] {
-    return (
-      this.rules ?? [
-        {
-          ref: this.selectedRef,
-          comparator: this.comparator,
-          value: this.value,
-        },
-      ]
-    )
-  }
 
   isProperty(refId?: string) {
     return this.refOptions.some(

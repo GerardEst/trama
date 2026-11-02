@@ -95,7 +95,6 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
     const editor = runtime.createStoryEditor({
       element: preview,
       content: this.currentHtml,
-      refs: this.activeStory.entireTree().refs,
       label: this.label(),
       placeholder: this.placeholderText(),
       inlineOnly: this.inlineOnly(),

@@ -6,7 +6,6 @@ import { NodeAddRequirementComponent } from '../context-menus/node-add-requireme
 import { answer_requirement } from 'src/app/core/interfaces/interfaces'
 import { StoryEditorService } from '../../../services/story-editor.service'
 import { RequirementChange } from '../../../services/story-logic-changes'
-import { getRequirementRefId } from 'src/app/shared/utils/story-requirements'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { ContextualButtonComponent } from 'src/app/shared/components/ui/contextual-button/contextual-button.component'
 import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
@@ -34,6 +33,6 @@ export class NodeRequirementsComponent {
   }
 
   getRefId(requirement: answer_requirement): string {
-    return getRequirementRefId(requirement) ?? ''
+    return requirement.target
   }
 }

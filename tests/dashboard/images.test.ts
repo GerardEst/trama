@@ -9,11 +9,11 @@ const authorId = '00000000-0000-4000-8000-000000000033'
 const storyId = '00000000-0000-4000-8000-000000000034'
 const image = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=', 'base64')
 
-type ImageTree = { nodes: { id: string; image?: { path: string }; [key: string]: unknown }[] }
+type ImageTree = { entryPoint?: unknown; nodes: { id: string; image?: { path: string }; [key: string]: unknown }[] }
 
 async function mockImagesBackend(page: Page, holdUpload = false) {
   const user = { id: authorId, aud: 'authenticated', role: 'authenticated', email: 'images@example.com' }
-  let savedTree: ImageTree = { nodes: [
+  let savedTree: ImageTree = { entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [
     { id: 'node_0', type: 'content', text: 'Start', top: 5000, left: 5000 },
     { id: 'node_1', type: 'content', text: 'Illustrated node', top: 5000, left: 5340 },
   ] }

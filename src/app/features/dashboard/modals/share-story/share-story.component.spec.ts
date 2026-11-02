@@ -36,7 +36,10 @@ describe('ShareStoryComponent', () => {
       ],
     }).compileComponents()
     story = TestBed.inject(ActiveStoryService)
-    story.load('story-1', 'The island', { nodes: [{ id: 'node_0', type: 'end', text: 'Secret ending', top: 0, left: 0 }] })
+    story.load('story-1', 'The island', {
+      nodes: [{ id: 'node_0', type: 'end', text: 'Secret ending', top: 0, left: 0 }],
+      entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' },
+    })
     fixture = TestBed.createComponent(ShareStoryComponent)
     component = fixture.componentInstance
     fixture.detectChanges()

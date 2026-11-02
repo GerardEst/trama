@@ -4,7 +4,6 @@ import {
   storyReferenceUsage,
   tree,
 } from '../../core/interfaces/interfaces'
-import { getRequirementRefId } from '../utils/story-requirements'
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -208,21 +207,7 @@ export class ActiveStoryService {
   }
 
   private normalizeTree(storyTree: Partial<tree> | null | undefined): tree {
-    const normalized = structuredClone(storyTree ?? {})
-    // Temporary compatibility until existing stories have been migrated.
-    // Never reconnect an explicitly disconnected marker.
-    if (!normalized.entryPoint) {
-      const legacyStart = normalized.nodes?.find(node => node.id === 'node_0' && node.type !== 'group')
-      normalized.entryPoint = {
-        left: legacyStart ? (Number(legacyStart.left) || 0) - 180 : 5000,
-        // Above the existing graph so the marker does not cover a scene's controls.
-        top: legacyStart
-          ? Math.min(...(normalized.nodes ?? []).map(node => Number(node.top) || 0)) - 100
-          : 5000,
-        ...(legacyStart ? { targetNodeId: legacyStart.id } : {}),
-      }
-    }
-    return this.freezeTree(normalized)
+    return this.freezeTree(structuredClone(storyTree ?? {}))
   }
 
   private freezeTree(storyTree: Partial<tree>): tree {
@@ -241,7 +226,7 @@ export class ActiveStoryService {
       this.addEventUsages(usages, storyTree, node.id, node.events)
 
       for (const route of node.conditions ?? []) {
-        for (const rule of route.rules ?? [route]) {
+        for (const rule of route.rules ?? []) {
           if (rule.ref) {
             this.addUsage(usages, storyTree, rule.ref, node.id, 'requirement')
           }
@@ -250,7 +235,7 @@ export class ActiveStoryService {
 
       for (const answer of node.answers ?? []) {
         for (const requirement of answer.requirements ?? []) {
-          const refId = getRequirementRefId(requirement)
+          const refId = requirement.target
           if (!refId) continue
 
           this.addUsage(

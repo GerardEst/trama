@@ -6,7 +6,7 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { Router } from '@angular/router'
 import { SeparatorComponent } from 'src/app/shared/components/ui/separator/separator.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { stat } from 'src/app/core/interfaces/interfaces'
+import { result } from 'src/app/core/interfaces/interfaces'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 
@@ -50,20 +50,12 @@ export class StatisticsComponent implements OnInit {
     this.games = await this.stadistics.getGamesOf(this.storyId)
   }
 
-  getStatAmount(game: any, stat: any) {
-    const amount = game.result.stats.find(
-      (gameStat: any) => gameStat.id === stat.id
-    )?.amount
-
-    return amount
+  getStatAmount(game: { result: result }, ref: { id: string }) {
+    return game.result.stats[ref.id]
   }
 
-  getConditionValue(game: any, condition: any) {
-    const isConditionPresent = game.result.conditions.find(
-      (gameStat: any) => gameStat.id === condition.id
-    )
-
-    return isConditionPresent ? '✅' : '❌'
+  getConditionValue(game: { result: result }, ref: { id: string }) {
+    return game.result.conditions.includes(ref.id) ? '✅' : '❌'
   }
 
   normalizeDate(date: Date) {

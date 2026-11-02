@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryEditorService } from '../board/services/story-editor.service'
 import { RichTextEditorComponent } from '../board/components/rich-text/rich-text-editor.component'
-import { PlayerService } from '../playground/services/player.service'
+import { GameSessionService } from '../playground/services/game-session.service'
 import { LinearEditorComponent } from './linear-editor.component'
 
 const original = '<p>Hello <span data-trama-variable="" data-kind="property" data-key="name">#name</span></p>'
@@ -43,7 +43,7 @@ describe('LinearEditorComponent', () => {
       providers: [{ provide: StoryEditorService, useValue: editor }],
     })
     story = TestBed.inject(ActiveStoryService)
-    story.load('story', 'Story', { nodes: [
+    story.load('story', 'Story', { entryPoint: { left: 0, top: 0, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', top: 0, left: 0, text: original,
         events: [{ id: 'name', type: 'property', action: 'alterProperty', target: 'name', amount: '', property: 'Ada' }],
         answers: [
@@ -88,9 +88,29 @@ describe('LinearEditorComponent', () => {
     expect(host.querySelector('.authorSheet')!.textContent).not.toContain('Hello')
   })
 
-  it('isolates the test player from the application player', () => {
-    expect(TestBed.inject(PlayerService).playerProperties()).toEqual({})
+  it('keeps the test player inside its own preview session', () => {
+    expect(TestBed.inject(GameSessionService, null)).toBeNull()
+    expect(component.session.player().properties).toEqual({ name: 'Ada' })
     expect(component.currentNodes()[0].text).toContain('Ada')
+  })
+
+  it('stops at automatic joins while editing and continues on request', async () => {
+    story.load('automatic', 'Story', { entryPoint: { left: 0, top: 0, targetNodeId: 'node_0' }, nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0, text: 'First', join: [{ node: 'node_1' }] },
+      { id: 'node_1', type: 'content', top: 0, left: 0, text: 'Second', join: [{ node: 'node_2' }] },
+      { id: 'node_2', type: 'end', top: 0, left: 0, text: 'Last' },
+    ] })
+    fixture.detectChanges()
+    expect(component.session.currentNodeId()).toBe('node_2')
+    await edit()
+    component.restart()
+    fixture.detectChanges()
+    expect(component.session.currentNodeId()).toBe('node_0')
+    component.continueAutomatic()
+    expect(component.session.currentNodeId()).toBe('node_1')
+    component.toggleEditing()
+    component.continueAutomatic()
+    expect(component.session.currentNodeId()).toBe('node_2')
   })
 
   it('enables the passage and every answer as plain writing surfaces with exactly one toolbar', async () => {
@@ -178,7 +198,7 @@ describe('LinearEditorComponent', () => {
   it('rejects stale saves and resets to preview when changing stories with matching node IDs', async () => {
     await edit()
     const field = editors()[0]
-    story.load('other', 'Other', { nodes: [{ id: 'node_0', type: 'content', text: 'Other', top: 0, left: 0 }] })
+    story.load('other', 'Other', { entryPoint: { left: 0, top: 0, targetNodeId: 'node_0' }, nodes: [{ id: 'node_0', type: 'content', text: 'Other', top: 0, left: 0 }] })
     field.saved.emit('Old draft')
     expect(editor.updateNodeText).not.toHaveBeenCalled()
     expect(component.editing()).toBeFalse()

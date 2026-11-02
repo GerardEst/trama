@@ -9,7 +9,7 @@ for (const cumulativeMode of [false, true]) {
       tracking: false, sharing: false, tapLink: false, footer: {}, cumulativeMode,
       tree: {
         refs: {}, categories: [],
-        nodes: [
+        entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' }, nodes: [
           {
             id: 'node_0', top: 0, left: 0, text: 'Start here',
             answers: [

@@ -83,15 +83,15 @@ describe('NodeRequirementsComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('delegates deletion of a legacy requirement without mutating its input', () => {
+  it('delegates deletion of a requirement without mutating its input', () => {
     component.answerId = 'answer_0_0'
     component.requirements = [
-      { id: 'condition_1', type: 'condition', amount: 1 },
+      { target: 'condition_1', type: 'condition', amount: 1 },
     ]
 
     component.deleteRequirement('condition_1')
 
-    expect(component.requirements).toEqual([{ id: 'condition_1', type: 'condition', amount: 1 }])
+    expect(component.requirements).toEqual([{ target: 'condition_1', type: 'condition', amount: 1 }])
     expect(storyEditor.deleteAnswerRequirement).toHaveBeenCalledOnceWith('answer_0_0', 'condition_1')
   })
 
@@ -106,9 +106,9 @@ describe('NodeRequirementsComponent', () => {
     })
   })
 
-  it('delegates edits of legacy id-only requirements', () => {
+  it('delegates edits that change the requirement target', () => {
     component.answerId = 'answer_0_0'
-    component.requirements = [{ id: 'stat_1', type: 'stat', amount: 1 }]
+    component.requirements = [{ target: 'stat_1', type: 'stat', amount: 1 }]
 
     component.saveRequirement({
       target: 'stat_2',
@@ -117,7 +117,7 @@ describe('NodeRequirementsComponent', () => {
       amount: '2',
     })
 
-    expect(component.requirements).toEqual([{ id: 'stat_1', type: 'stat', amount: 1 }])
+    expect(component.requirements).toEqual([{ target: 'stat_1', type: 'stat', amount: 1 }])
     expect(storyEditor.upsertAnswerRequirement).toHaveBeenCalledOnceWith('answer_0_0', {
       target: 'stat_2', previousValue: 'stat_1', type: 'stat', amount: '2',
     })

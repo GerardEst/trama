@@ -1,39 +1,30 @@
-import { I18nService } from 'src/app/core/i18n/i18n.service'
-import { join } from 'src/app/core/interfaces/interfaces'
-import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { GameEngineService } from '../playground/services/game-engine.service'
-import { PlayerService } from '../playground/services/player.service'
+import { applyEvents, distribute, loadStory, PlayerState, renderScene, StoryJoin } from '@trama/engine'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from './exampleStory'
+
+const emptyPlayer = (): PlayerState => ({ properties: {}, stats: {}, conditions: [] })
 
 describe('The Last Threshold demo', () => {
   for (const [lang, copy] of Object.entries(EXAMPLE_STORY_COPY)) {
     it(`finishes every available ${lang} path in four short rich-text scenes without dead ends or unresolved variables`, () => {
       const exampleStory = buildExampleStory(copy)
-      const story = new ActiveStoryService()
-      const player = new PlayerService()
-      const engine = new GameEngineService(player, story, new I18nService())
-      story.load('', copy.title, exampleStory)
+      const story = loadStory(exampleStory)
       const reached = new Set<string>()
       const endings = new Set<string>()
 
-      const visit = (joins: join[], scenes: number, depth: number, words: number) => {
+      const visit = (joins: readonly StoryJoin[], scenes: number, depth: number, words: number, before: PlayerState) => {
         // A broken join or cycle must fail rather than hang the test.
         if (!joins.length || depth > exampleStory.nodes.length) {
           throw new Error('The demo has a dead end or a cycle')
         }
         for (const next of joins) {
-          const properties = structuredClone(player.playerProperties())
-          const stats = structuredClone(player.playerStats())
-          const conditions = structuredClone(player.playerConditions())
-          const activeNode = engine.buildNextNodeFromJoin(next)
+          const activeNode = story.node(next.node)!
           reached.add(activeNode.id)
-          engine.applyEvents(activeNode.events ?? [])
+          const player = applyEvents(before, activeNode.events).player
 
           if (activeNode.type === 'distributor') {
-            visit(engine.distributeNode(activeNode), scenes, depth + 1, words)
+            visit(distribute(activeNode, player), scenes, depth + 1, words, player)
           } else {
-            engine.filterAvailableAnswers(activeNode)
-            const rendered = engine.interpolateNodeTexts(activeNode)
+            const rendered = renderScene(story, activeNode.id, next, player)!
             const document = new DOMParser().parseFromString(rendered.text, 'text/html')
             const text = document.body.textContent ?? ''
             const totalWords = words + text.trim().split(/\s+/).length
@@ -43,43 +34,28 @@ describe('The Last Threshold demo', () => {
             expect(rendered.text).not.toMatch(/#(?:property|stat|condition)_/)
             expect(rendered.text).not.toContain(' -')
             if (activeNode.id === 'node_8' || activeNode.id === 'node_9' || activeNode.id === 'node_10') {
-              expect(text).toContain(player.playerProperties()['property_title'])
+              expect(text).toContain(player.properties['property_title'])
             }
             if (activeNode.type === 'end') {
               expect(scenes + 1).toBe(4)
               expect(totalWords).toBeLessThanOrEqual(240)
               if (activeNode.id !== 'node_14') {
-                expect(text).toContain(player.playerProperties()['property_deed'])
+                expect(text).toContain(player.properties['property_deed'])
               }
               endings.add(activeNode.id)
             } else {
               expect(rendered.answers.length).toBeGreaterThan(0)
               expect(rendered.answers.length).toBeLessThanOrEqual(3)
-              const answerState = {
-                properties: structuredClone(player.playerProperties()),
-                stats: structuredClone(player.playerStats()),
-                conditions: structuredClone(player.playerConditions()),
-              }
               for (const answer of rendered.answers) {
-                player.playerProperties.set(
-                  structuredClone(answerState.properties)
-                )
-                player.playerStats.set(structuredClone(answerState.stats))
-                player.playerConditions.set(
-                  structuredClone(answerState.conditions)
-                )
-                engine.applyEvents(answer.events ?? [])
-                visit(answer.join ?? [], scenes + 1, depth + 1, totalWords)
+                const source = activeNode.answers!.find(candidate => candidate.id === answer.id)!
+                visit(source.join ?? [], scenes + 1, depth + 1, totalWords, applyEvents(player, source.events).player)
               }
             }
           }
-          player.playerProperties.set(properties)
-          player.playerStats.set(stats)
-          player.playerConditions.set(conditions)
         }
       }
 
-      visit([{ node: 'node_0' }], 0, 0, 0)
+      visit([{ node: 'node_0' }], 0, 0, 0, emptyPlayer())
       expect(exampleStory.nodes.length).toBe(12)
       expect(reached.size).toBe(exampleStory.nodes.length)
       expect(endings.size).toBe(3)
@@ -95,23 +71,20 @@ describe('The Last Threshold demo', () => {
         { path: 2, choice: 1, encounter: 'node_10', condition: undefined },
       ]
       for (const route of routes) {
-        const story = new ActiveStoryService()
-        const player = new PlayerService()
-        const engine = new GameEngineService(player, story, new I18nService())
-        story.load('', copy.title, buildExampleStory(copy))
-        const entry = engine.buildNextNodeFromJoin({ node: 'node_0' })
-        const path = entry.answers?.[route.path]
-        engine.applyEvents(path?.events ?? [])
-        const obstacle = engine.buildNextNodeFromJoin(path?.join?.[0] ?? { node: '' })
+        const story = loadStory(buildExampleStory(copy))
+        let player = applyEvents(emptyPlayer(), story.node('node_0')!.events).player
+        const path = story.node('node_0')!.answers?.[route.path]
+        player = applyEvents(player, path?.events).player
+        const obstacle = story.node(path?.join?.[0]?.node ?? '')!
+        player = applyEvents(player, obstacle.events).player
         const choice = obstacle.answers?.[route.choice]
-        engine.applyEvents(choice?.events ?? [])
-        const distributor = engine.buildNextNodeFromJoin(choice?.join?.[0] ?? { node: '' })
+        player = applyEvents(player, choice?.events).player
+        const distributor = story.node(choice?.join?.[0]?.node ?? '')!
+        player = applyEvents(player, distributor.events).player
 
         expect(distributor.type).toBe('distributor')
-        expect(player.playerConditions().map(condition => condition.id)).toEqual(
-          route.condition ? [route.condition] : []
-        )
-        expect(engine.distributeNode(distributor)).toEqual([{ node: route.encounter }])
+        expect(player.conditions).toEqual(route.condition ? [route.condition] : [])
+        expect(distribute(distributor, player)).toEqual([{ node: route.encounter }])
       }
     })
   }

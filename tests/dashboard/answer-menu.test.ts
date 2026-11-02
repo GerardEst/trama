@@ -8,7 +8,7 @@ test('answer menu adds logic, keeps pills editable and persists display settings
   const storyId = '00000000-0000-4000-8000-000000000009'
   const user = { id: authorId, email: 'answer-menu@example.com', aud: 'authenticated', role: 'authenticated' }
   let persisted: tree = {
-    nodes: [{ id: 'node_0', type: 'content', text: 'Choose a path', top: 5000, left: 5000, answers: [
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [{ id: 'node_0', type: 'content', text: 'Choose a path', top: 5000, left: 5000, answers: [
       { id: 'answer_0_0', text: 'Enter the door', join: [{ node: 'node_1' }] },
       { id: 'answer_0_1', text: 'Leave', join: [{ node: 'node_1' }] },
     ] }, { id: 'node_1', type: 'end', text: 'End', top: 5000, left: 5500 }],

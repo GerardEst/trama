@@ -1,228 +1,83 @@
 import { computed, effect, Injectable, OnDestroy, signal, untracked } from '@angular/core'
-import { Subject } from 'rxjs'
-import { join, node, node_answer, tree } from 'src/app/core/interfaces/interfaces'
+import { createGame, Game, GameState, loadStory, PlayerState } from '@trama/engine'
+import { tree } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { GameEngineService } from './game-engine.service'
-import { GameSessionEvent, GameSessionProblem, GameVisit, PlayableNode, TextContinuation } from './game-session.types'
-import { PlayerService } from './player.service'
+
+const EMPTY_PLAYER: PlayerState = { properties: {}, stats: {}, conditions: [] }
 
 /**
- * One playthrough, scoped to its host. Rules live in GameEngineService; display
- * modes and authoring controls do not belong here. Checkpoints capture what
- * happened, not what today's edited rules would have allowed to happen.
+ * Live preview of the active story for the editors, on top of @trama/engine.
+ * Follows edits without losing the playthrough: joins and answers come from the
+ * latest tree, and removing the current node rewinds to the last visit that
+ * still exists. Checkpoints capture what happened, not what today's edited
+ * rules would have allowed. Switching stories starts over.
  */
 @Injectable()
 export class GameSessionService implements OnDestroy {
-  private readonly recordedVisits = signal<GameVisit[]>([])
-  private readonly position = signal(-1)
-  private readonly sessionProblem = signal<GameSessionProblem>(null)
+  private game?: Game
+  private unsubscribe?: () => void
   private storyId?: string
-  private nextVisitId = 0
-  private step = 0
-  private initialized = false
-  private generation = 0
-  private transition?: ReturnType<typeof setTimeout>
-  private automaticCount = 0
-  private readonly eventSubject = new Subject<GameSessionEvent>()
+  private autoAdvance = true
+  private readonly state = signal<GameState | undefined>(undefined)
 
-  readonly events = this.eventSubject.asObservable()
-  readonly visits = this.recordedVisits.asReadonly()
-  readonly cursor = this.position.asReadonly()
-  readonly problem = this.sessionProblem.asReadonly()
+  /** The active tree as the engine reads it. Editor trees are frozen, so this does not copy them. */
+  readonly story = computed(() => loadStory(this.activeStory.entireTree()))
+  readonly visits = computed(() => this.state()?.visits ?? [])
+  readonly cursor = computed(() => this.state()?.cursor ?? -1)
+  readonly problem = computed(() => this.state()?.problem ?? null)
+  readonly player = computed(() => this.state()?.player ?? EMPTY_PLAYER)
   readonly currentVisit = computed(() => this.visits()[this.cursor()])
   readonly currentNodeId = computed(() => this.currentVisit()?.nodeId)
-  readonly canGoBack = computed(() => this.previousExistingIndex() >= 0)
-  readonly activeNodes = computed(() => {
-    const current = this.currentVisit()
-    return current ? this.visits().slice(0, this.cursor() + 1)
-      .filter(visit => visit.step === current.step).map(visit => visit.rendered) : []
-  })
-  readonly inactiveNodes = computed(() => {
-    const current = this.currentVisit()
-    return current ? this.visits().slice(0, this.cursor() + 1)
-      .filter(visit => visit.step < current.step).map(visit => visit.rendered) : []
+  readonly canGoBack = computed(() => {
+    const story = this.story()
+    return this.visits().slice(0, Math.max(this.cursor(), 0)).some(visit => !!story.node(visit.nodeId))
   })
 
-  constructor(
-    private engine: GameEngineService,
-    private player: PlayerService,
-    private story: ActiveStoryService
-  ) {
+  constructor(private activeStory: ActiveStoryService) {
     effect(() => {
-      const id = this.story.storyId()
-      const tree = this.story.entireTree()
-      untracked(() => this.synchronize(id, tree))
+      const id = this.activeStory.storyId()
+      const storyTree = this.activeStory.entireTree()
+      this.story()
+      untracked(() => this.synchronize(id, storyTree))
     }, { allowSignalWrites: true })
   }
 
   ngOnDestroy() {
-    this.cancelTransition()
-    this.eventSubject.complete()
+    this.unsubscribe?.()
   }
 
-  initialize() {
-    if (this.initialized) return
-    const initial = this.story.initialNode()
-    if (!initial) {
-      this.sessionProblem.set('missingStart')
-      return
-    }
-    this.initialized = true
-    this.nextStep([{ node: initial.id }])
+  restart() { this.play(game => game.restart()) }
+  selectAnswer(answerId: string) { this.play(game => game.choose(answerId)) }
+  continueFlow(value: string) { this.play(game => game.submitText(value)) }
+  /** Follows the current node's automatic join, within the same step. */
+  advance() { this.play(game => game.advance()) }
+  back() { this.play(game => game.back()) }
+  goToVisit(index: number) { this.play(game => game.goTo(index)) }
+
+  /** While editing, the preview stops at every node instead of following automatic joins. */
+  setAutoAdvance(enabled: boolean) {
+    this.autoAdvance = enabled
+    this.game?.setAutoAdvance(enabled)
   }
 
-  restart() {
-    this.reset()
-    this.initialize()
+  /** Acts on the latest tree, even if an edit has not reached the effect yet. */
+  private play(action: (game: Game) => void) {
+    this.synchronize(this.activeStory.storyId(), this.activeStory.entireTree())
+    if (this.game) action(this.game)
   }
 
-  selectAnswer(answer: node_answer) {
-    const state = this.player.snapshot()
-    if (!answer.join?.length || !this.engine.playerHasAnswerRequirements(
-      state.properties, state.stats, state.conditions, answer.requirements
-    )) return
-    this.markCurrent({ selectedAnswerId: answer.id })
-    this.engine.applyEvents(answer.events ?? [])
-    this.eventSubject.next({ type: 'answer', answer })
-    this.nextStep(answer.join)
-  }
-
-  continueFlow(info: TextContinuation) {
-    if (!info.join?.length) return
-    this.markCurrent({ userResponse: info.value })
-    this.engine.alterProperty(info.property, info.value)
-    this.nextStep(info.join)
-  }
-
-  /** Explicit navigation starts a new automatic-chain budget. */
-  nextStep(joins: join[], addToCurrentStep = false) {
-    this.cancelTransition()
-    this.automaticCount = 0
-    if (!joins.length) return
-    this.recordedVisits.update(visits => visits.slice(0, this.cursor() + 1))
-    this.step = addToCurrentStep ? (this.currentVisit()?.step ?? this.step) : this.step + 1
-    this.sessionProblem.set(null)
-    this.enter(joins)
-  }
-
-  back() {
-    this.goToVisit(this.previousExistingIndex())
-  }
-
-  goToVisit(index: number) {
-    const visit = this.visits()[index]
-    if (!visit || index > this.cursor() || !this.existingNode(visit.nodeId)) return
-    this.cancelTransition()
-    this.sessionProblem.set(null)
-    this.position.set(index)
-    this.player.restore(visit.player)
-    this.step = visit.step
-    // Restoring a checkpoint never repeats arrival events or automatic joins.
-  }
-
-  pause() {
-    this.cancelTransition()
-  }
-
-  private enter(joins: join[]) {
-    if (!joins.length) return
-    if (++this.automaticCount > 256) {
-      this.sessionProblem.set('automaticLoop')
-      return
-    }
-
-    let rendered: PlayableNode
-    let entry: join
-    try {
-      entry = this.engine.getRandomJoin(joins)
-      rendered = this.engine.buildNextNodeFromJoin(entry)
-    } catch {
-      this.sessionProblem.set('missingNode')
-      return
-    }
-
-    this.engine.applyEvents(rendered.events ?? [])
-    if (rendered.type === 'distributor') {
-      this.scheduleFrom(rendered, true)
-      return
-    }
-
-    this.engine.filterAvailableAnswers(rendered)
-    rendered = this.engine.interpolateNodeTexts(rendered)
-    const id = ++this.nextVisitId
-    rendered.key = id
-    const visit: GameVisit = {
-      id, nodeId: rendered.id, step: this.step, entry: structuredClone(entry),
-      player: this.player.snapshot(), rendered,
-    }
-    this.recordedVisits.update(visits => [...visits, visit])
-    this.position.set(this.visits().length - 1)
-    this.eventSubject.next({ type: 'node', node: rendered })
-    if (rendered.type === 'end') this.eventSubject.next({ type: 'end' })
-    if (rendered.join?.length && rendered.type !== 'text') this.scheduleFrom(rendered, false)
-  }
-
-  private scheduleFrom(origin: node, distributor: boolean) {
-    const generation = this.generation
-    const storyId = this.story.storyId()
-    // Yield, not animate. Re-read joins so edits made before this task runs win.
-    this.transition = setTimeout(() => {
-      this.transition = undefined
-      if (generation !== this.generation || storyId !== this.story.storyId()) return
-      const latest = this.existingNode(origin.id)
-      if (!latest) {
-        this.sessionProblem.set('missingNode')
-        return
-      }
-      const joins = distributor ? this.engine.distributeNode(latest) : latest.join ?? []
-      this.enter(joins)
-    })
-  }
-
-  private synchronize(id: string, tree: tree) {
-    if (this.storyId !== id) {
+  private synchronize(id: string, storyTree: tree) {
+    const story = this.story()
+    if (!this.game || this.storyId !== id) {
       this.storyId = id
-      this.reset()
+      this.unsubscribe?.()
+      const game = createGame(story, { autoAdvance: this.autoAdvance })
+      this.unsubscribe = game.subscribe(event => { if (event.type === 'state') this.state.set(event.state) })
+      this.game = game
+      this.state.set(game.getState())
+    } else {
+      this.game.updateStory(story)
     }
-    const current = this.currentVisit()
-    if (current && !this.existingNode(current.nodeId)) {
-      const previous = this.previousExistingIndex()
-      if (previous >= 0) this.goToVisit(previous)
-      else this.restart()
-    } else if (!this.initialized && tree.entryPoint) {
-      this.initialize()
-    }
-  }
-
-  private existingNode(id: string) {
-    return this.story.entireTree().nodes.find(node => node.id === id && node.type !== 'group')
-  }
-
-  private previousExistingIndex() {
-    for (let index = this.cursor() - 1; index >= 0; index--) {
-      if (this.existingNode(this.visits()[index].nodeId)) return index
-    }
-    return -1
-  }
-
-  private markCurrent(values: { selectedAnswerId?: string; userResponse?: string }) {
-    this.recordedVisits.update(visits => visits.map((visit, index) => index === this.cursor()
-      ? { ...visit, rendered: { ...visit.rendered, ...values } } : visit))
-  }
-
-  private reset() {
-    this.cancelTransition()
-    this.recordedVisits.set([])
-    this.position.set(-1)
-    this.sessionProblem.set(null)
-    this.player.reset()
-    this.initialized = false
-    this.step = 0
-  }
-
-  private cancelTransition() {
-    this.generation++
-    if (this.transition !== undefined) clearTimeout(this.transition)
-    this.transition = undefined
+    if (!this.state()?.started && storyTree.entryPoint) this.game.start()
   }
 }

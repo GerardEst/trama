@@ -48,6 +48,7 @@ describe('StoryEditorService', () => {
           type: 'end',
         },
       ],
+      entryPoint: { left: -180, top: -100, targetNodeId: 'node_0' },
     })
   })
 
@@ -122,9 +123,9 @@ describe('StoryEditorService', () => {
       .toEqual(activeStory.entireTree().nodes[0].answers![0].requirements)
   })
 
-  it('replaces legacy requirements in place and removes target collisions', async () => {
+  it('replaces requirements in place and removes target collisions', async () => {
     editor.saveAnswerRequirements('answer_0_0', [
-      { id: 'stat_gold', type: 'stat', amount: 1 },
+      { target: 'stat_gold', type: 'stat', amount: 1 },
       { target: 'condition_key', type: 'condition', amount: 1 },
       { target: 'stat_health', type: 'stat', amount: 2 },
     ])
@@ -135,7 +136,7 @@ describe('StoryEditorService', () => {
       { target: 'condition_key', type: 'condition', amount: 0 },
       { target: 'stat_health', type: 'stat', amount: 2 },
     ])
-    editor.saveAnswerRequirements('answer_0_0', [{ id: 'condition_key', type: 'condition', amount: 1 }])
+    editor.saveAnswerRequirements('answer_0_0', [{ target: 'condition_key', type: 'condition', amount: 1 }])
     editor.deleteAnswerRequirement('answer_0_0', 'condition_key')
     await Promise.resolve()
     expect(activeStory.entireTree().nodes[0].answers![0].requirements).toEqual([])
@@ -541,7 +542,16 @@ describe('StoryEditorService', () => {
     })
   })
 
-  it('adds AND rules to a legacy route without changing its connection', () => {
+  it('creates routes with one empty rule', () => {
+    activeStory.load('story-1', 'Story', { nodes: [{ id: 'node_0', top: 0, left: 0, type: 'distributor' }] })
+    editor.createNodeCondition('node_0', 'condition_0_0')
+    editor.updateConditionValues('condition_0_0', { ref: 'stat_gold', comparator: 'morethan', value: 3 })
+    expect(activeStory.entireTree().nodes[0].conditions).toEqual([
+      { id: 'condition_0_0', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 3 }] },
+    ])
+  })
+
+  it('adds AND rules to a route without changing its connection', () => {
     activeStory.load('story-1', 'Story', {
       nodes: [
         {
@@ -552,9 +562,7 @@ describe('StoryEditorService', () => {
           conditions: [
             {
               id: 'condition_0_0',
-              ref: 'stat_gold',
-              comparator: 'morethan',
-              value: 3,
+              rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 3 }],
               join: [{ node: 'node_1' }],
             },
           ],
@@ -590,7 +598,7 @@ describe('StoryEditorService', () => {
       nodes: [{
         id: 'node_0', top: 0, left: 0, type: 'distributor',
         conditions: [
-          { id: 'condition_0_0', ref: 'stat_gold', comparator: 'morethan', value: 3, join: [{ node: 'node_1' }] },
+          { id: 'condition_0_0', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 3 }], join: [{ node: 'node_1' }] },
           { id: 'condition_0_1', rules: [{ ref: 'condition_key', comparator: 'equalto', value: 1 }], join: [{ node: 'node_2', toAnswer: true }] },
           { id: 'condition_0_2', rules: [{ ref: 'stat_gold', comparator: 'equalto', value: 0 }] },
         ],
@@ -611,7 +619,7 @@ describe('StoryEditorService', () => {
   it('rejects unchanged, invalid, cross-node and fallback route moves without saving', () => {
     activeStory.load('story-1', 'Story', {
       nodes: [{ id: 'node_0', top: 0, left: 0, type: 'distributor',
-        conditions: [{ id: 'condition_0_0' }], fallbackCondition: { id: 'condition_0_fallback' } }],
+        conditions: [{ id: 'condition_0_0', rules: [] }], fallbackCondition: { id: 'condition_0_fallback' } }],
     })
     const before = activeStory.entireTree()
     const save = TestBed.inject(DatabaseService).saveTreeToDB as jasmine.Spy
@@ -634,8 +642,8 @@ describe('StoryEditorService', () => {
           left: 0,
           type: 'distributor',
           conditions: [
-            { id: 'condition_0_0', join: [{ node: 'node_1' }] },
-            { id: 'condition_0_1', join: [{ node: 'node_2' }] },
+            { id: 'condition_0_0', rules: [], join: [{ node: 'node_1' }] },
+            { id: 'condition_0_1', rules: [], join: [{ node: 'node_2' }] },
           ],
         },
       ],

@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren, computed, effect, output, signal, untracked } from '@angular/core'
+import { renderScene } from '@trama/engine'
 import { node_answer } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryEditorService } from '../board/services/story-editor.service'
 import { RichTextEditorComponent } from '../board/components/rich-text/rich-text-editor.component'
 import { RichTextToolbarComponent } from '../board/components/rich-text/rich-text-toolbar.component'
 import { GameNodeComponent } from '../playground/components/game/components/game-node/game-node.component'
-import { GameEngineService } from '../playground/services/game-engine.service'
 import { GameSessionService } from '../playground/services/game-session.service'
-import { PlayerService } from '../playground/services/player.service'
+import { sceneToPlayableNode } from '../playground/services/engine-adapter'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
 
 /** Preview by default; editing turns the same node into a sheet with one shared toolbar. */
@@ -16,7 +17,7 @@ import { storyPlainText } from 'src/app/shared/utils/story-html'
   selector: 'polo-linear-editor',
   standalone: true,
   imports: [GameNodeComponent, RichTextEditorComponent, RichTextToolbarComponent, TranslatePipe],
-  providers: [PlayerService, GameEngineService, GameSessionService],
+  providers: [GameSessionService],
   templateUrl: './linear-editor.component.html',
   styleUrl: './linear-editor.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,9 +45,11 @@ export class LinearEditorComponent implements OnDestroy {
   readonly currentNodes = computed(() => {
     const source = this.sourceNode()
     const visit = this.session.currentVisit()
-    if (!source || !visit) return []
-    const rendered = this.engine.renderNode(source, visit.entry, visit.player)
-    return [{ ...rendered, key: visit.id, source, storyId: this.story.storyId(),
+    // Refresh the visit with the latest edits, using the state it was reached with.
+    const scene = visit && renderScene(this.session.story(), visit.nodeId, visit.entry, visit.player)
+    if (!source || !visit || !scene) return []
+    const rendered = sceneToPlayableNode(scene, source, this.i18n, { key: visit.id })
+    return [{ ...rendered, source, storyId: this.story.storyId(),
       authoredAnswers: (source.answers ?? []).map((answer, index) => {
         const playable = rendered.answers?.find(candidate => candidate.id === answer.id)
         return { source: answer, index, text: playable?.text ?? answer.text ?? '', disabled: !playable?.join?.length }
@@ -61,13 +64,17 @@ export class LinearEditorComponent implements OnDestroy {
   constructor(
     public story: ActiveStoryService,
     public session: GameSessionService,
-    private engine: GameEngineService,
-    private editor: StoryEditorService
+    private editor: StoryEditorService,
+    private i18n: I18nService
   ) {
+    // While editing, the preview stops at every node so each one can be corrected.
+    effect(() => {
+      const editing = this.editing()
+      untracked(() => this.session.setAutoAdvance(!editing))
+    })
     effect(() => {
       const visit = this.session.currentVisit()
       const following = this.followNode()
-      if (this.editing()) untracked(() => this.session.pause())
       untracked(() => {
         this.highlightedNodeChanged.emit(following ? visit?.nodeId : undefined)
         if (visit && following) this.nodeRequested.emit(visit.nodeId)
@@ -88,7 +95,7 @@ export class LinearEditorComponent implements OnDestroy {
     this.commitEdits()
     this.editingStoryId.set(this.editing() ? undefined : this.story.storyId())
     this.selectedEditor.set(undefined)
-    if (this.editing()) this.session.pause()
+    this.session.setAutoAdvance(!this.editing())
   }
 
   activateEditor(editor: RichTextEditorComponent) {
@@ -108,19 +115,18 @@ export class LinearEditorComponent implements OnDestroy {
     if (this.editing()) return
     this.commitEdits()
     const current = this.currentNodes()[0]?.authoredAnswers.find(candidate => candidate.source.id === answer.id)
-    if (current && !current.disabled) this.session.selectAnswer(current.source)
+    if (current && !current.disabled) this.session.selectAnswer(current.source.id)
   }
 
   continueFlow(value: string) {
     if (this.editing()) return
     this.commitEdits()
-    const node = this.sourceNode()
-    if (node) this.session.continueFlow({ value, property: node.userTextOptions?.property ?? '', join: node.join })
+    this.session.continueFlow(value)
   }
 
   continueAutomatic() {
     this.commitEdits()
-    this.session.nextStep(this.sourceNode()?.join ?? [], true)
+    this.session.advance()
   }
 
   back() {

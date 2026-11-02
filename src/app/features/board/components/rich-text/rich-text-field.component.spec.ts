@@ -128,36 +128,6 @@ describe('RichTextFieldComponent', () => {
     expect(getComputedStyle(editedParagraph).overflowWrap).toBe(wordWrap)
   })
 
-  it('preserves literal newlines from an existing text in inline and focus editing', async () => {
-    fixture.componentRef.setInput('text', 'First line\nSecond line\n\nFourth line')
-    fixture.detectChanges()
-    const field = fixture.componentInstance
-    const save = jasmine.createSpy('save')
-    field.saved.subscribe(save)
-    const expected = '<p>First line<br>Second line<br><br>Fourth line</p>'
-    await editInline()
-    expect(field.inlineEditor?.getHTML()).toBe(expected)
-    field.open()
-    fixture.detectChanges()
-    const [block] = await fixture.getDeferBlocks()
-    await block.render(DeferBlockState.Complete)
-    fixture.detectChanges()
-    const dialog = (fixture.nativeElement as HTMLElement).querySelector('dialog') as HTMLDialogElement
-    expect(dialog.querySelector('.richTextEditor__content')?.innerHTML).toBe(expected)
-    const closed = new Promise<void>(resolve => dialog.addEventListener('close', () => resolve(), { once: true }))
-    dialog.close()
-    await closed
-    fixture.detectChanges()
-    expect(save).not.toHaveBeenCalled()
-  })
-
-  it('preserves visible line breaks inside an existing HTML paragraph', async () => {
-    fixture.componentRef.setInput('text', '<p>First line\nSecond line</p>')
-    fixture.detectChanges()
-    await editInline()
-    expect(fixture.componentInstance.inlineEditor?.getHTML()).toBe('<p>First line<br>Second line</p>')
-  })
-
   it('keeps the spacing after a heading with an empty paragraph when editing starts', async () => {
     fixture.componentRef.setInput('text', '<h2>A chapter heading</h2><p></p><p>The passage continues.</p>')
     fixture.detectChanges()

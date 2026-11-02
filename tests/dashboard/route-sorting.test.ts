@@ -6,12 +6,12 @@ test('distributor routes can be dragged and keyboard-sorted without moving the f
   const storyId = '00000000-0000-4000-8000-000000000004'
   const user = { id: '00000000-0000-4000-8000-000000000001', email: 'route-test@example.com', aud: 'authenticated', role: 'authenticated' }
   let persisted: tree = {
-    nodes: [{
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [{
       id: 'node_0', type: 'distributor', top: 5000, left: 5000,
       conditions: [
-        { id: 'condition_0_0', ref: 'stat_gold', comparator: 'morethan', value: 1, join: [{ node: 'node_1' }] },
+        { id: 'condition_0_0', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 1 }], join: [{ node: 'node_1' }] },
         { id: 'condition_0_1', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 2 }], join: [{ node: 'node_1', toAnswer: true }] },
-        { id: 'condition_0_2', ref: 'stat_gold', comparator: 'morethan', value: 3, join: [{ node: 'node_1' }] },
+        { id: 'condition_0_2', rules: [{ ref: 'stat_gold', comparator: 'morethan', value: 3 }], join: [{ node: 'node_1' }] },
       ],
       fallbackCondition: { id: 'condition_0_fallback', join: [{ node: 'node_1' }] },
     }, { id: 'node_1', type: 'end', text: 'End', top: 5000, left: 5500 }],

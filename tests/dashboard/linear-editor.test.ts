@@ -11,7 +11,7 @@ async function mockStory(page: Page) {
   const user = { id: authorId, email: 'linear-test@example.com', aud: 'authenticated', role: 'authenticated' }
   let gameWrites = 0
   let savedTree: tree = {
-    nodes: [
+    entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', top: 5000, left: 5000,
         text: '<p>Hello <span data-trama-variable="" data-kind="property" data-key="hero">#hero</span></p>',
         events: [
@@ -23,8 +23,8 @@ async function mockStory(page: Page) {
           { id: 'answer_0_1', text: 'Locked answer', join: [{ node: 'node_3' }],
             requirements: [{ target: 'stat_gold', type: 'stat', amount: 99 }] }] },
       { id: 'node_1', type: 'content', groupId: 'node_2', top: 5000, left: 5400,
-        text: 'Gold: #stat_gold', events: [{ id: 'arrival', type: 'stat', action: 'alterStat', target: 'stat_gold', amount: '2' }],
-        answers: [{ id: 'answer_1_0', text: 'Finish with #stat_gold gold', join: [{ node: 'node_3' }] }] },
+        text: '<p>Gold: <span data-trama-variable="" data-kind="stat" data-key="stat_gold">#stat_gold</span></p>', events: [{ id: 'arrival', type: 'stat', action: 'alterStat', target: 'stat_gold', amount: '2' }],
+        answers: [{ id: 'answer_1_0', text: '<p>Finish with <span data-trama-variable="" data-kind="stat" data-key="stat_gold">#stat_gold</span> gold</p>', join: [{ node: 'node_3' }] }] },
       { id: 'node_2', type: 'group', text: 'Chapter', top: 5000, left: 5400 },
       { id: 'node_3', type: 'end', text: 'The end', top: 5000, left: 5800 },
     ],

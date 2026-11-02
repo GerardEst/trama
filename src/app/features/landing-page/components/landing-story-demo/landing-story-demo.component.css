@@ -66,7 +66,7 @@
   display: flex;
   min-height: 230px;
 }
-.story-player__game polo-game {
+.story-player__game polo-story-player {
   width: 100%;
 }
 .story-player__game--ended {

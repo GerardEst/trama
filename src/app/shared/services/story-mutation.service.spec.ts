@@ -30,7 +30,7 @@ describe('StoryMutationService', () => {
     activeStory = TestBed.inject(ActiveStoryService)
     listen = spyOn(window, 'addEventListener').and.callThrough()
     mutations = TestBed.inject(StoryMutationService)
-    activeStory.load('story-1', 'Story', { nodes: [] })
+    activeStory.load('story-1', 'Story', { nodes: [], entryPoint: { left: 5000, top: 5000 } })
   })
 
   afterEach(() => {

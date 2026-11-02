@@ -53,7 +53,7 @@ describe('BoardComponent', () => {
     const previous = localStorage.getItem(key)
     const help = TestBed.inject(ContextHelpService)
     const story = TestBed.inject(ActiveStoryService)
-    story.load('entry-help', 'Story', { nodes: [] })
+    story.load('entry-help', 'Story', { nodes: [], entryPoint: { left: 5000, top: 5000 } })
     fixture.detectChanges()
     const board = component.boardElement!.nativeElement
     const capture = spyOn(board, 'setPointerCapture')
@@ -88,7 +88,7 @@ describe('BoardComponent', () => {
   it('renders one movable entry outside node selections, frames and groups', () => {
     const story = TestBed.inject(ActiveStoryService)
     const save = spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
-    story.load('entry', 'Story', { nodes: [
+    story.load('entry', 'Story', { entryPoint: { left: 20, top: 0, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', left: 200, top: 100 },
       { id: 'node_1', type: 'end', left: 400, top: 100 },
     ] })
@@ -116,7 +116,7 @@ describe('BoardComponent', () => {
   it('connects the real entry port with the existing pointer flow and ignores answer ports', () => {
     const story = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
-    story.load('entry', 'Story', { nodes: [
+    story.load('entry', 'Story', { entryPoint: { left: 20, top: 0, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', left: 200, top: 100 },
       { id: 'node_1', type: 'content', left: 500, top: 100, answers: [{ id: 'answer_1_0', text: 'Answer' }] },
     ] })
@@ -149,7 +149,7 @@ describe('BoardComponent', () => {
   it('allows deleting node_0 from its component and shows the disconnected entry notice', () => {
     const story = TestBed.inject(ActiveStoryService)
     spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
-    story.load('entry', 'Story', { nodes: [{ id: 'node_0', type: 'content', left: 200, top: 100 }] })
+    story.load('entry', 'Story', { entryPoint: { left: 20, top: 0, targetNodeId: 'node_0' }, nodes: [{ id: 'node_0', type: 'content', left: 200, top: 100 }] })
     fixture.detectChanges()
     const nodeComponent = fixture.debugElement.query(By.directive(NodeComponent)).componentInstance as NodeComponent
     nodeComponent.onRemoveNode()
@@ -1463,7 +1463,7 @@ describe('BoardComponent', () => {
         { id: 'node_0', type: 'content', top: 0, left: 0, answers: [
           { id: 'answer_0_0', text: 'Continue', events: [event], requirements: [{ target: 'stat_gold', type: 'stat', amount: 1 }] },
         ] },
-        { id: 'node_1', type: 'distributor', top: 0, left: 300, conditions: [{ id: 'condition_1_0', ref: 'stat_gold', value: 1 }] },
+        { id: 'node_1', type: 'distributor', top: 0, left: 300, conditions: [{ id: 'condition_1_0', rules: [{ ref: 'stat_gold', value: 1 }] }] },
       ],
     })
     story.beginHistorySession()

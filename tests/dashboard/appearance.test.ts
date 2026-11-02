@@ -34,7 +34,7 @@ async function openWorkspace(page: Page) {
     } else if (path === '/rest/v1/stories') {
       await route.fulfill({ json: [{
         id: storyId, name: 'The garden of branching paths',
-        tree: { nodes: [
+        tree: { entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [
           { id: 'node_0', type: 'content', text: 'Every story starts with a choice.', top: 5000, left: 5000, answers: [
             { id: 'answer_0', text: 'Follow the path', join: ['node_1'] },
           ] },

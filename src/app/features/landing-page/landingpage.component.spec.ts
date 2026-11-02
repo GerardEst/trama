@@ -5,7 +5,6 @@ import { LandingpageComponent } from './landingpage.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
-import { PlayerService } from '../playground/services/player.service'
 
 describe('LandingpageComponent', () => {
   let component: LandingpageComponent
@@ -63,7 +62,7 @@ describe('LandingpageComponent', () => {
     expect(hero.querySelectorAll('.hero__reassurance span').length).toBe(3)
     expect(primaryAction.getAttribute('href')).toBe('/login?mode=register&plan=creator&period=monthly')
     expect(storyAction.getAttribute('href')).toBe('/#try-it')
-    expect(hero.querySelector('#try-it polo-game')).toBeTruthy()
+    expect(hero.querySelector('#try-it polo-story-player')).toBeTruthy()
     const demoImage = hero.querySelector('.story-player__scene img') as HTMLImageElement
     expect(demoImage.getAttribute('src')).toBe('/assets/images/landing/modest-hero.webp')
     expect(demoImage.getAttribute('width')).toBe('1368')
@@ -136,8 +135,8 @@ describe('LandingpageComponent', () => {
     await choose('Shadow — climb the haunted stair')
     await choose('Steal the moon sigil')
     expect(demo.textContent).toContain('a key to the prison')
-    const player = fixture.debugElement.query(By.directive(LandingStoryDemoComponent)).injector.get(PlayerService)
-    expect(player.playerConditions()).toEqual([{ id: 'condition_sigil' }])
+    const player = fixture.debugElement.query(By.directive(LandingStoryDemoComponent)).componentInstance as LandingStoryDemoComponent
+    expect(player.game!.getState().player.conditions).toEqual(['condition_sigil'])
 
     const restart = demo.querySelector('.story-player__footer button') as HTMLButtonElement
     restart.click()
@@ -149,9 +148,7 @@ describe('LandingpageComponent', () => {
 
     expect(demo.textContent).toContain('leads you to the Hollow Citadel')
     expect(demo.textContent).not.toContain('a key to the prison')
-    expect(player.playerProperties()).toEqual({})
-    expect(player.playerStats()).toEqual([])
-    expect(player.playerConditions()).toEqual([])
+    expect(player.game!.getState().player).toEqual({ properties: {}, stats: {}, conditions: [] })
     expect(demo.querySelector('.story-player__next')).toBeNull()
 
     await choose('Blade — cross the bridge of sentries')

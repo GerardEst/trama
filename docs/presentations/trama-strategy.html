@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="ca" data-polo-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Anàlisi estratègica de Trama: competidors, necessitats dels autors, DAFO, prioritats de producte i validació.">
+  <title>Trama — De crear històries a acabar obres</title>
+  <style>
+    /* Embedded snapshot of src/styles/tokens.css for a portable, offline dossier.
+       These are the application's existing brand and semantic colors, not a new palette. */
+    :root {
+      color-scheme: light dark;
+      --polo-ink-900: #252720;
+      --polo-paper-50: #fbf9f4;
+      --polo-forest-700: #294b3e;
+      --polo-amber-300: #f6ce6a;
+      --polo-amber-400: #f3c24c;
+      --polo-amber-600: #d79829;
+      --polo-color-canvas: light-dark(var(--polo-paper-50), #1b211d);
+      --polo-color-surface: light-dark(#fffefa, #262e28);
+      --polo-color-surface-subtle: light-dark(#f8f6ef, #2b342d);
+      --polo-color-surface-muted: light-dark(#eeece3, #354037);
+      --polo-color-surface-accent: light-dark(#f8edcc, #45422c);
+      --polo-color-text-strong: light-dark(var(--polo-ink-900), #f3f0e5);
+      --polo-color-text: var(--polo-color-text-strong);
+      --polo-color-text-secondary: light-dark(#5c625a, #c1c6b8);
+      --polo-color-text-muted: light-dark(#707569, #b0b9a8);
+      --polo-color-text-on-accent: var(--polo-ink-900);
+      --polo-color-text-on-media: #fff4da;
+      --polo-color-border: light-dark(#deded1, #465044);
+      --polo-color-border-strong: light-dark(#c5c8b9, #64715f);
+      --polo-color-action: light-dark(var(--polo-forest-700), #b6d3b0);
+      --polo-color-action-hover: light-dark(#1b352b, #d3e7ce);
+      --polo-color-action-soft: light-dark(#e9eee5, #344636);
+      --polo-color-accent: var(--polo-amber-300);
+      --polo-color-accent-hover: var(--polo-amber-400);
+      --polo-color-accent-border: #d8b354;
+      --polo-color-wordmark-dot: var(--polo-amber-600);
+      --polo-color-success: light-dark(#32754a, #8bd79e);
+      --polo-color-success-soft: light-dark(#e8f9e6, #254632);
+      --polo-color-danger-text: light-dark(#a23636, #ffb2b2);
+      --polo-color-danger-soft: light-dark(#ffefef, #503038);
+      --polo-color-warning: light-dark(#a05a2c, #efb880);
+      --polo-color-shadow: light-dark(#252720, #000000);
+      --polo-color-grid-dot: color-mix(in srgb, var(--polo-color-text) 14%, transparent);
+      --polo-font-ui: Raleway, 'Trebuchet MS', sans-serif;
+      --polo-font-story: Baskerville, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+      --polo-radius-control: 10px;
+      --polo-radius-panel: 12px;
+      --polo-radius-card: 14px;
+      --deck-width: 1180px;
+      --deck-gutter: clamp(22px, 4.3vw, 68px);
+      --deck-shadow: 0 18px 48px color-mix(in srgb, var(--polo-color-shadow) 8%, transparent);
+    }
+
+    :root[data-polo-theme='light'] { color-scheme: light; }
+    :root[data-polo-theme='dark'] { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 90px; }
+    body {
+      margin: 0;
+      padding-bottom: 82px;
+      background: var(--polo-color-canvas);
+      color: var(--polo-color-text);
+      font-family: var(--polo-font-ui);
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    button, summary { cursor: pointer; }
+    a { color: var(--polo-color-action); text-underline-offset: 4px; }
+    a:hover { text-decoration-thickness: 2px; }
+    :is(a, button, summary, [tabindex]):focus-visible {
+      outline: 3px solid var(--polo-color-action);
+      outline-offset: 5px;
+      border-radius: 3px;
+    }
+    button:disabled { cursor: default; opacity: .35; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2 { font-family: var(--polo-font-story); font-weight: 400; text-wrap: balance; }
+    h1 { font-size: clamp(48px, 6.4vw, 88px); line-height: 1.04; letter-spacing: -.05em; }
+    h2 { font-size: clamp(32px, 3.55vw, 52px); line-height: 1.12; letter-spacing: -.035em; }
+    h3 { font-size: 19px; line-height: 1.3; letter-spacing: -.02em; }
+    strong { font-weight: 750; }
+    ul, ol { margin: 0; padding-left: 19px; }
+    li + li { margin-top: 7px; }
+    svg { display: block; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 16px;
+      z-index: 20;
+      padding: 12px 18px;
+      transform: translateY(-160%);
+      background: var(--polo-color-accent);
+      color: var(--polo-color-text-on-accent);
+    }
+    .skip-link:focus { transform: none; }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--polo-color-canvas);
+      border-bottom: 1px solid var(--polo-color-border);
+    }
+    .header-inner {
+      max-width: calc(var(--deck-width) + 2 * var(--deck-gutter));
+      min-height: 72px;
+      margin: auto;
+      padding: 12px var(--deck-gutter);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .wordmark {
+      font-size: 28px;
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: -.075em;
+      color: var(--polo-color-text);
+      text-decoration: none;
+    }
+    .wordmark span { color: var(--polo-color-wordmark-dot); }
+    .header-label {
+      padding-left: 20px;
+      border-left: 1px solid var(--polo-color-border-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      color: var(--polo-color-text-secondary);
+    }
+    .header-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .tool {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid var(--polo-color-border);
+      border-radius: var(--polo-radius-control);
+      background: var(--polo-color-surface);
+      color: var(--polo-color-text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s, border-color .18s;
+    }
+    .tool:hover { background: var(--polo-color-action-soft); border-color: var(--polo-color-border-strong); }
+    .tool[aria-pressed='true'] { background: var(--polo-color-action-soft); border-color: var(--polo-color-action); }
+    .tool svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .js-control { display: none; }
+    .enhanced .js-control { display: inline-flex; }
+    .deck {
+      width: min(100%, calc(var(--deck-width) + 2 * var(--deck-gutter)));
+      margin: auto;
+      min-height: calc(100svh - 154px);
+    }
+    .slide { padding: 32px var(--deck-gutter) 24px; scroll-margin-top: 86px; }
+    .slide + .slide { border-top: 1px solid var(--polo-color-border); }
+    .enhanced:not([data-view='reading']) .slide { display: none; }
+    .enhanced:not([data-view='reading']) .slide.is-active { display: block; border-top: 0; }
+    .enhanced[data-view='reading'] .slide { padding-block: 64px; }
+    .slide-inner { width: 100%; margin: auto; }
+    .slide-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 21px;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--polo-color-text-secondary);
+    }
+    .section-kicker { display: inline-flex; align-items: center; gap: 9px; }
+    .section-kicker::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--polo-color-action); }
+    .folio { font-variant-numeric: tabular-nums; letter-spacing: .06em; white-space: nowrap; }
+    .slide-heading { margin-bottom: 25px; max-width: 980px; }
+    .slide-heading p { max-width: 890px; margin-top: 10px; color: var(--polo-color-text-secondary); font-size: 15px; }
+    .slide-heading em { color: var(--polo-color-action); }
+    .grid { display: grid; gap: 18px; }
+    .grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel {
+      min-width: 0;
+      padding: 23px;
+      background: var(--polo-color-surface);
+      border: 1px solid var(--polo-color-border);
+      border-radius: var(--polo-radius-card);
+    }
+    .panel--soft { background: var(--polo-color-surface-subtle); }
+    .panel--accent { background: var(--polo-color-surface-accent); border-color: var(--polo-color-accent-border); }
+    .panel h3 + p { margin-top: 10px; }
+    .panel p, .panel li { font-size: 14px; }
+    .panel ul { margin-top: 13px; }
+    .eyebrow {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--polo-color-action);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border: 1px solid var(--polo-color-border);
+      border-radius: 30px;
+      color: var(--polo-color-text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .tag--good { color: var(--polo-color-success); background: var(--polo-color-success-soft); border-color: transparent; }
+    .tag--proposed { color: var(--polo-color-text-on-accent); background: var(--polo-color-accent); border-color: var(--polo-color-accent-border); }
+    .tag--pending { color: var(--polo-color-danger-text); background: var(--polo-color-danger-soft); border-color: transparent; }
+    .takeaway {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 21px;
+      padding: 15px 18px;
+      border-left: 3px solid var(--polo-color-accent);
+      background: var(--polo-color-surface-subtle);
+      border-radius: 0 var(--polo-radius-control) var(--polo-radius-control) 0;
+      font-size: 14px;
+    }
+    .takeaway > span { color: var(--polo-color-action); font-size: 19px; line-height: 1.2; }
+    .slide-note { margin-top: 18px; font-size: 11px; line-height: 1.6; color: var(--polo-color-text-secondary); }
+    .slide-note a { color: inherit; }
+    .competitor-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 17px; }
+    .competitor-head a { color: var(--polo-color-text); text-decoration: none; }
+    .competitor-head a:hover { text-decoration: underline; }
+    .competitor-block + .competitor-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--polo-color-border); }
+    .block-label { display: block; margin-bottom: 5px; color: var(--polo-color-text-secondary); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .competitor-lesson { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--polo-color-border); color: var(--polo-color-action); }
+    .competitor-lesson strong { display: block; margin-bottom: 4px; }
+
+    /* The cover's branching diagram is an illustration, not a quantitative chart. */
+    .cover {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
+      min-height: 490px;
+      padding: 46px;
+      border-radius: 20px;
+      background: var(--polo-forest-700);
+      color: var(--polo-color-text-on-media);
+      box-shadow: var(--deck-shadow);
+      overflow: hidden;
+      position: relative;
+      isolation: isolate;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .3;
+      background-image: radial-gradient(circle, var(--polo-color-text-on-media) .6px, transparent .9px);
+      background-size: 19px 19px;
+      mask-image: linear-gradient(90deg, transparent 35%, var(--polo-ink-900));
+    }
+    .cover-copy { display: flex; flex-direction: column; justify-content: center; }
+    .cover .eyebrow { margin-bottom: 22px; color: var(--polo-color-accent); }
+    .cover h1 em { color: var(--polo-color-accent); }
+    .cover-copy > p { max-width: 530px; margin-top: 24px; color: var(--polo-color-text-on-media); font-size: 15px; line-height: 1.7; }
+    .cover-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 27px; }
+    .cover-meta span { border: 1px solid color-mix(in srgb, var(--polo-color-text-on-media) 27%, transparent); border-radius: 30px; padding: 5px 10px; font-size: 10px; letter-spacing: .04em; }
+    .branch-illustration { align-self: center; width: 100%; max-width: 400px; justify-self: center; }
+    .branch-illustration .route { fill: none; stroke: var(--polo-color-text-on-media); stroke-width: 1.3; opacity: .5; }
+    .branch-illustration .route--chosen { stroke: var(--polo-color-accent); opacity: 1; stroke-width: 2; }
+    .branch-illustration .node { fill: var(--polo-forest-700); stroke: var(--polo-color-text-on-media); stroke-width: 1; }
+    .branch-illustration .node--chosen { fill: var(--polo-color-accent); stroke: var(--polo-color-accent); }
+    .branch-illustration text { fill: var(--polo-color-text-on-media); font-family: var(--polo-font-ui); font-size: 12px; }
+    .branch-illustration .ink { fill: var(--polo-color-text-on-accent); }
+    .cover-caption { margin-top: 10px; text-align: center; font-family: var(--polo-font-story); font-size: 17px; font-style: italic; color: var(--polo-color-accent); }
+    .cover-bottom { display: flex; gap: 30px; justify-content: space-between; margin-top: 24px; color: var(--polo-color-text-secondary); font-size: 12px; }
+    .cover-bottom p { max-width: 810px; }
+    .cover-bottom strong { color: var(--polo-color-text); }
+    .cover-bottom .direction { white-space: nowrap; color: var(--polo-color-action); }
+
+    .needs-list { display: grid; gap: 0; }
+    .need {
+      display: grid;
+      grid-template-columns: 46px 260px minmax(0, 1fr);
+      gap: 18px;
+      align-items: baseline;
+      padding: 15px 0;
+      border-top: 1px solid var(--polo-color-border);
+    }
+    .need-number { font-family: var(--polo-font-story); font-size: 28px; line-height: 1; color: var(--polo-color-action); }
+    .need h3 { font-size: 17px; }
+    .need p { font-size: 14px; color: var(--polo-color-text-secondary); }
+    .workflow { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; }
+    .workflow-step { flex: 1; padding: 17px; background: var(--polo-color-action-soft); border-radius: var(--polo-radius-panel); }
+    .workflow-step small { display: block; color: var(--polo-color-text-secondary); margin-top: 3px; font-size: 11px; }
+    .workflow-arrow { color: var(--polo-color-action); flex-shrink: 0; }
+    .capability-list { columns: 2; gap: 38px; list-style: none; padding: 0; margin-top: 14px; }
+    .capability-list li { position: relative; padding-left: 24px; break-inside: avoid; margin-bottom: 13px; font-size: 14px; }
+    .capability-list li::before { content: '✓'; position: absolute; left: 0; color: var(--polo-color-success); font-weight: 800; }
+    .base-layout { display: grid; grid-template-columns: minmax(0, 1fr) 265px; gap: 18px; }
+    .evidence-panel { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+    .evidence-number { font-family: var(--polo-font-story); font-size: 58px; line-height: 1; color: var(--polo-color-action); }
+    .evidence-label { margin-top: 5px; font-size: 13px; }
+    .evidence-caption { color: var(--polo-color-text-secondary); font-size: 11px !important; }
+    .gap-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+    .gap { padding: 13px 0; border-top: 1px solid var(--polo-color-border); }
+    .gap h3 { font-size: 15px; margin-bottom: 5px; }
+    .gap p { font-size: 12px; color: var(--polo-color-text-secondary); }
+    .swot { gap: 14px; }
+    .swot .panel { padding: 21px 23px; }
+    .swot-head { display: flex; justify-content: space-between; align-items: center; }
+    .swot-letter { font-family: var(--polo-font-story); font-size: 40px; line-height: 1; color: var(--polo-color-action); opacity: .65; }
+    .swot li { font-size: 12px; line-height: 1.45; margin-top: 6px; }
+    .swot ul { padding-left: 16px; margin-top: 10px; }
+    .manifesto {
+      padding: 30px 34px;
+      margin-bottom: 18px;
+      border-top: 1px solid var(--polo-color-border-strong);
+      border-bottom: 1px solid var(--polo-color-border-strong);
+      background: var(--polo-color-surface-subtle);
+    }
+    .manifesto blockquote { max-width: 950px; margin: 0; font-family: var(--polo-font-story); font-size: clamp(25px, 2.8vw, 39px); line-height: 1.25; letter-spacing: -.02em; text-wrap: balance; }
+    .manifesto em { color: var(--polo-color-action); }
+    .audience-copy { margin: 11px 0 0; max-width: 940px; font-size: 17px; line-height: 1.55; }
+    .strategy-columns { display: grid; grid-template-columns: 1.3fr .7fr; gap: 22px; }
+    .priority { position: relative; padding-top: 24px; }
+    .priority-heading { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+    .priority-number { font-family: var(--polo-font-story); font-size: 40px; line-height: 1; color: var(--polo-color-action); }
+    .priority-heading .eyebrow { margin-bottom: 4px; }
+    .priority ul { margin-top: 0; }
+    .priority li { font-size: 13px; line-height: 1.5; }
+    .priority-outcome { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--polo-color-border); font-size: 12px !important; color: var(--polo-color-action); }
+    .deferred { margin-top: 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font-size: 12px; color: var(--polo-color-text-secondary); }
+    .deferred .tag { font-size: 11px; }
+    .validation-layout { display: grid; grid-template-columns: .78fr 1.22fr; gap: 20px; }
+    .study-size { font-family: var(--polo-font-story); font-size: 76px; line-height: 1.05; color: var(--polo-color-action); letter-spacing: -.04em; }
+    .study-label { font-size: 16px !important; margin: 8px 0 18px; }
+    .study-panel p + p { margin-top: 12px; }
+    .task-list { list-style: none; counter-reset: task; padding: 0; }
+    .task-list li { counter-increment: task; display: flex; gap: 13px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--polo-color-border); margin: 0; font-size: 13px; }
+    .task-list li::before { content: counter(task, decimal-leading-zero); color: var(--polo-color-action); font-size: 11px; font-weight: 800; flex-shrink: 0; }
+    .measurements { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; }
+    .research-question { margin-top: 18px; font-family: var(--polo-font-story); font-size: 23px; line-height: 1.3; color: var(--polo-color-action); }
+    .readiness-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .readiness-table th { text-align: left; color: var(--polo-color-text-secondary); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; padding: 0 16px 12px 0; }
+    .readiness-table td { padding: 13px 16px 13px 0; border-top: 1px solid var(--polo-color-border); }
+    .readiness-table td:last-child { width: 35%; }
+    .readiness-table .tag { font-size: 11px; }
+    .verdict { margin-top: 24px; padding: 24px 28px; background: var(--polo-forest-700); color: var(--polo-color-text-on-media); border-radius: var(--polo-radius-card); }
+    .verdict .eyebrow { color: var(--polo-color-accent); }
+    .verdict p { font-family: var(--polo-font-story); font-size: clamp(24px, 2.5vw, 33px); line-height: 1.25; }
+    .verdict em { color: var(--polo-color-accent); }
+    .sources-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 25px; }
+    .source-list { display: grid; gap: 0; }
+    .source-link { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--polo-color-border); font-size: 12px; text-decoration: none; }
+    .source-link:hover { text-decoration: underline; }
+    .source-link span { display: block; color: var(--polo-color-text-secondary); font-size: 10px; margin-top: 2px; }
+    .source-link b { font-weight: 700; }
+    .methodology h3 { font-size: 17px; }
+    .methodology p, .methodology li { font-size: 12px; }
+    .methodology p + p { margin-top: 12px; }
+    .methodology ul { margin-bottom: 18px; }
+    .methodology code { overflow-wrap: anywhere; font-size: 11px; }
+    .footer {
+      display: none;
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 5;
+      background: var(--polo-color-canvas);
+      border-top: 1px solid var(--polo-color-border);
+    }
+    .enhanced .footer { display: block; }
+    .footer-inner {
+      max-width: calc(var(--deck-width) + 2 * var(--deck-gutter));
+      min-height: 74px;
+      padding: 11px var(--deck-gutter);
+      margin: auto;
+      display: flex;
+      gap: 22px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-chapter { font-size: 11px; color: var(--polo-color-text-secondary); }
+    .footer-chapter strong { display: block; color: var(--polo-color-text); font-size: 12px; }
+    .keyboard-hint { font-size: 10px; color: var(--polo-color-text-secondary); }
+    kbd { display: inline-block; padding: 1px 5px; border: 1px solid var(--polo-color-border-strong); border-radius: 4px; font: inherit; }
+    .navigation { display: flex; gap: 12px; align-items: center; }
+    .nav-button { width: 44px; height: 44px; padding: 0; font-size: 21px; }
+    .nav-button--next { background: var(--polo-color-accent); color: var(--polo-color-text-on-accent); border-color: var(--polo-color-accent-border); }
+    .nav-button--next:hover { background: var(--polo-color-accent-hover); }
+    .counter { min-width: 58px; text-align: center; color: var(--polo-color-text-secondary); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .counter b { color: var(--polo-color-text); font-size: 15px; }
+    .progress { position: absolute; inset: -3px 0 auto; width: 100%; height: 3px; border: 0; appearance: none; background: transparent; }
+    .progress::-webkit-progress-bar { background: transparent; }
+    .progress::-webkit-progress-value { background: var(--polo-color-action); transition: width .2s; }
+    .progress::-moz-progress-bar { background: var(--polo-color-action); }
+    [data-view='reading'] .navigation .nav-button, [data-view='reading'] .keyboard-hint, [data-view='reading'] .progress { display: none; }
+    [data-view='reading'] .counter { min-width: auto; }
+    dialog {
+      width: min(690px, calc(100% - 32px));
+      max-height: calc(100svh - 40px);
+      padding: 27px;
+      border: 1px solid var(--polo-color-border-strong);
+      border-radius: 18px;
+      background: var(--polo-color-surface);
+      color: var(--polo-color-text);
+      box-shadow: var(--deck-shadow);
+    }
+    dialog::backdrop { background: color-mix(in srgb, var(--polo-ink-900) 55%, transparent); }
+    .dialog-heading { display: flex; gap: 20px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .dialog-heading h2 { font-size: 29px; }
+    .dialog-close { min-width: 42px; font-size: 18px; }
+    .index-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .index-list a { display: flex; gap: 12px; align-items: baseline; padding: 12px; border: 1px solid var(--polo-color-border); border-radius: var(--polo-radius-control); font-size: 12px; text-decoration: none; }
+    .index-list a:hover, .index-list a[aria-current='step'] { background: var(--polo-color-action-soft); border-color: var(--polo-color-action); }
+    .index-list span { font-size: 10px; font-variant-numeric: tabular-nums; color: var(--polo-color-text-secondary); }
+    .dialog-note { margin-top: 18px; font-size: 11px; color: var(--polo-color-text-secondary); }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .enhanced:not([data-view='reading']) .slide.is-active .slide-inner { animation: arrive .28s ease-out; }
+      @keyframes arrive { from { opacity: .35; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    }
+    @media (max-width: 1000px) {
+      .header-label { display: none; }
+      .cover { padding: 33px; min-height: 445px; grid-template-columns: 1.2fr .8fr; }
+      .cover h1 { font-size: 65px; }
+      .grid--three { gap: 12px; }
+      .panel { padding: 19px; }
+      .competitor-head { flex-wrap: wrap; gap: 7px; }
+      .need { grid-template-columns: 36px 210px minmax(0, 1fr); gap: 13px; }
+      .base-layout { grid-template-columns: minmax(0, 1fr) 220px; }
+      .keyboard-hint { display: none; }
+    }
+    @media (max-width: 760px) {
+      body { font-size: 14px; }
+      .header-inner { gap: 12px; min-height: 65px; }
+      .header-actions { gap: 5px; }
+      .tool { padding-inline: 10px; }
+      .tool-label { display: none; }
+      .tool svg { width: 18px; height: 18px; }
+      .slide { padding-top: 26px; }
+      .slide-topline { margin-bottom: 18px; font-size: 9px; }
+      .slide-heading { margin-bottom: 20px; }
+      .slide-heading p { font-size: 14px; }
+      .grid--three, .grid--two, .base-layout, .strategy-columns, .validation-layout, .sources-layout { grid-template-columns: 1fr; }
+      .cover { grid-template-columns: 1fr; padding: 28px; gap: 22px; }
+      .cover h1 { font-size: clamp(44px, 9.5vw, 65px); }
+      .cover-copy > p { font-size: 14px; margin-top: 19px; }
+      .cover .eyebrow { margin-bottom: 18px; font-size: 9px; }
+      .branch-illustration { max-width: 330px; }
+      .cover-bottom { display: block; }
+      .cover-bottom .direction { display: none; }
+      .need { grid-template-columns: 34px minmax(0, 1fr); gap: 6px 12px; padding-block: 18px; }
+      .need p { grid-column: 2; }
+      .need-number { grid-row: 1 / 3; }
+      .workflow { flex-wrap: wrap; gap: 7px; }
+      .workflow-step { padding: 12px; min-width: 90px; }
+      .workflow-step small { font-size: 10px; }
+      .workflow-arrow { font-size: 12px; }
+      .capability-list { columns: 1; }
+      .evidence-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+      .evidence-number { font-size: 49px; }
+      .evidence-caption { grid-column: 1 / -1; }
+      .gap-grid { grid-template-columns: 1fr; }
+      .gap { padding-block: 16px; }
+      .gap p { font-size: 13px; }
+      .swot li { font-size: 13px; }
+      .manifesto { padding: 24px 21px; }
+      .audience-copy { font-size: 16px; }
+      .priority li { font-size: 14px; }
+      .readiness-table { font-size: 13px; }
+      .readiness-table td { padding-right: 10px; }
+      .readiness-table td:last-child { width: 42%; }
+      .readiness-table .tag { font-size: 10px; }
+      .verdict { padding: 24px; }
+      .footer-inner { min-height: 72px; gap: 12px; }
+      .footer-chapter { max-width: 45%; font-size: 9px; }
+      .footer-chapter strong { font-size: 11px; }
+      .navigation { gap: 8px; }
+      .counter { min-width: 45px; font-size: 10px; }
+      .counter b { font-size: 13px; }
+      .index-list { grid-template-columns: 1fr; }
+      .enhanced[data-view='reading'] .slide { padding-block: 40px; }
+    }
+    @media (max-width: 380px) {
+      :root { --deck-gutter: 18px; }
+      .header-actions { gap: 4px; }
+      .tool { padding-inline: 9px; }
+      .wordmark { font-size: 25px; }
+      .cover { padding: 24px; }
+      .workflow-arrow { display: none; }
+      .navigation { gap: 5px; }
+      .footer-chapter { max-width: 40%; }
+    }
+    @media print {
+      @page { size: A4 landscape; margin: 13mm; }
+      :root { color-scheme: light !important; }
+      body { padding: 0; background: var(--polo-paper-50); font-size: 11px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .site-header, .footer, .skip-link, #announcement, dialog, .cover-bottom .direction { display: none !important; }
+      .deck { width: 100%; min-height: 0; }
+      .slide, .enhanced:not([data-view='reading']) .slide, .enhanced[data-view='reading'] .slide {
+        display: block !important;
+        padding: 0;
+        border: 0;
+        break-after: page;
+      }
+      #presentation .slide:last-child { break-after: auto; }
+      .slide-inner { animation: none !important; }
+      .slide-topline { margin-bottom: 12px; font-size: 8px; }
+      h2 { font-size: 31px; }
+      .slide-heading { margin-bottom: 15px; }
+      .slide-heading p { font-size: 11px; margin-top: 7px; }
+      .panel { padding: 16px; break-inside: avoid; }
+      .panel p, .panel li, .need p, .priority li { font-size: 10px; }
+      .panel h3 { font-size: 16px; }
+      .grid { gap: 12px; }
+      .cover { min-height: 390px; padding: 32px; box-shadow: none; }
+      .cover h1 { font-size: 65px; }
+      .cover-copy > p { font-size: 12px; }
+      .cover-bottom { font-size: 10px; }
+      .cover-meta span, .eyebrow { font-size: 8px; }
+      .competitor-head { margin-bottom: 12px; }
+      .competitor-block + .competitor-block { margin-top: 10px; padding-top: 10px; }
+      .competitor-lesson { margin-top: 12px; padding-top: 10px; }
+      .need { padding-block: 12px; grid-template-columns: 40px 230px minmax(0, 1fr); }
+      .need h3 { font-size: 14px; }
+      .takeaway { margin-top: 13px; font-size: 10px; padding: 10px 14px; }
+      .slide-note { margin-top: 11px; font-size: 8px; }
+      .gap { padding-block: 9px; }
+      .gap h3 { font-size: 12px; }
+      .gap p, .capability-list li { font-size: 10px; }
+      .swot .panel { padding: 16px; }
+      .swot li { font-size: 10px; }
+      .manifesto { padding: 23px; }
+      .manifesto blockquote { font-size: 29px; }
+      .audience-copy { font-size: 13px; }
+      .priority-heading { margin-bottom: 12px; }
+      .priority-outcome { margin-top: 14px; font-size: 10px !important; }
+      .study-size { font-size: 60px; }
+      .task-list li { padding-block: 7px; font-size: 11px; }
+      .research-question { font-size: 21px; }
+      .readiness-table { font-size: 11px; }
+      .readiness-table td { padding-block: 10px; }
+      .verdict { margin-top: 17px; padding: 20px; }
+      .verdict p { font-size: 26px; }
+      .source-link { padding-block: 7px; font-size: 10px; }
+      .source-link span, .methodology p, .methodology li { font-size: 9px; }
+      .methodology code { font-size: 8px; }
+      a { text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#presentation">Salta a la presentació</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="#portada" aria-label="Trama, portada de la presentació">trama<span>.</span></a>
+      <span class="header-label">Dossier d’estratègia · 01</span>
+      <div class="header-actions" aria-label="Eines de la presentació">
+        <button class="tool js-control" id="indexButton" type="button" aria-label="Obre l’índex" aria-haspopup="dialog" aria-controls="indexDialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></svg><span class="tool-label">Índex</span>
+        </button>
+        <button class="tool js-control" id="readingButton" type="button" aria-label="Activa la lectura contínua" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5c4-1 6-1 9 1 3-2 5-2 9-1v14c-4-1-6-1-9 1-3-2-5-2-9-1Z M12 6v14"/></svg><span class="tool-label">Lectura</span>
+        </button>
+        <button class="tool js-control" id="themeButton" type="button" aria-label="Activa el tema fosc" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg><span class="tool-label">Tema</span>
+        </button>
+        <button class="tool js-control" id="printButton" type="button" aria-label="Imprimeix o desa tota la presentació com a PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7Z M17 11h1"/></svg><span class="tool-label">PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="deck" id="presentation" tabindex="-1" aria-label="Presentació estratègica de Trama">
+    <section class="slide is-active" id="portada" data-title="De crear històries a acabar obres" data-chapter="La direcció" aria-labelledby="title-01">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Narrativa interactiva · Estratègia de producte</span><span class="folio">01 / 13</span></div>
+        <div class="cover">
+          <div class="cover-copy">
+            <span class="eyebrow">Una eina al servei de qui escriu</span>
+            <h1 id="title-01" tabindex="-1">De crear històries<br>a <em>acabar obres.</em></h1>
+            <p>Competidors, necessitats dels autors i una ruta perquè Trama ajudi a escriure, revisar i publicar amb llibertat.</p>
+            <div class="cover-meta"><span>Creativitat humana</span><span>Propietat de l’obra</span><span>Menys fricció</span></div>
+          </div>
+          <div>
+            <svg class="branch-illustration" viewBox="0 0 380 385" aria-hidden="true">
+              <path class="route route--chosen" d="M190 71v32q0 16-16 16h-66q-16 0-16 16v22 M92 210v31q0 17 17 17h64q17 0 17 17v23"/>
+              <path class="route" d="M190 71v32q0 16 16 16h66q16 0 16 16v22 M288 210v31q0 17-17 17h-64q-17 0-17 17v23"/>
+              <rect class="node" x="122" y="20" width="136" height="51" rx="9"/><text x="190" y="51" text-anchor="middle">Una idea</text>
+              <rect class="node node--chosen" x="20" y="157" width="144" height="53" rx="9"/><text class="ink" x="92" y="180" text-anchor="middle" font-weight="700">La teva veu</text><text class="ink" x="92" y="196" text-anchor="middle" style="font-size:9px">ESCRIURE · REVISAR</text>
+              <rect class="node" x="216" y="157" width="144" height="53" rx="9"/><text x="288" y="180" text-anchor="middle">L’estructura</text><text x="288" y="196" text-anchor="middle" style="font-size:9px">DECISIONS · CONSEQÜÈNCIES</text>
+              <rect class="node" x="111" y="298" width="158" height="62" rx="9"/><text x="190" y="324" text-anchor="middle" font-weight="700">Una obra acabada</text><text x="190" y="343" text-anchor="middle" style="font-size:10px">PUBLICABLE · TEVA</text>
+              <circle cx="190" cy="119" r="4" fill="var(--polo-color-accent)"/><circle cx="190" cy="258" r="4" fill="var(--polo-color-accent)"/>
+            </svg>
+            <p class="cover-caption">La tecnologia no ha de prendre el protagonisme.</p>
+          </div>
+        </div>
+        <div class="cover-bottom">
+          <p><strong>El diagnòstic:</strong> Trama té una base sòlida. El següent salt és completar confiança, escriptura i publicació; no acumular funcions.</p>
+          <span class="direction" aria-hidden="true">Comencem →</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="competidors" data-title="Les alternatives consolidades" data-chapter="L’ecosistema" aria-labelledby="title-02">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Competidors · I</span><span class="folio">02 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-02" tabindex="-1">No partim d’un mercat buit.</h2><p>Hi ha alternatives gratuïtes que ja permeten escriure, provar i publicar. «Sense codi» no és, per si sol, un avantatge.</p></div>
+        <div class="grid grid--three">
+          <article class="panel">
+            <div class="competitor-head"><h3><a href="https://twinery.org/" target="_blank" rel="noopener noreferrer">Twine ↗</a></h3><span class="tag">Gratuït · obert</span></div>
+            <div class="competitor-block"><span class="block-label">On destaca</span><p>Comunitat consolidada, exportació HTML i molta llibertat amb CSS i JavaScript. Les històries senzilles no requereixen programació.</p></div>
+            <div class="competitor-block"><span class="block-label">On pot frenar</span><p>Formats amb sintaxis diferents. Variables, personalització i mapes grans poden augmentar la complexitat tècnica i de navegació.</p></div>
+            <p class="competitor-lesson"><strong>La lliçó per a Trama</strong>Demostrar menys fricció en un projecte complet, no només en la primera escena.</p>
+          </article>
+          <article class="panel">
+            <div class="competitor-head"><h3><a href="https://www.inklestudios.com/ink/" target="_blank" rel="noopener noreferrer">Ink / Inky ↗</a></h3><span class="tag">Gratuït · obert</span></div>
+            <div class="competitor-block"><span class="block-label">On destaca</span><p>Text al centre, lògica potent, previsualització immediata, exportació web i integracions amb motors de joc.</p></div>
+            <div class="competitor-block"><span class="block-label">On pot frenar</span><p>Cal aprendre sintaxi. Compartir una prova implica exportar i allotjar-la; hi ha una petició pública per simplificar aquest pas.</p></div>
+            <p class="competitor-lesson"><strong>La lliçó per a Trama</strong>Lògica visual i un enllaç directe poden aportar comoditat, no més potència que Ink.</p>
+          </article>
+          <article class="panel">
+            <div class="competitor-head"><h3><a href="https://www.inklestudios.com/inklewriter/" target="_blank" rel="noopener noreferrer">inklewriter ↗</a></h3><span class="tag">Gratuït · accessible</span></div>
+            <div class="competitor-block"><span class="block-label">On destaca</span><p>Permet escriure mentre es recorre la història, amb molt poca preparació. Identifica camins que encara cal completar.</p></div>
+            <div class="competitor-block"><span class="block-label">On pot frenar</span><p>Orientat a històries bàsiques. La mateixa empresa diferencia aquesta simplicitat de la potència narrativa d’Ink.</p></div>
+            <p class="competitor-lesson"><strong>La lliçó per a Trama</strong>Entrada fàcil, sense quedar curta quan apareixen variables i conseqüències.</p>
+          </article>
+        </div>
+        <p class="slide-note">Fonts: documentació oficial. La fricció descrita no és una comparativa d’usabilitat mesurada. <a href="https://github.com/inkle/inky/issues/558" target="_blank" rel="noopener noreferrer">Petició de compartir proves a Inky ↗</a></p>
+      </div>
+    </section>
+
+    <section class="slide" id="competidors-directes" data-title="Arcweave i el benchmark Moiki" data-chapter="L’ecosistema" aria-labelledby="title-03">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Competidors · II</span><span class="folio">03 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-03" tabindex="-1">El competidor més directe:<br><em>Moiki.</em></h2><p>Exportació, propietat i publicació estable són requisits per competir. No necessàriament diferenciació.</p></div>
+        <div class="grid grid--two">
+          <article class="panel">
+            <div class="competitor-head"><h3><a href="https://arcweave.com/features" target="_blank" rel="noopener noreferrer">Arcweave ↗</a></h3><span class="tag">Referència professional</span></div>
+            <div class="competitor-block"><span class="block-label">On destaca</span><p>Editor visual, organització del món narratiu, col·laboració, depurador, localització, exportacions i integracions professionals.</p></div>
+            <div class="competitor-block"><span class="block-label">Fricció per comprovar</span><p>L’amplitud del producte i el llenguatge de scripting poden ser més del que necessita un autor individual. No hem mesurat aquesta fricció.</p></div>
+            <p class="competitor-lesson"><strong>La lliçó per a Trama</strong>No competir per eines d’estudi: concentració, escriptura i simplicitat del procés complet.</p>
+          </article>
+          <article class="panel panel--accent">
+            <div class="competitor-head"><h3><a href="https://documentation.moiki.fr/" target="_blank" rel="noopener noreferrer">Moiki ↗</a></h3><span class="tag">Benchmark directe</span></div>
+            <div class="competitor-block"><span class="block-label">On destaca</span><p>Sense codi: condicions, comptadors, objectes, imatges i sons. Comprovacions d’errors, exportació HTML5/CSV, publicació i comunitat.</p></div>
+            <div class="competitor-block"><span class="block-label">Encara no podem afirmar</span><p>No hem identificat un inconvenient determinant que demostri un avantatge de Trama. Cal comparar l’edició i els projectes reals.</p></div>
+            <p class="competitor-lesson"><strong>A més, ja ofereix</strong>Propietat intel·lectual de l’autor, partides reprenibles i separació entre esborrany i versió publicada.</p>
+          </article>
+        </div>
+        <div class="takeaway"><span aria-hidden="true">↳</span><p><strong>La pregunta correcta:</strong> quina feina important pot acabar millor un autor amb Trama que amb aquestes alternatives?</p></div>
+        <p class="slide-note"><a href="https://moiki.fr/faq" target="_blank" rel="noopener noreferrer">FAQ de Moiki ↗</a> · <a href="https://docs.arcweave.com/project-tools/play-mode/debugger" target="_blank" rel="noopener noreferrer">Depurador d’Arcweave ↗</a></p>
+      </div>
+    </section>
+
+    <section class="slide" id="necessitats" data-title="Cinc necessitats dels autors" data-chapter="Les persones" aria-labelledby="title-04">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Escoltar abans de construir</span><span class="folio">04 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-04" tabindex="-1">Què volen poder fer els autors?</h2><p>Les converses públiques apunten a cinc necessitats. Són senyals qualitatius, no una enquesta representativa ni prova de disposició a pagar.</p></div>
+        <div class="needs-list">
+          <article class="need"><span class="need-number" aria-hidden="true">01</span><h3>Conservar el control</h3><p>Guardar localment, distribuir fora de la plataforma i no perdre l’obra si el servei desapareix. Propietat legal <strong>i independència tècnica</strong>.</p></article>
+          <article class="need"><span class="need-number" aria-hidden="true">02</span><h3>Entrada fàcil, sostre alt</h3><p>Començar sense programar, però no topar amb límits quan creixen les mecàniques. «Sense codi» no ha de significar «només allò que hem previst».</p></article>
+          <article class="need"><span class="need-number" aria-hidden="true">03</span><h3>Escriure sense perdre’s</h3><p>Alguns prefereixen text; altres, mapa i lògica junts. Poder canviar de perspectiva <strong>sense perdre context</strong>, no imposar un únic model.</p></article>
+          <article class="need"><span class="need-number" aria-hidden="true">04</span><h3>Revisar i entendre</h3><p>Localitzar escenes, seguir variables, provar conseqüències i trobar errors. Una història que «funciona» no és necessàriament una història revisada.</p></article>
+          <article class="need"><span class="need-number" aria-hidden="true">05</span><h3>Presentar sense aprendre CSS</h3><p>Plantilles ben resoltes, personalització senzilla i backups automàtics. Interessa també a autors experimentats que no volen gestionar infraestructura.</p></article>
+        </div>
+        <p class="slide-note">Converses consultades: <a href="https://intfiction.org/t/looking-for-feedback-and-testers-for-a-new-interactive-story-platform-story-builders-world/77506/3" target="_blank" rel="noopener noreferrer">control i extensibilitat ↗</a> · <a href="https://intfiction.org/t/why-is-writing-interactive-fiction-still-drawing-diagrams-instead-of-writing/79389/14" target="_blank" rel="noopener noreferrer">text i diagrames ↗</a> · <a href="https://intfiction.org/t/storyfall-a-new-if-authoring-tool-and-publishing-platform/77617/17" target="_blank" rel="noopener noreferrer">estil i backups ↗</a></p>
+      </div>
+    </section>
+
+    <section class="slide" id="base-actual" data-title="La base que Trama ja té" data-chapter="El producte avui" aria-labelledby="title-05">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Capacitats inspeccionades</span><span class="folio">05 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-05" tabindex="-1">No cal començar de zero.</h2><p>Trama ja combina estructura visual, correcció lineal i execució de la història. Hi ha una base valuosa per completar el flux.</p></div>
+        <div class="workflow" aria-label="Flux funcional existent">
+          <div class="workflow-step"><strong>Crear</strong><small>Tauler i lògica visual</small></div><span class="workflow-arrow" aria-hidden="true">→</span>
+          <div class="workflow-step"><strong>Corregir</strong><small>Editor lineal</small></div><span class="workflow-arrow" aria-hidden="true">→</span>
+          <div class="workflow-step"><strong>Provar</strong><small>Camins i conseqüències</small></div><span class="workflow-arrow" aria-hidden="true">→</span>
+          <div class="workflow-step"><strong>Compartir</strong><small>Un enllaç directe</small></div>
+        </div>
+        <div class="base-layout">
+          <div class="panel">
+            <span class="tag tag--good">Confirmat al producte inspeccionat</span>
+            <ul class="capability-list">
+              <li>Tauler visual amb grups, marcs i noms d’escenes.</li>
+              <li>Variables, condicions, requisits i conseqüències visuals.</li>
+              <li>Editor lineal de passatges i respostes.</li>
+              <li>Previsualització amb historial, retorn i seguiment al tauler.</li>
+              <li>Desfer/refer amb agrupació de canvis.</li>
+              <li>Estat de desat, reintents i recuperació de canvis pendents.</li>
+              <li>Exportació JSON, inclosos canvis encara no desats.</li>
+              <li>Compartició per enllaç, sense compte per al lector.</li>
+              <li>Documentació i ajuda contextual.</li>
+            </ul>
+          </div>
+          <aside class="panel panel--soft evidence-panel" aria-label="Verificació funcional de l’anàlisi">
+            <div><div class="evidence-number">73</div><p class="evidence-label">tests unitaris seleccionats<br><strong>superats</strong></p></div>
+            <div><div class="evidence-number">17</div><p class="evidence-label">proves de navegador<br><strong>superades</strong></p></div>
+            <p class="evidence-caption">Chromium, amb backend simulat. Edició, historial i recuperació. No valida producció, rendiment a escala ni avantatge comercial.</p>
+          </aside>
+        </div>
+        <div class="takeaway"><span aria-hidden="true">↳</span><p><strong>Construir sobre el que existeix:</strong> no cal reconstruir Trama ni crear un editor lineal nou.</p></div>
+      </div>
+    </section>
+
+    <section class="slide" id="mancances" data-title="Les mancances importants" data-chapter="El producte avui" aria-labelledby="title-06">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Funcional no vol dir complet</span><span class="folio">06 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-06" tabindex="-1">Els punts on encara queda curta.</h2><p>Mancances identificades en el flux i el codi inspeccionats. Distingim una funció existent d’una garantia completa per a l’autor.</p></div>
+        <div class="gap-grid">
+          <article class="gap"><h3>01 · Escriptura com a flux principal</h3><p>L’editor lineal s’obre com a «Preview». La creació estructural continua al tauler: no és encara un espai complet d’escriptura.</p></article>
+          <article class="gap"><h3>02 · Portabilitat</h3><p>El JSON no és una història jugable independent i les imatges referencien recursos externs. No s’ha trobat un flux d’importació/restauració per a l’usuari.</p></article>
+          <article class="gap"><h3>03 · Historial durador</h3><p>Desfer/refer és de sessió, amb un límit de 15 passos. No equival a recuperar una versió de fa dies.</p></article>
+          <article class="gap"><h3>04 · Recuperació robusta</h3><p>La còpia pendent usa <code>sessionStorage</code>: ajuda davant una recàrrega, però no és un backup durador independent de la pestanya.</p></article>
+          <article class="gap"><h3>05 · Publicació estable</h3><p>El lector carrega l’arbre desat. No s’ha trobat separació entre esborrany i versió publicada.</p></article>
+          <article class="gap"><h3>06 · Revisió global</h3><p>Hi ha proteccions durant l’execució, però no s’ha trobat diagnòstic global, cerca editorial o cercar/substituir.</p></article>
+          <article class="gap"><h3>07 · Depuració</h3><p>Hi ha estat intern i checkpoints. Falta una interfície clara per inspeccionar i modificar variables durant les proves.</p></article>
+          <article class="gap"><h3>08 · Lectura llarga</h3><p>No s’ha trobat un flux públic per desar i reprendre la partida. Registrar activitat no és restaurar-la.</p></article>
+          <article class="gap"><h3>09 · Escala i accessibilitat</h3><p>Hi ha avenços i tests, però no s’ha fet un benchmark de projectes grans ni una auditoria completa amb tecnologies assistives.</p></article>
+        </div>
+        <p class="slide-note">Prioritats de confiança: l’obra ha de ser recuperable, exportable i publicable sense exposar accidentalment el treball en curs.</p>
+      </div>
+    </section>
+
+    <section class="slide" id="dafo" data-title="DAFO combinat" data-chapter="La posició de Trama" aria-labelledby="title-07">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Síntesi competitiva</span><span class="folio">07 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-07" tabindex="-1">DAFO · Trama davant l’ecosistema.</h2><p>La base tècnica és un actiu. L’avantatge per als autors i la disposició a pagar encara s’han de demostrar.</p></div>
+        <div class="grid grid--two swot">
+          <article class="panel panel--soft"><div class="swot-head"><h3>Fortaleses</h3><span class="swot-letter" aria-hidden="true">F</span></div><ul>
+            <li>Mapa, lògica visual i edició lineal ja existents.</li>
+            <li>Crear, provar i compartir dins del mateix producte.</li>
+            <li>Desat i recuperació amb regressions automatitzades.</li>
+            <li>Interfície i documentació en català, castellà i anglès.</li>
+            <li>Possibilitat de focalitzar-se en l’autor individual.</li>
+          </ul></article>
+          <article class="panel"><div class="swot-head"><h3>Debilitats</h3><span class="swot-letter" aria-hidden="true">D</span></div><ul>
+            <li>Exportació insuficient per garantir independència real.</li>
+            <li>Tauler protagonista; edició lineal poc visible.</li>
+            <li>Sense versions duradores, publicació separada i revisió global.</li>
+            <li>Personalització i extensibilitat limitades davant eines madures.</li>
+            <li>Avantatge d’usabilitat i disposició a pagar no demostrats.</li>
+          </ul></article>
+          <article class="panel panel--accent"><div class="swot-head"><h3>Oportunitats</h3><span class="swot-letter" aria-hidden="true">O</span></div><ul>
+            <li>Autors que abandonen davant la fricció tècnica.</li>
+            <li>Unificar escriptura, estructura, revisió i publicació.</li>
+            <li>Explicar errors i conseqüències amb llenguatge comprensible.</li>
+            <li>Presentació i portabilitat sense configuració tècnica.</li>
+            <li>Construir confiança amb obres acabades i autors reals.</li>
+          </ul></article>
+          <article class="panel"><div class="swot-head"><h3>Amenaces</h3><span class="swot-letter" aria-hidden="true">A</span></div><ul>
+            <li>Alternatives gratuïtes potents; Moiki ja cobreix molt.</li>
+            <li>Desconfiança envers plataformes noves al núvol.</li>
+            <li>Ús episòdic: acabar una obra i abandonar la subscripció.</li>
+            <li>Interès en narrativa no implica demanda d’un altre editor.</li>
+            <li>«Sense IA» genera afinitat, no una raó suficient per pagar.</li>
+          </ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="posicionament" data-title="L’autor i la promesa" data-chapter="La direcció" aria-labelledby="title-08">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Posicionament proposat</span><span class="folio">08 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-08" tabindex="-1">No ser l’eina de tothom.<br>Ser útil per a <em>algú concret.</em></h2></div>
+        <div class="strategy-columns">
+          <div class="panel panel--soft">
+            <span class="eyebrow">L’usuari inicial</span>
+            <p class="audience-copy">Un autor individual que vol escriure i publicar ficció interactiva amb conseqüències significatives, però <strong>no vol convertir-se en programador.</strong></p>
+          </div>
+          <div class="panel">
+            <span class="eyebrow">La disciplina</span>
+            <p>No intentar satisfer simultàniament estudis de videojocs, formadors, marques i escriptors. La focalització és una decisió de producte.</p>
+          </div>
+        </div>
+        <div class="manifesto">
+          <span class="eyebrow">La promesa que val la pena provar</span>
+          <blockquote>«L’eina que t’ajuda a <em>acabar, revisar i publicar</em> la teva història interactiva, sense que la tecnologia interrompi l’escriptura ni s’apropiï de la teva obra.»</blockquote>
+        </div>
+        <div class="takeaway"><span aria-hidden="true">↳</span><p><strong>Identitat ≠ avantatge demostrat.</strong> Creativitat humana i «sense IA» poden crear afinitat. Acabar una obra amb menys fricció és un benefici que podem comprovar.</p></div>
+        <p class="slide-note"><span class="tag tag--proposed">Hipòtesi de posicionament</span> No és encara una decisió de mercat validada ni una promesa de rendibilitat.</p>
+      </div>
+    </section>
+
+    <section class="slide" id="prioritats-fonaments" data-title="Prioritats 1 i 2: confiança i escriptura" data-chapter="La ruta de producte" aria-labelledby="title-09">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Prioritats · Fonaments</span><span class="folio">09 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-09" tabindex="-1">Primer: obra seva.<br>Després: escriptura al centre.</h2><p>Completar el que ja tenim, sense reconstruir l’aplicació.</p></div>
+        <div class="grid grid--two">
+          <article class="panel priority">
+            <div class="priority-heading"><span class="priority-number" aria-hidden="true">01</span><div><span class="eyebrow">Confiança i independència</span><h3>Garantir que l’obra és seva</h3></div></div>
+            <ul>
+              <li>Importar i restaurar l’exportació.</li>
+              <li>Exportar HTML/ZIP jugable, amb els recursos necessaris.</li>
+              <li>Versions recuperables i backups duradors.</li>
+              <li>Separar esborrany i versió publicada.</li>
+              <li>Explicar què passa amb l’obra en cancel·lar el pla.</li>
+            </ul>
+            <p class="priority-outcome"><strong>Principi:</strong> no utilitzar la recuperació de les dades com a mecanisme de retenció comercial.</p>
+          </article>
+          <article class="panel priority panel--soft">
+            <div class="priority-heading"><span class="priority-number" aria-hidden="true">02</span><div><span class="eyebrow">Aprofitar l’editor lineal</span><h3>Crear un espai d’escriptura</h3></div></div>
+            <ul>
+              <li>Entrades clares: <strong>Escriure · Mapa · Provar.</strong></li>
+              <li>Crear escenes i decisions sense abandonar l’escriptura.</li>
+              <li>Navegar per escenes i capítols.</li>
+              <li>Cerca global.</li>
+              <li>Noms narratius per davant d’identificadors tècnics.</li>
+              <li>Recordar posició i context entre perspectives.</li>
+            </ul>
+            <p class="priority-outcome"><strong>Resultat desitjat:</strong> la tecnologia acompanya el procés creatiu, no obliga l’autor a interrompre’l.</p>
+          </article>
+        </div>
+        <div class="takeaway"><span aria-hidden="true">↳</span><p>La independència redueix el risc percebut. Una escriptura fluida dona una raó per escollir Trama.</p></div>
+        <p class="slide-note">Ordre proposat de valor, no calendari ni estimació de desenvolupament. Cal validar prioritats amb autors.</p>
+      </div>
+    </section>
+
+    <section class="slide" id="prioritats-acabar" data-title="Prioritats 3 i 4: revisar i publicar" data-chapter="La ruta de producte" aria-labelledby="title-10">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Prioritats · Acabar l’obra</span><span class="folio">10 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-10" tabindex="-1">De «funciona» a «està preparada».</h2><p>La revisió i l’experiència del lector formen part de la feina de l’autor.</p></div>
+        <div class="grid grid--two">
+          <article class="panel priority panel--soft">
+            <div class="priority-heading"><span class="priority-number" aria-hidden="true">03</span><div><span class="eyebrow">Revisió i diagnòstic</span><h3>Ajudar a acabar i revisar</h3></div></div>
+            <ul>
+              <li>Informe de connexions trencades, escenes estructuralment inaccessibles i finals pendents.</li>
+              <li>Distingir errors segurs d’advertiments: un bucle pot ser intencionat.</li>
+              <li>Depurador de variables amb estat abans/després d’una decisió.</li>
+              <li>Seguiment de camins provats, sense prometre cobertura completa de totes les combinacions.</li>
+              <li>Eines de relectura i exportació de text.</li>
+            </ul>
+            <p class="priority-outcome"><strong>Resultat desitjat:</strong> entendre què passa i trobar problemes abans de compartir l’obra.</p>
+          </article>
+          <article class="panel priority">
+            <div class="priority-heading"><span class="priority-number" aria-hidden="true">04</span><div><span class="eyebrow">Publicació i lectura</span><h3>Fer justícia a la història</h3></div></div>
+            <ul>
+              <li>Uns pocs temes visuals molt ben resolts.</li>
+              <li>Tipografia, espaiat i colors configurables sense CSS.</li>
+              <li>Desar i reprendre lectures.</li>
+              <li>Compartir una versió de prova per recollir feedback.</li>
+              <li>Validar teclat, lector de pantalla i mòbil.</li>
+            </ul>
+            <p class="priority-outcome"><strong>Resultat desitjat:</strong> publicar bé sense haver de gestionar disseny i infraestructura.</p>
+          </article>
+        </div>
+        <div class="deferred"><strong>Deixaria per després:</strong><span class="tag">Marketplace</span><span class="tag">Generació amb IA</span><span class="tag">Motors de joc</span><span class="tag">Col·laboració complexa</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="validacio" data-title="Com demostrar que som millors" data-chapter="La prova decisiva" aria-labelledby="title-11">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Pla de validació · No resultats observats</span><span class="folio">11 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-11" tabindex="-1">Mesurar obres acabades.<br>No només bones impressions.</h2></div>
+        <div class="validation-layout">
+          <aside class="panel panel--accent study-panel">
+            <span class="eyebrow">Prova inicial proposada</span><div class="study-size">12–15</div><p class="study-label">autors, tasca equivalent</p>
+            <p>Comparar <strong>Trama, Twine i Moiki</strong> amb text proporcionat i el mateix objectiu.</p>
+            <p>Després, treballar en una <strong>obra pròpia</strong> i observar finalització, ús posterior i pagament real.</p>
+            <p class="slide-note">Estudi exploratori: no és una estimació estadística de demanda ni una garantia de negoci.</p>
+          </aside>
+          <div class="panel">
+            <span class="eyebrow">La mateixa feina, en cada eina</span>
+            <ol class="task-list">
+              <li>Crear una història curta amb text proporcionat.</li>
+              <li>Afegir una decisió amb conseqüències.</li>
+              <li>Configurar una condició.</li>
+              <li>Reorganitzar una escena.</li>
+              <li>Detectar un problema introduït.</li>
+              <li>Compartir i conservar una còpia utilitzable.</li>
+            </ol>
+            <div class="measurements" aria-label="Criteris a mesurar"><span class="tag">Temps</span><span class="tag">Errors</span><span class="tag">Ajuda necessària</span><span class="tag">Confiança</span></div>
+            <p class="research-question">«Amb quina eina acabes i publiques millor, i per què pagaries per continuar utilitzant-la?»</p>
+          </div>
+        </div>
+        <div class="takeaway"><span aria-hidden="true">↳</span><p>La preferència en una demo no és suficient. Cal observar el comportament quan l’autor intenta acabar una obra real.</p></div>
+      </div>
+    </section>
+
+    <section class="slide" id="proximitat" data-title="Com de prop estem?" data-chapter="El veredicte" aria-labelledby="title-12">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Proximitat qualitativa · Sense percentatges inventats</span><span class="folio">12 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-12" tabindex="-1">Prou a prop per validar.<br>No per afirmar lideratge.</h2></div>
+        <table class="readiness-table">
+          <caption class="sr-only">Estat actual de Trama respecte als sis objectius estratègics</caption>
+          <thead><tr><th scope="col">Objectiu</th><th scope="col">Diagnòstic</th></tr></thead>
+          <tbody>
+            <tr><td>Crear i compartir històries interactives</td><td><span class="tag tag--good">Ja hi som funcionalment</span></td></tr>
+            <tr><td>Conseqüències sense programació</td><td><span class="tag tag--good">Base avançada</span><br><small>Pendent d’avaluar comprensibilitat.</small></td></tr>
+            <tr><td>Entorn complet per escriure i revisar</td><td><span class="tag">A mig camí</span></td></tr>
+            <tr><td>Portabilitat i preservació</td><td><span class="tag tag--pending">Mancances importants</span></td></tr>
+            <tr><td>Millor que les alternatives per al segment triat</td><td><span class="tag tag--pending">No demostrat</span></td></tr>
+            <tr><td>Negoci recurrent validat</td><td><span class="tag tag--pending">No demostrat</span></td></tr>
+          </tbody>
+        </table>
+        <div class="verdict"><span class="eyebrow">El següent salt</span><p>Completar <em>confiança, escriptura i publicació.</em><br>I demostrar que aquest conjunt ajuda a acabar obres.</p></div>
+        <p class="slide-note">Recomanació: començar una validació seriosa amb autors mentre es prioritzen les mancances de confiança. No cal esperar un producte perfecte.</p>
+      </div>
+    </section>
+
+    <section class="slide" id="fonts" data-title="Fonts, mètode i límits" data-chapter="L’evidència" aria-labelledby="title-13">
+      <div class="slide-inner">
+        <div class="slide-topline"><span class="section-kicker">Referències i transparència</span><span class="folio">13 / 13</span></div>
+        <div class="slide-heading"><h2 id="title-13" tabindex="-1">Una direcció amb criteri.<br>Una hipòtesi per comprovar.</h2><p>Documentació, veus d’autors i inspecció funcional. Cap d’aquests elements, sol, demostra demanda comercial per a Trama.</p></div>
+        <div class="sources-layout">
+          <div class="source-list" aria-label="Fonts externes de l’anàlisi">
+            <a class="source-link" href="https://twinery.org/" target="_blank" rel="noopener noreferrer"><div><b>Twine</b><span>Capacitats, formats, exportació i llibertat d’ús.</span></div>↗</a>
+            <a class="source-link" href="https://www.inklestudios.com/ink/" target="_blank" rel="noopener noreferrer"><div><b>Ink / Inky</b><span>Escriptura, previsualització, exportacions i integracions.</span></div>↗</a>
+            <a class="source-link" href="https://www.inklestudios.com/inklewriter/" target="_blank" rel="noopener noreferrer"><div><b>inklewriter</b><span>Escriptura senzilla i diferència respecte a Ink.</span></div>↗</a>
+            <a class="source-link" href="https://arcweave.com/features" target="_blank" rel="noopener noreferrer"><div><b>Arcweave</b><span>Funcions professionals; depurador enllaçat a la diapositiva 3.</span></div>↗</a>
+            <a class="source-link" href="https://documentation.moiki.fr/" target="_blank" rel="noopener noreferrer"><div><b>Moiki · Documentació</b><span>Sense codi, lògica, recursos, comprovacions i exportacions.</span></div>↗</a>
+            <a class="source-link" href="https://moiki.fr/faq" target="_blank" rel="noopener noreferrer"><div><b>Moiki · FAQ</b><span>Propietat, partides reprenibles i publicació de versions.</span></div>↗</a>
+            <a class="source-link" href="https://github.com/inkle/inky/issues/558" target="_blank" rel="noopener noreferrer"><div><b>Inky · Petició pública</b><span>Compartir una previsualització web temporal.</span></div>↗</a>
+            <a class="source-link" href="https://intfiction.org/t/looking-for-feedback-and-testers-for-a-new-interactive-story-platform-story-builders-world/77506/3" target="_blank" rel="noopener noreferrer"><div><b>Intfiction · Control i extensibilitat</b><span>Reaccions d’autors davant una nova plataforma.</span></div>↗</a>
+            <a class="source-link" href="https://intfiction.org/t/why-is-writing-interactive-fiction-still-drawing-diagrams-instead-of-writing/79389/14" target="_blank" rel="noopener noreferrer"><div><b>Intfiction · Text i diagrames</b><span>Preferències diverses en organització i escriptura.</span></div>↗</a>
+            <a class="source-link" href="https://intfiction.org/t/storyfall-a-new-if-authoring-tool-and-publishing-platform/77617/17" target="_blank" rel="noopener noreferrer"><div><b>Intfiction · Estil, backups i límits</b><span>Feedback qualitatiu a Storyfall, no auditoria del producte actual.</span></div>↗</a>
+          </div>
+          <aside class="panel panel--soft methodology">
+            <span class="eyebrow">Com llegir aquesta anàlisi</span>
+            <h3>Tres tipus d’evidència</h3>
+            <ul><li><strong>Documentació:</strong> funcions declarades pels competidors, no una prova comparativa completa.</li><li><strong>Comunitat:</strong> opinions seleccionades; no representatives de tots els autors.</li><li><strong>Trama:</strong> codi, proves funcionals i captures locals; no mètriques comercials.</li></ul>
+            <h3>Verificació de l’auditoria</h3>
+            <p>73 tests unitaris seleccionats amb <code>npm test</code>. 17 proves Playwright en Chromium, amb backend simulat. <code>git diff --check</code> correcte.</p>
+            <p>Àrees revisades: editor de tauler i lineal, exportació, desat, historial, sessió de joc i reproductor públic.</p>
+            <p>No s’ha comprovat tot el backend real, ni fet un benchmark a escala, ni mesurat usabilitat comparativa, retenció o disposició a pagar.</p>
+            <p>No es van modificar l’aplicació ni els canvis previs de la landing durant l’anàlisi. Lint/build no es van executar en aquella fase.</p>
+            <div class="takeaway"><p><strong>Una base funcional sòlida no equival a avantatge comercial.</strong> El següent pas és observar autors acabant obres reals.</p></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" aria-label="Navegació entre diapositives">
+    <progress class="progress" id="progress" value="1" max="13" aria-label="Progrés de la presentació">1 de 13</progress>
+    <div class="footer-inner">
+      <div class="footer-chapter"><span id="chapter">La direcció</span><strong id="slideLabel">De crear històries a acabar obres</strong></div>
+      <p class="keyboard-hint"><kbd>←</kbd> <kbd>→</kbd> per navegar · <kbd>Home</kbd> inici</p>
+      <nav class="navigation" aria-label="Diapositiva anterior o següent">
+        <button class="tool nav-button" id="previousButton" type="button" aria-label="Diapositiva anterior" disabled>←</button>
+        <span class="counter" id="counter"><b>01</b> / 13</span>
+        <button class="tool nav-button nav-button--next" id="nextButton" type="button" aria-label="Diapositiva següent">→</button>
+      </nav>
+    </div>
+  </footer>
+  <div class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog id="indexDialog" aria-labelledby="indexTitle">
+    <div class="dialog-heading"><h2 id="indexTitle">El dossier, d’un cop d’ull.</h2><button class="tool dialog-close" id="closeIndexButton" type="button" aria-label="Tanca l’índex" autofocus>×</button></div>
+    <nav class="index-list" id="indexList" aria-label="Índex de les 13 diapositives"></nav>
+    <p class="dialog-note">Les fletxes naveguen entre diapositives. «Lectura» mostra tot el dossier. «PDF» imprimeix totes les pàgines.</p>
+  </dialog>
+
+  <script>
+    (() => {
+      const root = document.documentElement
+      const slides = [...document.querySelectorAll('.slide')]
+      const previousButton = document.getElementById('previousButton')
+      const nextButton = document.getElementById('nextButton')
+      const counter = document.getElementById('counter')
+      const progress = document.getElementById('progress')
+      const chapter = document.getElementById('chapter')
+      const slideLabel = document.getElementById('slideLabel')
+      const announcement = document.getElementById('announcement')
+      const dialog = document.getElementById('indexDialog')
+      const indexButton = document.getElementById('indexButton')
+      const indexList = document.getElementById('indexList')
+      const readingButton = document.getElementById('readingButton')
+      const themeButton = document.getElementById('themeButton')
+      const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+      let current = 0
+      let reading = false
+
+      const indexLinks = slides.map((slide, index) => {
+        const link = document.createElement('a')
+        link.href = `#${slide.id}`
+        const number = document.createElement('span')
+        number.textContent = String(index + 1).padStart(2, '0')
+        link.append(number, document.createTextNode(slide.dataset.title))
+        link.addEventListener('click', event => {
+          event.preventDefault()
+          dialog.close()
+          showSlide(index, { focus: true })
+        })
+        indexList.append(link)
+        return link
+      })
+
+      function updateControls() {
+        const slide = slides[current]
+        chapter.textContent = slide.dataset.chapter
+        slideLabel.textContent = slide.dataset.title
+        counter.replaceChildren()
+        if (reading) {
+          counter.textContent = `${slides.length} diapositives · lectura`
+        } else {
+          const number = document.createElement('b')
+          number.textContent = String(current + 1).padStart(2, '0')
+          counter.append(number, document.createTextNode(` / ${slides.length}`))
+        }
+        previousButton.disabled = current === 0
+        nextButton.disabled = current === slides.length - 1
+        progress.value = current + 1
+        progress.max = slides.length
+        progress.textContent = `${current + 1} de ${slides.length}`
+        for (const [index, link] of indexLinks.entries()) {
+          if (index === current) link.setAttribute('aria-current', 'step')
+          else link.removeAttribute('aria-current')
+        }
+      }
+
+      function showSlide(index, { focus = false, updateHash = true, scroll = true } = {}) {
+        current = Math.max(0, Math.min(index, slides.length - 1))
+        slides.forEach((slide, position) => slide.classList.toggle('is-active', position === current))
+        updateControls()
+        if (updateHash) {
+          try { history.replaceState(null, '', `#${slides[current].id}`) }
+          catch { location.hash = slides[current].id }
+        }
+        if (scroll) {
+          if (reading) slides[current].scrollIntoView({ behavior: motion.matches ? 'auto' : 'smooth', block: 'start' })
+          else window.scrollTo({ top: 0, behavior: 'auto' })
+        }
+        if (focus) slides[current].querySelector('h1, h2').focus({ preventScroll: true })
+        announcement.textContent = `Diapositiva ${current + 1} de ${slides.length}: ${slides[current].dataset.title}`
+      }
+
+      function readHash() {
+        return slides.findIndex(slide => `#${slide.id}` === location.hash)
+      }
+
+      previousButton.addEventListener('click', () => showSlide(current - 1))
+      nextButton.addEventListener('click', () => showSlide(current + 1))
+      indexButton.addEventListener('click', () => dialog.showModal())
+      document.getElementById('closeIndexButton').addEventListener('click', () => dialog.close())
+      dialog.addEventListener('click', event => {
+        if (event.target !== dialog) return
+        const bounds = dialog.getBoundingClientRect()
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close()
+      })
+      readingButton.addEventListener('click', () => {
+        reading = !reading
+        root.dataset.view = reading ? 'reading' : 'slides'
+        readingButton.setAttribute('aria-pressed', String(reading))
+        readingButton.setAttribute('aria-label', reading ? 'Torna al mode de diapositives' : 'Activa la lectura contínua')
+        showSlide(current, { focus: true })
+      })
+
+      function applyTheme(theme) {
+        const dark = theme === 'dark'
+        root.dataset.poloTheme = dark ? 'dark' : 'light'
+        themeButton.setAttribute('aria-pressed', String(dark))
+        themeButton.setAttribute('aria-label', dark ? 'Activa el tema clar' : 'Activa el tema fosc')
+      }
+      try {
+        const savedTheme = localStorage.getItem('trama-strategy-theme')
+        if (savedTheme === 'light' || savedTheme === 'dark') applyTheme(savedTheme)
+      } catch { /* File access or blocked storage must not break the presentation. */ }
+      themeButton.addEventListener('click', () => {
+        const theme = root.dataset.poloTheme === 'dark' ? 'light' : 'dark'
+        applyTheme(theme)
+        try { localStorage.setItem('trama-strategy-theme', theme) } catch { /* Optional preference only. */ }
+      })
+      document.getElementById('printButton').addEventListener('click', () => window.print())
+      window.addEventListener('hashchange', () => {
+        const index = readHash()
+        if (index >= 0) showSlide(index, { focus: true, updateHash: false })
+      })
+      document.addEventListener('keydown', event => {
+        if (reading || dialog.open || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+        if (event.target.closest('input, textarea, select, [contenteditable]')) return
+        const index = event.key === 'ArrowRight' || event.key === 'PageDown' ? current + 1
+          : event.key === 'ArrowLeft' || event.key === 'PageUp' ? current - 1
+          : event.key === 'Home' ? 0
+          : event.key === 'End' ? slides.length - 1 : undefined
+        if (index === undefined) return
+        event.preventDefault()
+        showSlide(index)
+      })
+      root.dataset.view = 'slides'
+      root.classList.add('enhanced')
+      const initialIndex = readHash()
+      showSlide(initialIndex >= 0 ? initialIndex : 0, { updateHash: initialIndex >= 0, scroll: false })
+    })()
+  </script>
+</body>
+</html>

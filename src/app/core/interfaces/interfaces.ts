@@ -26,14 +26,14 @@ export type UnavailableAnswerDisplay = 'hidden' | 'locked' | 'requirements'
  * this shape when they become active so consumers do not need null checks.
  */
 export interface tree {
-  /** Defaults to hidden for stories saved before this option existed. */
+  /** Defaults to hidden. */
   unavailableAnswerDisplay?: UnavailableAnswerDisplay
-  /** Optional only for compatibility with stories predating the entry marker. */
+  /** Every saved story has one; only the empty placeholder tree does not. */
   entryPoint?: storyEntryPoint
   refs: Record<string, ref>
   nodes: Array<node>
   categories: Array<refCategory>
-  /** Editor-only visual frames; older stories may not have any. */
+  /** Editor-only visual frames. */
   frames?: boardFrame[]
   /** Story-owned palette, shared by frames and included in exports. */
   frameColors?: storyColor[]
@@ -115,11 +115,11 @@ export interface node_condition_rule {
   value?: number
 }
 
-export interface node_conditions extends node_condition_rule {
+export interface node_conditions {
   id: string
   join?: Array<join>
-  /** Multiple rules on one route are combined with AND. Legacy routes use ref/comparator/value. */
-  rules?: node_condition_rule[]
+  /** Combined with AND. A route without rules never matches. */
+  rules: node_condition_rule[]
 }
 export interface node_userTextOptions {
   property: string
@@ -140,9 +140,7 @@ export interface event {
   property?: string
 }
 export interface answer_requirement {
-  /** Legacy stories use id; newly saved requirements use target. */
-  id?: string
-  target?: string
+  target: string
   type: 'stat' | 'condition'
   amount: number
 }
@@ -172,11 +170,6 @@ export interface join {
   node: string
   toAnswer?: boolean
 }
-export interface externalEvent {
-  name: 'leaveTab' | 'goBackToTab' | 'blurWindow' | 'focusWindow'
-  time: number
-}
-
 // Results and Stadistics
 export interface path {
   id: string
@@ -184,14 +177,10 @@ export interface path {
   timestamp: number
   type: 'node' | 'answer'
 }
-export interface result {
-  conditions: condition[]
-  name: string
-  stats: stat[]
-}
+/** Final player state of a game, saved as @trama/engine keeps it. */
+export type result = PlayerState
 export interface game {
   created_at: string
-  external_events: externalEvent[]
   path: path[]
   result: result
   user_name: string
@@ -199,6 +188,7 @@ export interface game {
 
 // Authenticated user
 import { User } from '@supabase/supabase-js'
+import { PlayerState } from '@trama/engine'
 
 export interface userProfile {
   subscription_status: string

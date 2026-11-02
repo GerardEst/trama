@@ -9,7 +9,7 @@ async function prepareAuthor(page: Page) {
   const story = {
     id: '00000000-0000-4000-8000-000000000012', name: 'The island', custom_id: null as string | null,
     tracking: false, sharing: true, tapLink: false, cumulativeMode: false, footer: {},
-    tree: { refs: {}, categories: [], nodes: [{ id: 'node_0', type: 'end', left: 5000, top: 5000, text: 'The murderer was the captain.' }] },
+    tree: { refs: {}, categories: [], entryPoint: { left: 4820, top: 4900, targetNodeId: 'node_0' }, nodes: [{ id: 'node_0', type: 'end', left: 5000, top: 5000, text: 'The murderer was the captain.' }] },
   }
   const authKey = `sb-${new URL(environment.apiUrl).hostname.split('.')[0]}-auth-token`
   await page.addInitScript(({ user, storyId, authKey }) => {

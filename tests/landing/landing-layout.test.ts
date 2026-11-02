@@ -10,7 +10,7 @@ for (const width of [1440, 820, 375, 320]) {
     await expect(page.locator('#authoring button')).toHaveCount(4)
     await expect(page.locator('#features polo-landing-feature-card')).toHaveCount(6)
     await expect(page.locator('#trust article')).toHaveCount(3)
-    await expect(page.locator('#try-it polo-game')).toHaveCount(1)
+    await expect(page.locator('#try-it polo-story-player')).toHaveCount(1)
     const image = page.locator('#try-it .story-player__scene img')
     await expect(image).toHaveJSProperty('naturalWidth', 1368)
     const imageBox = await image.boundingBox()

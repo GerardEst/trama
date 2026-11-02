@@ -1,14 +1,8 @@
-import { Component, Input, Renderer2, OnInit } from '@angular/core'
+import { Component, Input, Renderer2, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { GameComponent } from 'src/app/features/playground/components/game/game.component'
+import { createGame, Game, SceneAnswer, Visit } from '@trama/engine'
+import { StoryPlayerComponent } from 'src/app/features/playground/components/story-player/story-player.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
-import {
-  externalEvent,
-  node,
-  node_answer,
-} from 'src/app/core/interfaces/interfaces'
-import { PlayerService } from '../../services/player.service'
-import { GameEngineService } from '../../services/game-engine.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { Router } from '@angular/router'
 import { storyPlainText } from 'src/app/shared/utils/story-html'
@@ -19,12 +13,11 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 @Component({
   selector: 'polo-playground',
   standalone: true,
-  imports: [CommonModule, GameComponent, ToggleComponent, TranslatePipe],
-  providers: [PlayerService, GameEngineService],
+  imports: [CommonModule, StoryPlayerComponent, ToggleComponent, TranslatePipe],
   templateUrl: './playground.component.html',
   styleUrls: ['./playground.component.css'],
 })
-export class PlaygroundComponent implements OnInit {
+export class PlaygroundComponent implements OnInit, OnDestroy {
   // Complex id, used for private stories
   @Input() storyId: string = ''
   // Easy and customizable id, used for public stories
@@ -32,12 +25,12 @@ export class PlaygroundComponent implements OnInit {
 
   userName: string | null = null
   playerPath: Array<any> = []
-  externalEvents: externalEvent[] = []
   gameId?: string
+  game?: Game
+  private unsubscribe?: () => void
 
   constructor(
     private db: DatabaseService,
-    public playerService: PlayerService,
     public activeStory: ActiveStoryService,
     public theme: ThemeService,
     private router: Router,
@@ -77,16 +70,26 @@ export class PlaygroundComponent implements OnInit {
       cumulativeMode: configuration.cumulativeMode,
     })
 
+    // The page plays through @trama/engine; activeStory only holds the story
+    // name and configuration that the header and shared views read.
+    const game = createGame(story.tree ?? {})
+    this.unsubscribe = game.subscribe(event => {
+      if (event.type === 'node') this.drawNode(event.visit)
+      else if (event.type === 'answer') this.selectAnswer(event.answer)
+      else if (event.type === 'end') this.endGame()
+    })
+    this.game = game
     this.displayGame()
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe?.()
   }
 
   async displayGame(event?: Event) {
     event?.preventDefault()
 
     if (this.activeStory.storyConfiguration().tracking) {
-      this.startTabChangeDetection()
-      this.startBlurWindowDetection()
-
       this.gameId = self.crypto.randomUUID()
 
       // We upload an empty game
@@ -98,23 +101,15 @@ export class PlaygroundComponent implements OnInit {
   private async saveGame() {
     if (!this.gameId) return console.error('Cannot save adventure')
 
+    const player = this.game?.getState().player ?? { properties: {}, stats: {}, conditions: [] }
     const saved = await this.db.saveNewGameTo(
       this.gameId,
-      this.playerService.playerProperties()['id'] || 'anonymous',
+      player.properties['id'] || 'anonymous',
       this.activeStory.storyId(),
       this.playerPath,
-      {
-        properties: this.playerService.playerProperties(),
-        stats: this.playerService.playerStats(),
-        conditions: this.playerService.playerConditions(),
-      },
-      this.externalEvents
+      player
     )
-    if (saved) {
-      console.log('Game saved!', saved)
-    } else {
-      console.error('Error saving game')
-    }
+    if (!saved) console.error('Error saving game')
   }
 
   endGame() {
@@ -123,7 +118,7 @@ export class PlaygroundComponent implements OnInit {
     }
   }
 
-  selectAnswer(answer: node_answer) {
+  selectAnswer(answer: SceneAnswer) {
     if (this.activeStory.storyConfiguration().tracking) {
       this.playerPath.push({
         type: 'answer',
@@ -131,49 +126,17 @@ export class PlaygroundComponent implements OnInit {
         text: storyPlainText(answer.text),
         timestamp: Date.now(),
       })
-      console.log('Selection registered', this.playerPath)
     }
   }
 
-  drawNode(node: node) {
+  drawNode(visit: Visit) {
     if (this.activeStory.storyConfiguration().tracking) {
       this.playerPath.push({
         type: 'node',
-        id: node.id,
-        text: storyPlainText(node.text),
+        id: visit.nodeId,
+        text: storyPlainText(visit.scene.text),
         timestamp: Date.now(),
       })
-      console.log('Node registered', this.playerPath)
     }
-  }
-
-  private startTabChangeDetection() {
-    document.addEventListener('visibilitychange', () => {
-      let externalEvent: externalEvent
-      if (document.hidden) {
-        externalEvent = { name: 'leaveTab', time: Date.now() }
-        this.externalEvents.push(externalEvent)
-      } else {
-        externalEvent = { name: 'goBackToTab', time: Date.now() }
-        this.externalEvents.push(externalEvent)
-      }
-    })
-  }
-
-  private startBlurWindowDetection() {
-    window.addEventListener('focus', () => {
-      const externalEvent: externalEvent = {
-        name: 'focusWindow',
-        time: Date.now(),
-      }
-      this.externalEvents.push(externalEvent)
-    })
-    window.addEventListener('blur', () => {
-      const externalEvent: externalEvent = {
-        name: 'blurWindow',
-        time: Date.now(),
-      }
-      this.externalEvents.push(externalEvent)
-    })
   }
 }

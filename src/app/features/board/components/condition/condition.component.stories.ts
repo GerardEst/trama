@@ -15,9 +15,7 @@ const meta: Meta<ConditionComponent> = {
   ],
   args: {
     conditionId: 'condition_18_0',
-    selectedRef: 'stat_courage',
-    comparator: 'morethan',
-    value: 4,
+    rules: [{ ref: 'stat_courage', comparator: 'morethan', value: 4 }],
     hasJoin: false,
   },
 }
@@ -29,9 +27,7 @@ export const Default: Story = {}
 export const Connected: Story = { args: { hasJoin: true } }
 export const PropertyValue: Story = {
   args: {
-    selectedRef: 'property_alias',
-    comparator: 'equalto',
-    value: 0,
+    rules: [{ ref: 'property_alias', comparator: 'equalto', value: 0 }],
   },
 }
 export const Fallback: Story = {
