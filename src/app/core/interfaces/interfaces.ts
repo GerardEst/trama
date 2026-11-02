@@ -155,17 +155,6 @@ export interface link {
   url: string
 }
 
-export interface property {
-  [key: string]: string // Basicament pot tenir qualsevol cosa que se li vulgui fotre
-}
-
-export interface stat {
-  id: string
-  amount: number
-}
-export interface condition {
-  id: string
-}
 export interface join {
   node: string
   toAnswer?: boolean
