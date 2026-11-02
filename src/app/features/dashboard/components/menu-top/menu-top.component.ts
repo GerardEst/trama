@@ -47,6 +47,8 @@ export class MenuTopComponent {
     const newName = value.trim()
     if (!storyId || newName.length === 0) return
 
+    this.mutations.renameDraft(storyId, value)
+    if (!(await this.mutations.ensureSaved())) return
     await this.db.saveNewStoryName(storyId, value)
 
     this.activeStory.setStoryName(newName)
@@ -56,31 +58,31 @@ export class MenuTopComponent {
     this.showOptions = !this.showOptions
   }
 
-  toggleTracking() {
+  async toggleTracking() {
     if (this.db.authenticationRequired() || !this.activeStory.storyId()) return
 
     const tracking = !this.activeStory.storyConfiguration().tracking
     this.activeStory.patchConfiguration({ tracking })
-    this.db.setTrackingOf(this.activeStory.storyId(), tracking)
+    if (await this.mutations.ensureSaved()) this.db.setTrackingOf(this.activeStory.storyId(), tracking)
   }
 
   setAnswerDisplay(value: UnavailableAnswerDisplay | undefined) {
     this.mutations.update(tree => { tree.unavailableAnswerDisplay = value })
   }
 
-  toggleCumulativeMode() {
+  async toggleCumulativeMode() {
     const cumulativeMode = !this.activeStory.storyConfiguration().cumulativeMode
     this.activeStory.patchConfiguration({ cumulativeMode })
-    this.db.setCumulativeModeOf(this.activeStory.storyId(), cumulativeMode)
+    if (await this.mutations.ensureSaved()) this.db.setCumulativeModeOf(this.activeStory.storyId(), cumulativeMode)
   }
 
-  toggleAppLink() {
+  async toggleAppLink() {
     const tapLink = !this.activeStory.storyConfiguration().tapLink
     this.activeStory.patchConfiguration({ tapLink })
-    this.db.setTapLinkOf(this.activeStory.storyId(), tapLink)
+    if (await this.mutations.ensureSaved()) this.db.setTapLinkOf(this.activeStory.storyId(), tapLink)
   }
 
-  updateFooter(option: 'text' | 'link', event: any) {
+  async updateFooter(option: 'text' | 'link', event: any) {
     let newValue = event.target.value
     if (option === 'link') {
       newValue = normalizeLink(newValue)
@@ -90,6 +92,7 @@ export class MenuTopComponent {
       [option]: newValue,
     }
     this.activeStory.patchConfiguration({ footer })
+    if (!(await this.mutations.ensureSaved())) return
     this.db.updateFooterOf(this.activeStory.storyId(), {
       text: footer.text ?? '',
       link: footer.link ?? '',

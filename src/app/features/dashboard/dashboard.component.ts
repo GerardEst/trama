@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, HostListener, signal } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, ViewChild, OnInit, OnDestroy, HostListener, effect, signal, untracked } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { BoardComponent } from '../board/board.component'
 import { MenuComponent } from './components/menu/menu.component'
@@ -16,6 +16,7 @@ import { LinearEditorComponent } from '../linear-editor/linear-editor.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { ShareStoryComponent } from './modals/share-story/share-story.component'
+import { buildExampleStory, EXAMPLE_STORY_COPY } from '../landing-page/exampleStory'
 
 @Component({
   selector: 'polo-dashboard',
@@ -54,8 +55,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (window.matchMedia('(max-width: 760px)').matches && this.menuSide) this.menuSide.fixedMenu = false
   }
 
-  openShare() {
+  async openShare() {
     this.commitEdits()
+    // Sharing needs a stored story, so an untouched example is saved first.
+    if (!(await this.mutations.ensureSaved())) return
     this.modal.launch(ShareStoryComponent)
   }
 
@@ -125,6 +128,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private host: ElementRef<HTMLElement>
   ) {
     this.mutations.beginHistorySession()
+    // The example becomes one of the author's stories once they change it.
+    effect(() => {
+      const created = this.mutations.savedDraft()
+      if (!created) return
+      untracked(() => {
+        if (this.activeStory.storyId() === created.id) localStorage.setItem('polo-id', created.id)
+        const stories = this.menuSide?.stories()
+        if (stories && !stories.some((story: { id: string }) => story.id === created.id)) {
+          this.menuSide?.stories.set([...stories, { id: created.id, name: created.name }])
+        }
+      })
+    })
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -188,10 +203,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (storyId && storyId === currentId && storyId === this.loadedStoryId) return
     const currentTree = this.activeStory.entireTree()
     const hadPendingChanges = this.mutations.hasUnsavedChanges()
-    const story = storyId
-      ? await this.db.getStoryWithID(storyId)
-      : await this.db.getNewestStory()
-    if (!story || request !== this.loadRequest) return
+    const story = (storyId && await this.db.getStoryWithID(storyId)) || await this.db.getNewestStory()
+    if (request !== this.loadRequest) return
+    if (!story) {
+      // Authors without stories start from an example that is only stored once they change it.
+      if (this.db.user()) this.loadExampleDraft()
+      return
+    }
 
     // A read started before a deletion/save must not resurrect its old tree,
     // even if the save finished while that read was still in flight.
@@ -215,6 +233,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => this.board?.refreshFlows(), 0)
 
     this.loadConfigurationForStory(story.id)
+  }
+
+  private loadExampleDraft() {
+    const copy = this.i18n.pick(EXAMPLE_STORY_COPY)
+    const storyId = self.crypto.randomUUID()
+    this.mutations.loadDraft(storyId, copy.title, buildExampleStory(copy))
+    this.loadedStoryId = storyId
+    this.stadistics.clean()
+    this.setInitialBoardPositionFor(storyId)
+    setTimeout(() => this.board?.refreshFlows(), 0)
   }
 
   setInitialBoardPositionFor(storyId: string) {

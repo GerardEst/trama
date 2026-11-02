@@ -14,9 +14,10 @@ describe('StoryMutationService', () => {
 
   beforeEach(() => {
     database = jasmine.createSpyObj<DatabaseService>('DatabaseService', [
-      'saveTreeToDB',
+      'saveTreeToDB', 'createStoryWithID',
     ])
     database.saveTreeToDB.and.resolveTo(true)
+    database.createStoryWithID.and.resolveTo(true)
     Object.assign(database, { user: signal<appUser | null>(null) })
 
     TestBed.configureTestingModule({
@@ -477,4 +478,62 @@ describe('StoryMutationService', () => {
     expect(database.saveTreeToDB).toHaveBeenCalledTimes(2)
     expect(database.saveTreeToDB.calls.argsFor(1)[1].nodes.length).toBe(3)
   }))
+
+  describe('drafts', () => {
+    const author = { id: 'draft-author' } as appUser
+    afterEach(() => sessionStorage.removeItem('polo-pending-tree:draft-author:draft-1'))
+
+    it('does not store a draft until it changes, then creates it once under the same id', fakeAsync(() => {
+      database.user.set(author)
+      mutations.loadDraft('draft-1', 'Example', { nodes: [], entryPoint: { left: 5000, top: 5000 } })
+      flushMicrotasks()
+      expect(mutations.isDraft()).toBeTrue()
+      expect(database.createStoryWithID).not.toHaveBeenCalled()
+      expect(database.saveTreeToDB).not.toHaveBeenCalled()
+
+      mutations.update(addNode)
+      flushMicrotasks()
+      expect(database.createStoryWithID).toHaveBeenCalledOnceWith('draft-1', 'Example', activeStory.entireTree())
+      expect(mutations.isDraft()).toBeFalse()
+      expect(mutations.savedDraft()).toEqual({ id: 'draft-1', name: 'Example' })
+      expect(activeStory.storyId()).toBe('draft-1')
+
+      mutations.update(draft => { draft.nodes[0].text = 'Changed' })
+      flushMicrotasks()
+      expect(database.createStoryWithID).toHaveBeenCalledTimes(1)
+      expect(database.saveTreeToDB).toHaveBeenCalledOnceWith('draft-1', activeStory.entireTree())
+    }))
+
+    it('stores an untouched draft on demand, with the name it was given meanwhile', fakeAsync(() => {
+      database.user.set(author)
+      mutations.loadDraft('draft-1', 'Example', { nodes: [], entryPoint: { left: 5000, top: 5000 } })
+      mutations.renameDraft('draft-1', 'My adventure')
+      let saved: boolean | undefined
+      mutations.ensureSaved().then(result => saved = result)
+      flushMicrotasks()
+      expect(saved).toBeTrue()
+      expect(database.createStoryWithID).toHaveBeenCalledOnceWith('draft-1', 'My adventure', activeStory.entireTree())
+      let again: boolean | undefined
+      mutations.ensureSaved().then(result => again = result)
+      flushMicrotasks()
+      expect(again).toBeTrue()
+      expect(database.createStoryWithID).toHaveBeenCalledTimes(1)
+    }))
+
+    it('keeps a draft that failed to be created and retries it', fakeAsync(() => {
+      database.user.set(author)
+      database.createStoryWithID.and.resolveTo(false)
+      mutations.loadDraft('draft-1', 'Example', { nodes: [], entryPoint: { left: 5000, top: 5000 } })
+      let saved: boolean | undefined
+      mutations.ensureSaved().then(result => saved = result)
+      flushMicrotasks()
+      expect(saved).toBeFalse()
+      expect(mutations.isDraft()).toBeTrue()
+      database.createStoryWithID.and.resolveTo(true)
+      tick(2000)
+      flushMicrotasks()
+      expect(mutations.isDraft()).toBeFalse()
+      expect(database.createStoryWithID).toHaveBeenCalledTimes(2)
+    }))
+  })
 })

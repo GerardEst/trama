@@ -4,6 +4,10 @@ import { By } from '@angular/platform-browser'
 import { MenuTreeLegendComponent } from './components/menu-tree-legend/menu-tree-legend.component'
 
 import { DashboardComponent } from './dashboard.component'
+import { DatabaseService } from 'src/app/core/services/database.service'
+import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
+import { appUser } from 'src/app/core/interfaces/interfaces'
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent
@@ -21,6 +25,21 @@ describe('DashboardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('shows authors without stories an example that is not stored until they change it', async () => {
+    const db = TestBed.inject(DatabaseService)
+    db.user.set({ id: 'new-author' } as appUser)
+    spyOn(db, 'getNewestStory').and.resolveTo(false)
+    const create = spyOn(db, 'createStoryWithID').and.resolveTo(true)
+    await component.initBoard(null)
+    const activeStory = TestBed.inject(ActiveStoryService)
+    const mutations = TestBed.inject(StoryMutationService)
+    expect(activeStory.storyName()).toBe('The Last Threshold')
+    expect(activeStory.initialNode()?.id).toBe('node_0')
+    expect(mutations.isDraft()).toBeTrue()
+    expect(localStorage.getItem('polo-id')).not.toBe(activeStory.storyId())
+    expect(create).not.toHaveBeenCalled()
   })
 
   it('starts at 70/30, resets to that split and bounds keyboard resizing', () => {

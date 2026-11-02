@@ -99,11 +99,23 @@ describe('Dashboard history shortcuts', () => {
     flushMicrotasks()
   }))
 
-  it('commits focused edits before opening the sharing dialog', () => {
+  it('commits focused edits before opening the sharing dialog', async () => {
     const commit = spyOn(component, 'commitEdits')
     const launch = spyOn(TestBed.inject(ModalService), 'launch')
-    component.openShare()
+    await component.openShare()
     expect(commit).toHaveBeenCalledBefore(launch)
+    expect(launch).toHaveBeenCalledWith(ShareStoryComponent)
+  })
+
+  it('stores an untouched example before sharing it, and does not share if that fails', async () => {
+    const mutations = TestBed.inject(StoryMutationService)
+    const launch = spyOn(TestBed.inject(ModalService), 'launch')
+    const ensureSaved = spyOn(mutations, 'ensureSaved').and.resolveTo(false)
+    await component.openShare()
+    expect(ensureSaved).toHaveBeenCalled()
+    expect(launch).not.toHaveBeenCalled()
+    ensureSaved.and.resolveTo(true)
+    await component.openShare()
     expect(launch).toHaveBeenCalledWith(ShareStoryComponent)
   })
 

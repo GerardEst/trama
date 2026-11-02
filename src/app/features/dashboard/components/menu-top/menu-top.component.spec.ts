@@ -111,7 +111,7 @@ describe('MenuTopComponent', () => {
     expect(exportButton?.disabled).toBeFalse()
   })
 
-  it('unlocks tracking, footer customization and analytics without subscription metadata', () => {
+  it('unlocks tracking, footer customization and analytics without subscription metadata', async () => {
     TestBed.inject(ActiveStoryService).load('story-1', 'Story', { nodes: [] })
     const tracking = spyOn(TestBed.inject(DatabaseService), 'setTrackingOf').and.resolveTo(true)
     component.toggleOptions()
@@ -124,10 +124,10 @@ describe('MenuTopComponent', () => {
     }
     const analytics = Array.from(host.querySelectorAll('button')).find(button => button.textContent?.includes('Open analytics'))!
     expect(analytics.disabled).toBeFalse()
-    component.toggleTracking()
+    await component.toggleTracking()
     expect(tracking).toHaveBeenCalledWith('story-1', true)
     TestBed.inject(DatabaseService).authenticationRequired.set(true)
-    component.toggleTracking()
+    await component.toggleTracking()
     expect(tracking).toHaveBeenCalledTimes(1)
   })
 
@@ -190,7 +190,7 @@ describe('MenuTopComponent', () => {
     expect(input.value).toBe('Original story')
     input.value = 'New story'
     input.dispatchEvent(new Event('change'))
-    await Promise.resolve()
+    await fixture.whenStable()
     expect(save).toHaveBeenCalledOnceWith('story-1', 'New story')
     expect(activeStory.storyName()).toBe('New story')
   })

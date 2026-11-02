@@ -196,6 +196,16 @@ export class DatabaseService implements OnDestroy {
     return data
   }
 
+  /** Stores a story the author has only had in memory, under the id it already uses. */
+  async createStoryWithID(id: string, name: string, storyTree: tree): Promise<boolean> {
+    const userId = this.user()?.id
+    if (!userId) return false
+    const { error } = await this.supabase.from('stories').insert({ id, name, tree: storyTree, profile_id: userId })
+    // A retry after a lost response finds the row already created.
+    if (error && error.code !== '23505') console.error(error)
+    return !error || error.code === '23505'
+  }
+
   async saveTreeToDB(treeId: string, treeContent: tree): Promise<boolean> {
     const userId = this.user()?.id
     if (!userId) return false

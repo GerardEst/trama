@@ -19,6 +19,12 @@ export class StoryMutationService implements OnDestroy {
   private readonly storyAuthors = new Map<string, string | undefined>()
   private readonly failedStories = new Set<string>()
   private readonly recoveredStories = new Set<string>()
+  /** Stories shown before they exist in the database, by id, with their name. */
+  private readonly drafts = new Map<string, string>()
+  private readonly draftWaiters = new Map<string, Array<(saved: boolean) => void>>()
+  private readonly createdDraft = signal<{ id: string; name: string } | undefined>(undefined)
+  /** The last draft that became a stored story. */
+  readonly savedDraft = this.createdDraft.asReadonly()
   private batchDepth = 0
   private batchChanged = false
   private saveInProgress = false
@@ -88,6 +94,31 @@ export class StoryMutationService implements OnDestroy {
       this.refreshState()
     }
     this.images.storyLoaded(storyId, this.activeStory.entireTree(), userId, this.pendingSaves.has(storyId))
+  }
+
+  /** Shows a story that is only stored the first time the author changes it. */
+  loadDraft(storyId: string, name: string, draftTree: Partial<tree>) {
+    this.drafts.set(storyId, name)
+    this.loadStory(storyId, name, draftTree)
+  }
+
+  isDraft(storyId = this.activeStory.storyId()): boolean {
+    return this.drafts.has(storyId)
+  }
+
+  /** Renames a draft before it is stored; stored stories are renamed in the database. */
+  renameDraft(storyId: string, name: string) {
+    if (this.drafts.has(storyId)) this.drafts.set(storyId, name)
+  }
+
+  /** Stores the active draft now, for changes that are not tree edits (settings, sharing). */
+  ensureSaved(): Promise<boolean> {
+    const storyId = this.activeStory.storyId()
+    if (!this.drafts.has(storyId)) return Promise.resolve(true)
+    return new Promise(resolve => {
+      this.draftWaiters.set(storyId, [...(this.draftWaiters.get(storyId) ?? []), resolve])
+      this.enqueueSave(this.activeStory.entireTree())
+    })
   }
 
   update(mutate: (draft: tree) => boolean | void, coalescingKey?: string): boolean {
@@ -184,10 +215,21 @@ export class StoryMutationService implements OnDestroy {
         }
 
         let saved = false
+        const draftName = this.drafts.get(storyId)
         try {
-          saved = await this.database.saveTreeToDB(storyId, pending.tree)
+          saved = draftName === undefined
+            ? await this.database.saveTreeToDB(storyId, pending.tree)
+            : await this.database.createStoryWithID(storyId, draftName, pending.tree)
         } catch (error: unknown) {
           console.error('Could not save the story', error)
+        }
+        if (draftName !== undefined) {
+          if (saved) {
+            this.drafts.delete(storyId)
+            this.createdDraft.set({ id: storyId, name: draftName })
+          }
+          this.draftWaiters.get(storyId)?.forEach(resolve => resolve(saved))
+          this.draftWaiters.delete(storyId)
         }
 
         if (saved) {
