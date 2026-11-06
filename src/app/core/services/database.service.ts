@@ -445,15 +445,17 @@ export class DatabaseService implements OnDestroy {
   ) {
     if (!environment.production)
       console.log('%cdb call to save a new anonymous game', 'color: #9999ff')
-    const { data, error } = await this.supabase.from('games').upsert({
-      id,
-      result,
-      user_name: username,
-      story,
-      path,
+    // Players cannot write to the games table: the function creates the game
+    // and later updates it, as long as it is called with the same game id.
+    const { error } = await this.supabase.rpc('save_game', {
+      game_id: id,
+      story_id: story,
+      player_name: username,
+      game_path: path,
+      game_result: result,
     })
     if (error) {
-      console.log(error)
+      console.error(error)
       return false
     }
 

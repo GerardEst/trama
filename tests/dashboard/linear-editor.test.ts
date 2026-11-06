@@ -52,7 +52,7 @@ async function mockStory(page: Page) {
       await route.fulfill({ json: [{ id: storyId, name: 'Linear regression', tree: savedTree,
         tracking: true, sharing: true, tapLink: true, cumulativeMode: true, footer: {}, custom_id: null }] })
     } else {
-      if (path === '/rest/v1/games' && route.request().method() !== 'GET') gameWrites++
+      if (path === '/rest/v1/rpc/save_game' || (path === '/rest/v1/games' && route.request().method() !== 'GET')) gameWrites++
       await route.abort()
     }
   })
