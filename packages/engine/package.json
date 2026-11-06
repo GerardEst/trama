@@ -1,5 +1,5 @@
 {
-  "name": "@trama/engine",
+  "name": "@trama-app/engine",
   "version": "0.1.0",
   "description": "Play Trama stories anywhere: resolves nodes, events and requirements without any UI.",
   "license": "MIT",
@@ -23,6 +23,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "trama",
     "interactive-fiction",
@@ -30,6 +33,14 @@
     "branching-narrative"
   ],
   "homepage": "https://trama.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GerardEst/trama.git",
+    "directory": "packages/engine"
+  },
+  "bugs": {
+    "url": "https://github.com/GerardEst/trama/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean --target es2020",
     "typecheck": "tsc --noEmit",
@@ -41,5 +52,8 @@
     "tsup": "^8.5.1",
     "typescript": "5.5",
     "vitest": "^2.1.9"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

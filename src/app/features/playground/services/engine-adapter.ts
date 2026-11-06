@@ -1,9 +1,9 @@
-import { MissingRequirement, Scene, SceneAnswer, Story, Visit } from '@trama/engine'
+import { MissingRequirement, Scene, SceneAnswer, Story, Visit } from '@trama-app/engine'
 import { node, node_answer } from 'src/app/core/interfaces/interfaces'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { PlayableAnswer, PlayableNode } from './game-session.types'
 
-/** Maps a scene computed by @trama/engine to the shape the player views render. */
+/** Maps a scene computed by @trama-app/engine to the shape the player views render. */
 export function sceneToPlayableNode(
   scene: Scene, stored: node, i18n: I18nService,
   visit: Partial<Pick<PlayableNode, 'key' | 'selectedAnswerId' | 'userResponse'>> = {}

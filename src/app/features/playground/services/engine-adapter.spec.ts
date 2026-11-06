@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { loadStory, renderScene, StoryRequirement, StoryTree } from '@trama/engine'
+import { loadStory, renderScene, StoryRequirement, StoryTree } from '@trama-app/engine'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { sceneToPlayableNode } from './engine-adapter'

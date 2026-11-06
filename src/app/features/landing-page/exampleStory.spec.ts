@@ -1,4 +1,4 @@
-import { applyEvents, distribute, loadStory, PlayerState, renderScene, StoryJoin } from '@trama/engine'
+import { applyEvents, distribute, loadStory, PlayerState, renderScene, StoryJoin } from '@trama-app/engine'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from './exampleStory'
 
 const emptyPlayer = (): PlayerState => ({ properties: {}, stats: {}, conditions: [] })

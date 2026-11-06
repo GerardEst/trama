@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
-import { createGame, Game } from '@trama/engine'
+import { createGame, Game } from '@trama-app/engine'
 import { tree } from 'src/app/core/interfaces/interfaces'
 import { StoryPlayerComponent } from 'src/app/features/playground/components/story-player/story-player.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'

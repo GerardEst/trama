@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren, computed, effect, output, signal, untracked } from '@angular/core'
-import { renderScene } from '@trama/engine'
+import { renderScene } from '@trama-app/engine'
 import { node_answer } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { StoryEditorService } from '../board/services/story-editor.service'

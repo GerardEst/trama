@@ -1,6 +1,6 @@
 import { Component, Input, Renderer2, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { createGame, fetchStory, Game, PublishedStory, SceneAnswer, Visit } from '@trama/engine'
+import { createGame, fetchStory, Game, PublishedStory, SceneAnswer, Visit } from '@trama-app/engine'
 import { StoryPlayerComponent } from 'src/app/features/playground/components/story-player/story-player.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -70,7 +70,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
       cumulativeMode: story.settings.cumulativeMode,
     })
 
-    // The page plays through @trama/engine; activeStory only holds the story
+    // The page plays through @trama-app/engine; activeStory only holds the story
     // name and configuration that the header and shared views read.
     const game = createGame(story.tree)
     this.unsubscribe = game.subscribe(event => {

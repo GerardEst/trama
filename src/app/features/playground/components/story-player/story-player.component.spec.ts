@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { createGame, Game, StoryTree } from '@trama/engine'
+import { createGame, Game, StoryTree } from '@trama-app/engine'
 import { node } from 'src/app/core/interfaces/interfaces'
 import { StoryPlayerComponent } from './story-player.component'
 

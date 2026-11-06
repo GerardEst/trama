@@ -1,20 +1,26 @@
-# @trama/engine
+# @trama-app/engine
 
 Play stories made with [Trama](https://trama.app) in your own interface. The
 engine has no UI and no dependencies: it resolves the next node, applies
 events, checks requirements, evaluates distributors and fills in variables.
 Rendering is entirely up to you.
 
-Runs in browsers, Node 17+, Deno and workers.
+Runs in browsers, Node 18+, Deno and workers.
 
 The engine reads the story tree exactly as the Trama editor saves it. The tree
 is used as it is, without copying it: treat it as read-only while playing, and
 pass edited versions to `game.updateStory()` as a new tree.
 
+## Install
+
+```bash
+npm install @trama-app/engine
+```
+
 ## Loading a story from Trama
 
 ```ts
-import { createGame, fetchStory } from '@trama/engine'
+import { createGame, fetchStory } from '@trama-app/engine'
 
 const story = await fetchStory({ slug: 'the-island' })   // or { id: '…' }
 if (story) createGame(story.tree).start()
@@ -28,7 +34,7 @@ loaded one at a time, by id or by custom address; they cannot be listed.
 ## Usage
 
 ```ts
-import { createGame } from '@trama/engine'
+import { createGame } from '@trama-app/engine'
 import storyTree from './my-story.json'
 
 const game = createGame(storyTree)
@@ -128,4 +134,4 @@ npm run build      # dist/: ESM, CommonJS and type declarations
 ```
 
 Inside the Trama repository, the app imports the sources through the
-`@trama/engine` path alias in the root `tsconfig.json`.
+`@trama-app/engine` path alias in the root `tsconfig.json`.

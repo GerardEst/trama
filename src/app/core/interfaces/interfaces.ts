@@ -166,7 +166,7 @@ export interface path {
   timestamp: number
   type: 'node' | 'answer'
 }
-/** Final player state of a game, saved as @trama/engine keeps it. */
+/** Final player state of a game, saved as @trama-app/engine keeps it. */
 export type result = PlayerState
 export interface game {
   created_at: string
@@ -177,7 +177,7 @@ export interface game {
 
 // Authenticated user
 import { User } from '@supabase/supabase-js'
-import { PlayerState } from '@trama/engine'
+import { PlayerState } from '@trama-app/engine'
 
 export interface userProfile {
   subscription_status: string

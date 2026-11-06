@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 
 import { GameNodeComponent } from './game-node.component'
-import { inlineHtml } from '@trama/engine'
+import { inlineHtml } from '@trama-app/engine'
 
 describe('GameNodeComponent', () => {
   let component: GameNodeComponent

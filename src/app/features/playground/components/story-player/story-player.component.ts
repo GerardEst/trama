@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core'
-import { Game, GameState } from '@trama/engine'
+import { Game, GameState } from '@trama-app/engine'
 import { node_answer } from 'src/app/core/interfaces/interfaces'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
@@ -9,7 +9,7 @@ import { SingleGameComponent } from '../game/views/single-game.component'
 import { CumulativeGameComponent } from '../game/views/cumulative-game.component'
 
 /**
- * Reader-facing player for a @trama/engine game, in single or cumulative mode.
+ * Reader-facing player for a @trama-app/engine game, in single or cumulative mode.
  * Starts the game on init, so subscribe to it before handing it over.
  */
 @Component({

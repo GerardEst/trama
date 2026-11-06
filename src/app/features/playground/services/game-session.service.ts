@@ -1,12 +1,12 @@
 import { computed, effect, Injectable, OnDestroy, signal, untracked } from '@angular/core'
-import { createGame, Game, GameState, loadStory, PlayerState } from '@trama/engine'
+import { createGame, Game, GameState, loadStory, PlayerState } from '@trama-app/engine'
 import { tree } from 'src/app/core/interfaces/interfaces'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 
 const EMPTY_PLAYER: PlayerState = { properties: {}, stats: {}, conditions: [] }
 
 /**
- * Live preview of the active story for the editors, on top of @trama/engine.
+ * Live preview of the active story for the editors, on top of @trama-app/engine.
  * Follows edits without losing the playthrough: joins and answers come from the
  * latest tree, and removing the current node rewinds to the last visit that
  * still exists. Checkpoints capture what happened, not what today's edited

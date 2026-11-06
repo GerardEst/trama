@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@trama/engine": ["packages/engine/src/index.ts"]
+      "@trama-app/engine": ["packages/engine/src/index.ts"]
     },
     "types": ["node", "jest", "mocha"],
     "outDir": "./dist/out-tsc",
