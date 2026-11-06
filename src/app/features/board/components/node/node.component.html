@@ -39,40 +39,49 @@
       </div>
     </div>
 
-    <polo-anchored-popover #nodeEventPopover class="node__menu" [closeOnEscape]="false">
-      <div popoverTrigger>
-        <polo-basic-button
-          class="node__menuButton"
-          size="s"
-          [transparent]="true"
-          [title]="'board.node.options' | t"
-          icon="/assets/icons/hamburger-menu.svg"
-          (pointerdown)="$event.stopPropagation()"
-          (click)="toggleNodeOptions()"
-        ></polo-basic-button>
-        @if (optionsOpen) {
-          <div class="node__options" (pointerdown)="$event.stopPropagation()">
-            <polo-node-options
-              [type]="type"
-              [nodeId]="nodeId"
-              [frameName]="frameName"
-              (removeFromFrame)="onRemoveFromFrame()"
-              (onAddImage)="onAddImage($event)"
-              (addEvent)="openNodeEvent()"
-              (onDuplicateNode)="onDuplicateNode()"
-              (onRemoveNode)="onRemoveNode()"
-              (onClose)="optionsOpen = false"
-            ></polo-node-options>
-          </div>
-        }
-      </div>
+    <polo-anchored-popover
+      #nodePopover
+      class="node__menu"
+      [style.--polo-popover-width]="nodePanel === 'menu' ? '14rem' : '32rem'"
+      [closeOnEscape]="nodePanel === 'menu'"
+    >
+      <polo-basic-button
+        popoverTrigger
+        class="node__menuButton"
+        size="s"
+        [transparent]="true"
+        [title]="'board.node.options' | t"
+        icon="/assets/icons/hamburger-menu.svg"
+        (pointerdown)="$event.stopPropagation()"
+        (click)="toggleNodeOptions()"
+      ></polo-basic-button>
       <ng-template poloPopoverContent>
-        <polo-node-add-event
-          class="anchoredAddEvent"
-          [closeOnOutsideClick]="false"
-          (onSaveEvent)="saveEvent($event)"
-          (onClose)="nodeEventPopover.close()"
-        />
+        @switch (nodePanel) {
+          @case ('menu') {
+            <div class="node__options" (pointerdown)="$event.stopPropagation()">
+              <polo-node-options
+                [type]="type"
+                [nodeId]="nodeId"
+                [frameName]="frameName"
+                [closeOnOutsideClick]="false"
+                (removeFromFrame)="onRemoveFromFrame()"
+                (onAddImage)="addImageFromMenu($event)"
+                (addEvent)="openNodeEvent()"
+                (onDuplicateNode)="onDuplicateNode()"
+                (onRemoveNode)="onRemoveNode()"
+                (onClose)="nodePopover.close()"
+              ></polo-node-options>
+            </div>
+          }
+          @case ('event') {
+            <polo-node-add-event
+              class="anchoredAddEvent"
+              [closeOnOutsideClick]="false"
+              (onSaveEvent)="saveEvent($event)"
+              (onClose)="nodePopover.close()"
+            />
+          }
+        }
       </ng-template>
     </polo-anchored-popover>
   </header>

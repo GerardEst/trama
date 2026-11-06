@@ -1,4 +1,7 @@
 <div [class.fixedMenu]="fixedMenu" class="menu">
+  @if (fixedMenu) {
+    <div class="menu__backdrop" aria-hidden="true" (click)="toggleMenu()"></div>
+  }
   <nav [attr.aria-label]="'dashboard.menu.stories' | t">
     <div class="nav__brand">
       <a class="wordmark" routerLink="/" aria-label="Trama">trama<span aria-hidden="true">.</span></a>

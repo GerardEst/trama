@@ -16,6 +16,7 @@ import { ModalService } from 'src/app/core/services/modal.service'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { FeedbackModalComponent } from 'src/app/features/feedback/feedback-modal/feedback-modal.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { ViewportService } from 'src/app/core/services/viewport.service'
 
 @Component({
   selector: 'polo-menu',
@@ -33,8 +34,11 @@ export class MenuComponent implements OnInit {
   constructor(
     public db: DatabaseService,
     public activeStory: ActiveStoryService,
-    private modal: ModalService
+    private modal: ModalService,
+    private viewport: ViewportService
   ) {
+    // On phones the menu is a drawer that would cover the whole board.
+    this.fixedMenu = !this.viewport.mobile()
     effect(
       () => {
         this.changeStoryName(
@@ -67,11 +71,18 @@ export class MenuComponent implements OnInit {
   }
 
   loadTree(treeId: number) {
+    this.closeDrawer()
     this.onChangeTree.emit(treeId)
   }
 
   createNewTree() {
+    this.closeDrawer()
     this.onNewStory.emit()
+  }
+
+  // Leave the board visible once the author has picked where to go.
+  private closeDrawer() {
+    if (this.viewport.mobile()) this.fixedMenu = false
   }
 
   toggleMenu() {

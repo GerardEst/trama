@@ -317,3 +317,23 @@ polo-node.node--playing::before {
 .contextMenu.active {
   display: flex;
 }
+.contextMenu.mobileModal {
+  padding: var(--polo-space-2);
+}
+.contextMenu.mobileModal .contextMenu__create {
+  min-height: 44px;
+  padding: 0.6rem 0.8rem;
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .groupToolbar {
+    top: 72px;
+    left: 16px;
+    max-width: calc(100vw - 32px);
+  }
+  /* Multi-selection needs Ctrl + drag, so its hint and idle actions only add clutter. */
+  .groupToolbar span, .groupToolbar button:disabled {
+    display: none;
+  }
+}

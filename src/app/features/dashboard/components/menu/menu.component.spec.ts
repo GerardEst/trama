@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { provideRouter } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ModalService } from 'src/app/core/services/modal.service'
+import { ViewportService } from 'src/app/core/services/viewport.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { MenuComponent } from './menu.component'
@@ -93,5 +94,50 @@ describe('MenuComponent', () => {
     expect(component.fixedMenu).toBeTrue()
     expect(host.querySelector('.menuToggler')).not.toBeNull()
     expect(host.querySelector('.menu__edge')).toBeNull()
+  })
+})
+
+describe('MenuComponent on phones', () => {
+  let component: MenuComponent
+  let fixture: ComponentFixture<MenuComponent>
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [MenuComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: DatabaseService,
+          useValue: { user: signal({ id: 'author', profile: { user_name: 'Author' } }), getAllTreesForUser: () => Promise.resolve([]) },
+        },
+        { provide: ModalService, useValue: { launch: () => undefined } },
+        { provide: ViewportService, useValue: { mobile: signal(true) } },
+      ],
+    })
+    fixture = TestBed.createComponent(MenuComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
+
+  it('starts as a closed drawer and closes from its backdrop', () => {
+    const host = fixture.nativeElement as HTMLElement
+    expect(component.fixedMenu).toBeFalse()
+    expect(host.querySelector('.menu__backdrop')).toBeNull()
+    host.querySelector<HTMLButtonElement>('.openMenu button')!.click()
+    fixture.detectChanges()
+    host.querySelector<HTMLElement>('.menu__backdrop')!.click()
+    fixture.detectChanges()
+    expect(component.fixedMenu).toBeFalse()
+  })
+
+  it('closes after choosing a story', () => {
+    const change = spyOn(component.onChangeTree, 'emit')
+    component.fixedMenu = true
+    component.stories.set([{ id: 'story-1', name: 'First story' }])
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    host.querySelector<HTMLButtonElement>('.story')!.click()
+    expect(change).toHaveBeenCalledOnceWith('story-1')
+    expect(component.fixedMenu).toBeFalse()
   })
 })

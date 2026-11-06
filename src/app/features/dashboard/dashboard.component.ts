@@ -17,6 +17,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { ShareStoryComponent } from './modals/share-story/share-story.component'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from '../landing-page/exampleStory'
+import { isMobileLayout } from 'src/app/core/constants'
 
 @Component({
   selector: 'polo-dashboard',
@@ -52,7 +53,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.linearOpen.set(true)
     this.mobileBoard.set(false)
     // The pinned story list must not cover the full-width mobile reading pane.
-    if (window.matchMedia('(max-width: 760px)').matches && this.menuSide) this.menuSide.fixedMenu = false
+    if (isMobileLayout() && this.menuSide) this.menuSide.fixedMenu = false
   }
 
   async openShare() {

@@ -13,6 +13,7 @@ import { StoryExportService } from 'src/app/shared/services/story-export.service
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { TranslationKey } from 'src/app/core/i18n/i18n.types'
+import { ViewportService } from 'src/app/core/services/viewport.service'
 
 @Component({
   selector: 'polo-menu-top',
@@ -35,7 +36,8 @@ export class MenuTopComponent {
     public activeStory: ActiveStoryService,
     private alertService: AlertService,
     private storyExport: StoryExportService,
-    public mutations: StoryMutationService
+    public mutations: StoryMutationService,
+    public viewport: ViewportService
   ) {}
 
   signInAgain() {

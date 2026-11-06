@@ -128,7 +128,8 @@ export class NodeComponent {
   private imageUploadSequence = 0
   readonly loading = signal(false)
   readonly loadingMessage = signal<string | undefined>(undefined)
-  optionsOpen: boolean = false
+  // The menu and the event editor share one anchored popover.
+  nodePanel: 'menu' | 'event' = 'menu'
   readonly answerOrderAnnouncement = signal('')
   readonly routeOrderAnnouncement = signal('')
 
@@ -141,7 +142,7 @@ export class NodeComponent {
   }>()
 
   @ViewChild(RichTextFieldComponent) richTextField?: RichTextFieldComponent
-  @ViewChild('nodeEventPopover') nodeEventPopover!: AnchoredPopoverComponent
+  @ViewChild('nodePopover') nodePopover!: AnchoredPopoverComponent
   @ViewChildren(AnswerComponent) answerComponents?: QueryList<AnswerComponent>
   @ViewChild('shortcutImageInput') shortcutImageInput?: ElementRef<HTMLInputElement>
 
@@ -162,8 +163,11 @@ export class NodeComponent {
   }
 
   toggleNodeOptions() {
-    this.nodeEventPopover.close()
-    this.optionsOpen = !this.optionsOpen
+    if (this.nodePopover.isOpen) this.nodePopover.close()
+    else {
+      this.nodePanel = 'menu'
+      this.nodePopover.open()
+    }
   }
 
   saveEvent(change: EventChange) {
@@ -171,8 +175,9 @@ export class NodeComponent {
   }
 
   openNodeEvent() {
-    this.optionsOpen = false
-    this.nodeEventPopover.open()
+    this.nodePanel = 'event'
+    // Opened from the menu, the popover stays open and swaps its content.
+    if (!this.nodePopover.isOpen) this.nodePopover.open()
   }
 
   openImagePicker(): boolean {
@@ -310,11 +315,18 @@ export class NodeComponent {
   }
 
   onDuplicateNode() {
+    this.nodePopover.close()
     this.duplicateNode.emit(this.nodeId)
   }
 
+  addImageFromMenu(event: Event) {
+    // The upload reads the chosen file before the menu (and its input) goes away.
+    void this.onAddImage(event)
+    this.nodePopover.close()
+  }
+
   onRemoveFromFrame() {
-    this.optionsOpen = false
+    this.nodePopover.close()
     this.removeFromFrame.emit(this.nodeId)
   }
 

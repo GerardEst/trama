@@ -144,9 +144,11 @@ export class AnchoredPopoverComponent {
       (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5)
     ) return
 
+    // A click on the panel itself landed on its empty area or, on phones, its backdrop.
     if (
       this.isOpen &&
-      !event.composedPath().includes(this.elementRef.nativeElement)
+      (event.target === this.panelElement ||
+        !event.composedPath().includes(this.elementRef.nativeElement))
     ) {
       this.close()
     }

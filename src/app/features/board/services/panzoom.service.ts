@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { node } from 'src/app/core/interfaces/interfaces'
 import createPanZoom, { PanZoom } from 'panzoom'
+import { isBoardControl } from '../board-interactions'
 
 const CENTERING_DURATION_MS = 320
 
@@ -40,6 +41,9 @@ export class PanzoomService {
         const shouldIgnore = !e.altKey
         return shouldIgnore
       },
+      // panzoom cancels every touchstart, which stops the browser from turning
+      // a tap into focus or a click. Let taps reach controls; the board still pans.
+      onTouch: (e) => !isBoardControl(e.target),
       initialZoom: options.initialZoom ?? 1,
       zoomSpeed: 0.065,
       zoomDoubleClickSpeed: 1,

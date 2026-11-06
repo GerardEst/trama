@@ -97,3 +97,23 @@
   background: no-repeat center/15px;
   background-image: url("/assets/icons/trash.svg");
 }
+
+/* Phones: a full-width bottom bar. */
+@media (max-width: 760px) {
+  .legend {
+    inset: auto 0 0;
+    width: auto;
+    padding-bottom: max(var(--polo-space-3), env(safe-area-inset-bottom));
+    translate: none;
+    border-inline: 0;
+    border-bottom: 0;
+    border-radius: var(--polo-radius-panel) var(--polo-radius-panel) 0 0;
+  }
+  .legend__header__buttons {
+    flex: 1;
+    flex-wrap: nowrap;
+  }
+  .legend__header__buttons polo-basic-button {
+    flex: 1;
+  }
+}

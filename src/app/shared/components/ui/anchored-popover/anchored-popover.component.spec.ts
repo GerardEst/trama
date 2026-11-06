@@ -194,4 +194,18 @@ describe('AnchoredPopoverComponent', () => {
     expect(style.getPropertyValue('position-try-order')).toBe('most-height')
     expect(parseFloat(style.maxHeight)).toBeLessThan(window.innerHeight)
   })
+
+  it('closes on a click on its own panel, which is the modal backdrop on phones', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLButtonElement>('[popoverTrigger]')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
+    panel.querySelector('section')!.click()
+    fixture.detectChanges()
+    expect(host.querySelector('.anchoredPopover__panel')).not.toBeNull()
+    panel.click()
+    fixture.detectChanges()
+    expect(host.querySelector('.anchoredPopover__panel')).toBeNull()
+  })
 })

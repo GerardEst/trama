@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -11,6 +12,7 @@ import {
   AfterViewInit,
   OnDestroy,
   computed,
+  inject,
   signal,
 } from '@angular/core'
 import { NodeComponent } from './components/node/node.component'
@@ -32,7 +34,7 @@ import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
 import { BoardAnchorRegistryService } from './services/board-anchor-registry.service'
 import { BoardPreferencesService } from './services/board-preferences.service'
-import { BoardJoinStroke, BoardPoint, ENTRY_POINT_ORIGIN } from './board-interactions'
+import { BoardJoinStroke, BoardPoint, ENTRY_POINT_ORIGIN, isBoardControl } from './board-interactions'
 import { EntryPointComponent } from './components/entry-point/entry-point.component'
 import { FrameColorsService } from './services/frame-colors.service'
 import { FrameColorPickerComponent } from './components/frame-color-picker/frame-color-picker.component'
@@ -40,6 +42,9 @@ import { projectBoardJoins } from './board-join-projection'
 import { BoardAnchorDirective } from './directives/board-anchor.directive'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
 import { Subscription } from 'rxjs'
+import { MobileModalDirective } from 'src/app/shared/directives/mobile-modal.directive'
+import { LongPress } from './utils/long-press'
+import { ViewportService } from 'src/app/core/services/viewport.service'
 
 interface JoinCounts {
   incoming: number
@@ -98,6 +103,7 @@ import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-he
     TranslatePipe,
     ContextHelpComponent,
     FrameColorPickerComponent,
+    MobileModalDirective,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
@@ -126,6 +132,13 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly nodeHelpTopics = NODE_CONTEXT_HELP_TOPICS
   contextMenuPosition = { x: 0, y: 0 }
   contextMenuActive = false
+  // Touch has no right click, so holding still on the board opens the same menu.
+  private readonly changeDetector = inject(ChangeDetectorRef)
+  readonly viewport = inject(ViewportService)
+  private readonly longPress = new LongPress((event) => {
+    this.openContextMenu(event)
+    this.changeDetector.markForCheck()
+  })
   // Drags to join
   joinStroke?: BoardJoinStroke
   private joinPointerId?: number
@@ -412,6 +425,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.longPress.cancel()
     this.cancelNodeReveal()
     this.dragAutoPan.destroy()
     this.panzoom.destroy()
@@ -680,6 +694,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkDragStart(event: PointerEvent) {
+    // Any new press, such as a second finger for a pinch, ends the previous one.
+    this.longPress.cancel()
     if (event.button !== 0) return
     this.dragAutoPan.prepare(event)
 
@@ -703,6 +719,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault()
       } else {
         this.selectedNodeIds = new Set()
+        this.longPress.down(event)
       }
       this.clearActiveNode()
       return
@@ -726,6 +743,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkDrag(event: PointerEvent) {
+    this.longPress.move(event)
     if (event.pointerId === this.selectionPointerId && this.selectionStart) {
       const position = this.getBoardPosition(event, this.selectionOrigin)
       this.selectionBox = {
@@ -748,6 +766,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkDragStop(event: PointerEvent) {
+    this.longPress.cancel()
     if (event.pointerId === this.selectionPointerId) {
       this.checkDrag(event)
       this.stopSelection()
@@ -786,6 +805,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   cancelJoin(event: PointerEvent) {
+    this.longPress.cancel()
     if (event.pointerId === this.selectionPointerId) {
       this.stopSelection()
       this.selectedNodeIds = new Set()
@@ -870,9 +890,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   nodePointerDown(nodeId: string, event?: PointerEvent) {
     if (!this.selectedNodeIds.has(nodeId)) this.selectedNodeIds = new Set()
     const target = event?.target
-    if (target instanceof Element && !target.closest(
-      'input, textarea, select, button, a, label, [contenteditable], [role="textbox"]'
-    )) {
+    if (target instanceof Element && !isBoardControl(target)) {
       (event?.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
         '.node__header, .groupNode__header'
       )?.focus({ preventScroll: true })

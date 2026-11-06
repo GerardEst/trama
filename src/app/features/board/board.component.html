@@ -42,13 +42,15 @@
   @if (contextMenuActive) {
     <div
       class="contextMenu active"
+      poloMobileModal
+      (mobileModalDismiss)="closeContextMenu()"
       role="group"
       [attr.aria-label]="'board.create.title' | t"
       (pointerdown)="$event.stopPropagation()"
       (mousedown)="$event.stopPropagation()"
       (touchstart)="$event.stopPropagation()"
-      [style.left.px]="contextMenuPosition.x"
-      [style.top.px]="contextMenuPosition.y"
+      [style.left.px]="viewport.mobile() ? null : contextMenuPosition.x"
+      [style.top.px]="viewport.mobile() ? null : contextMenuPosition.y"
     >
       <header>
         <p>{{ 'board.create.title' | t }}</p>
