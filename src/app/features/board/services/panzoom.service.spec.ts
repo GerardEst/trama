@@ -160,4 +160,22 @@ describe('PanzoomService centering', () => {
     tick(400)
     expect(position()).toEqual(stopped)
   }))
+
+  it('lets a tap on a board control become a click while the background still pans', fakeAsync(() => {
+    initialize()
+    const button = document.createElement('button')
+    board.appendChild(button)
+    const touchstart = (target: Element) => {
+      const touch = new Touch({ identifier: 1, target, clientX: 10, clientY: 10 })
+      const event = new TouchEvent('touchstart', {
+        bubbles: true, cancelable: true, touches: [touch], targetTouches: [touch], changedTouches: [touch],
+      })
+      target.dispatchEvent(event)
+      target.dispatchEvent(new TouchEvent('touchend', { bubbles: true, cancelable: true, changedTouches: [touch] }))
+      return event
+    }
+
+    expect(touchstart(button).defaultPrevented).toBeFalse()
+    expect(touchstart(board).defaultPrevented).toBeTrue()
+  }))
 })

@@ -1,16 +1,20 @@
 @if (showOptions) {
   <div (click)="closePopup()" class="overlay"></div>
 }
-<div class="menu">
+<div class="menu" [class.menu--open]="showOptions">
   <polo-editable-name
     [label]="'dashboard.top.storyName' | t"
     [value]="activeStory.storyName()"
     (valueChanged)="updateStoryName($event)"
   ></polo-editable-name>
+  <!-- Phones collapse the whole panel into this button, so it carries the save alert. -->
   <polo-basic-button
+    class="optionsToggle"
+    [class.optionsToggle--alert]="db.authenticationRequired() || mutations.saveState() === 'error'"
     icon="/assets/icons/configuration.svg"
     (click)="toggleOptions()"
-    [text]="'dashboard.top.options' | t"
+    [text]="viewport.mobile() && !showOptions ? '' : ('dashboard.top.options' | t)"
+    [title]="'dashboard.top.options' | t"
   ></polo-basic-button>
   <div class="historyControls">
     <polo-basic-button

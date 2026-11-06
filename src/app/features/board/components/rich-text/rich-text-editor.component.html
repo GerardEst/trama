@@ -4,7 +4,7 @@
   </section>
 } @else {
   <dialog #dialog class="focusEditor richTextEditor" [attr.aria-label]="'board.editor.focusOn' | t: { label: label() }"
-    (close)="onClosed()" (pointerdown)="onBackdropPointerDown($event)">
+    (close)="onClosed()" (pointerdown)="onBackdropPointerDown($event)" (touchstart)="$event.stopPropagation()">
     <header class="focusEditor__header">
       <button type="button" [attr.aria-label]="'board.editor.closeFocus' | t" (click)="close()">
         {{ 'board.editor.close' | t }}

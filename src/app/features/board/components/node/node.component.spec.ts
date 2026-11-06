@@ -168,7 +168,7 @@ describe('NodeComponent', () => {
       expect(panel.matches(':popover-open')).toBeTrue()
       expect(panel.textContent).toContain('A content node is a scene')
       expect(panel.querySelector('a')?.getAttribute('href')).toBe('/docs/features#content-nodes')
-      expect(component.optionsOpen).toBeFalse()
+      expect(host.querySelector('.node__options')).toBeNull()
       TestBed.inject(ContextHelpService).setEnabled(false)
       fixture.detectChanges()
       expect(row.querySelector('button')).toBeNull()

@@ -283,3 +283,33 @@ h1 {
 .node__passage .storyCategory__entries {
   white-space: pre-line;
 }
+
+/* MobileModalDirective: in-place menus opened as centered modals on phones. */
+:root [popover].mobileModal:popover-open {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: min(26rem, 100vw - 2rem);
+  height: fit-content;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  box-shadow: var(--polo-shadow-dialog);
+}
+:root .mobileModal__backdrop:popover-open {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--polo-color-overlay);
+}

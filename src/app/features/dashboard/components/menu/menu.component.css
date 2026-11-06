@@ -8,8 +8,14 @@
   transition: left 200ms ease;
 }
 /* Mouse focus must not keep a floating menu open after the pointer leaves. */
-.menu.fixedMenu, .menu:has(nav :focus-visible), .menu:not(.fixedMenu):hover {
+.menu.fixedMenu, .menu:has(nav :focus-visible) {
   left: 16px;
+}
+/* A tap leaves :hover stuck on touch screens, which would keep the menu half open. */
+@media (hover: hover) {
+  .menu:not(.fixedMenu):hover {
+    left: 16px;
+  }
 }
 .menu.fixedMenu {
   bottom: 16px;
@@ -174,13 +180,45 @@ ul {
   box-shadow: var(--polo-shadow-control);
 }
 
+.menu__backdrop {
+  display: none;
+}
+
+/* Phones: a full-height drawer from the left edge, closed by default. */
 @media (max-width: 760px) {
   .menu {
-    top: 88px;
+    --width: min(300px, calc(100vw - 48px));
+    top: 0;
+    bottom: 0;
+    width: var(--width);
+    left: calc(var(--width) * -1);
+  }
+  .menu.fixedMenu, .menu:has(nav :focus-visible) {
+    left: 0;
+    z-index: 9;
+  }
+  .menu.fixedMenu {
+    bottom: 0;
   }
   .menu nav {
+    position: relative;
+    height: 100%;
+    max-height: none;
     margin-top: 0;
-    max-height: calc(100dvh - 104px);
+    padding-top: max(18px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    border-block: 0;
+    border-left: 0;
+    border-radius: 0 var(--polo-radius-card) var(--polo-radius-card) 0;
+  }
+  .menu__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--polo-color-overlay);
+  }
+  .menu__edge {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -76,11 +76,6 @@
   margin-left: auto;
 }
 .node__options {
-  position: absolute;
-  top: 3.5rem;
-  right: 0.5rem;
-  z-index: 30;
-  width: 14rem;
   background: var(--polo-color-surface);
   border: 1px solid var(--polo-color-border);
   border-radius: 0.8rem;

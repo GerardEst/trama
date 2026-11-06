@@ -1861,4 +1861,44 @@ describe('BoardComponent', () => {
 
     expect(component.panzoom.destroy).toHaveBeenCalled()
   })
+
+  describe('touch long press', () => {
+    const press = (target: HTMLElement, type: string, init: PointerEventInit = {}) =>
+      target.dispatchEvent(new PointerEvent(type, {
+        bubbles: true, button: 0, pointerId: 7, pointerType: 'touch', isPrimary: true, clientX: 80, clientY: 100, ...init,
+      }))
+
+    it('opens the create menu after holding still on the board', fakeAsync(() => {
+      fixture.detectChanges()
+      const board = component.boardElement!.nativeElement
+      press(board, 'pointerdown')
+      tick(300)
+      expect(component.contextMenuActive).toBeFalse()
+      tick(300)
+      fixture.detectChanges()
+      expect(component.contextMenuActive).toBeTrue()
+      expect(fixture.nativeElement.querySelector('.contextMenu')).not.toBeNull()
+      press(board, 'pointerup')
+      flush()
+    }))
+
+    it('does not open the menu when the finger pans, lifts early or uses a mouse', fakeAsync(() => {
+      fixture.detectChanges()
+      const board = component.boardElement!.nativeElement
+      press(board, 'pointerdown')
+      press(board, 'pointermove', { clientX: 120, clientY: 100 })
+      tick(600)
+      press(board, 'pointerup')
+
+      press(board, 'pointerdown')
+      tick(200)
+      press(board, 'pointerup')
+      tick(600)
+
+      press(board, 'pointerdown', { pointerType: 'mouse' })
+      tick(600)
+      press(board, 'pointerup', { pointerType: 'mouse' })
+      expect(component.contextMenuActive).toBeFalse()
+    }))
+  })
 })

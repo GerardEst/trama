@@ -103,3 +103,65 @@
   flex-direction: column;
   align-items: stretch;
 }
+
+/* Phones: only the options button until it is opened, then a full-width sheet. */
+@media (max-width: 760px) {
+  .menu:not(.menu--open) {
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .menu:not(.menu--open) > :not(.optionsToggle) {
+    display: none;
+  }
+  /* Matches the menu drawer's opening button in the other corner. */
+  .menu:not(.menu--open) .optionsToggle {
+    border: 1px solid var(--polo-color-border);
+    border-radius: 9px;
+    box-shadow: var(--polo-shadow-control);
+  }
+  .menu--open {
+    inset: 0 0 auto;
+    width: auto;
+    max-height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: max(12px, env(safe-area-inset-top)) 16px 16px;
+    translate: none;
+    border-block-start: 0;
+    border-inline: 0;
+    border-radius: 0 0 var(--polo-radius-panel) var(--polo-radius-panel);
+  }
+  .menu--open .dropdown {
+    position: static;
+    flex-basis: 100%;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    padding: var(--polo-space-4) 0 0;
+    border: 0;
+    border-top: 1px solid var(--polo-color-border);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .overlay {
+    background: var(--polo-color-overlay);
+  }
+  .menu:not(.menu--open) .optionsToggle--alert {
+    position: relative;
+  }
+  .menu:not(.menu--open) .optionsToggle--alert::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--polo-color-surface);
+    border-radius: 50%;
+    background: var(--polo-color-danger);
+    pointer-events: none;
+  }
+}
