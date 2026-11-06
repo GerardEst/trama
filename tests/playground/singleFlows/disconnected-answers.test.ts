@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { serveStory } from '../mock-story'
 
 // Minimal reproduction of the exported story: two random destinations, one
 // joined at its passage and the other at its answers. Legacy nodes omit type.
@@ -34,7 +35,7 @@ for (const cumulativeMode of [false, true]) {
 
     test.beforeEach(async ({ page }) => {
       // No production story or authenticated state is needed for this test.
-      await page.route('**/rest/v1/stories?*', (route) => route.fulfill({ json: [story] }))
+      await serveStory(page, story)
     })
 
     test('shows the Keep going answer disabled instead of dropping it', async ({ page }) => {
@@ -67,7 +68,7 @@ for (const cumulativeMode of [false, true]) {
     test('falls back to the passage if an answers-only join has no visible answers', async ({ page }) => {
       const emptyStory = structuredClone(story)
       emptyStory.tree.nodes[2].answers = [{ id: 'answer_2_1', text: '<p><br></p>' }]
-      await page.route('**/rest/v1/stories?*', (route) => route.fulfill({ json: [emptyStory] }))
+      await serveStory(page, emptyStory)
       await page.addInitScript(() => { Math.random = () => 0.75 })
       await page.goto(`/private/${story.id}`)
       await page.getByRole('button', { name: 'Choose a branch' }).click()

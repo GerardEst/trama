@@ -203,3 +203,7 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.create-subscription]
 verify_jwt = false
+
+# Public read API for players and external fronts: one story by id or slug.
+[functions.story]
+verify_jwt = false

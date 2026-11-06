@@ -11,6 +11,20 @@ The engine reads the story tree exactly as the Trama editor saves it. The tree
 is used as it is, without copying it: treat it as read-only while playing, and
 pass edited versions to `game.updateStory()` as a new tree.
 
+## Loading a story from Trama
+
+```ts
+import { createGame, fetchStory } from '@trama/engine'
+
+const story = await fetchStory({ slug: 'the-island' })   // or { id: '…' }
+if (story) createGame(story.tree).start()
+```
+
+`fetchStory` resolves `undefined` when the story does not exist and throws
+`StoryRequestError` for any other failure. It returns the story's `name`, its
+`settings` (such as `cumulativeMode`) and the `tree` to play. Stories can only be
+loaded one at a time, by id or by custom address; they cannot be listed.
+
 ## Usage
 
 ```ts

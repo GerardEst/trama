@@ -1,4 +1,5 @@
 import { expect, Locator, test } from '@playwright/test'
+import { serveStory } from './mock-story'
 
 async function expectAnswersAtBottom(container: Locator) {
   await expect.poll(() => container.evaluate(element => {
@@ -27,7 +28,7 @@ for (const cumulativeMode of [false, true]) {
           { id: 'node_3', type: 'end', top: 0, left: 0, text: 'End' },
         ] },
       }
-      await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+      await serveStory(page, story)
       await page.goto(`/private/${story.id}`)
       const container = page.locator('.gameContainer')
       await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeVisible()
@@ -58,7 +59,7 @@ for (const cumulativeMode of [false, true]) {
         { id: 'node_1', type: 'end', top: 0, left: 0, text: 'End' },
       ] },
     }
-    await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+    await serveStory(page, story)
     await page.goto(`/private/${story.id}`)
     const container = page.locator('.gameContainer')
     await expect(page.getByText('A long passage line.', { exact: false }).first()).toBeVisible()

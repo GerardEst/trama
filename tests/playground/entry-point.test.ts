@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { serveStory } from './mock-story'
 
 for (const cumulativeMode of [false, true]) {
   test(`starts at the configured scene inside a group in ${cumulativeMode ? 'cumulative' : 'single'} mode`, async ({ page }) => {
@@ -17,7 +18,7 @@ for (const cumulativeMode of [false, true]) {
         ],
       },
     }
-    await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+    await serveStory(page, story)
     await page.goto(`/private/${story.id}`)
     await expect(page.getByText('The chosen opening', { exact: true })).toBeVisible()
     await expect(page.getByText('This is not the opening', { exact: true })).toHaveCount(0)
@@ -38,7 +39,7 @@ test('an explicitly disconnected start does not execute node_0', async ({ page }
       nodes: [{ id: 'node_0', type: 'content', left: 0, top: 0, text: 'Do not start here' }],
     },
   }
-  await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+  await serveStory(page, story)
   await page.goto(`/private/${story.id}`)
   await expect(page.getByRole('status')).toHaveText('This story has no connected starting point.')
   await expect(page.getByText('Do not start here', { exact: true })).toHaveCount(0)

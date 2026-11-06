@@ -1,5 +1,6 @@
 import { expect, Page, test } from '@playwright/test'
 import { environment } from '../../src/environments/environment'
+import { publishedStory } from '../playground/mock-story'
 
 // All auth, story reads and writes are intercepted. No real account or production writes.
 test.use({ storageState: { cookies: [], origins: [] } })
@@ -34,6 +35,7 @@ async function prepareAuthor(page: Page) {
         return route.fulfill({ json: { id: story.id, custom_id: story.custom_id, sharing: story.sharing } })
       }
       if (path === '/rest/v1/stories') return route.fulfill({ json: [story] })
+      if (path === '/functions/v1/story') return route.fulfill({ json: publishedStory(story) })
       return route.abort()
     })
   }

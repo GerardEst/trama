@@ -119,25 +119,6 @@ export class DatabaseService implements OnDestroy {
     return stories
   }
 
-  async getStoryWithCustomID(customId: string) {
-    if (!environment.production)
-      console.log(
-        '%cdb call to get everything about a story with a custom id',
-        'color: #9999ff',
-        customId
-      )
-    // Can't limit to stories of a user because the stories are PUBLIC and can be fetched by everyone to play them
-    const { data: stories, error } = await this.supabase
-      .from('stories')
-      .select('*')
-      .eq('custom_id', customId)
-
-    if (error || !stories?.[0]) {
-      return false
-    }
-    return stories[0]
-  }
-
   async getStoryWithID(storyId: string, basicInfo = false) {
     if (!environment.production)
       console.log(

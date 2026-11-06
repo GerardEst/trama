@@ -1,6 +1,6 @@
 import { Component, Input, Renderer2, OnInit, OnDestroy } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { createGame, Game, SceneAnswer, Visit } from '@trama/engine'
+import { createGame, fetchStory, Game, PublishedStory, SceneAnswer, Visit } from '@trama/engine'
 import { StoryPlayerComponent } from 'src/app/features/playground/components/story-player/story-player.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
@@ -9,6 +9,7 @@ import { storyPlainText } from 'src/app/shared/utils/story-html'
 import { ThemeService } from 'src/app/shared/services/theme.service'
 import { ToggleComponent } from 'src/app/shared/components/ui/toggle/toggle.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'polo-playground',
@@ -38,41 +39,40 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   ) {}
   // In activeStory we have everything about the story, the options, tree, refs, etc
 
-  async getStoryByCorrectID() {
-    let story, configuration
-    if (this.storyId) {
-      // Get the story and configuration to save it to activeStory and use activeStory from now on
-      story = await this.db.getStoryWithID(this.storyId)
-      configuration = await this.db.getConfigurationOf(story.id)
-    } else if (this.customId) {
-      story = await this.db.getStoryWithCustomID(this.customId)
-      configuration = await this.db.getConfigurationOf(story.id)
+  /** Players read stories through the same public API as external fronts. */
+  private async loadStory(): Promise<PublishedStory | undefined> {
+    const reference = this.storyId ? { id: this.storyId } : this.customId ? { slug: this.customId } : undefined
+    if (!reference) return undefined
+    try {
+      return await fetchStory(reference, { api: `${environment.apiUrl}/functions/v1/story` })
+    } catch (error: unknown) {
+      console.error('Could not load the story', error)
+      return undefined
     }
-
-    return { story, configuration }
   }
 
   async ngOnInit(): Promise<void> {
-    const { story, configuration } = await this.getStoryByCorrectID()
+    const story = await this.loadStory()
 
-    if (!story || !configuration) {
+    if (!story) {
       this.router.navigate(['/not-found'])
       return
     }
 
-    this.activeStory.load(story.id, story.name, story.tree)
+    // The header and the shared player views read the name and settings from here.
+    this.activeStory.load(story.id, story.name, {})
     this.activeStory.patchConfiguration({
-      customId: configuration.custom_id,
-      tracking: configuration.tracking,
-      sharing: configuration.sharing,
-      tapLink: configuration.tapLink,
-      footer: configuration.footer,
-      cumulativeMode: configuration.cumulativeMode,
+      customId: story.slug ?? undefined,
+      tracking: story.settings.tracking,
+      sharing: story.settings.sharing,
+      tapLink: story.settings.tapLink,
+      footer: story.settings.footer,
+      cumulativeMode: story.settings.cumulativeMode,
     })
 
     // The page plays through @trama/engine; activeStory only holds the story
     // name and configuration that the header and shared views read.
-    const game = createGame(story.tree ?? {})
+    const game = createGame(story.tree)
     this.unsubscribe = game.subscribe(event => {
       if (event.type === 'node') this.drawNode(event.visit)
       else if (event.type === 'answer') this.selectAnswer(event.answer)

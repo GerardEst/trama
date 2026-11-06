@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { serveStory } from './mock-story'
 
 for (const cumulativeMode of [false, true]) {
   test(`Unavailable answers support story defaults and exceptions (${cumulativeMode ? 'cumulative' : 'single'})`, async ({ page }) => {
@@ -23,7 +24,7 @@ for (const cumulativeMode of [false, true]) {
         ],
       },
     }
-    await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+    await serveStory(page, story)
     await page.goto(`/private/${story.id}`)
     const door = page.getByRole('button', { name: /Enter the door/ }).last()
     const chest = page.getByRole('button', { name: /Open the chest/ }).last()
@@ -53,7 +54,7 @@ for (const cumulativeMode of [false, true]) {
         }],
       }] },
     }
-    await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [story] }))
+    await serveStory(page, story)
     await page.goto(`/private/${story.id}`)
     await expect(page.getByText('A passage', { exact: true })).toBeVisible()
     await expect(page.getByRole('button', { name: /Hidden answer/ })).toHaveCount(0)

@@ -6,12 +6,37 @@ export interface MockStory {
   tree: Record<string, unknown>
   cumulativeMode?: boolean
   sharing?: boolean
+  tapLink?: boolean
+  tracking?: boolean
+  footer?: { text?: string; link?: string }
+  custom_id?: string | null
 }
 
-/** Serves a story as the stories endpoint would and opens it in the player. */
+/** A stored story as the public `story` function returns it. */
+export function publishedStory(story: MockStory) {
+  return {
+    id: story.id,
+    name: story.name,
+    slug: story.custom_id ?? null,
+    settings: {
+      cumulativeMode: !!story.cumulativeMode,
+      sharing: !!story.sharing,
+      tapLink: !!story.tapLink,
+      tracking: !!story.tracking,
+      footer: story.footer ?? {},
+    },
+    tree: story.tree,
+  }
+}
+
+/** Answers the player's request for this story, as the public API would. */
+export async function serveStory(page: Page, story: MockStory) {
+  await page.route('**/functions/v1/story?*', route => route.fulfill({ json: publishedStory(story) }))
+}
+
+/** Serves a story and opens it in the player. */
 export async function openMockStory(page: Page, story: MockStory) {
-  const row = { tracking: false, sharing: false, tapLink: false, footer: {}, cumulativeMode: false, custom_id: null, ...story }
-  await page.route('**/rest/v1/stories?*', route => route.fulfill({ json: [row] }))
+  await serveStory(page, story)
   await page.goto(`/private/${story.id}`)
 }
 
