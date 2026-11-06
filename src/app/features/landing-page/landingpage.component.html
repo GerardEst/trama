@@ -5,6 +5,7 @@
     <div class="nav-links">
       <a [routerLink]="homeUrl" fragment="authoring">{{ 'landing.nav.authoring' | t }}</a>
       <a [routerLink]="homeUrl" fragment="features">{{ 'landing.nav.features' | t }}</a>
+      <a [routerLink]="homeUrl" fragment="engine">{{ 'landing.nav.engine' | t }}</a>
       <a [routerLink]="homeUrl" fragment="pricing">{{ 'landing.nav.pricing' | t }}</a>
       <a href="/docs/features">{{ 'landing.nav.docs' | t }}</a>
     </div>
@@ -63,6 +64,8 @@
   <polo-landing-authoring id="authoring" class="section-container"></polo-landing-authoring>
 
   <polo-landing-features id="features" class="section-container"></polo-landing-features>
+
+  <polo-landing-engine id="engine" class="section-container"></polo-landing-engine>
 
   <section id="trust" class="author-trust" aria-labelledby="trust-title">
     <div class="section-container">

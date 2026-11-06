@@ -23,6 +23,7 @@ import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language
 import { LandingStoryDemoComponent } from './components/landing-story-demo/landing-story-demo.component'
 import { LandingFeaturesComponent } from './components/landing-features/landing-features.component'
 import { LandingAuthoringComponent } from './components/landing-authoring/landing-authoring.component'
+import { LandingEngineComponent } from './components/landing-engine/landing-engine.component'
 import { PricingComponent } from 'src/app/shared/components/pricing/pricing.component'
 import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/billing-cycle.component'
 
@@ -33,6 +34,7 @@ import { BillingCycleComponent } from 'src/app/shared/components/billing-cycle/b
     LandingStoryDemoComponent,
     LandingFeaturesComponent,
     LandingAuthoringComponent,
+    LandingEngineComponent,
     PricingComponent,
     BillingCycleComponent,
     LanguageSelectorComponent,
@@ -79,7 +81,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Scope anchor scrolling to the landing so editor navigation is unaffected.
     this.route.fragment.pipe(takeUntilDestroyed()).subscribe((fragment) => {
-      if (!fragment || !['main-content', 'authoring', 'features', 'pricing', 'try-it'].includes(fragment)) return
+      if (!fragment || !['main-content', 'authoring', 'features', 'engine', 'pricing', 'try-it'].includes(fragment)) return
       afterNextRender(() => {
         this.document.getElementById(fragment)?.scrollIntoView({ block: 'start' })
       }, { injector: this.injector })

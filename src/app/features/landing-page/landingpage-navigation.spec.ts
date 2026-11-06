@@ -33,7 +33,7 @@ describe('Localised landing navigation', () => {
       const page = harness.routeNativeElement!
       const scroll = spyOn(HTMLElement.prototype, 'scrollIntoView')
 
-      for (const id of ['authoring', 'features', 'pricing', 'try-it', 'main-content']) {
+      for (const id of ['authoring', 'features', 'engine', 'pricing', 'try-it', 'main-content']) {
         const link = page.querySelector<HTMLAnchorElement>(`a[href="${path}#${id}"]`)!
         expect(link).toBeTruthy()
         scroll.calls.reset()

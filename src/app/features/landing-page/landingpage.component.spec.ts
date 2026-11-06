@@ -76,9 +76,9 @@ describe('LandingpageComponent', () => {
 
   it('goes from the demo to authoring, features, trust and pricing without loading a board', () => {
     const main = fixture.nativeElement.querySelector('main') as HTMLElement
-    const blocks = Array.from(main.querySelectorAll(':scope > section, :scope > polo-landing-features, :scope > polo-landing-authoring'))
+    const blocks = Array.from(main.querySelectorAll(':scope > section, :scope > polo-landing-features, :scope > polo-landing-authoring, :scope > polo-landing-engine'))
 
-    expect(blocks.map((block) => block.id)).toEqual(['', 'authoring', 'features', 'trust', 'pricing', ''])
+    expect(blocks.map((block) => block.id)).toEqual(['', 'authoring', 'features', 'engine', 'trust', 'pricing', ''])
     expect(main.querySelector('.demo-bridge a')?.getAttribute('href')).toBe('/#authoring')
     expect(main.querySelector('#authoring img')).toBeTruthy()
     expect(main.querySelector('#trust')?.textContent).toContain('JSON')
@@ -186,6 +186,7 @@ describe('LandingpageComponent', () => {
     expect(questions.textContent).toContain('around 200€')
     expect(questions.textContent).not.toContain('Basic')
     expect(questions.textContent).toContain('not a standalone HTML game')
+    expect(questions.textContent).toContain('Yes, with Trama Engine')
     expect(questions.textContent).toContain('not yet a user-facing import or restore tool')
     expect(questions.textContent).toContain('contact us before cancelling')
     expect(questions.querySelector('.questions__contact')?.getAttribute('href')).toBe('mailto:gesteve.12@gmail.com')

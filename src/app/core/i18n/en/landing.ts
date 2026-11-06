@@ -11,6 +11,7 @@ export const landing = {
     authoring: 'How it works',
     features: 'Features',
     pricing: 'Pricing',
+    engine: 'Open source',
     docs: 'Docs',
     login: 'Log in',
     dashboard: 'Dashboard',
@@ -144,6 +145,54 @@ export const landing = {
       link: 'Organise your board',
     },
   },
+  engine: {
+    eyebrow: 'OPEN SOURCE · TRAMA ENGINE',
+    titleStart: 'Your story,',
+    titleEnd: 'in any interface.',
+    description:
+      'Trama Engine is the engine that plays every Trama story, now free and open source. Load a story by its id and draw it however you like: a terminal, a game screen, a chat, an illustrated book. Trama’s reader becomes just one option.',
+    points: {
+      same: {
+        title: 'The same engine as Trama',
+        description: 'Events, distributors, requirements and variables behave exactly as they do in Trama’s reader.',
+      },
+      design: {
+        title: 'Your design, no limits',
+        description: 'It decides what happens next. You decide how it looks. No interface included and no dependencies.',
+      },
+      live: {
+        title: 'Written in Trama, played anywhere',
+        description: 'Your interface loads the story from Trama, so your changes in the editor reach it without exporting anything.',
+      },
+    },
+    agent: {
+      label: 'WITH AN AI AGENT',
+      title: 'Ask your agent',
+      description:
+        'Paste your story’s link and give the prompt to your coding agent. It will build an interface with Trama Engine and your readers will play the way you want, without being limited by Trama’s reader.',
+      storyLabel: 'Story link or id',
+      storyHint: 'Copy the link from your story’s sharing window.',
+      storyInvalid: 'That doesn’t look like a Trama story link, id or custom address.',
+      placeholderId: 'YOUR_STORY_ID',
+      promptLabel: 'Prompt for your agent',
+      prompt:
+        'Build a web page where readers play my interactive story. Use the @trama-app/engine npm package (read its README: {npm}). Load the story with fetchStory({reference}) and play it with createGame. Design the interface however you like: it does not have to look like Trama’s reader.',
+      copy: 'Copy prompt',
+      copied: 'Prompt copied',
+      copyFailed: 'Could not copy it. Select the text and copy it by hand.',
+    },
+    code: {
+      label: 'WITH CODE',
+      title: 'Or write it yourself',
+      description: 'Install the package, load your story and draw each state your way. It runs in browsers, Node 18+, Deno and workers.',
+      codeLabel: 'Example code',
+    },
+    links: {
+      npm: 'View on npm',
+      source: 'Read the source',
+      license: 'MIT license · free for any project',
+    },
+  },
   visuals: {
     distributor: 'Distributor',
     secretRule: 'trust > 2 AND has_key',
@@ -197,7 +246,7 @@ export const landing = {
     },
     export: {
       question: 'Can I host a playable story on my own website?',
-      answer: 'Not yet. Today readers play through a Trama link. The JSON download is story data, not a standalone HTML game. Playable export is planned for Pro, but its format, scope and launch date are still undecided.',
+      answer: 'Yes, with Trama Engine. It is open source: build your own interface on your website and it loads the story from Trama by its id, so the story stays in Trama. The JSON download is story data, not a standalone HTML game. A self-contained playable export is planned for Pro, but its format, scope and launch date are still undecided.',
     },
     cancel: {
       question: 'What if I cancel Creator?',

@@ -13,6 +13,7 @@ export const landing: Dictionary['landing'] = {
     authoring: 'Cómo funciona',
     features: 'Funciones',
     pricing: 'Precios',
+    engine: 'Código abierto',
     docs: 'Documentación',
     login: 'Iniciar sesión',
     dashboard: 'Panel',
@@ -146,6 +147,54 @@ export const landing: Dictionary['landing'] = {
       link: 'Organiza tu tablero',
     },
   },
+  engine: {
+    eyebrow: 'CÓDIGO ABIERTO · TRAMA ENGINE',
+    titleStart: 'Tu historia,',
+    titleEnd: 'en cualquier interfaz.',
+    description:
+      'Trama Engine es el motor que hace funcionar todas las historias de Trama, ahora gratuito y de código abierto. Carga una historia por su id y dibújala como quieras: un terminal, una pantalla de juego, un chat, un libro ilustrado. El lector de Trama pasa a ser solo una opción.',
+    points: {
+      same: {
+        title: 'El mismo motor que Trama',
+        description: 'Los eventos, los distribuidores, los requisitos y las variables funcionan exactamente igual que en el lector de Trama.',
+      },
+      design: {
+        title: 'Tu diseño, sin límites',
+        description: 'Él decide qué pasa después. Tú decides cómo se ve. No incluye ninguna interfaz ni tiene dependencias.',
+      },
+      live: {
+        title: 'Escrita en Trama, jugada en cualquier parte',
+        description: 'Tu interfaz carga la historia de Trama, así que los cambios que hagas en el editor le llegan sin exportar nada.',
+      },
+    },
+    agent: {
+      label: 'CON UN AGENTE DE IA',
+      title: 'Pídeselo a tu agente',
+      description:
+        'Pega el enlace de tu historia y pasa el prompt a tu agente de programación. Preparará una interfaz con Trama Engine y tus lectores jugarán como más te guste, sin estar limitados por el lector de Trama.',
+      storyLabel: 'Enlace o id de la historia',
+      storyHint: 'Copia el enlace desde la ventana de compartir de tu historia.',
+      storyInvalid: 'Esto no parece un enlace, un id ni una dirección personalizada de una historia de Trama.',
+      placeholderId: 'ID_DE_TU_HISTORIA',
+      promptLabel: 'Prompt para tu agente',
+      prompt:
+        'Crea una página web donde los lectores jueguen mi historia interactiva. Usa el paquete de npm @trama-app/engine (lee su README: {npm}). Carga la historia con fetchStory({reference}) y juégala con createGame. Diseña la interfaz como quieras: no hace falta que se parezca al lector de Trama.',
+      copy: 'Copiar el prompt',
+      copied: 'Prompt copiado',
+      copyFailed: 'No se ha podido copiar. Selecciona el texto y cópialo a mano.',
+    },
+    code: {
+      label: 'CON CÓDIGO',
+      title: 'O escríbelo tú',
+      description: 'Instala el paquete, carga tu historia y dibuja cada estado a tu manera. Funciona en navegadores, Node 18+, Deno y workers.',
+      codeLabel: 'Código de ejemplo',
+    },
+    links: {
+      npm: 'Ver en npm',
+      source: 'Leer el código',
+      license: 'Licencia MIT · gratuito para cualquier proyecto',
+    },
+  },
   visuals: {
     distributor: 'Distribuidor',
     secretRule: 'confianza > 2 Y tiene_llave',
@@ -199,7 +248,7 @@ export const landing: Dictionary['landing'] = {
     },
     export: {
       question: '¿Puedo alojar una historia jugable en mi web?',
-      answer: 'Todavía no. Hoy los lectores juegan con un enlace de Trama. La descarga JSON contiene datos de la historia, no un juego HTML independiente. La exportación jugable está prevista para Pro, pero su formato, alcance y fecha de lanzamiento aún están por decidir.',
+      answer: 'Sí, con Trama Engine. Es de código abierto: crea tu propia interfaz en tu web y esta carga la historia de Trama por su id, de modo que la historia se queda en Trama. La descarga JSON contiene datos de la historia, no un juego HTML independiente. Una exportación jugable autónoma está prevista para Pro, pero su formato, alcance y fecha de lanzamiento aún están por decidir.',
     },
     cancel: {
       question: '¿Qué pasa si cancelo Creator?',

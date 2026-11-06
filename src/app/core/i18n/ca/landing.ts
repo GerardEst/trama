@@ -13,6 +13,7 @@ export const landing: Dictionary['landing'] = {
     authoring: 'Com funciona',
     features: 'Funcions',
     pricing: 'Preus',
+    engine: 'Codi obert',
     docs: 'Documentació',
     login: 'Inicia sessió',
     dashboard: 'Panell',
@@ -146,6 +147,54 @@ export const landing: Dictionary['landing'] = {
       link: 'Organitza el teu tauler',
     },
   },
+  engine: {
+    eyebrow: 'CODI OBERT · TRAMA ENGINE',
+    titleStart: 'La teva història,',
+    titleEnd: 'en qualsevol interfície.',
+    description:
+      'Trama Engine és el motor que fa funcionar totes les històries de Trama, ara gratuït i de codi obert. Carrega una història pel seu id i dibuixa-la com vulguis: un terminal, una pantalla de joc, un xat, un llibre il·lustrat. El lector de Trama passa a ser només una opció.',
+    points: {
+      same: {
+        title: 'El mateix motor que Trama',
+        description: 'Els esdeveniments, els distribuïdors, els requisits i les variables funcionen exactament igual que al lector de Trama.',
+      },
+      design: {
+        title: 'El teu disseny, sense límits',
+        description: 'Ell decideix què passa després. Tu decideixes com es veu. No inclou cap interfície ni té dependències.',
+      },
+      live: {
+        title: 'Escrita a Trama, jugada a qualsevol lloc',
+        description: 'La teva interfície carrega la història de Trama, així que els canvis que facis a l’editor hi arriben sense exportar res.',
+      },
+    },
+    agent: {
+      label: 'AMB UN AGENT D’IA',
+      title: 'Demana-ho al teu agent',
+      description:
+        'Enganxa l’enllaç de la teva història i passa el prompt al teu agent de programació. Prepararà una interfície amb Trama Engine i els teus lectors jugaran com més t’agradi, sense estar limitats pel lector de Trama.',
+      storyLabel: 'Enllaç o id de la història',
+      storyHint: 'Copia l’enllaç des de la finestra de compartir de la teva història.',
+      storyInvalid: 'Això no sembla un enllaç, un id ni una adreça personalitzada d’una història de Trama.',
+      placeholderId: 'ID_DE_LA_TEVA_HISTORIA',
+      promptLabel: 'Prompt per al teu agent',
+      prompt:
+        'Crea una pàgina web on els lectors juguin la meva història interactiva. Fes servir el paquet de npm @trama-app/engine (llegeix-ne el README: {npm}). Carrega la història amb fetchStory({reference}) i juga-la amb createGame. Dissenya la interfície com vulguis: no cal que s’assembli al lector de Trama.',
+      copy: 'Copia el prompt',
+      copied: 'Prompt copiat',
+      copyFailed: 'No s’ha pogut copiar. Selecciona el text i copia’l a mà.',
+    },
+    code: {
+      label: 'AMB CODI',
+      title: 'O escriu-ho tu',
+      description: 'Instal·la el paquet, carrega la teva història i dibuixa cada estat a la teva manera. Funciona en navegadors, Node 18+, Deno i workers.',
+      codeLabel: 'Codi d’exemple',
+    },
+    links: {
+      npm: 'Veure a npm',
+      source: 'Llegir el codi',
+      license: 'Llicència MIT · gratuït per a qualsevol projecte',
+    },
+  },
   visuals: {
     distributor: 'Distribuïdor',
     secretRule: 'confiança > 2 I te_clau',
@@ -199,7 +248,7 @@ export const landing: Dictionary['landing'] = {
     },
     export: {
       question: 'Puc allotjar una història jugable al meu web?',
-      answer: 'Encara no. Avui els lectors juguen amb un enllaç de Trama. La descàrrega JSON conté dades de la història, no un joc HTML independent. L’exportació jugable està prevista per a Pro, però el format, l’abast i la data de llançament encara s’han de decidir.',
+      answer: 'Sí, amb Trama Engine. És de codi obert: crea la teva pròpia interfície al teu web i aquesta carrega la història de Trama pel seu id, de manera que la història es queda a Trama. La descàrrega JSON conté dades de la història, no un joc HTML independent. Una exportació jugable autònoma està prevista per a Pro, però el format, l’abast i la data de llançament encara s’han de decidir.',
     },
     cancel: {
       question: 'Què passa si cancel·lo Creator?',
