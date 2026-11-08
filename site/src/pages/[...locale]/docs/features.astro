@@ -1,0 +1,262 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import FeatureIndex from '../../../components/docs/FeatureIndex.astro'
+import FeatureChapter from '../../../components/docs/FeatureChapter.astro'
+import Eyebrow from '../../../components/ui/Eyebrow.astro'
+import ButtonLink from '../../../components/ui/ButtonLink.astro'
+import { docsCopyFor, format, type Lang } from '../../../i18n'
+import { featureGuide } from '../../../docs/features'
+import { APP_LINKS } from '../../../lib/links'
+import { localePath, localeStaticPaths } from '../../../lib/locale'
+import { PAGES } from '../../../lib/pages'
+
+// The features guide in every language: /docs/features, /es/docs/features and /ca/docs/features.
+export const getStaticPaths = localeStaticPaths
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = docsCopyFor(lang)
+const groups = featureGuide(lang)
+const count = groups.reduce((total, group) => total + group.features.length, 0)
+const home = localePath(lang)
+const structuredData = {
+  '@type': 'TechArticle',
+  headline: t.title,
+  description: t.meta.description,
+  isPartOf: { '@type': 'WebSite', name: 'Trama', url: new URL(home, Astro.site).href },
+}
+---
+
+<BaseLayout
+  lang={lang}
+  page={PAGES.features}
+  title={t.meta.title}
+  description={t.meta.description}
+  structuredData={structuredData}
+>
+  <feature-guide class="section-container guide">
+    <div class="guide__intro">
+      <a class="guide__back" href={home}><span aria-hidden="true">←</span> {t.back}</a>
+      <h1>{t.title}</h1>
+      <p class="guide__description">{t.description}</p>
+      <p class="guide__note">{t.note}</p>
+    </div>
+
+    <details class="guide__mobile-index">
+      <summary>{format(t.browse, { count })} <span aria-hidden="true">↓</span></summary>
+      <FeatureIndex groups={groups} label={t.mobileIndex} />
+    </details>
+
+    <div class="guide__layout">
+      <aside class="guide__sidebar">
+        <FeatureIndex groups={groups} label={t.index} />
+        <a class="guide__play" href={`${home}#try-it`}>{t.play} <span aria-hidden="true">↗</span></a>
+      </aside>
+
+      <div class="guide__content">
+        {groups.map((group, index) => (
+          <div class="guide__group">
+            <div class="guide__group-heading">
+              <Eyebrow>0{index + 1} / {group.title}</Eyebrow>
+              <p>{group.description}</p>
+            </div>
+            {group.features.map(feature => (
+              <FeatureChapter feature={feature} labels={{ howTo: t.howTo, goodToKnow: t.goodToKnow }} />
+            ))}
+          </div>
+        ))}
+        <div class="guide__next">
+          <Eyebrow>{t.nextEyebrow}</Eyebrow>
+          <h2>{t.nextTitle}</h2>
+          <ButtonLink href={APP_LINKS.register} signedInHref={APP_LINKS.dashboard} variant="primary" arrow="↗">
+            {t.create}
+          </ButtonLink>
+        </div>
+      </div>
+    </div>
+  </feature-guide>
+</BaseLayout>
+
+<script>
+  // Opening a chapter (from the index, the app's help or a shared link) also
+  // moves keyboard focus there, so the next Tab continues inside it.
+  class FeatureGuide extends HTMLElement {
+    connectedCallback() {
+      window.addEventListener('hashchange', this.focusChapter)
+      this.focusChapter()
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener('hashchange', this.focusChapter)
+    }
+
+    private focusChapter = () => {
+      const id = decodeURIComponent(location.hash.slice(1))
+      const chapter = id ? document.getElementById(id) : null
+      if (chapter?.matches('section[tabindex]') && this.contains(chapter)) chapter.focus({ preventScroll: true })
+    }
+  }
+
+  customElements.define('feature-guide', FeatureGuide)
+</script>
+
+<style>
+  .guide {
+    display: block;
+    padding-bottom: 64px;
+    font-weight: 500;
+    line-height: 1.7;
+  }
+
+  .guide__intro {
+    max-width: 820px;
+    padding: 48px 0 56px;
+  }
+  .guide__intro h1 {
+    margin-top: 18px;
+    font: 800 clamp(36px, 4vw, 54px)/1.12 var(--polo-font-ui);
+    letter-spacing: -0.055em;
+  }
+  .guide__intro p {
+    line-height: 1.7;
+  }
+  .guide__intro .guide__description {
+    max-width: 680px;
+    margin-top: 28px;
+    font-size: 17px;
+  }
+  .guide__intro .guide__note {
+    max-width: 620px;
+    margin-top: var(--polo-space-4);
+    font-size: 14px;
+  }
+
+  .guide__back {
+    display: inline-block;
+    min-height: 44px;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .guide__back:hover {
+    color: var(--polo-color-action);
+  }
+
+  .guide__layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .guide__sidebar,
+  .guide__content {
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: var(--polo-radius-card);
+    background: var(--polo-color-surface);
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  }
+
+  .guide__sidebar {
+    position: sticky;
+    top: 108px;
+    max-height: calc(100vh - 132px);
+    overflow-y: auto;
+    padding: var(--polo-space-6);
+  }
+
+  .guide__play {
+    display: inline-block;
+    padding: 10px 0;
+    border-top: 1px solid var(--polo-color-border);
+    color: var(--polo-color-action);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .guide__content {
+    min-width: 0;
+    max-width: 820px;
+    padding: 32px 40px 0;
+  }
+
+  .guide__group + .guide__group {
+    margin-top: 40px;
+  }
+  .guide__group-heading {
+    padding-top: 4px;
+  }
+  .guide__group-heading p {
+    margin: 12px 0 32px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .guide__next {
+    padding: 40px 0 64px;
+    border-top: 1px solid var(--polo-color-border);
+  }
+  .guide__next h2 {
+    margin: 16px 0 24px;
+    font: 800 clamp(26px, 3vw, 36px)/1.2 var(--polo-font-ui);
+    letter-spacing: -0.05em;
+  }
+
+  .guide__mobile-index {
+    display: none;
+  }
+
+  @media (max-width: 1000px) {
+    .guide__layout {
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 40px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .guide {
+      padding-bottom: 40px;
+    }
+    .guide__intro {
+      padding: 28px 0 32px;
+    }
+    .guide__intro h1 {
+      font-size: clamp(32px, 8vw, 46px);
+    }
+    .guide__intro .guide__description {
+      margin-top: var(--polo-space-6);
+    }
+    .guide__layout {
+      display: block;
+    }
+    .guide__sidebar {
+      display: none;
+    }
+    .guide__content {
+      padding: 24px 20px 0;
+    }
+    .guide__mobile-index {
+      display: block;
+      margin-bottom: 24px;
+      padding: 12px 20px;
+      border: 1px solid var(--polo-color-border-strong);
+      border-radius: var(--polo-radius-control);
+      background: var(--polo-color-surface);
+    }
+    .guide__mobile-index summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 44px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .guide__mobile-index :global(nav) {
+      padding: 20px 6px 0;
+    }
+  }
+</style>

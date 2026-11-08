@@ -11,6 +11,7 @@ import {
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { ContextHelpService } from './context-help.service'
 import { CONTEXT_HELP_TOPICS, ContextHelpTopic } from './context-help.topics'
+import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
 
 let nextHelpId = 0
 
@@ -48,6 +49,11 @@ export class ContextHelpComponent implements OnDestroy {
 
   get copy() {
     return CONTEXT_HELP_TOPICS[this.topic]
+  }
+
+  /** The topic's chapter of the features guide, in the app's language. */
+  docsUrl() {
+    return siteUrl(this.i18n.lang(), SITE_PAGES.features, this.copy.docsFragment)
   }
 
   @ViewChild('trigger')

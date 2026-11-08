@@ -4,7 +4,6 @@ export const APP_LINKS = {
   login: '/login',
   dashboard: '/dashboard',
   register: '/login?mode=register&plan=creator&period=monthly',
-  docs: '/docs/features',
   email: 'mailto:gesteve.12@gmail.com',
 } as const
 

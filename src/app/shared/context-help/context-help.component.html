@@ -35,7 +35,7 @@
       <span class="contextHelp__body" [id]="id + '-body'">{{ i18n.t(copy.body) }}</span>
       <a
         class="contextHelp__docs"
-        [href]="'/docs/features#' + copy.docsFragment"
+        [href]="docsUrl()"
         target="_blank"
         rel="noopener noreferrer"
         [attr.aria-label]="i18n.t('contextHelp.documentation') + ' · ' + i18n.t('contextHelp.newTab')"

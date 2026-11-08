@@ -3,13 +3,15 @@ import Wordmark from './Wordmark.astro'
 import LanguageSelector from './LanguageSelector.astro'
 import { copyFor, type Lang } from '../i18n'
 import { localePath } from '../lib/locale'
+import { PAGES, type PagePath } from '../lib/pages'
 import { APP_LINKS } from '../lib/links'
 
 interface Props {
   lang: Lang
+  page: PagePath
 }
 
-const { lang } = Astro.props
+const { lang, page } = Astro.props
 const t = copyFor(lang)
 ---
 
@@ -18,11 +20,11 @@ const t = copyFor(lang)
     <Wordmark href={localePath(lang)} label={t.nav.home} />
     <p>{t.footer.tagline}</p>
     <div class="footer__links">
-      <a href={APP_LINKS.docs}>{t.footer.guide}</a>
+      <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
       <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
       <a href={APP_LINKS.email}>{t.footer.email}</a>
     </div>
-    <LanguageSelector lang={lang} label={t.footer.language} />
+    <LanguageSelector lang={lang} page={page} label={t.footer.language} />
     <small>{t.footer.rights}</small>
   </div>
 </footer>

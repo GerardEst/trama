@@ -6,21 +6,24 @@ import {
   WritableSignal,
   signal,
   OnInit,
+  computed,
+  inject,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { RouterLink } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
 import { ViewportService } from 'src/app/core/services/viewport.service'
 
 @Component({
   selector: 'polo-menu',
   standalone: true,
-  imports: [CommonModule, RouterLink, BasicButtonComponent, TranslatePipe],
+  imports: [CommonModule, BasicButtonComponent, TranslatePipe],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css'],
 })
@@ -29,6 +32,10 @@ export class MenuComponent implements OnInit {
   public stories: WritableSignal<any> = signal([])
   @Output() onChangeTree: EventEmitter<any> = new EventEmitter()
   @Output() onNewStory: EventEmitter<any> = new EventEmitter()
+  private readonly i18n = inject(I18nService)
+  // The landing and the docs are the public site, in the reader's language.
+  readonly homeUrl = computed(() => siteUrl(this.i18n.lang()))
+  readonly docsUrl = computed(() => siteUrl(this.i18n.lang(), SITE_PAGES.features))
 
   constructor(
     public db: DatabaseService,
