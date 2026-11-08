@@ -18,85 +18,42 @@ const supabase = createClient(
   }
 )
 
+// Les altres funcions de subscripció les invoca Stripe; aquesta, el navegador des de Trama.
 Deno.serve(async (req) => {
-  const origin = req.headers.get('origin')
-
-  // Les altres funcions s'estan invocant desde stripe, aquesta desde trama
-  // Per tant aquesta necessita una mica de CORS (no sé perquè, suposo que supabase ja permet per defecte stripe)
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
-          ? origin
-          : '',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-      status: 204,
-    })
+  const origin = req.headers.get('origin') ?? ''
+  const cors = {
+    'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   }
+  const respond = (body: string, status: number) =>
+    new Response(body, { status, headers: { ...cors, 'Content-Type': 'application/json' } })
 
-  // Extract the JWT token from the Authorization header
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors })
+  if (req.method !== 'POST') return respond(JSON.stringify({ error: 'method_not_allowed' }), 405)
+
   const authHeader = req.headers.get('Authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return new Response('No valid token provided', { status: 401 })
-  }
-  const token = authHeader.split(' ')[1]
+  if (!authHeader?.startsWith('Bearer ')) return respond(JSON.stringify({ error: 'no_token' }), 401)
 
   try {
-    // Verify the JWT token and get the user details
-    const {
-      data: { user },
-      validationError,
-    } = await supabase.auth.getUser(token)
-    if (validationError || !user) {
-      return new Response('Invalid token', { status: 401 })
-    }
+    const { data: { user }, error: userError } = await supabase.auth.getUser(authHeader.slice('Bearer '.length))
+    if (userError || !user) return respond(JSON.stringify({ error: 'invalid_token' }), 401)
 
-    // Fetch the subscription details from supabase
-    const { data, queryError } = await supabase
+    // The profile row has the same id as the auth user, and only the Stripe webhooks write it.
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('subscription_id')
-      .eq('email', user.email)
+      .eq('id', user.id)
+      .maybeSingle()
+    if (profileError) throw profileError
+    if (!profile?.subscription_id) return respond(JSON.stringify({ error: 'no_subscription' }), 404)
 
-    if (queryError) {
-      return new Response('No subscription found', { status: 404 })
-    }
+    const cancelled = await stripe.subscriptions.cancel(profile.subscription_id)
+    if (cancelled.status !== 'canceled') return respond(JSON.stringify({ error: 'not_cancelled' }), 500)
 
-    const subscriptionId = data[0].subscription_id
-    const cancelledSubscription =
-      await stripe.subscriptions.cancel(subscriptionId)
-    if (cancelledSubscription.status !== 'canceled') {
-      return new Response('Failed to cancel subscription', { status: 500 })
-    }
-
-    return new Response(
-      JSON.stringify({
-        message: 'Subscription canceled successfully',
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
-            ? origin
-            : '',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-        status: 200,
-      }
-    )
+    return respond(JSON.stringify({ message: 'Subscription canceled successfully' }), 200)
   } catch (err) {
-    return new Response(String(err?.message ?? err), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': allowedOrigins.includes(origin)
-          ? origin
-          : '',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-      status: 500,
-    })
+    console.error('Could not cancel the subscription', err)
+    return respond(JSON.stringify({ error: 'cancel_failed' }), 500)
   }
 })

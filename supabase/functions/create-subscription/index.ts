@@ -1,7 +1,7 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import Stripe from 'https://esm.sh/stripe?target=deno'
+import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   // This is needed to use the Fetch API rather than relying on the Node http package.
@@ -83,6 +83,6 @@ Deno.serve(async (req) => {
     )
   } catch (err) {
     // En cas d'error retornem l'error
-    return new Response(String(err?.message ?? err), { status: 500 })
+    return new Response(String((err as Error)?.message ?? err), { status: 500 })
   }
 })
