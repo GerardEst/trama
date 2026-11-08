@@ -16,7 +16,7 @@ import { LinearEditorComponent } from '../linear-editor/linear-editor.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { ModalService } from 'src/app/core/services/modal.service'
 import { ShareStoryComponent } from './modals/share-story/share-story.component'
-import { buildExampleStory, EXAMPLE_STORY_COPY } from '../landing-page/exampleStory'
+import { buildExampleStory, EXAMPLE_STORY_COPY } from 'src/app/shared/example-story/exampleStory'
 import { isMobileLayout } from 'src/app/core/constants'
 
 @Component({

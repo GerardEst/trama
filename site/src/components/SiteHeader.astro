@@ -1,0 +1,124 @@
+---
+import Wordmark from './Wordmark.astro'
+import AuthLabel from './ui/AuthLabel.astro'
+import { copyFor, type Lang } from '../i18n'
+import { localePath } from '../lib/locale'
+import { APP_LINKS } from '../lib/links'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+const home = localePath(lang)
+const sections = [
+  { href: `${home}#authoring`, label: t.nav.authoring },
+  { href: `${home}#features`, label: t.nav.features },
+  { href: `${home}#engine`, label: t.nav.engine },
+  { href: APP_LINKS.docs, label: t.nav.docs },
+]
+---
+
+<header class="site-header">
+  <nav class="section-container nav" aria-label={t.nav.label}>
+    <div class="nav__brand"><Wordmark href={home} label={t.nav.home} /></div>
+    <div class="nav__links">
+      {sections.map(section => <a href={section.href}>{section.label}</a>)}
+    </div>
+    <a class="nav__login" href={APP_LINKS.login} data-when="signed-out">{t.nav.login}</a>
+    <a class="nav__cta" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+      <AuthLabel signedOut={t.nav.start} signedIn={t.nav.dashboard} />
+      <span aria-hidden="true">→</span>
+    </a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--polo-color-canvas) 95%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--polo-color-border);
+  }
+
+  .nav {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: 30px;
+    margin-left: auto;
+  }
+
+  .nav__links a,
+  .nav__login,
+  .nav__cta {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .nav__links a:hover,
+  .nav__login:hover {
+    color: var(--polo-color-action);
+  }
+
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--polo-color-accent-border);
+    border-radius: var(--polo-radius-control);
+    background: var(--polo-color-accent);
+    color: var(--polo-color-text-on-accent);
+    box-shadow: 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+  }
+  .nav__cta:hover {
+    background: var(--polo-color-accent-hover);
+    transform: translateY(-1px);
+  }
+  .nav__cta span {
+    transform: translateY(-0.08em);
+  }
+
+  @media (max-width: 1000px) {
+    .nav {
+      gap: var(--polo-space-6);
+    }
+    .nav__links {
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .nav__links {
+      display: none;
+    }
+    .nav__brand {
+      margin-right: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav {
+      min-height: 66px;
+      gap: var(--polo-space-3);
+    }
+    .nav__login,
+    .nav__cta {
+      font-size: 12px;
+    }
+    .nav__cta {
+      gap: var(--polo-space-3);
+      padding: 0 12px;
+    }
+  }
+</style>

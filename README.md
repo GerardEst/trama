@@ -26,14 +26,13 @@ src/app/
   shared/      Reusable UI components, app-wide state
                (active-story.service holds the in-memory story tree), utils
   features/
-    landing-page/  Marketing site
     login/         Auth pages (Supabase + Google OAuth)
     dashboard/     Authoring shell (story menu, stats, modals)
     board/         The node-based story editor
     playground/    The runtime player that executes a story tree
     statistics/    Aggregated play results / analytics
-    feedback/      Feedback modal -> edge function email
-supabase/functions/   Deno edge functions (subscriptions, feedback email)
+site/                 Astro landing pages (/, /es, /ca)
+supabase/functions/   Deno edge functions (subscriptions, story API)
 aws/resize-image/     Standalone Lambda for image optimization
 tests/                Playwright e2e specs
 ```

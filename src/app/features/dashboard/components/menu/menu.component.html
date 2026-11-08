@@ -4,7 +4,7 @@
   }
   <nav [attr.aria-label]="'dashboard.menu.stories' | t">
     <div class="nav__brand">
-      <a class="wordmark" routerLink="/" aria-label="Trama">trama<span aria-hidden="true">.</span></a>
+      <a class="wordmark" href="/" aria-label="Trama">trama<span aria-hidden="true">.</span></a>
       @if (fixedMenu) {
         <polo-basic-button
           class="menuToggler"
@@ -65,16 +65,6 @@
           </li>
         }
       </ul>
-    </section>
-
-    <section class="feedback">
-      <polo-basic-button
-        [text]="'dashboard.menu.feedback' | t"
-        icon="/assets/icons/user-info.svg"
-        (click)="openFeedbackModal()"
-        [transparent]="true"
-        [border]="true"
-      ></polo-basic-button>
     </section>
   </nav>
   @if (!fixedMenu) {

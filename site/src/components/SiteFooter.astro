@@ -1,0 +1,81 @@
+---
+import Wordmark from './Wordmark.astro'
+import LanguageSelector from './LanguageSelector.astro'
+import { copyFor, type Lang } from '../i18n'
+import { localePath } from '../lib/locale'
+import { APP_LINKS } from '../lib/links'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+---
+
+<footer class="footer">
+  <div class="section-container footer__inner">
+    <Wordmark href={localePath(lang)} label={t.nav.home} />
+    <p>{t.footer.tagline}</p>
+    <div class="footer__links">
+      <a href={APP_LINKS.docs}>{t.footer.guide}</a>
+      <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
+      <a href={APP_LINKS.email}>{t.footer.email}</a>
+    </div>
+    <LanguageSelector lang={lang} label={t.footer.language} />
+    <small>{t.footer.rights}</small>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 28px 0;
+    border-top: 1px solid var(--polo-color-border);
+    background: var(--polo-color-surface);
+  }
+
+  .footer__inner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer__inner p,
+  .footer__inner small {
+    font-size: 12px;
+    color: var(--polo-color-text-secondary);
+  }
+  .footer__inner small {
+    flex-basis: 100%;
+    font-size: 11px;
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--polo-space-6);
+    margin-left: auto;
+  }
+  .footer__links a {
+    padding: 8px 0;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .footer__links a:hover {
+    color: var(--polo-color-action);
+  }
+
+  @media (max-width: 760px) {
+    .footer__inner {
+      align-items: flex-start;
+      gap: var(--polo-space-4);
+    }
+    .footer__inner p {
+      flex-basis: calc(100% - 120px);
+      line-height: 1.5;
+    }
+    .footer__links {
+      margin-left: 0;
+    }
+  }
+</style>

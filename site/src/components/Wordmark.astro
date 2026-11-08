@@ -1,0 +1,19 @@
+---
+interface Props {
+  href: string
+  label: string
+}
+const { href, label } = Astro.props
+---
+
+<a class="wordmark" href={href} aria-label={label}>Trama<span>.</span></a>
+
+<style>
+  .wordmark {
+    font: 800 27px var(--polo-font-ui);
+    letter-spacing: -0.075em;
+  }
+  .wordmark span {
+    color: var(--polo-color-wordmark-dot);
+  }
+</style>

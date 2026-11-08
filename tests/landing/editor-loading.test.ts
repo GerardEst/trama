@@ -58,7 +58,7 @@ test.describe('Landing story experience', () => {
   })
 
   for (const width of [375, 390, 820]) {
-    test(`keeps the demo and expanded plans usable at ${width}px`, async ({ page }) => {
+    test(`keeps the demo usable at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 844 })
       await page.goto('/')
       await page.getByRole('link', { name: 'Play a story' }).click()
@@ -66,42 +66,17 @@ test.describe('Landing story experience', () => {
       await expect(page.locator('#try-it')).toContainText('You climb unseen among sleeping ghosts')
       await expect(page.locator('polo-board')).toHaveCount(0)
       await expect(page.locator('#features')).toBeVisible()
-      await page.getByText('What’s included in Creator', { exact: true }).click()
-      await expect(page.locator('.pricing__details li').filter({ hasText: 'Player tracking and story analytics' })).toBeVisible()
-      const pro = page.locator('.pricing__plan--pro')
-      await pro.scrollIntoViewIfNeeded()
-      await expect(pro).toContainText('Pro is not available yet')
-      await expect(page.locator('.export-license')).toHaveCount(0)
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
     })
   }
 
-  test('keeps the planned one-time Pro reference separate from Creator subscription billing', async ({ page }) => {
+  test('shows the first scene before any script runs', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false })
+    const page = await context.newPage()
     await page.goto('/')
-    const pricing = page.locator('#pricing')
-    const pro = pricing.locator('.pricing__plan--pro')
-    await expect(pricing.locator('.pricing__plan')).toHaveCount(2)
-    await expect(pro).toContainText('Around 200€')
-    await expect(pro).toContainText('not a final offer')
-    await expect(pro.locator('button, a')).toHaveCount(0)
-    await pricing.getByRole('button', { name: /Annual billing/ }).click()
-    await expect(pricing.getByText('49.95€/year', { exact: true })).toBeVisible()
-    await expect(pro).toContainText('Around 200€')
-    await expect(pricing).not.toContainText('Basic')
-  })
-
-  test('offers available plans and keyboard-accessible annual billing', async ({ page }) => {
-    await page.goto('/')
-    const pricing = page.locator('#pricing')
-    await expect(pricing.locator('.pricing__plan')).toHaveCount(2)
-    await expect(pricing.getByText('In development')).toHaveCount(0)
-    await expect(pricing.getByText('5.95€/month', { exact: true })).toBeVisible()
-    const annual = pricing.getByRole('button', { name: /Annual billing/ })
-    await annual.focus()
-    await page.keyboard.press('Enter')
-    await expect(annual).toHaveAttribute('aria-pressed', 'true')
-    await expect(pricing.getByText('49.95€/year', { exact: true })).toBeVisible()
-    await pricing.getByRole('button', { name: 'Choose Creator' }).click()
-    await expect(page).toHaveURL(/mode=register.*plan=creator.*period=yearly/)
+    await expect(page.locator('#try-it')).toContainText('Hollow Citadel')
+    await expect(page.locator('#try-it').getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
+    await expect(page.locator('#features')).toContainText('Choices with consequences')
+    await context.close()
   })
 })

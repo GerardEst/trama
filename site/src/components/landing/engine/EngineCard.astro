@@ -1,0 +1,65 @@
+---
+interface Props {
+  id: string
+  label: string
+  title: string
+  description: string
+  /** Highlights the recommended way. */
+  featured?: boolean
+}
+
+const { id, label, title, description, featured = false } = Astro.props
+---
+
+<article class:list={['engine-card', { 'engine-card--featured': featured }]} aria-labelledby={id}>
+  <p class="engine-card__label">{label}</p>
+  <h3 id={id}>{title}</h3>
+  <p class="engine-card__description">{description}</p>
+  <slot />
+</article>
+
+<style>
+  .engine-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 28px;
+    border: 1px solid var(--polo-color-border);
+    border-radius: var(--polo-radius-panel);
+    background: var(--polo-color-surface);
+  }
+
+  .engine-card--featured {
+    border-color: var(--polo-color-action);
+    box-shadow: inset 0 3px 0 var(--polo-color-action);
+  }
+
+  .engine-card__label {
+    color: var(--polo-color-action);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+  }
+
+  h3 {
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+  }
+
+  .engine-card__description {
+    margin-top: 10px;
+    color: var(--polo-color-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 760px) {
+    .engine-card {
+      padding: 22px 18px;
+    }
+  }
+</style>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://trama.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trama.app/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://trama.app/es" />
+    <xhtml:link rel="alternate" hreflang="ca" href="https://trama.app/ca" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trama.app/" />
+  </url>
+  <url>
+    <loc>https://trama.app/es</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trama.app/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://trama.app/es" />
+    <xhtml:link rel="alternate" hreflang="ca" href="https://trama.app/ca" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trama.app/" />
+  </url>
+  <url>
+    <loc>https://trama.app/ca</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trama.app/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://trama.app/es" />
+    <xhtml:link rel="alternate" hreflang="ca" href="https://trama.app/ca" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trama.app/" />
+  </url>
+  <url>
+    <loc>https://trama.app/docs/features</loc>
+  </url>
+</urlset>

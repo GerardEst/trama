@@ -1,0 +1,92 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string
+  variant?: 'primary' | 'secondary'
+  /** Decorative symbol after the label, such as → or ↓. */
+  arrow?: string
+  /** Where the link goes for signed-in readers (see BaseLayout). */
+  signedInHref?: string
+}
+
+const { href, variant = 'secondary', arrow, signedInHref, class: className, ...attributes } = Astro.props
+---
+
+<a
+  href={href}
+  class:list={['button', `button--${variant}`, className]}
+  data-signed-in-href={signedInHref}
+  {...attributes}
+>
+  <slot />
+  {arrow && <span class="button__arrow" aria-hidden="true">{arrow}</span>}
+</a>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 54px;
+    border-radius: var(--polo-radius-control);
+    font-size: 15px;
+    font-weight: 800;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .button:hover {
+    transform: translateY(-2px);
+  }
+  .button__arrow {
+    transform: translateY(-0.08em);
+  }
+
+  .button--primary {
+    justify-content: space-between;
+    gap: 36px;
+    padding: 0 24px;
+    border: 1px solid var(--polo-color-accent-border);
+    background: var(--polo-color-accent);
+    color: var(--polo-color-text-on-accent);
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+  }
+  .button--primary:hover {
+    background: var(--polo-color-accent-hover);
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+  }
+
+  .button--secondary {
+    gap: 14px;
+    padding: 0 22px;
+    border: 1px solid var(--polo-color-border-strong);
+    background: var(--polo-color-surface);
+    color: var(--polo-color-text-strong);
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
+  }
+  .button--secondary .button__arrow {
+    color: var(--polo-color-action);
+  }
+  .button--secondary:hover {
+    border-color: var(--polo-color-action);
+    color: var(--polo-color-action);
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--polo-color-shadow) 12%, transparent);
+  }
+
+  @media (max-width: 480px) {
+    .button--primary {
+      gap: var(--polo-space-6);
+      padding: 0 18px;
+    }
+    .button--secondary {
+      padding: 0 18px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+    .button:hover {
+      transform: none;
+    }
+  }
+</style>

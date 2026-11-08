@@ -1,0 +1,98 @@
+---
+import { LANGS, LANGUAGE_NAMES, type Lang } from '../i18n'
+import { localePath } from '../lib/locale'
+
+interface Props {
+  lang: Lang
+  label: string
+}
+
+const { lang, label } = Astro.props
+---
+
+<language-selector>
+  <div class="selector" role="group" aria-label={label}>
+    {LANGS.map(option => (
+      <a
+        class="selector__option"
+        href={localePath(option)}
+        hreflang={option}
+        lang={option}
+        aria-label={LANGUAGE_NAMES[option].name}
+        title={LANGUAGE_NAMES[option].name}
+        aria-current={option === lang ? 'true' : undefined}
+      >
+        {LANGUAGE_NAMES[option].code}
+      </a>
+    ))}
+  </div>
+</language-selector>
+
+<script>
+  import { LANG_STORAGE_KEY } from '../lib/links'
+
+  // Remembers the reader's choice for the app and for "/", and keeps the
+  // section they were reading. Without JavaScript the links still work.
+  class LanguageSelector extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener('click', this.choose)
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.choose)
+    }
+
+    private choose = (event: MouseEvent) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[hreflang]')
+      if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey) return
+      event.preventDefault()
+      if (link.getAttribute('aria-current')) return
+      try {
+        localStorage.setItem(LANG_STORAGE_KEY, link.hreflang)
+      } catch {
+        // The page still changes language without persistence.
+      }
+      location.assign(link.pathname + location.hash)
+    }
+  }
+
+  customElements.define('language-selector', LanguageSelector)
+</script>
+
+<style>
+  .selector {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 999px;
+  }
+
+  .selector__option {
+    min-width: 26px;
+    padding: 4px 6px;
+    border-radius: 999px;
+    color: var(--polo-color-text-secondary);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .selector__option:hover {
+    color: var(--polo-color-text-strong);
+    background: var(--polo-color-action-soft);
+  }
+  .selector__option:focus-visible {
+    outline: 2px solid var(--polo-color-focus);
+    outline-offset: 2px;
+  }
+
+  .selector__option[aria-current] {
+    color: var(--polo-color-text-on-action);
+    background: var(--polo-color-action);
+  }
+  .selector__option[aria-current]:hover {
+    color: var(--polo-color-text-on-action);
+    background: var(--polo-color-action-hover);
+  }
+</style>

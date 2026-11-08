@@ -1,0 +1,92 @@
+/* The app's theme is the single source of colors; the site never redefines a palette. */
+@import '@app/styles/tokens.css';
+
+:root {
+  /* Same families as the app, loaded through Astro's font pipeline. */
+  --polo-font-ui: var(--font-raleway);
+  --polo-font-story: var(--font-baskerville);
+  --site-gutter: 48px;
+  --site-header-offset: 96px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 12px;
+  margin: 0;
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+  background-color: var(--polo-color-canvas);
+  background-image: var(--polo-background-paper);
+  background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px, 20px 20px;
+}
+
+/* Same baseline as the app, so components size text explicitly. */
+:where(p, h1, h2, h3, h4, h5, h6, a, li, button, label, details, summary, figure, small) {
+  margin: 0;
+  color: inherit;
+  font-size: 12px;
+}
+
+:where(ul, ol, menu) {
+  margin: 0;
+  padding: 0;
+}
+
+:where(li) {
+  list-style: none;
+}
+
+:where(input, textarea, button, select) {
+  font-family: inherit;
+}
+
+:where(h1, h2, h3) {
+  font-weight: 200;
+  line-height: 2;
+}
+
+:where(h1, h2) {
+  text-wrap: balance;
+}
+
+h2 {
+  font: 800 clamp(36px, 4vw, 54px)/1.12 var(--polo-font-ui);
+  letter-spacing: -0.055em;
+}
+
+a {
+  text-decoration: none;
+}
+
+:is(a, button, summary):focus-visible {
+  outline: 3px solid var(--polo-color-action);
+  outline-offset: 5px;
+}
+
+.section-container {
+  width: min(100% - var(--site-gutter) * 2, 1248px);
+  margin-inline: auto;
+}
+
+/* Signed-in readers see app shortcuts instead of sign-up prompts (see BaseLayout). */
+:root:not([data-signed-in]) [data-when='signed-in'],
+:root[data-signed-in] [data-when='signed-out'] {
+  display: none !important;
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --site-gutter: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --site-gutter: 18px;
+  }
+}

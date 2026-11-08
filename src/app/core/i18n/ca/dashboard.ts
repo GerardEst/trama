@@ -8,7 +8,6 @@ export const dashboard: Dictionary['dashboard'] = {
     docs: 'Guia',
     stories: 'Les teves històries',
     newStory: 'Crea una història nova',
-    feedback: 'Envia comentaris',
     toggle: 'Mostra o amaga el menú',
   },
   top: {
@@ -145,16 +144,6 @@ export const dashboard: Dictionary['dashboard'] = {
     playerSharingNote: 'Això només controla el botó dels jugadors. No restringeix l’accés a l’enllaç.',
     stableLink: 'Enllaç de lectura estable',
     stableNote: 'Aquest enllaç alternatiu continua funcionant encara que canviïs l’adreça personalitzada. No és un enllaç privat.',
-  },
-  feedback: {
-    title: 'Envia comentaris',
-    label: 'Els teus comentaris:',
-    placeholder:
-      'Explica’ns la teva experiència, informa d’un error o suggereix una funció...',
-    screenshot: 'Captura de pantalla (presa automàticament):',
-    screenshotAlt: 'Previsualització de la captura',
-    send: 'Envia comentaris',
-    failed: 'No s’han pogut enviar els comentaris. Torna-ho a provar més tard.',
   },
   statistics: {
     back: 'Torna',

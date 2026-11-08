@@ -1,0 +1,42 @@
+---
+import ButtonLink from '../ui/ButtonLink.astro'
+import { copyFor, type Lang } from '../../i18n'
+
+interface Props {
+  lang: Lang
+}
+
+const t = copyFor(Astro.props.lang).demoBridge
+---
+
+<div class="section-container demo-bridge">
+  <p>{t.description}</p>
+  <ButtonLink href="#authoring" arrow="↓">{t.action}</ButtonLink>
+</div>
+
+<style>
+  .demo-bridge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 24px 0 32px;
+    border-bottom: 1px solid var(--polo-color-border);
+  }
+
+  .demo-bridge p {
+    max-width: 710px;
+    color: var(--polo-color-text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 1000px) {
+    .demo-bridge {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+  }
+</style>

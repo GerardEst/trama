@@ -30,6 +30,7 @@
               "src/assets",
               "src/.well-known",
               "src/robots.txt",
+              "src/sitemap.xml",
               "src/llms.txt",
               "src/skills",
               "src/ads.txt"
@@ -38,6 +39,10 @@
           },
           "configurations": {
             "production": {
+              "index": {
+                "input": "src/index.html",
+                "output": "app.html"
+              },
               "budgets": [
                 {
                   "type": "initial",

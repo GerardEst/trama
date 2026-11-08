@@ -8,7 +8,6 @@ export const dashboard: Dictionary['dashboard'] = {
     docs: 'Guía',
     stories: 'Tus historias',
     newStory: 'Crear una historia nueva',
-    feedback: 'Enviar comentarios',
     toggle: 'Mostrar u ocultar el menú',
   },
   top: {
@@ -145,17 +144,6 @@ export const dashboard: Dictionary['dashboard'] = {
     playerSharingNote: 'Esto solo controla el botón de los jugadores. No restringe el acceso al enlace.',
     stableLink: 'Enlace de lectura estable',
     stableNote: 'Este enlace alternativo sigue funcionando aunque cambies la dirección personalizada. No es un enlace privado.',
-  },
-  feedback: {
-    title: 'Enviar comentarios',
-    label: 'Tus comentarios:',
-    placeholder:
-      'Cuéntanos tu experiencia, informa de un error o sugiere una función...',
-    screenshot: 'Captura de pantalla (tomada automáticamente):',
-    screenshotAlt: 'Vista previa de la captura',
-    send: 'Enviar comentarios',
-    failed:
-      'No se han podido enviar los comentarios. Inténtalo de nuevo más tarde.',
   },
   statistics: {
     back: 'Volver',
