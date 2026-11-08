@@ -1,4 +1,4 @@
-import { TranslationKey } from 'src/app/core/i18n/i18n.types'
+import type { TranslationKey } from 'src/app/core/i18n/i18n.types'
 
 // Adding a topic only requires translated copy and an explicit template placement.
 export const CONTEXT_HELP_TOPICS = {

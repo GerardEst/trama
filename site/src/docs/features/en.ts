@@ -1,19 +1,6 @@
-export interface GuideFeature {
-  id: string
-  title: string
-  summary: string
-  steps: readonly string[]
-  example: { label: string; lines: readonly string[] }
-  note: string
-}
+import type { GuideGroup } from './types'
 
-export interface GuideGroup {
-  title: string
-  description: string
-  features: readonly GuideFeature[]
-}
-
-export const FEATURE_GUIDE: readonly GuideGroup[] = [
+export const guide: readonly GuideGroup[] = [
   {
     title: 'Logic and player state',
     description: 'Configure state changes, answer requirements and connections between nodes.',

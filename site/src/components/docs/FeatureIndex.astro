@@ -1,0 +1,42 @@
+---
+import type { GuideGroup } from '../../docs/features'
+
+interface Props {
+  groups: readonly GuideGroup[]
+  label: string
+}
+
+const { groups, label } = Astro.props
+---
+
+<nav class="index" aria-label={label}>
+  {groups.map(group => (
+    <div class="index__group">
+      <p>{group.title}</p>
+      {group.features.map(feature => <a href={`#${feature.id}`}>{feature.title}</a>)}
+    </div>
+  ))}
+</nav>
+
+<style>
+  .index__group {
+    margin-bottom: 24px;
+  }
+  .index__group p {
+    margin-bottom: 8px;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+  }
+  .index__group a {
+    display: block;
+    padding: 5px 0;
+    color: var(--polo-color-text-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .index__group a:hover {
+    color: var(--polo-color-action);
+  }
+</style>

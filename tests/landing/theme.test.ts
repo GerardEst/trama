@@ -11,14 +11,14 @@ for (const theme of ['light', 'dark'] as const) {
     for (const [path, host, action, card] of [
       ['/', 'body', '.hero .button--primary', '#questions'],
       ['/login', 'polo-login', '.form__footer button', '.box'],
-      ['/docs/features', 'polo-feature-guide', '.guide-button', '.guide-sidebar'],
+      ['/docs/features', 'body', '.guide .button--primary', '.guide__sidebar'],
     ]) {
       await page.goto(path)
       await expect(page.locator(host)).toHaveCSS('background-color', canvas)
       await expect(page.locator(card).first()).toHaveCSS('background-color', surface)
       await expect(page.locator(action).first()).toHaveCSS('background-color', 'rgb(246, 206, 106)')
       await expect(page.locator(action).first()).toHaveCSS('color', 'rgb(37, 39, 32)')
-      await page.screenshot({ path: test.info().outputPath(`${theme}-${host}.png`) })
+      await page.screenshot({ path: test.info().outputPath(`${theme}${path === '/' ? '-home' : path.replaceAll('/', '-')}.png`) })
     }
   })
 }
@@ -34,5 +34,6 @@ test('a saved theme applies consistently to public pages on mobile', async ({ pa
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Log in', exact: true }).click()
   await expect(page.locator('polo-login')).toHaveCSS('background-color', 'rgb(27, 33, 29)')
   await page.goto('/docs/features')
-  await expect(page.locator('polo-feature-guide')).toHaveCSS('background-color', 'rgb(27, 33, 29)')
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(27, 33, 29)')
+  await expect(page.locator('.guide__content')).toHaveCSS('background-color', 'rgb(38, 46, 40)')
 })

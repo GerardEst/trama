@@ -8,6 +8,8 @@
   "rewrites": [
     { "source": "/es", "destination": "/es.html" },
     { "source": "/ca", "destination": "/ca.html" },
+    { "source": "/docs/:page", "destination": "/docs/:page.html" },
+    { "source": "/:lang(es|ca)/docs/:page", "destination": "/:lang/docs/:page.html" },
     { "source": "/(.*)", "destination": "/app.html" }
   ]
 }

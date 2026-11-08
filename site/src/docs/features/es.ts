@@ -1,7 +1,7 @@
-import type { GuideGroup } from './feature-guide.content'
+import type { GuideGroup } from './types'
 
-// Mirrors FEATURE_GUIDE chapter by chapter; ids stay in English so links are shared.
-export const FEATURE_GUIDE_ES: readonly GuideGroup[] = [
+// Mirrors the English guide chapter by chapter; ids stay in English so links are shared.
+export const guide: readonly GuideGroup[] = [
   {
     title: 'Lógica y estado del jugador',
     description:

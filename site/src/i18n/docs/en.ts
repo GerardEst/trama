@@ -1,17 +1,11 @@
-export const guide = {
+// Interface copy of the docs pages; the chapters live in src/docs.
+export const docs = {
   meta: {
     title: 'Docs — Trama',
     description:
       'Documentation for Trama’s story-building tools: events, requirements, distributors, variables and editing tools. Instructions, examples and limitations.',
   },
-  skip: 'Skip to content',
-  navLabel: 'Main navigation',
-  home: 'Trama home',
-  label: 'Docs',
-  pricing: 'Plans and limits',
-  start: 'Open the editor',
   back: 'Back to Trama',
-  eyebrow: 'Editor reference',
   title: 'Docs',
   description:
     'Learn how to configure story nodes, answers and references. Each section includes setup instructions, an example and the feature’s limitations.',
@@ -25,7 +19,6 @@ export const guide = {
   nextEyebrow: 'Practice',
   nextTitle: 'Try the features in the editor',
   create: 'Open the editor',
-  compare: 'View plans and limits',
-  tagline: 'Trama docs',
-  ask: 'Contact and support',
 }
+
+export type DocsCopy = typeof docs

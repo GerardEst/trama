@@ -3,20 +3,22 @@ import Wordmark from './Wordmark.astro'
 import AuthLabel from './ui/AuthLabel.astro'
 import { copyFor, type Lang } from '../i18n'
 import { localePath } from '../lib/locale'
+import { PAGES, type PagePath } from '../lib/pages'
 import { APP_LINKS } from '../lib/links'
 
 interface Props {
   lang: Lang
+  page: PagePath
 }
 
-const { lang } = Astro.props
+const { lang, page } = Astro.props
 const t = copyFor(lang)
 const home = localePath(lang)
 const sections = [
   { href: `${home}#authoring`, label: t.nav.authoring },
   { href: `${home}#features`, label: t.nav.features },
   { href: `${home}#engine`, label: t.nav.engine },
-  { href: APP_LINKS.docs, label: t.nav.docs },
+  { href: localePath(lang, PAGES.features), label: t.nav.docs, current: page === PAGES.features },
 ]
 ---
 
@@ -24,7 +26,9 @@ const sections = [
   <nav class="section-container nav" aria-label={t.nav.label}>
     <div class="nav__brand"><Wordmark href={home} label={t.nav.home} /></div>
     <div class="nav__links">
-      {sections.map(section => <a href={section.href}>{section.label}</a>)}
+      {sections.map(section => (
+        <a href={section.href} aria-current={section.current ? 'page' : undefined}>{section.label}</a>
+      ))}
     </div>
     <a class="nav__login" href={APP_LINKS.login} data-when="signed-out">{t.nav.login}</a>
     <a class="nav__cta" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
@@ -65,6 +69,7 @@ const sections = [
   }
 
   .nav__links a:hover,
+  .nav__links a[aria-current],
   .nav__login:hover {
     color: var(--polo-color-action);
   }

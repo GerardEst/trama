@@ -2,13 +2,11 @@ import { appRoutes, leaveForSite } from './routes'
 import { authGuard } from './core/guards/auth.guard'
 import { DashboardComponent } from './features/dashboard/dashboard.component'
 import { PlaygroundComponent } from './features/playground/pages/playground/playground.component'
-import { FeatureGuideComponent } from './features/feature-guide/feature-guide.component'
 
 describe('appRoutes', () => {
   it('loads each page on demand while preserving route order and auth guards', async () => {
     expect(appRoutes.map((route) => route.path)).toEqual([
       '',
-      'docs/features',
       'reset-password',
       'change-password',
       'login',
@@ -18,7 +16,7 @@ describe('appRoutes', () => {
       'not-found',
       ':customId',
     ])
-    // The landing pages are the Astro site (site/); '' only leaves the app.
+    // The landing and the docs are the Astro site (site/); '' only leaves the app.
     expect(appRoutes[0].canActivate).toEqual([leaveForSite])
     expect(
       appRoutes.slice(1).every((route) => !!route.loadComponent && !route.component)
@@ -33,11 +31,6 @@ describe('appRoutes', () => {
       appRoutes.find((route) => route.path === 'stadistics/:storyId')
         ?.canActivate
     ).toEqual([authGuard])
-
-    const guide = appRoutes.find((route) => route.path === 'docs/features')!
-    expect(guide.canActivate).toBeUndefined()
-    expect(guide.path).toBe('docs/features')
-    expect(await guide.loadComponent!()).toBe(FeatureGuideComponent)
 
     const dashboard = appRoutes.find((route) => route.path === 'dashboard')!
     const privateStory = appRoutes.find(

@@ -4,7 +4,7 @@
   }
   <nav [attr.aria-label]="'dashboard.menu.stories' | t">
     <div class="nav__brand">
-      <a class="wordmark" href="/" aria-label="Trama">trama<span aria-hidden="true">.</span></a>
+      <a class="wordmark" [href]="homeUrl()" aria-label="Trama">trama<span aria-hidden="true">.</span></a>
       @if (fixedMenu) {
         <polo-basic-button
           class="menuToggler"
@@ -28,7 +28,7 @@
           </button>
         </li>
         <li>
-          <a class="nav__item" routerLink="/docs/features">
+          <a class="nav__item" [href]="docsUrl()">
             <img width="14" src="/assets/icons/docs.svg" alt="" />
             {{ 'dashboard.menu.docs' | t }}
             <img class="action" width="14" src="/assets/icons/arrow-right.svg" alt="" />
