@@ -20,8 +20,8 @@ test.describe('with a Spanish browser', () => {
   test('remembers a language chosen in the selector', async ({ page }) => {
     await page.goto('/es')
     await page
-      .locator('.footer polo-language-selector')
-      .getByRole('button', { name: 'Català' })
+      .locator('.footer language-selector')
+      .getByRole('link', { name: 'Català' })
       .click()
 
     await expect(page).toHaveURL(/\/ca$/)
@@ -38,8 +38,8 @@ test.describe('with a Spanish browser', () => {
   test('keeps English when the reader chooses it', async ({ page }) => {
     await page.goto('/es')
     await page
-      .locator('.footer polo-language-selector')
-      .getByRole('button', { name: 'English' })
+      .locator('.footer language-selector')
+      .getByRole('link', { name: 'English' })
       .click()
 
     await expect(page).toHaveURL(/\/$/)

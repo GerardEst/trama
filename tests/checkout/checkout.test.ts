@@ -46,11 +46,8 @@ async function mockCheckout(page: Page, options: { invalidPassword?: boolean; co
 for (const period of ['monthly', 'yearly'] as const) {
   test(`Creator ${period}: selected plan survives registration and goes to the right hosted checkout`, async ({ page }) => {
     const backend = await mockCheckout(page)
-    await page.goto('/')
-    const pricing = page.locator('#pricing')
-    if (period === 'yearly') await pricing.getByRole('button', { name: /Annual billing/ }).click()
-    await pricing.getByRole('button', { name: 'Choose Creator', exact: true }).click()
-    await expect(page).toHaveURL(new RegExp(`plan=creator.*period=${period}`))
+    // The landing has no pricing for now: registration links carry the plan.
+    await page.goto(`/login?mode=register&plan=creator&period=${period}`)
     await expect(page.locator('.checkoutSummary')).toContainText(period === 'yearly' ? '49.95€/year' : '5.95€/month')
     await page.getByLabel('User name', { exact: true }).fill('Author')
     await page.getByLabel('Your email', { exact: true }).fill('submitted@example.com')

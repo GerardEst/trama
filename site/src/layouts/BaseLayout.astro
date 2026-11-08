@@ -1,0 +1,120 @@
+---
+import { Font, getImage } from 'astro:assets'
+import '../styles/global.css'
+import SiteHeader from '../components/SiteHeader.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+import { copyFor, LANGS, type Lang } from '../i18n'
+import { localePath } from '../lib/locale'
+import { LANG_STORAGE_KEY, SESSION_STORAGE_KEY, THEME_STORAGE_KEY } from '../lib/links'
+import socialImage from '../assets/landing/modest-hero.webp'
+
+interface Props {
+  lang: Lang
+  title: string
+  description: string
+}
+
+const { lang, title, description } = Astro.props
+const t = copyFor(lang)
+const site = Astro.site!
+const canonical = new URL(localePath(lang), site).href
+const alternates = [
+  ...LANGS.map(hreflang => ({ hreflang, href: new URL(localePath(hreflang), site).href })),
+  { hreflang: 'x-default', href: new URL(localePath('en'), site).href },
+]
+const ogImage = await getImage({ src: socialImage, width: 1200, format: 'jpeg' })
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Trama',
+  url: canonical,
+  inLanguage: lang,
+  applicationCategory: 'Interactive fiction editor',
+  operatingSystem: 'Web browser',
+  description,
+}
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map(link => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Trama" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage.src, site).href} />
+    <meta property="og:locale" content={lang} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+    <Font cssVariable="--font-raleway" preload />
+    <Font cssVariable="--font-baskerville" />
+    <Font cssVariable="--font-libre-baskerville" />
+
+    <!-- Before the first paint: the app's theme choice and whether the reader is signed in. -->
+    <script is:inline define:vars={{ themeKey: THEME_STORAGE_KEY, sessionKey: SESSION_STORAGE_KEY }}>
+      try {
+        const theme = localStorage.getItem(themeKey)
+        if (theme === 'dark' || theme === 'light') document.documentElement.dataset.poloTheme = theme
+        if (localStorage.getItem(sessionKey)) document.documentElement.dataset.signedIn = ''
+      } catch {
+        // Without storage the system theme and the signed-out links still work.
+      }
+    </script>
+    {lang === 'en' && (
+      <script is:inline define:vars={{ langKey: LANG_STORAGE_KEY, langs: LANGS }}>
+        // English is the default page: readers who chose or prefer another language go to theirs.
+        try {
+          const saved = localStorage.getItem(langKey)
+          const preferred = langs.includes(saved) ? saved
+            : (navigator.languages?.length ? navigator.languages : [navigator.language])
+              .map(tag => tag?.toLowerCase().split('-')[0]).find(base => langs.includes(base)) ?? 'en'
+          if (preferred !== 'en') location.replace(`/${preferred}${location.search}${location.hash}`)
+        } catch {
+          // Stay on the English page.
+        }
+      </script>
+    )}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{t.nav.skip}</a>
+    <SiteHeader lang={lang} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <SiteFooter lang={lang} />
+  </body>
+</html>
+
+<script>
+  // Signed-in readers go straight to the app instead of signing up again.
+  if (document.documentElement.hasAttribute('data-signed-in')) {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-signed-in-href]')) {
+      link.href = link.dataset['signedInHref']!
+    }
+  }
+</script>
+
+<style>
+  .skip-link {
+    position: absolute;
+    top: -80px;
+    left: 20px;
+    z-index: 30;
+    padding: 14px 20px;
+    background: var(--polo-color-canvas);
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+</style>

@@ -39,6 +39,7 @@ export default defineConfig({
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'dashboard',
+      testIgnore: /landing\//,
       use: {
         ...devices['Desktop Chrome'],
         ...devices['Desktop Firefox'],
@@ -50,10 +51,21 @@ export default defineConfig({
     },
     {
       name: 'playground',
+      testIgnore: /landing\//,
       use: {
         ...devices['Desktop Chrome'],
         ...devices['Desktop Firefox'],
         ...devices['Desktop Safari'],
+      },
+    },
+    {
+      // The landing (site/) and the app share one origin only in the merged
+      // build: run `npm run build && npm run serve-dist` first.
+      name: 'landing',
+      testMatch: /landing\/.*\.test\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: process.env['CI'] ? 'https://trama.app' : 'http://localhost:4300',
       },
     },
 

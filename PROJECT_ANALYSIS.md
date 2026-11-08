@@ -71,11 +71,10 @@ Each feature ships its own `routes.ts`.
 | **`board`** | **The editor core.** Node-based canvas with pan/zoom (`panzoom`). Rich node model: answers, conditions, events, requirements, references; context-menus for editing. Largest sub-tree in the app. |
 | **`playground`** | **The runtime player.** Executes a story tree: `player.service.ts`, `game.component.ts` (465 lines), handles flows, conditions, stats, user-text input. |
 | **`statistics`** | Aggregated play results / analytics views. |
-| **`feedback`** | Feedback modal → Supabase edge function email. |
 
 ### 2.4 Backend (`supabase/`)
 Edge Functions (Deno): `create-subscription`, `update-subscription`,
-`cancel-subscription-request`, `send-feedback-email`. Plus `config.toml` and
+`cancel-subscription-request`. Plus `config.toml` and
 `seed.sql`. Deployed via the `deploy-edge` npm script.
 
 ### 2.5 Other

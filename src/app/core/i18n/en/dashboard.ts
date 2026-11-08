@@ -6,7 +6,6 @@ export const dashboard = {
     docs: 'Docs',
     stories: 'Your stories',
     newStory: 'Create new story',
-    feedback: 'Give feedback',
     toggle: 'Toggle menu',
   },
   top: {
@@ -142,16 +141,6 @@ export const dashboard = {
     playerSharingNote: 'This only controls the button for players. It does not restrict access to the link.',
     stableLink: 'Stable reading link',
     stableNote: 'This alternative link keeps working even if you change the custom address. It is not a private link.',
-  },
-  feedback: {
-    title: 'Send Feedback',
-    label: 'Your feedback:',
-    placeholder:
-      'Tell us about your experience, report a bug, or suggest a feature...',
-    screenshot: 'Screenshot (automatically captured):',
-    screenshotAlt: 'Screenshot preview',
-    send: 'Send Feedback',
-    failed: 'Failed to send feedback. Please try again later.',
   },
   statistics: {
     back: 'Go back',

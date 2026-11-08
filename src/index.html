@@ -5,13 +5,55 @@
     <title>Trama</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Write interactive fiction without coding. Connect scenes and choices, test their consequences, revise as you play, and share your story with a link."
+    />
     <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+    <!-- The summary below is for clients that do not run JavaScript (crawlers, AI tools). -->
+    <script>document.documentElement.classList.add('js')</script>
+    <style>.js .static-summary { display: none; }</style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Trama",
+        "url": "https://www.trama.app/",
+        "applicationCategory": "Interactive fiction editor",
+        "operatingSystem": "Web browser",
+        "inLanguage": ["en", "es", "ca"],
+        "description": "Trama is a web editor for writing branching interactive stories without coding. Authors connect scenes and choices on a visual board, track stats, conditions and player answers, test every path as they write, and share the story with a link."
+      }
+    </script>
     <!--script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9509597642068942"
     crossorigin="anonymous"></script-->
   </head>
 
   <body>
-    <polo-root></polo-root>
+    <polo-root>
+      <!-- Replaced by the app when it starts. -->
+      <main class="static-summary">
+        <h1>Trama: write interactive fiction without coding</h1>
+        <p>
+          Trama (trama.app) is a web editor for branching interactive stories, choose-your-own-adventure
+          books and text adventures. Authors write scenes on a visual board and connect them with choices.
+          Stories can track stats, conditions and the player's own answers, lock choices behind
+          requirements, and branch at random or by condition. Authors test every path while they write,
+          revise as they play, and share the finished story with a link that readers open in any browser.
+        </p>
+        <p>The editor is available in English, Spanish and Catalan.</p>
+        <ul>
+          <li><a href="/login?mode=register">Create your first story</a></li>
+          <li><a href="/docs/features">Documentation of the story features</a></li>
+          <li><a href="/es">Trama en español</a> · <a href="/ca">Trama en català</a></li>
+          <li>
+            <a href="https://www.npmjs.com/package/@trama-app/engine">@trama-app/engine</a>: the open-source
+            engine to play Trama stories in your own interface
+          </li>
+          <li><a href="/llms.txt">llms.txt</a>: information for AI assistants and developers</li>
+        </ul>
+      </main>
+    </polo-root>
   </body>
 </html>

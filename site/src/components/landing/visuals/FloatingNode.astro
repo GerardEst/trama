@@ -1,0 +1,44 @@
+---
+// A story node floating over a feature card; it settles when the card is hovered.
+interface Props {
+  title: string
+}
+const { title } = Astro.props
+---
+
+<div class="node">
+  <p class="node__title">{title}</p>
+  <slot />
+</div>
+
+<style>
+  .node {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    width: min(100% - 40px, 300px);
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 15%, transparent);
+    border-radius: var(--polo-radius-panel);
+    background: var(--polo-color-surface);
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 7%, transparent);
+    transform: translateX(-50%) rotate(-1.5deg);
+    transition: transform 0.3s;
+  }
+  :global(.feature-card:hover) .node {
+    transform: translateX(-50%) rotate(0deg) translateY(-4px);
+  }
+
+  .node__title {
+    margin-bottom: 10px;
+    color: var(--polo-color-text-strong);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .node {
+      transition: none;
+    }
+  }
+</style>

@@ -13,14 +13,20 @@ const walk = directory => {
   }
 }
 walk(join(root, 'src'))
+// The Astro site shares the same theme.
+walk(join(root, 'site/src'))
 
 const theme = readFileSync(join(root, 'src/styles/tokens.css'), 'utf8')
 const tokens = new Set([...theme.matchAll(/(--polo-[\w-]+)\s*:/g)].map(match => match[1]))
 for (const path of sources) {
   const name = relative(root, path)
   if (/\.(sass|scss)$/.test(path)) errors.push(`${name}: use native CSS`)
-  if (!path.endsWith('.css') || name === 'src/styles/tokens.css') continue
-  const css = readFileSync(path, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+  if (!/\.(css|astro)$/.test(path) || name === 'src/styles/tokens.css') continue
+  const source = readFileSync(path, 'utf8')
+  const styles = path.endsWith('.astro')
+    ? [...source.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]).join('\n')
+    : source
+  const css = styles.replace(/\/\*[\s\S]*?\*\//g, '')
   if (/--polo-(?:color-[\w-]+|(?:ink|paper|forest|amber)-\d+)\s*:/.test(css)) {
     errors.push(`${name}: palettes belong only in src/styles/tokens.css`)
   }

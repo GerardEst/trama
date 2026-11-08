@@ -1,0 +1,10 @@
+---
+// Two labels for one control: BaseLayout shows the one that matches the session.
+interface Props {
+  signedOut: string
+  signedIn: string
+}
+const { signedOut, signedIn } = Astro.props
+---
+
+<span data-when="signed-out">{signedOut}</span><span data-when="signed-in">{signedIn}</span>

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci && npm ci --prefix site",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/polo-angular",
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/es", "destination": "/es.html" },
+    { "source": "/ca", "destination": "/ca.html" },
+    { "source": "/(.*)", "destination": "/app.html" }
+  ]
+}

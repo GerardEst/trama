@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/landing/Hero.astro'
+import DemoBridge from '../components/landing/DemoBridge.astro'
+import Authoring from '../components/landing/Authoring.astro'
+import Features from '../components/landing/Features.astro'
+import Engine from '../components/landing/engine/Engine.astro'
+import AuthorTrust from '../components/landing/AuthorTrust.astro'
+import Questions from '../components/landing/Questions.astro'
+import Closing from '../components/landing/Closing.astro'
+import { copyFor, LANGS, type Lang } from '../i18n'
+
+// One landing page per language: / (English), /es and /ca.
+export function getStaticPaths() {
+  return LANGS.map(lang => ({
+    params: { locale: lang === 'en' ? undefined : lang },
+    props: { lang },
+  }))
+}
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+---
+
+<BaseLayout lang={lang} title={t.meta.title} description={t.meta.description}>
+  <Hero lang={lang} />
+  <DemoBridge lang={lang} />
+  <Authoring lang={lang} />
+  <Features lang={lang} />
+  <Engine lang={lang} />
+  <AuthorTrust lang={lang} />
+  <Questions lang={lang} />
+  <Closing lang={lang} />
+</BaseLayout>

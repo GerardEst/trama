@@ -4,12 +4,16 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run build --prefix site && node scripts/merge-site.mjs",
+    "start:site": "npm run dev --prefix site",
+    "serve-dist": "node scripts/serve-dist.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:site": "npm test --prefix site",
     "lint": "eslint \"src/**/*.{ts,html}\" && node scripts/check-styles.mjs && node scripts/build-skill-zip.mjs --check",
     "tests-e2e-dashboard": "npx playwright test --project=dashboard",
     "tests-e2e-playground": "npx playwright test --project=playground",
+    "tests-e2e-landing": "npx playwright test --project=landing",
     "ts-coverage": "typescript-coverage-report",
     "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref lsemostpqoguehpsbzgu",
     "storybook": "ng run polo-angular:storybook",
@@ -32,7 +36,6 @@
     "@tiptap/pm": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
     "@trama-app/engine": "^0.1.0",
-    "html2canvas": "^1.4.1",
     "panzoom": "^9.4.3",
     "prettier": "^3.3.3",
     "rxjs": "~7.8.0",
@@ -73,5 +76,8 @@
     "@supabase/supabase-js": {
       "@supabase/auth-js": "2.61.0"
     }
+  },
+  "engines": {
+    "node": ">=22.23.4"
   }
 }

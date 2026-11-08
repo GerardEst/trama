@@ -1,0 +1,211 @@
+---
+import ButtonLink from '../ui/ButtonLink.astro'
+import AuthLabel from '../ui/AuthLabel.astro'
+import { copyFor, type Lang } from '../../i18n'
+import { APP_LINKS } from '../../lib/links'
+
+interface Props {
+  lang: Lang
+}
+
+const t = copyFor(Astro.props.lang)
+---
+
+<closing-scene>
+  <section class="closing" aria-labelledby="closing-title">
+    <div class="section-container closing__node">
+      <span class="closing__label">{t.closing.label}</span>
+      <h2 id="closing-title">
+        {t.closing.titleStart}<br /><em>{t.closing.titleEnd}</em><span class="closing__cursor" aria-hidden="true">|</span>
+      </h2>
+      <ButtonLink variant="primary" href={APP_LINKS.register} signedInHref={APP_LINKS.dashboard} arrow="→">
+        <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+      </ButtonLink>
+      <p>{t.closing.yours}</p>
+    </div>
+  </section>
+</closing-scene>
+
+<script>
+  // Draws the closing scene in when it scrolls into view. The section only
+  // starts hidden once it can be revealed, so it never stays invisible.
+  class ClosingScene extends HTMLElement {
+    private observer?: IntersectionObserver
+
+    connectedCallback() {
+      if (typeof IntersectionObserver === 'undefined') return
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      this.classList.add('closing--pending')
+      this.observer = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return
+        this.classList.replace('closing--pending', 'closing--revealed')
+        this.observer?.disconnect()
+      }, { threshold: 0.35 })
+      this.observer.observe(this)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+    }
+  }
+
+  customElements.define('closing-scene', ClosingScene)
+</script>
+
+<style>
+  closing-scene {
+    display: block;
+  }
+
+  .closing {
+    padding: 80px 0;
+    text-align: center;
+  }
+
+  .closing__node {
+    position: relative;
+    max-width: 740px;
+    padding: 40px 24px;
+    border: 1px solid color-mix(in srgb, var(--polo-color-action) 31%, transparent);
+    border-radius: 20px;
+    background: var(--polo-color-surface);
+  }
+  .closing__node::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -81px;
+    height: 80px;
+    border-left: 2px solid var(--polo-color-action);
+    transform: translateX(-50%);
+    transform-origin: top;
+  }
+  .closing__node::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    background: var(--polo-color-canvas);
+    border: 2px solid var(--polo-color-action);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  h2 {
+    margin: 20px 0 28px;
+    font-size: clamp(48px, 5.8vw, 80px);
+  }
+  em {
+    color: var(--polo-color-action);
+    font-family: var(--font-libre-baskerville);
+  }
+
+  .closing__node p {
+    margin-top: 20px;
+    color: var(--polo-color-text-secondary);
+    font-size: 13px;
+  }
+
+  .closing__label {
+    color: var(--polo-color-action);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+  }
+
+  .closing__cursor {
+    margin-left: 8px;
+    color: var(--polo-color-action);
+    font-weight: 400;
+    animation: cursor-blink 1.1s steps(1) infinite;
+  }
+
+  @keyframes cursor-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .closing--pending .closing__node {
+    border-color: transparent;
+    background: transparent;
+  }
+  .closing--pending .closing__node::before,
+  .closing--pending .closing__node::after,
+  .closing--pending .closing__node > :global(*) {
+    opacity: 0;
+  }
+
+  .closing--revealed .closing__node {
+    animation: closing-node-open 0.5s 0.65s ease-out backwards;
+  }
+  .closing--revealed .closing__node::before {
+    animation: closing-line-draw 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  .closing--revealed .closing__node::after {
+    animation: closing-dot-pop 0.4s 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) backwards;
+  }
+  .closing--revealed .closing__node > :global(*) {
+    animation: closing-content-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+  .closing--revealed .closing__node > :global(:nth-child(1)) {
+    animation-delay: 0.8s;
+  }
+  .closing--revealed .closing__node > :global(:nth-child(2)) {
+    animation-delay: 0.9s;
+  }
+  .closing--revealed .closing__node > :global(:nth-child(3)) {
+    animation-delay: 1.05s;
+  }
+  .closing--revealed .closing__node > :global(:nth-child(4)) {
+    animation-delay: 1.15s;
+  }
+
+  @keyframes closing-line-draw {
+    from {
+      transform: translateX(-50%) scaleY(0);
+    }
+  }
+  @keyframes closing-dot-pop {
+    from {
+      transform: translateX(-50%) scale(0);
+    }
+  }
+  @keyframes closing-node-open {
+    from {
+      border-color: transparent;
+      background: transparent;
+    }
+  }
+  @keyframes closing-content-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .closing__cursor {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .closing {
+      padding: 40px 0;
+    }
+    .closing__node {
+      padding: 24px 18px;
+    }
+    h2 {
+      font-size: 44px;
+      margin: 16px 0 24px;
+    }
+    .closing__node::before {
+      top: -41px;
+      height: 40px;
+    }
+  }
+</style>

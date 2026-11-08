@@ -1,0 +1,31 @@
+---
+interface Props {
+  /** A pulsing dot before the label, for live content. */
+  live?: boolean
+}
+const { live = false } = Astro.props
+---
+
+<p class="eyebrow">
+  {live && <span class="eyebrow__dot" aria-hidden="true"></span>}
+  <slot />
+</p>
+
+<style>
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--polo-color-action);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.5;
+    letter-spacing: 0.13em;
+  }
+  .eyebrow__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--polo-color-action);
+  }
+</style>

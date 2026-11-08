@@ -1,4 +1,4 @@
-import { appRoutes } from './routes'
+import { appRoutes, leaveForSite } from './routes'
 import { authGuard } from './core/guards/auth.guard'
 import { DashboardComponent } from './features/dashboard/dashboard.component'
 import { PlaygroundComponent } from './features/playground/pages/playground/playground.component'
@@ -8,8 +8,6 @@ describe('appRoutes', () => {
   it('loads each page on demand while preserving route order and auth guards', async () => {
     expect(appRoutes.map((route) => route.path)).toEqual([
       '',
-      'es',
-      'ca',
       'docs/features',
       'reset-password',
       'change-password',
@@ -20,8 +18,10 @@ describe('appRoutes', () => {
       'not-found',
       ':customId',
     ])
+    // The landing pages are the Astro site (site/); '' only leaves the app.
+    expect(appRoutes[0].canActivate).toEqual([leaveForSite])
     expect(
-      appRoutes.every((route) => !!route.loadComponent && !route.component)
+      appRoutes.slice(1).every((route) => !!route.loadComponent && !route.component)
     ).toBeTrue()
     expect(
       appRoutes.find((route) => route.path === 'dashboard')?.canActivate
@@ -33,10 +33,6 @@ describe('appRoutes', () => {
       appRoutes.find((route) => route.path === 'stadistics/:storyId')
         ?.canActivate
     ).toEqual([authGuard])
-
-    // Localised landing pages come before public story ids such as /:customId.
-    expect(appRoutes.find((route) => route.path === 'es')?.data).toEqual({ lang: 'es' })
-    expect(appRoutes.find((route) => route.path === 'ca')?.data).toEqual({ lang: 'ca' })
 
     const guide = appRoutes.find((route) => route.path === 'docs/features')!
     expect(guide.canActivate).toBeUndefined()

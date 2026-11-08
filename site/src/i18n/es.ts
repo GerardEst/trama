@@ -1,0 +1,270 @@
+import type { Copy } from './en'
+
+export const landing: Copy = {
+  meta: {
+    title: 'Trama — Tú escribes la historia. Ellos eligen el camino.',
+    description:
+      'Escribe ficción interactiva sin programar. Conecta escenas y decisiones, prueba sus consecuencias, corrige mientras juegas y comparte la historia con un enlace.',
+  },
+  nav: {
+    label: 'Navegación principal',
+    home: 'Inicio de Trama',
+    skip: 'Saltar al contenido',
+    authoring: 'Cómo funciona',
+    features: 'Funciones',
+    engine: 'Código abierto',
+    docs: 'Documentación',
+    login: 'Iniciar sesión',
+    dashboard: 'Panel',
+    start: 'Empieza a escribir',
+  },
+  hero: {
+    eyebrow: 'PARA AUTORES DE FICCIÓN INTERACTIVA',
+    titleStart: 'Tú escribes la historia.',
+    titleEnd: 'Ellos eligen el camino.',
+    description:
+      'Escribe escenas, conecta decisiones y prueba cómo cambia la historia con cada camino. Corrige los pasajes mientras la recorres y compártela con un enlace. Sin programar.',
+    openDashboard: 'Abre tu panel',
+    startStory: 'Crea tu primera historia',
+    tryStory: 'Juega una historia',
+    free: '✓ Todas las funciones del editor incluidas',
+    noAccount: '✓ Los lectores no necesitan cuenta',
+    demoLabel: 'Juega a El último umbral',
+  },
+  demo: {
+    heading: 'UNA HISTORIA REAL. TU PRÓXIMO MOVIMIENTO.',
+    titleStart: 'EL ÚLTIMO',
+    titleEnd: 'UMBRAL',
+    endingStart: 'Ese final era tuyo.',
+    endingEnd: 'Ahora escribe el comienzo de otra persona.',
+    makeAnother: 'Crea otra historia',
+    createFirst: 'Crea tu primera historia',
+    ended: 'Cada decisión lleva a otro lugar.',
+    intro: 'Sin registro. Elige un camino.',
+    restart: 'Volver a empezar',
+  },
+  demoBridge: {
+    description: 'Liberar al espíritu o coger el sello lunar cambia lo que puedes hacer más adelante. Tú decides qué decisiones recuerda tu historia.',
+    action: 'Mira cómo se construye',
+  },
+  authoring: {
+    eyebrow: 'TU HISTORIA, PASO A PASO',
+    title: 'De la primera escena a una historia para compartir.',
+    description: 'Escribe los pasajes. Da forma a los caminos en el mapa. Recórrelos y corrige sobre la marcha, sin salir de tu historia.',
+    enlarge: 'Abre la captura del editor a tamaño completo (pestaña nueva)',
+    realCapture: 'Editor real · Historia de ejemplo',
+    write: {
+      title: 'Escribe',
+      description: 'Da espacio a los pasajes largos en el editor de texto.',
+      caption: 'Edita pasajes y respuestas en el panel de lectura. Crea escenas nuevas y conexiones en el mapa.',
+      alt: 'El editor de Trama con el mapa de la historia junto a un pasaje editable y sus respuestas.',
+    },
+    map: {
+      title: 'Conecta',
+      description: 'Enlaza decisiones con escenas y organiza los caminos en el mapa.',
+      caption: 'El tablero muestra las escenas, las respuestas y las conexiones entre ellas.',
+      alt: 'El tablero de Trama con escenas conectadas y dos caminos distintos en una historia de ejemplo.',
+    },
+    preview: {
+      title: 'Prueba y corrige',
+      description: 'Sigue un camino, vuelve atrás y pasa a editar cuando un pasaje lo necesite.',
+      caption: 'La vista previa recorre la historia junto al mapa. Pasa a Editar para corregir el pasaje actual.',
+      alt: 'La vista previa de lectura de Trama junto al mapa, con decisiones y botones para volver atrás y editar.',
+    },
+    share: {
+      title: 'Comparte',
+      description: 'Envía un enlace directo a los lectores. No necesitan cuenta.',
+      caption: 'Copia el enlace de la historia desde la ventana para compartir y envíaselo a tus lectores.',
+      alt: 'La ventana para compartir de Trama con el enlace de una historia y el botón para copiarlo.',
+    },
+  },
+  trust: {
+    eyebrow: 'CREADA POR TI',
+    title: 'Tú pones la voz. Trama pone las herramientas.',
+    description: 'Las palabras, los personajes y las decisiones los escribes tú. Trama no genera el texto por ti.',
+    saving: {
+      title: 'Sabes cuándo se ha guardado',
+      description: 'Los cambios se guardan automáticamente. Si falla un guardado, el editor muestra un aviso y te permite volver a intentarlo.',
+    },
+    history: {
+      title: 'Puedes cambiar de idea',
+      description: 'Deshaz y rehace cambios recientes mientras trabajas. El historial de la sesión no es un archivo permanente de versiones.',
+    },
+    data: {
+      title: 'Descarga los datos de la historia',
+      description: 'Descarga un JSON desde las opciones de la historia. Contiene el texto, la estructura y la configuración, no un juego independiente ni las imágenes empaquetadas.',
+    },
+  },
+  features: {
+    eyebrow: 'MÁS ALLÁ DE LAS RAMIFICACIONES',
+    titleStart: 'Historias que',
+    titleEnd: 'recuerdan.',
+    description:
+      'Una promesa cumplida, una llave encontrada, una amistad ganada. Haz que las decisiones anteriores cambien lo que pasa después, sin escribir código.',
+    readGuide: 'Consulta la documentación',
+    events: {
+      label: 'EVENTOS',
+      title: 'Decisiones con consecuencias',
+      description:
+        'Lleva la cuenta de monedas, descubrimientos, confianza y todo lo que tu historia necesite recordar. Cada escena y cada respuesta pueden cambiar el estado del jugador, sin código.',
+      link: 'Descubre cómo funcionan los eventos',
+    },
+    distributors: {
+      label: 'DISTRIBUIDORES',
+      title: 'El pasado cambia lo que pasa después',
+      description:
+        'Un aliado que confía en el lector lo deja entrar. Un desconocido debe encontrar otra entrada. Define rutas diferentes según lo que ha hecho el lector.',
+      link: 'Conoce los nodos distribuidores',
+    },
+    playerInput: {
+      label: 'TEXTO DEL JUGADOR',
+      title: 'Haz sitio al lector dentro de la historia',
+      description:
+        'Pide un nombre o una idea y entrelázalo en pasajes posteriores con una variable.',
+      link: 'Pregunta al jugador',
+    },
+    requirements: {
+      label: 'REQUISITOS',
+      title: 'No todas las opciones se abren desde el principio',
+      description:
+        'Una llave encontrada abre la puerta. Suficientes monedas compran el mapa. Las respuestas solo aparecen cuando el jugador cumple todos los requisitos.',
+      link: 'Añade requisitos',
+    },
+    focusMode: {
+      label: 'MODO CONCENTRACIÓN',
+      title: 'Espacio para escribir',
+      description:
+        'Sal del lienzo a un editor sin distracciones para pasajes largos, con títulos, listas y variables. Ciérralo y vuelves al mismo mapa.',
+      link: 'Prueba el modo concentración',
+    },
+    organisation: {
+      label: 'GRUPOS Y MARCOS',
+      title: 'Dale un lugar a cada capítulo',
+      description:
+        'Pliega un capítulo en un grupo o mantenlo visible dentro de un marco móvil.',
+      link: 'Organiza tu tablero',
+    },
+  },
+  engine: {
+    eyebrow: 'CÓDIGO ABIERTO · TRAMA ENGINE',
+    titleStart: 'Tu historia,',
+    titleEnd: 'en cualquier interfaz.',
+    description:
+      'Trama Engine es el motor que hace funcionar todas las historias de Trama, ahora gratuito y de código abierto. Carga una historia por su id y dibújala como quieras: un terminal, una pantalla de juego, un chat, un libro ilustrado. El lector de Trama pasa a ser solo una opción.',
+    points: {
+      same: {
+        title: 'El mismo motor que Trama',
+        description: 'Los eventos, los distribuidores, los requisitos y las variables funcionan exactamente igual que en el lector de Trama.',
+      },
+      design: {
+        title: 'Tu diseño, sin límites',
+        description: 'Él decide qué pasa después. Tú decides cómo se ve. No incluye ninguna interfaz ni tiene dependencias.',
+      },
+      live: {
+        title: 'Escrita en Trama, jugada en cualquier parte',
+        description: 'Tu interfaz carga la historia de Trama, así que los cambios que hagas en el editor le llegan sin exportar nada.',
+      },
+    },
+    agent: {
+      label: 'CON UN AGENTE DE IA',
+      title: 'Pídeselo a tu agente',
+      description:
+        'Pega el enlace de tu historia y pasa el prompt a tu agente de programación. Preparará una interfaz con Trama Engine y tus lectores jugarán como más te guste, sin estar limitados por el lector de Trama.',
+      storyLabel: 'Enlace o id de la historia',
+      storyHint: 'Copia el enlace desde la ventana de compartir de tu historia.',
+      storyInvalid: 'Esto no parece un enlace, un id ni una dirección personalizada de una historia de Trama.',
+      placeholderId: 'ID_DE_TU_HISTORIA',
+      promptLabel: 'Prompt para tu agente',
+      prompt:
+        'Crea una página web donde los lectores jueguen mi historia interactiva. Usa el paquete de npm @trama-app/engine (lee su README: {npm}). Carga la historia con fetchStory({reference}) y juégala con createGame. Diseña la interfaz como quieras: no hace falta que se parezca al lector de Trama.',
+      copy: 'Copiar el prompt',
+      copied: 'Prompt copiado',
+      copyFailed: 'No se ha podido copiar. Selecciona el texto y cópialo a mano.',
+    },
+    code: {
+      label: 'CON CÓDIGO',
+      title: 'O escríbelo tú',
+      description: 'Instala el paquete, carga tu historia y dibuja cada estado a tu manera. Funciona en navegadores, Node 18+, Deno y workers.',
+      codeLabel: 'Código de ejemplo',
+    },
+    links: {
+      npm: 'Ver en npm',
+      source: 'Leer el código',
+      license: 'Licencia MIT · gratuito para cualquier proyecto',
+    },
+  },
+  visuals: {
+    distributor: 'Distribuidor',
+    secretRule: 'confianza > 2 Y tiene_llave',
+    secretEntrance: 'Entrada secreta',
+    frontRule: 'confianza > 2',
+    frontEntrance: 'Entrada principal',
+    otherwise: 'En otro caso',
+    gatekeeper: 'Guardián',
+    askName: '¿Cómo quieres que te llamemos?',
+    welcomeBack: 'Hola de nuevo,',
+    nameToken: '#nombre',
+    coins: 'monedas 2',
+    hasKey: 'tiene_llave ✓',
+    openArchive: 'Abrir el archivo',
+    requiresKey: 'requiere tiene_llave',
+    buyMap: 'Comprar el mapa',
+    requiresCoins: 'requiere 3 monedas',
+    walkAway: 'Marcharse',
+    close: 'Cerrar',
+    chapterHeading: 'Capítulo 2 · El archivo',
+    passageStart:
+      'La puerta cedió con un suspiro, como si hubiera estado esperando a',
+    passageEnd:
+      'desde siempre. El polvo flotaba a la luz del farol y se posaba en estanterías que se adentraban más de lo que el edificio debería permitir.',
+    chapter2: 'Capítulo 2',
+    chapter3: 'Capítulo 3',
+    scenes: '6 escenas',
+  },
+  questions: {
+    title: 'Algunos cabos sueltos.',
+    code: {
+      question: '¿Tengo que saber programar?',
+      answer: 'No. Escribe pasajes en el editor de texto, conecta escenas en el tablero y configura eventos y requisitos visualmente. La documentación explica las herramientas con ejemplos.',
+    },
+    readers: {
+      question: '¿Los lectores necesitan una cuenta?',
+      answer: 'No. Comparte un enlace y los lectores pueden entrar directamente en tu historia sin registrarse ni instalar nada.',
+    },
+    download: {
+      question: '¿Puedo descargar los datos de la historia?',
+      answer: 'Sí. Abre las opciones de la historia en el panel y elige Exportar JSON. El archivo incluye el texto, la estructura y la configuración. Las imágenes siguen siendo referencias externas; no se empaquetan. Aún no hay una herramienta de importación o restauración para el usuario.',
+    },
+    export: {
+      question: '¿Puedo alojar una historia jugable en mi web?',
+      answer: 'Sí, con Trama Engine. Es de código abierto: crea tu propia interfaz en tu web y esta carga la historia de Trama por su id, de modo que la historia se queda en Trama. La descarga JSON contiene datos de la historia, no un juego HTML independiente.',
+    },
+    create: {
+      question: '¿Qué puedo crear con Trama?',
+      answer: 'Ficción interactiva y aventuras ramificadas con consecuencias. Empieza con una escena, ofrece una decisión al lector y elige qué recuerda la historia.',
+    },
+  },
+  player: {
+    unavailable: 'No disponible',
+    stat: 'Requiere {name}: al menos {amount} (tienes {current})',
+    condition: 'Requiere: {name}',
+    absentCondition: 'Requiere no tener: {name}',
+    unknown: 'No se cumple un requisito',
+    yourAnswer: 'Tu respuesta',
+    continue: 'Continuar',
+  },
+  closing: {
+    label: 'TU PRÓXIMA ESCENA',
+    titleStart: '¿Qué pasa',
+    titleEnd: 'después?',
+    yours: 'Esa parte la escribes tú.',
+  },
+  footer: {
+    language: 'Idioma',
+    tagline: 'Las historias no tienen por qué ir en línea recta.',
+    guide: 'Documentación',
+    login: 'Iniciar sesión',
+    email: 'Escribe al creador',
+    rights: '© trama.app · Todos los derechos reservados',
+  },
+}

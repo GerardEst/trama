@@ -3,18 +3,25 @@
   "name": "trama",
   "description": "Skills for building on Trama (https://trama.app), the editor for branching interactive stories.",
   "owner": {
-    "name": "GerardEst"
+    "name": "Trama",
+    "url": "https://trama.app"
   },
   "plugins": [
     {
       "name": "trama-engine",
       "description": "Build players, maps and analyses of Trama stories with @trama-app/engine.",
+      "author": {
+        "name": "Trama",
+        "url": "https://trama.app"
+      },
       "version": "0.1.0",
       "category": "development",
       "homepage": "https://trama.app",
       "source": "./skills",
       "strict": false,
-      "skills": ["./trama-engine"]
+      "skills": [
+        "./trama-engine"
+      ]
     }
   ]
 }

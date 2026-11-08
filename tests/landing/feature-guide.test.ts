@@ -19,7 +19,7 @@ test('the author landing keeps the guide accessible through Docs', async ({ page
   await page.goto('/')
   await expect(page.locator('#toolkit, .hero__foot, polo-board')).toHaveCount(0)
   await expect(page.locator('#authoring')).toHaveCount(1)
-  await expect(page.locator('#features polo-landing-feature-card')).toHaveCount(6)
+  await expect(page.locator('#features .feature-card')).toHaveCount(6)
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Docs' }).click()
   await expect(page).toHaveURL(/\/docs\/features$/)
   await expect(page).toHaveTitle('Docs — Trama')
