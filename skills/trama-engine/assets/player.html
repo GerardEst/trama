@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trama story</title>
+  <style>
+    /* Restyle freely: the engine does not care about any of this. */
+    :root {
+      --bg: #faf8f4;
+      --surface: #ffffff;
+      --text: #1f1d1a;
+      --muted: #6b665e;
+      --accent: #3b5bdb;
+      --accent-text: #ffffff;
+      --border: #e3ded5;
+      --locked: #a8a29a;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161514;
+        --surface: #201f1d;
+        --text: #ece8e1;
+        --muted: #a39d93;
+        --accent: #8ea4ff;
+        --accent-text: #10131f;
+        --border: #34322e;
+        --locked: #6b665e;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 18px/1.6 Georgia, 'Times New Roman', serif;
+    }
+    main { max-width: 40rem; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    h1 { font-size: 1.6rem; margin: 0 0 2rem; }
+    .visit { margin-bottom: 2rem; }
+    .visit--past { opacity: 0.6; }
+    .visit img { width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+    .passage p { margin: 0 0 1em; }
+    .storyCategory__entries { white-space: pre-line; }
+    .answers { display: grid; gap: 0.5rem; margin-top: 1rem; }
+    button, input {
+      font: inherit;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.9rem;
+    }
+    .answer {
+      text-align: left;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .answer:hover:not(:disabled), .answer:focus-visible { border-color: var(--accent); }
+    .answer:disabled { color: var(--locked); cursor: not-allowed; }
+    .answer--selected { border-color: var(--accent); font-weight: bold; }
+    .answer__missing { display: block; font-size: 0.8em; color: var(--muted); }
+    .primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); cursor: pointer; }
+    form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    form input { flex: 1 1 12rem; background: var(--surface); color: var(--text); }
+    .description { width: 100%; margin: 0; color: var(--muted); font-size: 0.9em; }
+    .response { font-style: italic; color: var(--muted); }
+    .ending { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .ending a { color: var(--accent); }
+    .controls { display: flex; gap: 0.5rem; margin-top: 2rem; }
+    .controls button { background: none; color: var(--muted); cursor: pointer; }
+    .notice { padding: 1rem; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); }
+    footer { margin-top: 3rem; font-size: 0.85em; color: var(--muted); }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="title"></h1>
+    <div id="story" aria-live="polite"></div>
+    <div class="controls" id="controls"></div>
+    <footer id="footer"></footer>
+  </main>
+
+  <!--
+    Optional: paste a published story here (the JSON returned by the story API)
+    to play it without calling the API, e.g. where only CDNs are reachable.
+    Escape any "</" inside it as "<\/". When empty, the story is fetched.
+  -->
+  <script type="application/json" id="embedded-story"></script>
+
+  <script type="module">
+    import { createGame, fetchStory } from 'https://cdn.jsdelivr.net/npm/@trama-app/engine@0.1.0/+esm'
+    import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/+esm'
+
+    // Which story to play: { slug: '…' } or { id: '…' }. Ignored when a story is embedded.
+    const STORY = { slug: 'the-island' }
+
+    const $ = id => document.getElementById(id)
+    const html = value => DOMPurify.sanitize(value ?? '')
+    const element = (tag, attributes = {}, children = []) => {
+      const node = document.createElement(tag)
+      for (const [key, value] of Object.entries(attributes)) {
+        if (key === 'html') node.innerHTML = html(value)
+        else if (key === 'text') node.textContent = value
+        else if (key.startsWith('on')) node.addEventListener(key.slice(2), value)
+        else if (value !== false && value !== undefined) node.setAttribute(key, value === true ? '' : value)
+      }
+      node.append(...children)
+      return node
+    }
+
+    const story = await loadStory()
+    if (story) play(story)
+
+    async function loadStory() {
+      const embedded = $('embedded-story').textContent.trim()
+      if (embedded) return JSON.parse(embedded)
+      try {
+        const loaded = await fetchStory(STORY)
+        if (!loaded) showNotice('This story does not exist.')
+        return loaded
+      } catch (error) {
+        console.error(error)
+        showNotice('The story could not be loaded.')
+      }
+    }
+
+    function play(story) {
+      const { settings } = story
+      document.title = story.name
+      $('title').textContent = story.name
+      renderFooter(story)
+
+      const game = createGame(story.tree)
+      game.subscribe(event => {
+        if (event.type === 'state') render(event.state)
+      })
+      game.start()
+
+      function render(state) {
+        const container = $('story')
+        container.replaceChildren()
+        if (state.problem) container.append(problemNotice(state.problem))
+
+        // Cumulative stories keep earlier steps on screen, read-only.
+        if (settings.cumulativeMode) {
+          for (const visit of state.previousVisits) container.append(renderVisit(visit, false))
+        }
+        // A step can hold several nodes reached without input: show them all.
+        for (const visit of state.activeVisits) container.append(renderVisit(visit, true))
+
+        const controls = $('controls')
+        controls.replaceChildren()
+        if (state.canGoBack) controls.append(element('button', { type: 'button', text: '← Back', onclick: () => game.back() }))
+        if (state.started) controls.append(element('button', { type: 'button', text: '↺ Restart', onclick: () => game.restart() }))
+
+        // Keep keyboard players on the newest choice.
+        container.lastElementChild?.querySelector('input, button:not(:disabled)')?.focus({ preventScroll: true })
+      }
+
+      function renderVisit(visit, active) {
+        const { scene } = visit
+        const section = element('section', { class: `visit${active ? '' : ' visit--past'}` })
+        if (scene.image) section.append(element('img', { src: scene.image.url, alt: '', loading: 'lazy' }))
+        if (scene.text && !scene.skipText) section.append(element('div', { class: 'passage', html: scene.text }))
+
+        if (scene.answers.length) {
+          section.append(element('div', { class: 'answers' }, scene.answers.map(answer => renderAnswer(answer, visit, active))))
+        }
+
+        if (scene.type === 'text') {
+          if (visit.userResponse !== undefined) section.append(element('p', { class: 'response', text: visit.userResponse }))
+          else if (active) section.append(textForm(scene.input ?? {}))
+        }
+
+        if (scene.type === 'end' && active) section.append(renderEnding(scene))
+        return section
+      }
+
+      function renderAnswer(answer, visit, active) {
+        const button = element('button', {
+          type: 'button',
+          class: `answer${visit.selectedAnswerId === answer.id ? ' answer--selected' : ''}`,
+          disabled: !active || answer.locked || !answer.connected,
+          html: answer.text,
+          onclick: () => game.choose(answer.id),
+        })
+        if (answer.locked && answer.display === 'requirements') {
+          for (const missing of answer.missing) {
+            button.append(element('span', { class: 'answer__missing', text: describeMissing(missing) }))
+          }
+        }
+        return button
+      }
+
+      function textForm(input) {
+        // Same rules as Trama's player: an answer is required, up to 100 characters.
+        const field = element('input', {
+          id: 'player-text', type: 'text', autocomplete: 'off', required: true, maxlength: 100,
+          placeholder: input.placeholder || false,
+        })
+        return element('form', {
+          onsubmit: event => {
+            event.preventDefault()
+            if (field.value.trim()) game.submitText(field.value.trim())
+          },
+        }, [
+          element('label', { class: 'description', for: 'player-text', text: input.description || 'Your answer' }),
+          field,
+          element('button', { type: 'submit', class: 'primary', text: input.buttonText || 'Continue' }),
+        ])
+      }
+
+      function renderEnding(scene) {
+        const actions = element('div', { class: 'ending' })
+        for (const link of scene.links) {
+          const url = absoluteUrl(link.url)
+          actions.append(element('a', { href: url, target: '_blank', rel: 'noopener', text: link.name || url }))
+        }
+        if (settings.sharing && scene.share) {
+          actions.append(element('button', {
+            type: 'button',
+            class: 'primary',
+            text: scene.share.shareButtonText || 'Share',
+            onclick: () => share(scene.share.sharedText || `I just finished "${story.name}"`),
+          }))
+        }
+        return actions
+      }
+    }
+
+    function describeMissing({ name, type, required, current }) {
+      // Never show internal ref ids to players.
+      if (!name) return 'Unknown requirement'
+      if (type === 'stat') return `Needs ${name}: ${current}/${required}`
+      return required === 1 ? `Needs ${name}` : `Not with ${name}`
+    }
+
+    function problemNotice(problem) {
+      const messages = {
+        missingStart: 'This story has no starting point yet.',
+        missingNode: 'This path leads to a part of the story that no longer exists.',
+        automaticLoop: 'The story is stuck in a loop.',
+      }
+      return element('p', { class: 'notice', role: 'status', text: messages[problem] })
+    }
+
+    function readingUrl(story) {
+      return story.slug ? `https://trama.app/${story.slug}` : `https://trama.app/private/${encodeURIComponent(story.id)}`
+    }
+
+    async function share(text) {
+      const url = readingUrl(story)
+      try {
+        if (navigator.share) await navigator.share({ title: story.name, text, url })
+        else await navigator.clipboard.writeText(`${text} ${url}`)
+      } catch {
+        // The reader closed the share sheet or the clipboard is unavailable.
+      }
+    }
+
+    function renderFooter(story) {
+      const footer = $('footer')
+      const { text, link } = story.settings.footer ?? {}
+      if (text) footer.append(link ? element('a', { href: absoluteUrl(link), target: '_blank', rel: 'noopener', text }) : text)
+      // tapLink means the author hid the "Created with Trama" link.
+      if (!story.settings.tapLink) {
+        if (text) footer.append(' · ')
+        footer.append(element('a', { href: 'https://trama.app', target: '_blank', rel: 'noopener', text: 'Created with Trama' }))
+      }
+    }
+
+    // Authors often type links without the protocol.
+    function absoluteUrl(url) {
+      return /^https?:\/\//.test(url) ? url : `https://${url}`
+    }
+
+    function showNotice(message) {
+      $('story').replaceChildren(element('p', { class: 'notice', role: 'status', text: message }))
+    }
+  </script>
+</body>
+</html>

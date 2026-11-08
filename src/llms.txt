@@ -1,0 +1,32 @@
+# Trama
+
+> Trama (https://trama.app) is a visual editor for branching interactive stories: authors connect passages, choices, stats, conditions and random or conditional routes on a node board, and readers play them in the browser. Stories can also be played in any custom interface with the open-source engine @trama-app/engine (MIT, no dependencies).
+
+Key facts for building on Trama:
+
+- Play stories only through @trama-app/engine. Do not reimplement the rules (random joins, distributors, requirements, events, variables) by reading the story JSON.
+- A story is read by id or by its custom address (slug) with `fetchStory()` or the public API. Stories cannot be listed, and there is no public write API.
+- Reading links look like `https://trama.app/<slug>` or `https://trama.app/private/<id>`.
+- Passages and answers are author HTML: render them as HTML and sanitize them.
+
+## Engine
+
+- [@trama-app/engine README](https://raw.githubusercontent.com/GerardEst/trama/main/packages/engine/README.md): install, load a story, play it, render scenes, save games
+- [Engine API reference](https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/references/engine-api.md): every function, type and event
+- [Story format](https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/references/story-format.md): the story JSON (nodes, joins, answers, events, requirements, distributors, refs, text tokens)
+- [npm package](https://www.npmjs.com/package/@trama-app/engine): `npm install @trama-app/engine`, or import `https://cdn.jsdelivr.net/npm/@trama-app/engine@0.1.0/+esm` in the browser
+
+## Public API
+
+- [Story endpoint](https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/story): `GET ?id=<uuid>` or `GET ?slug=<slug>` returns `{ id, name, slug, settings, tree }` as JSON, ready for `createGame(tree)`. 404 when it does not exist. CORS is open.
+
+## Agent skill
+
+- [trama-engine skill (zip)](https://trama.app/skills/trama-engine.zip): ready to upload to claude.ai (Settings → Capabilities → Skills). In Claude Code: `/plugin install trama-engine --marketplace GerardEst/trama`
+- [trama-engine skill](https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/SKILL.md): instructions for coding agents to build players, maps and analyses of Trama stories
+- [Player template](https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/assets/player.html): a complete single-file player that behaves like Trama's own
+- [Story outline script](https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/scripts/story-outline.mjs): compact outline and structural checks of a story (Node 18+)
+
+## Optional
+
+- [Source code](https://github.com/GerardEst/trama): the Trama app, engine and API
