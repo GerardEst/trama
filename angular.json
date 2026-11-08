@@ -30,6 +30,8 @@
               "src/assets",
               "src/.well-known",
               "src/robots.txt",
+              "src/llms.txt",
+              "src/skills",
               "src/ads.txt"
             ],
             "styles": ["src/styles/tokens.css", "src/styles.css"]
