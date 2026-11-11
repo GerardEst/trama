@@ -688,12 +688,12 @@ trama-board[ready] .lb-loading {
   overflow-wrap: anywhere;
 }
 
-/* Any interface: one story, four ways of telling it. */
+/* Any interface: examples and an open invitation to create your own. */
 .e-any {
   padding-block: var(--e-section);
   border-top: 1px solid var(--lab-ink);
 }
-/* Four interfaces that play the same game, each reacting to its events its own way. */
+/* Three independent examples and a fourth card for any interface the author imagines. */
 .ai {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -789,65 +789,30 @@ trama-board[ready] .lb-loading {
     opacity: 0;
   }
 }
-/* Chat */
-.ai-out--chat .ai-screen {
-  justify-content: space-between;
-  gap: 14px;
-  border-radius: 18px;
-  background: var(--lab-canvas-2);
-  font: 400 13px / 1.4 var(--e-sans);
-}
-.ai-thread {
-  display: grid;
-  gap: 8px;
-}
-.ai-bubble {
-  max-width: 88%;
-  padding: 8px 12px;
-  border-radius: 14px 14px 14px 4px;
-  background: var(--lab-surface);
-}
-.ai-bubble--me {
-  justify-self: end;
-  border-radius: 14px 14px 4px 14px;
-  background: var(--e-red);
-  color: #fff;
-}
-.ai-chips {
+/* An open canvas for the author's own interface. */
+.ai-imagine {
+  flex: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 300px;
+  padding: 28px 22px;
+  border: 1px dashed var(--lab-line);
+  color: var(--lab-faint);
+  text-align: center;
+  font: 400 15px / 1.6 var(--e-sans);
 }
-.ai-chip {
-  width: auto !important;
-  padding: 6px 12px !important;
-  border: 1px solid var(--e-red) !important;
-  border-radius: 999px;
-  color: var(--e-red) !important;
-  font: 600 12.5px var(--e-sans);
-}
-.ai-chip.is-locked {
-  border-style: dashed !important;
-  opacity: 0.6;
-}
-.ai-notice {
-  justify-self: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--lab-tint);
+.ai-imagine__mark {
   color: var(--e-red);
-  font-size: 11.5px;
-  font-weight: 700;
-  animation: ai-pop 0.35s ease-out both;
+  font: 400 100px / 1 var(--e-serif);
 }
 @keyframes ai-pop {
   from {
     opacity: 0;
     scale: 0.6;
   }
-}
-.ai-chip:not(:disabled):hover {
-  background: var(--lab-tint) !important;
 }
 /* Book */
 .ai-out--book .ai-screen {

@@ -1,6 +1,6 @@
 import { createGame, type StateChange } from '@trama-app/engine'
 import { describe, expect, it } from 'vitest'
-import { renderBook, renderChat, renderGame, renderTerminal, viewOf, type AnyWords } from './any-render'
+import { renderBook, renderGame, renderTerminal, viewOf, type AnyWords } from './any-render'
 import { anyStory, KEY, TRUST } from './any-story'
 import { eCopyFor } from './copy'
 
@@ -29,7 +29,7 @@ function play(lang: (typeof LANGS)[number]) {
   }
 }
 
-// What the four interfaces promise: the same game, and events each one can show.
+// What the example interfaces promise: the same story, and events each one can show.
 describe.each(LANGS)('any interface in %s', lang => {
   it('the tower is locked until the stranger gives the key', () => {
     const story = play(lang)
@@ -58,7 +58,6 @@ describe.each(LANGS)('any interface in %s', lang => {
     story.choose('help')
     const view = story.choose('help')
     expect(renderTerminal(view, story.words)).toContain(`${story.e.anyTrust} 1 → 2`)
-    expect(renderChat(view, story.words)).toContain(`${story.e.anyTrust} +1`)
     expect(renderBook(view, story.words)).toContain(story.e.anyBookKey)
     expect(renderGame(view, story.words)).toContain('ai-game-slot is-new')
   })
@@ -66,7 +65,7 @@ describe.each(LANGS)('any interface in %s', lang => {
   it('locked answers cannot be chosen in any interface', () => {
     const story = play(lang)
     const view = story.view()
-    for (const render of [renderTerminal, renderChat, renderBook, renderGame]) {
+    for (const render of [renderTerminal, renderBook, renderGame]) {
       expect(render(view, story.words)).not.toContain('data-answer="tower"')
     }
   })

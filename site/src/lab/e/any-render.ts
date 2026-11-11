@@ -2,7 +2,7 @@ import type { GameState, StateChange, StoryTree } from '@trama-app/engine'
 import { escapeHtml } from '../../lib/story-step'
 import { KEY, TRUST } from './any-story'
 
-// One game, told four ways. Each function turns the same engine state, and the
+// One story, told three ways. Each function turns an engine state, and the
 // changes the engine reported for the last choice, into one interface. The page
 // renders the first scene at build time with them, and the browser renders
 // every later step with the same code.
@@ -106,23 +106,6 @@ export function renderTerminal(view: AnyView, words: AnyWords): string {
   })
   lines.push(view.ended ? choice(undefined, `<span>↺</span> ${escapeHtml(words.again)}`, 'ai-term-choice ai-again') : '<p class="ai-caret">? <i></i></p>')
   return lines.join('')
-}
-
-/** A conversation: events arrive as notices between the messages. */
-export function renderChat(view: AnyView, words: AnyWords): string {
-  const bubbles: string[] = []
-  if (view.chosen) bubbles.push(`<p class="ai-bubble ai-bubble--me">${escapeHtml(view.chosen)}</p>`)
-  for (const change of view.changes) {
-    const text = change.type === 'stat'
-      ? `${change.name} ${change.after > change.before ? '+' : '−'}${Math.abs(change.after - change.before)}`
-      : `${change.after ? '+' : '−'} ${change.name}`
-    bubbles.push(`<p class="ai-notice">${escapeHtml(text)}</p>`)
-  }
-  if (view.fresh || !view.chosen) bubbles.push(`<p class="ai-bubble">${escapeHtml(view.page)}</p>`)
-  const chips = view.ended
-    ? choice(undefined, `↺ ${escapeHtml(words.again)}`, 'ai-chip ai-again')
-    : view.answers.map(answer => choice(answer, answer.locked ? `${LOCK} ${escapeHtml(answer.text)}` : escapeHtml(answer.text), 'ai-chip')).join('')
-  return `<div class="ai-thread">${bubbles.join('')}</div><div class="ai-chips">${chips}</div>`
 }
 
 const ROMAN = ['i', 'ii', 'iii', 'iv', 'v']

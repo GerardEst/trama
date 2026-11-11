@@ -1,7 +1,7 @@
 import type { StoryTree } from '@trama-app/engine'
 import type { ECopy } from './copy'
 
-// The story the four interfaces play. It is small but uses what an interface
+// The story the example interfaces play. It is small but uses what an interface
 // has to react to: a stat and a condition changed by events, a distributor that
 // reads the stat, an answer locked by a requirement, and two endings.
 
