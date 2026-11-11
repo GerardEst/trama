@@ -4,10 +4,10 @@ import { Image } from 'astro:assets'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-story/exampleStory'
 import type { Lang } from '../../i18n'
 
-// The valley is made of words. Where the pointer passes, a brush lifts the paint
-// and shows what is underneath: the example story, set in the book's type, each
-// letter in the colour of the landscape it sits under. The strokes heal a few
-// seconds later, unevenly, like paint drying back.
+// The valley is made of words. Where the pointer passes, the drawing tears and
+// shows what is underneath: the example story, set in the book's type, each
+// letter in the colour of the landscape it sits under. A few seconds later the
+// tears close again.
 //
 // Without WebGL, with reduced motion or before the script runs, it is simply the
 // painting: the <img> below.
@@ -15,7 +15,7 @@ interface Props {
   image: ImageMetadata
   lang: Lang
   class?: string
-  /** A selector, inside the same section, for words the brush barely touches. */
+  /** A selector, inside the same section, for words the drawing does not tear over. */
   quiet?: string
 }
 
@@ -81,11 +81,13 @@ const passages = story.nodes
     }
   `
 
-  // The brush. Each frame the mask dries a little, and the brush lays one segment
-  // of stroke from where it was to where it is now. Across the stroke, bristles:
-  // streaks that run along it, so some hairs carry more than others and the edge
-  // is ragged. Values above 1 keep a stroke open for a while before it heals.
-  const BRUSH = /* glsl */ `
+  // The tear. The mask holds two things: in red, how close each point is to the
+  // line of a tear (1 on the line, 0 at its reach); in green, the tear's life.
+  // Each frame life runs down, and the pointer tears one more piece, from where
+  // the tip was to where it is now. The line wanders and changes width as it
+  // goes, like paper that gives where it is weakest. A fresh tear starts its life
+  // at 1.6; tearing again where one is already open keeps it open.
+  const TEAR = /* glsl */ `
     precision highp float;
     varying vec2 vUv;
     uniform sampler2D uPrevious;
@@ -96,8 +98,8 @@ const passages = story.nodes
     uniform float uRadiusTo;
     uniform float uTravelled;
     uniform float uSeed;
-    uniform float uDry;
-    uniform float uPainting;
+    uniform float uAging;
+    uniform float uTearing;
     uniform vec4 uQuiet;
     ${NOISE}
 
@@ -110,35 +112,38 @@ const passages = story.nodes
     }
 
     void main() {
-      float mask = max(texture2D(uPrevious, vUv).r - uDry, 0.0);
-      if (uPainting > 0.5) {
+      vec4 previous = texture2D(uPrevious, vUv);
+      float life = max(previous.g - uAging, 0.0);
+      float line = life > 0.0 ? previous.r : 0.0;
+      if (uTearing > 0.5) {
         vec2 p = vUv * uSize;
         vec2 segment = uTo - uFrom;
         float length_ = max(length(segment), 0.001);
         vec2 along = segment / length_;
         vec2 across = vec2(-along.y, along.x);
         float t = clamp(dot(p - uFrom, along) / length_, 0.0, 1.0);
-        float radius = mix(uRadiusFrom, uRadiusTo, t);
-        float distance_ = length(p - (uFrom + along * t * length_));
-        float side = dot(p - uFrom, across) / radius;
-        float run = (uTravelled + t * length_) / radius;
-        float hairs = noise(vec2(side * 5.0 + uSeed, run * 0.25)) * 0.5
-                    + noise(vec2(side * 14.0 + uSeed * 2.3, run * 0.6)) * 0.3
-                    + noise(vec2(side * 37.0 + uSeed * 5.1, run * 1.4)) * 0.2;
-        float body = 1.0 - smoothstep(radius * 0.45, radius, distance_ + (hairs - 0.5) * radius * 0.7);
-        float load = smoothstep(0.15, 0.55, hairs + 0.3 - side * side * 0.55);
-        // Over the quiet words the brush only grazes: a faint trace, no opening.
-        mask = max(mask, body * load * 1.7 * mix(1.0, 0.27, quietness(p)));
+        float run = uTravelled + t * length_;
+        float radius = mix(uRadiusFrom, uRadiusTo, t) * (0.6 + 0.8 * noise(vec2(run / 70.0, uSeed + 7.0)));
+        float wander = (noise(vec2(run / 45.0, uSeed)) - 0.5) * radius * 0.7;
+        float distance_ = length(p - (uFrom + along * t * length_) - across * wander);
+        // The paper does not tear across the quiet words: the tear thins out and stops.
+        float reach = clamp(1.0 - distance_ / radius, 0.0, 1.0) * (1.0 - quietness(p));
+        if (reach > 0.0) {
+          line = max(line, reach);
+          life = life > 0.0 ? max(life, 1.0) : 1.6;
+        }
       }
-      gl_FragColor = vec4(mask, 0.0, 0.0, 1.0);
+      gl_FragColor = vec4(line, life, 0.0, 1.0);
     }
   `
 
-  // The page. Where the mask is open the painting gives way to the words beneath,
-  // each letter in a darker tone of the landscape over it; the pilcrows and arrows
-  // in the cape's red. The edge of a stroke is grainy, and the paint around it
-  // is pushed into a slightly darker rim. The paper is the page's own, so on a
-  // dark page the words are light.
+  // The page. A tear opens just after it is made, stays open, and closes again
+  // as its life runs out. Its edge is jagged at two scales; around it, a fringe of
+  // the paper's white fibres, and each side of the painting pulled a little away
+  // from the line. Through the opening, the words, each letter in a deeper tone of
+  // the landscape above it, the pilcrows and arrows in the cape's red; the torn
+  // edge casts a shadow on them, more from the upper side. The paper beneath is
+  // the page's own, so on a dark page the words are light.
   const PAGE = /* glsl */ `
     precision highp float;
     varying vec2 vUv;
@@ -147,6 +152,7 @@ const passages = story.nodes
     uniform sampler2D uWords;
     uniform vec2 uResolution;
     uniform vec2 uImageSize;
+    uniform vec2 uMaskTexel;
     uniform vec3 uGraphite;
     uniform vec3 uCape;
     uniform vec3 uPaper;
@@ -162,42 +168,60 @@ const passages = story.nodes
     }
 
     void main() {
-      vec3 paint = texture2D(uImage, cover(vUv)).rgb;
-      float mask = texture2D(uMask, vUv).r;
       vec2 pixel = vUv * uResolution;
-      float grain = fbm(pixel / 9.0) - 0.5;
-      float open = mask + grain * 0.32;
-      float lifted = smoothstep(0.42, 0.7, open);
-      float rim = smoothstep(0.2, 0.44, open) * (1.0 - lifted);
+      vec4 tear = texture2D(uMask, vUv);
+      float opened = smoothstep(1.6, 1.48, tear.g) * smoothstep(0.0, 0.7, tear.g);
 
+      // Towards the line of the tear; each side of the painting moves away from it.
+      vec2 e = uMaskTexel * 1.5;
+      vec2 toward = vec2(
+        texture2D(uMask, vUv + vec2(e.x, 0.0)).r - texture2D(uMask, vUv - vec2(e.x, 0.0)).r,
+        texture2D(uMask, vUv + vec2(0.0, e.y)).r - texture2D(uMask, vUv - vec2(0.0, e.y)).r
+      );
+      toward = length(toward) > 0.0001 ? normalize(toward) : vec2(0.0);
+      float pull = opened * smoothstep(0.0, 0.45, tear.r) * 9.0;
+      vec3 paint = texture2D(uImage, cover(vUv + toward * pull / uResolution)).rgb;
+
+      // The jagged edge, and the fringe of fibres, wider in some places than others
+      // and on the lower side, where the paper's top layer peeled back as it tore.
+      float upper = 0.5 + 0.5 * dot(toward, normalize(vec2(0.3, -1.0)));
+      float field = tear.r + (fbm(pixel / 8.0) - 0.5) * 0.24 + (noise(pixel / 2.4) - 0.5) * 0.07;
+      float edge = 1.0 - opened * 0.74;
+      float open = smoothstep(edge, edge + 0.012, field) * step(0.02, opened);
+      float fringe = (0.05 + 0.1 * noise(pixel / 16.0)) * opened * mix(1.5, 0.35, upper);
+      float fibres = smoothstep(edge - fringe - 0.012, edge - fringe, field + (noise(pixel / 1.2) - 0.5) * 0.06) * (1.0 - open);
+      vec3 fibre = mix(vec3(0.99, 0.98, 0.95), vec3(0.88, 0.86, 0.81), noise(pixel / 1.6) * 0.7);
+      float lip = smoothstep(edge - fringe - 0.12, edge - fringe - 0.02, field) * (1.0 - fibres) * (1.0 - open) * opened;
+
+      // Beneath: the words, with a trace of the landscape on their paper.
       vec3 words = texture2D(uWords, vUv).rgb;
-      // Lifting the paint leaves a wash of it on the paper, heavier near the edge,
-      // so the valley still shows in the page; each letter is the landscape's own
-      // colour, deepened.
-      float wash = (0.14 + 0.3 * (1.0 - smoothstep(0.7, 1.25, open))) * (1.0 - uDark * 0.4);
-      vec3 paper = mix(uPaper, paint, wash);
+      vec3 paper = mix(uPaper, paint, 0.12 * (1.0 - uDark * 0.4));
       vec3 ink = mix(mix(paint * paint * 0.7, uGraphite, 0.3), mix(sqrt(paint), vec3(0.95, 0.93, 0.89), 0.35), uDark);
       vec3 under = mix(paper, ink, words.r);
       under = mix(under, uCape, words.g);
+      float depth = 1.0 - smoothstep(0.0, 0.16, field - edge);
+      under *= 1.0 - depth * mix(0.12, 0.38, upper);
 
-      vec3 color = mix(paint * (1.0 - rim * 0.18), under, lifted);
+      vec3 color = paint * (1.0 - lip * 0.14);
+      color = mix(color, fibre, fibres);
+      color = mix(color, under, open);
       gl_FragColor = vec4(color, 1.0);
     }
   `
 
-  const DRY_PER_SECOND = 0.32
-  const LONGEST_STROKE = 1.7 / DRY_PER_SECOND + 0.5
-  // The mask is kept at half the element's size: the brush is soft, the words are not.
+  const LIFE_PER_SECOND = 0.32
+  const LONGEST_TEAR = 1.6 / LIFE_PER_SECOND + 0.5
+  // The mask is kept at half the element's size: the edge's detail is drawn by the page.
   const MASK_SCALE = 0.5
 
   class WrittenWorld extends HTMLElement {
     private renderer?: WebGLRenderer
     private page?: ShaderMaterial
-    private brush?: ShaderMaterial
+    private tearing?: ShaderMaterial
     private targets: WebGLRenderTarget[] = []
     private words?: Texture
     private renderPage = () => {}
-    private renderBrush = (_target: WebGLRenderTarget) => {}
+    private renderTear = (_target: WebGLRenderTarget) => {}
     private makeTargets = (_width: number, _height: number) => {}
     private observer?: IntersectionObserver
     private resizer?: ResizeObserver
@@ -206,10 +230,10 @@ const passages = story.nodes
     private started = false
     private frame = 0
     private last = 0
-    private lastInk = -Infinity
+    private lastTear = -Infinity
     private size = { width: 1, height: 1 }
-    // Where the pointer is, and where the brush is: the brush follows a little
-    // behind, which smooths the stroke into curves.
+    // Where the pointer is, and where the tear's tip is: the tip follows a little
+    // behind, which smooths the tear into curves.
     private pointer: { x: number; y: number } | null = null
     private tip: { x: number; y: number } | null = null
     private radius = 0
@@ -271,7 +295,7 @@ const passages = story.nodes
       const camera = new three.Camera()
       const quad = new three.PlaneGeometry(2, 2)
       const pageScene = new three.Scene()
-      const brushScene = new three.Scene()
+      const tearScene = new three.Scene()
       this.page = new three.ShaderMaterial({
         vertexShader: VERTEX,
         fragmentShader: PAGE,
@@ -281,15 +305,16 @@ const passages = story.nodes
           uWords: { value: null },
           uResolution: { value: new three.Vector2(1, 1) },
           uImageSize: { value: new three.Vector2(painting.image.width, painting.image.height) },
+          uMaskTexel: { value: new three.Vector2(1, 1) },
           uGraphite: { value: new three.Color() },
           uCape: { value: new three.Color() },
           uPaper: { value: new three.Color() },
           uDark: { value: 0 },
         },
       })
-      this.brush = new three.ShaderMaterial({
+      this.tearing = new three.ShaderMaterial({
         vertexShader: VERTEX,
-        fragmentShader: BRUSH,
+        fragmentShader: TEAR,
         uniforms: {
           uPrevious: { value: null },
           uSize: { value: new three.Vector2(1, 1) },
@@ -299,16 +324,16 @@ const passages = story.nodes
           uRadiusTo: { value: 1 },
           uTravelled: { value: 0 },
           uSeed: { value: 0 },
-          uDry: { value: 0 },
-          uPainting: { value: 0 },
+          uAging: { value: 0 },
+          uTearing: { value: 0 },
           uQuiet: { value: new three.Vector4(-1e5, -1e5, -1e5, -1e5) },
         },
       })
       pageScene.add(new three.Mesh(quad, this.page))
-      brushScene.add(new three.Mesh(quad, this.brush))
+      tearScene.add(new three.Mesh(quad, this.tearing))
 
-      // Half floats let the mask dry by small steps; without them it dries in
-      // coarser ones, which still reads as paint.
+      // Half floats keep the tear's life in small steps; without them it runs down
+      // in coarser ones, which still reads well.
       const type = renderer.capabilities.isWebGL2 ? three.HalfFloatType : three.UnsignedByteType
       this.makeTargets = (width, height) => {
         this.targets.forEach(target => target.dispose())
@@ -324,13 +349,13 @@ const passages = story.nodes
         }
         renderer.setRenderTarget(null)
       }
-      this.renderBrush = target => {
+      this.renderTear = target => {
         renderer.setRenderTarget(target)
-        renderer.render(brushScene, camera)
+        renderer.render(tearScene, camera)
         renderer.setRenderTarget(null)
       }
       this.renderPage = () => renderer.render(pageScene, camera)
-      // The theme can change while the page is open, so each stroke reads the
+      // The theme can change while the page is open, so each tear reads the
       // colours again: the cape and graphite (set on this element) and the paper.
       this.readColors = () => {
         const uniforms = this.page!.uniforms
@@ -361,20 +386,20 @@ const passages = story.nodes
       this.playIntro()
     }
 
-    // Where the quiet words are, in the brush's coordinates (origin bottom left).
+    // Where the quiet words are, in the tear's coordinates (origin bottom left).
     private measureQuiet() {
       const selector = this.dataset['quiet']
       const quiet = selector ? this.surface?.querySelector(selector) : null
-      if (!quiet || !this.brush) return
+      if (!quiet || !this.tearing) return
       const own = this.getBoundingClientRect()
       const rect = quiet.getBoundingClientRect()
-      this.brush.uniforms['uQuiet']!.value.set(rect.left - own.left, own.bottom - rect.bottom, rect.right - own.left, own.bottom - rect.top)
+      this.tearing.uniforms['uQuiet']!.value.set(rect.left - own.left, own.bottom - rect.bottom, rect.right - own.left, own.bottom - rect.top)
     }
 
     private makeWords = (_width: number, _height: number, _ratio: number): Texture | undefined => undefined
 
     private resize() {
-      if (!this.renderer || !this.page || !this.brush) return
+      if (!this.renderer || !this.page || !this.tearing) return
       const { width, height } = this.getBoundingClientRect()
       if (!width || !height) return
       this.size = { width, height }
@@ -383,9 +408,10 @@ const passages = story.nodes
       this.words?.dispose()
       this.words = this.makeWords(width, height, this.renderer.getPixelRatio())
       this.page.uniforms['uResolution']!.value.set(width, height)
+      this.page.uniforms['uMaskTexel']!.value.set(1 / Math.ceil(width * MASK_SCALE), 1 / Math.ceil(height * MASK_SCALE))
       this.page.uniforms['uWords']!.value = this.words
       this.page.uniforms['uMask']!.value = this.targets[0]!.texture
-      this.brush.uniforms['uSize']!.value.set(width, height)
+      this.tearing.uniforms['uSize']!.value.set(width, height)
       this.measureQuiet()
       this.renderPage()
     }
@@ -476,7 +502,7 @@ const passages = story.nodes
 
     private aim(point: { x: number; y: number }) {
       if (!this.pointer) {
-        // A new stroke: the brush lands where the pointer is, with a fresh set of hairs.
+        // A new tear starts where the pointer is, with its own way of wandering.
         this.tip = { ...point }
         this.radius = 0
         this.travelled = 0
@@ -488,8 +514,8 @@ const passages = story.nodes
       this.wake()
     }
 
-    // On arrival, one stroke across the left hillside shows that the valley can be
-    // painted away; touch readers see what is beneath this way too.
+    // On arrival, one tear across the left hillside shows that the valley can be
+    // torn; touch readers see what is beneath this way too.
     private playIntro() {
       const { width, height } = this.size
       // Wide, beside the title on the left hillside; narrow, across the strip of
@@ -509,7 +535,7 @@ const passages = story.nodes
 
     private tick = (now: number) => {
       this.frame = 0
-      if (!this.renderer || !this.brush || !this.page) return
+      if (!this.renderer || !this.tearing || !this.page) return
       // The frame's timestamp can be a little older than the moment it was asked for.
       const seconds = Math.min(0.05, Math.max(0, (now - this.last) / 1000))
       this.last = now
@@ -531,23 +557,24 @@ const passages = story.nodes
         }
       }
 
-      const uniforms = this.brush.uniforms
-      uniforms['uDry']!.value = seconds * DRY_PER_SECOND
-      uniforms['uPainting']!.value = 0
+      const uniforms = this.tearing.uniforms
+      uniforms['uAging']!.value = seconds * LIFE_PER_SECOND
+      uniforms['uTearing']!.value = 0
       if (this.pointer && this.tip) {
         const from = { ...this.tip }
         const follow = 1 - Math.pow(0.0005, seconds)
         this.tip.x += (this.pointer.x - this.tip.x) * follow
         this.tip.y += (this.pointer.y - this.tip.y) * follow
         const moved = Math.hypot(this.tip.x - from.x, this.tip.y - from.y)
-        // A slow brush presses and spreads; a quick one only grazes.
-        const base = Math.min(58, Math.max(30, this.size.width * 0.026))
+        // A slow pull tears wide; a quick one leaves a thin rip. Each tear starts
+        // narrow, so its first end comes to a point.
+        const base = Math.min(46, Math.max(24, this.size.width * 0.02))
         const speed = moved / Math.max(seconds, 0.001)
         const target = base * (1.15 - Math.min(0.5, speed / 4000))
-        const previous = this.radius || target * 0.55
+        const previous = this.radius || target * 0.3
         this.radius = previous + (target - previous) * Math.min(1, seconds * 10)
         if (moved > 0.3 || this.travelled === 0) {
-          uniforms['uPainting']!.value = 1
+          uniforms['uTearing']!.value = 1
           uniforms['uFrom']!.value.set(from.x, from.y)
           uniforms['uTo']!.value.set(this.tip.x, this.tip.y)
           uniforms['uRadiusFrom']!.value = previous
@@ -555,21 +582,21 @@ const passages = story.nodes
           uniforms['uTravelled']!.value = this.travelled
           uniforms['uSeed']!.value = this.seed
           this.travelled += moved || 0.001
-          this.lastInk = now
+          this.lastTear = now
         }
       }
 
       const [read, write] = this.targets as [WebGLRenderTarget, WebGLRenderTarget]
       uniforms['uPrevious']!.value = read.texture
-      this.renderBrush(write)
+      this.renderTear(write)
       this.targets = [write, read]
       this.page.uniforms['uMask']!.value = write.texture
       this.renderPage()
 
-      // Keep painting while there is a stroke to lay or one still drying.
-      const drying = (now - this.lastInk) / 1000 < LONGEST_STROKE
+      // Keep drawing while there is a tear to make or one still open.
+      const open = (now - this.lastTear) / 1000 < LONGEST_TEAR
       const following = !!this.pointer && !!this.tip && Math.hypot(this.pointer.x - this.tip.x, this.pointer.y - this.tip.y) > 0.3
-      if (this.visible && (following || this.intro || drying)) this.frame = requestAnimationFrame(this.tick)
+      if (this.visible && (following || this.intro || open)) this.frame = requestAnimationFrame(this.tick)
     }
   }
 
