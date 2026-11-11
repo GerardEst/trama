@@ -1,0 +1,78 @@
+---
+import { Font } from 'astro:assets'
+import './base.css'
+import './art.css'
+import LabBar from './LabBar.astro'
+import { copyFor, type Lang } from '../i18n'
+import { SESSION_STORAGE_KEY, THEME_STORAGE_KEY } from '../lib/links'
+import type { DirectionId } from './directions'
+
+interface Props {
+  lang: Lang
+  /** Absent on the lab's own index page. */
+  version?: DirectionId
+  title: string
+}
+
+const { lang, version, title } = Astro.props
+const t = copyFor(lang)
+---
+
+<!doctype html>
+<html lang={lang} data-lab={version ?? 'a'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={t.meta.description} />
+    <!-- Comparison pages: they must not compete with the real landing. -->
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48 64x64" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png" />
+
+    <Font cssVariable="--font-raleway" preload />
+    <Font cssVariable="--font-baskerville" />
+    <slot name="head" />
+
+    <script is:inline define:vars={{ themeKey: THEME_STORAGE_KEY, sessionKey: SESSION_STORAGE_KEY }}>
+      document.documentElement.classList.add('lab-js')
+      try {
+        const theme = localStorage.getItem(themeKey)
+        if (theme === 'dark' || theme === 'light') document.documentElement.dataset.poloTheme = theme
+        if (localStorage.getItem(sessionKey)) document.documentElement.dataset.signedIn = ''
+      } catch {
+        // Without storage the system theme and the signed-out links still work.
+      }
+    </script>
+  </head>
+  <body>
+    <a class="lab-skip" href="#main-content">{t.nav.skip}</a>
+    <slot />
+    <LabBar lang={lang} version={version} />
+  </body>
+</html>
+
+<script>
+  // Signed-in readers go straight to the app instead of signing up again.
+  if (document.documentElement.hasAttribute('data-signed-in')) {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-signed-in-href]')) {
+      link.href = link.dataset['signedInHref']!
+    }
+  }
+
+  // One observer for the whole page; each element is released once it has appeared.
+  const pending = document.querySelectorAll('[data-reveal]')
+  if (pending.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entry.target.classList.add('is-in')
+          observer.unobserve(entry.target)
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    pending.forEach(element => observer.observe(element))
+  }
+</script>

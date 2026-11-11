@@ -1,0 +1,98 @@
+---
+import { Font } from 'astro:assets'
+import LabLayout from '../../lab/LabLayout.astro'
+import { DIRECTIONS } from '../../lab/directions'
+import { localeStaticPaths } from '../../lib/locale'
+import type { Lang } from '../../i18n'
+
+// The lab's index, in Catalan for the team whichever language is browsed.
+export const getStaticPaths = localeStaticPaths
+
+const { lang } = Astro.props as { lang: Lang }
+const prefix = lang === 'en' ? '' : `/${lang}`
+---
+
+<LabLayout lang={lang} title="Lab de la landing — Trama">
+  <Fragment slot="head">
+    <Font cssVariable="--font-baskerville" />
+  </Fragment>
+  <main id="main-content" class="index" lang="ca">
+    <h1>Lab de la landing</h1>
+    <p class="index__lead">
+      Quatre direccions, cadascuna derivada d’una cadena aleatòria de 128 caràcters generada un sol cop. A, C i D comparteixen text i 14 funcions, per comparar només el disseny. B parteix de les dues referències de Dribbble i afegeix el catàleg complet de 21 capacitats, exemples jugables, comparativa i dades per a IA.
+    </p>
+    <ol>
+      {DIRECTIONS.map(direction => (
+        <li>
+          <a class="index__name" href={`${prefix}/lab/${direction.id}`}>
+            <span>{direction.id.toUpperCase()}</span> {direction.name} <span aria-hidden="true">→</span>
+          </a>
+          <p class="index__idea">{direction.idea}</p>
+          <p class="index__type">{direction.type}</p>
+          {direction.seed && <code>{direction.seed}</code>}
+          <ul>
+            {direction.readings.map(reading => <li>{reading}</li>)}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  </main>
+</LabLayout>
+
+<style>
+  .index {
+    width: min(100% - 32px, 860px);
+    margin-inline: auto;
+    padding-block: 64px 96px;
+    font: 500 16px / 1.55 var(--font-raleway), sans-serif;
+    font-feature-settings: 'lnum';
+    font-kerning: none;
+  }
+  h1 {
+    font: 400 clamp(40px, 6vw, 68px) / 1.02 var(--font-baskerville), serif;
+    letter-spacing: -0.03em;
+  }
+  .index__lead {
+    margin: 16px 0 48px;
+    color: var(--lab-soft);
+    font-size: 18px;
+  }
+  ol > li {
+    padding-block: 32px;
+    border-top: 1px solid var(--lab-line);
+  }
+  .index__name {
+    display: block;
+    font: 400 32px / 1.1 var(--font-baskerville), serif;
+    letter-spacing: -0.02em;
+  }
+  .index__name:hover {
+    color: var(--lab-blue);
+  }
+  .index__idea {
+    margin-top: 8px;
+    font-size: 18px;
+  }
+  .index__type {
+    margin-top: 4px;
+    color: var(--lab-faint);
+    font-size: 14px;
+  }
+  code {
+    display: block;
+    margin-block: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--lab-canvas-2);
+    font: 500 12.5px / 1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    overflow-wrap: anywhere;
+  }
+  ul {
+    display: grid;
+    gap: 6px;
+    padding-left: 18px;
+    list-style: disc;
+    color: var(--lab-soft);
+    font-size: 15px;
+  }
+</style>

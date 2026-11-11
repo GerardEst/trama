@@ -14,7 +14,7 @@
   height: 10000px;
   background-position: 20px 20px;
   background-size: 40px 40px;
-  background-color: var(--polo-color-canvas);
+  background-color: var(--polo-board-background, var(--polo-color-canvas));
 }
 .board--grid {
   background-image: var(--polo-board-grid-image, radial-gradient(var(--grid-color) 5%, transparent 5%));

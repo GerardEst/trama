@@ -1,0 +1,103 @@
+---
+import { createGame } from '@trama-app/engine'
+import type { Lang } from '../../i18n'
+import { eCopyFor } from './copy'
+import { anyStory } from './any-story'
+import { renderBook, renderChat, renderGame, renderTerminal, viewOf, type AnyWords } from './any-render'
+
+// One story played by the open engine in four interfaces at once. A choice made
+// in any of them is the same game's choice, so all four move on, and each one
+// shows the events of that choice in its own way.
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const e = eCopyFor(lang)
+const story = anyStory(e)
+const words: AnyWords = { again: e.again, trust: e.anyTrust, key: e.anyKey, needs: e.anyNeeds, bookTrust: e.anyBookTrust, bookKey: e.anyBookKey }
+const view = viewOf(createGame(story).start(), [], story)
+const outputs = [
+  { kind: 'terminal', label: e.anyTerminal, html: renderTerminal(view, words) },
+  { kind: 'chat', label: e.anyChat, html: renderChat(view, words) },
+  { kind: 'book', label: e.anyBook, html: renderBook(view, words) },
+  { kind: 'game', label: e.anyGame, html: renderGame(view, words) },
+]
+const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c')
+---
+
+<any-interface class="ai">
+  {outputs.map(output => (
+    <figure class:list={['ai-out', `ai-out--${output.kind}`]}>
+      <figcaption class="ai-label">{output.label}</figcaption>
+      <div class="ai-screen" data-kind={output.kind} set:html={output.html} />
+    </figure>
+  ))}
+  <script type="application/json" data-story set:html={json(story)} />
+  <script type="application/json" data-words set:html={json(words)} />
+</any-interface>
+
+<script>
+  import { createGame, type Game, type StateChange, type StoryTree } from '@trama-app/engine'
+  import { renderBook, renderChat, renderGame, renderTerminal, viewOf, type AnyView, type AnyWords } from './any-render'
+
+  const RENDERERS: Record<string, (view: AnyView, words: AnyWords) => string> = {
+    terminal: renderTerminal,
+    chat: renderChat,
+    book: renderBook,
+    game: renderGame,
+  }
+
+  class AnyInterface extends HTMLElement {
+    private story!: StoryTree
+    private words!: AnyWords
+    private game?: Game
+    private stop?: () => void
+    /** What the engine reported since the last choice. */
+    private changes: StateChange[] = []
+
+    connectedCallback() {
+      const read = (selector: string) => JSON.parse(this.querySelector(selector)?.textContent ?? '{}')
+      this.story = read('[data-story]')
+      this.words = read('[data-words]')
+      this.addEventListener('click', this.onClick)
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.onClick)
+      this.stop?.()
+    }
+
+    private onClick = (event: Event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-answer]')
+      if (!button) return
+      const id = button.dataset['answer']
+      // The first scene was rendered at build time; the game starts on the first click.
+      if (!this.game || !id) this.newGame()
+      this.changes = []
+      if (id) this.game?.choose(id)
+    }
+
+    private newGame() {
+      this.stop?.()
+      this.changes = []
+      const game = createGame(this.story)
+      this.stop = game.subscribe(event => {
+        if (event.type === 'change') this.changes.push(event.change)
+        if (event.type === 'state') this.render()
+      })
+      this.game = game
+      game.start()
+    }
+
+    private render() {
+      if (!this.game) return
+      const view = viewOf(this.game.getState(), this.changes, this.story)
+      for (const screen of this.querySelectorAll<HTMLElement>('.ai-screen')) {
+        screen.innerHTML = RENDERERS[screen.dataset['kind'] ?? '']?.(view, this.words) ?? ''
+      }
+    }
+  }
+
+  customElements.define('any-interface', AnyInterface)
+</script>

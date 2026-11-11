@@ -1,0 +1,332 @@
+---
+import { Font, Image } from 'astro:assets'
+import AuthLabel from '../../components/ui/AuthLabel.astro'
+import { copyFor, format, type Lang } from '../../i18n'
+import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
+import { localePath } from '../../lib/locale'
+import { PAGES } from '../../lib/pages'
+import { engineExample, referenceCode } from '../../lib/story-reference'
+import valleyImage from '../../assets/landing/lab/valley.webp'
+import closingImage from '../../assets/landing/lab/plate-closing.webp'
+import closingDrawing from '../../assets/landing/lab/drawing-closing.webp'
+import LabFooter from '../LabFooter.astro'
+import LabLayout from '../LabLayout.astro'
+import LabNav from '../LabNav.astro'
+import LabStory from '../LabStory.astro'
+import { documentation } from '../atlas/summary'
+import {
+  ATLAS,
+  COMPARISON_CHECKED,
+  COMPETITORS,
+  COMPETITOR_NAMES,
+  COMPETITOR_SOURCES,
+  ROWS,
+  atlasFor,
+  type AtlasChapter,
+  type AtlasId,
+} from '../atlas'
+import { highlightCode } from '../highlight'
+import { eCopyFor } from '../e/copy'
+import LiveBoard from '../e/LiveBoard.astro'
+import PaintedClosing from '../e/PaintedClosing.astro'
+import FeatureIcon from '../e/FeatureIcon.astro'
+import Strengths from '../e/Strengths.astro'
+import OtherTools from '../e/OtherTools.astro'
+import AnyInterface from '../e/AnyInterface.astro'
+import type { DemoId } from '../e/demos'
+import './e.css'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+const c = atlasFor(lang)
+const e = eCopyFor(lang)
+const home = `${lang === 'en' ? '' : `/${lang}`}/lab/e`
+const docsPath = localePath(lang, PAGES.features)
+const summaryPath = '/lab/llms-full.txt'
+const checkedLabel = new Date(COMPARISON_CHECKED).toLocaleDateString(lang, { dateStyle: 'long', timeZone: 'UTC' })
+
+// The page states an answer without the question it was written for, so a
+// leading "Yes." would answer nothing; the question stays in the FAQ data.
+const plain = (answer: string) => answer.replace(/^(Yes|Sí)[.,]\s*/, '').replace(/^./, letter => letter.toUpperCase())
+
+// Four chapters, like a book: each opens with one capability played on a real
+// board, and gathers the smaller ones under it.
+const CHAPTERS: { id: AtlasChapter; numeral: string; lead: AtlasId; demo: DemoId; zoom: number }[] = [
+  { id: 'write', numeral: 'I', lead: 'scene', demo: 'scene', zoom: 0.9 },
+  { id: 'connect', numeral: 'II', lead: 'connections', demo: 'connections', zoom: 0.9 },
+  { id: 'remember', numeral: 'III', lead: 'events', demo: 'events', zoom: 0.9 },
+  { id: 'publish', numeral: 'IV', lead: 'endings', demo: 'publish', zoom: 0.9 },
+]
+
+const placeholder = referenceCode(null, t.engine.agent.placeholderId)
+const prompt = format(t.engine.agent.prompt, { reference: placeholder, npm: ENGINE_LINKS.npm })
+const code = engineExample(placeholder)
+
+// What a search engine or an AI assistant reads first: the same facts as the page.
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      '@id': 'https://trama.app/#app',
+      name: 'Trama',
+      url: 'https://trama.app',
+      description: c.meta.definition,
+      applicationCategory: 'Interactive fiction editor',
+      operatingSystem: 'Web browser',
+      inLanguage: ['en', 'es', 'ca'],
+      featureList: ATLAS.map(info => `${c.features[info.id].name}: ${c.features[info.id].answer}`),
+      softwareHelp: `https://trama.app${docsPath}`,
+      sameAs: ['https://github.com/GerardEst/trama', ENGINE_LINKS.npm],
+      offers: [
+        { '@type': 'Offer', name: 'Creator (monthly)', price: '5.95', priceCurrency: 'EUR' },
+        { '@type': 'Offer', name: 'Creator (yearly)', price: '49.95', priceCurrency: 'EUR' },
+      ],
+    },
+    {
+      '@type': 'SoftwareSourceCode',
+      name: '@trama-app/engine',
+      description: c.features.engine.answer,
+      codeRepository: ENGINE_LINKS.source,
+      programmingLanguage: 'TypeScript',
+      license: 'https://opensource.org/license/mit',
+      runtimePlatform: ['Browser', 'Node.js 18+', 'Deno', 'Workers'],
+    },
+    {
+      '@type': 'FAQPage',
+      inLanguage: lang,
+      mainEntity: c.faq.map(item => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    },
+  ],
+}
+---
+
+<LabLayout lang={lang} version="e" title={`E · Quadern — ${c.meta.title}`}>
+  <Fragment slot="head">
+    <Font cssVariable="--font-baskerville" />
+    <link rel="alternate" type="text/plain" href={summaryPath} title="Trama: full product summary" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />
+  </Fragment>
+  <LabNav lang={lang} home={home} heroCta />
+
+  <main id="main-content">
+    <!-- The valley, drawn on the app's squared paper. -->
+    <section class="e-hero" aria-labelledby="e-title">
+      <div class="e-hero__paper" aria-hidden="true"></div>
+      <Image class="e-hero__valley" src={valleyImage} alt="" widths={[960, 1440, 1928]} sizes="100vw" loading="eager" fetchpriority="high" />
+      <div class="e-hero__copy">
+        <h1 id="e-title">{t.hero.titleStart}<br />{t.hero.titleEnd}</h1>
+        <p class="e-hero__lead">{c.meta.definition}</p>
+        <div class="e-actions">
+          <a class="e-btn e-btn--solid" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+            <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="e-btn" href="#try-it">{t.hero.tryStory}</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- The first page of a real story, laid on the valley's floor. -->
+    <section class="e-play" aria-labelledby="e-play-title">
+      <h2 id="e-play-title" class="e-visually-hidden">{c.ui.playTitle}</h2>
+      <LabStory lang={lang} class="e-story" memory>
+        <p class="e-story__title">{t.demo.titleStart} {t.demo.titleEnd}</p>
+      </LabStory>
+      <p class="e-play__note">{c.ui.playLead}</p>
+    </section>
+
+    <section id="features" class="e-wrap e-features" aria-labelledby="e-features-title">
+      <header class="e-features__head">
+        <h2 id="e-features-title">{t.authoring.title}</h2>
+        <p>{t.authoring.description}</p>
+        <ol class="e-toc">
+          {CHAPTERS.map(chapter => (
+            <li><a href={`#ch-${chapter.id}`}><span>{chapter.numeral}</span> {c.chapters[chapter.id].name}</a></li>
+          ))}
+        </ol>
+      </header>
+
+      {CHAPTERS.map(chapter => {
+        const lead = ATLAS.find(info => info.id === chapter.lead)!
+        const feature = c.features[lead.id]
+        const link = documentation(lead, docsPath)
+        const rest = ATLAS.filter(info => info.chapter === chapter.id && info.id !== chapter.lead)
+        return (
+          <section id={`ch-${chapter.id}`} class="e-chapter" aria-labelledby={`ch-${chapter.id}-title`}>
+            <header class="e-chapter__head">
+              <span class="e-chapter__n" aria-hidden="true">{chapter.numeral}</span>
+              <p class="e-chapter__name">{c.chapters[chapter.id].name}</p>
+              <h3 id={`ch-${chapter.id}-title`}>{c.chapters[chapter.id].title}</h3>
+              <p class="e-chapter__lead">{c.chapters[chapter.id].lead}</p>
+            </header>
+            <div class="e-chapter__body">
+              <div id={`f-${lead.id}`} class="e-lead">
+                <h4><FeatureIcon id={lead.id} />{feature.name}</h4>
+                <p>{plain(feature.answer)}</p>
+                {link && <a class="e-link" href={link} rel={lead.docs ? undefined : 'noopener'}>{lead.docs ? c.ui.docs : c.ui.reference} →</a>}
+              </div>
+              <LiveBoard id={chapter.demo} lang={lang} zoom={chapter.zoom} />
+              <div class="e-more">
+                <p class="e-more__title">{e.alsoIn}</p>
+                <dl>
+                  {rest.map(info => {
+                    const item = c.features[info.id]
+                    const href = documentation(info, docsPath)
+                    return (
+                      <div id={`f-${info.id}`}>
+                        <dt><FeatureIcon id={info.id} />{href ? <a href={href} rel={info.docs ? undefined : 'noopener'}>{item.name}</a> : item.name}</dt>
+                        <dd>{plain(item.answer)}</dd>
+                      </div>
+                    )
+                  })}
+                </dl>
+              </div>
+            </div>
+          </section>
+        )
+      })}
+    </section>
+
+    <section id="why" class="e-wrap e-why" aria-labelledby="e-why-title">
+      <header class="e-section-head">
+        <p class="e-eyebrow">{e.whyEyebrow}</p>
+        <h2 id="e-why-title">{e.whyTitle}</h2>
+        <p>{e.whyLead}</p>
+      </header>
+      <Strengths lang={lang} />
+    </section>
+
+    <section id="compare" class="e-compare" aria-labelledby="e-compare-title">
+      <div class="e-wrap">
+        <header class="e-section-head">
+          <p class="e-eyebrow">{e.compareEyebrow}</p>
+          <h2 id="e-compare-title">{c.ui.compareTitle}</h2>
+          <p>{c.ui.compareLead}</p>
+        </header>
+        <OtherTools lang={lang} />
+        <div class="e-table" role="region" aria-labelledby="e-compare-title" tabindex="0">
+          <table>
+            <caption>{c.ui.compareCaption}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{c.ui.compareRow}</th>
+                <th scope="col" class="is-trama">Trama</th>
+                {COMPETITORS.map(id => <th scope="col">{COMPETITOR_NAMES[id]}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {ROWS.map(row => (
+                <tr>
+                  <th scope="row">{c.rows[row].label}</th>
+                  <td class="is-trama">{c.rows[row].trama}</td>
+                  {COMPETITORS.map(id => <td>{c.rows[row][id]}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="e-table__note">
+          {c.ui.compareLegend} {c.ui.compareChecked} <time datetime={COMPARISON_CHECKED}>{checkedLabel}</time>.
+        </p>
+        <details class="e-sources">
+          <summary>{c.ui.sources}</summary>
+          <ul>
+            {COMPETITORS.flatMap(id => COMPETITOR_SOURCES[id].map(url => (
+              <li><b>{COMPETITOR_NAMES[id]}:</b> <a href={url} rel="noopener">{url.replace(/^https:\/\/(www\.)?/, '')}</a></li>
+            )))}
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <!-- One story played in four kinds of interface, each showing its events its own way. -->
+    <section id="engine" class="e-wrap e-any" aria-labelledby="e-any-title">
+      <header class="e-section-head">
+        <p class="e-eyebrow">{e.anyEyebrow}</p>
+        <h2 id="e-any-title">{t.engine.titleStart} {t.engine.titleEnd}</h2>
+        <p>{t.engine.description}</p>
+      </header>
+      <AnyInterface lang={lang} />
+      <p class="e-any__hint">{e.anyHint}</p>
+      <div class="e-any__how">
+        <dl class="e-any__facts">
+          {ATLAS.filter(info => info.chapter === 'build').map(info => {
+            const item = c.features[info.id]
+            const href = documentation(info, docsPath)
+            return (
+              <div id={`f-${info.id}`}>
+                <dt><FeatureIcon id={info.id} />{href ? <a href={href} rel="noopener">{item.name}</a> : item.name}</dt>
+                <dd>{plain(item.answer)}</dd>
+              </div>
+            )
+          })}
+        </dl>
+        <div class="e-any__code">
+          <pre class="e-code" tabindex="0" aria-label={t.engine.code.codeLabel}><code set:html={highlightCode(code)} /></pre>
+          <div class="e-any__actions">
+            <button class="e-btn" type="button" data-copy-prompt data-prompt={prompt} data-copied={e.copied}>{e.copyPrompt}</button>
+            <a class="e-link" href={ENGINE_LINKS.npm} rel="noopener">{t.engine.links.npm} ↗</a>
+            <a class="e-link" href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source} ↗</a>
+          </div>
+          <p class="e-ai">
+            <span>{c.ui.aiTitle}</span>
+            <a href={summaryPath}>{c.ui.aiLinks[0]}</a>
+            <a href="https://trama.app/llms.txt" rel="noopener">{c.ui.aiLinks[1]}</a>
+            <a href="https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/references/story-format.md" rel="noopener">{c.ui.aiLinks[2]}</a>
+            <a href="https://raw.githubusercontent.com/GerardEst/trama/main/skills/trama-engine/references/engine-api.md" rel="noopener">{c.ui.aiLinks[3]}</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="e-wrap e-faq" aria-labelledby="e-faq-title">
+      <h2 id="e-faq-title">{t.questions.title}</h2>
+      <div class="lq">
+        {c.faq.map((item, index) => (
+          <details open={index === 0}>
+            <summary><span>{item.question}</span><i aria-hidden="true"></i></summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- The last page: a drawing that is painted as it arrives, the question in its sky. -->
+    <section class="e-closing" aria-labelledby="e-closing-title">
+      <PaintedClosing image={closingImage} drawing={closingDrawing}>
+        <h2 id="e-closing-title">{t.closing.titleStart} {t.closing.titleEnd}</h2>
+        <p>{t.closing.yours}</p>
+        <a class="e-btn e-btn--closing" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+          <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+          <span aria-hidden="true">→</span>
+        </a>
+      </PaintedClosing>
+    </section>
+  </main>
+  <LabFooter lang={lang} version="e" />
+</LabLayout>
+
+<script>
+  // Copies the agent prompt; the button says so for a moment.
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy-prompt]')) {
+    const label = button.textContent ?? ''
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset['prompt'] ?? '')
+        button.textContent = button.dataset['copied'] ?? label
+        setTimeout(() => (button.textContent = label), 1600)
+      } catch {
+        // Without clipboard access the prompt stays in the docs.
+      }
+    })
+  }
+</script>

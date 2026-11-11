@@ -1,0 +1,878 @@
+/* A · Clariana. A book: a frontispiece plate, four parts, an index and an
+   appendix, all on one grid of 18 columns split 5:13. Spacing is Fibonacci
+   because the seed's only digit runs, 25 and 40, reduce to 5:8. Red, from the
+   traveller's cape, marks only three things: chapter numerals, the reader's
+   choices and the one button that matters. */
+:root {
+  --a-5: 5px;
+  --a-8: 8px;
+  --a-13: 13px;
+  --a-21: 21px;
+  --a-34: 34px;
+  --a-55: 55px;
+  --a-89: 89px;
+  --a-144: 144px;
+  --a-gutter: clamp(16px, 4vw, 55px);
+  --a-width: 1280px;
+  --a-split: minmax(0, 5fr) minmax(0, 13fr);
+  --a-serif: var(--font-baskerville), Baskerville, serif;
+  --a-sans: var(--font-raleway), sans-serif;
+  --a-red: var(--lab-cape);
+  --code-key: var(--lab-ink);
+  --code-string: var(--lab-soft);
+  --code-call: var(--lab-ink);
+  --code-comment: var(--lab-faint);
+}
+
+/* The book is set in its serif; the sans is only for the product's own UI. */
+body {
+  font: 400 18px / 1.6 var(--a-serif);
+}
+:is(.art, .story-step .answer, lab-live .answer, .lp__way input) {
+  font-family: var(--a-sans);
+  font-feature-settings: 'lnum';
+  /* Raleway's kerning swallows the apostrophes Catalan depends on. */
+  font-kerning: none;
+}
+
+:is(h1, h2, h3, h4) {
+  font-family: var(--a-serif);
+  font-weight: 400;
+}
+
+/* The heading ladder: display, section, chapter. */
+h2 {
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+.a-wrap,
+.a-section {
+  width: min(100% - var(--a-gutter) * 2, var(--a-width));
+  margin-inline: auto;
+}
+.a-section {
+  padding-top: var(--a-144);
+}
+
+/* Nav */
+.ln {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--lab-canvas) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+.ln__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--a-34);
+  width: min(100% - var(--a-gutter) * 2, var(--a-width));
+  min-height: 72px;
+  margin-inline: auto;
+  border-bottom: 1px solid var(--lab-line);
+  font-size: 16px;
+}
+.ln__mark {
+  font: 400 28px / 1 var(--a-serif);
+  letter-spacing: -0.02em;
+}
+.ln__mark span {
+  color: var(--a-red);
+}
+.ln__links {
+  display: flex;
+  gap: var(--a-34);
+  margin: 0 auto 0 var(--a-21);
+}
+.ln__links a:hover,
+.ln__login:hover,
+.ln__cta:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ln__login {
+  color: var(--lab-soft);
+}
+.ln__cta::after {
+  content: ' →';
+}
+
+/* Two buttons: the red one, and the outline for everything else. */
+.a-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--a-13);
+}
+.a-btn,
+.lp__actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-13);
+  min-height: 50px;
+  padding: 0 26px;
+  border: 1px solid var(--lab-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--lab-ink);
+  font: 400 17px / 1 var(--a-serif);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.a-btn span {
+  font-size: 19px;
+  translate: 0 -1px;
+}
+.a-btn:hover,
+.lp__actions button:hover {
+  border-color: var(--lab-ink);
+}
+.a-btn--solid {
+  border-color: var(--a-red);
+  background: var(--a-red);
+  color: var(--lab-on-action);
+}
+.a-btn--solid:hover {
+  border-color: var(--lab-ink);
+  background: var(--lab-ink);
+}
+.a-eyebrow {
+  color: var(--lab-soft);
+  font-size: 15px;
+}
+.a-link {
+  text-decoration: underline;
+  text-decoration-color: var(--lab-strong);
+  text-underline-offset: 4px;
+}
+.a-link:hover {
+  text-decoration-color: var(--lab-ink);
+}
+
+/* Hero: a centred title page, then the frontispiece. */
+.a-hero {
+  width: min(100% - var(--a-gutter) * 2, var(--a-width));
+  margin-inline: auto;
+}
+.a-hero__copy {
+  max-width: 1040px;
+  margin-inline: auto;
+  padding-block: var(--a-89) var(--a-55);
+  text-align: center;
+}
+.a-hero h1 {
+  font-size: clamp(44px, 7vw, 100px);
+  line-height: 0.99;
+  letter-spacing: -0.04em;
+}
+.a-hero__lead {
+  max-width: 560px;
+  margin: var(--a-34) auto;
+  color: var(--lab-soft);
+  font-size: clamp(17px, 1.4vw, 20px);
+  text-wrap: balance;
+}
+/* The opening spread: the frontispiece facing the first page of the story. */
+.a-plate__frame {
+  display: grid;
+  grid-template-columns: minmax(0, 11fr) minmax(0, 7fr);
+  gap: var(--a-34);
+  align-items: stretch;
+}
+.a-plate__img {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  object-fit: cover;
+  object-position: 78% 50%;
+}
+
+/* The story, set as the facing page. */
+.a-story {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--lab-ink);
+  border-bottom: 1px solid var(--lab-ink);
+  scroll-margin-top: 96px;
+}
+.a-story .ls-game {
+  flex: 1;
+}
+.a-story .node__answers {
+  margin-top: 0;
+}
+.a-story .ls-memory,
+.a-story .ls-next,
+.a-story .ls-foot {
+  padding-inline: 0;
+}
+.a-story .node__passage strong {
+  font-weight: 400;
+  font-style: italic;
+}
+.a-story__title {
+  padding: var(--a-21) 0 0;
+  color: var(--lab-soft);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+.a-story .story-step,
+lab-live .story-step {
+  --story-passage-size: 18px;
+  --story-answer-size: 17px;
+  max-width: none;
+}
+.a-story .node__content {
+  padding: var(--a-13) 0 var(--a-34);
+  gap: var(--a-21);
+}
+/* The reader's choices, the same in the hero, the examples and the drawings. */
+.a-story .node__answers,
+lab-live .story-step .node__answers {
+  gap: 0;
+  counter-reset: choice;
+}
+.a-story .answer,
+lab-live .story-step .answer,
+.lc .art-play .art-answer {
+  display: flex;
+  gap: var(--a-13);
+  align-items: baseline;
+  min-height: 0;
+  padding: var(--a-8) 0;
+  border: 0;
+  border-top: 1px solid var(--lab-line);
+  border-radius: 0;
+  background: none;
+  color: var(--lab-ink);
+  font: 400 var(--story-answer-size, 17px) / 1.45 var(--a-serif);
+  text-align: left;
+  transition: color 0.2s;
+}
+.a-story .answer::before,
+lab-live .story-step .answer::before {
+  counter-increment: choice;
+  content: counter(choice, lower-roman) '.';
+  flex: none;
+  width: 24px;
+  color: var(--a-red);
+  font-size: 15px;
+}
+.a-story .answer:hover:not(:disabled),
+.a-story .answer--selected,
+lab-live .story-step .answer:hover:not(:disabled),
+lab-live .story-step .answer--selected {
+  background: none;
+  color: var(--a-red);
+}
+.ls-memory,
+.v-live__memory {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--a-5) var(--a-13);
+  padding: var(--a-13) var(--a-34);
+  border-top: 1px solid var(--lab-line);
+  color: var(--lab-soft);
+  font-size: 15px;
+}
+.ls-memory ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-5) var(--a-13);
+}
+.ls-memory li,
+.v-live__memory span:last-child {
+  color: var(--lab-ink);
+}
+.ls-memory .ls-memory__empty {
+  color: var(--lab-faint);
+}
+.ls-next {
+  padding: var(--a-21) var(--a-34);
+  border-top: 1px solid var(--lab-line);
+}
+.ls-next p {
+  margin-bottom: var(--a-13);
+  font-size: 19px;
+  line-height: 1.35;
+}
+.ls-next a {
+  display: inline-flex;
+  gap: var(--a-8);
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--a-red);
+  color: var(--lab-on-action);
+}
+.ls-foot,
+.v-live__restart {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  padding: var(--a-5) var(--a-34);
+  border: 0;
+  border-top: 1px solid var(--lab-line);
+  background: none;
+  color: var(--lab-soft);
+  font: 400 15px var(--a-serif);
+}
+.a-story:not([data-started]) .ls-foot,
+.ls-foot [data-intro] {
+  display: none;
+}
+.ls-foot button {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--lab-ink);
+  cursor: pointer;
+}
+
+/* Features: one spread per chapter on the 5:13 split, then the index. */
+.a-features__head {
+  max-width: 820px;
+  padding-bottom: var(--a-89);
+}
+.a-features__head h2 {
+  margin-bottom: var(--a-21);
+}
+.a-features__lead {
+  max-width: 620px;
+  color: var(--lab-soft);
+  font-size: 20px;
+}
+.lc {
+  display: grid;
+  gap: var(--a-144);
+}
+/* One spread for every chapter, on the 5:13 split: the text, and the chapter's
+   picture when it has one, in the margin; the product on the wide page. */
+.lc-spread {
+  display: grid;
+  grid-template-columns: var(--a-split);
+  grid-template-rows: auto auto 1fr;
+  gap: 0 var(--a-55);
+  align-items: start;
+  scroll-margin-top: 80px;
+}
+.lc-head {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--a-13);
+  margin-bottom: var(--a-13);
+  color: var(--a-red);
+  font-size: 17px;
+}
+.lc-n {
+  min-width: 1.6em;
+  font-variant-numeric: tabular-nums;
+}
+.lc-head h3 {
+  font-size: inherit;
+}
+.lc-head p {
+  display: none;
+}
+.lc-copy {
+  grid-column: 1;
+  grid-row: 2;
+}
+.lc-copy h4 {
+  margin-bottom: var(--a-21);
+  font-size: clamp(30px, 2.8vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.lc-copy p {
+  color: var(--lab-ink);
+  font-size: 18px;
+}
+.lc-copy h4 a,
+.lc-index a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 0.2s;
+}
+.lc-copy h4 a:hover,
+.lc-index a:hover {
+  text-decoration-color: currentColor;
+}
+.lc-plate {
+  grid-column: 1;
+  grid-row: 3;
+  margin-top: var(--a-34);
+}
+/* The product, on a sheet of the same paper: two leaves and the thread. */
+.lc-demo {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--a-55);
+  align-items: center;
+  min-height: 100%;
+  padding: var(--a-55);
+  border-block: 1px solid var(--lab-ink);
+}
+.lc-board {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+}
+.lc-demo figure {
+  position: relative;
+  display: grid;
+}
+.lc-demo figure + figure::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(var(--a-55) * -1);
+  width: var(--a-55);
+  height: 1px;
+  background: var(--a-red);
+}
+.lc-demo figure + figure::before,
+.lc-demo figure + figure::after {
+  pointer-events: none;
+}
+.lc-demo figure + figure::after {
+  content: '';
+  position: absolute;
+  top: calc(50% - 3px);
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--a-red);
+}
+.lc-demo figcaption {
+  display: none;
+}
+/* Remember draws the setup first, so its thread leaves from its right edge. */
+.lc-spread--remember .lc-author {
+  order: -1;
+}
+.lc-spread--remember .lc-demo figure + figure::before {
+  left: auto;
+  right: calc(var(--a-55) * -1);
+}
+.lc-spread--remember .lc-demo figure + figure::after {
+  left: auto;
+  right: -4px;
+}
+
+/* One drawing language: ink and paper, square corners, one scale. */
+.lc .art {
+  --art-radius: 2px;
+  --art-accent: var(--lab-ink);
+  --art-accent-soft: var(--lab-canvas-2);
+  --art-on-accent: var(--lab-surface);
+  zoom: 1.08;
+}
+.lc .art-node,
+.lc .art-play,
+lab-live {
+  border-color: var(--lab-strong);
+  background: var(--lab-surface);
+  box-shadow: none;
+}
+lab-live {
+  border: 1px solid var(--lab-strong);
+}
+.lc .art-play .art-answer {
+  --story-answer-size: 15px;
+}
+lab-live .story-step .node__content {
+  padding: var(--a-34) var(--a-34) var(--a-21);
+  gap: var(--a-21);
+}
+.lc-phone__screen {
+  width: auto;
+}
+
+/* The index, at the back of the book: every other tool, in even columns. */
+.lc-index {
+  display: grid;
+  grid-template-columns: var(--a-split);
+  gap: var(--a-34) var(--a-55);
+  padding-top: var(--a-55);
+  border-top: 1px solid var(--lab-ink);
+}
+.lc-index h3 {
+  font-size: clamp(30px, 2.8vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.lc-index dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--a-34);
+}
+.lc-index dl > div {
+  padding-block: var(--a-13) var(--a-21);
+  border-top: 1px solid var(--lab-line);
+  scroll-margin-top: 80px;
+}
+.lc-index dt {
+  font-size: 19px;
+  line-height: 1.3;
+}
+.lc-index dd {
+  margin: var(--a-5) 0 0;
+  color: var(--lab-ink);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+/* Engine: an appendix on the same grid, the code printed as a listing. */
+.a-engine {
+  width: min(100% - var(--a-gutter) * 2, var(--a-width));
+  margin: var(--a-144) auto 0;
+  padding-top: var(--a-55);
+  border-top: 1px solid var(--lab-ink);
+}
+.a-engine__inner {
+  display: grid;
+  grid-template-columns: var(--a-split);
+  grid-template-areas:
+    'label title'
+    'links text'
+    'license points'
+    '. ways';
+  gap: 0 var(--a-55);
+  align-items: start;
+}
+.a-engine__head {
+  display: contents;
+}
+.a-engine .a-eyebrow {
+  grid-area: label;
+  padding-top: var(--a-13);
+}
+.a-engine__head h2 {
+  grid-area: title;
+  margin-bottom: var(--a-21);
+}
+.a-engine__head > p:not(.a-eyebrow, .a-engine__license) {
+  grid-area: text;
+  max-width: 680px;
+  color: var(--lab-soft);
+  font-size: 19px;
+}
+.a-engine__links {
+  grid-area: links;
+  display: grid;
+  gap: var(--a-5);
+  font-size: 16px;
+}
+.a-engine__license {
+  grid-area: license;
+  margin-top: var(--a-8);
+  color: var(--lab-faint);
+  font-size: 15px;
+}
+.a-engine__points {
+  grid-area: points;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--a-34);
+  margin-block: var(--a-55);
+}
+.a-engine__points h3 {
+  margin-bottom: var(--a-5);
+  font-size: 20px;
+  line-height: 1.2;
+}
+.a-engine__points p {
+  color: var(--lab-soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.lp {
+  grid-area: ways;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--a-55);
+  align-items: start;
+}
+.lp__way {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-8);
+  min-width: 0;
+}
+.lp__label {
+  color: var(--lab-soft);
+  font-size: 15px;
+}
+.lp__way h3 {
+  font-size: 26px;
+  line-height: 1.1;
+}
+.lp__way > p {
+  color: var(--lab-soft);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.lp__way label {
+  margin-top: var(--a-8);
+  font-size: 15px;
+}
+.lp__way input {
+  min-height: 44px;
+  padding: 0 var(--a-13);
+  border: 1px solid var(--lab-strong);
+  border-radius: 2px;
+  background: var(--lab-surface);
+  font-size: 14px;
+}
+.lp__way .lp__hint {
+  color: var(--lab-faint);
+  font-size: 14px;
+}
+/* The prompt, quoted as the words you would say to your agent. */
+.lp__code--wrap {
+  margin-block: var(--a-8);
+  padding: 0 0 0 var(--a-21);
+  border-left: 2px solid var(--lab-strong);
+  color: var(--lab-soft);
+  font: 400 17px / 1.55 var(--a-serif);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* The code, printed as a numbered listing. */
+.lp__code:not(.lp__code--wrap) {
+  margin-top: var(--a-8);
+  padding: var(--a-21) 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-block: 1px solid var(--lab-line);
+  font: 400 13px / 1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.lp__code code {
+  counter-reset: line;
+}
+.tk-line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 3ch;
+  margin-right: 2ch;
+  color: var(--lab-faint);
+  text-align: right;
+}
+.lp__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--a-13);
+}
+.lp__status {
+  color: var(--lab-soft);
+  font-size: 15px;
+}
+
+/* FAQ, on the same split. */
+.a-faq {
+  display: grid;
+  grid-template-columns: var(--a-split);
+  gap: var(--a-55);
+  align-items: start;
+}
+.a-faq h2 {
+  position: sticky;
+  top: 104px;
+}
+.lq details {
+  border-top: 1px solid var(--lab-line);
+}
+.lq details:last-child {
+  border-bottom: 1px solid var(--lab-line);
+}
+.lq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-21);
+  padding: var(--a-21) 0;
+  font-size: 20px;
+  line-height: 1.3;
+}
+.lq summary i {
+  position: relative;
+  flex: none;
+  width: 13px;
+  height: 13px;
+}
+.lq summary i::before,
+.lq summary i::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 0;
+  width: 13px;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.25s;
+}
+.lq summary i::after {
+  transform: rotate(90deg);
+}
+.lq details[open] summary i::after {
+  transform: none;
+}
+.lq details p {
+  max-width: 680px;
+  padding-bottom: var(--a-21);
+  color: var(--lab-soft);
+  font-size: 17px;
+}
+
+/* Closing: the endpaper. */
+.a-closing {
+  margin-top: var(--a-144);
+  padding: var(--a-89) var(--a-gutter) var(--a-144);
+  background: var(--lab-canvas-2);
+  text-align: center;
+}
+.a-closing__plate {
+  width: min(100%, var(--a-width));
+  height: auto;
+  margin: 0 auto var(--a-89);
+}
+.a-closing h2 {
+  font-size: clamp(48px, 7vw, 100px);
+  letter-spacing: -0.04em;
+  line-height: 0.99;
+}
+.a-closing > p {
+  margin: var(--a-21) 0 var(--a-34);
+  color: var(--lab-soft);
+  font-size: 21px;
+}
+
+/* Footer, on the split. */
+.lf__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6.5fr) minmax(0, 6.5fr);
+  gap: var(--a-21) var(--a-55);
+  width: min(100% - var(--a-gutter) * 2, var(--a-width));
+  margin-inline: auto;
+  padding-block: var(--a-55);
+  font-size: 16px;
+}
+.lf__brand p {
+  margin-top: var(--a-13);
+  max-width: 300px;
+  color: var(--lab-soft);
+}
+.lf__links,
+.lf__langs {
+  display: grid;
+  align-content: start;
+  gap: var(--a-5);
+}
+.lf__links a:hover,
+.lf__langs a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.lf__langs [aria-current] {
+  color: var(--lab-soft);
+}
+.lf small {
+  grid-column: 1 / -1;
+  color: var(--lab-faint);
+  font-size: 14px;
+}
+
+@media (max-width: 1040px) {
+  .ln__links {
+    display: none;
+  }
+  .ln__login {
+    margin-left: auto;
+  }
+  .lc-spread,
+  .a-plate__frame,
+  .a-engine__inner,
+  .a-faq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lc-spread {
+    grid-template-rows: none;
+  }
+  .lc-index {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lc-index dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .a-plate__img {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+  .lc-spread > * {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+  .lc-demo {
+    margin-top: var(--a-34);
+  }
+  .a-engine__inner {
+    grid-template-areas: 'label' 'title' 'text' 'links' 'license' 'points' 'ways';
+  }
+  .a-faq h2 {
+    position: static;
+  }
+  .lp,
+  .a-engine__points {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --a-144: 89px;
+    --a-89: 55px;
+  }
+  .ln__login {
+    display: none;
+  }
+  .ln__cta {
+    margin-left: auto;
+    font-size: 15px;
+  }
+  .ln__inner {
+    gap: var(--a-13);
+    min-height: 60px;
+  }
+  .lc-demo,
+  .lc-board {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--a-21);
+  }
+  .lc-index dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lc-demo figure + figure::before,
+  .lc-demo figure + figure::after {
+    display: none;
+  }
+  .lc .art {
+    zoom: 1;
+  }
+  .lf__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lf__brand {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,41 @@
+---
+import type { AtlasId } from '../atlas'
+
+// A feature's icon: the one the board shows for it, or a new one drawn in the same
+// line when the board has none. Drawn as a mask, so it takes the text colour.
+interface Props {
+  id: AtlasId
+}
+
+const { id } = Astro.props
+const board = import.meta.glob<string>('../../../../src/assets/icons/*.svg', { query: '?url', import: 'default', eager: true })
+const drawn = import.meta.glob<string>('./icons/*.svg', { query: '?url', import: 'default', eager: true })
+
+/** The board's own icon for the features it draws one for. */
+const FROM_BOARD: Partial<Record<AtlasId, string>> = {
+  focus: 'maximize',
+  images: 'camera',
+  events: 'stat',
+  requirements: 'condition',
+  variables: 'tag',
+  preview: 'play',
+  share: 'share',
+  safety: 'save',
+}
+const name = FROM_BOARD[id]
+const url = name ? board[`../../../../src/assets/icons/${name}.svg`] : drawn[`./icons/${id}.svg`]
+---
+
+{url && <span class="feature-icon" style={`--icon: url("${url}")`} aria-hidden="true"></span>}
+
+<style>
+  .feature-icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+  }
+</style>

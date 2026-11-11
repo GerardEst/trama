@@ -1,0 +1,10 @@
+/* The live boards of the public site (src/embed), built on their own. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/embed",
+    "types": []
+  },
+  "files": ["src/embed/main.ts"],
+  "include": ["src/**/*.d.ts"]
+}

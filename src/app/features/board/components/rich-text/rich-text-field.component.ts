@@ -7,6 +7,7 @@ import { storyEditorValue } from './story-editor-html'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { activeElementIn } from 'src/app/shared/utils/dom'
 
 @Component({
   selector: 'polo-rich-text-field',
@@ -88,7 +89,7 @@ export class RichTextFieldComponent implements OnChanges, OnDestroy {
     this.cancelEditorLoad()
     // The preview keeps its content until here, so leaving the field while loading changes nothing.
     const preview = this.preview?.nativeElement
-    if (this.inlineEditor || this.openEditor || !preview || document.activeElement !== preview) return
+    if (this.inlineEditor || this.openEditor || !preview || activeElementIn(preview) !== preview) return
 
     this.inlineDirty = false
     preview.replaceChildren()

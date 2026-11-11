@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core'
 import { AnchoredPopoverContentDirective } from './anchored-popover-content.directive'
+import { activeElementIn } from 'src/app/shared/utils/dom'
 
 // Project a [popoverTrigger] button and an <ng-template poloPopoverContent>.
 @Component({
@@ -45,7 +46,7 @@ export class AnchoredPopoverComponent {
           ? panel.querySelector<HTMLElement>(this.initialFocusSelector)
           : null
         if (preferredControl) preferredControl.focus()
-        else if (!panel.contains(document.activeElement)) {
+        else if (!panel.contains(activeElementIn(panel))) {
           const firstControl = panel.querySelector<HTMLElement>(
             '[autofocus], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
           )
@@ -73,7 +74,8 @@ export class AnchoredPopoverComponent {
   }
 
   close() {
-    const focusWasInside = this.panelElement?.contains(document.activeElement)
+    const panel = this.panelElement
+    const focusWasInside = panel ? panel.contains(activeElementIn(panel)) : false
     this.pointerStart = undefined
     this.boardPanned = false
     this.isOpen = false

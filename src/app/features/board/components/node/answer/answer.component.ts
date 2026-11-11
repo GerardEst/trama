@@ -23,6 +23,7 @@ import { BoardAnchorDirective } from '../../../directives/board-anchor.directive
 import { RichTextFieldComponent } from '../../rich-text/rich-text-field.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { SortableHandleComponent } from 'src/app/shared/components/ui/sortable-handle/sortable-handle.component'
+import { activeElementIn } from 'src/app/shared/utils/dom'
 
 @Component({
   selector: 'polo-answer',
@@ -93,7 +94,7 @@ export class AnswerComponent {
     event.preventDefault()
     event.stopPropagation()
     const items = Array.from(this.optionsPanel!.nativeElement.querySelectorAll<HTMLElement>('[role="menuitem"]'))
-    const current = items.indexOf(document.activeElement as HTMLElement)
+    const current = items.indexOf(activeElementIn(this.optionsPanel!.nativeElement) as HTMLElement)
     const index = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1
       : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length
     items[index]?.focus()

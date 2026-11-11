@@ -14,11 +14,13 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@types/three": "0.170.0",
     "happy-dom": "^21.0.4",
     "typescript": "^5.9.3",
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "astro": "^7.4.4"
+    "astro": "^7.4.4",
+    "three": "0.170.0"
   }
 }

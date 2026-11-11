@@ -1,0 +1,112 @@
+---
+import { createGame } from '@trama-app/engine'
+import { copyFor, type Lang } from '../../i18n'
+import { renderStep, type StepStrings } from '../../lib/story-step'
+import { atlasFor, type LiveId } from './index'
+import { liveTree } from './trees'
+
+// One feature's example as a story the reader can actually play. The first step
+// is rendered at build time, so it reads without a script.
+interface Props {
+  id: LiveId
+  lang: Lang
+}
+
+const { id, lang } = Astro.props
+const ui = atlasFor(lang).ui
+const strings: StepStrings = copyFor(lang).player
+const tree = liveTree(id, lang)
+const opening = renderStep(createGame(tree).start(), strings)
+const remembers = Object.values(tree.refs ?? {}).some(ref => ref.type !== 'property')
+---
+
+<lab-live data-strings={JSON.stringify(strings)}>
+  <div class="story-step" data-step set:html={opening} />
+  {remembers && (
+    <p class="v-live__memory">
+      <span>{ui.remembers}:</span>
+      <span data-memory>{ui.nothingYet}</span>
+    </p>
+  )}
+  <button class="v-live__restart" type="button" data-restart hidden>↺ {ui.restart}</button>
+  <script type="application/json" data-tree set:html={JSON.stringify(tree).replace(/</g, '\\u003c')} />
+</lab-live>
+
+<script>
+  import { createGame, type Game, type StoryTree } from '@trama-app/engine'
+  import { renderStep, type StepStrings } from '../../lib/story-step'
+
+  // Listens only on its own element, and starts its game on the first click.
+  class LabLive extends HTMLElement {
+    private game?: Game
+    private tree!: StoryTree
+    private strings!: StepStrings
+    private emptyMemory = ''
+
+    connectedCallback() {
+      this.tree = JSON.parse(this.querySelector('[data-tree]')?.textContent ?? '{}')
+      this.strings = JSON.parse(this.dataset['strings'] ?? '{}')
+      this.emptyMemory = this.querySelector('[data-memory]')?.textContent ?? ''
+      this.addEventListener('click', this.onClick)
+      this.addEventListener('submit', this.onSubmit)
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.onClick)
+      this.removeEventListener('submit', this.onSubmit)
+    }
+
+    private ensureGame(): Game {
+      if (this.game) return this.game
+      const game = createGame(this.tree)
+      game.subscribe(event => {
+        if (event.type === 'state') {
+          this.querySelector('[data-step]')!.innerHTML = renderStep(event.state, this.strings)
+          this.showMemory(game)
+        }
+      })
+      game.start()
+      this.game = game
+      return game
+    }
+
+    private showMemory(game: Game) {
+      const memory = this.querySelector('[data-memory]')
+      if (!memory) return
+      const { stats, conditions } = game.getState().player
+      const refs = this.tree.refs ?? {}
+      const name = (ref: string) => refs[ref]?.name ?? ref
+      const values = [
+        ...Object.entries(stats).map(([ref, amount]) => `${name(ref)} ${amount}`),
+        ...conditions.map(ref => `${name(ref)} ✓`),
+      ]
+      memory.textContent = values.join(' · ') || this.emptyMemory
+    }
+
+    private onClick = (event: Event) => {
+      const target = event.target as Element
+      if (target.closest('[data-restart]')) {
+        this.game = undefined
+        this.ensureGame()
+        this.querySelector<HTMLElement>('[data-restart]')!.hidden = true
+        return
+      }
+      const answer = target.closest<HTMLButtonElement>('button[data-answer]')
+      if (answer && !answer.disabled) {
+        this.ensureGame().choose(answer.dataset['answer']!)
+        this.querySelector<HTMLElement>('[data-restart]')!.hidden = false
+      }
+    }
+
+    private onSubmit = (event: Event) => {
+      event.preventDefault()
+      const value = new FormData(event.target as HTMLFormElement).get('answer')
+      if (typeof value === 'string' && value.trim()) {
+        this.ensureGame().submitText(value.trim())
+        this.querySelector<HTMLElement>('[data-restart]')!.hidden = false
+      }
+    }
+  }
+
+  customElements.define('lab-live', LabLive)
+</script>

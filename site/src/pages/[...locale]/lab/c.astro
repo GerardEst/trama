@@ -1,0 +1,11 @@
+---
+import Page from '../../../lab/versions/C.astro'
+import { localeStaticPaths } from '../../../lib/locale'
+import type { Lang } from '../../../i18n'
+
+export const getStaticPaths = localeStaticPaths
+
+const { lang } = Astro.props as { lang: Lang }
+---
+
+<Page lang={lang} />

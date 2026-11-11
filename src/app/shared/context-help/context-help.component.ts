@@ -12,6 +12,7 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { ContextHelpService } from './context-help.service'
 import { CONTEXT_HELP_TOPICS, ContextHelpTopic } from './context-help.topics'
 import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
+import { activeElementIn } from 'src/app/shared/utils/dom'
 
 let nextHelpId = 0
 
@@ -132,7 +133,8 @@ export class ContextHelpComponent implements OnDestroy {
 
   close(restoreFocus = false) {
     // Restore before closing: the trigger's focus handler would otherwise reopen help.
-    if (restoreFocus && this.panelElement?.contains(this.document.activeElement)) {
+    const panel = this.panelElement
+    if (restoreFocus && panel?.contains(activeElementIn(panel))) {
       this.triggerElement?.focus()
     }
     this.pinned = false

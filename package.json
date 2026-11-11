@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && npm run build --prefix site && node scripts/merge-site.mjs",
-    "start:site": "npm run dev --prefix site",
+    "build": "ng build && ng run polo-angular:build-embed && npm run build --prefix site && node scripts/merge-site.mjs",
+    "start:site": "ng run polo-angular:build-embed:development && npm run dev --prefix site",
     "serve-dist": "node scripts/serve-dist.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -17,7 +17,8 @@
     "ts-coverage": "typescript-coverage-report",
     "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref lsemostpqoguehpsbzgu",
     "storybook": "ng run polo-angular:storybook",
-    "build-storybook": "ng run polo-angular:build-storybook"
+    "build-storybook": "ng run polo-angular:build-storybook",
+    "build:embed": "ng run polo-angular:build-embed"
   },
   "private": true,
   "dependencies": {

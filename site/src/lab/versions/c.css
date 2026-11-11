@@ -1,0 +1,626 @@
+/* C · Mirall. The page folds along a thread: what you do on one side, what the
+   reader gets on the other. The seed is full of mirrors (JtTj, 3Qq3, OdO). */
+:root {
+  /* Bricolage only comes at its 96pt optical size: display type only. */
+  --c-sans: var(--font-bricolage), sans-serif;
+  --c-text: var(--font-instrument-sans), sans-serif;
+  --c-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --c-story: var(--font-baskerville), Baskerville, serif;
+  --c-gutter: clamp(16px, 3.4vw, 48px);
+  --c-half: 680px;
+  --polo-font-ui: var(--c-text);
+  --p-display: var(--c-sans);
+  --p-radius: 10px;
+  --p-accent: var(--lab-green);
+}
+
+body {
+  background: var(--lab-canvas);
+  font: 400 17px / 1.55 var(--c-text);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--c-sans);
+  font-weight: 800;
+}
+
+.c-mega,
+.c-big,
+.c-giant {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.c-mega {
+  font-size: clamp(38px, 5vw, 76px);
+  line-height: 0.96;
+}
+.c-big {
+  font-size: clamp(32px, 3.8vw, 56px);
+  line-height: 0.98;
+}
+.c-giant {
+  font-size: clamp(44px, 5.8vw, 92px);
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+/* The fold: two halves, two grounds, one thread. */
+.c-split {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  scroll-margin-top: 60px;
+}
+.c-split::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0 auto 0 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--lab-thread);
+  pointer-events: none;
+}
+.c-l {
+  background: var(--lab-author);
+  color: var(--lab-author-ink);
+}
+.c-r {
+  background: var(--lab-canvas);
+  color: var(--lab-ink);
+}
+.c-cell {
+  width: min(100%, var(--c-half));
+  padding: clamp(40px, 5vw, 72px) var(--c-gutter);
+}
+.c-l .c-cell {
+  margin-left: auto;
+}
+
+/* The author's side has its own ink. */
+.c-l .art {
+  --art-surface: var(--lab-author-surface);
+  --art-ink: var(--lab-author-ink);
+  --art-soft: var(--lab-author-soft);
+  --art-faint: var(--lab-author-faint);
+  --art-line: var(--lab-author-line);
+  --art-strong: var(--lab-author-faint);
+  --art-accent: var(--lab-thread);
+  --art-accent-soft: color-mix(in srgb, var(--lab-thread) 16%, transparent);
+  --art-on-accent: var(--lab-on-thread);
+}
+.art {
+  --art-ui: var(--c-text);
+  --art-mono: var(--c-mono);
+  --art-story: var(--c-story);
+  --art-radius: 10px;
+  --art-accent: var(--lab-green);
+  --art-on-accent: var(--lab-surface);
+  --art-accent-soft: color-mix(in srgb, var(--lab-green) 16%, transparent);
+}
+
+.c-tag {
+  margin-bottom: 14px;
+  font: 500 12.5px / 1.3 var(--c-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.c-l .c-tag {
+  color: var(--lab-thread);
+}
+.c-r .c-tag {
+  color: var(--lab-green);
+}
+
+/* Where the thread catches. */
+.c-knot,
+.c-port {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  translate: -50% 0;
+  background: var(--lab-thread);
+}
+.c-knot {
+  top: clamp(40px, 5vw, 72px);
+  width: 22px;
+  height: 22px;
+  border: 5px solid var(--lab-canvas);
+  border-radius: 7px;
+  outline: 2px solid var(--lab-thread);
+}
+.c-port {
+  top: clamp(46px, 4.8vw, 66px);
+  width: 14px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+/* Nav */
+.c-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: linear-gradient(90deg, var(--lab-author) 50%, var(--lab-canvas) 50%);
+}
+.c-nav::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--lab-thread) 40%, transparent);
+}
+.c-nav__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  width: min(100%, calc(var(--c-half) * 2));
+  min-height: 60px;
+  margin-inline: auto;
+  padding-inline: var(--c-gutter);
+  font-size: 14px;
+  font-weight: 500;
+}
+.c-nav .ln__mark {
+  margin-right: 12px;
+  color: var(--lab-author-ink);
+  font-family: var(--c-sans);
+  font-size: 24px;
+}
+.c-nav .ln__mark span {
+  color: var(--lab-thread);
+}
+.c-nav__side {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.c-nav__side--l {
+  padding-right: 28px;
+  color: var(--lab-author-ink);
+}
+.c-nav__side--l a:not(.ln__mark) {
+  color: var(--lab-author-soft);
+}
+.c-nav__side--r {
+  justify-content: flex-end;
+  padding-left: 28px;
+}
+.c-nav__side a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.c-nav__cta {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--lab-action);
+  color: var(--lab-on-action);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.c-nav__login {
+  white-space: nowrap;
+}
+
+/* Buttons */
+.c-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+.c-btn:hover {
+  transform: translateY(-2px);
+}
+.c-btn--thread {
+  background: var(--lab-thread);
+  color: var(--lab-on-thread);
+}
+
+/* Hero */
+.c-hero .c-cell {
+  padding-top: clamp(32px, 4vw, 56px);
+}
+/* Keeps both halves' content on one line, whatever each language's title wraps to. */
+.c-hero .c-mega {
+  min-height: 1.92em;
+}
+.c-hero .c-cell {
+  padding-top: clamp(48px, 5vw, 80px);
+}
+.c-hero__lead {
+  max-width: 520px;
+  margin: 24px 0 26px;
+  color: var(--lab-author-soft);
+  font-size: clamp(16px, 1.3vw, 18px);
+}
+.c-hero__board {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+.c-hero__board .art:last-child {
+  width: 86%;
+  margin-left: auto;
+}
+
+
+/* The story, on the reader's side */
+.c-story {
+  margin-top: 24px;
+  overflow: hidden;
+  border: 1px solid var(--lab-line);
+  border-radius: 14px;
+  background: var(--lab-surface);
+  box-shadow: 0 26px 46px -30px color-mix(in srgb, black 55%, transparent);
+  scroll-margin-top: 80px;
+}
+.c-story__scene {
+  position: relative;
+}
+.c-story__scene img {
+  width: 100%;
+  height: clamp(130px, 13vw, 190px);
+  object-fit: cover;
+  object-position: 60% 42%;
+}
+.c-story__scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 50%, var(--polo-color-media-scrim));
+}
+.c-story__scene span {
+  position: absolute;
+  z-index: 1;
+  left: 18px;
+  bottom: 12px;
+  color: var(--polo-color-text-on-media);
+  font: 800 15px var(--c-sans);
+  letter-spacing: 0.02em;
+}
+.c-story .story-step {
+  --story-passage-size: 17px;
+  --story-answer-size: 14.5px;
+}
+.c-story .node__content {
+  padding: 20px;
+  gap: 16px;
+}
+.c-story .ls-memory {
+  padding: 10px 20px;
+  border-top: 1px solid var(--lab-line);
+  background: var(--lab-tint);
+}
+.c-story .ls-next {
+  padding: 16px 20px;
+  border-top: 1px solid var(--lab-line);
+}
+.c-story .ls-next p {
+  font: 400 18px / 1.3 var(--c-story);
+}
+.c-story .ls-foot {
+  padding: 2px 20px;
+  border-top: 1px solid var(--lab-line);
+}
+
+/* Catalogue */
+.c-cat__desc {
+  display: grid;
+  align-content: end;
+  height: 100%;
+  font-size: clamp(17px, 1.5vw, 21px);
+  line-height: 1.4;
+}
+.c-act {
+  border-top: 2px solid var(--lab-thread);
+}
+.c-act .c-cell {
+  position: relative;
+}
+/* Outlined numerals hung in the author's margin. */
+.c-act__n {
+  position: absolute;
+  top: 50%;
+  left: var(--c-gutter);
+  translate: 0 -50%;
+  color: transparent;
+  font: 800 clamp(96px, 11vw, 168px) / 1 var(--c-sans);
+  -webkit-text-stroke: 1.5px var(--lab-thread);
+}
+.c-act .c-l .c-cell {
+  padding-left: calc(var(--c-gutter) + clamp(80px, 9vw, 140px));
+}
+.c-act__desc {
+  font: 400 clamp(21px, 2vw, 26px) / 1.3 var(--c-story);
+}
+.c-act .c-r .c-cell {
+  display: grid;
+  align-content: center;
+  height: 100%;
+}
+.c-row .c-cell {
+  padding-block: clamp(28px, 3.4vw, 48px);
+}
+.c-row + .c-row .c-cell {
+  border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+}
+.c-row h4 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.c-title {
+  font: 400 clamp(21px, 2.1vw, 28px) / 1.15 var(--c-story);
+  letter-spacing: -0.01em;
+}
+.c-title a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  transition: text-decoration-color 0.2s;
+}
+.c-title a:hover {
+  text-decoration-color: currentColor;
+}
+.c-voice {
+  min-height: 3em;
+  margin-top: 10px;
+  color: var(--lab-author-soft);
+  font-size: 17px;
+  line-height: 1.4;
+}
+.c-voice--reader {
+  color: var(--lab-soft);
+  font: 400 17px / 1.4 var(--c-story);
+}
+/* The index: every other tool, Write and Connect on your side, the rest on theirs. */
+.c-index {
+  border-top: 2px solid var(--lab-thread);
+}
+.c-index__title {
+  margin-bottom: 28px;
+  font: 800 clamp(26px, 2.6vw, 36px) / 1 var(--c-sans);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.c-index dl + dl {
+  margin-top: 8px;
+}
+.c-index dl > div {
+  padding-block: 16px;
+  border-top: 1px solid var(--lab-line);
+  scroll-margin-top: 80px;
+}
+.c-index .c-l dl > div {
+  border-color: var(--lab-author-line);
+}
+.c-index dt {
+  font-weight: 600;
+  font-size: 17px;
+}
+.c-index dd {
+  margin: 4px 0 0;
+  color: var(--lab-soft);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+.c-index .c-l dd {
+  color: var(--lab-author-soft);
+}
+.c-index a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Engine */
+.c-engine {
+  border-top: 2px solid var(--lab-thread);
+}
+.c-l .lp__code--wrap {
+  font: 400 16px / 1.55 var(--c-story);
+}
+.c-engine__lead {
+  margin-top: 18px;
+  color: var(--lab-author-soft);
+  font-size: 16.5px;
+}
+.c-engine__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 16px;
+  color: var(--lab-thread);
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.c-engine__links a:hover {
+  text-decoration: underline;
+}
+.c-engine__license {
+  margin-top: 6px;
+  color: var(--lab-author-faint);
+  font-size: 13px;
+}
+.c-points {
+  display: grid;
+  gap: 22px;
+}
+.c-points h3 {
+  font-size: 21px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.c-points p {
+  margin-top: 4px;
+  color: var(--lab-soft);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.c-ways .c-cell {
+  padding-top: 0;
+}
+.c-ways .lp {
+  grid-template-columns: minmax(0, 1fr);
+}
+.c-l .lp__way {
+  border-color: var(--lab-author-line);
+  background: var(--lab-author-surface);
+  color: var(--lab-author-ink);
+}
+.c-l .lp__way > p,
+.c-l .lp__hint {
+  color: var(--lab-author-soft) !important;
+}
+.c-l .lp__label {
+  color: var(--lab-thread);
+}
+.c-l .lp__way input {
+  border-color: var(--lab-author-line);
+  background: var(--lab-author);
+}
+.c-l .lp__code {
+  background: var(--lab-author);
+}
+.c-l .lp__actions button {
+  background: var(--lab-thread);
+  color: var(--lab-on-thread);
+}
+.c-l .lp__status {
+  color: var(--lab-author-soft);
+}
+
+/* FAQ */
+.c-faq {
+  border-top: 2px solid var(--lab-thread);
+}
+.c-faq .c-l .c-cell {
+  position: sticky;
+  top: 60px;
+}
+.lq summary {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+/* Closing */
+.c-closing {
+  border-top: 2px solid var(--lab-thread);
+}
+.c-closing .c-cell {
+  padding-block: clamp(64px, 9vw, 136px);
+}
+.c-closing .c-l .c-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+.c-closing .c-btn {
+  margin-top: 28px;
+}
+.c-closing__yours {
+  margin-top: 36px;
+  font: italic 400 clamp(19px, 2vw, 26px) / 1.3 var(--c-story);
+}
+
+/* Footer */
+.lf {
+  background: linear-gradient(90deg, var(--lab-author) 50%, var(--lab-canvas) 50%);
+  border-top: 2px solid var(--lab-thread);
+}
+.lf__inner {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: calc(var(--c-gutter) * 2);
+  width: min(100%, calc(var(--c-half) * 2));
+  margin-inline: auto;
+  padding-inline: var(--c-gutter);
+}
+.lf__brand {
+  grid-column: 1 / span 2;
+  color: var(--lab-author-ink);
+}
+.lf__brand p {
+  color: var(--lab-author-soft);
+}
+.lf small {
+  grid-column: 1 / span 2;
+  color: var(--lab-author-faint);
+}
+
+@media (max-width: 1100px) {
+  .c-nav__login,
+  .c-nav__side--l,
+  .c-nav__side--r a:not(.c-nav__cta) {
+    display: none;
+  }
+  .c-nav__inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    background: var(--lab-canvas);
+  }
+  .c-nav {
+    background: var(--lab-canvas);
+  }
+}
+
+/* Narrow screens fold the page: first your side, then theirs. */
+@media (max-width: 820px) {
+  .c-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .c-split::before {
+    display: none;
+  }
+  .c-knot,
+  .c-port {
+    display: none;
+  }
+  .c-cell {
+    width: 100%;
+    margin: 0 !important;
+  }
+  .c-hero .c-mega {
+    min-height: 0;
+  }
+  .c-voice {
+    min-height: 0;
+  }
+  .c-closing .c-l .c-cell {
+    align-items: flex-start;
+    text-align: left;
+    padding-bottom: 32px;
+  }
+  .c-closing .c-r .c-cell {
+    padding-top: 32px;
+  }
+  .lf {
+    background: var(--lab-canvas);
+  }
+  .lf__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lf__brand,
+  .lf small {
+    grid-column: 1 / -1;
+    color: var(--lab-ink);
+  }
+  .lf__brand p {
+    color: var(--lab-soft);
+  }
+}

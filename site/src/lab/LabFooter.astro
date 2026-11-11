@@ -1,0 +1,40 @@
+---
+import { copyFor, LANGS, LANGUAGE_NAMES, type Lang } from '../i18n'
+import { APP_LINKS, ENGINE_LINKS } from '../lib/links'
+import { localePath } from '../lib/locale'
+import { PAGES } from '../lib/pages'
+
+interface Props {
+  lang: Lang
+  /** This direction's id, so the language links stay on it. */
+  version: string
+}
+
+const { lang, version } = Astro.props
+const t = copyFor(lang)
+const langPath = (language: Lang) => `${language === 'en' ? '' : `/${language}`}/lab/${version}`
+---
+
+<footer class="lf">
+  <div class="lf__inner">
+    <div class="lf__brand">
+      <a class="ln__mark" href={langPath(lang)} aria-label={t.nav.home}>Trama<span>.</span></a>
+      <p>{t.footer.tagline}</p>
+    </div>
+    <div class="lf__links">
+      <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
+      <a href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source}</a>
+      <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
+      <a href={APP_LINKS.email}>{t.footer.email}</a>
+    </div>
+    <div class="lf__langs" role="group" aria-label={t.footer.language}>
+      {LANGS.map(language => (
+        <a href={langPath(language)} hreflang={language} lang={language} aria-current={language === lang ? 'true' : undefined}>
+          {LANGUAGE_NAMES[language].name}
+        </a>
+      ))}
+    </div>
+    {Astro.slots.has('default') && <p class="lf__colophon"><slot /></p>}
+    <small>{t.footer.rights}</small>
+  </div>
+</footer>

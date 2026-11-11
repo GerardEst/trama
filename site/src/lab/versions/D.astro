@@ -1,0 +1,115 @@
+---
+import { Font, Image } from 'astro:assets'
+import AuthLabel from '../../components/ui/AuthLabel.astro'
+import { copyFor, type Lang } from '../../i18n'
+import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
+import heroImage from '../../assets/landing/lab/hero.webp'
+import closingImage from '../../assets/landing/lab/plate-closing.webp'
+import { labCopyFor } from '../content'
+import LabChapters from '../LabChapters.astro'
+import LabFaq from '../LabFaq.astro'
+import LabFooter from '../LabFooter.astro'
+import LabLayout from '../LabLayout.astro'
+import LabNav from '../LabNav.astro'
+import LabPrompt from '../LabPrompt.astro'
+import LabStory from '../LabStory.astro'
+import '../parts.css'
+import './d.css'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+const lab = labCopyFor(lang)
+const home = `${lang === 'en' ? '' : `/${lang}`}/lab/d`
+
+// Section headings drop their closing full stop; only the hero keeps its two sentences.
+const bare = (text: string) => text.replace(/\.$/, '')
+---
+
+<LabLayout lang={lang} version="d" title={`D · Teixit — ${t.meta.title}`}>
+  <Fragment slot="head">
+    <Font cssVariable="--font-schibsted" preload />
+    <Font cssVariable="--font-newsreader" preload />
+    <Font cssVariable="--font-dm-mono" />
+  </Fragment>
+  <LabNav lang={lang} home={home} heroCta />
+
+  <main id="main-content">
+    <section class="d-wrap d-hero" aria-labelledby="d-title">
+      <div class="d-hero__copy">
+        <h1 id="d-title">
+          <span class="d-line">{t.hero.titleStart}</span>
+          <span class="d-line">{t.hero.titleEnd}</span>
+        </h1>
+        <p class="d-hero__lead">{t.hero.description}</p>
+        <div class="d-actions">
+          <a class="d-btn d-btn--solid" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+            <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="d-btn" href="#try-it">{t.hero.tryStory}</a>
+        </div>
+      </div>
+      <div class="d-hero__stage">
+        <Image class="d-hero__paint" src={heroImage} alt="" widths={[800, 1280, 1928]} sizes="(max-width: 1040px) 100vw, 60vw" loading="eager" fetchpriority="high" />
+        <LabStory lang={lang} class="d-story" memory>
+          <p class="d-story__title">{t.demo.titleStart} {t.demo.titleEnd}</p>
+        </LabStory>
+      </div>
+    </section>
+
+    <div class="d-spine">
+      <section id="features" class="d-wrap d-features" aria-labelledby="d-features-title">
+        <div class="d-head">
+          <h2 id="d-features-title">{bare(t.authoring.title)}</h2>
+          <p>{t.authoring.description}</p>
+        </div>
+        <LabChapters lang={lang} numerals={['', '', '', '']} bare plates />
+      </section>
+
+      <section id="engine" class="d-engine" aria-labelledby="d-engine-title">
+        <div class="d-wrap">
+        <div class="d-engine__top">
+          <div class="d-head d-head--tight">
+            <p class="d-eyebrow">{t.engine.eyebrow}</p>
+            <h2 id="d-engine-title">{bare(`${t.engine.titleStart} ${t.engine.titleEnd}`)}</h2>
+            <p>{t.engine.description}</p>
+            <p class="d-engine__links">
+              <a href={ENGINE_LINKS.npm} rel="noopener">{t.engine.links.npm} ↗</a>
+              <a href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source} ↗</a>
+            </p>
+          </div>
+          <ul>
+            {Object.values(t.engine.points).map(point => (
+              <li><h3>{point.title}</h3><p>{point.description}</p></li>
+            ))}
+          </ul>
+        </div>
+        <LabPrompt lang={lang} />
+        </div>
+      </section>
+
+      <section class="d-wrap d-faq" aria-labelledby="d-faq-title">
+        <h2 id="d-faq-title">{lab.ui.faqTitle}</h2>
+        <LabFaq lang={lang} withTrust />
+      </section>
+
+    </div>
+
+    <section class="d-closing" aria-labelledby="d-closing-title">
+      <Image class="d-closing__paint" src={closingImage} alt="" widths={[1024, 1976]} sizes="100vw" loading="lazy" />
+      <div class="d-wrap d-closing__copy">
+      <h2 id="d-closing-title">{bare(`${t.closing.titleStart} ${t.closing.titleEnd}`)}</h2>
+      <p>{t.closing.yours}</p>
+      <a class="d-btn d-btn--solid" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+        <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+        <span aria-hidden="true">→</span>
+      </a>
+      </div>
+    </section>
+  </main>
+  <LabFooter lang={lang} version="d" />
+</LabLayout>

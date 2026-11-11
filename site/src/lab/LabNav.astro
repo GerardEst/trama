@@ -1,0 +1,36 @@
+---
+import AuthLabel from '../components/ui/AuthLabel.astro'
+import { copyFor, type Lang } from '../i18n'
+import { APP_LINKS } from '../lib/links'
+import { localePath } from '../lib/locale'
+import { PAGES } from '../lib/pages'
+
+interface Props {
+  lang: Lang
+  /** Absolute links to the current direction's sections. */
+  home: string
+  /** Uses the hero's call to action, so the page asks for one thing in one way. */
+  heroCta?: boolean
+}
+
+const { lang, home, heroCta = false } = Astro.props
+const t = copyFor(lang)
+const sections = [
+  { href: `${home}#features`, label: t.nav.features },
+  { href: `${home}#engine`, label: t.nav.engine },
+  { href: localePath(lang, PAGES.features), label: t.nav.docs },
+]
+---
+
+<header class="ln">
+  <nav class="ln__inner" aria-label={t.nav.label}>
+    <a class="ln__mark" href={home} aria-label={t.nav.home}>Trama<span>.</span></a>
+    <div class="ln__links">
+      {sections.map(section => <a href={section.href}>{section.label}</a>)}
+    </div>
+    <a class="ln__login" href={APP_LINKS.login} data-when="signed-out">{t.nav.login}</a>
+    <a class="ln__cta" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+      <AuthLabel signedOut={heroCta ? t.hero.startStory : t.nav.start} signedIn={t.nav.dashboard} />
+    </a>
+  </nav>
+</header>

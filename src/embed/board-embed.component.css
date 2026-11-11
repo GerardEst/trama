@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  font-family: var(--polo-font-ui), sans-serif;
+  color: var(--polo-color-text);
+  /* The board pans and zooms on its own; the page behind it draws the background,
+     so there is only one grid and the board's edge never shows. */
+  --polo-board-background: transparent;
+}
+
+/* Focus mode is a modal dialog, which the browser lays over the whole window.
+   Here it covers the board only (see publishRect), and the page stays visible. */
+dialog.focusEditor {
+  top: var(--embed-top, 0) !important;
+  left: var(--embed-left, 0) !important;
+  width: var(--embed-width, 100vw) !important;
+  height: var(--embed-height, 100dvh) !important;
+  right: auto !important;
+  bottom: auto !important;
+  padding: 16px !important;
+}
+dialog.focusEditor::backdrop {
+  background: transparent;
+}
+
+/* The create menu is placed for a board that fills the window; a demo works with
+   the scenes it has, so it is left out. */
+.contextMenu {
+  display: none !important;
+}

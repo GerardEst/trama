@@ -158,3 +158,134 @@
   --polo-icon-play: url('/assets/icons/play-white.svg');
   --polo-icon-drag: url('/assets/icons/drag-white.svg');
 }
+
+/* Landing lab (site/src/lab): one palette per direction under comparison, each
+   derived from its random seed. Remove all but the chosen one when it ships. */
+:root[data-lab] {
+  --polo-color-canvas: var(--lab-canvas);
+  --polo-color-surface: var(--lab-surface);
+  --polo-color-text-strong: var(--lab-ink);
+  --polo-color-text: var(--lab-ink);
+  --polo-color-text-secondary: var(--lab-soft);
+  --polo-color-text-muted: var(--lab-faint);
+  --polo-color-border: var(--lab-line);
+  --polo-color-border-strong: var(--lab-strong);
+  --polo-color-border-hover: var(--lab-action);
+  --polo-color-action: var(--lab-action);
+  --polo-color-action-hover: var(--lab-action);
+  --polo-color-action-soft: var(--lab-tint);
+  --polo-color-focus: var(--lab-action);
+  --polo-color-text-on-action: var(--lab-on-action);
+}
+
+/* A · seed hex runs fFE3 + 40c8 = #FFE340C8, plus the painting's ultramarine. */
+:root[data-lab='a'] {
+  --lab-canvas: light-dark(#fffefb, #0c1320);
+  --lab-canvas-2: light-dark(#f5f5ee, #111a2b);
+  --lab-surface: light-dark(#ffffff, #16213a);
+  --lab-ink: light-dark(#14171c, #f3f1e7);
+  --lab-soft: light-dark(#3d424b, #b9c0cc);
+  --lab-faint: light-dark(#6a717d, #919bab);
+  --lab-line: light-dark(#e5e4da, #26324a);
+  --lab-strong: light-dark(#c9c9bc, #3b4a66);
+  --lab-action: light-dark(#14171c, #f3f1e7);
+  --lab-on-action: light-dark(#ffffff, #0c1320);
+  --lab-tint: light-dark(#f8e9e3, #3a2018);
+  --lab-blue: light-dark(#163e8c, #9dbcf5);
+  --lab-mark: #ffe340c8;
+  --lab-cape: light-dark(#c93c20, #ff8a6e);
+}
+
+/* E · Quadern. A's book (Baskervville, the cape's vermilion) on B's valley, drawn
+   on the app's squared paper. Paper, ink and the cape; the grid lines are the
+   ones the app draws on its board. */
+:root[data-lab='e'] {
+  --lab-canvas: light-dark(#fbf9f3, #10151d);
+  --lab-canvas-2: light-dark(#f2efe5, #161c26);
+  --lab-surface: light-dark(#ffffff, #1b2230);
+  --lab-ink: light-dark(#17191d, #f1eee4);
+  --lab-soft: light-dark(#3b3f47, #bcc1ca);
+  --lab-faint: light-dark(#696f78, #8f97a3);
+  --lab-line: light-dark(#e3dfd2, #2a3242);
+  --lab-strong: light-dark(#c8c2b1, #414c60);
+  --lab-action: light-dark(#c2391e, #ff8a6e);
+  --lab-on-action: light-dark(#ffffff, #10151d);
+  --lab-tint: light-dark(#f7e7df, #3a2018);
+  --lab-cape: light-dark(#c2391e, #ff8a6e);
+  --lab-cypress: light-dark(#1f3a2e, #a9d3b6);
+  --lab-grid: light-dark(#e6e1d3, #232a38);
+  --lab-grid-fine: light-dark(#f0ece1, #191f2b);
+}
+
+/* B · La Vall. Seed hex run Ec2A expands to #EECC22AA, the marker; the seed's
+   ASCII sum mod 360 is 254, the hue of the mist. White ground, as in the valley. */
+:root[data-lab='b'] {
+  --lab-canvas: light-dark(#fcfbf7, #0e1216);
+  --lab-canvas-2: light-dark(#f3f1ea, #151a20);
+  --lab-surface: light-dark(#ffffff, #181e25);
+  --lab-ink: light-dark(#17191d, #f2f3f5);
+  --lab-title: light-dark(#2e3036, #f2f3f5);
+  --lab-soft: light-dark(#555a64, #b8bec8);
+  --lab-faint: light-dark(#6a707a, #929aa6);
+  --lab-line: light-dark(#e6e2d8, #2a313b);
+  --lab-strong: light-dark(#cdc8bb, #454e5b);
+  --lab-action: light-dark(#1f3a2e, #f2f3f5);
+  --lab-on-action: light-dark(#ffffff, #0e1216);
+  --lab-tint: light-dark(#ece9df, #23264a);
+  --lab-on-tint: light-dark(#294b3e, #a9d3b6);
+  --lab-link: light-dark(#294b3e, #a9d3b6);
+  --lab-leaf: light-dark(#eaf2ea, #1a2a22);
+  --lab-mark: #eecc22aa;
+  --lab-win: light-dark(#f2f6ee, #18261d);
+}
+
+/* C · seed hex runs DAD5 and 385 are the two faces of the mirror. */
+:root[data-lab='c'] {
+  --lab-canvas: light-dark(#ebe5d6, #24261f);
+  --lab-surface: light-dark(#fbf8f1, #30322a);
+  --lab-ink: light-dark(#1c1f1a, #eeeadb);
+  --lab-soft: light-dark(#4b4f44, #bdb9a8);
+  --lab-faint: light-dark(#5e6256, #a29f90);
+  --lab-line: light-dark(#d3ccba, #43453a);
+  --lab-strong: light-dark(#9f9a88, #5f6153);
+  --lab-action: light-dark(#173a2c, #f3c24c);
+  --lab-on-action: light-dark(#f4f1e8, #1c1f1a);
+  --lab-tint: light-dark(#e4ddcb, #33402f);
+  --lab-author: light-dark(#173a2c, #0e2219);
+  --lab-author-surface: light-dark(#21493a, #163026);
+  --lab-author-ink: #efecdc;
+  --lab-author-soft: #bccabb;
+  --lab-author-faint: #a3b5a4;
+  --lab-author-line: light-dark(#376653, #2a4b3c);
+  --lab-green: light-dark(#173a2c, #6fc091);
+  --lab-thread: #f3c24c;
+  --lab-on-thread: #1c1f1a;
+}
+
+/* D · seed hex runs fC3D, 627 and bdA; EAEA is the over-under of the weave. */
+:root[data-lab='d'] {
+  --lab-canvas: light-dark(#f6f2ec, #15101b);
+  --lab-canvas-2: light-dark(#ede7df, #1b1523);
+  --lab-surface: light-dark(#fffdfa, #211a2b);
+  --lab-surface-2: light-dark(#f2ecf3, #2b2237);
+  --lab-ink: light-dark(#1e1523, #f4eef2);
+  --lab-soft: light-dark(#5d5067, #bdb2c4);
+  --lab-faint: light-dark(#736680, #978ba0);
+  --lab-line: light-dark(#ded5dd, #352b42);
+  --lab-strong: light-dark(#bfb3c2, #4d4060);
+  --lab-action: light-dark(#d5213a, #fc3d4f);
+  --lab-on-action: light-dark(#fffdfa, #15101b);
+  --lab-tint: light-dark(#fbe1e4, #3a1c2c);
+  --lab-coral: light-dark(#d5213a, #fc3d4f);
+  --lab-plum: light-dark(#662277, #c78ad8);
+  --lab-plum-cell: light-dark(#662277, #4a1c58);
+  --lab-on-plum: #f8eefb;
+  --lab-sage: light-dark(#47722f, #bbddaa);
+  --lab-sage-cell: light-dark(#bbddaa, #bbddaa);
+  --lab-on-sage: #1b2513;
+}
+
+/* D is dark first; only an explicit light choice changes it. */
+:root[data-lab='d']:not([data-polo-theme='light']) {
+  color-scheme: dark;
+}

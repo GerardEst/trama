@@ -88,6 +88,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
+import { elementAt } from 'src/app/shared/utils/dom'
 
 @Component({
   selector: 'polo-board',
@@ -1212,7 +1213,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getElementAtPointer(event: BoardPoint) {
-    const element = document.elementFromPoint(event.x, event.y)
+    const board = this.boardElement?.nativeElement
+    const element = board ? elementAt(board, event.x, event.y) : document.elementFromPoint(event.x, event.y)
     return element ?? undefined
   }
 
