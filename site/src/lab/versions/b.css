@@ -595,7 +595,6 @@ lab-live .story-step .node__form {
 }
 .v-verdict {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: 56px;
   margin-top: 56px;
 }
@@ -617,23 +616,6 @@ lab-live .story-step .node__form {
   color: var(--lab-ink);
   font-weight: 600;
 }
-.v-others li {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  padding-block: 11px;
-  border-top: 1px solid var(--lab-line);
-  color: var(--lab-soft);
-  font-size: 15px;
-}
-.v-others b {
-  flex: none;
-  max-width: 44%;
-  color: var(--lab-ink);
-  font-weight: 600;
-  text-align: right;
-}
-
 /* Build */
 .v-build {
   padding-block: 120px 0;

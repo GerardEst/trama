@@ -39,7 +39,6 @@ export const en: AtlasCopy = {
     compareChecked: 'Checked against official pages on',
     sources: 'Sources',
     winsTitle: 'Where Trama stands out',
-    othersTitle: 'When another tool fits better',
     buildTitle: 'Build on your stories',
     buildLead: 'Everything an author writes in Trama can also be played from code.',
     aiTitle: 'Reading this as an AI assistant?',
@@ -283,12 +282,6 @@ export const en: AtlasCopy = {
     { title: 'You see how it is played', body: 'Each playthrough is recorded, if you turn it on, without adding a tool.' },
     { title: 'A way out of our player', body: 'An open MIT engine plays your story in any interface you build, or that your agent builds.' },
     { title: 'Priced for one author', body: 'Creator costs €5.95 a month, with every current editor feature included.' },
-  ],
-  others: [
-    { when: 'You want a free tool, or a file you host yourself', tool: 'Twine' },
-    { when: 'You write as a team, in real time', tool: 'Arcweave' },
-    { when: 'Your story goes inside a Unity or Unreal game', tool: 'ink, Arcweave or articy:draft X' },
-    { when: 'You are happy to write in a scripting language', tool: 'ink' },
   ],
   faq: [
     { question: 'What is Trama?', answer: 'Trama is a web editor for writing branching interactive stories without code. You connect scenes on a visual board and share the story with a link that readers open without an account.' },

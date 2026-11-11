@@ -44,8 +44,6 @@ export function fullSummary(): string {
   }
   lines.push('', c.ui.compareLegend, '', '### Where Trama stands out', '')
   lines.push(...c.wins.map(win => `- ${win.title}: ${win.body}`))
-  lines.push('', '### When another tool fits better', '')
-  lines.push(...c.others.map(other => `- ${other.when}: ${other.tool}`))
   lines.push('', '### Sources', '')
   lines.push(...COMPETITORS.flatMap(id => COMPETITOR_SOURCES[id].map(url => `- ${COMPETITOR_NAMES[id]}: ${url}`)))
   lines.push('', '## Frequently asked questions', '')

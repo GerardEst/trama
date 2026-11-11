@@ -39,7 +39,6 @@ export const es: AtlasCopy = {
     compareChecked: 'Comprobado en las páginas oficiales el',
     sources: 'Fuentes',
     winsTitle: 'Dónde destaca Trama',
-    othersTitle: 'Cuándo te conviene más otra herramienta',
     buildTitle: 'Construye a partir de tus historias',
     buildLead: 'Todo lo que un autor escribe en Trama también se puede jugar desde código.',
     aiTitle: '¿Lees esto como asistente de IA?',
@@ -283,12 +282,6 @@ export const es: AtlasCopy = {
     { title: 'Ves cómo se juega', body: 'Cada partida queda registrada, si lo activas, sin añadir ninguna herramienta.' },
     { title: 'Una salida de nuestro lector', body: 'Un motor MIT abierto juega tu historia en cualquier interfaz que construyas, tú o tu agente.' },
     { title: 'Un precio para un solo autor', body: 'Creator cuesta 5,95 € al mes, con todas las funciones actuales del editor incluidas.' },
-  ],
-  others: [
-    { when: 'Quieres una herramienta gratuita, o un archivo que alojas tú', tool: 'Twine' },
-    { when: 'Escribís en equipo, en tiempo real', tool: 'Arcweave' },
-    { when: 'La historia va dentro de un juego de Unity o Unreal', tool: 'ink, Arcweave o articy:draft X' },
-    { when: 'No te importa escribir en un lenguaje de guion', tool: 'ink' },
   ],
   faq: [
     { question: '¿Qué es Trama?', answer: 'Trama es un editor web para escribir historias interactivas con ramas sin programar. Conectas escenas en un tablero visual y compartes la historia con un enlace que los lectores abren sin cuenta.' },

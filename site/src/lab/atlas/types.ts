@@ -110,7 +110,6 @@ export interface AtlasCopy {
     compareChecked: string
     sources: string
     winsTitle: string
-    othersTitle: string
     buildTitle: string
     buildLead: string
     aiTitle: string
@@ -123,7 +122,6 @@ export interface AtlasCopy {
   features: Record<AtlasId, { name: string; question: string; answer: string; example: string }>
   rows: Record<RowId, { label: string; trama: string } & Record<CompetitorId, string>>
   wins: readonly { title: string; body: string }[]
-  others: readonly { when: string; tool: string }[]
   faq: readonly { question: string; answer: string }[]
   art: {
     coin: string
