@@ -1,0 +1,577 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-story/exampleStory'
+import type { Lang } from '../../i18n'
+
+// The valley is made of words. Where the pointer passes, a brush lifts the paint
+// and shows what is underneath: the example story, set in the book's type, each
+// letter in the colour of the landscape it sits under. The strokes heal a few
+// seconds later, unevenly, like paint drying back.
+//
+// Without WebGL, with reduced motion or before the script runs, it is simply the
+// painting: the <img> below.
+interface Props {
+  image: ImageMetadata
+  lang: Lang
+  class?: string
+  /** A selector, inside the same section, for words the brush barely touches. */
+  quiet?: string
+}
+
+const { image, lang, class: className, quiet } = Astro.props
+const copy = EXAMPLE_STORY_COPY[lang]
+const story = buildExampleStory(copy)
+
+// The variables in the story's text read as one playthrough's values would.
+const values: Record<string, string> = {
+  property_title: copy.titles.ember,
+  property_deed: copy.skills.ember.deed,
+}
+const plain = (html: string) =>
+  html
+    .replace(/<span[^>]*data-key="([^"]+)"[^>]*>[^<]*<\/span>/g, (_, key: string) => values[key] ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+// One line per scene: its name, its text, and each answer after an arrow.
+const passages = story.nodes
+  .filter(node => node.text)
+  .map(node => ({
+    name: node.name ?? '',
+    text: plain(node.text ?? ''),
+    answers: (node.answers ?? []).map(answer => plain(answer.text ?? '')),
+  }))
+---
+
+<written-world class:list={['ww', className]} data-passages={JSON.stringify(passages)} data-quiet={quiet}>
+  <Image class="ww-image" src={image} alt="" widths={[960, 1440, 1928]} sizes="100vw" loading="eager" fetchpriority="high" />
+  <canvas class="ww-canvas" aria-hidden="true"></canvas>
+</written-world>
+
+<script>
+  import type { Color, ShaderMaterial, Texture, WebGLRenderTarget, WebGLRenderer } from 'three'
+
+  interface Passage {
+    name: string
+    text: string
+    answers: string[]
+  }
+
+  const VERTEX = /* glsl */ `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position.xy, 0.0, 1.0);
+    }
+  `
+
+  const NOISE = /* glsl */ `
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
+    }
+    float fbm(vec2 p) {
+      float v = 0.0, a = 0.5;
+      for (int i = 0; i < 4; i++) { v += a * noise(p); p *= 2.07; a *= 0.5; }
+      return v;
+    }
+  `
+
+  // The brush. Each frame the mask dries a little, and the brush lays one segment
+  // of stroke from where it was to where it is now. Across the stroke, bristles:
+  // streaks that run along it, so some hairs carry more than others and the edge
+  // is ragged. Values above 1 keep a stroke open for a while before it heals.
+  const BRUSH = /* glsl */ `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uPrevious;
+    uniform vec2 uSize;
+    uniform vec2 uFrom;
+    uniform vec2 uTo;
+    uniform float uRadiusFrom;
+    uniform float uRadiusTo;
+    uniform float uTravelled;
+    uniform float uSeed;
+    uniform float uDry;
+    uniform float uPainting;
+    uniform vec4 uQuiet;
+    ${NOISE}
+
+    // 1 over the quiet words (left, bottom, right, top), fading out around them.
+    float quietness(vec2 p) {
+      vec2 centre = (uQuiet.xy + uQuiet.zw) * 0.5;
+      vec2 d = abs(p - centre) - (uQuiet.zw - uQuiet.xy) * 0.5;
+      float outside = length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+      return 1.0 - smoothstep(0.0, 48.0, outside);
+    }
+
+    void main() {
+      float mask = max(texture2D(uPrevious, vUv).r - uDry, 0.0);
+      if (uPainting > 0.5) {
+        vec2 p = vUv * uSize;
+        vec2 segment = uTo - uFrom;
+        float length_ = max(length(segment), 0.001);
+        vec2 along = segment / length_;
+        vec2 across = vec2(-along.y, along.x);
+        float t = clamp(dot(p - uFrom, along) / length_, 0.0, 1.0);
+        float radius = mix(uRadiusFrom, uRadiusTo, t);
+        float distance_ = length(p - (uFrom + along * t * length_));
+        float side = dot(p - uFrom, across) / radius;
+        float run = (uTravelled + t * length_) / radius;
+        float hairs = noise(vec2(side * 5.0 + uSeed, run * 0.25)) * 0.5
+                    + noise(vec2(side * 14.0 + uSeed * 2.3, run * 0.6)) * 0.3
+                    + noise(vec2(side * 37.0 + uSeed * 5.1, run * 1.4)) * 0.2;
+        float body = 1.0 - smoothstep(radius * 0.45, radius, distance_ + (hairs - 0.5) * radius * 0.7);
+        float load = smoothstep(0.15, 0.55, hairs + 0.3 - side * side * 0.55);
+        // Over the quiet words the brush only grazes: a faint trace, no opening.
+        mask = max(mask, body * load * 1.7 * mix(1.0, 0.27, quietness(p)));
+      }
+      gl_FragColor = vec4(mask, 0.0, 0.0, 1.0);
+    }
+  `
+
+  // The page. Where the mask is open the painting gives way to the words beneath,
+  // each letter in a darker tone of the landscape over it; the pilcrows and arrows
+  // in the cape's red. The edge of a stroke is grainy, and the paint around it
+  // is pushed into a slightly darker rim. The paper is the page's own, so on a
+  // dark page the words are light.
+  const PAGE = /* glsl */ `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uImage;
+    uniform sampler2D uMask;
+    uniform sampler2D uWords;
+    uniform vec2 uResolution;
+    uniform vec2 uImageSize;
+    uniform vec3 uGraphite;
+    uniform vec3 uCape;
+    uniform vec3 uPaper;
+    uniform float uDark;
+    ${NOISE}
+
+    // object-fit: cover, anchored to the bottom like the <img>.
+    vec2 cover(vec2 uv) {
+      float screen = uResolution.x / uResolution.y;
+      float picture = uImageSize.x / uImageSize.y;
+      vec2 scale = screen > picture ? vec2(1.0, picture / screen) : vec2(screen / picture, 1.0);
+      return vec2((uv.x - 0.5) * scale.x + 0.5, uv.y * scale.y);
+    }
+
+    void main() {
+      vec3 paint = texture2D(uImage, cover(vUv)).rgb;
+      float mask = texture2D(uMask, vUv).r;
+      vec2 pixel = vUv * uResolution;
+      float grain = fbm(pixel / 9.0) - 0.5;
+      float open = mask + grain * 0.32;
+      float lifted = smoothstep(0.42, 0.7, open);
+      float rim = smoothstep(0.2, 0.44, open) * (1.0 - lifted);
+
+      vec3 words = texture2D(uWords, vUv).rgb;
+      // Lifting the paint leaves a wash of it on the paper, heavier near the edge,
+      // so the valley still shows in the page; each letter is the landscape's own
+      // colour, deepened.
+      float wash = (0.14 + 0.3 * (1.0 - smoothstep(0.7, 1.25, open))) * (1.0 - uDark * 0.4);
+      vec3 paper = mix(uPaper, paint, wash);
+      vec3 ink = mix(mix(paint * paint * 0.7, uGraphite, 0.3), mix(sqrt(paint), vec3(0.95, 0.93, 0.89), 0.35), uDark);
+      vec3 under = mix(paper, ink, words.r);
+      under = mix(under, uCape, words.g);
+
+      vec3 color = mix(paint * (1.0 - rim * 0.18), under, lifted);
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `
+
+  const DRY_PER_SECOND = 0.32
+  const LONGEST_STROKE = 1.7 / DRY_PER_SECOND + 0.5
+  // The mask is kept at half the element's size: the brush is soft, the words are not.
+  const MASK_SCALE = 0.5
+
+  class WrittenWorld extends HTMLElement {
+    private renderer?: WebGLRenderer
+    private page?: ShaderMaterial
+    private brush?: ShaderMaterial
+    private targets: WebGLRenderTarget[] = []
+    private words?: Texture
+    private renderPage = () => {}
+    private renderBrush = (_target: WebGLRenderTarget) => {}
+    private makeTargets = (_width: number, _height: number) => {}
+    private observer?: IntersectionObserver
+    private resizer?: ResizeObserver
+    private surface: HTMLElement | null = null
+    private visible = false
+    private started = false
+    private frame = 0
+    private last = 0
+    private lastInk = -Infinity
+    private size = { width: 1, height: 1 }
+    // Where the pointer is, and where the brush is: the brush follows a little
+    // behind, which smooths the stroke into curves.
+    private pointer: { x: number; y: number } | null = null
+    private tip: { x: number; y: number } | null = null
+    private radius = 0
+    private travelled = 0
+    private seed = 0
+    private intro?: { started: number; points: [number, number][] }
+    private resizeTimer = 0
+    private family = 'serif'
+    private readColors = () => {}
+
+    connectedCallback() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      this.surface = this.parentElement
+      this.observer = new IntersectionObserver(entries => {
+        this.visible = entries.some(entry => entry.isIntersecting)
+        if (this.visible && !this.started) {
+          this.started = true
+          void this.start()
+        }
+        if (this.visible) this.listen()
+        else this.unlisten()
+      })
+      this.observer.observe(this)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+      this.resizer?.disconnect()
+      this.unlisten()
+      cancelAnimationFrame(this.frame)
+      clearTimeout(this.resizeTimer)
+      this.targets.forEach(target => target.dispose())
+      this.words?.dispose()
+      this.renderer?.dispose()
+    }
+
+    private async start() {
+      const canvas = this.querySelector('canvas')!
+      const image = this.querySelector('img')!
+      const three = await import('three')
+      // The painting's colours go to the screen exactly as they are in the file.
+      three.ColorManagement.enabled = false
+      let renderer: WebGLRenderer
+      try {
+        renderer = new three.WebGLRenderer({ canvas, antialias: false, alpha: false })
+      } catch {
+        return
+      }
+      // The <img> has already chosen and loaded the right size; the texture reuses it.
+      const painting = await new three.TextureLoader().loadAsync(image.currentSrc || image.src).catch(() => null)
+      if (!painting) return renderer.dispose()
+      painting.generateMipmaps = false
+      painting.minFilter = three.LinearFilter
+
+      this.family = getComputedStyle(this.surface?.querySelector('h1') ?? this).fontFamily
+      await document.fonts.load(`16px ${this.family}`).catch(() => [])
+      await document.fonts.load(`italic 16px ${this.family}`).catch(() => [])
+
+      const camera = new three.Camera()
+      const quad = new three.PlaneGeometry(2, 2)
+      const pageScene = new three.Scene()
+      const brushScene = new three.Scene()
+      this.page = new three.ShaderMaterial({
+        vertexShader: VERTEX,
+        fragmentShader: PAGE,
+        uniforms: {
+          uImage: { value: painting },
+          uMask: { value: null },
+          uWords: { value: null },
+          uResolution: { value: new three.Vector2(1, 1) },
+          uImageSize: { value: new three.Vector2(painting.image.width, painting.image.height) },
+          uGraphite: { value: new three.Color() },
+          uCape: { value: new three.Color() },
+          uPaper: { value: new three.Color() },
+          uDark: { value: 0 },
+        },
+      })
+      this.brush = new three.ShaderMaterial({
+        vertexShader: VERTEX,
+        fragmentShader: BRUSH,
+        uniforms: {
+          uPrevious: { value: null },
+          uSize: { value: new three.Vector2(1, 1) },
+          uFrom: { value: new three.Vector2() },
+          uTo: { value: new three.Vector2() },
+          uRadiusFrom: { value: 1 },
+          uRadiusTo: { value: 1 },
+          uTravelled: { value: 0 },
+          uSeed: { value: 0 },
+          uDry: { value: 0 },
+          uPainting: { value: 0 },
+          uQuiet: { value: new three.Vector4(-1e5, -1e5, -1e5, -1e5) },
+        },
+      })
+      pageScene.add(new three.Mesh(quad, this.page))
+      brushScene.add(new three.Mesh(quad, this.brush))
+
+      // Half floats let the mask dry by small steps; without them it dries in
+      // coarser ones, which still reads as paint.
+      const type = renderer.capabilities.isWebGL2 ? three.HalfFloatType : three.UnsignedByteType
+      this.makeTargets = (width, height) => {
+        this.targets.forEach(target => target.dispose())
+        this.targets = [0, 1].map(() => new three.WebGLRenderTarget(width, height, {
+          type,
+          depthBuffer: false,
+          minFilter: three.LinearFilter,
+          magFilter: three.LinearFilter,
+        }))
+        for (const target of this.targets) {
+          renderer.setRenderTarget(target)
+          renderer.clear()
+        }
+        renderer.setRenderTarget(null)
+      }
+      this.renderBrush = target => {
+        renderer.setRenderTarget(target)
+        renderer.render(brushScene, camera)
+        renderer.setRenderTarget(null)
+      }
+      this.renderPage = () => renderer.render(pageScene, camera)
+      // The theme can change while the page is open, so each stroke reads the
+      // colours again: the cape and graphite (set on this element) and the paper.
+      this.readColors = () => {
+        const uniforms = this.page!.uniforms
+        const style = getComputedStyle(this)
+        const paper = (uniforms['uPaper']!.value as Color).setStyle(getComputedStyle(document.body).backgroundColor)
+        uniforms['uCape']!.value.setStyle(style.color)
+        uniforms['uGraphite']!.value.setStyle(style.outlineColor)
+        uniforms['uDark']!.value = paper.r * 0.3 + paper.g * 0.59 + paper.b * 0.11 < 0.5 ? 1 : 0
+      }
+      this.readColors()
+      this.makeWords = (width, height, ratio) => {
+        const texture = new three.CanvasTexture(this.typeset(width, height, ratio))
+        texture.generateMipmaps = false
+        texture.minFilter = three.LinearFilter
+        return texture
+      }
+
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+      renderer.setClearColor(0x000000, 1)
+      this.renderer = renderer
+      this.resizer = new ResizeObserver(() => {
+        clearTimeout(this.resizeTimer)
+        this.resizeTimer = window.setTimeout(() => this.resize(), 120)
+      })
+      this.resizer.observe(this)
+      this.resize()
+      this.setAttribute('data-written', '')
+      this.playIntro()
+    }
+
+    // Where the quiet words are, in the brush's coordinates (origin bottom left).
+    private measureQuiet() {
+      const selector = this.dataset['quiet']
+      const quiet = selector ? this.surface?.querySelector(selector) : null
+      if (!quiet || !this.brush) return
+      const own = this.getBoundingClientRect()
+      const rect = quiet.getBoundingClientRect()
+      this.brush.uniforms['uQuiet']!.value.set(rect.left - own.left, own.bottom - rect.bottom, rect.right - own.left, own.bottom - rect.top)
+    }
+
+    private makeWords = (_width: number, _height: number, _ratio: number): Texture | undefined => undefined
+
+    private resize() {
+      if (!this.renderer || !this.page || !this.brush) return
+      const { width, height } = this.getBoundingClientRect()
+      if (!width || !height) return
+      this.size = { width, height }
+      this.renderer.setSize(width, height, false)
+      this.makeTargets(Math.ceil(width * MASK_SCALE), Math.ceil(height * MASK_SCALE))
+      this.words?.dispose()
+      this.words = this.makeWords(width, height, this.renderer.getPixelRatio())
+      this.page.uniforms['uResolution']!.value.set(width, height)
+      this.page.uniforms['uWords']!.value = this.words
+      this.page.uniforms['uMask']!.value = this.targets[0]!.texture
+      this.brush.uniforms['uSize']!.value.set(width, height)
+      this.measureQuiet()
+      this.renderPage()
+    }
+
+    // The words beneath: the example story, set as one long justified page. The
+    // lines grow from the top of the valley to its foot, so the letters keep the
+    // painting's depth. Body text goes in the red channel, the marks in green.
+    private typeset(width: number, height: number, ratio: number) {
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(width * ratio)
+      canvas.height = Math.round(height * ratio)
+      const context = canvas.getContext('2d')!
+      context.scale(ratio, ratio)
+      context.fillStyle = '#000'
+      context.fillRect(0, 0, width, height)
+      context.textBaseline = 'alphabetic'
+
+      const passages = JSON.parse(this.dataset['passages'] ?? '[]') as Passage[]
+      type Word = { text: string; italic?: boolean; mark?: boolean }
+      const words: Word[] = passages.flatMap(passage => [
+        ...passage.name.split(' ').map(text => ({ text, italic: true })),
+        { text: '—', italic: true },
+        ...passage.text.split(' ').map(text => ({ text })),
+        ...passage.answers.flatMap(answer => [{ text: '→', mark: true }, ...answer.split(' ').map(text => ({ text, italic: true }))]),
+        { text: '¶', mark: true },
+      ])
+      if (!words.length) return canvas
+
+      const margin = 8
+      // Narrow screens set the same page a little smaller.
+      const scale = Math.min(1, Math.max(0.72, width / 1440))
+      let next = 0
+      let y = 0
+      while (y < height + 20) {
+        const depth = Math.min(1, y / height)
+        const size = (12 + 12 * depth ** 1.6) * scale
+        y += size * 1.18
+        const regular = `${size}px ${this.family}`
+        const italic = `italic ${size}px ${this.family}`
+        const space = size * 0.27
+        const line: { word: Word; width: number }[] = []
+        let used = 0
+        while (true) {
+          const word = words[next % words.length]!
+          context.font = word.italic ? italic : regular
+          const wordWidth = context.measureText(word.text).width
+          if (line.length && used + space + wordWidth > width - margin * 2) break
+          used += (line.length ? space : 0) + wordWidth
+          line.push({ word, width: wordWidth })
+          next++
+        }
+        const gap = line.length > 1 ? space + (width - margin * 2 - used) / (line.length - 1) : 0
+        let x = margin
+        for (const { word, width: wordWidth } of line) {
+          context.font = word.italic ? italic : regular
+          context.fillStyle = word.mark ? '#00ff00' : '#ff0000'
+          context.fillText(word.text, x, y)
+          x += wordWidth + gap
+        }
+      }
+      return canvas
+    }
+
+    private listen() {
+      this.surface?.addEventListener('pointermove', this.onMove, { passive: true })
+      this.surface?.addEventListener('pointerleave', this.onLeave, { passive: true })
+    }
+
+    private unlisten() {
+      this.surface?.removeEventListener('pointermove', this.onMove)
+      this.surface?.removeEventListener('pointerleave', this.onLeave)
+    }
+
+    // Mouse and pen only: on touch the same gesture scrolls the page.
+    private onMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch' || !this.renderer) return
+      const rect = this.getBoundingClientRect()
+      const point = { x: event.clientX - rect.left, y: rect.bottom - event.clientY }
+      if (point.x < 0 || point.y < 0 || point.x > rect.width || point.y > rect.height) return this.onLeave()
+      this.intro = undefined
+      this.aim(point)
+    }
+
+    private onLeave = () => {
+      this.pointer = null
+      this.tip = null
+    }
+
+    private aim(point: { x: number; y: number }) {
+      if (!this.pointer) {
+        // A new stroke: the brush lands where the pointer is, with a fresh set of hairs.
+        this.tip = { ...point }
+        this.radius = 0
+        this.travelled = 0
+        this.seed = Math.random() * 100
+        this.readColors()
+        this.measureQuiet()
+      }
+      this.pointer = point
+      this.wake()
+    }
+
+    // On arrival, one stroke across the left hillside shows that the valley can be
+    // painted away; touch readers see what is beneath this way too.
+    private playIntro() {
+      const { width, height } = this.size
+      // Wide, beside the title on the left hillside; narrow, across the strip of
+      // valley between the title and the story.
+      const points: [number, number][] = width >= 900
+        ? [[0.03, 0.5], [0.11, 0.45], [0.19, 0.5], [0.28, 0.43]]
+        : [[0.04, 0.22], [0.3, 0.28], [0.62, 0.22], [0.96, 0.29]]
+      this.intro = { started: performance.now() + 700, points: points.map(([x, y]) => [x * width, y * height]) }
+      this.wake()
+    }
+
+    private wake() {
+      if (this.frame || !this.visible) return
+      this.last = performance.now()
+      this.frame = requestAnimationFrame(this.tick)
+    }
+
+    private tick = (now: number) => {
+      this.frame = 0
+      if (!this.renderer || !this.brush || !this.page) return
+      // The frame's timestamp can be a little older than the moment it was asked for.
+      const seconds = Math.min(0.05, Math.max(0, (now - this.last) / 1000))
+      this.last = now
+
+      if (this.intro && now >= this.intro.started) {
+        const progress = (now - this.intro.started) / 1400
+        if (progress > 1) {
+          this.intro = undefined
+          this.onLeave()
+        } else {
+          const { points } = this.intro
+          const eased = 1 - (1 - progress) ** 2
+          const at = eased * (points.length - 1)
+          const index = Math.min(points.length - 2, Math.floor(at))
+          const [ax, ay] = points[index]!
+          const [bx, by] = points[index + 1]!
+          const local = at - index
+          this.aim({ x: ax + (bx - ax) * local, y: ay + (by - ay) * local })
+        }
+      }
+
+      const uniforms = this.brush.uniforms
+      uniforms['uDry']!.value = seconds * DRY_PER_SECOND
+      uniforms['uPainting']!.value = 0
+      if (this.pointer && this.tip) {
+        const from = { ...this.tip }
+        const follow = 1 - Math.pow(0.0005, seconds)
+        this.tip.x += (this.pointer.x - this.tip.x) * follow
+        this.tip.y += (this.pointer.y - this.tip.y) * follow
+        const moved = Math.hypot(this.tip.x - from.x, this.tip.y - from.y)
+        // A slow brush presses and spreads; a quick one only grazes.
+        const base = Math.min(58, Math.max(30, this.size.width * 0.026))
+        const speed = moved / Math.max(seconds, 0.001)
+        const target = base * (1.15 - Math.min(0.5, speed / 4000))
+        const previous = this.radius || target * 0.55
+        this.radius = previous + (target - previous) * Math.min(1, seconds * 10)
+        if (moved > 0.3 || this.travelled === 0) {
+          uniforms['uPainting']!.value = 1
+          uniforms['uFrom']!.value.set(from.x, from.y)
+          uniforms['uTo']!.value.set(this.tip.x, this.tip.y)
+          uniforms['uRadiusFrom']!.value = previous
+          uniforms['uRadiusTo']!.value = this.radius
+          uniforms['uTravelled']!.value = this.travelled
+          uniforms['uSeed']!.value = this.seed
+          this.travelled += moved || 0.001
+          this.lastInk = now
+        }
+      }
+
+      const [read, write] = this.targets as [WebGLRenderTarget, WebGLRenderTarget]
+      uniforms['uPrevious']!.value = read.texture
+      this.renderBrush(write)
+      this.targets = [write, read]
+      this.page.uniforms['uMask']!.value = write.texture
+      this.renderPage()
+
+      // Keep painting while there is a stroke to lay or one still drying.
+      const drying = (now - this.lastInk) / 1000 < LONGEST_STROKE
+      const following = !!this.pointer && !!this.tip && Math.hypot(this.pointer.x - this.tip.x, this.pointer.y - this.tip.y) > 0.3
+      if (this.visible && (following || this.intro || drying)) this.frame = requestAnimationFrame(this.tick)
+    }
+  }
+
+  customElements.define('written-world', WrittenWorld)
+</script>

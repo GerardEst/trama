@@ -1,5 +1,5 @@
 ---
-import { Font, Image } from 'astro:assets'
+import { Font } from 'astro:assets'
 import AuthLabel from '../../components/ui/AuthLabel.astro'
 import { copyFor, format, type Lang } from '../../i18n'
 import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
@@ -29,6 +29,7 @@ import { highlightCode } from '../highlight'
 import { eCopyFor } from '../e/copy'
 import LiveBoard from '../e/LiveBoard.astro'
 import PaintedClosing from '../e/PaintedClosing.astro'
+import WrittenWorld from '../e/WrittenWorld.astro'
 import FeatureIcon from '../e/FeatureIcon.astro'
 import Strengths from '../e/Strengths.astro'
 import OtherTools from '../e/OtherTools.astro'
@@ -118,10 +119,10 @@ const structuredData = {
   <LabNav lang={lang} home={home} heroCta />
 
   <main id="main-content">
-    <!-- The valley, drawn on the app's squared paper. -->
+    <!-- The valley, drawn on the app's squared paper; under its paint, the words it is made of. -->
     <section class="e-hero" aria-labelledby="e-title">
       <div class="e-hero__paper" aria-hidden="true"></div>
-      <Image class="e-hero__valley" src={valleyImage} alt="" widths={[960, 1440, 1928]} sizes="100vw" loading="eager" fetchpriority="high" />
+      <WrittenWorld class="e-hero__valley" image={valleyImage} lang={lang} quiet=".e-hero__lead" />
       <div class="e-hero__copy">
         <h1 id="e-title">{t.hero.titleStart}<br />{t.hero.titleEnd}</h1>
         <p class="e-hero__lead">{c.meta.definition}</p>
