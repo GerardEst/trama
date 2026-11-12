@@ -1,0 +1,105 @@
+---
+import StoryMap from './StoryMap.astro'
+import type { Lang } from '../../i18n'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+---
+
+<map-closing>
+  <div class="map-closing__art"><StoryMap lang={lang} /></div>
+  <div class="map-closing__copy"><slot /></div>
+</map-closing>
+
+<script>
+  class MapClosing extends HTMLElement {
+    private observer?: IntersectionObserver
+
+    connectedCallback() {
+      if (typeof IntersectionObserver === 'undefined') return
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      this.classList.add('closing--pending')
+      this.observer = new IntersectionObserver(entries => {
+        const visible = entries.some(entry => entry.isIntersecting)
+        this.classList.toggle('closing--visible', visible)
+        if (visible) this.classList.replace('closing--pending', 'closing--revealed')
+      }, { threshold: 0.2 })
+      this.observer.observe(this)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+    }
+  }
+
+  customElements.define('map-closing', MapClosing)
+</script>
+
+<style>
+  map-closing {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: clamp(640px, 55vw, 800px);
+    overflow: clip;
+    text-align: center;
+  }
+
+  .map-closing__art {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    margin-inline: auto;
+    pointer-events: none;
+  }
+
+  .map-closing__copy {
+    width: min(100% - 32px, 620px);
+    padding: 40px 16px;
+  }
+
+  .map-closing__copy :global(h2) {
+    max-width: 7em;
+    margin-inline: auto;
+    font-size: clamp(52px, 6.3vw, 90px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .map-closing__copy :global(p) {
+    width: fit-content;
+    margin: 24px auto 32px;
+    font-size: clamp(19px, 1.7vw, 24px);
+    color: var(--polo-color-text-secondary);
+  }
+
+  .closing--revealed .map-closing__copy {
+    animation: map-copy-arrive 0.8s ease-out both;
+  }
+
+  @keyframes map-copy-arrive {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    map-closing {
+      min-height: 800px;
+    }
+    .map-closing__copy {
+      padding-inline: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .closing--revealed .map-closing__copy {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,135 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "krea2_turbo_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "lora_name": "krea2\\PencilartD.safetensors",
+      "strength_model": 1.05
+    }
+  },
+  "3": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_4b_fp8_scaled.safetensors",
+      "type": "krea2",
+      "device": "default"
+    }
+  },
+  "4": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": [
+        "3",
+        0
+      ],
+      "text": "pencilart, a fine black ink pen drawing of an imaginary map, entirely monochrome black and white. White unpainted paper with delicate confident thin hand-drawn lines, airy linework and sparse crosshatching. All the colour and all painted shading have been removed. A literary fantasy map with winding branching footpaths, rivers, narrow bridges, forests of tiny carefully drawn trees, mountains, small villages and a distant old walled city. Hand-drawn cartographic geography with beautiful detail. Fine outlines and short pen strokes, no solid dark masses, no heavy grey shadows, no watercolour, no colours, no sepia, no grey wash, no yellow parchment. The rivers and lakes are white paper with only a few fine water lines near the shoreline. The centre is a generous blank white clearing reserved for website typography. Keep the overall layout of the reference map: elaborate lands at the margins, a quiet open centre. The map continues beyond the image edges. A flat scan of a professional illustrator's ink drawing for the endpapers of a novel. No words, no text, no labels, no lettering, no compass, no decorative frame, no borders, no objects or event icons, no swords, no treasure chests, no markers. These will be added separately. The composition is a tall portrait, with mountains and forests above, a city and paths below, and a bare white middle."
+    }
+  },
+  "6": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "trama-atlas-portrait-reference.png"
+    }
+  },
+  "12": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "7",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1024,
+      "height": 1536,
+      "crop": "disabled"
+    }
+  },
+  "8": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "12",
+        0
+      ],
+      "vae": [
+        "4",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": [
+        "2",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "8",
+        0
+      ],
+      "seed": 913812,
+      "steps": 8,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.75
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "9",
+        0
+      ],
+      "vae": [
+        "4",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "10",
+        0
+      ],
+      "filename_prefix": "trama/story-map-ink-portrait"
+    }
+  }
+}
