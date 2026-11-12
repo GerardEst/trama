@@ -515,6 +515,11 @@ h2 {
   line-height: 1.5;
 }
 
+.e-more__example {
+  margin-top: 8px;
+  color: var(--lab-ink);
+}
+
 /* A live example: the real board, on the notebook's squared paper. */
 .lb {
   display: block;

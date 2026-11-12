@@ -72,6 +72,18 @@ export const en: AtlasCopy = {
       answer: 'Each scene is a passage with the answers a reader can choose. Connect each answer to the scene it leads to.',
       example: 'The scene “The crossroads” offers “Enter the forest” and “Follow the river”. Each leads to a different scene.',
     },
+    'rich-text': {
+      name: 'Rich text editor',
+      question: 'Can I format my story’s text?',
+      answer: 'Write passages with headings, lists, bold and italics. Insert variables to weave the reader’s choices into the text.',
+      example: 'Give a scene a heading, emphasise a clue in bold and insert the reader’s name as a variable.',
+    },
+    interpolation: {
+      name: 'Text interpolation',
+      question: 'Can my story’s wording use the reader’s values?',
+      answer: 'Insert variables in passages and answers to show the reader’s name, stats or conditions. The text displays their current values as the story is played.',
+      example: 'Write “Welcome back, #name.” and a reader named Morgan sees “Welcome back, Morgan.”',
+    },
     focus: {
       name: 'Focus mode',
       question: 'Can I write long passages comfortably?',

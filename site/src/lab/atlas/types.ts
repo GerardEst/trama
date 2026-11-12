@@ -5,7 +5,7 @@ export const ATLAS_CHAPTERS = ['write', 'connect', 'remember', 'publish', 'build
 export type AtlasChapter = (typeof ATLAS_CHAPTERS)[number]
 
 export const ATLAS_IDS = [
-  'scene', 'focus', 'images',
+  'scene', 'rich-text', 'interpolation', 'focus', 'images',
   'connections', 'random', 'organisation',
   'events', 'requirements', 'distributors', 'input', 'variables',
   'preview', 'modes', 'share', 'endings', 'brand', 'analytics', 'safety',
@@ -30,6 +30,8 @@ export interface AtlasInfo {
 
 export const ATLAS: readonly AtlasInfo[] = [
   { id: 'scene', chapter: 'write', docs: 'content-nodes', live: 'scene' },
+  { id: 'rich-text', chapter: 'write', docs: 'focus-mode' },
+  { id: 'interpolation', chapter: 'write', docs: 'variables' },
   { id: 'focus', chapter: 'write', docs: 'focus-mode' },
   { id: 'images', chapter: 'write', docs: 'images' },
   { id: 'connections', chapter: 'connect', docs: 'connections', live: 'connections' },

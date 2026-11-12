@@ -185,7 +185,10 @@ const structuredData = {
                     return (
                       <div id={`f-${info.id}`}>
                         <dt><FeatureIcon id={info.id} />{href ? <a href={href} rel={info.docs ? undefined : 'noopener'}>{item.name}</a> : item.name}</dt>
-                        <dd>{plain(item.answer)}</dd>
+                        <dd>
+                          {plain(item.answer)}
+                          {info.id === 'interpolation' && <p class="e-more__example">{item.example}</p>}
+                        </dd>
                       </div>
                     )
                   })}

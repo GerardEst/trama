@@ -26,9 +26,20 @@ const name = FROM_BOARD[id]
 const url = name ? board[`../../../../src/assets/icons/${name}.svg`] : drawn[`./icons/${id}.svg`]
 ---
 
-{url && <span class="feature-icon" style={`--icon: url("${url}")`} aria-hidden="true"></span>}
+{id === 'rich-text'
+  ? <span class="feature-letter" aria-hidden="true">T</span>
+  : url && <span class="feature-icon" style={`--icon: url("${url}")`} aria-hidden="true"></span>}
 
 <style>
+  .feature-letter {
+    color: var(--e-red);
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    line-height: 1;
+    text-align: center;
+  }
+
   .feature-icon {
     display: inline-block;
     flex: none;

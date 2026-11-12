@@ -72,6 +72,18 @@ export const ca: AtlasCopy = {
       answer: 'Cada escena és un passatge amb les respostes que pot triar el lector. Connecta cada resposta amb l’escena on porta.',
       example: 'L’escena «La cruïlla» ofereix «Entrar al bosc» i «Seguir el riu». Cadascuna porta a una escena diferent.',
     },
+    'rich-text': {
+      name: 'Editor de text enriquit',
+      question: 'Puc donar format al text de la meva història?',
+      answer: 'Escriu passatges amb títols, llistes, negreta i cursiva. Insereix variables per incorporar les decisions del lector al text.',
+      example: 'Afegeix un títol a una escena, destaca una pista en negreta i insereix el nom del lector com a variable.',
+    },
+    interpolation: {
+      name: 'Interpolació de text',
+      question: 'Puc fer servir els valors del lector en el text?',
+      answer: 'Insereix variables en passatges i respostes per mostrar el nom del lector, les seves estadístiques o condicions. El text mostra els valors actuals durant la partida.',
+      example: 'Escriu «Hola de nou, #nom.» i un lector que es digui Morgan veurà «Hola de nou, Morgan.»',
+    },
     focus: {
       name: 'Mode concentració',
       question: 'Puc escriure passatges llargs amb comoditat?',
