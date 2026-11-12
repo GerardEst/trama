@@ -71,6 +71,18 @@ export const es: AtlasCopy = {
       answer: 'Cada escena es un pasaje con las respuestas que puede elegir el lector. Conecta cada respuesta con la escena a la que lleva.',
       example: 'La escena «El cruce» ofrece «Entrar en el bosque» y «Seguir el río». Cada una lleva a una escena distinta.',
     },
+    'rich-text': {
+      name: 'Editor de texto enriquecido',
+      question: '¿Puedo dar formato al texto de mi historia?',
+      answer: 'Escribe pasajes con títulos, listas, negrita y cursiva. Inserta variables para incorporar las decisiones del lector al texto.',
+      example: 'Añade un título a una escena, destaca una pista en negrita e inserta el nombre del lector como variable.',
+    },
+    interpolation: {
+      name: 'Interpolación de texto',
+      question: '¿Puedo usar los valores del lector en el texto?',
+      answer: 'Inserta variables en pasajes y respuestas para mostrar el nombre del lector, sus estadísticas o condiciones. El texto muestra sus valores actuales durante la partida.',
+      example: 'Escribe «Hola de nuevo, #nombre.» y un lector llamado Morgan verá «Hola de nuevo, Morgan.»',
+    },
     focus: {
       name: 'Modo concentración',
       question: '¿Puedo escribir pasajes largos con comodidad?',
