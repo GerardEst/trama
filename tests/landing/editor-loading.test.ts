@@ -15,10 +15,11 @@ test.describe('Landing story experience', () => {
     })
 
     await page.goto('/')
-    const hero = page.locator('.hero')
+    const hero = page.locator('.e-hero')
+    const demo = page.locator('#try-it')
     await expect(hero.getByRole('heading', { level: 1 })).toContainText('You write')
-    await expect(hero.getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
-    await expect(hero.getByRole('button', { name: 'Shadow — climb the haunted stair' })).toBeVisible()
+    await expect(demo.getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
+    await expect(demo.getByRole('button', { name: 'Shadow — climb the haunted stair' })).toBeVisible()
     await expect(page.locator('polo-board')).toHaveCount(0)
     await expect(page.locator('#features')).toBeVisible()
     await page.waitForLoadState('networkidle')
@@ -42,7 +43,7 @@ test.describe('Landing story experience', () => {
     await expect(page.locator('.checkoutSummary')).toContainText('Creator · 5.95€/month')
   })
 
-  test('follows the other ending and restarts without a board', async ({ page }) => {
+  test('follows the other ending and restarts in the independent story demo', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('button', { name: 'Start over' })).toHaveCount(0)
     await page.getByRole('button', { name: 'Shadow — climb the haunted stair' }).click()
@@ -54,7 +55,7 @@ test.describe('Landing story experience', () => {
     await expect(page.getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Shadow — climb the haunted stair' })).toBeVisible()
     await expect(page.locator('#try-it').getByRole('link', { name: /Create your first story/ })).toHaveCount(0)
-    await expect(page.locator('polo-board')).toHaveCount(0)
+    await expect(page.locator('#try-it polo-board')).toHaveCount(0)
   })
 
   for (const width of [375, 390, 820]) {
@@ -64,7 +65,7 @@ test.describe('Landing story experience', () => {
       await page.getByRole('link', { name: 'Play a story' }).click()
       await page.getByRole('button', { name: 'Shadow — climb the haunted stair' }).click()
       await expect(page.locator('#try-it')).toContainText('You climb unseen among sleeping ghosts')
-      await expect(page.locator('polo-board')).toHaveCount(0)
+      await expect(page.locator('#try-it polo-board')).toHaveCount(0)
       await expect(page.locator('#features')).toBeVisible()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
     })
@@ -76,7 +77,7 @@ test.describe('Landing story experience', () => {
     await page.goto('/')
     await expect(page.locator('#try-it')).toContainText('Hollow Citadel')
     await expect(page.locator('#try-it').getByRole('button', { name: 'Blade — cross the bridge of sentries' })).toBeVisible()
-    await expect(page.locator('#features')).toContainText('Choices with consequences')
+    await expect(page.locator('#features .e-chapter')).toHaveCount(4)
     await context.close()
   })
 })

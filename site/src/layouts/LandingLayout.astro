@@ -1,0 +1,54 @@
+---
+import PageHead from './PageHead.astro'
+import '../styles/landing-base.css'
+import { copyFor, type Lang } from '../i18n'
+import { PAGES } from '../lib/pages'
+
+interface Props {
+  lang: Lang
+  title: string
+  description: string
+  structuredData: Record<string, unknown>
+}
+
+const { lang, title, description, structuredData } = Astro.props
+const t = copyFor(lang)
+---
+
+<!doctype html>
+<html lang={lang} data-landing>
+  <head>
+    <PageHead lang={lang} page={PAGES.home} title={title} description={description} structuredData={structuredData} landing>
+      <slot name="head" />
+    </PageHead>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{t.nav.skip}</a>
+    <slot />
+  </body>
+</html>
+
+<script>
+  // Signed-in readers go straight to the app instead of signing up again.
+  if (document.documentElement.hasAttribute('data-signed-in')) {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-signed-in-href]')) {
+      link.href = link.dataset['signedInHref']!
+    }
+  }
+
+  // One observer for the whole page; each element is released once it has appeared.
+  const pending = document.querySelectorAll('[data-reveal]')
+  if (pending.length) {
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entry.target.classList.add('is-in')
+          observer.unobserve(entry.target)
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    pending.forEach(element => observer.observe(element))
+  }
+</script>

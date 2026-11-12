@@ -1,48 +1,14 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import Hero from '../components/landing/Hero.astro'
-import DemoBridge from '../components/landing/DemoBridge.astro'
-import Authoring from '../components/landing/Authoring.astro'
-import Features from '../components/landing/Features.astro'
-import Engine from '../components/landing/engine/Engine.astro'
-import AuthorTrust from '../components/landing/AuthorTrust.astro'
-import Questions from '../components/landing/Questions.astro'
-import Closing from '../components/landing/Closing.astro'
-import { copyFor, type Lang } from '../i18n'
+import Landing from '../components/landing/Landing.astro'
+import type { Lang } from '../i18n'
 import { localeStaticPaths } from '../lib/locale'
-import { PAGES } from '../lib/pages'
 
-// One landing page per language: / (English), /es and /ca.
+// The definitive landing, built at /, /es and /ca.
 export const getStaticPaths = localeStaticPaths
 
 interface Props {
   lang: Lang
 }
-
-const { lang } = Astro.props
-const t = copyFor(lang)
-const structuredData = {
-  '@type': 'WebApplication',
-  name: 'Trama',
-  applicationCategory: 'Interactive fiction editor',
-  operatingSystem: 'Web browser',
-  description: t.meta.description,
-}
 ---
 
-<BaseLayout
-  lang={lang}
-  page={PAGES.home}
-  title={t.meta.title}
-  description={t.meta.description}
-  structuredData={structuredData}
->
-  <Hero lang={lang} />
-  <DemoBridge lang={lang} />
-  <Authoring lang={lang} />
-  <Features lang={lang} />
-  <Engine lang={lang} />
-  <AuthorTrust lang={lang} />
-  <Questions lang={lang} />
-  <Closing lang={lang} />
-</BaseLayout>
+<Landing lang={Astro.props.lang} />

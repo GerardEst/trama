@@ -1,6 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
 
 async function scrollVoyage(page: Page, fraction: number) {
+  // Font loading can move the FAQ and the route after navigation.
+  await page.evaluate(() => document.fonts.ready)
+  await expect(page.locator('story-voyage')).toHaveClass(/voyage--ready/)
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await page.evaluate(fraction => {
     const voyage = document.querySelector('story-voyage')!
     const route = voyage.querySelector<SVGPathElement>('.voyage__route')!
@@ -18,7 +22,7 @@ async function scrollVoyage(page: Page, fraction: number) {
 for (const width of [1440, 820, 601, 375, 320]) {
   test(`the small boat turns along a permanent drawn voyage without covering text at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto('/lab/e')
+    await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
     const voyage = page.locator('story-voyage')
     await expect(voyage).toHaveClass(/voyage--ready/)
@@ -72,7 +76,7 @@ for (const width of [1440, 820, 601, 375, 320]) {
 
 test('the route adapts when an answer is expanded and the viewport changes', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/lab/e')
+  await page.goto('/')
   const voyage = page.locator('story-voyage')
   await expect(voyage).toHaveClass(/voyage--ready/)
   const before = await voyage.locator('.voyage__route').getAttribute('d')
@@ -90,7 +94,7 @@ test('the route adapts when an answer is expanded and the viewport changes', asy
 
 test('reduced motion shows a complete, static voyage', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/lab/e')
+  await page.goto('/')
   const voyage = page.locator('story-voyage')
   await expect(voyage).toHaveAttribute('data-progress', '1.000')
   expect(await voyage.locator('.voyage__trail path').count()).toBeGreaterThan(15)
@@ -102,7 +106,7 @@ test('reduced motion shows a complete, static voyage', async ({ page }) => {
 test('the boat remains a static drawing without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  await page.goto('/lab/e')
+  await page.goto('/')
   await page.locator('#faq').scrollIntoViewIfNeeded()
   await expect(page.locator('.voyage__boat svg')).toBeVisible()
   await expect(page.locator('.voyage__chart')).toBeHidden()
@@ -113,7 +117,7 @@ test('the boat remains a static drawing without JavaScript', async ({ browser })
 
 test('the course enters the wide map through its actual northern water channel', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/lab/e')
+  await page.goto('/')
   await scrollVoyage(page, 1)
   const waterPoints = await page.locator('story-voyage').evaluate(voyage => {
     const root = voyage.getBoundingClientRect()

@@ -29,6 +29,8 @@ Key facts for building on Trama:
 
 ## Editor
 
+- [Full product summary](https://trama.app/llms-full.txt): capabilities, examples, comparisons and frequently asked questions from the landing.
+
 - [Features guide](https://trama.app/docs/features): how authors set up each editor feature (content nodes, events, conditional paths, requirements, distributors, player input, variables, images, sharing), with an example and its limitations. Also in Spanish (/es/docs/features) and Catalan (/ca/docs/features).
 
 ## Optional

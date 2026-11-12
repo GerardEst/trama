@@ -1,94 +1,82 @@
 import { test, expect } from '@playwright/test'
-import { landing as en } from '../../site/src/i18n/en'
-import { landing as ca } from '../../site/src/i18n/ca'
-import { landing as es } from '../../site/src/i18n/es'
+import { copyFor } from '../../site/src/i18n'
+import { ATLAS, atlasFor } from '../../site/src/components/landing/atlas'
 
 const languages = [
-  { lang: 'en', path: '/', copy: en },
-  { lang: 'ca', path: '/ca', copy: ca },
-  { lang: 'es', path: '/es', copy: es },
+  { lang: 'en', path: '/' },
+  { lang: 'ca', path: '/ca' },
+  { lang: 'es', path: '/es' },
 ] as const
-const views = ['write', 'map', 'preview', 'share'] as const
 
 test.use({ storageState: { cookies: [], origins: [] } })
 
-for (const { lang, path, copy } of languages) {
-  test(`${lang}: shows the real author workflow with keyboard-selectable, localised captures`, async ({ page }) => {
+for (const { lang, path } of languages) {
+  const copy = copyFor(lang)
+  const catalogue = atlasFor(lang)
+
+  test(`${lang}: shows four authoring chapters with real localised boards and documentation`, async ({ page }) => {
     const errors: string[] = []
     page.on('pageerror', error => errors.push(error.message))
     await page.goto(path)
     await expect(page.locator('h1')).toContainText(copy.hero.titleStart)
-    await expect(page.locator('.hero__reassurance')).toContainText(copy.hero.free)
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', copy.meta.description)
-    await page.getByRole('link', { name: copy.demoBridge.action }).click()
-    await expect(page).toHaveURL(new RegExp(`${path}#authoring$`))
-    const authoring = page.locator('#authoring')
-    await expect(authoring.getByRole('heading', { level: 2 })).toHaveText(copy.authoring.title)
-    for (const view of views) {
-      const button = authoring.getByRole('button', { name: new RegExp(copy.authoring[view].title) })
-      await button.focus()
-      await page.keyboard.press('Enter')
-      await expect(button).toHaveAttribute('aria-pressed', 'true')
-      await expect(authoring.locator('button[aria-pressed="true"]')).toHaveCount(1)
-      // Only the chosen capture is shown, as a responsive image linking to its full size.
-      const image = authoring.locator('img:visible')
-      await expect(image).toHaveCount(1)
-      await expect(image).toHaveAttribute('src', new RegExp(`/_astro/${lang}-${view}\\.`))
-      await expect(image).toHaveAttribute('srcset', /1600w/)
-      await expect(image).toHaveAttribute('alt', copy.authoring[view].alt)
-      await expect(image).toHaveJSProperty('complete', true)
-      await expect(authoring.locator('figcaption')).toContainText(copy.authoring[view].caption)
-      await expect(authoring.getByRole('link')).toHaveAttribute('href', new RegExp(`/_astro/${lang}-${view}\\.`))
+    await expect(page.locator('.e-toc a')).toHaveCount(4)
+    await expect(page.locator('board-demo')).toHaveCount(4)
+    for (const chapter of ['write', 'connect', 'remember', 'publish'] as const) {
+      await page.locator(`.e-toc a[href="#ch-${chapter}"]`).click()
+      const section = page.locator(`#ch-${chapter}`)
+      await expect(section.getByRole('heading', { level: 3 })).toHaveText(catalogue.chapters[chapter].title)
+      await expect(section.locator('trama-board')).toHaveAttribute('ready', '', { timeout: 15000 })
+      await expect(section.locator('polo-board')).toHaveCount(1)
     }
-    await expect(page.locator('polo-board, polo-rich-text-editor')).toHaveCount(0)
+    for (const feature of ATLAS.filter(feature => feature.docs)) {
+      await expect(page.locator(`#f-${feature.id} a`).first()).toHaveAttribute('href', `${lang === 'en' ? '' : `/${lang}`}/docs/features#${feature.docs}`)
+    }
     expect(errors).toEqual([])
   })
 
-  test(`${lang}: answers common questions without selling plans`, async ({ page }) => {
+  test(`${lang}: answers the catalogue's questions with keyboard-operated disclosures`, async ({ page }) => {
     await page.goto(path)
-    const questions = page.locator('#questions')
-    await expect(questions.locator('details')).toHaveCount(5)
-    for (const key of ['code', 'readers', 'download', 'export', 'create'] as const) {
-      const question = questions.locator('details').filter({ has: page.getByText(copy.questions[key].question, { exact: true }) })
+    const questions = page.locator('#faq')
+    await expect(questions.locator('details')).toHaveCount(catalogue.faq.length)
+    for (const [index, item] of catalogue.faq.entries()) {
+      const question = questions.locator('details').nth(index)
+      await expect(question.locator('summary')).toHaveText(item.question)
+      if (await question.getAttribute('open') !== null) await question.locator('summary').click()
       await question.locator('summary').focus()
       await page.keyboard.press('Enter')
       await expect(question).toHaveAttribute('open', '')
-      await expect(question.locator('p')).toHaveText(copy.questions[key].answer)
+      await expect(question.locator('p')).toHaveText(item.answer)
+      await expect(question.locator('p')).toBeVisible()
     }
-    await expect(page.locator('main')).not.toContainText(/\bPro\b/)
-    await expect(page.locator('#trust')).toContainText(copy.trust.data.description)
   })
 
   for (const width of [1440, 390, 320]) {
     for (const theme of ['light', 'dark'] as const) {
-      test(`${lang}: authoring, features and questions stay readable at ${width}px in ${theme}`, async ({ page }) => {
+      test(`${lang}: chapters and questions stay readable at ${width}px in ${theme}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 1000 })
         await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' })
         await page.goto(path)
-        await page.locator('#authoring').scrollIntoViewIfNeeded()
-        await expect(page.locator('#authoring img:visible')).toHaveJSProperty('complete', true)
-        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
-        for (const selector of ['#authoring button', '#trust article', '#questions summary', '.feature-card__copy']) {
-          for (const element of await page.locator(selector).all()) {
-            const bounds = await element.boundingBox()
-            expect(bounds).not.toBeNull()
-            expect(bounds!.x).toBeGreaterThanOrEqual(0)
-            expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1)
+        await page.evaluate(() => document.fonts.ready)
+        for (const selector of ['.e-chapter__head', '.e-more > dl > div', '.st-pillar > h3', '#faq summary']) {
+          const elements = page.locator(selector)
+          expect(await elements.count()).toBeGreaterThan(0)
+          for (const element of await elements.all()) {
+            const bounds = (await element.boundingBox())!
+            expect(bounds.x).toBeGreaterThanOrEqual(0)
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1)
             expect(await element.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true)
           }
         }
-        await page.locator('#authoring').screenshot({ path: test.info().outputPath(`${lang}-${width}-${theme}-authoring.png`),
-          style: '.site-header { visibility: hidden }' })
-        await page.locator('#questions').screenshot({ path: test.info().outputPath(`${lang}-${width}-${theme}-questions.png`),
-          style: '.site-header { visibility: hidden }' })
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
       })
     }
   }
 }
 
-test('keeps the authoring section selected when changing language', async ({ page }) => {
-  await page.goto('/ca#authoring')
+test('keeps the chosen chapter when changing language', async ({ page }) => {
+  await page.goto('/ca#ch-write')
   await page.locator('.footer language-selector').getByRole('link', { name: 'Español' }).click()
-  await expect(page).toHaveURL(/\/es#authoring$/)
-  await expect(page.locator('#authoring h2')).toHaveText(es.authoring.title)
+  await expect(page).toHaveURL(/\/es#ch-write$/)
+  await expect(page.locator('#ch-write h3')).toHaveText(atlasFor('es').chapters.write.title)
 })

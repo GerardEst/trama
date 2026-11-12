@@ -1,0 +1,179 @@
+---
+import { getImage } from 'astro:assets'
+import landscape from '../../assets/landing/story-map-ink-landscape.webp'
+import portrait from '../../assets/landing/story-map-ink-portrait.webp'
+
+import type { Lang } from '../../i18n'
+import { interfaceCopyFor } from './copy'
+import { MAP_EVENTS } from './map-events'
+import MapEventIcon from './MapEventIcon.astro'
+
+interface Props {
+  lang: Lang
+}
+
+const t = interfaceCopyFor(Astro.props.lang)
+const labels = {
+  battle: t.mapBattle, discovery: t.mapDiscovery, treasure: t.mapTreasure,
+  key: t.mapKey, potion: t.mapPotion, camp: t.mapCamp, relic: t.mapRelic,
+}
+
+const wide = await getImage({ src: landscape, width: 1984, format: 'webp' })
+const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
+---
+
+<div class="story-map" aria-hidden="true">
+  <picture>
+    <source media="(max-width: 600px)" srcset={tall.src} width="1024" height="1536" />
+    <img class="story-map__image" src={wide.src} width="1984" height="1024" alt="" loading="lazy" decoding="async" />
+  </picture>
+  <div class="story-map__events">
+    {MAP_EVENTS.map(({ kind, position, mobilePosition, tabletPosition = position, delay }) => (
+      <div class="map-event" data-event={kind} style={`--event-x: ${position[0]}%; --event-y: ${position[1]}%; --event-tablet-x: ${tabletPosition[0]}%; --event-tablet-y: ${tabletPosition[1]}%; --event-mobile-x: ${mobilePosition[0]}%; --event-mobile-y: ${mobilePosition[1]}%; --event-delay: ${delay}s`}>
+        <div class="map-event__body">
+          <span class="map-event__badge"><MapEventIcon kind={kind} /></span>
+          <span class="map-event__label">{labels[kind]}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .story-map {
+    --map-image-filter: grayscale(1) contrast(1.12) brightness(1.1);
+    --map-image-blend: multiply;
+    --map-image-opacity: 0.62;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+
+  .story-map__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: var(--map-image-filter);
+    mix-blend-mode: var(--map-image-blend);
+    opacity: var(--map-image-opacity);
+  }
+
+  picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-image: linear-gradient(transparent, black 12%, black 88%, transparent);
+  }
+
+  .story-map__events {
+    position: absolute;
+    inset: 0;
+  }
+
+  .map-event {
+    position: absolute;
+    left: var(--event-x);
+    top: var(--event-y);
+    transform: translate(-50%, -50%);
+    color: var(--polo-color-action);
+  }
+
+  .map-event__body {
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+  }
+
+  .map-event__badge {
+    display: block;
+    width: 64px;
+    height: 64px;
+    border-radius: 48% 52% 56% 44% / 54% 46% 54% 46%;
+    background: color-mix(in srgb, var(--polo-color-canvas) 94%, transparent);
+    box-shadow: 0 0 18px 8px color-mix(in srgb, var(--polo-color-canvas) 70%, transparent);
+  }
+
+  .map-event__label {
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--polo-color-canvas) 94%, transparent);
+    color: var(--polo-color-text-secondary);
+    font: italic 15px / 1.3 var(--e-serif);
+    white-space: nowrap;
+  }
+
+  :global(.closing--pending) .story-map {
+    opacity: 0;
+  }
+
+  :global(.closing--revealed) .story-map {
+    animation: atlas-unfold 1.8s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+  }
+
+  :global(.closing--revealed) .map-event__body {
+    animation: event-arrive 0.7s calc(0.6s + var(--event-delay)) ease-out both;
+  }
+
+  @keyframes atlas-unfold {
+    from { opacity: 0; transform: scale(1.025); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes event-arrive {
+    from { opacity: 0; transform: translateY(6px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  :global(:root[data-polo-theme='dark']) .story-map {
+    --map-image-filter: grayscale(1) invert(1) contrast(1.12);
+    --map-image-blend: screen;
+    --map-image-opacity: 0.48;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-polo-theme='light'])) .story-map {
+      --map-image-filter: grayscale(1) invert(1) contrast(1.12);
+      --map-image-blend: screen;
+      --map-image-opacity: 0.48;
+    }
+  }
+
+  @media (min-width: 601px) and (max-width: 1000px) {
+    .story-map__image {
+      object-position: 30% center;
+    }
+
+    .map-event {
+      left: var(--event-tablet-x);
+      top: var(--event-tablet-y);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .map-event {
+      left: var(--event-mobile-x);
+      top: var(--event-mobile-y);
+    }
+
+    .map-event__badge {
+      width: 46px;
+      height: 46px;
+    }
+
+    .map-event__label {
+      padding: 2px 4px;
+      font-size: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story-map,
+    .map-event__body {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+  }
+</style>

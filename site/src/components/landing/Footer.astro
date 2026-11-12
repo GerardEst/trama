@@ -1,0 +1,34 @@
+---
+import { copyFor, type Lang } from '../../i18n'
+import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
+import { localePath } from '../../lib/locale'
+import { PAGES } from '../../lib/pages'
+import LanguageSelector from '../LanguageSelector.astro'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+---
+
+<footer class="footer lf">
+  <div class="lf__inner">
+    <div class="lf__brand">
+      <a class="ln__mark" href={localePath(lang, PAGES.home)} aria-label={t.nav.home}>Trama<span>.</span></a>
+      <p>{t.footer.tagline}</p>
+    </div>
+    <div class="lf__links">
+      <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
+      <a href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source}</a>
+      <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
+      <a href={APP_LINKS.email}>{t.footer.email}</a>
+    </div>
+    <div class="lf__langs">
+      <LanguageSelector lang={lang} page={PAGES.home} label={t.footer.language} />
+    </div>
+    {Astro.slots.has('default') && <p class="lf__colophon"><slot /></p>}
+    <small>{t.footer.rights}</small>
+  </div>
+</footer>

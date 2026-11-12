@@ -1,0 +1,442 @@
+---
+import { copyFor, type Lang } from '../../i18n'
+import { atlasFor } from './atlas'
+import { landingCopyFor } from './content'
+import { interfaceCopyFor } from './copy'
+import FeatureIcon from './FeatureIcon.astro'
+
+// Where Trama stands out. Three pillars, each with a scene drawn in the editor's
+// own words, carry the reason to choose it; the rest follows in one quieter row.
+// The scenes are decoration: the titles and bodies carry the facts.
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+const c = atlasFor(lang)
+const e = interfaceCopyFor(lang)
+const art = landingCopyFor(lang).art
+const v = t.visuals
+
+// The atlas lists the wins in this order: logic, write and test, link; then
+// analytics, engine and price.
+const [logic, play, link, ...more] = c.wins
+const MORE_ICONS = ['analytics', 'engine', null] as const
+const PILLARS = [
+  { win: logic, scene: 'logic' },
+  { win: play, scene: 'play' },
+  { win: link, scene: 'link' },
+] as const
+---
+
+<div class="st">
+  <ol class="st-pillars">
+    {PILLARS.map(({ win, scene }) => (
+      <li class="st-pillar">
+        <div class={`st-scene st-scene--${scene}`} aria-hidden="true">
+          {scene === 'logic' && (
+            <>
+              <p class="st-state">
+                <span>{v.coins}</span>
+                <span>{v.hasKey}</span>
+              </p>
+              <p class="st-answer">
+                <b>{v.openArchive}</b>
+                <small>{v.requiresKey}</small>
+              </p>
+              <p class="st-answer is-locked">
+                <b>{v.buyMap}</b>
+                <small>{v.requiresCoins}</small>
+              </p>
+              <p class="st-answer">
+                <b>{v.walkAway}</b>
+              </p>
+            </>
+          )}
+          {scene === 'play' && (
+            <>
+              <div class="st-page st-page--write">
+                <span class="st-tag">{e.writerLabel}</span>
+                <p>{v.passageStart} <mark>{v.nameToken}</mark><i class="st-caret"></i></p>
+              </div>
+              <div class="st-page st-page--read">
+                <span class="st-tag">{e.readerLabel}</span>
+                <p>{v.passageStart} <em>Morgan</em>…</p>
+                <span class="st-choice">{v.openArchive}</span>
+              </div>
+            </>
+          )}
+          {scene === 'link' && (
+            <>
+              <p class="st-url">
+                <span class="st-url__dot"></span>
+                <span class="st-url__text">{e.storyUrl}</span>
+                <span class="st-url__copy">{art.copyLink}</span>
+              </p>
+              <svg class="st-threads" viewBox="0 0 300 60" preserveAspectRatio="none">
+                <path d="M150 0C150 34 50 26 50 60M150 0V60M150 0C150 34 250 26 250 60" />
+              </svg>
+              <div class="st-readers">
+                {[0, 1, 2].map(() => (
+                  <span class="st-phone">
+                    <span class="st-phone__line st-phone__line--title"></span>
+                    <span class="st-phone__line"></span>
+                    <span class="st-phone__line st-phone__line--short"></span>
+                    <span class="st-phone__choice"></span>
+                    <span class="st-phone__choice"></span>
+                  </span>
+                ))}
+              </div>
+              <p class="st-free">{t.hero.noAccount}</p>
+            </>
+          )}
+        </div>
+        <h3>{win.title}</h3>
+        <p>{win.body}</p>
+      </li>
+    ))}
+  </ol>
+
+  <ul class="st-more">
+    {more.map((win, index) => {
+      const icon = MORE_ICONS[index]
+      return (
+        <li>
+          <h3>
+            <span class="st-more__icon">{icon ? <FeatureIcon id={icon} /> : <span aria-hidden="true">€</span>}</span>
+            {win.title}
+          </h3>
+          <p>{win.body}</p>
+        </li>
+      )
+    })}
+  </ul>
+</div>
+
+<style>
+  .st {
+    display: grid;
+    gap: 56px;
+  }
+
+  /* The three pillars */
+  .st-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .st-pillar {
+    display: flex;
+    flex-direction: column;
+  }
+  .st-pillar h3 {
+    margin: 28px 0 10px;
+    font-size: clamp(26px, 2.3vw, 32px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+  .st-pillar > p {
+    max-width: 380px;
+    color: var(--polo-color-text-secondary);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .st-scene {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    height: 300px;
+    padding: 28px;
+    overflow: hidden;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    background-color: var(--polo-color-canvas);
+    background-image: var(--e-paper);
+    background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px;
+    font: 500 13px / 1.4 var(--e-sans);
+    color: var(--polo-color-text-strong);
+  }
+
+  /* Logic: the reader's state opens one answer and keeps another shut. */
+  .st-state {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .st-state span {
+    padding: 4px 12px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 999px;
+    background: var(--polo-color-surface);
+    font-weight: 600;
+  }
+  .st-answer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    background: var(--polo-color-surface);
+    box-shadow: 0 1px 0 var(--polo-color-border);
+  }
+  .st-answer b {
+    font-weight: 700;
+  }
+  .st-answer small {
+    color: var(--polo-color-story-accent);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .st-answer.is-locked {
+    border-style: dashed;
+    background: transparent;
+    box-shadow: none;
+  }
+  .st-answer.is-locked b {
+    color: var(--polo-color-text-muted);
+  }
+  .st-answer.is-locked small {
+    color: var(--e-red);
+  }
+  .st-answer.is-locked small::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 1px;
+    background: currentColor;
+    box-shadow: 0 -3px 0 -1px var(--polo-color-canvas), 0 -4px 0 0 currentColor;
+  }
+
+  /* Write and test: the passage you type, and the same passage as it is played. */
+  .st-scene--play {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 14px;
+    padding-inline: 20px;
+  }
+  .st-page {
+    padding: 12px 12px 14px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 4px;
+    background: var(--polo-color-surface);
+  }
+  .st-page p {
+    margin-top: 8px;
+    font: 400 14px / 1.45 var(--e-serif);
+  }
+  .st-page--write {
+    rotate: -1.5deg;
+    translate: 0 -14px;
+  }
+  .st-page--read {
+    rotate: 1deg;
+    translate: 0 14px;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--polo-color-text-strong) 10%, transparent);
+  }
+  .st-tag {
+    color: var(--polo-color-text-muted);
+    font: 700 10px / 1 var(--e-sans);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .st-page--read .st-tag {
+    color: var(--e-red);
+  }
+  .st-page mark {
+    padding: 0 4px;
+    border-radius: 3px;
+    background: var(--polo-color-action-soft);
+    color: var(--polo-color-text-strong);
+    font: 600 12px var(--e-sans);
+  }
+  .st-page em {
+    font-style: normal;
+    text-decoration: underline;
+    text-decoration-color: var(--e-red);
+    text-underline-offset: 3px;
+  }
+  .st-caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 1.1em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: var(--polo-color-text-strong);
+    animation: st-blink 1.1s steps(1) infinite;
+  }
+  .st-choice {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border: 1px solid var(--polo-color-text-strong);
+    border-radius: 4px;
+    font: 600 12px var(--e-sans);
+  }
+  @keyframes st-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Publish: one link, opened by any number of readers. */
+  .st-scene--link {
+    align-items: center;
+    gap: 0;
+  }
+  .st-url {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 6px 6px 6px 14px;
+    border: 1px solid var(--polo-color-text-strong);
+    border-radius: 999px;
+    background: var(--polo-color-surface);
+  }
+  .st-url__dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--e-red);
+  }
+  .st-url__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .st-url__copy {
+    flex: none;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--polo-color-action);
+    color: var(--polo-color-text-on-action);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .st-threads {
+    width: 72%;
+    height: 40px;
+    overflow: visible;
+  }
+  .st-threads path {
+    fill: none;
+    stroke: var(--e-red);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .st-readers {
+    display: flex;
+    justify-content: space-between;
+    width: 88%;
+  }
+  .st-phone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 27%;
+    aspect-ratio: 9 / 15;
+    padding: 12px 8px;
+    border: 1.5px solid var(--polo-color-text-strong);
+    border-radius: 10px;
+    background: var(--polo-color-surface);
+  }
+  .st-phone__line {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--polo-color-border-strong);
+  }
+  .st-phone__line--title {
+    width: 70%;
+    height: 5px;
+    margin: 4px auto 6px;
+    background: var(--polo-color-text-strong);
+  }
+  .st-phone__line--short {
+    width: 60%;
+  }
+  .st-phone__choice {
+    height: 12px;
+    border: 1px solid var(--polo-color-text-strong);
+    border-radius: 3px;
+  }
+  .st-phone__choice:first-of-type {
+    margin-top: auto;
+  }
+  .st-free {
+    margin-top: 14px;
+    color: var(--polo-color-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* The quieter row */
+  .st-more {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    padding-top: 28px;
+    border-top: 1px solid var(--polo-color-border);
+    list-style: none;
+  }
+  .st-more h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  .st-more__icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 50%;
+    color: var(--e-red);
+    font: 600 15px var(--e-sans);
+  }
+  .st-more p {
+    padding-left: 42px;
+    color: var(--polo-color-text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 980px) {
+    .st-pillars,
+    .st-more {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .st-pillars {
+      gap: 48px;
+    }
+    .st-scene {
+      max-width: 520px;
+    }
+    .st-pillar > p {
+      max-width: 560px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .st-caret {
+      animation: none;
+    }
+  }
+</style>

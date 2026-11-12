@@ -1,0 +1,81 @@
+---
+import type { Lang } from '../../i18n'
+import { boardStory, type DemoId } from './demos'
+import { interfaceCopyFor } from './copy'
+
+// A real Trama board next to the reader's view of the same story. The board is
+// the app's own editor (<trama-board>, built from src/embed), loaded only when the
+// example comes near the screen; every edit on it is played again by the engine,
+// so the reader's side always shows what the board now says.
+interface Props {
+  id: DemoId
+  lang: Lang
+  zoom?: number
+  x?: number
+  y?: number
+}
+
+const { id, lang, zoom = 0.9, x = 0, y = 0 } = Astro.props
+const e = interfaceCopyFor(lang)
+const story = boardStory(id, lang)
+const json = JSON.stringify(story).replace(/</g, '\\u003c')
+---
+
+<board-demo class="lb">
+  <trama-board zoom={zoom} x={x} y={y}>
+    <script type="application/json" set:html={json} />
+    <p class="lb-loading">{e.boardLoading}</p>
+  </trama-board>
+  <p class="lb-foot">
+    <span>{e.boardHint}</span>
+    <button class="lb-reset" type="button" data-reset>↺ {e.reset}</button>
+  </p>
+  <script type="application/json" data-story set:html={json} />
+</board-demo>
+
+<script>
+  // The built board, shared by every example on the page: one download, on demand.
+  let embed: Promise<unknown> | undefined
+  const loadEmbed = () =>
+    (embed ??= import(/* @vite-ignore */ new URL('/embed/polyfills.js', location.origin).href).then(
+      () => import(/* @vite-ignore */ new URL('/embed/main.js', location.origin).href),
+    ))
+
+  class BoardDemo extends HTMLElement {
+    private original = ''
+    private observer?: IntersectionObserver
+
+    connectedCallback() {
+      this.original = this.querySelector(':scope > script[data-story]')?.textContent ?? '{}'
+      this.querySelector('[data-reset]')?.addEventListener('click', this.reset)
+      this.observer = new IntersectionObserver(
+        entries => {
+          if (!entries.some(entry => entry.isIntersecting)) return
+          this.observer?.disconnect()
+          void loadEmbed()
+        },
+        { rootMargin: '800px 0px' },
+      )
+      this.observer.observe(this)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+    }
+
+    // Puts the original example back on the board.
+    private reset = () => {
+      const board = this.querySelector('trama-board')
+      if (!board) return
+      const fresh = board.cloneNode(false) as HTMLElement
+      fresh.removeAttribute('ready')
+      const script = document.createElement('script')
+      script.type = 'application/json'
+      script.textContent = this.original
+      fresh.append(script)
+      board.replaceWith(fresh)
+    }
+  }
+
+  customElements.define('board-demo', BoardDemo)
+</script>

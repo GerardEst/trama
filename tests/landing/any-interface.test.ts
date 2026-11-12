@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 for (const lang of ['en', 'es', 'ca']) {
   test(`${lang}: each interface advances and restarts independently`, async ({ page }) => {
-    await page.goto(`${lang === 'en' ? '' : `/${lang}`}/lab/e`)
+    await page.goto(lang === 'en' ? '/' : `/${lang}`)
     await page.evaluate(() => customElements.whenDefined('any-interface'))
     const screens = page.locator('any-interface .ai-screen')
     await expect(screens).toHaveCount(3)

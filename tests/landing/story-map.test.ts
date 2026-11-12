@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 for (const width of [1440, 820, 601, 375, 320]) {
-  test(`the lab E map keeps the closing invitation readable at ${width}px`, async ({ page }) => {
+  test(`the landing map keeps the closing invitation readable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto('/ca/lab/e')
+    await page.goto('/ca')
     const closing = page.locator('map-closing')
     await closing.scrollIntoViewIfNeeded()
     await expect(closing).toHaveClass(/closing--revealed/)
@@ -39,9 +39,9 @@ for (const width of [1440, 820, 601, 375, 320]) {
   })
 }
 
-test('the lab E map is complete when motion is reduced', async ({ page }) => {
+test('the landing map is complete when motion is reduced', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/ca/lab/e')
+  await page.goto('/ca')
   const closing = page.locator('map-closing')
   await closing.scrollIntoViewIfNeeded()
   await expect(closing).not.toHaveClass(/closing--pending/)
@@ -52,10 +52,10 @@ test('the lab E map is complete when motion is reduced', async ({ page }) => {
   await expect(closing.getByRole('link', { name: /Crea la teva primera història/ })).toBeVisible()
 })
 
-test('the lab E closing invitation works without JavaScript', async ({ browser }) => {
+test('the landing closing invitation works without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  await page.goto('/ca/lab/e')
+  await page.goto('/ca')
   const closing = page.locator('map-closing')
   await closing.scrollIntoViewIfNeeded()
   await expect(closing.getByRole('heading', { name: 'Què passa després?' })).toBeVisible()
@@ -69,7 +69,7 @@ test('the lab E closing invitation works without JavaScript', async ({ browser }
 })
 
 test('map markers animate only while the closing section is visible', async ({ page }) => {
-  await page.goto('/ca/lab/e')
+  await page.goto('/ca')
   const closing = page.locator('map-closing')
   const spark = closing.locator('.spark').first()
   await expect(spark).toHaveCSS('animation-play-state', 'paused')
@@ -80,9 +80,9 @@ test('map markers animate only while the closing section is visible', async ({ p
 })
 
 for (const [path, battle, treasure] of [
-  ['/lab/e', 'A battle', 'A hidden treasure'],
-  ['/es/lab/e', 'Una batalla', 'Un tesoro oculto'],
-  ['/ca/lab/e', 'Una batalla', 'Un tresor amagat'],
+  ['/', 'A battle', 'A hidden treasure'],
+  ['/es', 'Una batalla', 'Un tesoro oculto'],
+  ['/ca', 'Una batalla', 'Un tresor amagat'],
 ]) {
   test(`map events follow the page language at ${path}`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })

@@ -1,0 +1,113 @@
+---
+import { createGame } from '@trama-app/engine'
+import type { Lang } from '../../i18n'
+import { interfaceCopyFor } from './copy'
+import { anyStory } from './any-story'
+import { renderBook, renderGame, renderTerminal, viewOf, type AnyWords } from './any-render'
+
+// The same story played independently in three example interfaces. Each screen advances
+// only when the reader makes a choice in that interface.
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const e = interfaceCopyFor(lang)
+const story = anyStory(e)
+const words: AnyWords = { again: e.again, trust: e.anyTrust, key: e.anyKey, needs: e.anyNeeds, bookTrust: e.anyBookTrust, bookKey: e.anyBookKey }
+const view = viewOf(createGame(story).start(), [], story)
+const outputs = [
+  { kind: 'terminal', label: e.anyTerminal, html: renderTerminal(view, words) },
+  { kind: 'book', label: e.anyBook, html: renderBook(view, words) },
+  { kind: 'game', label: e.anyGame, html: renderGame(view, words) },
+]
+const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c')
+---
+
+<any-interface class="ai">
+  {outputs.map(output => (
+    <figure class:list={['ai-out', `ai-out--${output.kind}`]}>
+      <figcaption class="ai-label">{output.label}</figcaption>
+      <div class="ai-screen" data-kind={output.kind} set:html={output.html} />
+    </figure>
+  ))}
+  <figure class="ai-out ai-out--imagine">
+    <figcaption class="ai-label">{e.anyImagine}</figcaption>
+    <div class="ai-imagine">
+      <span class="ai-imagine__mark" aria-hidden="true">∞</span>
+      <p>{e.anyImagineDescription}</p>
+    </div>
+  </figure>
+  <script type="application/json" data-story set:html={json(story)} />
+  <script type="application/json" data-words set:html={json(words)} />
+</any-interface>
+
+<script>
+  import { createGame, type Game, type StateChange, type StoryTree } from '@trama-app/engine'
+  import { renderBook, renderGame, renderTerminal, viewOf, type AnyView, type AnyWords } from './any-render'
+
+  const RENDERERS: Record<string, (view: AnyView, words: AnyWords) => string> = {
+    terminal: renderTerminal,
+    book: renderBook,
+    game: renderGame,
+  }
+
+  interface Session {
+    game: Game
+    stop: () => void
+    changes: StateChange[]
+  }
+
+  class AnyInterface extends HTMLElement {
+    private story!: StoryTree
+    private words!: AnyWords
+    private sessions = new Map<HTMLElement, Session>()
+
+    connectedCallback() {
+      const read = (selector: string) => JSON.parse(this.querySelector(selector)?.textContent ?? '{}')
+      this.story = read('[data-story]')
+      this.words = read('[data-words]')
+      this.addEventListener('click', this.onClick)
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.onClick)
+      for (const session of this.sessions.values()) session.stop()
+      this.sessions.clear()
+    }
+
+    private onClick = (event: Event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-answer]')
+      if (!button) return
+      const screen = button.closest<HTMLElement>('.ai-screen')
+      if (!screen || !this.contains(screen)) return
+      const id = button.dataset['answer']
+      // The first scene was rendered at build time; this screen starts on its first click.
+      const session = !id || !this.sessions.has(screen)
+        ? this.newGame(screen)
+        : this.sessions.get(screen)!
+      session.changes = []
+      if (id) session.game.choose(id)
+    }
+
+    private newGame(screen: HTMLElement): Session {
+      this.sessions.get(screen)?.stop()
+      const game = createGame(this.story)
+      const session: Session = { game, stop: () => {}, changes: [] }
+      session.stop = game.subscribe(event => {
+        if (event.type === 'change') session.changes.push(event.change)
+        if (event.type === 'state') this.render(screen, session)
+      })
+      this.sessions.set(screen, session)
+      game.start()
+      return session
+    }
+
+    private render(screen: HTMLElement, session: Session) {
+      const view = viewOf(session.game.getState(), session.changes, this.story)
+      screen.innerHTML = RENDERERS[screen.dataset['kind'] ?? '']?.(view, this.words) ?? ''
+    }
+  }
+
+  customElements.define('any-interface', AnyInterface)
+</script>

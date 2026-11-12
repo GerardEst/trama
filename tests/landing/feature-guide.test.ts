@@ -19,8 +19,8 @@ const featureIndex = (page: Page) => page.getByRole('navigation', { name: 'Featu
 
 test('the author landing keeps the guide accessible through Docs', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('#authoring')).toHaveCount(1)
-  await expect(page.locator('#features .feature-card')).toHaveCount(6)
+  await expect(page.locator('#features .e-chapter')).toHaveCount(4)
+  await expect(page.locator('#features board-demo')).toHaveCount(4)
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Docs' }).click()
   await expect(page).toHaveURL(/\/docs\/features$/)
   await expect(page).toHaveTitle('Docs — Trama')

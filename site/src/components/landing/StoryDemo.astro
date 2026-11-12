@@ -1,21 +1,22 @@
 ---
-import { Image } from 'astro:assets'
 import { createGame } from '@trama-app/engine'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-story/exampleStory'
 import AuthLabel from '../ui/AuthLabel.astro'
 import { copyFor, type Lang } from '../../i18n'
 import { APP_LINKS } from '../../lib/links'
 import { renderStep, type StepStrings } from '../../lib/story-step'
-import heroImage from '../../assets/landing/modest-hero.webp'
-import '../../styles/story-step.css'
+import { landingCopyFor } from './content'
 
 interface Props {
   lang: Lang
+  class?: string
+  /** Shows the live list of what the story has remembered so far. */
+  memory?: boolean
 }
 
-const { lang } = Astro.props
+const { lang, class: className, memory = false } = Astro.props
 const t = copyFor(lang)
-// The same example story new authors start with in the app.
+const lab = landingCopyFor(lang)
 const story = buildExampleStory(EXAMPLE_STORY_COPY[lang])
 const strings: StepStrings = t.player
 // The opening scene is in the HTML, so it shows before any script runs.
@@ -23,33 +24,25 @@ const opening = renderStep(createGame(story).start(), strings)
 const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
 ---
 
-<story-demo id="try-it" role="region" aria-label={t.hero.demoLabel} data-strings={JSON.stringify(strings)}>
-  <div class="demo__heading">
-    <span class="demo__dot" aria-hidden="true"></span>
-    {t.demo.heading}
-  </div>
-  <div class="demo__scene">
-    <Image
-      src={heroImage}
-      alt=""
-      widths={[684, 1368]}
-      sizes="(max-width: 760px) 100vw, 780px"
-      loading="eager"
-      fetchpriority="high"
-    />
-    <span>{t.demo.titleStart}<br /><strong>{t.demo.titleEnd}</strong></span>
-  </div>
-  <div class="demo__game">
+<story-demo id="try-it" class={className} role="region" aria-label={t.hero.demoLabel} data-strings={JSON.stringify(strings)}>
+  <slot />
+  <div class="ls-game">
     <div class="story-step" data-step set:html={opening} />
   </div>
-  <div class="demo__next" data-next hidden>
-    <p>{t.demo.endingStart}<br />{t.demo.endingEnd}</p>
+  {memory && (
+    <div class="ls-memory">
+      <span class="ls-memory__label">{lab.ui.memoryLabel}</span>
+      <ul data-memory aria-live="polite"><li class="ls-memory__empty" data-memory-empty>{lab.ui.memoryEmpty}</li></ul>
+    </div>
+  )}
+  <div class="ls-next" data-next hidden>
+    <p>{t.demo.endingStart} {t.demo.endingEnd}</p>
     <a href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
       <AuthLabel signedOut={t.demo.createFirst} signedIn={t.demo.makeAnother} />
       <span aria-hidden="true">→</span>
     </a>
   </div>
-  <div class="demo__footer">
+  <div class="ls-foot">
     <span data-intro>{t.demo.intro}</span>
     <span data-ended hidden>{t.demo.ended}</span>
     <button type="button" data-restart hidden><span aria-hidden="true">↺</span> {t.demo.restart}</button>
@@ -58,11 +51,11 @@ const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
 </story-demo>
 
 <script>
-  import { createGame, type Game, type StoryTree } from '@trama-app/engine'
+  import { createGame, type Game, type StateChange, type StoryTree } from '@trama-app/engine'
   import { renderStep, type StepStrings } from '../../lib/story-step'
 
-  // Plays the example story with Trama's engine. The opening scene is already
-  // in the page; from the first choice on, this element renders every step.
+  // Plays the example story with Trama's engine and, when asked to, lists what
+  // the story remembers, so a reader sees the state a choice changes.
   class StoryDemo extends HTMLElement {
     private story!: StoryTree
     private strings!: StepStrings
@@ -82,23 +75,44 @@ const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
 
     disconnectedCallback() {
       this.unsubscribe?.()
-      this.find('[data-step]').removeEventListener('click', this.choose)
-      this.find('[data-step]').removeEventListener('submit', this.submit)
-      this.find('[data-restart]').removeEventListener('click', this.restart)
     }
 
     private newGame() {
       this.unsubscribe?.()
       this.started = false
       this.ended = false
+      const memory = this.querySelector('[data-memory]')
+      memory?.querySelectorAll('li:not([data-memory-empty])').forEach(item => item.remove())
+      memory?.querySelector<HTMLElement>('[data-memory-empty]')?.removeAttribute('hidden')
       const game = createGame(this.story)
       this.unsubscribe = game.subscribe(event => {
         if (event.type === 'answer') this.started = true
         else if (event.type === 'end') this.ended = true
+        else if (event.type === 'change') this.remember(event.change)
         else if (event.type === 'state') this.render(renderStep(event.state, this.strings))
       })
       this.game = game
       game.start()
+    }
+
+    private remember(change: StateChange) {
+      const memory = this.querySelector('[data-memory]')
+      if (!memory) return
+      const refs = (this.story as { refs?: Record<string, { name?: string }> }).refs ?? {}
+      const name = refs[change.ref]?.name ?? refs[`property_${change.ref}`]?.name ?? change.ref
+      let text = name
+      if (change.type === 'stat') text = `${name} ${change.after}`
+      else if (change.type === 'condition') text = `${name} ${change.after ? '✓' : '✕'}`
+      // Long values are sentences written for the ending, not memory worth listing.
+      else if (String(change.after).length > 28) return
+      else text = `${name}: ${change.after}`
+      memory.querySelector<HTMLElement>('[data-memory-empty]')?.setAttribute('hidden', '')
+      const item = document.createElement('li')
+      item.dataset['ref'] = change.ref
+      item.textContent = text
+      const previous = memory.querySelector(`li[data-ref="${CSS.escape(change.ref)}"]`)
+      if (previous) previous.replaceWith(item)
+      else memory.append(item)
     }
 
     private render(html: string) {
@@ -110,6 +124,7 @@ const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
       this.find('[data-ended]').hidden = !this.ended
       this.find('[data-restart]').hidden = !this.started
       this.toggleAttribute('data-ended', this.ended)
+      this.toggleAttribute('data-started', this.started)
       // Keep keyboard readers on the story instead of losing focus to the page.
       if (hadFocus) {
         const next = this.ended
@@ -141,144 +156,3 @@ const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
 
   customElements.define('story-demo', StoryDemo)
 </script>
-
-<style>
-  story-demo {
-    display: block;
-    position: relative;
-    width: min(100%, 780px);
-    min-width: 0;
-    border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 26%, transparent);
-    border-radius: 16px;
-    overflow: hidden;
-    background: var(--polo-color-surface);
-    box-shadow:
-      0 18px 0 -8px var(--polo-color-action-soft),
-      0 32px 48px -26px color-mix(in srgb, var(--polo-color-shadow) 21%, transparent);
-    scroll-margin-top: 110px;
-  }
-
-  .demo__heading,
-  .demo__footer {
-    display: flex;
-    align-items: center;
-    gap: var(--polo-space-2);
-    padding: 15px 20px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.09em;
-  }
-
-  .demo__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--polo-color-action);
-  }
-
-  .demo__scene {
-    position: relative;
-    background: var(--polo-color-text-strong);
-  }
-  .demo__scene::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(transparent 55%, var(--polo-color-media-scrim));
-  }
-  .demo__scene img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  .demo__scene > span {
-    position: absolute;
-    z-index: 1;
-    left: 24px;
-    bottom: 24px;
-    color: var(--polo-color-text-on-media);
-    font: 400 clamp(15px, 3vw, 23px) / 1.25 var(--font-libre-baskerville);
-    letter-spacing: -0.03em;
-    text-shadow: 0 1px 4px var(--polo-color-media-shadow);
-  }
-  .demo__scene strong {
-    font-weight: 400;
-  }
-
-  .demo__game {
-    display: flex;
-    min-height: 230px;
-  }
-  story-demo[data-ended] .demo__game {
-    min-height: 0;
-  }
-
-  .demo__footer {
-    border-top: 1px solid var(--polo-color-border);
-    justify-content: space-between;
-    letter-spacing: 0;
-    color: var(--polo-color-text-secondary);
-  }
-  .demo__footer button {
-    min-height: 44px;
-    margin: -12px -8px;
-    padding: 12px 8px;
-    border: 0;
-    background: none;
-    color: var(--polo-color-action);
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 800;
-  }
-  .demo__footer button:hover {
-    text-decoration: underline;
-  }
-  [hidden] {
-    display: none !important;
-  }
-
-  .demo__next {
-    padding: 20px 24px;
-    border-top: 1px solid var(--polo-color-border);
-    background: color-mix(in srgb, var(--polo-color-action) 5%, transparent);
-  }
-  .demo__next p {
-    font-size: 15px;
-    line-height: 1.5;
-  }
-  .demo__next a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--polo-space-3);
-    min-height: 44px;
-    margin-top: var(--polo-space-3);
-    padding: 0 18px;
-    border: 1px solid color-mix(in srgb, var(--polo-color-text-strong) 20%, transparent);
-    border-radius: var(--polo-radius-control);
-    background: var(--polo-color-surface);
-    box-shadow: 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
-    color: var(--polo-color-text-strong);
-    font-size: 14px;
-    font-weight: 800;
-    transition: border-color 0.2s, color 0.2s, transform 0.2s;
-  }
-  .demo__next a > span:last-child {
-    color: var(--polo-color-action);
-    transform: translateY(-0.08em);
-  }
-  .demo__next a:hover {
-    border-color: var(--polo-color-action);
-    color: var(--polo-color-action);
-    transform: translateY(-1px);
-  }
-
-  @media (max-width: 760px) {
-    story-demo {
-      max-width: 560px;
-    }
-    .demo__game {
-      min-height: 240px;
-    }
-  }
-</style>
