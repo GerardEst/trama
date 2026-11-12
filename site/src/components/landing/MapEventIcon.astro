@@ -105,7 +105,7 @@ const { kind } = Astro.props
     animation-play-state: paused;
   }
 
-  :global(.closing--visible) :is(.spark, .blade, .chest-lid, .bubble) {
+  :global(.closing--visible.closing--arrived) :is(.spark, .blade, .chest-lid, .bubble) {
     animation-play-state: running;
   }
 

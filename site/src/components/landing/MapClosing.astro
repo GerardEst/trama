@@ -16,22 +16,31 @@ const { lang } = Astro.props
 
 <script>
   class MapClosing extends HTMLElement {
+    static observedAttributes = ['data-voyage-arrived']
     private observer?: IntersectionObserver
 
     connectedCallback() {
       if (typeof IntersectionObserver === 'undefined') return
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
-      this.classList.add('closing--pending')
+      if (!this.classList.contains('closing--revealed')) this.classList.add('closing--pending')
+      if (!this.classList.contains('closing--arrived')) this.classList.add('closing--events-pending')
       this.observer = new IntersectionObserver(entries => {
         const visible = entries.some(entry => entry.isIntersecting)
         this.classList.toggle('closing--visible', visible)
         if (visible) this.classList.replace('closing--pending', 'closing--revealed')
-      }, { threshold: 0.2 })
+      }, { threshold: 0 })
       this.observer.observe(this)
     }
 
     disconnectedCallback() {
       this.observer?.disconnect()
+    }
+
+    attributeChangedCallback() {
+      // Keep events tied to the current boat position, including reverse scroll.
+      const arrived = this.hasAttribute('data-voyage-arrived')
+      this.classList.toggle('closing--events-pending', !arrived)
+      this.classList.toggle('closing--arrived', arrived)
     }
   }
 
@@ -79,6 +88,10 @@ const { lang } = Astro.props
     color: var(--polo-color-text-secondary);
   }
 
+  .closing--pending .map-closing__copy {
+    visibility: hidden;
+  }
+
   .closing--revealed .map-closing__copy {
     animation: map-copy-arrive 0.8s ease-out both;
   }
@@ -98,6 +111,10 @@ const { lang } = Astro.props
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .closing--pending .map-closing__copy {
+      visibility: visible;
+    }
+
     .closing--revealed .map-closing__copy {
       animation: none;
     }

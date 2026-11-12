@@ -26,6 +26,17 @@ import VoyageBoat from './VoyageBoat.astro'
     private startScroll = 0
     private endScroll = 1
     private length = 0
+    private mapTop = 0
+    private mapRevealDistance = 1
+    private marks: {
+      ink: SVGPathElement
+      ripples: SVGPathElement[]
+      distance: number
+      opacity: number
+      normalX: number
+      normalY: number
+      fade?: number
+    }[] = []
 
     private get route() { return this.querySelector<SVGPathElement>('.voyage__route')! }
     private get boat() { return this.querySelector<HTMLElement>('.voyage__boat')! }
@@ -95,12 +106,13 @@ import VoyageBoat from './VoyageBoat.astro'
       const startX = compact ? root.width * 0.22 : heading.left - root.left + heading.width * 0.52
       const startY = compact ? questions.bottom - root.top + 100 : heading.bottom - root.top + 92
       const image = this.querySelector<HTMLImageElement>('.story-map__image')!
+      const imageBounds = image.getBoundingClientRect()
       const [alignX, alignY] = getComputedStyle(image).objectPosition.split(' ').map(value => parseFloat(value) / 100)
       const sourceWidth = portrait ? 1024 : 1984
       const sourceHeight = portrait ? 1536 : 1024
-      const scale = Math.max(map.width / sourceWidth, map.height / sourceHeight)
-      const offsetX = (map.width - sourceWidth * scale) * alignX
-      const offsetY = (map.height - sourceHeight * scale) * alignY
+      const scale = Math.max(imageBounds.width / sourceWidth, imageBounds.height / sourceHeight)
+      const offsetX = (imageBounds.width - sourceWidth * scale) * alignX
+      const offsetY = (imageBounds.height - sourceHeight * scale) * alignY
       const water = (x: number, y: number) => `${offsetX + x * scale} ${mapTop + offsetY + y * scale}`
       // Coordinates traced in the actual artwork: the narrow northern channel
       // of the wide map, and the small northern bay of the portrait map.
@@ -123,8 +135,11 @@ import VoyageBoat from './VoyageBoat.astro'
       this.length = this.route.getTotalLength()
       this.drawTrail()
       const documentTop = root.top + scrollY
-      this.startScroll = documentTop + startY - innerHeight * 0.72
-      this.endScroll = Math.max(this.startScroll + 1, documentTop + endY - innerHeight * 0.48)
+      this.mapTop = documentTop + mapTop
+      this.mapRevealDistance = Math.min(map.height, innerHeight * 0.85)
+      // Scroll positions are rounded to pixels: both endpoints must be reachable.
+      this.startScroll = Math.floor(documentTop + startY - innerHeight * 0.72)
+      this.endScroll = Math.max(this.startScroll + 1, Math.floor(documentTop + endY - innerHeight * 0.48))
       this.classList.add('voyage--ready')
       this.render()
     }
@@ -136,6 +151,7 @@ import VoyageBoat from './VoyageBoat.astro'
       const fragment = document.createDocumentFragment()
       const lengths = [5, 7, 4, 6, 5.5, 8]
       const gaps = [10, 9, 11, 8, 10, 9]
+      this.marks = []
       let distance = 0
       let index = 0
       while (distance < this.length) {
@@ -149,27 +165,66 @@ import VoyageBoat from './VoyageBoat.astro'
         const x = (start.x + end.x) / 2 - dy / magnitude * bend
         const y = (start.y + end.y) / 2 + dx / magnitude * bend
         const dash = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        dash.classList.add('voyage__ink')
         dash.setAttribute('d', `M ${start.x} ${start.y} Q ${x} ${y} ${end.x} ${end.y}`)
         dash.setAttribute('stroke-width', String([1.3, 1.55, 1.15][index % 3]))
-        dash.setAttribute('opacity', String([0.6, 0.48, 0.7, 0.55][index % 4]))
+        const opacity = [0.6, 0.48, 0.7, 0.55][index % 4]
+        dash.setAttribute('opacity', String(opacity))
         fragment.append(dash)
+        const ripples = [-1, 1].map(() => {
+          const ripple = dash.cloneNode() as SVGPathElement
+          ripple.setAttribute('class', 'voyage__ripple')
+          ripple.setAttribute('stroke-width', '0.8')
+          ripple.setAttribute('opacity', '0')
+          fragment.append(ripple)
+          return ripple
+        })
+        this.marks.push({ ink: dash, ripples, distance, opacity, normalX: -dy / magnitude, normalY: dx / magnitude })
         distance += size + gaps[index % gaps.length]
         index++
       }
       trail.replaceChildren(fragment)
     }
 
+    private disperseTrail(distance: number) {
+      for (const mark of this.marks) {
+        // The stern loosens the ink into two widening ripples, which disappear
+        // over the next 110px. All geometry is cached when the chart is laid out.
+        const fade = Math.min(1, Math.max(0, (distance - mark.distance) / 110))
+        if (fade === mark.fade) continue
+        mark.fade = fade
+        const remaining = 1 - fade * fade * (3 - 2 * fade)
+        mark.ink.setAttribute('opacity', String(mark.opacity * remaining))
+        mark.ink.style.filter = fade > 0 && fade < 1 ? `blur(${fade * 2}px)` : ''
+        const rippleOpacity = Math.sin(fade * Math.PI) * mark.opacity * 0.65
+        mark.ripples.forEach((ripple, index) => {
+          const spread = (3 + fade * 12) * (index === 0 ? -1 : 1)
+          ripple.setAttribute('transform', `translate(${mark.normalX * spread} ${mark.normalY * spread})`)
+          ripple.setAttribute('opacity', fade > 0 && fade < 1 ? String(rippleOpacity) : '0')
+        })
+      }
+    }
+
     private render() {
       if (!this.length) return
-      const progress = this.motion?.matches ? 1 : Math.min(1, Math.max(0,
+      const scrollProgress = this.motion?.matches ? 1 : Math.min(1, Math.max(0,
         (scrollY - this.startScroll) / (this.endScroll - this.startScroll),
       ))
+      const progress = scrollProgress * scrollProgress * (3 - 2 * scrollProgress)
       const distance = this.length * progress
       const point = this.route.getPointAtLength(distance)
       const before = this.route.getPointAtLength(Math.max(0, distance - 2))
       const after = this.route.getPointAtLength(Math.min(this.length, distance + 2))
       const angle = Math.atan2(after.y - before.y, after.x - before.x) * 180 / Math.PI + 90
       this.boat.style.transform = `translate(${point.x}px, ${point.y}px) translate(-50%, -50%) rotate(${angle}deg)`
+      this.disperseTrail(this.motion?.matches ? 0 : distance)
+      const map = this.querySelector<HTMLElement>('map-closing')!
+      const mapProgress = this.motion?.matches ? 1 : Math.min(1, Math.max(0,
+        (scrollY + innerHeight - this.mapTop) / this.mapRevealDistance,
+      ))
+      map.style.setProperty('--map-reveal', String(mapProgress))
+      map.style.setProperty('--map-unrevealed', `${(1 - mapProgress) * 100}%`)
+      map.toggleAttribute('data-voyage-arrived', scrollProgress === 1)
       this.dataset['progress'] = progress.toFixed(3)
     }
   }

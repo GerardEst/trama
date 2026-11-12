@@ -16,11 +16,12 @@ async function scrollVoyage(page: Page, fraction: number) {
     window.scrollTo({ top: from + (to - from) * fraction, behavior: 'instant' })
   }, fraction)
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
-  await expect.poll(async () => Number(await page.locator('story-voyage').getAttribute('data-progress'))).toBeCloseTo(fraction, 2)
+  const eased = fraction * fraction * (3 - 2 * fraction)
+  await expect.poll(async () => Number(await page.locator('story-voyage').getAttribute('data-progress'))).toBeCloseTo(eased, 2)
 }
 
 for (const width of [1440, 820, 601, 375, 320]) {
-  test(`the small boat turns along a permanent drawn voyage without covering text at ${width}px`, async ({ page }) => {
+  test(`the small boat eases along its drawn voyage without covering text at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
@@ -41,12 +42,14 @@ for (const width of [1440, 820, 601, 375, 320]) {
         return Math.atan2(matrix.b, matrix.a) * 180 / Math.PI
       })
       angles.push((angle + 360) % 360)
+      // Use the reached position: scroll coordinates are quantized to pixels.
+      const actualProgress = Number(await voyage.getAttribute('data-progress'))
       const expected = await voyage.locator('.voyage__route').evaluate((route: SVGPathElement, progress) => {
         const distance = route.getTotalLength() * progress
         const from = route.getPointAtLength(Math.max(0, distance - 2))
         const to = route.getPointAtLength(Math.min(route.getTotalLength(), distance + 2))
         return (Math.atan2(to.y - from.y, to.x - from.x) * 180 / Math.PI + 90 + 360) % 360
-      }, progress)
+      }, actualProgress)
       const difference = Math.abs((angle - expected + 540) % 360 - 180)
       expect(difference).toBeLessThan(1)
       const bounds = (await boat.boundingBox())!
@@ -71,6 +74,92 @@ for (const width of [1440, 820, 601, 375, 320]) {
     await scrollVoyage(page, 0)
     expect(await voyage.locator('.voyage__trail path').evaluateAll(paths => paths.map(path => path.getAttribute('d')).join('|'))).toBe(trail)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
+  })
+}
+
+test('the boat disperses the ink behind it and restores the route on reverse scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await scrollVoyage(page, 0)
+  const voyage = page.locator('story-voyage')
+  const first = voyage.locator('.voyage__ink').first()
+  const last = voyage.locator('.voyage__ink').last()
+  const initialOpacity = await first.getAttribute('opacity')
+  const lastOpacity = await last.getAttribute('opacity')
+
+  await scrollVoyage(page, 0.6)
+  await expect(first).toHaveAttribute('opacity', '0')
+  await expect(last).toHaveAttribute('opacity', lastOpacity!)
+  const wake = await voyage.locator('.voyage__ripple').evaluateAll(paths => paths.filter(path =>
+    Number(path.getAttribute('opacity')) > 0 && path.getAttribute('transform') !== null,
+  ).length)
+  expect(wake).toBeGreaterThan(0)
+  const smudges = await voyage.locator('.voyage__ink').evaluateAll(paths => paths.filter(path =>
+    Number(path.getAttribute('opacity')) > 0 && (path as SVGElement).style.filter.includes('blur'),
+  ).length)
+  expect(smudges).toBeGreaterThan(0)
+
+  await scrollVoyage(page, 0)
+  await expect(first).toHaveAttribute('opacity', initialOpacity!)
+  await expect(first).toHaveCSS('filter', 'none')
+  expect(await voyage.locator('.voyage__ripple').evaluateAll(paths => paths.every(path =>
+    path.getAttribute('opacity') === '0',
+  ))).toBe(true)
+})
+
+for (const width of [1440, 375]) {
+  test(`the atlas draws on entry and only its events wait for the boat at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const closing = page.locator('map-closing')
+    const remainingDistance = () => page.locator('story-voyage').evaluate(voyage => {
+      const route = voyage.querySelector<SVGPathElement>('.voyage__route')!
+      const destination = route.getPointAtLength(route.getTotalLength())
+      const root = voyage.getBoundingClientRect()
+      const boat = voyage.querySelector('.voyage__boat')!.getBoundingClientRect()
+      return Math.hypot(boat.x + boat.width / 2 - root.x - destination.x, boat.y + boat.height / 2 - root.y - destination.y)
+    })
+    await scrollVoyage(page, 0.85)
+    await expect(closing).toHaveClass(/closing--visible/)
+    await expect(closing).toHaveClass(/closing--revealed/)
+    await expect(closing).not.toHaveClass(/closing--arrived/)
+    const mapOpacity = await closing.locator('picture').evaluate(element => Number(getComputedStyle(element).opacity))
+    expect(mapOpacity).toBeGreaterThan(0)
+    expect(mapOpacity).toBeLessThan(1)
+    await expect(closing.getByRole('heading')).toBeVisible()
+    for (const marker of await closing.locator('.map-event__body').all()) {
+      await expect(marker).toHaveCSS('opacity', '0')
+    }
+
+    await scrollVoyage(page, 1)
+    await expect(closing).toHaveClass(/closing--arrived/)
+    expect(await remainingDistance()).toBeLessThan(1)
+    await expect(closing.locator('.story-map')).toHaveCSS('opacity', '1')
+    await expect(closing.getByRole('heading')).toBeVisible()
+    const delays = await closing.locator('.map-event__body').evaluateAll(markers => markers.map(marker =>
+      parseFloat(getComputedStyle(marker).transitionDelay),
+    ).sort((a, b) => a - b))
+    expect(delays).toEqual([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2])
+    for (const marker of await closing.locator('.map-event__body').all()) {
+      await expect(marker).toHaveCSS('opacity', '1')
+    }
+    // Rewinding the voyage must hide events until the boat arrives again.
+    await scrollVoyage(page, 0.85)
+    expect(await remainingDistance()).toBeGreaterThan(1)
+    await expect(closing).not.toHaveClass(/closing--arrived/)
+    const fadingOpacity = await closing.locator('.map-event__body').first().evaluate(element => Number(getComputedStyle(element).opacity))
+    expect(fadingOpacity).toBeGreaterThan(0)
+    expect(fadingOpacity).toBeLessThan(1)
+    for (const marker of await closing.locator('.map-event__body').all()) {
+      await expect(marker).toHaveCSS('opacity', '0')
+      await expect(marker).toHaveCSS('animation-name', 'none')
+    }
+    await expect(closing.getByRole('heading')).toBeVisible()
+    await scrollVoyage(page, 1)
+    await expect(closing).toHaveClass(/closing--arrived/)
+    for (const marker of await closing.locator('.map-event__body').all()) {
+      await expect(marker).toHaveCSS('opacity', '1')
+    }
   })
 }
 

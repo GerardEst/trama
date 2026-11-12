@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets'
 import landscape from '../../assets/landing/story-map-ink-landscape.webp'
 import portrait from '../../assets/landing/story-map-ink-portrait.webp'
+import edgeMask from '../../assets/landing/map-edge-mask.svg?url'
 
 import type { Lang } from '../../i18n'
 import { interfaceCopyFor } from './copy'
@@ -23,7 +24,7 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
 ---
 
 <div class="story-map" aria-hidden="true">
-  <picture>
+  <picture style={{ '--map-edge-mask': `url("${edgeMask}")` }}>
     <source media="(max-width: 600px)" srcset={tall.src} width="1024" height="1536" />
     <img class="story-map__image" src={wide.src} width="1984" height="1024" alt="" loading="lazy" decoding="async" />
   </picture>
@@ -65,7 +66,11 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     display: block;
     width: 100%;
     height: 100%;
-    mask-image: linear-gradient(transparent, black 12%, black 88%, transparent);
+    mask-image: var(--map-edge-mask);
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    opacity: var(--map-reveal, 1);
+    clip-path: inset(0 0 var(--map-unrevealed, 0%) 0);
   }
 
   .story-map__events {
@@ -85,6 +90,9 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     display: grid;
     justify-items: center;
     gap: 1px;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
   }
 
   .map-event__badge {
@@ -109,22 +117,15 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     opacity: 0;
   }
 
-  :global(.closing--revealed) .story-map {
-    animation: atlas-unfold 1.8s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+  :global(.closing--events-pending) .map-event__body {
+    opacity: 0;
+    transform: translateY(6px) scale(0.94);
+    transition-duration: 0.4s;
+    transition-delay: 0s;
   }
 
-  :global(.closing--revealed) .map-event__body {
-    animation: event-arrive 0.7s calc(0.6s + var(--event-delay)) ease-out both;
-  }
-
-  @keyframes atlas-unfold {
-    from { opacity: 0; transform: scale(1.025); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes event-arrive {
-    from { opacity: 0; transform: translateY(6px) scale(0.94); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  :global(.closing--arrived) .map-event__body {
+    transition-delay: var(--event-delay);
   }
 
   :global(:root[data-polo-theme='dark']) .story-map {
@@ -153,6 +154,11 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
   }
 
   @media (max-width: 600px) {
+    .story-map__image {
+      /* Crop the portrait drawing's own paper margin at the footer. */
+      height: calc(100% + 48px);
+    }
+
     .map-event {
       left: var(--event-mobile-x);
       top: var(--event-mobile-y);
@@ -170,10 +176,20 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
   }
 
   @media (prefers-reduced-motion: reduce) {
+    picture {
+      clip-path: inset(0) !important;
+    }
+
     .story-map,
+    picture,
     .map-event__body {
       animation: none !important;
       opacity: 1 !important;
+    }
+
+    .map-event__body {
+      transform: none !important;
+      transition: none !important;
     }
   }
 </style>

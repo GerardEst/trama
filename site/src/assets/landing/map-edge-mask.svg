@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+  <defs>
+    <filter id="soft-edge" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="28" />
+    </filter>
+  </defs>
+  <!-- Only the northern edge dissolves. The other edges extend beyond the
+       viewport so the atlas remains opaque all the way down to the footer. -->
+  <path fill="white" filter="url(#soft-edge)" d="M-200 85
+    C-80 45 5 165 70 120 S145 40 210 105
+    S295 195 350 130 S430 60 485 115
+    S555 175 610 95 S695 55 755 125
+    S825 185 880 110 S995 65 1200 125
+    V1200 H-200Z" />
+</svg>
