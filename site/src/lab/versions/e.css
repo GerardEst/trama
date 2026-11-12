@@ -1,7 +1,7 @@
 /* E · Quadern. A book for writers: Baskervville for everything that is read,
    Raleway only for the product's own interface, and the cape's vermilion for the
    one thing to do. The intro is drawn on the app's squared paper; the chapters
-   carry the real board; the last page is a painting. */
+   carry the real board; the last page is an unfolding map. */
 :root {
   --e-serif: var(--font-baskerville), Baskerville, serif;
   --e-sans: var(--font-raleway), sans-serif;
@@ -1069,8 +1069,7 @@ trama-board[ready] .lb-loading {
   border-top: 1px solid var(--lab-ink);
 }
 .e-faq h2 {
-  position: sticky;
-  top: 104px;
+  position: static;
 }
 .lq details {
   border-top: 1px solid var(--lab-line);
@@ -1120,75 +1119,17 @@ trama-board[ready] .lb-loading {
   font-size: 17px;
 }
 
-/* Closing: a drawing on the notebook's paper, painted as it scrolls in. The
-   painting drifts slower than the page; the words turn from ink to cream as the
-   sky behind them fills with blue (--pc-progress, set by PaintedClosing). */
-.pc {
-  --pc-paper: #fbf9f3;
-  --pc-graphite: #3b3f47;
-  --pc-progress: 1;
-  --pc-ink-mix: 1;
-  --pc-travel: 0.5;
-  position: relative;
-  display: block;
-  isolation: isolate;
-  min-height: clamp(560px, 56vw, 860px);
-  overflow: clip;
-}
-.pc-image,
-.pc-canvas {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.pc-image {
-  object-fit: cover;
-  object-position: 60% 50%;
-}
-.pc-canvas {
-  opacity: 0;
-  transition: opacity 0.4s;
-}
-.pc[data-painting] .pc-canvas {
-  opacity: 1;
-}
-.pc[data-painting] .pc-image {
-  visibility: hidden;
-}
-.pc-copy {
-  --pc-ink: color-mix(in srgb, #17191d calc((1 - var(--pc-ink-mix)) * 100%), #fbf9f3);
-  width: min(100% - var(--e-gutter) * 2, var(--e-width));
-  margin-inline: auto;
-  padding-top: clamp(64px, 9vw, 132px);
-  color: var(--pc-ink);
-  translate: 0 calc((var(--pc-travel) - 0.5) * -90px);
-}
-.pc-copy h2 {
-  max-width: 9em;
-  font-size: clamp(52px, 7.4vw, 112px);
-  line-height: 0.96;
-  letter-spacing: -0.035em;
-}
-.pc-copy p {
-  margin: 18px 0 32px;
-  font-size: clamp(19px, 1.7vw, 24px);
-}
+/* Closing: an open map around a quiet clearing for the author's next story. */
 .e-btn--closing {
-  border-color: var(--pc-ink);
-  background: transparent;
-  color: var(--pc-ink);
+  border-color: var(--polo-color-action);
+  background: var(--polo-color-action);
+  color: var(--polo-color-text-on-action);
 }
 .e-btn--closing:hover {
-  border-color: var(--e-red);
-  background: var(--e-red);
-  color: #fff;
+  border-color: var(--polo-color-action-hover);
+  background: var(--polo-color-action-hover);
 }
 @media (prefers-reduced-motion: reduce) {
-  .pc-copy {
-    translate: none;
-  }
   .ai-screen * {
     animation: none !important;
   }
@@ -1229,6 +1170,10 @@ trama-board[ready] .lb-loading {
 }
 
 @media (max-width: 1040px) {
+  .e-faq {
+    padding-bottom: 240px;
+  }
+
   .ln__links {
     display: none;
   }

@@ -7,8 +7,6 @@ import { localePath } from '../../lib/locale'
 import { PAGES } from '../../lib/pages'
 import { engineExample, referenceCode } from '../../lib/story-reference'
 import valleyImage from '../../assets/landing/lab/valley.webp'
-import closingImage from '../../assets/landing/lab/plate-closing.webp'
-import closingDrawing from '../../assets/landing/lab/drawing-closing.webp'
 import LabFooter from '../LabFooter.astro'
 import LabLayout from '../LabLayout.astro'
 import LabNav from '../LabNav.astro'
@@ -28,7 +26,8 @@ import {
 import { highlightCode } from '../highlight'
 import { eCopyFor } from '../e/copy'
 import LiveBoard from '../e/LiveBoard.astro'
-import PaintedClosing from '../e/PaintedClosing.astro'
+import MapClosing from '../e/MapClosing.astro'
+import StoryVoyage from '../e/StoryVoyage.astro'
 import WrittenWorld from '../e/WrittenWorld.astro'
 import FeatureIcon from '../e/FeatureIcon.astro'
 import Strengths from '../e/Strengths.astro'
@@ -289,29 +288,31 @@ const structuredData = {
       </div>
     </section>
 
-    <section id="faq" class="e-wrap e-faq" aria-labelledby="e-faq-title">
-      <h2 id="e-faq-title">{t.questions.title}</h2>
-      <div class="lq">
-        {c.faq.map((item, index) => (
-          <details open={index === 0}>
-            <summary><span>{item.question}</span><i aria-hidden="true"></i></summary>
-            <p>{item.answer}</p>
-          </details>
-        ))}
-      </div>
-    </section>
+    <StoryVoyage>
+      <section id="faq" class="e-wrap e-faq" aria-labelledby="e-faq-title">
+        <h2 id="e-faq-title">{t.questions.title}</h2>
+        <div class="lq">
+          {c.faq.map((item, index) => (
+            <details open={index === 0}>
+              <summary><span>{item.question}</span><i aria-hidden="true"></i></summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
-    <!-- The last page: a drawing that is painted as it arrives, the question in its sky. -->
-    <section class="e-closing" aria-labelledby="e-closing-title">
-      <PaintedClosing image={closingImage} drawing={closingDrawing}>
-        <h2 id="e-closing-title">{t.closing.titleStart} {t.closing.titleEnd}</h2>
-        <p>{t.closing.yours}</p>
-        <a class="e-btn e-btn--closing" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
-          <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
-          <span aria-hidden="true">→</span>
-        </a>
-      </PaintedClosing>
-    </section>
+      <!-- The last page: branching paths through a world still to be discovered. -->
+      <section class="e-closing" aria-labelledby="e-closing-title">
+        <MapClosing lang={lang}>
+          <h2 id="e-closing-title">{t.closing.titleStart} {t.closing.titleEnd}</h2>
+          <p>{t.closing.yours}</p>
+          <a class="e-btn e-btn--closing" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+            <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+            <span aria-hidden="true">→</span>
+          </a>
+        </MapClosing>
+      </section>
+    </StoryVoyage>
   </main>
   <LabFooter lang={lang} version="e" />
 </LabLayout>
