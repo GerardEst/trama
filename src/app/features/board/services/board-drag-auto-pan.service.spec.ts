@@ -94,6 +94,17 @@ describe('BoardDragAutoPanService', () => {
     expect(panzoom.moveBy).toHaveBeenCalledTimes(2)
   })
 
+  it('leaves the board still at the edges when edge panning is off, and still moves every follower', () => {
+    service.edgePan = false
+    move({ x: 800, y: 300 })
+    frame(0)
+    frame(16)
+    expect(panzoom.moveBy).not.toHaveBeenCalled()
+    expect(window.requestAnimationFrame).not.toHaveBeenCalled()
+    const dragged = source.getFreeDragPosition()
+    expect(follower.setFreeDragPosition).toHaveBeenCalledWith({ x: dragged.x + 200, y: dragged.y + 100 })
+  })
+
   it('activates farther from the edge with the wider detection zone', () => {
     move({ x: 700, y: 300 })
     frame(0)

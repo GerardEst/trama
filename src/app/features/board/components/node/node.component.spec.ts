@@ -48,6 +48,18 @@ describe('NodeComponent', () => {
     expect(host.querySelector('[data-sortable-handle]')).toBeNull()
   })
 
+  it('redraws its connections once its image has loaded', () => {
+    const refresh = spyOn(TestBed.inject(BoardAnchorRegistryService), 'invalidate')
+    fixture.componentRef.setInput('nodeId', 'node_7')
+    fixture.componentRef.setInput('type', 'content')
+    fixture.componentRef.setInput('image', 'user/scene.webp')
+    fixture.detectChanges()
+    refresh.calls.reset()
+    const image = (fixture.nativeElement as HTMLElement).querySelector('polo-image .image__preview')!
+    image.dispatchEvent(new Event('load'))
+    expect(refresh).toHaveBeenCalledOnceWith(['node_7'])
+  })
+
   it('reorders distributor routes, updates numbering and keeps the fallback outside the sortable list', () => {
     const reorder = spyOn(TestBed.inject(StoryEditorService), 'reorderCondition').and.returnValue(true)
     const refresh = spyOn(TestBed.inject(BoardAnchorRegistryService), 'invalidate')

@@ -1,6 +1,6 @@
 export const landing = {
   meta: {
-    title: 'Trama — You write the story. They choose the way.',
+    title: 'Trama — Create interactive stories and adventures without code',
     description:
       'Write interactive fiction without coding. Connect scenes and choices, test their consequences, revise as you play, and share your story with a link.',
   },
@@ -47,8 +47,8 @@ export const landing = {
   },
   authoring: {
     eyebrow: 'YOUR STORY, STEP BY STEP',
-    title: 'From your first scene to a story worth sharing.',
-    description: 'Write the passages. Shape the paths on the map. Play through them and revise along the way, without leaving your story.',
+    title: 'From your first sentence to a story you can play.',
+    description: 'Create your interactive adventure with tools crafted for every part of your creative process.',
     enlarge: 'Open the editor screenshot at full size (new tab)',
     realCapture: 'Real editor · Example story',
     write: {

@@ -91,6 +91,7 @@
   @if (type !== 'distributor' && (image || loading() || loadingMessage())) {
     <polo-image
       (onRemoveImage)="removeNodeImage()"
+      (loaded)="imageLoaded()"
       [storageRoute]="image"
       [loading]="loading()"
       [loadingMessage]="loadingMessage()"

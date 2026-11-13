@@ -58,9 +58,9 @@ export const es: AtlasCopy = {
     { label: 'Motor', value: '@trama-app/engine: gratuito, de código abierto, MIT, sin dependencias' },
   ],
   chapters: {
-    write: { name: 'Escribe', title: 'Da espacio a cada escena', lead: 'Pasajes, decisiones e imágenes.' },
-    connect: { name: 'Conecta', title: 'Da forma a los caminos', lead: 'Un tablero visual que se mantiene legible a medida que la historia crece.' },
-    remember: { name: 'Recuerda', title: 'Haz que las decisiones importen', lead: 'Lo que hace el lector cambia lo que viene después. Sin código.' },
+    write: { name: 'Escribe', title: 'Un espacio para cada interacción', lead: 'Una escena, una conversación o una narración extensa.' },
+    connect: { name: 'Da forma', title: 'Traza los caminos de la historia', lead: 'Un tablero visual que se mantiene legible a medida que la historia crece.' },
+    remember: { name: 'Da vida', title: 'Haz que las decisiones importen', lead: 'Lo que hace el lector cambia lo que viene después. Sin código.' },
     publish: { name: 'Publica', title: 'De tu tablero a tus lectores', lead: 'Prueba, comparte, mira cómo se juega y no pierdas nunca el trabajo.' },
     build: { name: 'Construye', title: 'Más allá del lector', lead: 'Para desarrolladores y sus agentes de programación.' },
   },
@@ -68,7 +68,7 @@ export const es: AtlasCopy = {
     scene: {
       name: 'Escenas y respuestas',
       question: '¿Cómo escribo una historia con ramas?',
-      answer: 'Cada escena es un pasaje con las respuestas que puede elegir el lector. Conecta cada respuesta con la escena a la que lleva.',
+      answer: 'Cada escena es un nodo con los caminos que puede elegir el lector. Cada camino se une a la siguiente escena.',
       example: 'La escena «El cruce» ofrece «Entrar en el bosque» y «Seguir el río». Cada una lleva a una escena distinta.',
     },
     'rich-text': {
@@ -81,12 +81,12 @@ export const es: AtlasCopy = {
       name: 'Interpolación de texto',
       question: '¿Puedo usar los valores del lector en el texto?',
       answer: 'Inserta variables en pasajes y respuestas para mostrar el nombre del lector, sus estadísticas o condiciones. El texto muestra sus valores actuales durante la partida.',
-      example: 'Escribe «Hola de nuevo, #nombre.» y un lector llamado Morgan verá «Hola de nuevo, Morgan.»',
+      example: 'Hola, #nombre → Hola, Morgan\n¿Solo tienes #coins monedas? → ¿Solo tienes 12 monedas?',
     },
     focus: {
       name: 'Modo concentración',
       question: '¿Puedo escribir pasajes largos con comodidad?',
-      answer: 'Sí. Amplía cualquier texto en un editor sin distracciones, con títulos, listas, negrita, cursiva y variables. Ciérralo y vuelves al tablero.',
+      answer: 'Sí. Amplía cualquier texto en un editor sin distracciones, con títulos, listas, negrita, cursiva y variables.',
       example: 'Pulsa Ctrl+F o ⌘F en un pasaje para escribir el Capítulo 2 a página completa, y Esc para volver al mismo punto.',
     },
     images: {
@@ -96,10 +96,10 @@ export const es: AtlasCopy = {
       example: 'Una escena muestra un paisaje pintado y, debajo, «La letra te resulta familiar» con la respuesta «Leerla».',
     },
     connections: {
-      name: 'Dos entradas',
-      question: '¿Cómo puede volver el lector a un menú sin releerlo?',
-      answer: 'Cada conexión lleva al texto de una escena o directamente a sus respuestas, saltándose el pasaje.',
-      example: 'Primera visita al mercado: texto y opciones. Después de comprar un farol: solo las opciones.',
+      name: 'Tipos de nodos y uniones',
+      question: '¿Qué tipos de nodo hay y cómo se unen?',
+      answer: 'Usa distintos tipos de nodo: escena, distribuidor, final... con múltiples maneras de unirlos entre ellos. Tienes libertad total para dar forma a tu historia.',
+      example: 'Una respuesta del mercado se une a dos escenas a la vez; otra, a un distribuidor que elige por dónde sigue la historia.',
     },
     random: {
       name: 'Caminos aleatorios',
@@ -110,7 +110,7 @@ export const es: AtlasCopy = {
     organisation: {
       name: 'Grupos y marcos',
       question: '¿Cómo mantengo ordenada una historia grande?',
-      answer: 'Pliega un capítulo en un grupo con su propio tablero interior, o mantenlo visible en un marco de color que se mueve de una vez. Ninguno de los dos cambia cómo se juega.',
+      answer: 'Pliega un capítulo en un grupo con su propio tablero interior, o mantenlo visible en un marco de color que se mueve de una vez.',
       example: 'El Capítulo 2 queda visible en un marco con tres escenas. El Capítulo 3 está plegado en un grupo de seis.',
     },
     events: {
@@ -327,9 +327,18 @@ export const es: AtlasCopy = {
     stableLink: 'Enlace estable',
   },
   live: {
-    forestEnd: 'Los árboles se cierran detrás de ti. Este camino no lo encontrarás dos veces.',
-    riverEnd: 'El río se lleva tu voz aguas abajo. Alguien responde.',
-    leftMarket: 'Sales del mercado con lo que has comprado.',
+    crossroads: 'El camino se parte en dos bajo el castillo. Elijas el que elijas, no llegarás siendo la misma persona.',
+    climb: 'Sube al castillo',
+    around: 'Rodea el castillo',
+    castleScene: 'Subes hasta la puerta del castillo. Está <strong>abierta</strong>, <em>como si te hubiera estado esperando</em>.',
+    aroundScene: 'En un margen brillan monedas antiguas. Recoges {coins} monedas: con eso llegas adonde quieras.',
+    insideScene: 'Cruzas la puerta. Dentro, todo está por escribir.',
+    marketBrowse: 'Pasea entre los puestos',
+    marketLeave: 'Sal del mercado',
+    marketLamp: 'Entre dos puestos encuentras un farol encendido. Te lo llevas.',
+    marketLost: 'Te pierdes entre telas y especias. Cuando sales, ya ha anochecido.',
+    marketLit: 'El farol te abre camino en la noche.',
+    marketDark: 'Caminas a oscuras, despacio.',
     tossText: 'Un desconocido te ofrece una moneda. Diga lo que diga, obedecerás.',
     headsEnd: 'Cara. Vas hacia el norte.',
     tailsEnd: 'Cruz. Te quedas aquí.',

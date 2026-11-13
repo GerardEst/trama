@@ -2,7 +2,7 @@ import type { Copy } from './en'
 
 export const landing: Copy = {
   meta: {
-    title: 'Trama — Tú escribes la historia. Ellos eligen el camino.',
+    title: 'Trama — Crea historias y aventuras interactivas sin programar',
     description:
       'Escribe ficción interactiva sin programar. Conecta escenas y decisiones, prueba sus consecuencias, corrige mientras juegas y comparte la historia con un enlace.',
   },
@@ -49,8 +49,8 @@ export const landing: Copy = {
   },
   authoring: {
     eyebrow: 'TU HISTORIA, PASO A PASO',
-    title: 'De la primera escena a una historia para compartir.',
-    description: 'Escribe los pasajes. Da forma a los caminos en el mapa. Recórrelos y corrige sobre la marcha, sin salir de tu historia.',
+    title: 'De la primera frase a una historia para jugar.',
+    description: 'Crea tu aventura interactiva con herramientas que cuidan cada parte del proceso creativo.',
     enlarge: 'Abre la captura del editor a tamaño completo (pestaña nueva)',
     realCapture: 'Editor real · Historia de ejemplo',
     write: {

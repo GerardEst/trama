@@ -213,6 +213,11 @@ export class NodeComponent {
     }
   }
 
+  /** An image arrives after its node is drawn and pushes the answers down: their connections follow. */
+  imageLoaded() {
+    this.anchorRegistry.invalidate([this.nodeId])
+  }
+
   removeNodeImage() {
     this.storyEditor.removeImageFromNode(this.nodeId)
   }

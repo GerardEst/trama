@@ -1,6 +1,8 @@
 ---
+import { getImage } from 'astro:assets'
 import type { Lang } from '../../i18n'
-import { boardStory, type DemoId } from './demos'
+import crossroads from '../../assets/landing/crossroads.webp'
+import { boardStory, type DemoId, type ScenePictures } from './demos'
 import { interfaceCopyFor } from './copy'
 
 // A real Trama board next to the reader's view of the same story. The board is
@@ -17,7 +19,21 @@ interface Props {
 
 const { id, lang, zoom = 0.9, x = 0, y = 0 } = Astro.props
 const e = interfaceCopyFor(lang)
-const story = boardStory(id, lang)
+
+// The pictures the examples' scenes carry, at the size a scene shows them.
+const PICTURES: Partial<Record<DemoId, Record<string, ImageMetadata>>> = {
+  scene: { start: crossroads },
+}
+const pictures: ScenePictures = {}
+for (const [scene, image] of Object.entries(PICTURES[id] ?? {})) {
+  pictures[scene] = (await getImage({ src: image, width: 640, format: 'webp' })).src
+}
+
+const story = boardStory(id, lang, pictures)
+
+// What to try on each board; an example with tools of its own says so.
+const HINTS: Partial<Record<DemoId, string>> = { connections: e.connectHint }
+const hint = HINTS[id] ?? e.boardHint
 const json = JSON.stringify(story).replace(/</g, '\\u003c')
 ---
 
@@ -27,7 +43,7 @@ const json = JSON.stringify(story).replace(/</g, '\\u003c')
     <p class="lb-loading">{e.boardLoading}</p>
   </trama-board>
   <p class="lb-foot">
-    <span>{e.boardHint}</span>
+    <span>{hint}</span>
     <button class="lb-reset" type="button" data-reset>↺ {e.reset}</button>
   </p>
   <script type="application/json" data-story set:html={json} />

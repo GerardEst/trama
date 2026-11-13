@@ -32,7 +32,7 @@ export function fullSummary(): string {
     for (const info of ATLAS.filter(item => item.chapter === chapter)) {
       const feature = c.features[info.id]
       const link = documentation(info, `${SITE}/docs/features`)
-      lines.push(`- **${feature.name}.** ${feature.question} ${feature.answer} Example: ${feature.example}${link ? ` Docs: ${link}` : ''}`)
+      lines.push(`- **${feature.name}.** ${feature.question} ${feature.answer} Example: ${feature.example.replaceAll('\n', '; ')}${link ? ` Docs: ${link}` : ''}`)
     }
   }
   lines.push('', '## Compared with other tools', '')

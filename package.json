@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build && ng run polo-angular:build-embed && npm run build --prefix site && node scripts/merge-site.mjs",
     "start:site": "ng run polo-angular:build-embed:development && npm run dev --prefix site",
+    "start:site:port": "ng run polo-angular:build-embed:development && npm run dev --prefix site -- --port",
     "serve-dist": "node scripts/serve-dist.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

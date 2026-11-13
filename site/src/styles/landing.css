@@ -480,11 +480,6 @@ h2 {
   margin-bottom: 12px;
   font-size: 19px;
 }
-.e-more__title {
-  margin-bottom: 4px;
-  color: var(--e-red);
-  font-size: 16px;
-}
 .e-more dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -515,9 +510,21 @@ h2 {
   line-height: 1.5;
 }
 
+/* A feature's example, set apart as a callout: one case per line. */
 .e-more__example {
-  margin-top: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-left: 2px solid var(--e-red);
+  background: var(--polo-color-surface-subtle);
   color: var(--polo-color-text-strong);
+  font-size: 15px;
+}
+.e-more__example > span {
+  display: block;
+}
+/* What the reader sees wraps whole, under what was written. */
+.e-more__example > span > span {
+  display: inline-block;
 }
 
 /* A live example: the real board, on the notebook's squared paper. */

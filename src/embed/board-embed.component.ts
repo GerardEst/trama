@@ -18,6 +18,7 @@ import { FrameColorsService } from 'src/app/features/board/services/frame-colors
 import { StoryEditorService } from 'src/app/features/board/services/story-editor.service'
 import { StoryReferencesService } from 'src/app/features/board/services/story-references.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
+import { STORY_IMAGE_URL } from 'src/app/shared/components/ui/image/story-image-url'
 import { StoryImagesService } from 'src/app/shared/services/story-images.service'
 import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { EmbedDatabaseService, EmbedStoryImagesService, EmbedStoryMutationService } from './embed-services'
@@ -44,6 +45,8 @@ import { EmbedDatabaseService, EmbedStoryImagesService, EmbedStoryMutationServic
     { provide: StoryMutationService, useClass: EmbedStoryMutationService },
     { provide: StoryImagesService, useClass: EmbedStoryImagesService },
     { provide: DatabaseService, useClass: EmbedDatabaseService },
+    // An example's pictures are the page's own files, already full addresses.
+    { provide: STORY_IMAGE_URL, useValue: (path: string) => path },
   ],
   template: `
     <polo-board
@@ -51,6 +54,7 @@ import { EmbedDatabaseService, EmbedStoryImagesService, EmbedStoryMutationServic
       [grid]="false"
       [zoomable]="false"
       [focusElements]="false"
+      [edgePan]="false"
       [initialZoom]="zoom"
       [initialPosition]="{ x: x, y: y }"
     />

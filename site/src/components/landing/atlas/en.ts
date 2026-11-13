@@ -58,9 +58,9 @@ export const en: AtlasCopy = {
     { label: 'Engine', value: '@trama-app/engine: free, open source, MIT, no dependencies' },
   ],
   chapters: {
-    write: { name: 'Write', title: 'Give every scene room', lead: 'Passages, choices and images.' },
-    connect: { name: 'Connect', title: 'Shape the paths', lead: 'A visual board that stays readable as the story grows.' },
-    remember: { name: 'Remember', title: 'Make choices matter', lead: 'What the reader does changes what comes next. No code.' },
+    write: { name: 'Write', title: 'A space for every interaction', lead: 'A scene, a conversation or an extended narration.' },
+    connect: { name: 'Give it shape', title: 'Chart the paths', lead: 'A visual board that stays readable as the story grows.' },
+    remember: { name: 'Give it life', title: 'Make choices matter', lead: 'What the reader does changes what comes next. No code.' },
     publish: { name: 'Publish', title: 'From your board to your readers', lead: 'Test, share, see how it is played and never lose work.' },
     build: { name: 'Build', title: 'Go beyond the player', lead: 'For developers and their coding agents.' },
   },
@@ -68,7 +68,7 @@ export const en: AtlasCopy = {
     scene: {
       name: 'Scenes and answers',
       question: 'How do I write a branching story?',
-      answer: 'Each scene is a passage with the answers a reader can choose. Connect each answer to the scene it leads to.',
+      answer: 'Each scene is a node with the paths a reader can choose. Each path connects to the next scene.',
       example: 'The scene “The crossroads” offers “Enter the forest” and “Follow the river”. Each leads to a different scene.',
     },
     'rich-text': {
@@ -81,12 +81,12 @@ export const en: AtlasCopy = {
       name: 'Text interpolation',
       question: 'Can my story’s wording use the reader’s values?',
       answer: 'Insert variables in passages and answers to show the reader’s name, stats or conditions. The text displays their current values as the story is played.',
-      example: 'Write “Welcome back, #name.” and a reader named Morgan sees “Welcome back, Morgan.”',
+      example: 'Hello, #name → Hello, Morgan\nYou only have #coins coins? → You only have 12 coins?',
     },
     focus: {
       name: 'Focus mode',
       question: 'Can I write long passages comfortably?',
-      answer: 'Yes. Expand any text into a distraction-free editor with headings, lists, bold, italics and variables. Close it and you are back on the board.',
+      answer: 'Yes. Expand any text into a distraction-free editor with headings, lists, bold, italics and variables.',
       example: 'Press Ctrl+F or ⌘F in a passage to write Chapter 2 on a full page, then press Escape to return to the same spot.',
     },
     images: {
@@ -96,10 +96,10 @@ export const en: AtlasCopy = {
       example: 'A scene shows a painted landscape and, under it, “The handwriting looks familiar” with the answer “Read it”.',
     },
     connections: {
-      name: 'Two ways in',
-      question: 'How can a reader return to a menu without rereading it?',
-      answer: 'Every connection goes either to a scene’s text or straight to its answers, skipping the passage.',
-      example: 'First visit to the market: text and options. Back from buying a lamp: only the options.',
+      name: 'Node types and connections',
+      question: 'What types of node are there, and how do they connect?',
+      answer: 'Use different types of node: scene, distributor, ending... with many ways to join them to one another. You have total freedom to shape your story.',
+      example: 'One answer in the market joins two scenes at once; another joins a distributor that picks where the story goes next.',
     },
     random: {
       name: 'Random paths',
@@ -110,7 +110,7 @@ export const en: AtlasCopy = {
     organisation: {
       name: 'Groups and frames',
       question: 'How do I keep a big story in order?',
-      answer: 'Fold a chapter into a group with its own inner board, or keep it visible in a coloured frame you move as one. Neither changes how the story plays.',
+      answer: 'Fold a chapter into a group with its own inner board, or keep it visible in a coloured frame you move as one.',
       example: 'Chapter 2 stays visible in a frame with three scenes. Chapter 3 is folded into a group of six.',
     },
     events: {
@@ -327,9 +327,18 @@ export const en: AtlasCopy = {
     stableLink: 'Stable link',
   },
   live: {
-    forestEnd: 'The trees close behind you. You will not find this path twice.',
-    riverEnd: 'The river carries your voice downstream. Someone answers.',
-    leftMarket: 'You leave the market with what you bought.',
+    crossroads: 'The road splits in two below the castle. Whichever you take, you will not arrive as the same person.',
+    climb: 'Climb to the castle',
+    around: 'Go around the castle',
+    castleScene: 'You climb to the castle gate. It stands <strong>open</strong>, <em>as if it had been waiting for you</em>.',
+    aroundScene: 'Old coins glint by the side of the path. You pick up {coins} coins: enough to take you anywhere.',
+    insideScene: 'You step through the gate. Inside, everything is still to be written.',
+    marketBrowse: 'Wander among the stalls',
+    marketLeave: 'Leave the market',
+    marketLamp: 'Between two stalls you find a lit lantern. You take it with you.',
+    marketLost: 'You lose yourself among cloth and spices. When you come out, night has fallen.',
+    marketLit: 'The lantern lights your way through the night.',
+    marketDark: 'You walk in the dark, slowly.',
     tossText: 'A stranger offers you a coin. Whatever it says, you will obey.',
     headsEnd: 'Heads. You go north.',
     tailsEnd: 'Tails. You stay here.',

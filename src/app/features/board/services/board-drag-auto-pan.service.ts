@@ -43,6 +43,12 @@ export class BoardDragAutoPanService implements OnDestroy {
   private previousTime?: number
   private removeListeners?: () => void
 
+  /**
+   * Whether a drag near an edge moves the board. A small board on a page (the
+   * site's examples) is all edge: there a drag only moves what is dragged.
+   */
+  edgePan = true
+
   constructor(private panzoom: PanzoomService, private zone: NgZone) {}
 
   prepare(event: PointerEvent) {
@@ -159,7 +165,7 @@ export class BoardDragAutoPanService implements OnDestroy {
   }
 
   private velocity(session: DragSession) {
-    if (!session.pointer || session.suspended) return { x: 0, y: 0 }
+    if (!this.edgePan || !session.pointer || session.suspended) return { x: 0, y: 0 }
     const rect = session.viewport.getBoundingClientRect()
     return calculateEdgePanVelocity(session.pointer, {
       left: Math.max(0, rect.left),
