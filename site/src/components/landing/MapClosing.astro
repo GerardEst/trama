@@ -1,25 +1,22 @@
 ---
 import StoryMap from './StoryMap.astro'
-import type { Lang } from '../../i18n'
-
-interface Props {
-  lang: Lang
-}
-
-const { lang } = Astro.props
 ---
 
 <map-closing>
-  <div class="map-closing__art"><StoryMap lang={lang} /></div>
+  <div class="map-closing__art"><StoryMap /></div>
   <div class="map-closing__copy"><slot /></div>
 </map-closing>
 
 <script>
+  import { MapFootprints } from './map-footprints'
+
   class MapClosing extends HTMLElement {
     static observedAttributes = ['data-voyage-arrived']
     private observer?: IntersectionObserver
+    private footprints?: MapFootprints
 
     connectedCallback() {
+      this.footprints = new MapFootprints(this)
       if (typeof IntersectionObserver === 'undefined') return
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
       if (!this.classList.contains('closing--revealed')) this.classList.add('closing--pending')
@@ -34,6 +31,7 @@ const { lang } = Astro.props
 
     disconnectedCallback() {
       this.observer?.disconnect()
+      this.footprints?.destroy()
     }
 
     attributeChangedCallback() {
@@ -65,6 +63,10 @@ const { lang } = Astro.props
     width: 100%;
     margin-inline: auto;
     pointer-events: none;
+  }
+
+  map-closing[data-map-exploring] {
+    cursor: none;
   }
 
   .map-closing__copy {

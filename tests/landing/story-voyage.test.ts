@@ -68,7 +68,8 @@ for (const width of [1440, 820, 601, 375, 320]) {
     expect(destination.y).toBeGreaterThan(map.y)
     expect(destination.y + destination.height).toBeLessThan(map.y + map.height * 0.4)
     expect(Math.max(...angles) - Math.min(...angles)).toBeGreaterThan(20)
-    await expect(boat.locator('svg')).toBeVisible()
+    await expect(boat.locator('img')).toBeVisible()
+    expect(await boat.locator('img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0)
     const size = await boat.evaluate(element => parseFloat(getComputedStyle(element).width))
     expect(size).toBeLessThanOrEqual(36)
     await scrollVoyage(page, 0)
@@ -108,7 +109,7 @@ test('the boat disperses the ink behind it and restores the route on reverse scr
 })
 
 for (const width of [1440, 375]) {
-  test(`the atlas draws on entry and only its events wait for the boat at ${width}px`, async ({ page }) => {
+  test(`the atlas follows the boat while its illustrations wait for exploration at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
     const closing = page.locator('map-closing')
@@ -136,20 +137,14 @@ for (const width of [1440, 375]) {
     expect(await remainingDistance()).toBeLessThan(1)
     await expect(closing.locator('.story-map')).toHaveCSS('opacity', '1')
     await expect(closing.getByRole('heading')).toBeVisible()
-    const delays = await closing.locator('.map-event__body').evaluateAll(markers => markers.map(marker =>
-      parseFloat(getComputedStyle(marker).transitionDelay),
-    ).sort((a, b) => a - b))
-    expect(delays).toEqual([0, 0.2, 0.4, 0.6, 0.8, 1, 1.2])
+    await expect(closing.locator('.map-event--discovered')).toHaveCount(0)
     for (const marker of await closing.locator('.map-event__body').all()) {
-      await expect(marker).toHaveCSS('opacity', '1')
+      await expect(marker).toHaveCSS('opacity', '0')
     }
-    // Rewinding the voyage must hide events until the boat arrives again.
+    // Scrolling the voyage must never uncover an unexplored illustration.
     await scrollVoyage(page, 0.85)
     expect(await remainingDistance()).toBeGreaterThan(1)
     await expect(closing).not.toHaveClass(/closing--arrived/)
-    const fadingOpacity = await closing.locator('.map-event__body').first().evaluate(element => Number(getComputedStyle(element).opacity))
-    expect(fadingOpacity).toBeGreaterThan(0)
-    expect(fadingOpacity).toBeLessThan(1)
     for (const marker of await closing.locator('.map-event__body').all()) {
       await expect(marker).toHaveCSS('opacity', '0')
       await expect(marker).toHaveCSS('animation-name', 'none')
@@ -158,7 +153,7 @@ for (const width of [1440, 375]) {
     await scrollVoyage(page, 1)
     await expect(closing).toHaveClass(/closing--arrived/)
     for (const marker of await closing.locator('.map-event__body').all()) {
-      await expect(marker).toHaveCSS('opacity', '1')
+      await expect(marker).toHaveCSS('opacity', '0')
     }
   })
 }
@@ -197,7 +192,7 @@ test('the boat remains a static drawing without JavaScript', async ({ browser })
   const page = await context.newPage()
   await page.goto('/')
   await page.locator('#faq').scrollIntoViewIfNeeded()
-  await expect(page.locator('.voyage__boat svg')).toBeVisible()
+  await expect(page.locator('.voyage__boat img')).toBeVisible()
   await expect(page.locator('.voyage__chart')).toBeHidden()
   await expect(page.locator('story-voyage')).not.toHaveClass(/voyage--ready/)
   await context.close()

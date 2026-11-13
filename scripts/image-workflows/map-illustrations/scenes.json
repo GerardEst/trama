@@ -1,0 +1,54 @@
+{
+  "style": "pencilart, a delicate hand-drawn literary fantasy illustration matching a finely drawn fantasy atlas. Fine irregular graphite outlines, confident thin pencil strokes, sparse crosshatching, visible individual coloured-pencil marks and airy unpainted spaces. A professional novel endpaper vignette, evocative and beautifully observed, with a clear silhouette readable at small size. One isolated complete composition centred on pure white paper, with generous clean white margins on all four sides. Decorative details grow naturally around the scene, with an irregular organic outline fading into white. No lettering, no labels, no words, no border, no medallion, no rectangular background, no watercolour wash, no solid dark masses, no glossy digital painting, no 3D, no flat vector clipart, no thick cartoon outlines.",
+  "scenes": [
+    {
+      "name": "boat",
+      "seed": 913900,
+      "width": 768,
+      "height": 1280,
+      "prompt": "A single small wooden adventurer's rowing boat, seen directly from above in strict top-down plan view. Its pointed bow faces exactly UP towards the top edge, its rounded stern at the bottom. Long narrow symmetrical hull, fine individual timber planks, two little wooden benches and two slender oars projecting to either side. The entire boat and both oars are visible. Graphite monochrome only, the same fine black pencil linework as the map. Unpainted white interior with delicate hatching, almost no solid fill. No people, no sails, no scenery, no water background, no horizon, no shadows. The boat occupies the central two thirds of the page height."
+    },
+    {
+      "name": "paper-boat",
+      "seed": 914425,
+      "width": 1024,
+      "height": 768,
+      "prompt": "One single unmistakable folded origami paper boat, a classic little paper sailing boat with a triangular folded peak and an angular folded paper hull. A slightly elevated three-quarter side view, bow pointing right. Entirely monochrome graphite pencil on clean white paper: delicate slightly uneven thin dark pencil contours, a few fine crosshatched pencil marks inside the folded faces, visible hand-drawn construction strokes. The exact same mature literary pencil drawing style as a fine fantasy atlas. White unpainted paper faces, open airy linework. Small simple iconic silhouette clearly readable as a paper boat at 44 pixels wide. One boat only, isolated, centred, occupying most of the page with clean generous margins. No wooden boat, no oars, no fabric sails, no person, no water, no ripples, no scenery, no drop shadow, no lettering, no colour, no decorative plants, no digital vector look, no thick outlines."
+    },
+    {
+      "name": "discovery",
+      "seed": 913902,
+      "width": 1024,
+      "height": 1024,
+      "prompt": "A tiny travelling explorer with a backpack pauses at an ancient broken stone arch and discovers a hidden waterfall and distant mountain peaks beyond it. Ferns, curling vines, a few delicate wildflowers and swallows frame the arch. A winding little trail leads into this mysterious new world. Sage green, moss and turquoise blue coloured-pencil strokes, sparse graphite stonework. Fresh, expansive, hopeful atmosphere of wonder and exploration. A compact landscape vignette with open sky left white."
+    },
+    {
+      "name": "treasure",
+      "seed": 913903,
+      "width": 1024,
+      "height": 1024,
+      "prompt": "An old ornate wooden treasure chest stands open in a secret rocky grotto, overflowing with a few carefully drawn golden coins, a pearl necklace and precious stones. Ferns curl around the chest, roots arch above it, tiny golden glints and fallen leaves complete the composition. Honey gold, ochre, burnt sienna and amber coloured-pencil hatching with small emerald accents. A secret, precious, quietly joyful discovery, a promise of forgotten adventures. White gaps between every detail, no dark cave background."
+    },
+    {
+      "name": "potion",
+      "seed": 913905,
+      "width": 1024,
+      "height": 1024,
+      "prompt": "An alchemist's round glass potion bottle with a little cork stands among magical mushrooms, curling medicinal herbs, lavender sprigs and a smaller delicate vial. A thin spiral of magical vapour rises from the bottle, with a few tiny floating stars and bubbles. Plum, violet and lilac coloured-pencil strokes, with little sage leaves and restrained pink highlights inside the glass. Curious, enchanted, dreamlike atmosphere of woodland alchemy. Intricate delicate bottle reflections made only from pencil lines, not digital glow."
+    },
+    {
+      "name": "camp",
+      "seed": 913906,
+      "width": 1024,
+      "height": 1024,
+      "prompt": "A small traveller's canvas tent beside a welcoming little campfire, sheltered by two slender pine trees. A kettle hangs over the fire, a rolled blanket and little logs lie nearby, fine smoke curls towards a crescent moon and three tiny stars. Warm amber, copper and soft orange coloured-pencil hatching in the tent and flames, muted indigo blue pencil in the pine trees. Peaceful, cosy, restful mood, a safe refuge after a long adventure. White sky, no dark backdrop, a little storybook campsite."
+    },
+    {
+      "name": "relic",
+      "seed": 913907,
+      "width": 1024,
+      "height": 1024,
+      "prompt": "A beautiful ancient faceted crystal relic rests on a weathered carved stone pedestal in a little circle of broken standing stones. Tiny wildflowers grow between the stones, thin celestial orbit lines and a few four-pointed stars hover above the crystal. Sapphire, periwinkle and icy blue coloured-pencil strokes with restrained silver graphite details. Reverent, ancient, otherworldly and full of forgotten magic. A miniature archaeological sanctuary, elegant delicate linework, no digital glow, no dark background."
+    }
+  ]
+}

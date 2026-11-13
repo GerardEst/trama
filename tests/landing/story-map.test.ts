@@ -106,21 +106,21 @@ for (const width of [1440, 820, 601, 375, 320]) {
     expect(await image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBeGreaterThan(0)
     await expect(closing.locator('.story-map')).toHaveCSS('opacity', '1')
     const markers = closing.locator('.map-event')
-    await expect(markers).toHaveCount(7)
+    await expect(markers).toHaveCount(5)
     const obstacles = await Promise.all([
       closing.getByRole('heading').boundingBox(),
       closing.locator('.map-closing__copy p').boundingBox(),
       link.boundingBox(),
     ])
     for (const marker of await markers.all()) {
-      await expect(marker.locator('.map-event__body')).toHaveCSS('opacity', '1')
+      await expect(marker.locator('.map-event__body')).toHaveCSS('opacity', '0')
       const bounds = (await marker.boundingBox())!
       expect(bounds.x).toBeGreaterThanOrEqual(0)
       expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
       for (const obstacle of obstacles) {
         const overlapX = Math.min(bounds.x + bounds.width, obstacle!.x + obstacle!.width) - Math.max(bounds.x, obstacle!.x)
         const overlapY = Math.min(bounds.y + bounds.height, obstacle!.y + obstacle!.height) - Math.max(bounds.y, obstacle!.y)
-        expect(overlapX > 0 && overlapY > 0).toBe(false)
+        expect(overlapX > 0 && overlapY > 0, `${width}px: ${await marker.getAttribute('data-event')} overlaps the invitation by ${overlapX}px × ${overlapY}px`).toBe(false)
       }
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
@@ -137,8 +137,8 @@ test('the landing map is complete when motion is reduced', async ({ page }) => {
   await expect(closing.locator('.story-map')).toHaveCSS('opacity', '1')
   await expect(closing.locator('picture')).toHaveCSS('opacity', '1')
   await expect(closing.locator('picture')).toHaveCSS('clip-path', 'inset(0px)')
-  await expect(closing.locator('.spark').first()).toHaveCSS('animation-name', 'none')
-  await expect(closing.locator('.map-event__label')).toHaveCount(7)
+  await expect(closing.locator('.map-event-icon').first()).toHaveCSS('animation-name', 'none')
+  await expect(closing.locator('.map-event__label')).toHaveCount(0)
   await expect(closing.getByRole('link', { name: /Crea la teva primera història/ })).toBeVisible()
 })
 
@@ -153,35 +153,59 @@ test('the landing closing invitation works without JavaScript', async ({ browser
   await expect(closing.locator('.story-map')).toHaveCSS('opacity', '1')
   await expect(closing.locator('picture')).toHaveCSS('opacity', '1')
   await expect(closing.locator('picture')).toHaveCSS('clip-path', 'inset(0px 0px 0%)')
-  await expect(closing.locator('.map-event__label')).toHaveCount(7)
-  await expect(closing.locator('.spark').first()).toHaveCSS('animation-play-state', 'paused')
+  await expect(closing.locator('.map-event__label')).toHaveCount(0)
+  await expect(closing.locator('.map-event-icon')).toHaveCount(5)
+  for (const image of await closing.locator('.map-event-icon').all()) {
+    expect(await image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true)
+  }
   await expect(closing.locator('.story-map__image')).toHaveJSProperty('complete', true)
   expect(await closing.locator('.story-map__image').evaluate((element: HTMLImageElement) => element.naturalWidth)).toBeGreaterThan(0)
   await context.close()
 })
 
-test('map markers animate only while the closing section is visible', async ({ page }) => {
-  await page.goto('/ca')
-  const closing = page.locator('map-closing')
-  const spark = closing.locator('.spark').first()
-  await expect(spark).toHaveCSS('animation-play-state', 'paused')
-  await closing.scrollIntoViewIfNeeded()
-  await expect(spark).toHaveCSS('animation-play-state', 'running')
-  await page.evaluate(() => window.scrollTo(0, 0))
-  await expect(spark).toHaveCSS('animation-play-state', 'paused')
-})
+for (const theme of ['light', 'dark']) {
+  test(`map vignettes retain transparent paper and distinct coloured pencil marks in ${theme} mode`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/ca')
+    await page.evaluate(theme => document.documentElement.dataset['poloTheme'] = theme, theme)
+    const closing = page.locator('map-closing')
+    await closing.scrollIntoViewIfNeeded()
+    const images = closing.locator('.map-event-icon')
+    await expect(images).toHaveCount(5)
+    for (const image of await images.all()) {
+      const drawing = await image.evaluate(async (element: HTMLImageElement) => {
+        await element.decode()
+        const canvas = document.createElement('canvas')
+        canvas.width = element.naturalWidth
+        canvas.height = element.naturalHeight
+        const context = canvas.getContext('2d')!
+        context.drawImage(element, 0, 0)
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
+        let transparent = 0, coloured = 0
+        for (let index = 0; index < pixels.length; index += 4) {
+          if (pixels[index + 3] === 0) transparent++
+          if (pixels[index + 3] > 60 && Math.max(pixels[index], pixels[index + 1], pixels[index + 2]) - Math.min(pixels[index], pixels[index + 1], pixels[index + 2]) > 40) coloured++
+        }
+        return { transparent, coloured, filter: getComputedStyle(element).filter }
+      })
+      expect(drawing.transparent).toBeGreaterThan(1000)
+      expect(drawing.coloured).toBeGreaterThan(100)
+      expect(drawing.filter).toBe(theme === 'dark' ? 'invert(1) hue-rotate(180deg)' : 'none')
+    }
+  })
+}
 
-for (const [path, battle, treasure] of [
-  ['/', 'A battle', 'A hidden treasure'],
-  ['/es', 'Una batalla', 'Un tesoro oculto'],
-  ['/ca', 'Una batalla', 'Un tresor amagat'],
-]) {
-  test(`map events follow the page language at ${path}`, async ({ page }) => {
+for (const path of ['/', '/es', '/ca']) {
+  test(`map illustrations start undiscovered without the spider, paths, key or captions at ${path}`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto(path)
     const closing = page.locator('map-closing')
     await closing.scrollIntoViewIfNeeded()
-    await expect(closing.locator('[data-event="battle"] .map-event__label')).toHaveText(battle)
-    await expect(closing.locator('[data-event="treasure"] .map-event__label')).toHaveText(treasure)
+    await expect(closing.locator('.story-map svg')).toHaveCount(0)
+    await expect(closing.locator('[data-event="key"], [data-event="battle"]')).toHaveCount(0)
+    await expect(closing.locator('.map-event--discovered')).toHaveCount(0)
+    for (const body of await closing.locator('.map-event__body').all()) await expect(body).toHaveCSS('opacity', '0')
+    await expect(closing.locator('.map-event__label')).toHaveCount(0)
+    await expect(closing.locator('.map-event-icon')).toHaveCount(5)
   })
 }

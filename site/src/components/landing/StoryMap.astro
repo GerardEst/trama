@@ -2,38 +2,35 @@
 import { getImage } from 'astro:assets'
 import landscape from '../../assets/landing/story-map-ink-landscape.webp'
 import portrait from '../../assets/landing/story-map-ink-portrait.webp'
+import colourLandscape from '../../assets/landing/story-map-colour-landscape.webp'
+import colourPortrait from '../../assets/landing/story-map-colour-portrait.webp'
+import paperBoat from '../../assets/landing/map-illustrations/paper-boat.webp'
+import waterLandscape from '../../assets/landing/story-map-water-landscape.png?url'
+import waterPortrait from '../../assets/landing/story-map-water-portrait.png?url'
 import edgeMask from '../../assets/landing/map-edge-mask.svg?url'
 
-import type { Lang } from '../../i18n'
-import { interfaceCopyFor } from './copy'
 import { MAP_EVENTS } from './map-events'
 import MapEventIcon from './MapEventIcon.astro'
 
-interface Props {
-  lang: Lang
-}
-
-const t = interfaceCopyFor(Astro.props.lang)
-const labels = {
-  battle: t.mapBattle, discovery: t.mapDiscovery, treasure: t.mapTreasure,
-  key: t.mapKey, potion: t.mapPotion, camp: t.mapCamp, relic: t.mapRelic,
-}
-
 const wide = await getImage({ src: landscape, width: 1984, format: 'webp' })
 const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
+const colourWide = await getImage({ src: colourLandscape, width: 1984, format: 'webp' })
+const colourTall = await getImage({ src: colourPortrait, width: 1024, format: 'webp' })
+const paperBoatImage = await getImage({ src: paperBoat, width: 192, format: 'webp' })
 ---
 
 <div class="story-map" aria-hidden="true">
   <picture style={{ '--map-edge-mask': `url("${edgeMask}")` }}>
     <source media="(max-width: 600px)" srcset={tall.src} width="1024" height="1536" />
     <img class="story-map__image" src={wide.src} width="1984" height="1024" alt="" loading="lazy" decoding="async" />
+    <canvas class="story-map__colour" data-colour-wide={colourWide.src} data-colour-tall={colourTall.src} data-water-wide={waterLandscape} data-water-tall={waterPortrait} data-paper-boat={paperBoatImage.src}></canvas>
   </picture>
+  <canvas class="story-map__footprints"></canvas>
   <div class="story-map__events">
-    {MAP_EVENTS.map(({ kind, position, mobilePosition, tabletPosition = position, delay }) => (
-      <div class="map-event" data-event={kind} style={`--event-x: ${position[0]}%; --event-y: ${position[1]}%; --event-tablet-x: ${tabletPosition[0]}%; --event-tablet-y: ${tabletPosition[1]}%; --event-mobile-x: ${mobilePosition[0]}%; --event-mobile-y: ${mobilePosition[1]}%; --event-delay: ${delay}s`}>
+    {MAP_EVENTS.map(({ kind, position, mobilePosition, tabletPosition = position }) => (
+      <div class="map-event" data-event={kind} style={`--event-x: ${position[0]}%; --event-y: ${position[1]}%; --event-tablet-x: ${tabletPosition[0]}%; --event-tablet-y: ${tabletPosition[1]}%; --event-mobile-x: ${mobilePosition[0]}%; --event-mobile-y: ${mobilePosition[1]}%`}>
         <div class="map-event__body">
           <span class="map-event__badge"><MapEventIcon kind={kind} /></span>
-          <span class="map-event__label">{labels[kind]}</span>
         </div>
       </div>
     ))}
@@ -63,6 +60,7 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
   }
 
   picture {
+    position: relative;
     display: block;
     width: 100%;
     height: 100%;
@@ -71,6 +69,24 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     mask-repeat: no-repeat;
     opacity: var(--map-reveal, 1);
     clip-path: inset(0 0 var(--map-unrevealed, 0%) 0);
+  }
+
+  .story-map__colour,
+  .story-map__footprints {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .story-map__colour {
+    mix-blend-mode: var(--map-image-blend);
+    filter: var(--map-colour-filter, none);
+  }
+
+  .story-map__footprints {
+    color: var(--polo-color-text-strong);
   }
 
   .story-map__events {
@@ -83,55 +99,37 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     left: var(--event-x);
     top: var(--event-y);
     transform: translate(-50%, -50%);
-    color: var(--polo-color-action);
   }
 
   .map-event__body {
     display: grid;
     justify-items: center;
-    gap: 1px;
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  }
+
+  .map-event--discovered .map-event__body {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    transform: none;
   }
 
   .map-event__badge {
     display: block;
-    width: 64px;
-    height: 64px;
-    border-radius: 48% 52% 56% 44% / 54% 46% 54% 46%;
-    background: color-mix(in srgb, var(--polo-color-canvas) 94%, transparent);
-    box-shadow: 0 0 18px 8px color-mix(in srgb, var(--polo-color-canvas) 70%, transparent);
-  }
-
-  .map-event__label {
-    padding: 2px 7px;
-    border-radius: 4px;
-    background: color-mix(in srgb, var(--polo-color-canvas) 94%, transparent);
-    color: var(--polo-color-text-secondary);
-    font: italic 15px / 1.3 var(--e-serif);
-    white-space: nowrap;
+    width: clamp(128px, 12vw, 180px);
+    height: clamp(128px, 12vw, 180px);
+    background: radial-gradient(ellipse, var(--polo-color-canvas) 25%, color-mix(in srgb, var(--polo-color-canvas) 88%, transparent) 45%, transparent 72%);
   }
 
   :global(.closing--pending) .story-map {
     opacity: 0;
   }
 
-  :global(.closing--events-pending) .map-event__body {
-    opacity: 0;
-    transform: translateY(6px) scale(0.94);
-    transition-duration: 0.4s;
-    transition-delay: 0s;
-  }
-
-  :global(.closing--arrived) .map-event__body {
-    transition-delay: var(--event-delay);
-  }
-
   :global(:root[data-polo-theme='dark']) .story-map {
     --map-image-filter: grayscale(1) invert(1) contrast(1.12);
     --map-image-blend: screen;
     --map-image-opacity: 0.48;
+    --map-colour-filter: invert(1) hue-rotate(180deg);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -139,10 +137,16 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
       --map-image-filter: grayscale(1) invert(1) contrast(1.12);
       --map-image-blend: screen;
       --map-image-opacity: 0.48;
+      --map-colour-filter: invert(1) hue-rotate(180deg);
     }
   }
 
   @media (min-width: 601px) and (max-width: 1000px) {
+    .map-event__badge {
+      width: clamp(104px, 14vw, 140px);
+      height: clamp(104px, 14vw, 140px);
+    }
+
     .story-map__image {
       object-position: 30% center;
     }
@@ -165,13 +169,8 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     }
 
     .map-event__badge {
-      width: 46px;
-      height: 46px;
-    }
-
-    .map-event__label {
-      padding: 2px 4px;
-      font-size: 12px;
+      width: clamp(100px, 27vw, 136px);
+      height: clamp(100px, 27vw, 136px);
     }
   }
 
@@ -181,8 +180,7 @@ const tall = await getImage({ src: portrait, width: 1024, format: 'webp' })
     }
 
     .story-map,
-    picture,
-    .map-event__body {
+    picture {
       animation: none !important;
       opacity: 1 !important;
     }

@@ -3,13 +3,6 @@ import type { Lang } from '../../i18n'
 // Copy for the interactive examples; everything else comes from i18n/, content/ and atlas/.
 const COPY = {
   en: {
-    mapBattle: 'A battle',
-    mapDiscovery: 'A discovery',
-    mapTreasure: 'A hidden treasure',
-    mapKey: 'An old key',
-    mapPotion: 'A strange potion',
-    mapCamp: 'A safe haven',
-    mapRelic: 'A forgotten relic',
     boardLabel: 'The board',
     boardHint: 'This is the real editor. Drag the scenes, rewrite a passage, connect an answer.',
     boardLoading: 'Opening the board…',
@@ -48,13 +41,6 @@ const COPY = {
     anyGone: 'You walk away. The tower keeps its secret.',
   },
   es: {
-    mapBattle: 'Una batalla',
-    mapDiscovery: 'Un hallazgo',
-    mapTreasure: 'Un tesoro oculto',
-    mapKey: 'Una vieja llave',
-    mapPotion: 'Una poción extraña',
-    mapCamp: 'Un refugio',
-    mapRelic: 'Una reliquia olvidada',
     boardLabel: 'El tablero',
     boardHint: 'Es el editor de verdad. Arrastra las escenas, reescribe un pasaje, conecta una respuesta.',
     boardLoading: 'Abriendo el tablero…',
@@ -93,13 +79,6 @@ const COPY = {
     anyGone: 'Te marchas. La torre guarda su secreto.',
   },
   ca: {
-    mapBattle: 'Una batalla',
-    mapDiscovery: 'Una troballa',
-    mapTreasure: 'Un tresor amagat',
-    mapKey: 'Una clau antiga',
-    mapPotion: 'Una poció estranya',
-    mapCamp: 'Un refugi',
-    mapRelic: 'Una relíquia oblidada',
     boardLabel: 'El tauler',
     boardHint: 'És l’editor de debò. Arrossega les escenes, reescriu un passatge, connecta una resposta.',
     boardLoading: 'Obrint el tauler…',
