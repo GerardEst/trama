@@ -145,9 +145,20 @@ export interface AtlasCopy {
     stableLink: string
   }
   live: {
-    forestEnd: string
-    riverEnd: string
-    leftMarket: string
+    /** Scenes of the first example. They are story text: HTML, with {coins} where the variable goes. */
+    crossroads: string
+    climb: string
+    around: string
+    castleScene: string
+    aroundScene: string
+    insideScene: string
+    /** The market of the second example. */
+    marketBrowse: string
+    marketLeave: string
+    marketLamp: string
+    marketLost: string
+    marketLit: string
+    marketDark: string
     tossText: string
     headsEnd: string
     tailsEnd: string

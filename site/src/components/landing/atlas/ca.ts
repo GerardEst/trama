@@ -58,9 +58,9 @@ export const ca: AtlasCopy = {
     { label: 'Motor', value: '@trama-app/engine: gratuït, de codi obert, MIT, sense dependències' },
   ],
   chapters: {
-    write: { name: 'Escriu', title: 'Dona espai a cada escena', lead: 'Passatges, decisions i imatges.' },
-    connect: { name: 'Connecta', title: 'Dona forma als camins', lead: 'Un tauler visual que es manté llegible a mesura que la història creix.' },
-    remember: { name: 'Recorda', title: 'Fes que les decisions importin', lead: 'El que fa el lector canvia el que ve després. Sense codi.' },
+    write: { name: 'Escriu', title: 'Un espai per a cada interacció', lead: 'Una escena, una conversa o una narració extensa.' },
+    connect: { name: 'Dona forma', title: 'Traça els camins de la història', lead: 'Un tauler visual que es manté llegible a mesura que la història creix.' },
+    remember: { name: 'Dona vida', title: 'Fes que les decisions importin', lead: 'El que fa el lector canvia el que ve després. Sense codi.' },
     publish: { name: 'Publica', title: 'Del teu tauler als teus lectors', lead: 'Prova, comparteix, mira com es juga i no perdis mai la feina.' },
     build: { name: 'Construeix', title: 'Més enllà del lector', lead: 'Per a desenvolupadors i els seus agents de programació.' },
   },
@@ -68,7 +68,7 @@ export const ca: AtlasCopy = {
     scene: {
       name: 'Escenes i respostes',
       question: 'Com escric una història amb branques?',
-      answer: 'Cada escena és un passatge amb les respostes que pot triar el lector. Connecta cada resposta amb l’escena on porta.',
+      answer: 'Cada escena és un node amb els camins que pot escollir el lector. Cada camí s’uneix a la següent escena.',
       example: 'L’escena «La cruïlla» ofereix «Entrar al bosc» i «Seguir el riu». Cadascuna porta a una escena diferent.',
     },
     'rich-text': {
@@ -81,12 +81,12 @@ export const ca: AtlasCopy = {
       name: 'Interpolació de text',
       question: 'Puc fer servir els valors del lector en el text?',
       answer: 'Insereix variables en passatges i respostes per mostrar el nom del lector, les seves estadístiques o condicions. El text mostra els valors actuals durant la partida.',
-      example: 'Escriu «Hola de nou, #nom.» i un lector que es digui Morgan veurà «Hola de nou, Morgan.»',
+      example: 'Hola, #nom → Hola, Morgan\nNomés tens #coins monedes? → Només tens 12 monedes?',
     },
     focus: {
       name: 'Mode concentració',
       question: 'Puc escriure passatges llargs amb comoditat?',
-      answer: 'Sí. Amplia qualsevol text en un editor sense distraccions, amb títols, llistes, negreta, cursiva i variables. Tanca’l i tornes al tauler.',
+      answer: 'Sí. Amplia qualsevol text en un editor sense distraccions, amb títols, llistes, negreta, cursiva i variables.',
       example: 'Prem Ctrl+F o ⌘F en un passatge per escriure el Capítol 2 a pàgina completa, i Esc per tornar al mateix punt.',
     },
     images: {
@@ -96,10 +96,10 @@ export const ca: AtlasCopy = {
       example: 'Una escena mostra un paisatge pintat i, a sota, «La lletra et resulta familiar» amb la resposta «Llegir-la».',
     },
     connections: {
-      name: 'Dues entrades',
-      question: 'Com pot tornar el lector a un menú sense rellegir-lo?',
-      answer: 'Cada connexió porta al text d’una escena o directament a les seves respostes, saltant-se el passatge.',
-      example: 'Primera visita al mercat: text i opcions. Després de comprar un fanal: només les opcions.',
+      name: 'Tipus de nodes i unions',
+      question: 'Quins tipus de node hi ha i com s’uneixen?',
+      answer: 'Fes servir diferents tipus de node: escena, distribuïdor, final... amb múltiples maneres d’unir-los entre ells. Tens llibertat total per donar forma a la teva història.',
+      example: 'Una resposta del mercat s’uneix a dues escenes alhora; una altra, a un distribuïdor que tria per on continua la història.',
     },
     random: {
       name: 'Camins aleatoris',
@@ -110,7 +110,7 @@ export const ca: AtlasCopy = {
     organisation: {
       name: 'Grups i marcs',
       question: 'Com mantinc ordenada una història gran?',
-      answer: 'Plega un capítol en un grup amb el seu propi tauler interior, o mantén-lo visible en un marc de color que es mou de cop. Cap dels dos canvia com es juga.',
+      answer: 'Plega un capítol en un grup amb el seu propi tauler interior, o mantén-lo visible en un marc de color que es mou de cop.',
       example: 'El Capítol 2 queda visible en un marc amb tres escenes. El Capítol 3 està plegat en un grup de sis.',
     },
     events: {
@@ -327,9 +327,18 @@ export const ca: AtlasCopy = {
     stableLink: 'Enllaç estable',
   },
   live: {
-    forestEnd: 'Els arbres es tanquen darrere teu. Aquest camí no el trobaràs dos cops.',
-    riverEnd: 'El riu s’endú la teva veu aigües avall. Algú respon.',
-    leftMarket: 'Surts del mercat amb el que has comprat.',
+    crossroads: 'El camí es parteix en dos sota el castell. Triïs el que triïs, no hi arribaràs sent la mateixa persona.',
+    climb: 'Puja al castell',
+    around: 'Rodeja el castell',
+    castleScene: 'Puges fins a la porta del castell. És <strong>oberta</strong>, <em>com si t’hagués estat esperant</em>.',
+    aroundScene: 'En un marge brillen monedes antigues. Reculls {coins} monedes: amb això arribes on vulguis.',
+    insideScene: 'Travesses la porta. A dins, tot està per escriure.',
+    marketBrowse: 'Passeja entre les parades',
+    marketLeave: 'Surt del mercat',
+    marketLamp: 'Entre dues parades trobes un fanal encès. Te l’endús.',
+    marketLost: 'Et perds entre teles i espècies. Quan en surts, ja s’ha fet fosc.',
+    marketLit: 'El fanal t’obre camí en la nit.',
+    marketDark: 'Camines a les fosques, a poc a poc.',
     tossText: 'Un desconegut t’ofereix una moneda. Digui el que digui, obeiràs.',
     headsEnd: 'Cara. Vas cap al nord.',
     tailsEnd: 'Creu. Et quedes aquí.',

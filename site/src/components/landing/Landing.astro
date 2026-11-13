@@ -49,13 +49,16 @@ const checkedLabel = new Date(COMPARISON_CHECKED).toLocaleDateString(lang, { dat
 
 // The page states an answer without the question it was written for, so a
 // leading "Yes." would answer nothing; the question stays in the FAQ data.
+// An example's cases, one per line: what the author writes and what the reader sees.
+const cases = (example: string) => example.split('\n').map(line => line.split(' → '))
+
 const plain = (answer: string) => answer.replace(/^(Yes|Sí)[.,]\s*/, '').replace(/^./, letter => letter.toUpperCase())
 
 // Four chapters, like a book: each opens with one capability played on a real
 // board, and gathers the smaller ones under it.
 const CHAPTERS: { id: AtlasChapter; numeral: string; lead: AtlasId; demo: DemoId; zoom: number }[] = [
   { id: 'write', numeral: 'I', lead: 'scene', demo: 'scene', zoom: 0.9 },
-  { id: 'connect', numeral: 'II', lead: 'connections', demo: 'connections', zoom: 0.9 },
+  { id: 'connect', numeral: 'II', lead: 'connections', demo: 'connections', zoom: 0.8 },
   { id: 'remember', numeral: 'III', lead: 'events', demo: 'events', zoom: 0.9 },
   { id: 'publish', numeral: 'IV', lead: 'endings', demo: 'publish', zoom: 0.9 },
 ]
@@ -172,7 +175,6 @@ const structuredData = {
               </div>
               <LiveBoard id={chapter.demo} lang={lang} zoom={chapter.zoom} />
               <div class="e-more">
-                <p class="e-more__title">{e.alsoIn}</p>
                 <dl>
                   {rest.map(info => {
                     const item = c.features[info.id]
@@ -182,7 +184,11 @@ const structuredData = {
                         <dt><FeatureIcon id={info.id} />{href ? <a href={href} rel={info.docs ? undefined : 'noopener'}>{item.name}</a> : item.name}</dt>
                         <dd>
                           {plain(item.answer)}
-                          {info.id === 'interpolation' && <p class="e-more__example">{item.example}</p>}
+                          {info.id === 'interpolation' && (
+                            <p class="e-more__example">
+                              {cases(item.example).map(([written, read]) => <span>{written} <span>→ {read}</span></span>)}
+                            </p>
+                          )}
                         </dd>
                       </div>
                     )

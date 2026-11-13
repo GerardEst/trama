@@ -7,7 +7,10 @@ import { atlasFor, type LiveId } from '.'
 // page plays them with the real engine, so an example cannot claim what the
 // product does not do (see trees.test.ts).
 
-const content = (id: string, text: string, answers: StoryAnswer[]): StoryNode => ({ id, type: 'content', text: `<p>${text}</p>`, answers })
+const content = (id: string, text: string, answers?: StoryAnswer[]): StoryNode => ({ id, type: 'content', text: `<p>${text}</p>`, ...(answers && { answers }) })
+/** A variable as the editor writes it into a passage, labelled with its name. */
+const variable = (kind: 'property' | 'stat', key: string, name: string) =>
+  `<span data-trama-variable="" data-kind="${kind}" data-key="${key}">#${name}</span>`
 const ending = (id: string, text: string): StoryNode => ({ id, type: 'end', text: `<p>${text}</p>` })
 const tree = (nodes: StoryNode[], refs: StoryTree['refs'] = {}, unavailableAnswerDisplay: StoryTree['unavailableAnswerDisplay'] = 'hidden'): StoryTree => ({
   nodes,
@@ -26,27 +29,47 @@ export function liveTree(id: LiveId, lang: Lang): StoryTree {
 
   switch (id) {
     case 'scene':
-      return tree([
-        content('start', a.crossroadsText, [
-          { id: 'forest', text: a.forest, join: [{ node: 'forest_end' }] },
-          { id: 'river', text: a.river, join: [{ node: 'river_end' }] },
-        ]),
-        ending('forest_end', l.forestEnd),
-        ending('river_end', l.riverEnd),
-      ])
+      // Scenes the author can keep writing from: one with emphasis, one that
+      // counts what the reader picks up and says it back.
+      return tree(
+        [
+          content('start', l.crossroads, [
+            { id: 'climb', text: l.climb, join: [{ node: 'castle' }] },
+            { id: 'around', text: l.around, join: [{ node: 'margin' }] },
+          ]),
+          // No answers: the scene leads straight on to the next one.
+          { ...content('castle', l.castleScene), join: [{ node: 'inside' }] },
+          {
+            ...content('margin', l.aroundScene.replace('{coins}', variable('stat', 'stat_coins', a.coins))),
+            events: [{ action: 'alterStat', type: 'stat', target: 'stat_coins', amount: '3' }],
+          },
+          content('inside', l.insideScene),
+        ],
+        { stat_coins: { name: a.coins, type: 'stat' } },
+      )
     case 'connections':
+      // One answer joined to two scenes, scenes joined straight on, and a
+      // distributor that picks the way out from what the reader carries.
       return tree(
         [
           content('market', a.marketText, [
-            {
-              id: 'buy',
-              text: a.buyLamp,
-              events: [{ action: 'alterStat', type: 'stat', target: 'stat_lamps', amount: '1' }],
-              join: [{ node: 'market', toAnswer: true }],
-            },
-            { id: 'leave', text: a.leave, join: [{ node: 'gone' }] },
+            { id: 'browse', text: l.marketBrowse, join: [{ node: 'lamp' }, { node: 'lost' }] },
+            { id: 'leave', text: l.marketLeave, join: [{ node: 'way_out' }] },
           ]),
-          ending('gone', l.leftMarket),
+          { ...content('lost', l.marketLost), join: [{ node: 'way_out' }] },
+          {
+            ...content('lamp', l.marketLamp),
+            events: [{ action: 'alterStat', type: 'stat', target: 'stat_lamps', amount: '1' }],
+            join: [{ node: 'way_out' }],
+          },
+          {
+            id: 'way_out',
+            type: 'distributor',
+            conditions: [{ id: 'lamp', rules: [{ ref: 'stat_lamps', comparator: 'morethan', value: 0 }], join: [{ node: 'lit' }] }],
+            fallbackCondition: { join: [{ node: 'dark' }] },
+          },
+          ending('lit', l.marketLit),
+          ending('dark', l.marketDark),
         ],
         { stat_lamps: { name: l.lampsRef, type: 'stat' } },
       )
@@ -144,7 +167,7 @@ export function liveTree(id: LiveId, lang: Lang): StoryTree {
           {
             id: 'greet',
             type: 'end',
-            text: `<p>${a.welcome} <strong><span data-trama-variable="" data-kind="property" data-key="property_name">#property_name</span></strong>.</p>`,
+            text: `<p>${a.welcome} <strong>${variable('property', 'property_name', a.name)}</strong>.</p>`,
           },
         ],
         { property_name: { name: a.name, type: 'property' } },

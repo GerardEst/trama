@@ -127,6 +127,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() focusElements: boolean = true
   @Input() initialPosition: { x: number; y: number } = { x: 0, y: 0 }
   @Input() zoomable: boolean = true
+  /** Dragging near an edge moves the board; off for the small boards of the public site. */
+  @Input() edgePan: boolean = true
 
   // Context menu
   readonly creatableNodeTypes = ['text', 'content', 'distributor', 'end'] as const
@@ -410,6 +412,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     // Sets if the board elements should focus on create or not (for the landing page)
     this.panzoom.focusElements = this.focusElements
+    this.dragAutoPan.edgePan = this.edgePan
   }
 
   ngAfterViewInit(): void {

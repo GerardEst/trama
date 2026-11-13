@@ -2,7 +2,7 @@ import type { Copy } from './en'
 
 export const landing: Copy = {
   meta: {
-    title: 'Trama — Tu escrius la història. Ells trien el camí.',
+    title: 'Trama — Crea històries i aventures interactives sense programar',
     description:
       'Escriu ficció interactiva sense programar. Connecta escenes i decisions, prova’n les conseqüències, corregeix mentre jugues i comparteix la història amb un enllaç.',
   },
@@ -49,8 +49,8 @@ export const landing: Copy = {
   },
   authoring: {
     eyebrow: 'LA TEVA HISTÒRIA, PAS A PAS',
-    title: 'De la primera escena a una història per compartir.',
-    description: 'Escriu els passatges. Dona forma als camins al mapa. Recorre’ls i corregeix sobre la marxa, sense sortir de la teva història.',
+    title: 'De la primera frase a una història per jugar.',
+    description: 'Crea la teva aventura interactiva amb eines que cuiden cada part del procés creatiu.',
     enlarge: 'Obre la captura de l’editor a mida completa (pestanya nova)',
     realCapture: 'Editor real · Història d’exemple',
     write: {

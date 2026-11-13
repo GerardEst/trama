@@ -39,8 +39,10 @@ function publishTree(lang: Lang): StoryTree {
 // themselves are the atlas's (tested in atlas/trees.test.ts); the board only adds
 // positions, so the example a reader edits is the one the engine plays.
 const LAYOUTS: Partial<Record<DemoId, Record<string, [left: number, top: number]>>> = {
-  scene: { start: [20, 70], forest_end: [450, 40], river_end: [450, 330] },
-  connections: { market: [20, 70], gone: [460, 170] },
+  // The story goes on past the right edge: the castle's next scene is out of view.
+  scene: { start: [20, 40], castle: [450, 40], margin: [450, 330], inside: [1160, 40] },
+  // The market's scenes share a frame; the distributor waits outside it and its two ways out are out of view.
+  connections: { market: [40, 60], lamp: [400, 305], lost: [400, 60], way_out: [780, 236], lit: [1320, 120], dark: [1320, 420] },
   events: { room: [20, 70], out: [460, 190] },
   requirements: { door: [20, 70], open_end: [460, 150] },
   distributors: { guard: [10, 70], route: [380, 110], open: [700, 40], shut: [700, 330] },
@@ -48,8 +50,19 @@ const LAYOUTS: Partial<Record<DemoId, Record<string, [left: number, top: number]
   publish: { start: [20, 70], gates: [460, 90] },
 }
 
-/** The Start marker sits just above the first scene. */
-const ENTRY: [left: number, top: number] = [20, 14]
+/**
+ * The Start marker waits off the board, to the left of the first scene: only its
+ * connection comes into view, so an example opens on the story itself.
+ */
+const ENTRY_LEFT = -220
+
+/** The frames an example draws around its scenes: an editor's tool, so the engine's trees have none. */
+const FRAMES: Partial<Record<DemoId, { id: string; name: (lang: Lang) => string; scenes: string[] }[]>> = {
+  connections: [{ id: 'frame_1', name: lang => landingCopyFor(lang).art.market, scenes: ['market', 'lamp', 'lost'] }],
+}
+
+/** The pictures an example's scenes carry: the address of each, by scene. */
+export type ScenePictures = Record<string, string>
 
 type StoryNode = NonNullable<StoryTree['nodes']>[number]
 
@@ -59,7 +72,8 @@ export interface BoardStory extends StoryTree {
 
 /**
  * The editor finds a scene from the ids of its answers and routes, so a story on
- * the board must use the app's ids: node_1, answer_1_0, condition_1_0. The atlas
+ * the board must use the app's ids: node_1, answer_1_0, condition_1_0,
+ * condition_1_fallback. The atlas
  * names its scenes for readability; this renames them, joins included.
  */
 function withAppIds(tree: StoryTree): StoryTree {
@@ -78,24 +92,30 @@ function withAppIds(tree: StoryTree): StoryTree {
         join: rejoin(node.join),
         answers: node.answers?.map((answer, k) => ({ ...answer, id: `answer_${n}_${k}`, join: rejoin(answer.join) })),
         conditions: node.conditions?.map((condition, k) => ({ ...condition, id: `condition_${n}_${k}`, join: rejoin(condition.join) })),
-        fallbackCondition: node.fallbackCondition && { ...node.fallbackCondition, join: rejoin(node.fallbackCondition.join) },
+        fallbackCondition: node.fallbackCondition && { ...node.fallbackCondition, id: `condition_${n}_fallback`, join: rejoin(node.fallbackCondition.join) },
       }
     }),
   } as StoryTree
 }
 
-/** An atlas example with the app's ids and the positions the board needs. */
-export function boardStory(id: DemoId, lang: Lang): BoardStory {
+/** An atlas example with the app's ids, the positions the board needs and its pictures. */
+export function boardStory(id: DemoId, lang: Lang, pictures: ScenePictures = {}): BoardStory {
   const source = id === 'publish' ? publishTree(lang) : liveTree(id, lang)
   const layout = LAYOUTS[id] ?? {}
-  const positions = (source.nodes ?? []).map((node, index) => layout[node.id] ?? [24 + index * 380, 40])
+  const scenes = source.nodes ?? []
+  const positions = scenes.map((node, index) => layout[node.id] ?? [24 + index * 380, 40])
+  const first = scenes.findIndex(node => node.id === source.entryPoint?.targetNodeId)
   const tree = withAppIds(source)
+  const appId = (scene: string) => tree.nodes![scenes.findIndex(node => node.id === scene)]!.id
+  const frames = FRAMES[id]?.map(frame => ({ id: frame.id, name: frame.name(lang), nodeIds: frame.scenes.map(appId) }))
   return {
     ...tree,
-    entryPoint: { ...tree.entryPoint, left: ENTRY[0], top: ENTRY[1] },
+    ...(frames && { frames }),
+    entryPoint: { ...tree.entryPoint, left: ENTRY_LEFT, top: positions[first]?.[1] ?? 0 },
     nodes: (tree.nodes ?? []).map((node, index) => {
       const [left, top] = positions[index]!
-      return { ...node, left, top }
+      const picture = pictures[scenes[index]!.id]
+      return { ...node, ...(picture && { image: { path: picture } }), left, top }
     }),
   }
 }

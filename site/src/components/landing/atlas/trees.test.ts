@@ -28,20 +28,31 @@ function play(tree: StoryTree, options?: { random: () => number }) {
 describe.each(LANGS)('live examples in %s', lang => {
   const live = atlasFor(lang).live
 
-  it('scene: each answer leads to its own scene', () => {
-    const story = play(liveTree('scene', lang))
-    story.choose('river')
-    expect(story.passage()).toContain(live.riverEnd)
+  it('scene: each answer leads to its own scene, and the story goes on from there', () => {
+    const climb = play(liveTree('scene', lang))
+    climb.choose('climb')
+    const passages = climb.game.getState().activeVisits.map(visit => visit.scene.text ?? '')
+    expect(passages.at(-2)).toContain(live.castleScene)
+    expect(passages.at(-1)).toContain(live.insideScene)
+    const around = play(liveTree('scene', lang))
+    around.choose('around')
+    expect(around.passage()).toContain(live.aroundScene.replace('{coins}', '3'))
+    expect(around.type()).toBe('content')
   })
 
-  it('connections: returning to the answers skips the passage', () => {
-    const story = play(liveTree('connections', lang))
-    expect(story.passage()).not.toBe('')
-    story.choose('buy')
-    expect(story.game.getState().player.stats['stat_lamps']).toBe(1)
-    const last = story.game.getState().activeVisits.at(-1)!
-    expect(last.scene.skipText).toBe(true)
-    expect(last.scene.answers.map(answer => answer.id)).toEqual(['buy', 'leave'])
+  it('connections: one answer reaches two scenes and a distributor picks the way out', () => {
+    const passages = (story: ReturnType<typeof play>) => story.game.getState().activeVisits.map(visit => visit.scene.text ?? '')
+    const lamp = play(liveTree('connections', lang), { random: () => 0 })
+    lamp.choose('browse')
+    expect(passages(lamp).at(-2)).toContain(live.marketLamp)
+    expect(lamp.passage()).toContain(live.marketLit)
+    const lost = play(liveTree('connections', lang), { random: () => 0.99 })
+    lost.choose('browse')
+    expect(passages(lost).at(-2)).toContain(live.marketLost)
+    expect(lost.passage()).toContain(live.marketDark)
+    const leave = play(liveTree('connections', lang))
+    leave.choose('leave')
+    expect(leave.passage()).toContain(live.marketDark)
   })
 
   it('random: the same choice reaches either ending', () => {

@@ -7,7 +7,8 @@
   } @else if (storageRoute) {
     <img
       class="image__preview"
-      [src]="'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/' + storageRoute"
+      [src]="source"
+      (load)="loaded.emit()"
       [alt]="'common.image.alt' | t"
     />
     @if (canDelete) {
