@@ -1,0 +1,288 @@
+---
+import AuthLabel from '../ui/AuthLabel.astro'
+import { copyFor, pricingCopyFor, useCasesCopyFor, type Lang } from '../../i18n'
+import { APP_LINKS } from '../../lib/links'
+import { localePath } from '../../lib/locale'
+import { PAGES } from '../../lib/pages'
+import { PLANS, formatPrice, type PlanId } from '../../lib/plans'
+import LandingLayout from '../../layouts/LandingLayout.astro'
+import Header from '../landing/Header.astro'
+import Footer from '../landing/Footer.astro'
+import FeatureIcon from '../landing/FeatureIcon.astro'
+import MapClosing from '../landing/MapClosing.astro'
+import { atlasFor, type AtlasId } from '../landing/atlas'
+import Mark from '../ui/Mark.astro'
+import UseCaseScene, { type UseCaseId } from './UseCaseScene.astro'
+import '../../styles/landing.css'
+import '../../styles/pages.css'
+
+// The use cases page: one chapter per kind of author, built like the landing's
+// chapters, each under its own mark instead of a numeral. Each names the capabilities it leans on and the plan that fits.
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = copyFor(lang)
+const u = useCasesCopyFor(lang)
+const p = pricingCopyFor(lang)
+const c = atlasFor(lang)
+const home = localePath(lang, PAGES.home)
+const pricingPath = localePath(lang, PAGES.pricing)
+
+const CASES: { id: UseCaseId; tools: AtlasId[]; plan: PlanId }[] = [
+  { id: 'writers', tools: ['focus', 'preview', 'organisation', 'share'], plan: 'creative' },
+  { id: 'games', tools: ['events', 'requirements', 'distributors', 'engine'], plan: 'creative' },
+  { id: 'brands', tools: ['brand', 'share', 'endings', 'analytics'], plan: 'pro' },
+]
+/** Capabilities that need a plan above Creative. */
+const PLAN_OF: Partial<Record<AtlasId, PlanId>> = { analytics: 'pro' }
+
+// The atlas answers a question; here the answer stands alone, without its "Yes.".
+const plain = (answer: string) => answer.replace(/^(Yes|Sí)[.,]\s*/, '').replace(/^./, letter => letter.toUpperCase())
+
+const structuredData = {
+  '@type': 'WebPage',
+  name: u.meta.title,
+  description: u.meta.description,
+  isPartOf: { '@type': 'WebSite', name: 'Trama', url: new URL(home, Astro.site).href },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: CASES.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: u.cases[item.id].name,
+      description: u.cases[item.id].lead,
+      url: new URL(`${localePath(lang, PAGES.useCases)}#${item.id}`, Astro.site).href,
+    })),
+  },
+}
+---
+
+<LandingLayout lang={lang} page={PAGES.useCases} title={u.meta.title} description={u.meta.description} structuredData={structuredData}>
+  <Header lang={lang} home={home} page={PAGES.useCases} />
+
+  <main id="main-content">
+    <section class="pg-hero uc-top" aria-labelledby="uc-title">
+      <div class="pg-hero__paper" aria-hidden="true"></div>
+      <div class="pg-hero__copy">
+        <p class="e-eyebrow">{u.eyebrow}</p>
+        <h1 id="uc-title">{u.titleStart}<br />{u.titleEnd}</h1>
+        <p class="pg-hero__lead">{u.lead}</p>
+      </div>
+      <nav class="e-wrap uc-toc" aria-label={u.eyebrow}>
+        <ol>
+          {CASES.map(item => (
+            <li>
+              <a href={`#${item.id}`}>
+                <Mark kind={item.id} />
+                {u.cases[item.id].name}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </section>
+
+    <div class="e-wrap uc">
+      {CASES.map(item => {
+        const copy = u.cases[item.id]
+        const plan = PLANS[item.plan]
+        return (
+          <section id={item.id} class="e-chapter" aria-labelledby={`${item.id}-title`}>
+            <header class="e-chapter__head">
+              <Mark kind={item.id} class="uc-mark" />
+              <p class="e-chapter__name">{copy.name}</p>
+              <h2 id={`${item.id}-title`}>{copy.title}</h2>
+              <p class="e-chapter__lead">{copy.lead}</p>
+            </header>
+            <div class="e-chapter__body">
+              <div class="uc-intro">
+                <h3>{copy.heading}</h3>
+                <p>{copy.body}</p>
+                <p class="uc-makes"><span>{u.makesLabel}</span> {copy.makes.join(' · ')}</p>
+              </div>
+              <UseCaseScene kind={item.id} lang={lang} />
+              <div class="e-more">
+                <h3 class="uc-tools">{u.toolsTitle}</h3>
+                <dl>
+                  {item.tools.map(id => {
+                    const feature = c.features[id]
+                    const needs = PLAN_OF[id]
+                    return (
+                      <div>
+                        <dt>
+                          <FeatureIcon id={id} />
+                          <a href={`${home}#f-${id}`}>{feature.name}</a>
+                          {needs && <span class="uc-tag">{PLANS[needs].name}</span>}
+                        </dt>
+                        <dd>{plain(feature.answer)}</dd>
+                      </div>
+                    )
+                  })}
+                </dl>
+              </div>
+              <p class="uc-plan">
+                <span class="uc-plan__label">{u.planLabel}</span>
+                <span class="uc-plan__name">
+                  <b>{plan.name}</b> {formatPrice(lang, plan.monthly)} {p.perMonth}
+                  {!plan.available && <span class="uc-tag uc-tag--soon">{p.plans.pro.soon}</span>}
+                </span>
+                <span class="uc-plan__why">{copy.plan}</span>
+                <a class="e-link" href={pricingPath}>{u.planLink} →</a>
+              </p>
+            </div>
+          </section>
+        )
+      })}
+    </div>
+
+    <section class="e-closing uc-closing" aria-labelledby="e-closing-title">
+      <MapClosing>
+        <h2 id="e-closing-title">{t.closing.titleStart} {t.closing.titleEnd}</h2>
+        <p>{t.closing.yours}</p>
+        <a class="e-btn e-btn--closing" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+          <AuthLabel signedOut={t.hero.startStory} signedIn={t.hero.openDashboard} />
+          <span aria-hidden="true">→</span>
+        </a>
+      </MapClosing>
+    </section>
+  </main>
+  <Footer lang={lang} page={PAGES.useCases} />
+</LandingLayout>
+
+<style>
+  /* The contents: three doors out of the intro, one per chapter. */
+  .uc-toc {
+    padding-top: 56px;
+  }
+  .uc-toc ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: 1px solid var(--polo-color-text-strong);
+  }
+  .uc-toc li + li {
+    border-left: 1px solid var(--polo-color-border);
+  }
+  .uc-toc a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    font-size: 21px;
+    transition: color 0.2s;
+  }
+  /* Small, the mark keeps the weight of the line it sits on. */
+  .uc-toc a :global(.mark) {
+    flex: none;
+    font-size: 34px;
+    stroke-width: 2.8;
+  }
+  .uc-toc li:first-child a {
+    padding-left: 0;
+  }
+  .uc-toc a:hover {
+    color: var(--e-red);
+  }
+
+  /* Chapters: the landing's, one level up, since each is a section of this page. */
+  .uc :global(.uc-mark) {
+    margin-bottom: 22px;
+    font-size: clamp(64px, 6vw, 84px);
+  }
+  .uc .e-chapter__head h2 {
+    margin: 6px 0 14px;
+    font-size: clamp(28px, 2.6vw, 38px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .uc .e-chapter:last-child {
+    border-bottom: 0;
+  }
+  .uc-intro {
+    max-width: 680px;
+  }
+  .uc-intro h3 {
+    margin-bottom: 10px;
+    font-size: 26px;
+    line-height: 1.15;
+  }
+  .uc-intro p {
+    font-size: 19px;
+  }
+  .uc-intro .uc-makes {
+    margin-top: 16px;
+    color: var(--polo-color-text-secondary);
+    font-size: 16px;
+  }
+  .uc-makes span {
+    margin-right: 6px;
+    color: var(--e-red);
+  }
+  .uc-tools {
+    margin-bottom: 12px;
+    color: var(--polo-color-text-secondary);
+    font-size: 17px;
+  }
+  .uc-tag {
+    align-self: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--e-red);
+    color: var(--polo-color-text-on-action);
+    font: 700 10px / 1.2 var(--e-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .uc-tag--soon {
+    margin-left: 8px;
+    border: 1px dashed var(--polo-color-border-strong);
+    background: none;
+    color: var(--polo-color-text-secondary);
+    vertical-align: middle;
+  }
+
+  /* The plan that fits: one line of a price list. */
+  .uc-plan {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--polo-color-text-strong);
+    font-size: 17px;
+  }
+  .uc-plan__label {
+    flex-basis: 100%;
+    color: var(--e-red);
+    font-size: 15px;
+  }
+  .uc-plan__name {
+    font-size: 21px;
+  }
+  .uc-plan__name b {
+    margin-right: 6px;
+    font-weight: 400;
+    font-size: 26px;
+  }
+  .uc-plan__why {
+    flex: 1 1 240px;
+    color: var(--polo-color-text-secondary);
+  }
+
+  @media (max-width: 860px) {
+    .uc-toc ol {
+      grid-template-columns: minmax(0, 1fr);
+      border-top: 1px solid var(--polo-color-border);
+    }
+    .uc-toc li + li {
+      border-top: 1px solid var(--polo-color-border);
+      border-left: 0;
+    }
+    .uc-toc a,
+    .uc-toc li:first-child a {
+      padding: 10px 0;
+    }
+  }
+</style>

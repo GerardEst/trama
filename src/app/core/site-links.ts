@@ -8,6 +8,8 @@ import type { Lang } from './i18n/i18n.types'
 export const SITE_PAGES = {
   home: '',
   features: 'docs/features',
+  useCases: 'use-cases',
+  pricing: 'pricing',
 } as const
 
 type SitePage = (typeof SITE_PAGES)[keyof typeof SITE_PAGES]

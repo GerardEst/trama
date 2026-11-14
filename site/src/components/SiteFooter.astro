@@ -20,6 +20,8 @@ const t = copyFor(lang)
     <Wordmark href={localePath(lang)} label={t.nav.home} />
     <p>{t.footer.tagline}</p>
     <div class="footer__links">
+      <a href={localePath(lang, PAGES.useCases)}>{t.nav.useCases}</a>
+      <a href={localePath(lang, PAGES.pricing)}>{t.nav.pricing}</a>
       <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
       <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
       <a href={APP_LINKS.email}>{t.footer.email}</a>

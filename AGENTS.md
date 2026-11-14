@@ -4,7 +4,7 @@ Guidance for coding agents working in this repository.
 
 ## Project overview
 
-Trama is the Angular application behind [trama.app](https://trama.app). It lets authors build branching narratives on a node-based board and lets players execute those stories in the playground. The public pages, the landing (`/`, `/es`, `/ca`) and the docs (`/docs/features` and its `/es` and `/ca` versions), are a separate static Astro site in `site/`, served from the same origin.
+Trama is the Angular application behind [trama.app](https://trama.app). It lets authors build branching narratives on a node-based board and lets players execute those stories in the playground. The public pages, the landing (`/`, `/es`, `/ca`), the use cases (`/use-cases`), the pricing (`/pricing`) and the docs (`/docs/features`), each with its `/es` and `/ca` versions, are a separate static Astro site in `site/`, served from the same origin.
 
 Main technologies:
 
@@ -25,7 +25,7 @@ Main technologies:
 - `src/app/features/`: feature areas such as the board, playground, and dashboard
 - `src/app/core/interfaces/interfaces.ts`: canonical story domain model
 - `src/app/shared/example-story/`: the example story new authors start with, also played on the landing
-- `site/`: the Astro public site: pages (`site/src/pages/`, one per path in `site/src/lib/pages.ts`), components, interface copy in `site/src/i18n/` and the docs chapters in `site/src/docs/`
+- `site/`: the Astro public site: pages (`site/src/pages/`, one per path in `site/src/lib/pages.ts`), components, interface copy in `site/src/i18n/` and the docs chapters in `site/src/docs/`. Plan names and prices live only in `site/src/lib/plans.ts`. A new root-level page also needs its rewrite in `vercel.json` and its path in `RESERVED_STORY_PATHS`
 - `src/environments/`: Angular environment configuration
 - `tests/`: Playwright end-to-end tests
 - `supabase/functions/`: Deno edge functions

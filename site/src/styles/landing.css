@@ -80,6 +80,9 @@ h2 {
 }
 
 /* Nav */
+landing-nav {
+  display: block;
+}
 .ln {
   position: sticky;
   top: 0;
@@ -106,14 +109,38 @@ h2 {
 }
 .ln__links {
   display: flex;
-  gap: 32px;
+  gap: 28px;
   margin: 0 auto 0 20px;
 }
 .ln__links a:hover,
 .ln__login:hover,
-.ln__cta:hover {
+.ln__cta:hover,
+.ln__toggle:hover {
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+.ln__links a[aria-current] {
+  color: var(--e-red);
+}
+/* Only in the folded menu, where the bar has no room for it. */
+.ln__links-login,
+.ln__toggle {
+  display: none;
+}
+.ln__toggle {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--polo-color-text-strong);
+  cursor: pointer;
+}
+.ln__toggle [data-when-menu='open'],
+landing-nav[open] .ln__toggle [data-when-menu='closed'] {
+  display: none;
+}
+landing-nav[open] .ln__toggle [data-when-menu='open'] {
+  display: inline;
 }
 .ln__login {
   color: var(--polo-color-text-secondary);
@@ -1146,17 +1173,56 @@ trama-board[ready] .lb-loading {
   font-size: 14px;
 }
 
+/* The menu folds before the page does: five links, the login and the call to action need the room. */
+@media (max-width: 1200px) {
+  .ln__links {
+    display: none;
+    margin: 0;
+  }
+  .ln__login {
+    margin-left: auto;
+  }
+  .landing-js .ln__toggle {
+    display: block;
+  }
+  landing-nav[open] .ln__links {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: grid;
+    gap: 0;
+    padding: 4px var(--e-gutter) 20px;
+    border-bottom: 1px solid var(--polo-color-text-strong);
+    background: var(--polo-color-canvas);
+    font-size: 21px;
+  }
+  landing-nav[open] .ln__links a {
+    padding-block: 12px;
+  }
+  landing-nav[open] .ln__links a + a {
+    border-top: 1px solid var(--polo-color-border);
+  }
+  /* Without the script there is no button: the links sit in a second row. */
+  html:not(.landing-js) .ln__inner {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+  html:not(.landing-js) .ln__links {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+    order: 1;
+    gap: 4px 24px;
+    padding-bottom: 14px;
+  }
+}
+
 @media (max-width: 1040px) {
   .e-faq {
     padding-bottom: 240px;
   }
 
-  .ln__links {
-    display: none;
-  }
-  .ln__login {
-    margin-left: auto;
-  }
   .e-features__head,
   .e-chapter,
   .e-verdict,
@@ -1178,11 +1244,26 @@ trama-board[ready] .lb-loading {
 }
 
 @media (max-width: 680px) {
+  .ln__inner {
+    gap: 12px;
+  }
   .ln__login {
     display: none;
   }
+  .ln__links .ln__links-login {
+    display: block;
+    color: var(--polo-color-text-secondary);
+  }
   .ln__cta {
     margin-left: auto;
+  }
+  /* Phones: the call to action keeps one line next to the menu. */
+  .ln__cta,
+  .ln__toggle {
+    font-size: 15px;
+  }
+  .ln__cta::after {
+    content: none;
   }
   .e-story__title,
   .e-story .node__content,

@@ -4,6 +4,7 @@ import { copyFor, format, type Lang } from '../../i18n'
 import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
 import { localePath } from '../../lib/locale'
 import { PAGES } from '../../lib/pages'
+import { planOffers } from '../../lib/plans'
 import { engineExample, referenceCode } from '../../lib/story-reference'
 import valleyImage from '../../assets/landing/valley.webp'
 import Footer from './Footer.astro'
@@ -83,10 +84,7 @@ const structuredData = {
       featureList: ATLAS.map(info => `${c.features[info.id].name}: ${c.features[info.id].answer}`),
       softwareHelp: `https://trama.app${docsPath}`,
       sameAs: ['https://github.com/GerardEst/trama', ENGINE_LINKS.npm],
-      offers: [
-        { '@type': 'Offer', name: 'Creator (monthly)', price: '5.95', priceCurrency: 'EUR' },
-        { '@type': 'Offer', name: 'Creator (yearly)', price: '49.95', priceCurrency: 'EUR' },
-      ],
+      offers: planOffers(),
     },
     {
       '@type': 'SoftwareSourceCode',

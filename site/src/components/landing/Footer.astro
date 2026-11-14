@@ -2,14 +2,16 @@
 import { copyFor, type Lang } from '../../i18n'
 import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
 import { localePath } from '../../lib/locale'
-import { PAGES } from '../../lib/pages'
+import { PAGES, type PagePath } from '../../lib/pages'
 import LanguageSelector from '../LanguageSelector.astro'
 
 interface Props {
   lang: Lang
+  /** The page being read, so the language selector opens it in the other languages. */
+  page?: PagePath
 }
 
-const { lang } = Astro.props
+const { lang, page = PAGES.home } = Astro.props
 const t = copyFor(lang)
 ---
 
@@ -20,13 +22,15 @@ const t = copyFor(lang)
       <p>{t.footer.tagline}</p>
     </div>
     <div class="lf__links">
+      <a href={localePath(lang, PAGES.useCases)}>{t.nav.useCases}</a>
+      <a href={localePath(lang, PAGES.pricing)}>{t.nav.pricing}</a>
       <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
       <a href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source}</a>
       <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
       <a href={APP_LINKS.email}>{t.footer.email}</a>
     </div>
     <div class="lf__langs">
-      <LanguageSelector lang={lang} page={PAGES.home} label={t.footer.language} />
+      <LanguageSelector lang={lang} page={page} label={t.footer.language} />
     </div>
     {Astro.slots.has('default') && <p class="lf__colophon"><slot /></p>}
     <small>{t.footer.rights}</small>

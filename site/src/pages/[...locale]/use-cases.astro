@@ -1,0 +1,14 @@
+---
+import UseCases from '../../components/use-cases/UseCases.astro'
+import type { Lang } from '../../i18n'
+import { localeStaticPaths } from '../../lib/locale'
+
+// Who writes with Trama, and how: /use-cases, /es/use-cases and /ca/use-cases.
+export const getStaticPaths = localeStaticPaths
+
+interface Props {
+  lang: Lang
+}
+---
+
+<UseCases lang={Astro.props.lang} />
