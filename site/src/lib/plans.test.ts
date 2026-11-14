@@ -8,9 +8,9 @@ const IDS = Object.keys(PLANS) as PlanId[]
 
 describe('plans', () => {
   it('writes prices the way each language does', () => {
-    expect(formatPrice('en', PLANS.creative.monthly)).toBe('€4.95')
+    expect(formatPrice('en', PLANS.creative.monthly)).toBe('€5.95')
     expect(formatPrice('es', PLANS.creative.yearly).replace(/\s/g, ' ')).toBe('49,95 €')
-    expect(formatPrice('ca', PLANS.creative.monthly).replace(/\s/g, ' ')).toBe('4,95 €')
+    expect(formatPrice('ca', PLANS.creative.monthly).replace(/\s/g, ' ')).toBe('5,95 €')
   })
 
   it('never promises a better yearly deal than the prices give', () => {
@@ -20,7 +20,7 @@ describe('plans', () => {
       expect(monthlyEquivalent(id) * 12).toBeLessThanOrEqual(yearly)
       expect(yearlySaving(id)).toBeCloseTo(monthly * 12 - yearly, 2)
     }
-    expect(yearlySaving('creative')).toBe(9.45)
+    expect(yearlySaving('creative')).toBe(21.45)
     expect(PLANS.pro.monthly).toBeGreaterThan(PLANS.creative.monthly)
   })
 
