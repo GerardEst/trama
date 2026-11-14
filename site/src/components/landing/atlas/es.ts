@@ -288,10 +288,10 @@ export const es: AtlasCopy = {
     },
   },
   wins: [
+    { title: 'Crea sin programar', body: 'Escribe las escenas, únelas en el tablero y prueba cada camino justo al lado de lo que escribes.' },
+    { title: 'Publica con un enlace', body: 'Sin archivos que exportar ni alojamiento que buscar. Los lectores lo abren y juegan sin cuenta, y los cambios les llegan al guardar.' },
+    { title: 'Analiza cómo se juega', body: 'Cada partida en una tabla: quién ha jugado, cuándo y con qué estadísticas y condiciones ha terminado. Con el plan Pro, próximamente.' },
     { title: 'Lógica de verdad, sin sintaxis', body: 'Números, condiciones, rutas y variables se configuran con formularios. No hay que aprender ningún lenguaje.' },
-    { title: 'Escribir y probar en el mismo sitio', body: 'Juega una rama junto al tablero y corrige el texto allí donde lo lees.' },
-    { title: 'Publicar es un enlace', body: 'Sin archivos que exportar, sin alojamiento que buscar, sin cuenta para los lectores, y los cambios les llegan al guardar.' },
-    { title: 'Ves cómo se juega', body: 'Cada partida queda registrada, si lo activas, sin añadir ninguna herramienta.' },
     { title: 'Una salida de nuestro lector', body: 'Un motor MIT abierto juega tu historia en cualquier interfaz que construyas, tú o tu agente.' },
     { title: 'Un precio para un solo autor', body: 'Creative cuesta 5,95 € al mes, con todo el editor incluido.' },
   ],

@@ -1,12 +1,14 @@
 ---
 import { copyFor, type Lang } from '../../i18n'
 import { atlasFor } from './atlas'
+import { PLANS } from '../../lib/plans'
+import AnalyticsSample from '../pricing/AnalyticsSample.astro'
 import { landingCopyFor } from './content'
 import { interfaceCopyFor } from './copy'
 import FeatureIcon from './FeatureIcon.astro'
 
-// Where Trama stands out. Three pillars, each with a scene drawn in the editor's
-// own words, carry the reason to choose it; the rest follows in one quieter row.
+// What an author does with Trama, in order: create, publish, analyse. Each pillar
+// has a scene drawn in the editor's own words; the rest follows in one quieter row.
 // The scenes are decoration: the titles and bodies carry the facts.
 interface Props {
   lang: Lang
@@ -19,14 +21,14 @@ const e = interfaceCopyFor(lang)
 const art = landingCopyFor(lang).art
 const v = t.visuals
 
-// The atlas lists the wins in this order: logic, write and test, link; then
-// analytics, engine and price.
-const [logic, play, link, ...more] = c.wins
-const MORE_ICONS = ['analytics', 'engine', null] as const
+// The atlas lists the wins in this order: create, publish, analyse; then logic,
+// engine and price.
+const [create, publish, analyse, ...more] = c.wins
+const MORE_ICONS = ['distributors', 'engine', null] as const
 const PILLARS = [
-  { win: logic, scene: 'logic' },
-  { win: play, scene: 'play' },
-  { win: link, scene: 'link' },
+  { win: create, scene: 'play' },
+  { win: publish, scene: 'link' },
+  { win: analyse, scene: 'data' },
 ] as const
 ---
 
@@ -35,25 +37,6 @@ const PILLARS = [
     {PILLARS.map(({ win, scene }) => (
       <li class="st-pillar">
         <div class={`st-scene st-scene--${scene}`} aria-hidden="true">
-          {scene === 'logic' && (
-            <>
-              <p class="st-state">
-                <span>{v.coins}</span>
-                <span>{v.hasKey}</span>
-              </p>
-              <p class="st-answer">
-                <b>{v.openArchive}</b>
-                <small>{v.requiresKey}</small>
-              </p>
-              <p class="st-answer is-locked">
-                <b>{v.buyMap}</b>
-                <small>{v.requiresCoins}</small>
-              </p>
-              <p class="st-answer">
-                <b>{v.walkAway}</b>
-              </p>
-            </>
-          )}
           {scene === 'play' && (
             <>
               <div class="st-page st-page--write">
@@ -91,6 +74,7 @@ const PILLARS = [
               <p class="st-free">{t.hero.noAccount}</p>
             </>
           )}
+          {scene === 'data' && <AnalyticsSample lang={lang} bare tag={PLANS.pro.name} />}
         </div>
         <h3>{win.title}</h3>
         <p>{win.body}</p>
@@ -159,62 +143,6 @@ const PILLARS = [
     background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px;
     font: 500 13px / 1.4 var(--e-sans);
     color: var(--polo-color-text-strong);
-  }
-
-  /* Logic: the reader's state opens one answer and keeps another shut. */
-  .st-state {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .st-state span {
-    padding: 4px 12px;
-    border: 1px solid var(--polo-color-border-strong);
-    border-radius: 999px;
-    background: var(--polo-color-surface);
-    font-weight: 600;
-  }
-  .st-answer {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    padding: 11px 14px;
-    border: 1px solid var(--polo-color-border-strong);
-    border-radius: 6px;
-    background: var(--polo-color-surface);
-    box-shadow: 0 1px 0 var(--polo-color-border);
-  }
-  .st-answer b {
-    font-weight: 700;
-  }
-  .st-answer small {
-    color: var(--polo-color-story-accent);
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .st-answer.is-locked {
-    border-style: dashed;
-    background: transparent;
-    box-shadow: none;
-  }
-  .st-answer.is-locked b {
-    color: var(--polo-color-text-muted);
-  }
-  .st-answer.is-locked small {
-    color: var(--e-red);
-  }
-  .st-answer.is-locked small::before {
-    content: '';
-    display: inline-block;
-    width: 7px;
-    height: 6px;
-    margin-right: 6px;
-    border-radius: 1px;
-    background: currentColor;
-    box-shadow: 0 -3px 0 -1px var(--polo-color-canvas), 0 -4px 0 0 currentColor;
   }
 
   /* Write and test: the passage you type, and the same passage as it is played. */
@@ -381,6 +309,11 @@ const PILLARS = [
     color: var(--polo-color-text-secondary);
     font-size: 12px;
     font-weight: 600;
+  }
+
+  /* Analyse: every playthrough in a table, as the plan that includes it shows it. */
+  .st-scene--data {
+    padding-inline: 22px;
   }
 
   /* The quieter row */
