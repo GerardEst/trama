@@ -288,10 +288,10 @@ export const en: AtlasCopy = {
     },
   },
   wins: [
+    { title: 'Create without code', body: 'Write the scenes, join them on the board and test every path right beside what you write.' },
+    { title: 'Publish with one link', body: 'No files to export, no hosting to arrange. Readers open it and play without an account, and changes reach them when saved.' },
+    { title: 'Analyse how it is played', body: 'Every playthrough in a table: who played, when, and the stats and conditions they finished with. With the Pro plan, coming soon.' },
     { title: 'Real logic, no syntax', body: 'Numbers, conditions, routes and variables are set up with forms. There is no language to learn.' },
-    { title: 'Writing and testing in one place', body: 'Play a branch beside the board and correct the text where you read it.' },
-    { title: 'Publishing is one link', body: 'No files to export, no hosting to arrange, no account for readers, and changes reach them when saved.' },
-    { title: 'You see how it is played', body: 'Each playthrough is recorded, if you turn it on, without adding a tool.' },
     { title: 'A way out of our player', body: 'An open MIT engine plays your story in any interface you build, or that your agent builds.' },
     { title: 'Priced for one author', body: 'Creative costs €5.95 a month, with the whole editor included.' },
   ],
