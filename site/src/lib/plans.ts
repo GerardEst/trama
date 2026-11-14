@@ -3,7 +3,7 @@ import type { Lang } from '../i18n'
 // The plans and their prices, in euros: the one place the site reads them from.
 // Pro is announced with its price but cannot be bought yet.
 export const PLANS = {
-  creative: { name: 'Creative', monthly: 4.95, yearly: 49.95, available: true },
+  creative: { name: 'Creative', monthly: 5.95, yearly: 49.95, available: true },
   pro: { name: 'Pro', monthly: 19.95, yearly: 199.95, available: false },
 } as const
 
@@ -12,7 +12,7 @@ export type PlanId = keyof typeof PLANS
 export const BILLING_PERIODS = ['monthly', 'yearly'] as const
 export type BillingPeriod = (typeof BILLING_PERIODS)[number]
 
-/** A price as each language writes it: €4.95 in English, 4,95 € in Spanish and Catalan. */
+/** A price as each language writes it: €5.95 in English, 5,95 € in Spanish and Catalan. */
 export function formatPrice(lang: Lang, amount: number): string {
   return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(amount)
 }
