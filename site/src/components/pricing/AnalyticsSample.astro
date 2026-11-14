@@ -1,0 +1,140 @@
+---
+import { pricingCopyFor, type Lang } from '../../i18n'
+import { interfaceCopyFor } from '../landing/copy'
+
+// What Pro adds, drawn as the app shows it: one row per playthrough, with the
+// stats and conditions it ended with. Decoration: the text beside it carries the facts.
+interface Props {
+  lang: Lang
+  /** Without its own sheet of paper, for when it is drawn inside another scene. */
+  bare?: boolean
+  /** A label beside the caption, such as the plan it belongs to. */
+  tag?: string
+}
+
+const { lang, bare = false, tag } = Astro.props
+const t = pricingCopyFor(lang)
+const e = interfaceCopyFor(lang)
+const day = (date: number) =>
+  new Date(Date.UTC(2026, 10, date)).toLocaleDateString(lang, { day: 'numeric', month: 'short', timeZone: 'UTC' })
+const ROWS = [
+  { name: 'Morgan', trust: 3, key: true, date: day(12) },
+  { name: 'Noor', trust: 1, key: false, date: day(12) },
+  { name: 'Ada', trust: 2, key: true, date: day(11) },
+  { name: 'Biel', trust: 3, key: true, date: day(9) },
+]
+---
+
+<div class:list={['as', { 'as--bare': bare }]} aria-hidden="true">
+  <p class="as__caption">{t.sample.caption}{tag && <span class="as__tag">{tag}</span>}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>{t.sample.name}</th>
+        <th class="as__ref">{e.anyTrust}</th>
+        <th class="as__ref">{e.anyKey}</th>
+        <th class="as__date">{t.sample.date}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {ROWS.map(row => (
+        <tr>
+          <td>{row.name}</td>
+          <td class="as__ref">{row.trust}</td>
+          <td class="as__ref">{row.key ? <span class="as__yes">✓</span> : '—'}</td>
+          <td class="as__date">{row.date}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* The same squared paper the landing draws its examples on. */
+  .as {
+    padding: 20px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    background-color: var(--polo-color-canvas);
+    background-image: var(--e-paper);
+    background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px;
+    color: var(--polo-color-text-strong);
+    font: 500 13px / 1.4 var(--e-sans);
+  }
+  .as--bare {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .as__caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: var(--polo-color-text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .as__tag {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--e-red);
+    color: var(--polo-color-text-on-action);
+    letter-spacing: 0.06em;
+  }
+  table {
+    width: 100%;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    background: var(--polo-color-surface);
+  }
+  th,
+  td {
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th {
+    color: var(--polo-color-text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  td {
+    border-top: 1px solid var(--polo-color-border);
+    font-weight: 600;
+  }
+  .as__ref {
+    text-align: center;
+  }
+  th.as__ref {
+    color: var(--polo-color-story-accent);
+  }
+  .as__date {
+    color: var(--polo-color-text-muted);
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .as__yes {
+    color: var(--e-red);
+  }
+
+  /* Narrow phones: the date gives way, so the table never pushes the page wider. */
+  @media (max-width: 420px) {
+    .as:not(.as--bare) {
+      padding: 14px;
+    }
+    th,
+    td {
+      padding-inline: 10px;
+    }
+    .as__date {
+      display: none;
+    }
+  }
+</style>

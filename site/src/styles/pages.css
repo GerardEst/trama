@@ -1,0 +1,33 @@
+/* The pages that follow the landing (use cases, pricing): the same book opened
+   at another chapter. They start on the squared paper, like the landing's hero. */
+.pg-hero {
+  position: relative;
+  isolation: isolate;
+}
+.pg-hero__paper {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: var(--e-paper);
+  background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px;
+  -webkit-mask-image: linear-gradient(transparent, black 14%, black 64%, transparent);
+  mask-image: linear-gradient(transparent, black 14%, black 64%, transparent);
+}
+.pg-hero__copy {
+  width: min(100% - var(--e-gutter) * 2, 900px);
+  margin-inline: auto;
+  padding-top: clamp(52px, 9vh, 104px);
+  text-align: center;
+}
+.pg-hero h1 {
+  font-size: clamp(42px, 6vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.pg-hero__lead {
+  max-width: 640px;
+  margin: 26px auto 0;
+  color: var(--polo-color-text-secondary);
+  font-size: clamp(17px, 1.4vw, 20px);
+  text-wrap: balance;
+}

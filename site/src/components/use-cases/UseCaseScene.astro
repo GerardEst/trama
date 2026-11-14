@@ -1,0 +1,347 @@
+---
+import { copyFor, useCasesCopyFor, type Lang } from '../../i18n'
+import { PLANS } from '../../lib/plans'
+import { atlasFor } from '../landing/atlas'
+import { interfaceCopyFor } from '../landing/copy'
+import FeatureIcon from '../landing/FeatureIcon.astro'
+import AnalyticsSample from '../pricing/AnalyticsSample.astro'
+
+// One scene per use case, drawn on the landing's squared paper in the editor's
+// own words. They are decoration: the text beside each one carries the facts.
+export type UseCaseId = 'writers' | 'games' | 'brands'
+
+interface Props {
+  kind: UseCaseId
+  lang: Lang
+}
+
+const { kind, lang } = Astro.props
+const v = copyFor(lang).visuals
+const e = interfaceCopyFor(lang)
+const art = atlasFor(lang).art
+const s = useCasesCopyFor(lang).scene
+
+// The reader's state, and the routes a distributor checks against it, in order.
+const ROUTES = [
+  { rule: v.secretRule, to: v.secretEntrance, taken: true },
+  { rule: v.frontRule, to: v.frontEntrance, taken: false },
+  { rule: v.otherwise, to: v.gatekeeper, taken: false },
+]
+---
+
+<div class={`us us--${kind}`} aria-hidden="true">
+  {kind === 'writers' && (
+    <>
+      <div class="us-page">
+        <p class="us-tag">{v.chapterHeading}</p>
+        <p class="us-page__text">{v.passageStart} {s.reader} {v.passageEnd}</p>
+        <ol class="us-choices">
+          <li class="is-chosen">{v.openArchive}</li>
+          <li>{v.walkAway}</li>
+        </ol>
+      </div>
+      <svg class="us-fork" viewBox="0 0 60 200" preserveAspectRatio="none">
+        <path class="is-chosen" d="M0 100C34 100 26 50 60 50" />
+        <path d="M0 100C34 100 26 150 60 150" />
+      </svg>
+      <div class="us-next">
+        {[v.chapter2, v.chapter3].map((label, index) => (
+          <div class:list={['us-stub', { 'is-chosen': index === 0 }]}>
+            <span class="us-tag">{label}</span>
+            <i></i><i></i><i class="is-short"></i>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+
+  {kind === 'games' && (
+    <>
+      <p class="us-state">
+        <span>{e.anyTrust} 3</span>
+        <span>{v.hasKey}</span>
+        <span>{v.coins}</span>
+      </p>
+      <div class="us-dist">
+        <p class="us-tag"><FeatureIcon id="distributors" />{v.distributor}</p>
+        <ol>
+          {ROUTES.map(route => (
+            <li class:list={{ 'is-taken': route.taken }}>
+              <span class="us-dist__rule">{route.rule}</span>
+              <span class="us-dist__arrow">→</span>
+              <b>{route.to}</b>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </>
+  )}
+
+  {kind === 'brands' && (
+    <>
+      <div class="us-reader">
+        <p class="us-url"><span class="us-url__dot"></span><span class="us-url__text">{e.storyUrl}</span></p>
+        <div class="us-stub us-stub--ending">
+          <span class="us-tag">{s.ending}</span>
+          <i></i><i class="is-short"></i>
+          <span class="us-button">{s.visit}</span>
+          <span class="us-brand">{art.yourBrand}</span>
+        </div>
+      </div>
+      <AnalyticsSample lang={lang} bare tag={PLANS.pro.name} />
+    </>
+  )}
+</div>
+
+<style>
+  .us {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 340px;
+    padding: 32px;
+    overflow: hidden;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    background-color: var(--polo-color-canvas);
+    background-image: var(--e-paper);
+    background-size: 4px 4px, 4px 4px, 20px 20px, 20px 20px;
+    color: var(--polo-color-text-strong);
+    font: 500 13px / 1.4 var(--e-sans);
+  }
+  .us-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--polo-color-text-muted);
+    font: 700 10px / 1.2 var(--e-sans);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .us-tag :global(.feature-icon) {
+    width: 13px;
+    height: 13px;
+    color: var(--e-red);
+  }
+
+  /* Pages that are only hinted at: a few lines of text still to be read. */
+  .us-stub {
+    display: grid;
+    gap: 7px;
+    padding: 14px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 4px;
+    background: var(--polo-color-surface);
+  }
+  .us-stub i {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--polo-color-border-strong);
+  }
+  .us-stub i.is-short {
+    width: 60%;
+  }
+  .us-stub .us-tag {
+    margin-bottom: 4px;
+  }
+
+  /* Writers: a page of the story, and the two pages its choices lead to. */
+  .us--writers {
+    grid-template-columns: minmax(0, 1.5fr) 64px minmax(0, 0.8fr);
+  }
+  .us-page {
+    padding: 22px 24px 14px;
+    background: var(--polo-color-surface);
+    box-shadow: 0 0 0 1px var(--polo-color-border), 6px 6px 0 -1px var(--polo-color-surface-subtle), 6px 6px 0 0 var(--polo-color-border);
+  }
+  .us-page .us-tag {
+    color: var(--e-red);
+  }
+  .us-page__text {
+    margin: 12px 0 14px;
+    font: 400 16px / 1.55 var(--e-serif);
+  }
+  .us-page__text::first-letter {
+    float: left;
+    margin: 4px 6px 0 0;
+    color: var(--e-red);
+    font-size: 3.1em;
+    line-height: 0.8;
+  }
+  .us-choices {
+    clear: both;
+    counter-reset: choice;
+    font: 400 15px / 1.45 var(--e-serif);
+  }
+  .us-choices li {
+    display: flex;
+    gap: 10px;
+    padding-block: 7px;
+    border-top: 1px solid var(--polo-color-border);
+  }
+  .us-choices li::before {
+    counter-increment: choice;
+    content: counter(choice, lower-roman) '.';
+    flex: none;
+    width: 18px;
+    color: var(--e-red);
+  }
+  .us-choices .is-chosen {
+    color: var(--e-red);
+  }
+  .us-fork {
+    align-self: stretch;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .us-fork path {
+    fill: none;
+    stroke: var(--polo-color-border-strong);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .us-fork path.is-chosen {
+    stroke: var(--e-red);
+  }
+  .us-next {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    align-self: stretch;
+    align-items: center;
+  }
+  .us-stub.is-chosen {
+    border-color: var(--e-red);
+  }
+
+  /* Games: what the player carries, and the route a distributor takes for it. */
+  .us--games {
+    align-content: center;
+    justify-items: center;
+    gap: 16px;
+  }
+  .us-state {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .us-state span {
+    padding: 4px 12px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 999px;
+    background: var(--polo-color-surface);
+    font-weight: 600;
+  }
+  .us-dist {
+    width: min(100%, 520px);
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--polo-color-surface);
+    box-shadow: 0 1px 0 var(--polo-color-border);
+  }
+  .us-dist .us-tag {
+    padding: 12px 14px;
+  }
+  .us-dist li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) 20px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 14px;
+    border-top: 1px solid var(--polo-color-border);
+    color: var(--polo-color-text-muted);
+  }
+  .us-dist__rule {
+    font-weight: 600;
+  }
+  .us-dist b {
+    font-weight: 700;
+  }
+  .us-dist .is-taken {
+    background: var(--polo-color-action-soft);
+    color: var(--polo-color-text-strong);
+  }
+  .us-dist .is-taken .us-dist__rule {
+    color: var(--polo-color-story-accent);
+  }
+  .us-dist .is-taken .us-dist__arrow {
+    color: var(--e-red);
+  }
+
+  /* Brands: the story under the brand's own name, and who played it. */
+  .us--brands {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 28px;
+  }
+  .us-reader {
+    display: grid;
+    gap: 12px;
+  }
+  .us-url {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border: 1px solid var(--polo-color-text-strong);
+    border-radius: 999px;
+    background: var(--polo-color-surface);
+  }
+  .us-url__dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--e-red);
+  }
+  .us-url__text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .us-stub--ending {
+    padding: 18px 16px 12px;
+  }
+  .us-button {
+    justify-self: start;
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--polo-color-text-strong);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .us-brand {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--polo-color-border);
+    font: 400 14px / 1.3 var(--e-serif);
+    text-decoration: underline;
+    text-decoration-color: var(--e-red);
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 680px) {
+    .us {
+      min-height: 0;
+      padding: 20px;
+    }
+    .us--writers,
+    .us--brands {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .us-fork,
+    .us-next {
+      display: none;
+    }
+    .us-dist li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+    .us-dist__arrow {
+      display: none;
+    }
+  }
+</style>

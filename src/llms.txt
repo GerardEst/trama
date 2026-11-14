@@ -30,6 +30,8 @@ Key facts for building on Trama:
 ## Editor
 
 - [Full product summary](https://trama.app/llms-full.txt): capabilities, examples, comparisons and frequently asked questions from the landing.
+- [Pricing](https://trama.app/pricing): the Creative and Pro plans, monthly and yearly, and what each includes. Also in Spanish (/es/pricing) and Catalan (/ca/pricing).
+- [Use cases](https://trama.app/use-cases): how fiction writers, narrative game makers and brands use Trama, with the features and the plan that fit each. Also in Spanish (/es/use-cases) and Catalan (/ca/use-cases).
 
 - [Features guide](https://trama.app/docs/features): how authors set up each editor feature (content nodes, events, conditional paths, requirements, distributors, player input, variables, images, sharing), with an example and its limitations. Also in Spanish (/es/docs/features) and Catalan (/ca/docs/features).
 

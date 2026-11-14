@@ -3,6 +3,8 @@
 export const PAGES = {
   home: '',
   features: 'docs/features',
+  useCases: 'use-cases',
+  pricing: 'pricing',
 } as const
 
 export type PagePath = (typeof PAGES)[keyof typeof PAGES]

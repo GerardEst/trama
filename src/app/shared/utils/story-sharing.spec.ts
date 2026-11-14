@@ -1,4 +1,5 @@
 import { tree } from 'src/app/core/interfaces/interfaces'
+import { SITE_PAGES } from 'src/app/core/site-links'
 import { appRoutes } from 'src/app/routes'
 import { brokenStoryAnswerCount, RESERVED_STORY_PATHS, storyReadingUrl, validateStorySlug } from './story-sharing'
 
@@ -14,6 +15,11 @@ describe('story sharing links', () => {
     for (const route of appRoutes) {
       const root = route.path?.split('/')[0]
       if (root && !root.startsWith(':')) expect(RESERVED_STORY_PATHS.has(root)).withContext(root).toBeTrue()
+    }
+    // The public site's pages are served before the app, so a story there would never open.
+    for (const page of Object.values(SITE_PAGES)) {
+      const root = page.split('/')[0]
+      if (root) expect(validateStorySlug(root)).withContext(root).toBe('reserved')
     }
     expect(validateStorySlug('ca')).toBe('reserved')
     expect(validateStorySlug('dashboard')).toBe('reserved')

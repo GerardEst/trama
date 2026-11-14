@@ -1,0 +1,14 @@
+---
+import Pricing from '../../components/pricing/Pricing.astro'
+import type { Lang } from '../../i18n'
+import { localeStaticPaths } from '../../lib/locale'
+
+// The plans and their prices: /pricing, /es/pricing and /ca/pricing.
+export const getStaticPaths = localeStaticPaths
+
+interface Props {
+  lang: Lang
+}
+---
+
+<Pricing lang={Astro.props.lang} />
