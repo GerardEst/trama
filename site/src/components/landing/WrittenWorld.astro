@@ -54,6 +54,9 @@ const passages = story.nodes
   // Keep the initial page static. Neither the shaders nor Three.js are fetched
   // on touch devices, small screens, reduced motion, or before pointer use.
   class WrittenWorld extends HTMLElement {
+    // While another landscape covers the valley (the hero's other stories), the
+    // effect rests: nothing listens to the pointer and nothing is drawn.
+    static observedAttributes = ['inactive']
     private eligibility?: MediaQueryList
     private surface: HTMLElement | null = null
     private effect?: { destroy(): void }
@@ -71,6 +74,10 @@ const passages = story.nodes
       this.stop()
     }
 
+    attributeChangedCallback() {
+      if (this.eligibility) this.sync()
+    }
+
     private stop() {
       this.surface?.removeEventListener('pointermove', this.activate)
       this.effect?.destroy()
@@ -79,13 +86,13 @@ const passages = story.nodes
 
     private sync = () => {
       this.stop()
-      if (this.eligibility?.matches) {
+      if (this.eligibility?.matches && !this.hasAttribute('inactive')) {
         this.surface?.addEventListener('pointermove', this.activate, { passive: true })
       }
     }
 
     private activate = async (event: PointerEvent) => {
-      if (event.pointerType === 'touch' || this.loading || this.effect || !this.eligibility?.matches) return
+      if (event.pointerType === 'touch' || this.loading || this.effect || !this.eligibility?.matches || this.hasAttribute('inactive')) return
       this.loading = true
       this.surface?.removeEventListener('pointermove', this.activate)
       try {
@@ -93,7 +100,7 @@ const passages = story.nodes
         await this.querySelector('img')?.decode().catch(() => undefined)
         if (!this.isConnected || !this.eligibility.matches) return
         const { enhanceWrittenWorld } = await import('./written-world-effect')
-        if (!this.isConnected || !this.eligibility.matches) return
+        if (!this.isConnected || !this.eligibility.matches || this.hasAttribute('inactive')) return
         this.surface?.removeEventListener('pointermove', this.activate)
         this.effect = enhanceWrittenWorld(this)
       } catch {

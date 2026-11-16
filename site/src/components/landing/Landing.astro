@@ -8,11 +8,14 @@ import { PAGES } from '../../lib/pages'
 import { planOffers } from '../../lib/plans'
 import { engineExample, referenceCode } from '../../lib/story-reference'
 import valleyImage from '../../assets/landing/valley.webp'
-import writingImage from '../../assets/landing/writing-hero.webp'
+import coastImage from '../../assets/landing/coast.webp'
+import desertImage from '../../assets/landing/desert.webp'
+import nightImage from '../../assets/landing/night.webp'
 import Footer from './Footer.astro'
 import LandingLayout from '../../layouts/LandingLayout.astro'
 import Header from './Header.astro'
-import StoryDemo from './StoryDemo.astro'
+import StoryCarousel from './StoryCarousel.astro'
+import NightSky from './NightSky.astro'
 import { documentation } from './atlas/summary'
 import {
   ATLAS,
@@ -118,9 +121,12 @@ const structuredData = {
 
   <main id="main-content">
     <!-- The valley, drawn on the app's squared paper; under its paint, the words it is made of. -->
-    <section class="e-hero" aria-labelledby="e-title">
+    <section class="e-hero" aria-labelledby="e-title" data-scene="valley">
       <div class="e-hero__paper" aria-hidden="true"></div>
       <WrittenWorld class="e-hero__valley" image={valleyImage} lang={lang} quiet=".e-hero__lead" />
+      <!-- The landscapes of the hero's other stories, shown while their story is in the middle. -->
+      <Image class="e-hero__scene" data-scene="coast" src={coastImage} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="lazy" fetchpriority="low" />
+      <Image class="e-hero__scene" data-scene="desert" src={desertImage} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="lazy" fetchpriority="low" />
       <div class="e-hero__copy">
         <h1 id="e-title">{t.hero.titleStart}<br />{t.hero.titleEnd}</h1>
         <p class="e-hero__lead">{c.meta.definition}</p>
@@ -134,12 +140,10 @@ const structuredData = {
       </div>
     </section>
 
-    <!-- The first page of a real story, laid on the valley's floor. -->
+    <!-- The first pages of real stories, laid on the landscape's floor, side by side. -->
     <section class="e-play" aria-labelledby="e-play-title">
       <h2 id="e-play-title" class="e-visually-hidden">{c.ui.playTitle}</h2>
-      <StoryDemo lang={lang} class="e-story" memory>
-        <p class="e-story__title">{t.demo.titleStart} {t.demo.titleEnd}</p>
-      </StoryDemo>
+      <StoryCarousel lang={lang} />
       <p class="e-play__note">{c.ui.playLead}</p>
     </section>
 
@@ -201,17 +205,18 @@ const structuredData = {
       })}
     </section>
 
-    <section id="why" class="e-wrap e-why" aria-labelledby="e-why-title">
-      <div class="e-why__head">
+    <!-- Night falls on the valley: the one section painted instead of written on paper. -->
+    <section id="why" class="e-why" aria-labelledby="e-why-title">
+      <Image class="e-why__night" src={nightImage} alt="" widths={[768, 1440, 1928]} sizes="100vw" loading="lazy" />
+      <div class="e-wrap">
+        <NightSky class="e-why__stars" />
         <header class="e-section-head">
           <p class="e-eyebrow">{e.whyEyebrow}</p>
           <h2 id="e-why-title">{e.whyTitle}</h2>
           <p>{e.whyLead}</p>
         </header>
-        <!-- The traveller of the valley, stopped to write the story down. -->
-        <Image class="e-why__figure" src={writingImage} alt="" widths={[260, 520]} sizes="260px" loading="lazy" />
+        <Strengths lang={lang} />
       </div>
-      <Strengths lang={lang} />
     </section>
 
     <section id="compare" class="e-compare" aria-labelledby="e-compare-title">

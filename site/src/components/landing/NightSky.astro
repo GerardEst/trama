@@ -1,0 +1,140 @@
+---
+// A constellation over the night section, drawn like a branching story: one star
+// to start, paths that part and meet again, and the brightest star at the end.
+// Its lines trace themselves once it comes into view; the stars twinkle. Without
+// scripts, or with reduced motion, it is simply there.
+interface Props {
+  class?: string
+}
+
+// Indexes: 0 is the first scene, the last one the ending the paths lead to.
+// Star 9 is an ending of its own, reached by one path only.
+const STARS: [x: number, y: number, size: number][] = [
+  [14, 132, 4.4],
+  [98, 88, 3.2],
+  [110, 182, 3.6],
+  [188, 52, 2.8],
+  [214, 124, 3.8],
+  [196, 212, 3],
+  [306, 78, 3.2],
+  [294, 170, 3.4],
+  [392, 110, 3],
+  [312, 232, 3.6],
+  [488, 86, 5.4],
+]
+const LINES: [from: number, to: number][] = [
+  [0, 1], [0, 2], [1, 3], [1, 4], [2, 4], [2, 5], [3, 6], [4, 6], [4, 7], [5, 7], [5, 9], [6, 8], [7, 8], [8, 10],
+]
+const end = STARS.length - 1
+---
+
+<night-sky class:list={['ns', Astro.props.class]} aria-hidden="true">
+  <svg viewBox="0 0 500 250">
+    {LINES.map(([from, to], index) => (
+      <line
+        x1={STARS[from]![0]}
+        y1={STARS[from]![1]}
+        x2={STARS[to]![0]}
+        y2={STARS[to]![1]}
+        pathLength="1"
+        style={`--i: ${index}`}
+      />
+    ))}
+    {STARS.map(([x, y, size], index) => (
+      <g class:list={['ns-star', { 'ns-star--end': index === end, 'ns-star--ending': index === 9 }]} style={`--i: ${index}`}>
+        <circle cx={x} cy={y} r={size * 2.8} class="ns-halo" />
+        <circle cx={x} cy={y} r={size} />
+      </g>
+    ))}
+  </svg>
+</night-sky>
+
+<script>
+  // Draws the constellation the first time it is seen, then lets go of the observer.
+  class NightSky extends HTMLElement {
+    private observer?: IntersectionObserver
+
+    connectedCallback() {
+      this.observer = new IntersectionObserver(
+        entries => {
+          if (!entries.some(entry => entry.isIntersecting)) return
+          this.setAttribute('data-drawn', '')
+          this.observer?.disconnect()
+        },
+        { threshold: 0.4 },
+      )
+      this.observer.observe(this)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+    }
+  }
+
+  customElements.define('night-sky', NightSky)
+</script>
+
+<style>
+  .ns {
+    display: block;
+    pointer-events: none;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  line {
+    stroke: var(--polo-color-night-text);
+    stroke-opacity: 0.4;
+    stroke-width: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    vector-effect: non-scaling-stroke;
+    transition: stroke-dashoffset 0.9s ease calc(var(--i) * 0.12s);
+  }
+  /* Waiting to be seen: only once the script runs, so it never stays hidden. */
+  .ns:defined:not([data-drawn]) line {
+    stroke-dashoffset: 1;
+  }
+  .ns-star circle {
+    fill: var(--polo-color-night-text);
+  }
+  .ns-star .ns-halo {
+    fill-opacity: 0.12;
+  }
+  .ns-star--end circle {
+    fill: var(--polo-color-night-accent);
+  }
+  .ns-star--end .ns-halo {
+    fill-opacity: 0.22;
+  }
+  .ns-star--ending circle {
+    fill: var(--polo-color-night-accent);
+    fill-opacity: 0.7;
+  }
+  .ns-star {
+    animation: ns-twinkle calc(2.6s + var(--i) * 0.37s) ease-in-out infinite alternate;
+  }
+  @keyframes ns-twinkle {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.55;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    line {
+      transition: none;
+    }
+    .ns:defined:not([data-drawn]) line {
+      stroke-dashoffset: 0;
+    }
+    .ns-star {
+      animation: none;
+    }
+  }
+</style>

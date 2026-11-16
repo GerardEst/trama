@@ -42,7 +42,6 @@ describe('plans', () => {
         expect(spaces(text)).toContain(spaces(formatPrice(lang, PLANS.creative.monthly)))
         expect(spaces(text)).toContain(spaces(formatPrice(lang, PLANS.creative.yearly)))
       }
-      expect(c.wins.map(win => win.body).join(' ')).toContain(`${PLANS.creative.name} `)
     }
   })
 

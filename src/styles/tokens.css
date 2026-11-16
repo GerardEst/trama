@@ -189,4 +189,11 @@
   --polo-color-story-accent: light-dark(#1f3a2e, #a9d3b6);
   --polo-color-grid: light-dark(#e6e1d3, #232a38);
   --polo-color-grid-fine: light-dark(#f0ece1, #191f2b);
+  /* The night painting one section of the page is set on: its sky, continued
+     above the picture, and the words written over it. The same in both themes. */
+  --polo-color-night-sky: #335082;
+  --polo-color-night-text: #f4f0e4;
+  --polo-color-night-text-secondary: #d3dbec;
+  --polo-color-night-line: #5670a0;
+  --polo-color-night-accent: #ffb199;
 }

@@ -1,5 +1,5 @@
 ---
-import { createGame } from '@trama-app/engine'
+import { createGame, type StoryTree } from '@trama-app/engine'
 import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-story/exampleStory'
 import AuthLabel from '../ui/AuthLabel.astro'
 import { copyFor, type Lang } from '../../i18n'
@@ -12,19 +12,25 @@ interface Props {
   class?: string
   /** Shows the live list of what the story has remembered so far. */
   memory?: boolean
+  /** The story to play; the example story new authors start with by default. */
+  story?: StoryTree
+  id?: string
+  /** What the region is called, for screen readers. */
+  label?: string
 }
 
-const { lang, class: className, memory = false } = Astro.props
+const { lang, class: className, memory = false, id = 'try-it' } = Astro.props
 const t = copyFor(lang)
 const lab = landingCopyFor(lang)
-const story = buildExampleStory(EXAMPLE_STORY_COPY[lang])
+const story = Astro.props.story ?? buildExampleStory(EXAMPLE_STORY_COPY[lang])
+const label = Astro.props.label ?? t.hero.demoLabel
 const strings: StepStrings = t.player
 // The opening scene is in the HTML, so it shows before any script runs.
 const opening = renderStep(createGame(story).start(), strings)
 const storyJson = JSON.stringify(story).replace(/</g, '\\u003c')
 ---
 
-<story-demo id="try-it" class={className} role="region" aria-label={t.hero.demoLabel} data-strings={JSON.stringify(strings)}>
+<story-demo id={id} class={className} role="region" aria-label={label} data-strings={JSON.stringify(strings)}>
   <slot />
   <div class="ls-game">
     <div class="story-step" data-step set:html={opening} />

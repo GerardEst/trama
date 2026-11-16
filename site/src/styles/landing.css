@@ -223,6 +223,30 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   opacity: 0.94;
   -webkit-mask-image: linear-gradient(transparent 6%, black 34%);
   mask-image: linear-gradient(transparent 6%, black 34%);
+  transition: opacity 0.9s ease;
+}
+/* The other stories' landscapes, laid where the valley is; each shows while its
+   story is in the middle of the carousel (StoryCarousel sets data-scene). */
+.e-hero__scene {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  mix-blend-mode: multiply;
+  opacity: 0;
+  -webkit-mask-image: linear-gradient(transparent 6%, black 34%);
+  mask-image: linear-gradient(transparent 6%, black 34%);
+  transition: opacity 0.9s ease;
+}
+.e-hero[data-scene='coast'] .e-hero__scene[data-scene='coast'],
+.e-hero[data-scene='desert'] .e-hero__scene[data-scene='desert'] {
+  opacity: 0.94;
+}
+.e-hero:not([data-scene='valley']) .e-hero__valley {
+  opacity: 0;
 }
 /* The valley's paint, and the words under it (WrittenWorld). The canvas takes the
    picture's place once it has drawn it. Its colours are read as computed values:
@@ -275,8 +299,7 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
 .e-play {
   position: relative;
   z-index: 2;
-  width: min(100% - var(--e-gutter) * 2, 620px);
-  margin: clamp(-260px, -18vw, -120px) auto 0;
+  margin-top: clamp(-260px, -18vw, -120px);
 }
 .e-story {
   background: var(--polo-color-surface);
@@ -303,7 +326,8 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   font-style: italic;
 }
 .e-play__note {
-  margin-top: 18px;
+  width: min(100% - var(--e-gutter) * 2, 620px);
+  margin: 18px auto 0;
   color: var(--polo-color-text-muted);
   font-size: 16px;
   text-align: center;
@@ -449,6 +473,10 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   padding-block: 88px;
   border-bottom: 1px solid var(--polo-color-border);
   scroll-margin-top: 72px;
+}
+/* The night painting that follows already closes the chapters. */
+.e-chapter:last-child {
+  border-bottom: 0;
 }
 .e-chapter__head {
   align-self: start;
@@ -604,34 +632,49 @@ trama-board[ready] .lb-loading {
   color: var(--e-red);
 }
 
-/* Why Trama */
+/* Why Trama: the valley at night, the one break in the page's paper. The painting
+   sits at the bottom, at its own proportions so the campfire is never cropped; its
+   sky carries on above it, behind the words. Its drawings keep their own paper. */
 .e-why {
-  padding-top: var(--e-section);
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(64px, 7vw, 96px) calc(var(--e-section) + max(20vw, 180px));
+  background: var(--polo-color-night-sky);
+  color: var(--polo-color-night-text);
 }
-.e-why__head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 40px;
-  margin-bottom: 56px;
-}
-.e-why__head .e-section-head {
-  margin-bottom: 0;
-}
-.e-why__figure {
-  flex: none;
-  width: 260px;
+.e-why__night {
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0;
+  width: 100%;
   height: auto;
+  /* On a phone the hills keep some height; the crop keeps the campfire, on the left. */
+  min-height: 240px;
+  object-fit: cover;
+  object-position: 22% 100%;
+  -webkit-mask-image: linear-gradient(transparent, black 30%);
+  mask-image: linear-gradient(transparent, black 30%);
 }
-@media (max-width: 760px) {
-  .e-why__head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 28px;
+.e-why .e-eyebrow {
+  color: var(--polo-color-night-accent);
+}
+.e-why .e-wrap {
+  position: relative;
+}
+/* The constellation, beside the heading where the sky is empty. */
+.e-why__stars {
+  position: absolute;
+  top: -16px;
+  right: 0;
+  width: min(30%, 420px);
+}
+@media (max-width: 1100px) {
+  .e-why__stars {
+    display: none;
   }
-  .e-why__figure {
-    width: 180px;
-  }
+}
+.e-why .e-section-head > p:not(.e-eyebrow) {
+  color: var(--polo-color-night-text-secondary);
 }
 
 /* Compare */
@@ -1161,6 +1204,10 @@ trama-board[ready] .lb-loading {
 @media (prefers-reduced-motion: reduce) {
   .ai-screen * {
     animation: none !important;
+  }
+  .e-hero__valley,
+  .e-hero__scene {
+    transition: none;
   }
 }
 
