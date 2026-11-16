@@ -12,8 +12,8 @@ export const pricing = {
   billing: { label: 'Billing period', monthly: 'Monthly', yearly: 'Yearly' },
   perMonth: 'a month',
   perYear: 'a year',
-  orYearly: 'or {price} a year',
-  yearlyDetail: '{price} a month · {saving} less than paying monthly',
+  wasLabel: 'Twelve monthly payments:',
+  nowLabel: 'paying yearly:',
   plans: {
     creative: {
       audience: 'For anyone who writes',
@@ -41,13 +41,11 @@ export const pricing = {
     },
   },
   sample: { caption: 'All responses', name: 'Name', date: 'Date' },
-  always: {
-    title: 'Included in both plans',
-    items: [
-      { title: 'Readers never pay', body: 'They open your link and play. No account, nothing to install.' },
-      { title: 'The engine is open', body: 'Trama Engine is free and MIT-licensed: play your stories in any interface you build.' },
-      { title: 'Your words stay yours', body: 'Trama does not generate your text, and you can download any story as JSON.' },
-    ],
+  engine: {
+    eyebrow: 'Free, whatever your plan',
+    title: 'Trama Engine is free and open source',
+    body: 'The engine that plays every Trama story is MIT-licensed and costs nothing. Use it to play your stories in any interface you build: on your own site, in a game or in a chat. The plans pay for the editor; the story you create is yours.',
+    more: 'How it works',
   },
   faqTitle: 'Before you choose.',
   faq: [

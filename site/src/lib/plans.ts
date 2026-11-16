@@ -17,15 +17,9 @@ export function formatPrice(lang: Lang, amount: number): string {
   return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' }).format(amount)
 }
 
-/** What a year costs per month. Rounded down, so the page never promises less than is charged. */
-export function monthlyEquivalent(plan: PlanId): number {
-  return Math.floor((PLANS[plan].yearly / 12) * 100) / 100
-}
-
-/** Euros saved by paying a year at once instead of twelve months. */
-export function yearlySaving(plan: PlanId): number {
-  const { monthly, yearly } = PLANS[plan]
-  return Math.round((monthly * 12 - yearly) * 100) / 100
+/** What a year costs paid month by month: the price the yearly plan is compared with. */
+export function twelveMonths(plan: PlanId): number {
+  return Math.round(PLANS[plan].monthly * 12 * 100) / 100
 }
 
 /** The plans on sale as schema.org offers, for the pages' structured data. */

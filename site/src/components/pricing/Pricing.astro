@@ -1,18 +1,16 @@
 ---
-import { Image } from 'astro:assets'
 import AuthLabel from '../ui/AuthLabel.astro'
 import { copyFor, format, pricingCopyFor, type Lang } from '../../i18n'
-import { APP_LINKS } from '../../lib/links'
+import { APP_LINKS, ENGINE_LINKS } from '../../lib/links'
 import { localePath } from '../../lib/locale'
 import { PAGES } from '../../lib/pages'
 import {
   BILLING_PERIODS,
   PLANS,
   formatPrice,
-  monthlyEquivalent,
   checkoutLink,
   planOffers,
-  yearlySaving,
+  twelveMonths,
   type PlanId,
 } from '../../lib/plans'
 import LandingLayout from '../../layouts/LandingLayout.astro'
@@ -22,7 +20,6 @@ import FeatureIcon from '../landing/FeatureIcon.astro'
 import Mark from '../ui/Mark.astro'
 import { ATLAS, ATLAS_CHAPTERS, atlasFor, type AtlasId } from '../landing/atlas'
 import AnalyticsSample from './AnalyticsSample.astro'
-import heroImage from '../../assets/landing/caped-hero.webp'
 import '../../styles/landing.css'
 import '../../styles/pages.css'
 
@@ -39,17 +36,11 @@ const c = atlasFor(lang)
 const home = localePath(lang, PAGES.home)
 const price = (amount: number) => formatPrice(lang, amount)
 
+// Monthly shows the price alone. Yearly shows, struck through beside it, what
+// the same year costs month by month, so the discount reads at a glance.
 const offers = (id: PlanId) => ({
-  monthly: {
-    amount: price(PLANS[id].monthly),
-    unit: p.perMonth,
-    note: format(p.orYearly, { price: price(PLANS[id].yearly) }),
-  },
-  yearly: {
-    amount: price(PLANS[id].yearly),
-    unit: p.perYear,
-    note: format(p.yearlyDetail, { price: price(monthlyEquivalent(id)), saving: price(yearlySaving(id)) }),
-  },
+  monthly: { amount: price(PLANS[id].monthly), unit: p.perMonth, was: undefined },
+  yearly: { amount: price(PLANS[id].yearly), unit: p.perYear, was: price(twelveMonths(id)) },
 })
 const creative = offers('creative')
 const pro = offers('pro')
@@ -61,7 +52,6 @@ const chapters = ATLAS_CHAPTERS.map(chapter => ({
   name: c.chapters[chapter].name,
   features: ATLAS.filter(info => info.chapter === chapter && info.id !== PRO_ONLY),
 }))
-const ALWAYS_ICONS: AtlasId[] = ['share', 'engine', 'safety']
 
 const prices = {
   creativeMonthly: price(PLANS.creative.monthly),
@@ -129,9 +119,12 @@ const structuredData = {
             <div class="pp-plan__price">
               {BILLING_PERIODS.map(period => (
                 <p class="pp-price" data-period={period}>
+                  {creative[period].was && (
+                    <s class="pp-price__was"><span class="e-visually-hidden">{p.wasLabel} </span>{creative[period].was}</s>
+                  )}
+                  {creative[period].was && <span class="e-visually-hidden">{p.nowLabel} </span>}
                   <span class="pp-price__amount">{creative[period].amount}</span>
                   <span class="pp-price__unit">{creative[period].unit}</span>
-                  <span class="pp-price__note">{creative[period].note}</span>
                 </p>
               ))}
             </div>
@@ -176,9 +169,12 @@ const structuredData = {
             <div class="pp-plan__price">
               {BILLING_PERIODS.map(period => (
                 <p class="pp-price" data-period={period}>
+                  {pro[period].was && (
+                    <s class="pp-price__was"><span class="e-visually-hidden">{p.wasLabel} </span>{pro[period].was}</s>
+                  )}
+                  {pro[period].was && <span class="e-visually-hidden">{p.nowLabel} </span>}
                   <span class="pp-price__amount">{pro[period].amount}</span>
                   <span class="pp-price__unit">{pro[period].unit}</span>
-                  <span class="pp-price__note">{pro[period].note}</span>
                 </p>
               ))}
             </div>
@@ -203,22 +199,23 @@ const structuredData = {
       </div>
     </section>
 
-    <section class="e-wrap pa" aria-labelledby="pa-title">
-      <h2 id="pa-title">{p.always.title}</h2>
-      <ul>
-        {p.always.items.map((item, index) => (
-          <li>
-            <h3><span class="pa__icon"><FeatureIcon id={ALWAYS_ICONS[index]} /></span>{item.title}</h3>
-            <p>{item.body}</p>
-          </li>
-        ))}
-      </ul>
+    <!-- The one thing that costs nothing on either plan. -->
+    <section class="e-wrap pe" aria-labelledby="pe-title">
+      <span class="pe__icon"><FeatureIcon id="engine" /></span>
+      <div class="pe__text">
+        <p class="pe__eyebrow">{p.engine.eyebrow}</p>
+        <h2 id="pe-title">{p.engine.title}</h2>
+        <p>{p.engine.body}</p>
+      </div>
+      <p class="pe__links">
+        <a class="e-link" href={`${home}#engine`}>{p.engine.more} →</a>
+        <a class="e-link" href={ENGINE_LINKS.npm} rel="noopener">{t.engine.links.npm} ↗</a>
+        <a class="e-link" href={ENGINE_LINKS.source} rel="noopener">{t.engine.links.source} ↗</a>
+      </p>
     </section>
 
     <section id="faq" class="e-wrap e-faq pr-faq" aria-labelledby="e-faq-title">
       <h2 id="e-faq-title">{p.faqTitle}</h2>
-      <!-- The traveller of the landing's valley, stopped before the paths part. -->
-      <Image class="pr-faq__hero" src={heroImage} alt="" widths={[300, 600]} sizes="300px" loading="lazy" />
       <div class="lq">
         {faq.map((item, index) => (
           <details open={index === 0}>
@@ -326,6 +323,25 @@ const structuredData = {
     padding-top: 28px;
     border-top: 1px solid var(--polo-color-border);
   }
+  /* The amount and its unit share a baseline; the struck price takes the line
+     above them. */
+  .pp-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 8px;
+  }
+  .pp-price__was {
+    flex-basis: 100%;
+    margin-bottom: 8px;
+    color: var(--polo-color-text-muted);
+    font-size: clamp(20px, 1.9vw, 26px);
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration-line: line-through;
+    text-decoration-color: var(--e-red);
+    text-decoration-thickness: 2px;
+  }
   .pp-price__amount {
     font-size: clamp(52px, 5.6vw, 76px);
     line-height: 1;
@@ -334,15 +350,8 @@ const structuredData = {
     white-space: nowrap;
   }
   .pp-price__unit {
-    margin-left: 6px;
     color: var(--polo-color-text-secondary);
     font-size: 19px;
-  }
-  .pp-price__note {
-    display: block;
-    margin-top: 10px;
-    color: var(--polo-color-text-muted);
-    font-size: 16px;
   }
   .pp-plan__action {
     padding-block: 28px 32px;
@@ -424,83 +433,56 @@ const structuredData = {
     margin-bottom: 8px;
   }
 
-  /* What does not depend on the plan: the landing's quieter row. */
-  .pa {
-    padding-block: clamp(80px, 10vw, 128px);
-  }
-  .pa h2 {
-    margin-bottom: 28px;
-    font-size: clamp(28px, 2.6vw, 38px);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-  }
-  .pa ul {
+  /* The free engine: one quiet line between the plans and the questions,
+     closed below by the questions' own rule. */
+  .pe {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-    padding-top: 28px;
-    border-top: 1px solid var(--polo-color-text-strong);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 20px 28px;
+    align-items: start;
+    margin-top: clamp(80px, 10vw, 128px);
+    padding-block: 28px 36px;
+    border-top: 1px solid var(--polo-color-border);
   }
-  .pa h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-    font-size: 20px;
-    line-height: 1.25;
-  }
-  .pa__icon {
+  .pe__icon {
     display: grid;
-    flex: none;
     place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     border: 1px solid var(--polo-color-border-strong);
     border-radius: 50%;
     color: var(--e-red);
+    font-size: 22px;
+  }
+  .pe__text {
+    max-width: 640px;
+  }
+  .pe__eyebrow {
+    color: var(--e-red);
     font-size: 15px;
   }
-  .pa li p {
-    padding-left: 42px;
+  .pe h2 {
+    margin: 2px 0 8px;
+    font-size: clamp(24px, 2.2vw, 30px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+  .pe__text > p:last-child {
     color: var(--polo-color-text-secondary);
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .pe__links {
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+    padding-top: 22px;
   }
 
-  /* The questions run down the right; under their title, the traveller stands
-     on the line that closes them. */
-  .pr-faq {
-    grid-template-rows: auto 1fr;
-  }
-  .pr-faq .lq {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
-  .pr-faq :global(.pr-faq__hero) {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: end;
-    width: min(100%, 300px);
-    height: auto;
-  }
-
-  /* No boat sails under these questions, so they need no room for it. One
-     column: the traveller waits after the last answer. */
+  /* No boat sails under these questions, so they need no room for it. */
   @media (max-width: 1040px) {
     .pr-faq {
-      grid-template-rows: none;
       padding-bottom: var(--e-section);
-    }
-    .pr-faq .lq {
-      grid-column: 1;
-      grid-row: auto;
-    }
-    .pr-faq :global(.pr-faq__hero) {
-      grid-row: auto;
-      order: 1;
-      justify-self: center;
-      width: min(60%, 220px);
-      margin-top: -24px;
     }
   }
 
@@ -516,8 +498,21 @@ const structuredData = {
       grid-row: auto;
       grid-template-rows: none;
     }
-    .pa ul {
+    .pe {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    .pe__links {
+      grid-column: 2;
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pe {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .pe__links {
+      grid-column: 1;
     }
   }
 

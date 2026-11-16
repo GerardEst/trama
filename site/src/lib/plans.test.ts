@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { atlasFor } from '../components/landing/atlas'
 import { LANGS } from '../i18n'
 import { APP_LINKS } from './links'
-import { BILLING_PERIODS, PLANS, checkoutLink, formatPrice, monthlyEquivalent, planOffers, yearlySaving, type PlanId } from './plans'
+import { BILLING_PERIODS, PLANS, checkoutLink, formatPrice, planOffers, twelveMonths, type PlanId } from './plans'
 
 const IDS = Object.keys(PLANS) as PlanId[]
 
@@ -17,10 +17,11 @@ describe('plans', () => {
     for (const id of IDS) {
       const { monthly, yearly } = PLANS[id]
       expect(yearly).toBeLessThan(monthly * 12)
-      expect(monthlyEquivalent(id) * 12).toBeLessThanOrEqual(yearly)
-      expect(yearlySaving(id)).toBeCloseTo(monthly * 12 - yearly, 2)
+      expect(twelveMonths(id)).toBeCloseTo(monthly * 12, 2)
+      expect(twelveMonths(id)).toBeGreaterThan(yearly)
     }
-    expect(yearlySaving('creative')).toBe(21.45)
+    expect(twelveMonths('creative')).toBe(71.4)
+    expect(twelveMonths('pro')).toBe(239.4)
     expect(PLANS.pro.monthly).toBeGreaterThan(PLANS.creative.monthly)
   })
 
