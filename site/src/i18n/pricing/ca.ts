@@ -13,8 +13,8 @@ export const pricing: PricingCopy = {
   billing: { label: 'Període de facturació', monthly: 'Mensual', yearly: 'Anual' },
   perMonth: 'al mes',
   perYear: 'l’any',
-  orYearly: 'o {price} l’any',
-  yearlyDetail: '{price} al mes · {saving} menys que pagant mes a mes',
+  wasLabel: 'Dotze mensualitats:',
+  nowLabel: 'pagant l’any:',
   plans: {
     creative: {
       audience: 'Per a qui escriu',
@@ -42,13 +42,11 @@ export const pricing: PricingCopy = {
     },
   },
   sample: { caption: 'Totes les respostes', name: 'Nom', date: 'Data' },
-  always: {
-    title: 'Inclòs en tots dos plans',
-    items: [
-      { title: 'Els lectors no paguen mai', body: 'Obren el teu enllaç i juguen. Sense compte i sense instal·lar res.' },
-      { title: 'El motor és obert', body: 'Trama Engine és gratuït i té llicència MIT: juga les teves històries en qualsevol interfície que construeixis.' },
-      { title: 'Les paraules són teves', body: 'Trama no genera el text, i pots descarregar qualsevol història en JSON.' },
-    ],
+  engine: {
+    eyebrow: 'Gratuït, sigui quin sigui el pla',
+    title: 'Trama Engine és gratuït i de codi obert',
+    body: 'El motor que juga totes les històries de Trama té llicència MIT i no costa res. Fes-lo servir per jugar les teves històries en qualsevol interfície que construeixis: al teu web, en un joc o en un xat. Els plans paguen l’editor, la història que creïs és teva.',
+    more: 'Com funciona',
   },
   faqTitle: 'Abans de triar.',
   faq: [

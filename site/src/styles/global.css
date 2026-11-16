@@ -15,6 +15,15 @@
   box-sizing: border-box;
 }
 
+/* Lining figures everywhere: Baskervville and Raleway default to old-style
+   numerals, which rise and fall like lowercase letters (4,95 reads as 4,g5).
+   Every font shorthand resets the setting, hence !important on every element. */
+*,
+::before,
+::after {
+  font-variant-numeric: lining-nums !important;
+}
+
 body {
   font-size: 12px;
   margin: 0;
