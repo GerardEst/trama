@@ -11,7 +11,9 @@ test('the pricing page shows both plans and switches between monthly and yearly'
 
   await expect(page.getByRole('radio', { name: 'Monthly' })).toBeChecked()
   await expect(creative.locator('.pp-price:visible')).toContainText('€5.95')
-  await expect(creative.locator('.pp-price:visible')).toContainText('or €49.95 a year')
+  // Monthly shows the price alone, without the yearly one.
+  await expect(creative.locator('.pp-price:visible')).not.toContainText('€49.95')
+  await expect(creative.locator('.pp-price__was:visible')).toHaveCount(0)
   await expect(pro.locator('.pp-price:visible')).toContainText('€19.95')
   await expect(creative.getByRole('link', { name: /Start with Creative/ }))
     .toHaveAttribute('href', '/login?mode=register&plan=creator&period=monthly')
@@ -19,8 +21,16 @@ test('the pricing page shows both plans and switches between monthly and yearly'
   await page.getByRole('radio', { name: 'Yearly' }).check()
   await expect(creative.locator('.pp-price:visible')).toHaveCount(1)
   await expect(creative.locator('.pp-price:visible')).toContainText('€49.95')
-  await expect(creative.locator('.pp-price:visible')).toContainText('€4.16 a month · €21.45 less than paying monthly')
+  // Yearly strikes through what twelve monthly payments would cost.
+  await expect(creative.locator('.pp-price__was:visible')).toHaveText('Twelve monthly payments: €71.40')
+  await expect(creative.locator('.pp-price__was:visible')).toHaveCSS('text-decoration-line', 'line-through')
+  // It stands on the line above the price, not beside it.
+  const was = await creative.locator('.pp-price__was:visible').boundingBox()
+  const amount = await creative.locator('.pp-price__amount:visible').boundingBox()
+  expect(was!.y + was!.height).toBeLessThanOrEqual(amount!.y + 1)
+  expect(Math.abs(was!.x - amount!.x)).toBeLessThan(2)
   await expect(pro.locator('.pp-price:visible')).toContainText('€199.95')
+  await expect(pro.locator('.pp-price__was:visible')).toContainText('€239.40')
   await expect(creative.getByRole('link', { name: /Start with Creative/ }))
     .toHaveAttribute('href', '/login?mode=register&plan=creator&period=yearly')
 })
@@ -53,6 +63,15 @@ test('every feature Creative links to exists on the landing', async ({ page }) =
   for (const hash of targets) await expect(page.locator(hash)).toHaveCount(1)
 })
 
+test('a short section explains the free engine, instead of a list of what both plans include', async ({ page }) => {
+  await page.goto('/pricing')
+  await expect(page.getByText('Included in both plans')).toHaveCount(0)
+  const engine = page.getByRole('region', { name: 'Trama Engine is free and open source' })
+  await expect(engine).toContainText('MIT-licensed and costs nothing')
+  await expect(engine.getByRole('link', { name: /How it works/ })).toHaveAttribute('href', '/#engine')
+  await expect(engine.getByRole('link', { name: /npm/ })).toHaveAttribute('href', 'https://www.npmjs.com/package/@trama-app/engine')
+})
+
 test('signed-in readers go to their dashboard instead of the checkout', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('sb-lsemostpqoguehpsbzgu-auth-token', '{"access_token":"x"}'))
   await page.goto('/pricing')
@@ -67,11 +86,7 @@ test('the pricing page ends on its questions, without the voyage or the map', as
   await faq.getByText('Do my readers pay or need an account?').click()
   await expect(faq).toContainText('Readers open the link and play, on either plan.')
   await expect(page.locator('story-voyage, map-closing')).toHaveCount(0)
-  // The landing's traveller stands under the title, as decoration.
-  const hero = faq.locator('img.pr-faq__hero')
-  await hero.scrollIntoViewIfNeeded()
-  await expect(hero).toHaveAttribute('alt', '')
-  await expect.poll(() => hero.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0)
+  await expect(faq.locator('img')).toHaveCount(0)
 })
 
 for (const [lang, path, title, price] of [

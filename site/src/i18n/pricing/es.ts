@@ -13,8 +13,8 @@ export const pricing: PricingCopy = {
   billing: { label: 'Periodo de facturación', monthly: 'Mensual', yearly: 'Anual' },
   perMonth: 'al mes',
   perYear: 'al año',
-  orYearly: 'o {price} al año',
-  yearlyDetail: '{price} al mes · {saving} menos que pagando mes a mes',
+  wasLabel: 'Doce mensualidades:',
+  nowLabel: 'pagando el año:',
   plans: {
     creative: {
       audience: 'Para quien escribe',
@@ -42,13 +42,11 @@ export const pricing: PricingCopy = {
     },
   },
   sample: { caption: 'Todas las respuestas', name: 'Nombre', date: 'Fecha' },
-  always: {
-    title: 'Incluido en los dos planes',
-    items: [
-      { title: 'Los lectores nunca pagan', body: 'Abren tu enlace y juegan. Sin cuenta y sin instalar nada.' },
-      { title: 'El motor es abierto', body: 'Trama Engine es gratuito y tiene licencia MIT: juega tus historias en cualquier interfaz que construyas.' },
-      { title: 'Las palabras son tuyas', body: 'Trama no genera el texto, y puedes descargar cualquier historia en JSON.' },
-    ],
+  engine: {
+    eyebrow: 'Gratis, sea cual sea el plan',
+    title: 'Trama Engine es gratuito y de código abierto',
+    body: 'El motor que juega todas las historias de Trama tiene licencia MIT y no cuesta nada. Úsalo para jugar tus historias en cualquier interfaz que construyas: en tu web, en un juego o en un chat. Los planes pagan el editor, la historia que crees es tuya.',
+    more: 'Cómo funciona',
   },
   faqTitle: 'Antes de elegir.',
   faq: [
