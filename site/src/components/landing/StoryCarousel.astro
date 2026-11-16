@@ -1,0 +1,230 @@
+---
+import { format } from '../../lib/format'
+import type { Lang } from '../../i18n'
+import { interfaceCopyFor } from './copy'
+import { heroStories } from './hero-stories'
+import StoryDemo from './StoryDemo.astro'
+
+// The hero's stories side by side: the one in the middle can be played, the
+// others wait at the sides. Passing to one paints the hero with its landscape
+// (the .e-hero's data-scene). Without scripts the cards still scroll sideways.
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const e = interfaceCopyFor(lang)
+const stories = heroStories(lang)
+---
+
+<story-carousel class="sc" role="region" aria-roledescription="carousel" aria-label={e.storiesLabel}>
+  <div class="sc-track" data-track>
+    {stories.map((story, index) => (
+      <div
+        class="sc-slide"
+        role="group"
+        aria-roledescription="slide"
+        aria-label={format(e.storyOf, { n: index + 1, total: stories.length })}
+        data-slide
+        data-scene={story.scene}
+        data-active={index === 0 ? '' : undefined}
+      >
+        <div class="sc-page" inert={index !== 0}>
+          <StoryDemo
+            lang={lang}
+            class="e-story"
+            memory
+            story={story.tree}
+            id={index === 0 ? 'try-it' : `try-${story.id}`}
+            label={format(e.playStory, { title: story.title })}
+          >
+            <p class="e-story__title">{story.title.toLocaleUpperCase(lang)}</p>
+          </StoryDemo>
+        </div>
+      </div>
+    ))}
+  </div>
+  <nav class="sc-nav" aria-label={e.storiesLabel}>
+    <button class="sc-arrow" type="button" data-step="-1" aria-label={e.previousStory} disabled>←</button>
+    <ol class="sc-tabs">
+      {stories.map((story, index) => (
+        <li>
+          <button type="button" data-go={index} aria-current={index === 0 ? 'true' : undefined}>{story.title}</button>
+        </li>
+      ))}
+    </ol>
+    <button class="sc-arrow" type="button" data-step="1" aria-label={e.nextStory}>→</button>
+  </nav>
+</story-carousel>
+
+<script>
+  // One observer on the track, nothing on the window: the card that crosses the
+  // track's middle is the active one, whichever way it got there.
+  class StoryCarousel extends HTMLElement {
+    private track!: HTMLElement
+    private slides: HTMLElement[] = []
+    private observer?: IntersectionObserver
+    private active = 0
+
+    connectedCallback() {
+      this.track = this.querySelector<HTMLElement>('[data-track]')!
+      this.slides = [...this.querySelectorAll<HTMLElement>('[data-slide]')]
+      this.observer = new IntersectionObserver(
+        entries => {
+          const crossing = entries.find(entry => entry.isIntersecting)
+          if (crossing) this.activate(this.slides.indexOf(crossing.target as HTMLElement))
+        },
+        { root: this.track, rootMargin: '0px -49% 0px -49%' },
+      )
+      for (const slide of this.slides) this.observer.observe(slide)
+      this.addEventListener('click', this.onClick)
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect()
+      this.removeEventListener('click', this.onClick)
+    }
+
+    private onClick = (event: Event) => {
+      const target = event.target as Element
+      const tab = target.closest<HTMLElement>('[data-go]')
+      const arrow = target.closest<HTMLElement>('[data-step]')
+      const slide = target.closest<HTMLElement>('[data-slide]')
+      if (tab) this.show(Number(tab.dataset['go']))
+      else if (arrow) this.show(this.active + Number(arrow.dataset['step']))
+      // A card waiting at the side comes to the middle when it is clicked.
+      else if (slide && !slide.hasAttribute('data-active')) this.show(this.slides.indexOf(slide))
+    }
+
+    private show(index: number) {
+      const slide = this.slides[Math.max(0, Math.min(this.slides.length - 1, index))]
+      if (!slide) return
+      const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches
+      this.track.scrollTo({ left: slide.offsetLeft - (this.track.clientWidth - slide.offsetWidth) / 2, behavior: smooth ? 'smooth' : 'auto' })
+    }
+
+    private activate(index: number) {
+      if (index < 0 || index === this.active) return
+      this.active = index
+      this.slides.forEach((slide, i) => {
+        slide.toggleAttribute('data-active', i === index)
+        slide.querySelector<HTMLElement>('.sc-page')!.inert = i !== index
+      })
+      this.querySelectorAll<HTMLElement>('[data-go]').forEach((tab, i) => {
+        if (i === index) tab.setAttribute('aria-current', 'true')
+        else tab.removeAttribute('aria-current')
+      })
+      this.querySelector<HTMLButtonElement>('[data-step="-1"]')!.disabled = index === 0
+      this.querySelector<HTMLButtonElement>('[data-step="1"]')!.disabled = index === this.slides.length - 1
+      const scene = this.slides[index]!.dataset['scene'] ?? 'valley'
+      const hero = document.querySelector<HTMLElement>('.e-hero')
+      if (hero) hero.dataset['scene'] = scene
+      // The valley's words belong to the valley's story: they rest under the others.
+      hero?.querySelector('written-world')?.toggleAttribute('inactive', scene !== 'valley')
+    }
+  }
+
+  customElements.define('story-carousel', StoryCarousel)
+</script>
+
+<style>
+  .sc {
+    display: block;
+  }
+  /* The cards in a row that snaps each one to the middle. The track's side padding
+     centres the first and last; on a wide screen the neighbours show at the sides.
+     Room above and below keeps the cards' shadows from being cut. */
+  .sc-track {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    margin-block: -12px -110px;
+    padding: 12px calc(50% - min(310px, 50% - var(--e-gutter))) 110px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .sc-track::-webkit-scrollbar {
+    display: none;
+  }
+  .sc-slide {
+    flex: 0 0 min(620px, 100%);
+    scroll-snap-align: center;
+  }
+  /* A card waiting at the side keeps its paper and fades its words. */
+  .sc-slide:not([data-active]) {
+    cursor: pointer;
+  }
+  .sc-slide :global(.e-story > *) {
+    transition: opacity 0.4s ease;
+  }
+  .sc-slide:not([data-active]) :global(.e-story > *) {
+    opacity: 0.35;
+  }
+
+  /* Above the track's bottom room, which it overlaps. */
+  .sc-nav {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: min(100% - var(--e-gutter) * 2, 620px);
+    margin: 26px auto 0;
+  }
+  .sc-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 18px;
+    list-style: none;
+  }
+  .sc-tabs button,
+  .sc-arrow {
+    border: 0;
+    background: none;
+    color: var(--polo-color-text-secondary);
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .sc-tabs button {
+    padding: 4px 0;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 6px;
+    transition: color 0.2s, text-decoration-color 0.2s;
+  }
+  .sc-tabs button:hover,
+  .sc-tabs [aria-current] {
+    color: var(--polo-color-text-strong);
+    text-decoration-color: var(--e-red);
+  }
+  .sc-arrow {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: 50%;
+    background: var(--polo-color-surface);
+    color: var(--polo-color-text-strong);
+  }
+  .sc-arrow:hover:not(:disabled) {
+    border-color: var(--e-red);
+  }
+  .sc-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sc-slide :global(.e-story > *) {
+      transition: none;
+    }
+  }
+</style>
