@@ -288,10 +288,10 @@ export const ca: AtlasCopy = {
     },
   },
   wins: [
+    { title: 'Crea sense programar', body: 'Escriu les escenes, uneix-les al tauler i prova cada camí just al costat del que escrius.' },
+    { title: 'Publica amb un enllaç', body: 'Sense fitxers per exportar ni allotjament per buscar. Els lectors l’obren i juguen sense compte, i els canvis els arriben en desar.' },
+    { title: 'Analitza com es juga', body: 'Cada partida en una taula: qui ha jugat, quan i amb quines estadístiques i condicions ha acabat. Amb el pla Pro, properament.' },
     { title: 'Lògica de debò, sense sintaxi', body: 'Nombres, condicions, rutes i variables es configuren amb formularis. No cal aprendre cap llenguatge.' },
-    { title: 'Escriure i provar al mateix lloc', body: 'Juga una branca al costat del tauler i corregeix el text allà on el llegeixes.' },
-    { title: 'Publicar és un enllaç', body: 'Sense fitxers per exportar, sense allotjament per buscar, sense compte per als lectors, i els canvis els arriben en desar.' },
-    { title: 'Veus com es juga', body: 'Cada partida queda registrada, si ho actives, sense afegir cap eina.' },
     { title: 'Una sortida del nostre lector', body: 'Un motor MIT obert juga la teva història en qualsevol interfície que construeixis, tu o el teu agent.' },
     { title: 'Un preu per a un sol autor', body: 'Creative costa 5,95 € al mes, amb tot l’editor inclòs.' },
   ],

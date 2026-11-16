@@ -608,6 +608,31 @@ trama-board[ready] .lb-loading {
 .e-why {
   padding-top: var(--e-section);
 }
+.e-why__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 56px;
+}
+.e-why__head .e-section-head {
+  margin-bottom: 0;
+}
+.e-why__figure {
+  flex: none;
+  width: 260px;
+  height: auto;
+}
+@media (max-width: 760px) {
+  .e-why__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .e-why__figure {
+    width: 180px;
+  }
+}
 
 /* Compare */
 .e-compare {
