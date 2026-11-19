@@ -21,6 +21,10 @@ describe('legalHtml', () => {
     expect(legalHtml('[AEPD](aepd)', links)).toBe('<a href="https://www.aepd.es" rel="noopener">AEPD</a>')
   })
 
+  it('writes {owner} as the owner’s name', () => {
+    expect(legalHtml('Run by {owner}.', links)).toBe(`Run by ${OWNER.name}.`)
+  })
+
   it('turns {email} into a mailto link to the owner', () => {
     expect(legalHtml('Write to {email}.', links)).toBe(
       `Write to <a href="mailto:${OWNER.email}">${OWNER.email}</a>.`,
@@ -43,10 +47,12 @@ describe('legal copy', () => {
     }
   })
 
-  it('names the owner in the first section of both texts', () => {
+  it('names the owner in the first section of both texts and points to their details', () => {
     for (const copy of Object.values(copies)) {
       for (const doc of ['privacy', 'terms'] as const) {
-        expect(copy[doc].sections[0].blocks).toContainEqual({ owner: true })
+        const first = copy[doc].sections[0].blocks[0]
+        expect(first).toContain('{owner}')
+        expect(first).toMatch(/\]\(owner\)/)
       }
     }
   })

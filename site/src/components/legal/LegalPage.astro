@@ -6,7 +6,8 @@ import { localePath } from '../../lib/locale'
 import { PAGES } from '../../lib/pages'
 
 // The privacy policy or the terms of service: a numbered list of sections,
-// all in the HTML, with an index to jump to each one.
+// all in the HTML, with an index to jump to each one, and the owner's details
+// at the end.
 interface Props {
   lang: Lang
   doc: 'privacy' | 'terms'
@@ -22,6 +23,7 @@ const links = {
   privacy,
   terms: localePath(lang, PAGES.terms),
   players: `${privacy}#players`,
+  owner: '#owner',
   pricing: localePath(lang, PAGES.pricing),
   aepd: 'https://www.aepd.es',
   stripe: 'https://stripe.com/privacy',
@@ -68,22 +70,25 @@ const structuredData = {
           {section.blocks.map(block =>
             typeof block === 'string' ? (
               <p set:html={html(block)} />
-            ) : 'list' in block ? (
-              <ul>{block.list.map(item => <li set:html={html(item)} />)}</ul>
             ) : (
-              <dl class="legal__owner">
-                {owner.map(row => (
-                  <div>
-                    <dt>{row.label}</dt>
-                    <dd>{row.href ? <a href={row.href}>{row.value}</a> : row.value}</dd>
-                  </div>
-                ))}
-              </dl>
+              <ul>{block.list.map(item => <li set:html={html(item)} />)}</ul>
             ),
           )}
         </section>
       ))}
     </div>
+
+    <section id="owner" class="legal__owner" aria-labelledby="owner-title">
+      <h2 id="owner-title">{t.ownerTitle}</h2>
+      <dl>
+        {owner.map(row => (
+          <div>
+            <dt>{row.label}</dt>
+            <dd>{row.href ? <a href={row.href}>{row.value}</a> : row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   </article>
 </BaseLayout>
 
@@ -183,7 +188,7 @@ const structuredData = {
   .legal__body h2 span {
     color: var(--polo-color-action);
   }
-  .legal__body :is(p, li, dt, dd) {
+  .legal__body :is(p, li) {
     font-size: 15px;
     line-height: 1.7;
   }
@@ -201,7 +206,7 @@ const structuredData = {
     margin-top: 8px;
   }
   /* Links in the copy come through set:html, outside the scoped styles. */
-  .legal__body :is(p, li, dd) :global(a) {
+  .legal__body :is(p, li) :global(a) {
     color: var(--polo-color-action);
     font-size: inherit;
     text-decoration: underline;
@@ -210,12 +215,34 @@ const structuredData = {
   }
 
   .legal__owner {
+    margin-top: 24px;
+    padding: 20px 28px;
+    border: 1px solid var(--polo-color-border-strong);
+    border-radius: var(--polo-radius-card);
+    background: var(--polo-color-surface);
+    scroll-margin-top: 96px;
+  }
+  .legal__owner h2 {
+    margin-bottom: 12px;
+    color: var(--polo-color-action);
+    font-size: 12px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .legal__owner dl {
     display: grid;
     gap: 6px;
     margin: 0;
-    padding: 16px 20px;
-    border-radius: var(--polo-radius-control);
-    background: var(--polo-color-canvas);
+  }
+  .legal__owner :is(dt, dd) {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .legal__owner a {
+    color: var(--polo-color-action);
+    font-size: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .legal__owner div {
     display: grid;
@@ -248,6 +275,9 @@ const structuredData = {
     }
     .legal__body {
       padding: 0 20px 8px;
+    }
+    .legal__owner {
+      padding: 16px 20px;
     }
     .legal__owner div {
       grid-template-columns: 1fr;

@@ -22,7 +22,8 @@ function escapeHtml(text: string): string {
 
 /**
  * A paragraph of the legal copy as HTML: the text is escaped, `[label](key)`
- * becomes a link to `links[key]` and `{email}` a mailto link to the owner.
+ * becomes a link to `links[key]`, `{owner}` the owner's name and `{email}` a
+ * mailto link to the owner.
  * An unknown key fails the build instead of shipping a broken link.
  */
 export function legalHtml(text: string, links: LegalLinks): string {
@@ -34,5 +35,6 @@ export function legalHtml(text: string, links: LegalLinks): string {
       const external = /^https?:/.test(href) ? ' rel="noopener"' : ''
       return `<a href="${escapeHtml(href)}"${external}>${label}</a>`
     })
+    .replace(/\{owner\}/g, escapeHtml(OWNER.name))
     .replace(/\{email\}/g, mail)
 }
