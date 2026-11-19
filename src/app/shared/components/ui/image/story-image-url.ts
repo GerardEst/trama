@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core'
 
-const STORAGE = 'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/'
+const STORAGE = 'https://hiibhbkawimlepxhhavm.supabase.co/storage/v1/object/public/images/'
 
 /**
  * Turns the path a story keeps for an image into the address it is served from:

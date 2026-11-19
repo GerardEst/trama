@@ -16,7 +16,7 @@
     "tests-e2e-playground": "npx playwright test --project=playground",
     "tests-e2e-landing": "npx playwright test --project=landing",
     "ts-coverage": "typescript-coverage-report",
-    "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref lsemostpqoguehpsbzgu",
+    "deploy-edge": "supabase functions deploy create-subscription --no-verify-jwt --project-ref hiibhbkawimlepxhhavm",
     "storybook": "ng run polo-angular:storybook",
     "build-storybook": "ng run polo-angular:build-storybook",
     "build:embed": "ng run polo-angular:build-embed"

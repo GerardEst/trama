@@ -13,7 +13,7 @@ export const ENGINE_LINKS = {
 } as const
 
 /** Supabase keeps the session in localStorage under this key (see the app's DatabaseService). */
-export const SESSION_STORAGE_KEY = 'sb-lsemostpqoguehpsbzgu-auth-token'
+export const SESSION_STORAGE_KEY = 'sb-hiibhbkawimlepxhhavm-auth-token'
 
 /** Shared with the app: the reader's chosen language and theme. */
 export const LANG_STORAGE_KEY = 'polo-lang'

@@ -40,7 +40,7 @@ test('shows the closing map without animation when motion is reduced', async ({ 
 })
 
 test('signed-in readers go to their dashboard instead of signing up again', async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('sb-lsemostpqoguehpsbzgu-auth-token', '{"access_token":"x"}'))
+  await page.addInitScript(() => localStorage.setItem('sb-hiibhbkawimlepxhhavm-auth-token', '{"access_token":"x"}'))
   await page.goto('/')
   const nav = page.getByRole('navigation', { name: 'Main navigation' })
   await expect(nav.getByRole('link', { name: 'Log in' })).toHaveCount(0)

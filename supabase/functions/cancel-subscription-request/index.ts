@@ -5,7 +5,7 @@ import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   httpClient: Stripe.createFetchHttpClient(),
 })
-const allowedOrigins = ['https://www.trama.app', 'http://localhost:4200']
+const allowedOrigins = ['https://trama.app', 'https://www.trama.app', 'http://localhost:4200']
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',

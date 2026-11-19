@@ -3,7 +3,7 @@ import { meetsRequirements, missingRequirements } from './rules'
 import { inlineHtml, interpolate, plainText } from './text'
 import { PlayerState, Scene, SceneAnswer, Story, StoryJoin } from './types'
 
-export const DEFAULT_IMAGE_URL = 'https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/'
+export const DEFAULT_IMAGE_URL = 'https://hiibhbkawimlepxhhavm.supabase.co/storage/v1/object/public/images/'
 
 export interface RenderOptions {
   /** Resolves image paths. Defaults to Trama's public image storage. */
