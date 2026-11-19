@@ -8,6 +8,7 @@ test('the privacy policy names its owner first and gives their details at the en
   await expect(page.locator('#controller')).toContainText('Gerard Esteve Busquets')
   const owner = page.locator('#owner')
   await expect(owner).toContainText('41549796C')
+  await expect(owner).toContainText('17455 Caldes de Malavella')
   // The details close the page, after the last section.
   const last = await page.locator('.legal__body section').last().boundingBox()
   expect((await owner.boundingBox())!.y).toBeGreaterThan(last!.y)

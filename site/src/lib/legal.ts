@@ -4,8 +4,8 @@ export const OWNER = {
   name: 'Gerard Esteve Busquets',
   nif: '41549796C',
   email: 'gesteve.12@gmail.com',
-  /** Postal address. Shown only once it is set. */
-  address: null as string | null,
+  /** Postal address. The row is left out while it is null. */
+  address: 'Lleida 14, 17455 Caldes de Malavella, Girona, España' as string | null,
 }
 
 /** When the legal texts last changed, shown at the top of both pages. */
