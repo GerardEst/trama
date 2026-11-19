@@ -12,6 +12,7 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { CheckoutService, isCreatorCheckout } from 'src/app/core/services/checkout.service'
 import { PRICING } from 'src/app/core/constants'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
 
 @Component({
   selector: 'polo-login',
@@ -46,6 +47,14 @@ export class LoginComponent implements OnInit {
     private checkoutService: CheckoutService,
     private i18n: I18nService
   ) {}
+
+  get termsUrl() {
+    return siteUrl(this.i18n.lang(), SITE_PAGES.terms)
+  }
+
+  get privacyUrl() {
+    return siteUrl(this.i18n.lang(), SITE_PAGES.privacy)
+  }
 
   get selectedPrice() {
     return this.i18n.formatNumber(this.period === 'yearly' ? PRICING.CREATOR_YEARLY_PRICE : PRICING.CREATOR_MONTHLY_PRICE, {

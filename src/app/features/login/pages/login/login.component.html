@@ -86,6 +86,12 @@
           >
           </polo-basic-button>
         </form>
+        <p class="login-legal">
+          {{ 'login.register.legal.start' | t }}
+          <a [href]="termsUrl">{{ 'login.register.legal.terms' | t }}</a>
+          {{ 'login.register.legal.and' | t }}
+          <a [href]="privacyUrl">{{ 'login.register.legal.privacy' | t }}</a>.
+        </p>
       } @else {
         <h1>{{ 'login.signIn.title' | t }}</h1>
         <polo-google-login (click)="signInWithGoogle()"></polo-google-login>

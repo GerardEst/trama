@@ -267,6 +267,8 @@ export const landing = {
     guide: 'Docs',
     login: 'Log in',
     email: 'Email the maker',
+    privacy: 'Privacy',
+    terms: 'Terms',
     rights: '© trama.app · All rights reserved',
   },
 }

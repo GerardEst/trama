@@ -170,6 +170,18 @@
   border-radius: var(--polo-radius-control);
   box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
 }
+.box .login-legal {
+  margin-top: 17px;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+}
+.box .login-legal a {
+  color: var(--polo-color-text);
+  font-size: inherit;
+  text-decoration: underline;
+}
 .box .change {
   flex-direction: row;
   justify-content: center;

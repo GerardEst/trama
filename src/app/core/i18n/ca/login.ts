@@ -30,6 +30,12 @@ export const login: Dictionary['login'] = {
     password: 'Contrasenya nova',
     submit: 'Registra’t',
     hasAccount: 'Ja tens un compte?',
+    legal: {
+      start: 'En registrar-te acceptes les',
+      terms: 'Condicions de servei',
+      and: 'i la',
+      privacy: 'Política de privacitat',
+    },
   },
   signIn: {
     title: 'Hola de nou',

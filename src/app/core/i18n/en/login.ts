@@ -28,6 +28,12 @@ export const login = {
     password: 'New password',
     submit: 'Register',
     hasAccount: 'Already have an account?',
+    legal: {
+      start: 'By signing up you accept the',
+      terms: 'Terms of service',
+      and: 'and the',
+      privacy: 'Privacy policy',
+    },
   },
   signIn: {
     title: 'Welcome back',

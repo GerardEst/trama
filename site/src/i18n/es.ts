@@ -269,6 +269,8 @@ export const landing: Copy = {
     guide: 'Documentación',
     login: 'Iniciar sesión',
     email: 'Escribe al creador',
+    privacy: 'Privacidad',
+    terms: 'Condiciones',
     rights: '© trama.app · Todos los derechos reservados',
   },
 }

@@ -1,0 +1,14 @@
+---
+import LegalPage from '../../components/legal/LegalPage.astro'
+import type { Lang } from '../../i18n'
+import { localeStaticPaths } from '../../lib/locale'
+
+// The terms of service: /terms, /es/terms and /ca/terms.
+export const getStaticPaths = localeStaticPaths
+
+interface Props {
+  lang: Lang
+}
+---
+
+<LegalPage lang={Astro.props.lang} doc="terms" />

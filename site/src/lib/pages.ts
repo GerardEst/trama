@@ -5,6 +5,8 @@ export const PAGES = {
   features: 'docs/features',
   useCases: 'use-cases',
   pricing: 'pricing',
+  privacy: 'privacy',
+  terms: 'terms',
 } as const
 
 export type PagePath = (typeof PAGES)[keyof typeof PAGES]
