@@ -103,7 +103,7 @@ export const dashboard: Dictionary['dashboard'] = {
     billing: 'Facturación',
     incomplete:
       'Tienes que completar el pago. Si ya lo has completado, recarga la página',
-    expires: 'Tu suscripción caducará el {date}',
+    expires: 'Tu plan sigue activo hasta el {date}',
     nextPayment: 'Tu próximo pago será el {date}',
   },
   share: {

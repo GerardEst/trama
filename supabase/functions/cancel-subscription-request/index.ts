@@ -1,6 +1,7 @@
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
+import { profileSubscription } from '../_shared/subscription.ts'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   httpClient: Stripe.createFetchHttpClient(),
@@ -39,7 +40,7 @@ Deno.serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(authHeader.slice('Bearer '.length))
     if (userError || !user) return respond(JSON.stringify({ error: 'invalid_token' }), 401)
 
-    // The profile row has the same id as the auth user, and only the Stripe webhooks write it.
+    // The profile row has the same id as the auth user. Besides the Stripe webhooks, only this function writes it.
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('subscription_id')
@@ -48,8 +49,16 @@ Deno.serve(async (req) => {
     if (profileError) throw profileError
     if (!profile?.subscription_id) return respond(JSON.stringify({ error: 'no_subscription' }), 404)
 
-    const cancelled = await stripe.subscriptions.cancel(profile.subscription_id)
-    if (cancelled.status !== 'canceled') return respond(JSON.stringify({ error: 'not_cancelled' }), 500)
+    // Cancelling stops the renewal: the plan lasts until the end of the period already paid.
+    const ending = await stripe.subscriptions.update(profile.subscription_id, { cancel_at_period_end: true })
+    if (!ending.cancel_at_period_end) return respond(JSON.stringify({ error: 'not_cancelled' }), 500)
+
+    // Written here too, so the profile shows it without waiting for the webhook.
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update(profileSubscription(ending))
+      .eq('id', user.id)
+    if (updateError) throw updateError
 
     return respond(JSON.stringify({ message: 'Subscription canceled successfully' }), 200)
   } catch (err) {

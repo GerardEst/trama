@@ -44,6 +44,11 @@ export class ProfileModalComponent {
     return this.i18n.formatDate(date, { dateStyle: 'long' })
   }
 
+  /** A canceled plan lasts until the end of the period already paid. */
+  canceledPlanEnd(nextPayment: string) {
+    return nextPayment && new Date(nextPayment).getTime() > Date.now() ? this.paymentDate(nextPayment) : null
+  }
+
   changePassword() {
     this.router.navigate(['change-password'])
   }

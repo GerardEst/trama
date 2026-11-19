@@ -76,4 +76,21 @@ describe('ProfileModalComponent', () => {
       else delete document.documentElement.dataset['poloTheme']
     }
   })
+
+  it('shows until when a canceled plan lasts', () => {
+    const user = (next_payment: string) => ({
+      email: 'author@example.com',
+      user_metadata: { user_name: 'Author' },
+      app_metadata: { provider: 'email' },
+      profile: { plan: 'creator', subscription_status: 'canceled', next_payment },
+    }) as unknown as appUser
+
+    component.db.user.set(user(new Date(Date.now() + 10 * 86400000).toISOString()))
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('.canceledPlanEnd')?.textContent).toContain('active until')
+
+    component.db.user.set(user(new Date(Date.now() - 86400000).toISOString()))
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('.canceledPlanEnd')).toBeNull()
+  })
 })
