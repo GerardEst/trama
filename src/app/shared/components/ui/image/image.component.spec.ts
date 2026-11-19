@@ -25,7 +25,7 @@ describe('ImageComponent', () => {
     fixture.componentRef.setInput('storageRoute', 'user/scene.webp')
     fixture.detectChanges()
     const image: HTMLImageElement = fixture.nativeElement.querySelector('.image__preview')
-    expect(image.src).toBe('https://lsemostpqoguehpsbzgu.supabase.co/storage/v1/object/public/images/user/scene.webp')
+    expect(image.src).toBe('https://hiibhbkawimlepxhhavm.supabase.co/storage/v1/object/public/images/user/scene.webp')
   })
 
   it('says when the image has arrived', () => {

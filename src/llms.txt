@@ -18,7 +18,7 @@ Key facts for building on Trama:
 
 ## Public API
 
-- [Story endpoint](https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/story): `GET ?id=<uuid>` or `GET ?slug=<slug>` returns `{ id, name, slug, settings, tree }` as JSON, ready for `createGame(tree)`. 404 when it does not exist. CORS is open.
+- [Story endpoint](https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/story): `GET ?id=<uuid>` or `GET ?slug=<slug>` returns `{ id, name, slug, settings, tree }` as JSON, ready for `createGame(tree)`. 404 when it does not exist. CORS is open.
 
 ## Agent skill
 

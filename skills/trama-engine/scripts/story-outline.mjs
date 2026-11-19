@@ -11,7 +11,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises'
 
-const API = 'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/story'
+const API = 'https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/story'
 const EXCERPT = 90
 
 const args = process.argv.slice(2)

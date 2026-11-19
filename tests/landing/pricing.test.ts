@@ -73,7 +73,7 @@ test('a short section explains the free engine, instead of a list of what both p
 })
 
 test('signed-in readers go to their dashboard instead of the checkout', async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('sb-lsemostpqoguehpsbzgu-auth-token', '{"access_token":"x"}'))
+  await page.addInitScript(() => localStorage.setItem('sb-hiibhbkawimlepxhhavm-auth-token', '{"access_token":"x"}'))
   await page.goto('/pricing')
   await expect(plan(page, 'Creative').getByRole('link', { name: /Open your dashboard/ })).toHaveAttribute('href', '/dashboard')
 })

@@ -1,7 +1,7 @@
 import { StoryTree } from './types'
 
 /** Trama's public story API. */
-export const TRAMA_STORY_API = 'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/story'
+export const TRAMA_STORY_API = 'https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/story'
 
 export interface StorySettings {
   /** Show earlier steps above the current one. */

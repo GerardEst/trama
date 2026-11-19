@@ -19,7 +19,7 @@ fetchStory(ref: { id: string } | { slug: string }, options?: { api?: string; fet
 
 - Resolves `undefined` when the story does not exist (HTTP 404).
 - Throws `StoryRequestError` (with `.status`) for any other failure.
-- Endpoint: `TRAMA_STORY_API` = `https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/story`
+- Endpoint: `TRAMA_STORY_API` = `https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/story`
   (`?id=<uuid>` or `?slug=<slug>`, CORS open, cached 30 s). Stories cannot be
   listed.
 

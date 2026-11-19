@@ -74,13 +74,13 @@ export class PricingComponent {
   cancelSubscription() {
     this.cancelingSubscription = true
 
-    const jwtToken = localStorage.getItem('sb-lsemostpqoguehpsbzgu-auth-token')
+    const jwtToken = localStorage.getItem('sb-hiibhbkawimlepxhhavm-auth-token')
     if (!jwtToken) {
       return console.error('No present JWT. Cant cancel plan.')
     }
 
     fetch(
-      'https://lsemostpqoguehpsbzgu.supabase.co/functions/v1/cancel-subscription-request',
+      'https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/cancel-subscription-request',
       {
         method: 'POST',
         headers: {
