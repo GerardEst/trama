@@ -113,7 +113,7 @@ export const dashboard = {
     billing: 'Billing',
     incomplete:
       'You need to complete the payment. If the payment has been completed, refresh the page',
-    expires: 'Your subscription will expire on {date}',
+    expires: 'Your plan stays active until {date}',
     nextPayment: 'Your next payment will be {date}',
   },
   home: {

@@ -1,0 +1,14 @@
+---
+import LegalPage from '../../components/legal/LegalPage.astro'
+import type { Lang } from '../../i18n'
+import { localeStaticPaths } from '../../lib/locale'
+
+// The privacy policy: /privacy, /es/privacy and /ca/privacy.
+export const getStaticPaths = localeStaticPaths
+
+interface Props {
+  lang: Lang
+}
+---
+
+<LegalPage lang={Astro.props.lang} doc="privacy" />

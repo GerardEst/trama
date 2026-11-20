@@ -1,6 +1,7 @@
 import 'https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@16.2.0?target=deno'
+import { profileSubscription } from '../_shared/subscription.ts'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   // This is needed to use the Fetch API rather than relying on the Node http package.
@@ -47,17 +48,13 @@ Deno.serve(async (req) => {
 
     const subscription = stripeEvent.data.object
 
-    // Get the next payment date
-    const nextPaymentDate = new Date(subscription.current_period_end * 1000)
-
     const customerId = subscription.customer
 
     const { data, error } = await supabaseAdmin
       .from('profiles')
       .update({
-        subscription_status: subscription.status,
+        ...profileSubscription(subscription),
         plan: subscription.plan.nickname,
-        next_payment: nextPaymentDate,
       })
       .eq('customer_id', customerId)
 

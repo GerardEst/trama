@@ -13,7 +13,7 @@ import { CheckoutService, isCreatorCheckout } from 'src/app/core/services/checko
 import { PRICING } from 'src/app/core/constants'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { WordmarkComponent } from 'src/app/shared/components/wordmark/wordmark.component'
-import { siteUrl } from 'src/app/core/site-links'
+import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
 
 @Component({
   selector: 'polo-login',
@@ -49,6 +49,14 @@ export class LoginComponent implements OnInit {
     private checkoutService: CheckoutService,
     private i18n: I18nService
   ) {}
+
+  get termsUrl() {
+    return siteUrl(this.i18n.lang(), SITE_PAGES.terms)
+  }
+
+  get privacyUrl() {
+    return siteUrl(this.i18n.lang(), SITE_PAGES.privacy)
+  }
 
   get selectedPrice() {
     return this.i18n.formatNumber(this.period === 'yearly' ? PRICING.CREATOR_YEARLY_PRICE : PRICING.CREATOR_MONTHLY_PRICE, {

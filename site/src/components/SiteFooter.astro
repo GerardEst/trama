@@ -25,6 +25,8 @@ const t = copyFor(lang)
       <a href={localePath(lang, PAGES.features)}>{t.footer.guide}</a>
       <a href={APP_LINKS.login} data-when="signed-out">{t.footer.login}</a>
       <a href={APP_LINKS.email}>{t.footer.email}</a>
+      <a href={localePath(lang, PAGES.privacy)}>{t.footer.privacy}</a>
+      <a href={localePath(lang, PAGES.terms)}>{t.footer.terms}</a>
     </div>
     <LanguageSelector lang={lang} page={page} label={t.footer.language} />
     <small>{t.footer.rights}</small>

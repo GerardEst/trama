@@ -32,4 +32,16 @@ describe('BillingSettingsComponent', () => {
     expect(host().querySelector('.summary__state--off')?.textContent).toContain('Subscription canceled')
     expect(host().querySelector('polo-billing-cycle')).not.toBeNull()
   })
+
+  it('shows until when a canceled plan lasts, and nothing once it has ended', async () => {
+    await render({ plan: 'creator', subscription_status: 'canceled', next_payment: new Date(Date.now() + 10 * 86400000).toISOString() })
+    expect(host().querySelector('.canceledPlanEnd')?.textContent).toContain('active until')
+
+    TestBed.inject(DatabaseService).user.set({
+      id: 'author-1', email: 'marta@example.com',
+      profile: { plan: 'creator', subscription_status: 'canceled', next_payment: new Date(Date.now() - 86400000).toISOString() },
+    } as unknown as appUser)
+    fixture.detectChanges()
+    expect(host().querySelector('.canceledPlanEnd')).toBeNull()
+  })
 })

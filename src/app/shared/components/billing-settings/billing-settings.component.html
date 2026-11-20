@@ -8,6 +8,9 @@
       <div class="summary__text">
         <p class="summary__label">{{ 'settings.billing.yourPlan' | t }}</p>
         <p class="summary__plan">{{ planName() | t }}</p>
+        @if (status() === 'canceled' && canceledPlanEnd(user.profile.next_payment); as end) {
+          <p class="summary__until canceledPlanEnd">{{ 'dashboard.profile.expires' | t: { date: end } }}</p>
+        }
       </div>
       <p class="summary__state" [class.summary__state--off]="status() !== 'active'">
         @switch (status()) {

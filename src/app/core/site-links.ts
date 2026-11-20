@@ -10,6 +10,8 @@ export const SITE_PAGES = {
   features: 'docs/features',
   useCases: 'use-cases',
   pricing: 'pricing',
+  privacy: 'privacy',
+  terms: 'terms',
 } as const
 
 type SitePage = (typeof SITE_PAGES)[keyof typeof SITE_PAGES]
