@@ -1,4 +1,5 @@
 ---
+import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import AuthLabel from '../ui/AuthLabel.astro'
 import { copyFor, format, type Lang } from '../../i18n'
@@ -15,6 +16,7 @@ import Footer from './Footer.astro'
 import LandingLayout from '../../layouts/LandingLayout.astro'
 import Header from './Header.astro'
 import StoryCarousel from './StoryCarousel.astro'
+import { heroStories, OPENING_STORY, type HeroScene } from './hero-stories'
 import NightSky from './NightSky.astro'
 import { documentation } from './atlas/summary'
 import {
@@ -69,6 +71,13 @@ const CHAPTERS: { id: AtlasChapter; numeral: string; lead: AtlasId; demo: DemoId
   { id: 'publish', numeral: 'IV', lead: 'endings', demo: 'publish', zoom: 0.9 },
 ]
 
+// The hero opens on the opening story's landscape, the cover made of its words; the
+// other stories' landscapes wait under it until their story comes to the middle.
+const SCENE_IMAGES: Record<HeroScene, ImageMetadata> = { valley: valleyImage, coast: coastImage, desert: desertImage }
+const stories = heroStories(lang)
+const opening = stories.find(story => story.id === OPENING_STORY)!
+const others = stories.filter(story => story !== opening)
+
 const placeholder = referenceCode(null, t.engine.agent.placeholderId)
 const prompt = format(t.engine.agent.prompt, { reference: placeholder, npm: ENGINE_LINKS.npm })
 const code = engineExample(placeholder)
@@ -120,13 +129,14 @@ const structuredData = {
   <Header lang={lang} home={home} heroCta />
 
   <main id="main-content">
-    <!-- The valley, drawn on the app's squared paper; under its paint, the words it is made of. -->
-    <section class="e-hero" aria-labelledby="e-title" data-scene="valley">
+    <!-- The opening story's landscape, drawn on the app's squared paper; under its paint, the words it is made of. -->
+    <section class="e-hero" aria-labelledby="e-title" data-scene={opening.scene}>
       <div class="e-hero__paper" aria-hidden="true"></div>
-      <WrittenWorld class="e-hero__valley" image={valleyImage} lang={lang} quiet=".e-hero__lead" />
+      <WrittenWorld class="e-hero__cover" image={SCENE_IMAGES[opening.scene]} story={opening.tree} scene={opening.scene} quiet=".e-hero__lead" />
       <!-- The landscapes of the hero's other stories, shown while their story is in the middle. -->
-      <Image class="e-hero__scene" data-scene="coast" src={coastImage} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="lazy" fetchpriority="low" />
-      <Image class="e-hero__scene" data-scene="desert" src={desertImage} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="lazy" fetchpriority="low" />
+      {others.map(story => (
+        <Image class="e-hero__scene" data-scene={story.scene} src={SCENE_IMAGES[story.scene]} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="lazy" fetchpriority="low" />
+      ))}
       <div class="e-hero__copy">
         <h1 id="e-title">{t.hero.titleStart}<br />{t.hero.titleEnd}</h1>
         <p class="e-hero__lead">{c.meta.definition}</p>

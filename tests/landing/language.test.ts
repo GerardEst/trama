@@ -10,7 +10,7 @@ test.describe('with a Spanish browser', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'es')
     await expect(page.locator('h1')).toContainText('Tú escribes la historia.')
     await expect(page.locator('#try-it')).toContainText(
-      'te guía hasta la Ciudadela Hueca'
+      'el faro no se enciende'
     )
     await expect(
       page.locator('link[rel="alternate"][hreflang="ca"]')
@@ -31,7 +31,7 @@ test.describe('with a Spanish browser', () => {
     await page.goto('/')
     await expect(page).toHaveURL(/\/ca$/)
     await expect(page.locator('#try-it')).toContainText(
-      'et guia fins a la Ciutadella Buida'
+      'el far no s’encén'
     )
   })
 
@@ -55,7 +55,9 @@ test.describe('with a Catalan browser', () => {
 
   test('plays the shorter rich-text adventure in Catalan', async ({ page }) => {
     await page.goto('/ca')
-    const demo = page.locator('#try-it')
+    // The page opens on the lighthouse; the example story comes to the middle to be played.
+    await page.locator('.sc-tabs').getByRole('button', { name: 'El darrer llindar' }).click()
+    const demo = page.locator('#try-threshold')
     await expect(demo.locator('strong', { hasText: 'Ciutadella Buida' })).toBeVisible()
     await demo.getByRole('button', { name: 'Espasa — creua el pont dels sentinelles' }).click()
     await demo.getByRole('button', { name: 'Obre’t pas lluitant. Allibera l’esperit.' }).click()

@@ -3,11 +3,15 @@ import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-s
 import type { Lang } from '../../i18n'
 
 // The stories the hero offers to play, side by side. Each paints the hero with its
-// own landscape. The first is the example story new authors start with; the others
-// are short and written here, and the engine plays all of them the same way.
+// own landscape. The example story new authors start with comes first and the dark
+// lighthouse sits in the middle, but the page opens on the lighthouse: its coast is
+// the hero's cover, the one made of words. The engine plays all of them the same way.
 
 export const HERO_SCENES = ['valley', 'coast', 'desert'] as const
 export type HeroScene = (typeof HERO_SCENES)[number]
+
+/** The story the page opens on, already in the middle of the carousel. */
+export const OPENING_STORY = 'lighthouse'
 
 export interface HeroStory {
   id: string
@@ -226,7 +230,7 @@ function oasis(lang: Lang): StoryTree {
   } as StoryTree
 }
 
-/** The hero's stories in order: the example story first, as the page always had it. */
+/** The hero's stories in order: the example story first, the dark lighthouse in the middle. */
 export function heroStories(lang: Lang): HeroStory[] {
   const example = EXAMPLE_STORY_COPY[lang]
   return [

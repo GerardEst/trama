@@ -2,12 +2,13 @@
 import { format } from '../../lib/format'
 import type { Lang } from '../../i18n'
 import { interfaceCopyFor } from './copy'
-import { heroStories } from './hero-stories'
+import { heroStories, OPENING_STORY } from './hero-stories'
 import StoryDemo from './StoryDemo.astro'
 
 // The hero's stories side by side: the one in the middle can be played, the
 // others wait at the sides. Passing to one paints the hero with its landscape
-// (the .e-hero's data-scene). Without scripts the cards still scroll sideways.
+// (the .e-hero's data-scene). The page opens on OPENING_STORY, brought to the
+// middle before the first paint. Without scripts the cards still scroll sideways.
 interface Props {
   lang: Lang
 }
@@ -15,6 +16,7 @@ interface Props {
 const { lang } = Astro.props
 const e = interfaceCopyFor(lang)
 const stories = heroStories(lang)
+const opening = stories.findIndex(story => story.id === OPENING_STORY)
 ---
 
 <story-carousel class="sc" role="region" aria-roledescription="carousel" aria-label={e.storiesLabel}>
@@ -27,15 +29,15 @@ const stories = heroStories(lang)
         aria-label={format(e.storyOf, { n: index + 1, total: stories.length })}
         data-slide
         data-scene={story.scene}
-        data-active={index === 0 ? '' : undefined}
+        data-active={index === opening ? '' : undefined}
       >
-        <div class="sc-page" inert={index !== 0}>
+        <div class="sc-page" inert={index !== opening}>
           <StoryDemo
             lang={lang}
             class="e-story"
             memory
             story={story.tree}
-            id={index === 0 ? 'try-it' : `try-${story.id}`}
+            id={index === opening ? 'try-it' : `try-${story.id}`}
             label={format(e.playStory, { title: story.title })}
           >
             <p class="e-story__title">{story.title.toLocaleUpperCase(lang)}</p>
@@ -45,15 +47,15 @@ const stories = heroStories(lang)
     ))}
   </div>
   <nav class="sc-nav" aria-label={e.storiesLabel}>
-    <button class="sc-arrow" type="button" data-step="-1" aria-label={e.previousStory} disabled>←</button>
+    <button class="sc-arrow" type="button" data-step="-1" aria-label={e.previousStory} disabled={opening === 0}>←</button>
     <ol class="sc-tabs">
       {stories.map((story, index) => (
         <li>
-          <button type="button" data-go={index} aria-current={index === 0 ? 'true' : undefined}>{story.title}</button>
+          <button type="button" data-go={index} aria-current={index === opening ? 'true' : undefined}>{story.title}</button>
         </li>
       ))}
     </ol>
-    <button class="sc-arrow" type="button" data-step="1" aria-label={e.nextStory}>→</button>
+    <button class="sc-arrow" type="button" data-step="1" aria-label={e.nextStory} disabled={opening === stories.length - 1}>→</button>
   </nav>
 </story-carousel>
 
@@ -69,6 +71,9 @@ const stories = heroStories(lang)
     connectedCallback() {
       this.track = this.querySelector<HTMLElement>('[data-track]')!
       this.slides = [...this.querySelectorAll<HTMLElement>('[data-slide]')]
+      // The page opens on a card that may not be the first: centre it at once.
+      this.active = Math.max(0, this.slides.findIndex(slide => slide.hasAttribute('data-active')))
+      this.track.scrollLeft = this.centred(this.slides[this.active]!)
       this.observer = new IntersectionObserver(
         entries => {
           const crossing = entries.find(entry => entry.isIntersecting)
@@ -100,7 +105,12 @@ const stories = heroStories(lang)
       const slide = this.slides[Math.max(0, Math.min(this.slides.length - 1, index))]
       if (!slide) return
       const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches
-      this.track.scrollTo({ left: slide.offsetLeft - (this.track.clientWidth - slide.offsetWidth) / 2, behavior: smooth ? 'smooth' : 'auto' })
+      this.track.scrollTo({ left: this.centred(slide), behavior: smooth ? 'smooth' : 'auto' })
+    }
+
+    /** The track's scroll that puts the slide in its middle. */
+    private centred(slide: HTMLElement) {
+      return slide.offsetLeft - (this.track.clientWidth - slide.offsetWidth) / 2
     }
 
     private activate(index: number) {
@@ -116,11 +126,12 @@ const stories = heroStories(lang)
       })
       this.querySelector<HTMLButtonElement>('[data-step="-1"]')!.disabled = index === 0
       this.querySelector<HTMLButtonElement>('[data-step="1"]')!.disabled = index === this.slides.length - 1
-      const scene = this.slides[index]!.dataset['scene'] ?? 'valley'
+      const scene = this.slides[index]!.dataset['scene'] ?? ''
       const hero = document.querySelector<HTMLElement>('.e-hero')
       if (hero) hero.dataset['scene'] = scene
-      // The valley's words belong to the valley's story: they rest under the others.
-      hero?.querySelector('written-world')?.toggleAttribute('inactive', scene !== 'valley')
+      // The cover's words belong to its own story: they rest under the others.
+      const cover = hero?.querySelector<HTMLElement>('written-world')
+      cover?.toggleAttribute('inactive', scene !== cover.dataset['scene'])
     }
   }
 
@@ -154,6 +165,10 @@ const stories = heroStories(lang)
     scroll-snap-align: center;
   }
   /* A card waiting at the side keeps its paper and fades its words. */
+  /* Where browsers allow it, the opening card is centred even without scripts. */
+  .sc-slide[data-active] {
+    scroll-initial-target: nearest;
+  }
   .sc-slide:not([data-active]) {
     cursor: pointer;
   }

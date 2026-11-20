@@ -196,8 +196,8 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   color: var(--polo-color-illustration-paper);
 }
 
-/* Hero: the valley, drawn on squared paper. The painting is multiplied onto the
-   grid, so its pale sky turns into the notebook and the lines run under the hills. */
+/* Hero: the first story's landscape, drawn on squared paper. The painting is multiplied
+   onto the grid, so its pale sky turns into the notebook and the lines run under the hills. */
 .e-hero {
   position: relative;
   isolation: isolate;
@@ -213,7 +213,7 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   -webkit-mask-image: linear-gradient(transparent, black 12%, black 70%, transparent);
   mask-image: linear-gradient(transparent, black 12%, black 70%, transparent);
 }
-.e-hero__valley {
+.e-hero__cover {
   position: absolute;
   z-index: -1;
   inset: auto 0 0;
@@ -225,8 +225,9 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   mask-image: linear-gradient(transparent 6%, black 34%);
   transition: opacity 0.9s ease;
 }
-/* The other stories' landscapes, laid where the valley is; each shows while its
-   story is in the middle of the carousel (StoryCarousel sets data-scene). */
+/* The other stories' landscapes, laid where the cover is; each shows while its
+   story is in the middle of the carousel (StoryCarousel sets data-scene, and
+   marks the cover inactive while another story is there). */
 .e-hero__scene {
   position: absolute;
   z-index: -1;
@@ -241,14 +242,15 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   mask-image: linear-gradient(transparent 6%, black 34%);
   transition: opacity 0.9s ease;
 }
+.e-hero[data-scene='valley'] .e-hero__scene[data-scene='valley'],
 .e-hero[data-scene='coast'] .e-hero__scene[data-scene='coast'],
 .e-hero[data-scene='desert'] .e-hero__scene[data-scene='desert'] {
   opacity: 0.94;
 }
-.e-hero:not([data-scene='valley']) .e-hero__valley {
+.e-hero__cover[inactive] {
   opacity: 0;
 }
-/* The valley's paint, and the words under it (WrittenWorld). The canvas takes the
+/* The cover's paint, and the words under it (WrittenWorld). The canvas takes the
    picture's place once it has drawn it. Its colours are read as computed values:
    the cape from color, the graphite from outline-color (no outline is drawn). */
 .ww {
@@ -295,7 +297,7 @@ landing-nav[open] .ln__toggle [data-when-menu='open'] {
   text-wrap: balance;
 }
 
-/* The story, a page laid on the valley floor. */
+/* The story, a page laid on the landscape's floor. */
 .e-play {
   position: relative;
   z-index: 2;
@@ -1205,7 +1207,7 @@ trama-board[ready] .lb-loading {
   .ai-screen * {
     animation: none !important;
   }
-  .e-hero__valley,
+  .e-hero__cover,
   .e-hero__scene {
     transition: none;
   }

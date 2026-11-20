@@ -1,7 +1,16 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+// The example story is the hero's second: bring it to the middle, where it can be played.
+async function openExampleStory(page: Page) {
+  await page.locator('.sc-tabs').getByRole('button', { name: 'The Last Threshold' }).click()
+  const demo = page.locator('#try-threshold')
+  await expect(page.locator('.sc-slide[data-active]')).toContainText('THE LAST THRESHOLD')
+  return demo
+}
 
 test('remembers a rescued spirit and only offers the chosen skill', async ({ page }) => {
   await page.goto('/')
+  await openExampleStory(page)
   const demo = page.getByRole('region', { name: 'Play The Last Threshold' })
   await expect(demo.locator('strong', { hasText: 'Hollow Citadel' })).toBeVisible()
   await expect(demo.locator('em', { hasText: 'Free the others before dawn' })).toBeVisible()
@@ -24,7 +33,7 @@ test('remembers a rescued spirit and only offers the chosen skill', async ({ pag
 
 test('clears skills and remembered allies on restart, changing the next outcome', async ({ page }) => {
   await page.goto('/')
-  const demo = page.locator('#try-it')
+  const demo = await openExampleStory(page)
   await demo.getByRole('button', { name: 'Shadow — climb the haunted stair' }).click()
   await demo.getByRole('button', { name: 'Hide the spirit in your shadow' }).click()
   await demo.getByRole('button', { name: 'Slip into its shadow and strike' }).click()
@@ -44,7 +53,7 @@ test('clears skills and remembered allies on restart, changing the next outcome'
 test('uses a remembered relic to break the curse and offers a way to walk away', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 844 })
   await page.goto('/')
-  const demo = page.locator('#try-it')
+  const demo = await openExampleStory(page)
   await demo.getByRole('button', { name: 'Ember — enter the gate of living fire' }).click()
   await demo.getByRole('button', { name: 'Tame the fire. Take the sigil.' }).click()
   await expect(demo).toContainText('The sigil reads the Ember Keeper')

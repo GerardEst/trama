@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { copyFor } from '../../site/src/i18n'
 import { atlasFor } from '../../site/src/components/landing/atlas'
 
-const effectScript = /\/(?:written-world-effect|three(?:\.module)?)[^/]*\.js(?:\?|$)/
+const effectScript = /\/written-world-effect[^/]*\.js(?:\?|$)/
 
 for (const device of [
   { name: 'phone', width: 390, touch: true },
@@ -69,6 +69,50 @@ test('desktop loads the optional effect only on pointer use and restores the ima
   await expect(hero).not.toHaveAttribute('data-written', '')
   await expect(hero.locator('img')).toBeVisible()
   await expect(hero.locator('canvas')).toBeHidden()
+})
+
+// Each frame the cover draws its tear and its page, once. Its intro used to ask
+// for the next frame twice per frame, so the draws doubled every frame until the
+// page froze. The draws in each frame are counted while the intro plays.
+test('desktop draws the cover once per frame while its intro tears it', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.addInitScript(() => {
+    let draws = 0
+    const webgl = WebGLRenderingContext.prototype
+    const webgl2 = WebGL2RenderingContext.prototype
+    const draw = webgl.drawArrays
+    const draw2 = webgl2.drawArrays
+    webgl.drawArrays = function (this: WebGLRenderingContext, ...args: Parameters<typeof draw>) {
+      draws++
+      return draw.apply(this, args)
+    }
+    webgl2.drawArrays = function (this: WebGL2RenderingContext, ...args: Parameters<typeof draw2>) {
+      draws++
+      return draw2.apply(this, args)
+    }
+    Object.assign(window, { heroDraws: () => draws })
+  })
+  await page.goto('/')
+  await page.evaluate(() => customElements.whenDefined('written-world'))
+  await page.mouse.move(120, 300)
+  await expect(page.locator('written-world')).toHaveAttribute('data-written', '', { timeout: 15000 })
+  // The intro starts 0.7 s after the cover is drawn and tears for 1.4 s.
+  const busiest = await page.evaluate(() => new Promise<number>(resolve => {
+    const count = (window as Window & { heroDraws: () => number }).heroDraws
+    const start = performance.now()
+    let previous = count()
+    let most = 0
+    const frame = (now: number) => {
+      const draws = count()
+      most = Math.max(most, draws - previous)
+      previous = draws
+      if (now - start < 2600) requestAnimationFrame(frame)
+      else resolve(most)
+    }
+    requestAnimationFrame(frame)
+  }))
+  expect(busiest).toBeGreaterThan(0)
+  expect(busiest).toBeLessThanOrEqual(4)
 })
 
 test('reduced motion keeps the desktop hero static even on pointer use', async ({ page }) => {

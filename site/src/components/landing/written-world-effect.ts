@@ -1,4 +1,6 @@
-import type { Color, PlaneGeometry, ShaderMaterial, Texture, WebGLRenderTarget, WebGLRenderer } from 'three'
+// The torn cover, drawn with WebGL directly. Two full-screen passes are all it
+// needs, so it carries no 3D library: a modest computer has nothing to download
+// or parse beyond this file, and the GPU does as little work as the picture allows.
 
 interface Passage {
   name: string
@@ -6,16 +8,36 @@ interface Passage {
   answers: string[]
 }
 
+type Uniforms = Record<string, WebGLUniformLocation | null>
+
+interface Pass {
+  program: WebGLProgram
+  uniforms: Uniforms
+}
+
+interface Target {
+  texture: WebGLTexture
+  framebuffer: WebGLFramebuffer
+}
+
+// One triangle that covers the screen; its uv runs from 0 to 1 across the view.
 const VERTEX = /* glsl */ `
+  attribute vec2 position;
   varying vec2 vUv;
   void main() {
-    vUv = uv;
-    gl_Position = vec4(position.xy, 0.0, 1.0);
+    vUv = position * 0.5 + 0.5;
+    gl_Position = vec4(position, 0.0, 1.0);
   }
 `
 
+// Value noise on an arithmetic hash: no sine, which is slow and imprecise on
+// many integrated GPUs.
 const NOISE = /* glsl */ `
-  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float hash(vec2 p) {
+    vec3 q = fract(vec3(p.xyx) * 0.1031);
+    q += dot(q, q.yzx + 33.33);
+    return fract((q.x + q.y) * q.z);
+  }
   float noise(vec2 p) {
     vec2 i = floor(p), f = fract(p);
     vec2 u = f * f * (3.0 - 2.0 * f);
@@ -23,17 +45,19 @@ const NOISE = /* glsl */ `
   }
   float fbm(vec2 p) {
     float v = 0.0, a = 0.5;
-    for (int i = 0; i < 4; i++) { v += a * noise(p); p *= 2.07; a *= 0.5; }
+    for (int i = 0; i < 3; i++) { v += a * noise(p); p *= 2.07; a *= 0.5; }
     return v;
   }
 `
 
 // The tear. The mask holds two things: in red, how close each point is to the
-// line of a tear (1 on the line, 0 at its reach); in green, the tear's life.
-// Each frame life runs down, and the pointer tears one more piece, from where
-// the tip was to where it is now. The line wanders and changes width as it
-// goes, like paper that gives where it is weakest. A fresh tear starts its life
-// at 1.6; tearing again where one is already open keeps it open.
+// line of a tear (1 on the line, 0 at its reach); in green, the tear's life,
+// stored at half its value so an 8-bit mask can hold it too. Each frame life
+// runs down, and the pointer tears one more piece, from where the tip was to
+// where it is now. The line wanders and changes width as it goes, like paper
+// that gives where it is weakest. A fresh tear starts its life at 1.6; tearing
+// again where one is already open keeps it open. Only the points within the
+// tear's reach pay for its noise.
 const TEAR = /* glsl */ `
   precision highp float;
   varying vec2 vUv;
@@ -60,27 +84,31 @@ const TEAR = /* glsl */ `
 
   void main() {
     vec4 previous = texture2D(uPrevious, vUv);
-    float life = max(previous.g - uAging, 0.0);
+    float life = max(previous.g * 2.0 - uAging, 0.0);
     float line = life > 0.0 ? previous.r : 0.0;
     if (uTearing > 0.5) {
       vec2 p = vUv * uSize;
       vec2 segment = uTo - uFrom;
       float length_ = max(length(segment), 0.001);
       vec2 along = segment / length_;
-      vec2 across = vec2(-along.y, along.x);
       float t = clamp(dot(p - uFrom, along) / length_, 0.0, 1.0);
-      float run = uTravelled + t * length_;
-      float radius = mix(uRadiusFrom, uRadiusTo, t) * (0.6 + 0.8 * noise(vec2(run / 70.0, uSeed + 7.0)));
-      float wander = (noise(vec2(run / 45.0, uSeed)) - 0.5) * radius * 0.7;
-      float distance_ = length(p - (uFrom + along * t * length_) - across * wander);
-      // The paper does not tear across the quiet words: the tear thins out and stops.
-      float reach = clamp(1.0 - distance_ / radius, 0.0, 1.0) * (1.0 - quietness(p));
-      if (reach > 0.0) {
-        line = max(line, reach);
-        life = life > 0.0 ? max(life, 1.0) : 1.6;
+      vec2 centre = uFrom + along * t * length_;
+      // The line wanders by up to 0.35 of a radius 1.4 times the nominal one.
+      if (distance(p, centre) < 2.0 * max(uRadiusFrom, uRadiusTo)) {
+        vec2 across = vec2(-along.y, along.x);
+        float run = uTravelled + t * length_;
+        float radius = mix(uRadiusFrom, uRadiusTo, t) * (0.6 + 0.8 * noise(vec2(run / 70.0, uSeed + 7.0)));
+        float wander = (noise(vec2(run / 45.0, uSeed)) - 0.5) * radius * 0.7;
+        float distance_ = length(p - centre - across * wander);
+        // The paper does not tear across the quiet words: the tear thins out and stops.
+        float reach = clamp(1.0 - distance_ / radius, 0.0, 1.0) * (1.0 - quietness(p));
+        if (reach > 0.0) {
+          line = max(line, reach);
+          life = life > 0.0 ? max(life, 1.0) : 1.6;
+        }
       }
     }
-    gl_FragColor = vec4(line, life, 0.0, 1.0);
+    gl_FragColor = vec4(line, life * 0.5, 0.0, 1.0);
   }
 `
 
@@ -91,6 +119,9 @@ const TEAR = /* glsl */ `
 // the landscape above it, the pilcrows and arrows in the cape's red; the torn
 // edge casts a shadow on them, more from the upper side. The paper beneath is
 // the page's own, so on a dark page the words are light.
+//
+// Most of the page is not torn at any moment: there the painting is all it
+// draws, one texture read, and the rest of the work is skipped.
 const PAGE = /* glsl */ `
   precision highp float;
   varying vec2 vUv;
@@ -115,9 +146,14 @@ const PAGE = /* glsl */ `
   }
 
   void main() {
-    vec2 pixel = vUv * uResolution;
     vec4 tear = texture2D(uMask, vUv);
-    float opened = smoothstep(1.6, 1.48, tear.g) * smoothstep(0.0, 0.7, tear.g);
+    float life = tear.g * 2.0;
+    float opened = smoothstep(1.6, 1.48, life) * smoothstep(0.0, 0.7, life);
+    if (opened <= 0.0) {
+      gl_FragColor = vec4(texture2D(uImage, cover(vUv)).rgb, 1.0);
+      return;
+    }
+    vec2 pixel = vUv * uResolution;
 
     // Towards the line of the tear; each side of the painting moves away from it.
     vec2 e = uMaskTexel * 1.5;
@@ -132,12 +168,13 @@ const PAGE = /* glsl */ `
     // The jagged edge, and the fringe of fibres, wider in some places than others
     // and on the lower side, where the paper's top layer peeled back as it tore.
     float upper = 0.5 + 0.5 * dot(toward, normalize(vec2(0.3, -1.0)));
+    float grain = noise(pixel / 1.4);
     float field = tear.r + (fbm(pixel / 8.0) - 0.5) * 0.24 + (noise(pixel / 2.4) - 0.5) * 0.07;
     float edge = 1.0 - opened * 0.74;
-    float open = smoothstep(edge, edge + 0.012, field) * step(0.02, opened);
+    float open = smoothstep(edge, edge + 0.012, field);
     float fringe = (0.05 + 0.1 * noise(pixel / 16.0)) * opened * mix(1.5, 0.35, upper);
-    float fibres = smoothstep(edge - fringe - 0.012, edge - fringe, field + (noise(pixel / 1.2) - 0.5) * 0.06) * (1.0 - open);
-    vec3 fibre = mix(vec3(0.99, 0.98, 0.95), vec3(0.88, 0.86, 0.81), noise(pixel / 1.6) * 0.7);
+    float fibres = smoothstep(edge - fringe - 0.012, edge - fringe, field + (grain - 0.5) * 0.06) * (1.0 - open);
+    vec3 fibre = mix(vec3(0.99, 0.98, 0.95), vec3(0.88, 0.86, 0.81), (1.0 - grain) * 0.7);
     float lip = smoothstep(edge - fringe - 0.12, edge - fringe - 0.02, field) * (1.0 - fibres) * (1.0 - open) * opened;
 
     // Beneath: the words, with a trace of the landscape on their paper.
@@ -160,29 +197,50 @@ const LIFE_PER_SECOND = 0.32
 const LONGEST_TEAR = 1.6 / LIFE_PER_SECOND + 0.5
 // The mask is kept at half the element's size: the edge's detail is drawn by the page.
 const MASK_SCALE = 0.5
+// The page is drawn at the screen's density, up to 2, and at less when frames
+// come too slowly: a modest GPU trades sharpness for a tear that keeps up.
+const MAX_RATIO = 2
+const SLOW_FRAME = 1000 / 40
+const RATIO_STEP = 0.8
+
+/** A uniform's location; null (a no-op to set) if the compiler left it out. */
+const at = (pass: Pass, name: string) => pass.uniforms[name] ?? null
+
+/** A CSS colour, as the browser computes it, in 0–1 sRGB channels. */
+function parseColor(context: CanvasRenderingContext2D, color: string): [number, number, number] {
+  context.clearRect(0, 0, 1, 1)
+  context.fillStyle = '#000'
+  context.fillStyle = color
+  context.fillRect(0, 0, 1, 1)
+  const [r, g, b] = context.getImageData(0, 0, 1, 1).data
+  return [r! / 255, g! / 255, b! / 255]
+}
 
 class WrittenWorldEffect {
   private destroyed = false
-  private painting?: Texture
-  private geometry?: PlaneGeometry
-
-  private renderer?: WebGLRenderer
-  private page?: ShaderMaterial
-  private tearing?: ShaderMaterial
-  private targets: WebGLRenderTarget[] = []
-  private words?: Texture
-  private renderPage = () => {}
-  private renderTear = (_target: WebGLRenderTarget) => {}
-  private makeTargets = (_width: number, _height: number) => {}
+  private gl?: WebGLRenderingContext
+  private page?: Pass
+  private tearing?: Pass
+  private buffer?: WebGLBuffer | null
+  private painting?: WebGLTexture | null
+  private words?: WebGLTexture | null
+  private targets: Target[] = []
+  private maskFormat = { internal: 0, type: 0, step: 0 }
+  private agingDebt = 0
+  private colors?: CanvasRenderingContext2D | null
   private observer?: IntersectionObserver
   private resizer?: ResizeObserver
   private surface: HTMLElement | null = null
+  private canvas: HTMLCanvasElement | null = null
   private visible = false
   private started = false
   private frame = 0
   private last = 0
   private lastTear = -Infinity
   private size = { width: 1, height: 1 }
+  private ratio = 1
+  private floor = 1
+  private slowFrames = 0
   // Where the pointer is, and where the tear's tip is: the tip follows a little
   // behind, which smooths the tear into curves.
   private pointer: { x: number; y: number } | null = null
@@ -193,7 +251,6 @@ class WrittenWorldEffect {
   private intro?: { started: number; points: [number, number][] }
   private resizeTimer = 0
   private family = 'serif'
-  private readColors = () => {}
 
   constructor(private readonly host: HTMLElement) {}
 
@@ -219,171 +276,267 @@ class WrittenWorldEffect {
     this.unlisten()
     cancelAnimationFrame(this.frame)
     clearTimeout(this.resizeTimer)
-    this.targets.forEach(target => target.dispose())
-    this.words?.dispose()
-    this.page?.dispose()
-    this.tearing?.dispose()
-    this.painting?.dispose()
-    this.geometry?.dispose()
-    this.renderer?.dispose()
+    this.canvas?.removeEventListener('webglcontextlost', this.onContextLost)
+    const gl = this.gl
+    if (gl && !gl.isContextLost()) {
+      this.disposeTargets()
+      gl.deleteTexture(this.words ?? null)
+      gl.deleteTexture(this.painting ?? null)
+      gl.deleteBuffer(this.buffer ?? null)
+      if (this.page) gl.deleteProgram(this.page.program)
+      if (this.tearing) gl.deleteProgram(this.tearing.program)
+    }
+    this.gl = undefined
     this.host.removeAttribute('data-written')
   }
 
   private async start() {
     const canvas = this.host.querySelector('canvas')!
     const image = this.host.querySelector('img')!
-    const three = await import('three')
-    if (this.destroyed) return
-    // The painting's colours go to the screen exactly as they are in the file.
-    three.ColorManagement.enabled = false
-    let renderer: WebGLRenderer
-    try {
-      renderer = new three.WebGLRenderer({ canvas, antialias: false, alpha: false })
-    } catch {
-      return
-    }
-    this.renderer = renderer
-    // The <img> has already chosen and loaded the right size; the texture reuses it.
-    const painting = await new three.TextureLoader().loadAsync(image.currentSrc || image.src).catch(() => null)
-    if (!painting) return renderer.dispose()
-    if (this.destroyed) return painting.dispose()
-    this.painting = painting
-    painting.generateMipmaps = false
-    painting.minFilter = three.LinearFilter
+    this.canvas = canvas
+    const options: WebGLContextAttributes = { alpha: false, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false }
+    const gl = (canvas.getContext('webgl2', options) ?? canvas.getContext('webgl', options)) as WebGLRenderingContext | null
+    if (!gl || gl.isContextLost()) return
+    this.gl = gl
+    canvas.addEventListener('webglcontextlost', this.onContextLost)
+
+    // The <img> has already chosen and decoded the right size; the texture reuses it.
+    await image.decode().catch(() => undefined)
+    if (this.destroyed || !image.naturalWidth) return
 
     this.family = getComputedStyle(this.surface?.querySelector('h1') ?? this.host).fontFamily
     await document.fonts.load(`16px ${this.family}`).catch(() => [])
     await document.fonts.load(`italic 16px ${this.family}`).catch(() => [])
-
     if (this.destroyed) return
 
-    const camera = new three.Camera()
-    const quad = new three.PlaneGeometry(2, 2)
-    this.geometry = quad
-    const pageScene = new three.Scene()
-    const tearScene = new three.Scene()
-    this.page = new three.ShaderMaterial({
-      vertexShader: VERTEX,
-      fragmentShader: PAGE,
-      uniforms: {
-        uImage: { value: painting },
-        uMask: { value: null },
-        uWords: { value: null },
-        uResolution: { value: new three.Vector2(1, 1) },
-        uImageSize: { value: new three.Vector2(painting.image.width, painting.image.height) },
-        uMaskTexel: { value: new three.Vector2(1, 1) },
-        uGraphite: { value: new three.Color() },
-        uCape: { value: new three.Color() },
-        uPaper: { value: new three.Color() },
-        uDark: { value: 0 },
-      },
-    })
-    this.tearing = new three.ShaderMaterial({
-      vertexShader: VERTEX,
-      fragmentShader: TEAR,
-      uniforms: {
-        uPrevious: { value: null },
-        uSize: { value: new three.Vector2(1, 1) },
-        uFrom: { value: new three.Vector2() },
-        uTo: { value: new three.Vector2() },
-        uRadiusFrom: { value: 1 },
-        uRadiusTo: { value: 1 },
-        uTravelled: { value: 0 },
-        uSeed: { value: 0 },
-        uAging: { value: 0 },
-        uTearing: { value: 0 },
-        uQuiet: { value: new three.Vector4(-1e5, -1e5, -1e5, -1e5) },
-      },
-    })
-    pageScene.add(new three.Mesh(quad, this.page))
-    tearScene.add(new three.Mesh(quad, this.tearing))
+    const page = this.link(PAGE)
+    const tearing = this.link(TEAR)
+    if (!page || !tearing) return this.destroy()
+    this.page = page
+    this.tearing = tearing
 
-    // Half floats keep the tear's life in small steps; without them it runs down
-    // in coarser ones, which still reads well.
-    const type = renderer.capabilities.isWebGL2 ? three.HalfFloatType : three.UnsignedByteType
-    this.makeTargets = (width, height) => {
-      this.targets.forEach(target => target.dispose())
-      this.targets = [0, 1].map(() => new three.WebGLRenderTarget(width, height, {
-        type,
-        depthBuffer: false,
-        minFilter: three.LinearFilter,
-        magFilter: three.LinearFilter,
-      }))
-      for (const target of this.targets) {
-        renderer.setRenderTarget(target)
-        renderer.clear()
-      }
-      renderer.setRenderTarget(null)
-    }
-    this.renderTear = target => {
-      renderer.setRenderTarget(target)
-      renderer.render(tearScene, camera)
-      renderer.setRenderTarget(null)
-    }
-    this.renderPage = () => renderer.render(pageScene, camera)
-    // The theme can change while the page is open, so each tear reads the
-    // colours again: the cape and graphite (set on this element) and the paper.
-    this.readColors = () => {
-      const uniforms = this.page!.uniforms
-      const style = getComputedStyle(this.host)
-      const paper = (uniforms['uPaper']!.value as Color).setStyle(getComputedStyle(document.body).backgroundColor)
-      uniforms['uCape']!.value.setStyle(style.color)
-      uniforms['uGraphite']!.value.setStyle(style.outlineColor)
-      uniforms['uDark']!.value = paper.r * 0.3 + paper.g * 0.59 + paper.b * 0.11 < 0.5 ? 1 : 0
-    }
+    this.buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
+    gl.enableVertexAttribArray(0)
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0)
+    gl.disable(gl.DEPTH_TEST)
+    gl.disable(gl.BLEND)
+
+    this.painting = this.texture(image)
+    this.maskFormat = this.chooseMaskFormat()
+
+    gl.useProgram(page.program)
+    gl.uniform1i(at(page, 'uImage'), 0)
+    gl.uniform1i(at(page, 'uMask'), 1)
+    gl.uniform1i(at(page, 'uWords'), 2)
+    gl.uniform2f(at(page, 'uImageSize'), image.naturalWidth, image.naturalHeight)
+    gl.useProgram(tearing.program)
+    gl.uniform1i(at(tearing, 'uPrevious'), 0)
+    gl.uniform4f(at(tearing, 'uQuiet'), -1e5, -1e5, -1e5, -1e5)
+
+    this.colors = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
     this.readColors()
-    this.makeWords = (width, height, ratio) => {
-      const texture = new three.CanvasTexture(this.typeset(width, height, ratio))
-      texture.generateMipmaps = false
-      texture.minFilter = three.LinearFilter
-      return texture
-    }
 
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
-    renderer.setClearColor(0x000000, 1)
+    this.ratio = Math.min(devicePixelRatio || 1, MAX_RATIO)
+    this.floor = Math.min(1, this.ratio) * 0.75
     this.resizer = new ResizeObserver(() => {
       clearTimeout(this.resizeTimer)
       this.resizeTimer = window.setTimeout(() => this.resize(), 120)
     })
     this.resizer.observe(this.host)
     this.resize()
+    if (this.destroyed) return
     this.host.setAttribute('data-written', '')
     this.playIntro()
+  }
+
+  private onContextLost = (event: Event) => {
+    event.preventDefault()
+    // The painting under the canvas comes back; the effect does not.
+    this.destroy()
+  }
+
+  private link(fragment: string): Pass | undefined {
+    const gl = this.gl!
+    const compile = (type: number, source: string) => {
+      const shader = gl.createShader(type)!
+      gl.shaderSource(shader, source)
+      gl.compileShader(shader)
+      return shader
+    }
+    const vertex = compile(gl.VERTEX_SHADER, VERTEX)
+    const fragmentShader = compile(gl.FRAGMENT_SHADER, fragment)
+    const program = gl.createProgram()!
+    gl.attachShader(program, vertex)
+    gl.attachShader(program, fragmentShader)
+    gl.bindAttribLocation(program, 0, 'position')
+    gl.linkProgram(program)
+    gl.deleteShader(vertex)
+    gl.deleteShader(fragmentShader)
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.warn('written-world: shader failed to link', gl.getProgramInfoLog(program))
+      gl.deleteProgram(program)
+      return undefined
+    }
+    const uniforms: Uniforms = {}
+    const count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS) as number
+    for (let i = 0; i < count; i++) {
+      const name = gl.getActiveUniform(program, i)!.name
+      uniforms[name] = gl.getUniformLocation(program, name)
+    }
+    return { program, uniforms }
+  }
+
+  /** A texture from an image or canvas, the right way up for the shaders' uv. */
+  private texture(source: TexImageSource) {
+    const gl = this.gl!
+    const texture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+    this.sampling()
+    return texture
+  }
+
+  private sampling() {
+    const gl = this.gl!
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  }
+
+  // Half floats keep the tear's life in small steps where WebGL 2 can render
+  // to them; elsewhere an 8-bit mask runs it down in coarser steps, which still
+  // reads well (see agingDebt).
+  private chooseMaskFormat() {
+    const gl = this.gl!
+    const byte = { internal: gl.RGBA, type: gl.UNSIGNED_BYTE, step: 2 / 255 }
+    if (!(typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext)) return byte
+    if (!gl.getExtension('EXT_color_buffer_float') && !gl.getExtension('EXT_color_buffer_half_float')) return byte
+    const half = { internal: gl.RGBA16F, type: gl.HALF_FLOAT, step: 0 }
+    const probe = this.makeTarget(4, 4, half)
+    gl.bindFramebuffer(gl.FRAMEBUFFER, probe.framebuffer)
+    const complete = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+    gl.deleteFramebuffer(probe.framebuffer)
+    gl.deleteTexture(probe.texture)
+    return complete ? half : byte
+  }
+
+  private makeTarget(width: number, height: number, format = this.maskFormat): Target {
+    const gl = this.gl!
+    const texture = gl.createTexture()!
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.texImage2D(gl.TEXTURE_2D, 0, format.internal, width, height, 0, gl.RGBA, format.type, null)
+    this.sampling()
+    const framebuffer = gl.createFramebuffer()!
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0)
+    gl.clearColor(0, 0, 0, 1)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+    return { texture, framebuffer }
+  }
+
+  private disposeTargets() {
+    const gl = this.gl
+    for (const target of this.targets) {
+      gl?.deleteFramebuffer(target.framebuffer)
+      gl?.deleteTexture(target.texture)
+    }
+    this.targets = []
+  }
+
+  // The theme can change while the page is open, so each tear reads the
+  // colours again: the cape and graphite (set on this element) and the paper.
+  private readColors() {
+    const gl = this.gl
+    if (!gl || !this.page || !this.colors) return
+    const style = getComputedStyle(this.host)
+    gl.useProgram(this.page.program)
+    const paper = parseColor(this.colors, getComputedStyle(document.body).backgroundColor)
+    gl.uniform3f(at(this.page, 'uPaper'), ...paper)
+    gl.uniform3f(at(this.page, 'uCape'), ...parseColor(this.colors, style.color))
+    gl.uniform3f(at(this.page, 'uGraphite'), ...parseColor(this.colors, style.outlineColor))
+    gl.uniform1f(at(this.page, 'uDark'), paper[0] * 0.3 + paper[1] * 0.59 + paper[2] * 0.11 < 0.5 ? 1 : 0)
   }
 
   // Where the quiet words are, in the tear's coordinates (origin bottom left).
   private measureQuiet() {
     const selector = this.host.dataset['quiet']
     const quiet = selector ? this.surface?.querySelector(selector) : null
-    if (!quiet || !this.tearing) return
+    const gl = this.gl
+    if (!quiet || !gl || !this.tearing) return
     const own = this.host.getBoundingClientRect()
     const rect = quiet.getBoundingClientRect()
-    this.tearing.uniforms['uQuiet']!.value.set(rect.left - own.left, own.bottom - rect.bottom, rect.right - own.left, own.bottom - rect.top)
+    gl.useProgram(this.tearing.program)
+    gl.uniform4f(at(this.tearing, 'uQuiet'), rect.left - own.left, own.bottom - rect.bottom, rect.right - own.left, own.bottom - rect.top)
   }
 
-  private makeWords = (_width: number, _height: number, _ratio: number): Texture | undefined => undefined
-
   private resize() {
-    if (!this.renderer || !this.page || !this.tearing) return
+    const gl = this.gl
+    if (!gl || !this.page || !this.tearing || gl.isContextLost()) return
     const { width, height } = this.host.getBoundingClientRect()
     if (!width || !height) return
     this.size = { width, height }
-    this.renderer.setSize(width, height, false)
-    this.makeTargets(Math.ceil(width * MASK_SCALE), Math.ceil(height * MASK_SCALE))
-    this.words?.dispose()
-    this.words = this.makeWords(width, height, this.renderer.getPixelRatio())
-    this.page.uniforms['uResolution']!.value.set(width, height)
-    this.page.uniforms['uMaskTexel']!.value.set(1 / Math.ceil(width * MASK_SCALE), 1 / Math.ceil(height * MASK_SCALE))
-    this.page.uniforms['uWords']!.value = this.words
-    this.page.uniforms['uMask']!.value = this.targets[0]!.texture
-    this.tearing.uniforms['uSize']!.value.set(width, height)
+    this.fitCanvas()
+    const maskWidth = Math.ceil(width * MASK_SCALE)
+    const maskHeight = Math.ceil(height * MASK_SCALE)
+    this.disposeTargets()
+    this.targets = [this.makeTarget(maskWidth, maskHeight), this.makeTarget(maskWidth, maskHeight)]
+    // The words are set once per size, at the screen's own density.
+    gl.deleteTexture(this.words ?? null)
+    this.words = this.texture(this.typeset(width, height, Math.min(devicePixelRatio || 1, MAX_RATIO)))
+    gl.useProgram(this.page.program)
+    gl.uniform2f(at(this.page, 'uResolution'), width, height)
+    gl.uniform2f(at(this.page, 'uMaskTexel'), 1 / maskWidth, 1 / maskHeight)
+    gl.useProgram(this.tearing.program)
+    gl.uniform2f(at(this.tearing, 'uSize'), width, height)
     this.measureQuiet()
     this.renderPage()
   }
 
-  // The words beneath: the example story, set as one long justified page. The
-  // lines grow from the top of the valley to its foot, so the letters keep the
-  // painting's depth. Body text goes in the red channel, the marks in green.
+  private fitCanvas() {
+    const canvas = this.canvas!
+    const width = Math.max(1, Math.round(this.size.width * this.ratio))
+    const height = Math.max(1, Math.round(this.size.height * this.ratio))
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width
+      canvas.height = height
+    }
+  }
+
+  private renderTear(target: Target) {
+    const gl = this.gl!
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer)
+    gl.viewport(0, 0, Math.ceil(this.size.width * MASK_SCALE), Math.ceil(this.size.height * MASK_SCALE))
+    gl.useProgram(this.tearing!.program)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, this.targets[0]!.texture)
+    gl.drawArrays(gl.TRIANGLES, 0, 3)
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+  }
+
+  private renderPage() {
+    const gl = this.gl!
+    const canvas = this.canvas!
+    gl.viewport(0, 0, canvas.width, canvas.height)
+    gl.useProgram(this.page!.program)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, this.painting ?? null)
+    gl.activeTexture(gl.TEXTURE1)
+    gl.bindTexture(gl.TEXTURE_2D, this.targets[0]?.texture ?? null)
+    gl.activeTexture(gl.TEXTURE2)
+    gl.bindTexture(gl.TEXTURE_2D, this.words ?? null)
+    gl.drawArrays(gl.TRIANGLES, 0, 3)
+  }
+
+  // The words beneath: the cover's story, set as one long justified page. The
+  // lines grow from the top of the landscape to its foot, so the letters keep
+  // the painting's depth. Body text goes in the red channel, the marks in green.
   private typeset(width: number, height: number, ratio: number) {
     const canvas = document.createElement('canvas')
     canvas.width = Math.round(width * ratio)
@@ -396,11 +549,11 @@ class WrittenWorldEffect {
 
     const passages = JSON.parse(this.host.dataset['passages'] ?? '[]') as Passage[]
     type Word = { text: string; italic?: boolean; mark?: boolean }
+    const split = (text: string, style: Omit<Word, 'text'> = {}) => text.split(' ').filter(Boolean).map(word => ({ text: word, ...style }))
     const words: Word[] = passages.flatMap(passage => [
-      ...passage.name.split(' ').map(text => ({ text, italic: true })),
-      { text: '—', italic: true },
-      ...passage.text.split(' ').map(text => ({ text })),
-      ...passage.answers.flatMap(answer => [{ text: '→', mark: true }, ...answer.split(' ').map(text => ({ text, italic: true }))]),
+      ...(passage.name ? [...split(passage.name, { italic: true }), { text: '—', italic: true }] : []),
+      ...split(passage.text),
+      ...passage.answers.flatMap(answer => [{ text: '→', mark: true }, ...split(answer, { italic: true })]),
       { text: '¶', mark: true },
     ])
     if (!words.length) return canvas
@@ -452,7 +605,7 @@ class WrittenWorldEffect {
 
   // Mouse and pen only: on touch the same gesture scrolls the page.
   private onMove = (event: PointerEvent) => {
-    if (event.pointerType === 'touch' || !this.renderer) return
+    if (event.pointerType === 'touch' || !this.gl) return
     const rect = this.host.getBoundingClientRect()
     const point = { x: event.clientX - rect.left, y: rect.bottom - event.clientY }
     if (point.x < 0 || point.y < 0 || point.x > rect.width || point.y > rect.height) return this.onLeave()
@@ -479,11 +632,11 @@ class WrittenWorldEffect {
     this.wake()
   }
 
-  // The first pointer interaction reveals how the valley can be torn.
+  // The first pointer interaction reveals how the cover can be torn.
   private playIntro() {
     const { width, height } = this.size
     // Wide, beside the title on the left hillside; narrow, across the strip of
-    // valley between the title and the story.
+    // landscape between the title and the story.
     const points: [number, number][] = width >= 900
       ? [[0.03, 0.5], [0.11, 0.45], [0.19, 0.5], [0.28, 0.43]]
       : [[0.04, 0.22], [0.3, 0.28], [0.62, 0.22], [0.96, 0.29]]
@@ -492,17 +645,31 @@ class WrittenWorldEffect {
   }
 
   private wake() {
-    if (this.frame || !this.visible) return
+    if (this.frame || !this.visible || !this.gl) return
     this.last = performance.now()
+    this.slowFrames = 0
     this.frame = requestAnimationFrame(this.tick)
+  }
+
+  // A run of slow frames lowers the page's resolution a step, down to a floor.
+  private pace(elapsed: number) {
+    if (this.ratio <= this.floor) return
+    this.slowFrames = elapsed > SLOW_FRAME ? this.slowFrames + 1 : Math.max(0, this.slowFrames - 1)
+    if (this.slowFrames < 8) return
+    this.slowFrames = 0
+    this.ratio = Math.max(this.floor, this.ratio * RATIO_STEP)
+    this.fitCanvas()
   }
 
   private tick = (now: number) => {
     this.frame = 0
-    if (!this.renderer || !this.tearing || !this.page) return
+    const gl = this.gl
+    if (!gl || !this.tearing || !this.page || gl.isContextLost()) return
     // The frame's timestamp can be a little older than the moment it was asked for.
-    const seconds = Math.min(0.05, Math.max(0, (now - this.last) / 1000))
+    const elapsed = Math.max(0, now - this.last)
+    const seconds = Math.min(0.05, elapsed / 1000)
     this.last = now
+    this.pace(elapsed)
 
     if (this.intro && now >= this.intro.started) {
       const progress = (now - this.intro.started) / 1400
@@ -521,9 +688,17 @@ class WrittenWorldEffect {
       }
     }
 
-    const uniforms = this.tearing.uniforms
-    uniforms['uAging']!.value = seconds * LIFE_PER_SECOND
-    uniforms['uTearing']!.value = 0
+    gl.useProgram(this.tearing.program)
+    // An 8-bit mask cannot hold less than one step of life: the ageing is kept
+    // until it adds up to a whole step, so tears close at the same pace there.
+    let aging = seconds * LIFE_PER_SECOND
+    if (this.maskFormat.step) {
+      this.agingDebt += aging
+      aging = Math.floor(this.agingDebt / this.maskFormat.step) * this.maskFormat.step
+      this.agingDebt -= aging
+    }
+    gl.uniform1f(at(this.tearing, 'uAging'), aging)
+    gl.uniform1f(at(this.tearing, 'uTearing'), 0)
     if (this.pointer && this.tip) {
       const from = { ...this.tip }
       const follow = 1 - Math.pow(0.0005, seconds)
@@ -538,29 +713,30 @@ class WrittenWorldEffect {
       const previous = this.radius || target * 0.3
       this.radius = previous + (target - previous) * Math.min(1, seconds * 10)
       if (moved > 0.3 || this.travelled === 0) {
-        uniforms['uTearing']!.value = 1
-        uniforms['uFrom']!.value.set(from.x, from.y)
-        uniforms['uTo']!.value.set(this.tip.x, this.tip.y)
-        uniforms['uRadiusFrom']!.value = previous
-        uniforms['uRadiusTo']!.value = this.radius
-        uniforms['uTravelled']!.value = this.travelled
-        uniforms['uSeed']!.value = this.seed
+        gl.uniform1f(at(this.tearing, 'uTearing'), 1)
+        gl.uniform2f(at(this.tearing, 'uFrom'), from.x, from.y)
+        gl.uniform2f(at(this.tearing, 'uTo'), this.tip.x, this.tip.y)
+        gl.uniform1f(at(this.tearing, 'uRadiusFrom'), previous)
+        gl.uniform1f(at(this.tearing, 'uRadiusTo'), this.radius)
+        gl.uniform1f(at(this.tearing, 'uTravelled'), this.travelled)
+        gl.uniform1f(at(this.tearing, 'uSeed'), this.seed)
         this.travelled += moved || 0.001
         this.lastTear = now
       }
     }
 
-    const [read, write] = this.targets as [WebGLRenderTarget, WebGLRenderTarget]
-    uniforms['uPrevious']!.value = read.texture
+    // Read the mask from the first target, write it into the second, then swap.
+    const [read, write] = this.targets as [Target, Target]
     this.renderTear(write)
     this.targets = [write, read]
-    this.page.uniforms['uMask']!.value = write.texture
     this.renderPage()
 
-    // Keep drawing while there is a tear to make or one still open.
+    // Keep drawing while there is a tear to make or one still open. The intro's
+    // aim may have asked for the next frame already: one frame is asked for at a
+    // time, or every frame would draw twice as often as the one before it.
     const open = (now - this.lastTear) / 1000 < LONGEST_TEAR
     const following = !!this.pointer && !!this.tip && Math.hypot(this.pointer.x - this.tip.x, this.pointer.y - this.tip.y) > 0.3
-    if (this.visible && (following || this.intro || open)) this.frame = requestAnimationFrame(this.tick)
+    if (!this.frame && this.visible && (following || this.intro || open)) this.frame = requestAnimationFrame(this.tick)
   }
 }
 

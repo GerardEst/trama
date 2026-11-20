@@ -1,33 +1,30 @@
 ---
 import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
-import { buildExampleStory, EXAMPLE_STORY_COPY } from '@app/app/shared/example-story/exampleStory'
-import type { Lang } from '../../i18n'
+import type { StoryTree } from '@trama-app/engine'
 
-// The valley is made of words. Where the pointer passes, the drawing tears and
-// shows what is underneath: the example story, set in the book's type, each
-// letter in the colour of the landscape it sits under. A few seconds later the
-// tears close again.
+// The cover is made of words. Where the pointer passes, the drawing tears and
+// shows what is underneath: the story the cover belongs to, set in the book's
+// type, each letter in the colour of the landscape it sits under. A few seconds
+// later the tears close again.
 //
 // Touch devices, small screens and reduced motion use only the painting below.
 // Desktop readers can reveal the words by moving a mouse over the hero.
 interface Props {
   image: ImageMetadata
-  lang: Lang
+  /** The story written under the painting. */
+  story: StoryTree
+  /** The scene this cover paints; it rests while the hero shows another. */
+  scene: string
+  /** Values for the variables in the story's text, as one playthrough would read them. */
+  values?: Record<string, string>
   class?: string
   /** A selector, inside the same section, for words the drawing does not tear over. */
   quiet?: string
 }
 
-const { image, lang, class: className, quiet } = Astro.props
-const copy = EXAMPLE_STORY_COPY[lang]
-const story = buildExampleStory(copy)
+const { image, story, scene, values = {}, class: className, quiet } = Astro.props
 
-// The variables in the story's text read as one playthrough's values would.
-const values: Record<string, string> = {
-  property_title: copy.titles.ember,
-  property_deed: copy.skills.ember.deed,
-}
 const plain = (html: string) =>
   html
     .replace(/<span[^>]*data-key="([^"]+)"[^>]*>[^<]*<\/span>/g, (_, key: string) => values[key] ?? '')
@@ -35,8 +32,8 @@ const plain = (html: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-// One line per scene: its name, its text, and each answer after an arrow.
-const passages = story.nodes
+// One line per scene: its name (if it has one), its text, and each answer after an arrow.
+const passages = (story.nodes ?? [])
   .filter(node => node.text)
   .map(node => ({
     name: node.name ?? '',
@@ -45,16 +42,16 @@ const passages = story.nodes
   }))
 ---
 
-<written-world class:list={['ww', className]} aria-hidden="true" data-passages={JSON.stringify(passages)} data-quiet={quiet}>
+<written-world class:list={['ww', className]} aria-hidden="true" data-scene={scene} data-passages={JSON.stringify(passages)} data-quiet={quiet}>
   <Image class="ww-image" src={image} alt="" widths={[480, 768, 960, 1440, 1928]} sizes="100vw" loading="eager" fetchpriority="high" />
   <canvas class="ww-canvas" aria-hidden="true"></canvas>
 </written-world>
 
 <script>
-  // Keep the initial page static. Neither the shaders nor Three.js are fetched
+  // Keep the initial page static. The WebGL effect is not fetched
   // on touch devices, small screens, reduced motion, or before pointer use.
   class WrittenWorld extends HTMLElement {
-    // While another landscape covers the valley (the hero's other stories), the
+    // While another landscape covers this one (the hero's other stories), the
     // effect rests: nothing listens to the pointer and nothing is drawn.
     static observedAttributes = ['inactive']
     private eligibility?: MediaQueryList

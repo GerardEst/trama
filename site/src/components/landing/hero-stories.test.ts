@@ -1,6 +1,6 @@
 import { createGame, type GameState, type StoryTree } from '@trama-app/engine'
 import { describe, expect, it } from 'vitest'
-import { heroStories } from './hero-stories'
+import { heroStories, OPENING_STORY } from './hero-stories'
 
 const LANGS = ['en', 'es', 'ca'] as const
 
@@ -22,8 +22,10 @@ const ending = (tree: StoryTree, id: string) => tree.nodes!.find(node => node.id
 describe.each(LANGS)('the hero stories in %s', lang => {
   const [threshold, lighthouse, oasis] = heroStories(lang)
 
-  it('starts with the example story and gives each story its own landscape', () => {
+  it('puts the example story first and opens on the dark lighthouse in the middle, each with its own landscape', () => {
     expect(threshold!.id).toBe('threshold')
+    expect(lighthouse!.id).toBe(OPENING_STORY)
+    expect(lighthouse!.scene).toBe('coast')
     expect(new Set(heroStories(lang).map(story => story.scene)).size).toBe(3)
   })
 
