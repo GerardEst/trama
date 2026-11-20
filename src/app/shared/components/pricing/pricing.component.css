@@ -162,6 +162,22 @@
   line-height: 1.6;
 }
 
+/* Cancelling is available but quiet: an ordinary button, not the plan's main action. */
+.cancel {
+  justify-self: start;
+  align-self: flex-start;
+}
+
+.cancelError {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--polo-color-danger-border);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-danger-soft);
+  color: var(--polo-color-danger-text);
+  font-size: 14px;
+}
+
 .pricing__coming-soon {
   align-self: flex-end;
   padding: 10px 14px;

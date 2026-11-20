@@ -44,7 +44,7 @@ async function openStory(page: Page, theme: 'light' | 'dark' = 'light') {
     else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1200 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await expect(page.locator('[data-board-origin]')).toHaveCount(6)
   return () => savedTree
 }
@@ -114,6 +114,8 @@ test.describe('touch connection tabs', () => {
   test('keeps the visible tab compact but exposes a 44px touch target (mocked backend)', async ({ page }) => {
     await openStory(page)
     const source = page.locator('[data-board-origin="node_0"]')
+    // Measure once the board has centred the story, not at its raw coordinates.
+    await expect(source).toBeInViewport()
     const hitArea = await source.evaluate(element => {
       const style = getComputedStyle(element, '::before')
       const rect = element.getBoundingClientRect()

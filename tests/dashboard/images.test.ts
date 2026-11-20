@@ -80,7 +80,7 @@ async function selectImage(page: Page) {
 test.describe('Story image lifecycle', () => {
   test('upload, removal, undo and redo preserve the file until the saved deletion leaves history', async ({ page }) => {
     const backend = await mockImagesBackend(page)
-    await page.goto('/dashboard')
+    await page.goto('/board')
     const node = page.locator('.node[data-board-join-node="node_1"]')
     await expect(node).toBeVisible()
     await selectImage(page)
@@ -100,16 +100,16 @@ test.describe('Story image lifecycle', () => {
     await expect(preview).toHaveCount(0)
     await expect.poll(() => backend.tree().nodes[1].image).toBeUndefined()
     expect(backend.removed).toEqual([])
-    await expect(page.locator('polo-menu-top [role="status"]')).toContainText('Board changes saved')
-    await page.locator('polo-menu').getByRole('link', { name: 'Docs', exact: true }).click()
-    await expect(page).toHaveURL(/\/docs\/features/)
+    await expect(page.locator('polo-board-header [role="status"]')).toContainText('Saved')
+    await page.locator('polo-board-header').getByRole('link', { name: 'Home', exact: true }).click()
+    await expect(page).toHaveURL(/\/dashboard$/)
     await expect.poll(() => backend.removed).toEqual([uploadedPath])
   })
 
   test('selecting the current story preserves an in-flight upload and earlier undo steps', async ({ page }) => {
     const backend = await mockImagesBackend(page, true)
     try {
-      await page.goto('/dashboard')
+      await page.goto('/board')
       const start = page.locator('.node[data-board-join-node="node_0"]')
       const node = page.locator('.node[data-board-join-node="node_1"]')
       await start.getByRole('textbox', { name: 'Node text', exact: true }).click()
@@ -118,7 +118,8 @@ test.describe('Story image lifecycle', () => {
       await expect.poll(() => backend.tree().nodes[0].text).toBe('<p>Earlier text edit</p>')
       await selectImage(page)
       await expect.poll(() => backend.uploaded.length).toBe(1)
-      await page.getByRole('button', { name: 'Image story', exact: true }).click()
+      await page.getByRole('button', { name: 'Switch project', exact: true }).click()
+      await page.getByRole('link', { name: 'Image story', exact: true }).click()
       backend.releaseUpload()
       await expect(node.getByRole('img', { name: 'Node illustration', exact: true })).toBeVisible()
       await expect.poll(() => backend.tree().nodes[1].image?.path).toBe(backend.uploaded[0])
@@ -136,7 +137,7 @@ test.describe('Story image lifecycle', () => {
   test('an upload finishing after node deletion cannot attach to the node restored by undo', async ({ page }) => {
     const backend = await mockImagesBackend(page, true)
     try {
-      await page.goto('/dashboard')
+      await page.goto('/board')
       const node = page.locator('.node[data-board-join-node="node_1"]')
       await expect(node).toBeVisible()
       await selectImage(page)

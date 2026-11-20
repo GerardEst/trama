@@ -1,0 +1,42 @@
+<div class="shell">
+  <aside class="sidebar">
+    <polo-wordmark class="wordmark" [href]="homeUrl()" label="Trama"></polo-wordmark>
+
+    <a class="back" routerLink="/dashboard">
+      <img width="14" src="/assets/icons/chevron-left.svg" alt="" />
+      {{ 'dashboard.menu.home' | t }}
+    </a>
+
+    <p class="sidebar__title" id="settings-title">{{ 'settings.title' | t }}</p>
+
+    <nav class="nav" aria-labelledby="settings-title">
+      <ul class="nav__group">
+        <li>
+          <a class="nav__item" routerLink="/settings/account" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/user.svg" alt="" />
+            {{ 'settings.account.nav' | t }}
+          </a>
+        </li>
+        <li>
+          <a class="nav__item" routerLink="/settings/preferences" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/configuration.svg" alt="" />
+            {{ 'settings.preferences.nav' | t }}
+          </a>
+        </li>
+        <li>
+          <a class="nav__item" routerLink="/settings/billing" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/card.svg" alt="" />
+            {{ 'settings.billing.nav' | t }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- The person at the foot of the menu: the top is for moving around the app. -->
+    <polo-user-menu class="sidebar__user"></polo-user-menu>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

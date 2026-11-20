@@ -1,0 +1,201 @@
+:host {
+  pointer-events: none;
+}
+
+/* Along the foot of the board, inside its pane: three groups, like the panels around them. */
+.controls {
+  position: absolute;
+  z-index: 5;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-1);
+  padding: 6px;
+  pointer-events: auto;
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  box-shadow: var(--polo-shadow-floating);
+  white-space: nowrap;
+}
+.controls--start {
+  left: 16px;
+}
+.controls--create {
+  left: 50%;
+  translate: -50% 0;
+}
+.controls--end {
+  right: 16px;
+}
+
+.separator {
+  align-self: stretch;
+  width: 1px;
+  margin: var(--polo-space-1) 2px;
+  background: var(--polo-color-border);
+}
+
+.create, .zoom, .help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--polo-color-text-strong);
+  font: 700 13px/1.2 var(--polo-font-ui);
+  cursor: pointer;
+}
+.create {
+  padding: 0 var(--polo-space-3) 0 var(--polo-space-2);
+}
+.create:hover, .zoom:hover, .help:hover, .help:has(+ .shortcuts:popover-open) {
+  background: var(--polo-color-surface-subtle);
+  border-color: var(--polo-color-border);
+}
+.zoom {
+  min-width: 52px;
+  padding: 0 var(--polo-space-1);
+  font-variant-numeric: tabular-nums;
+}
+.help {
+  width: 32px;
+  padding: 0;
+  anchor-name: --board-shortcuts;
+}
+.create:focus-visible, .zoom:focus-visible, .help:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.shortcuts {
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(70dvh, 520px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: var(--polo-space-4);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-popover);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+}
+/* Above its button, at the corner of the board. Without anchor positioning, tetherPopover
+   sets the edges before opening. */
+@supports (position-area: block-start) {
+  .shortcuts {
+    inset: auto;
+    margin: var(--polo-space-2) 0;
+    position-anchor: --board-shortcuts;
+    position-area: block-start span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline;
+  }
+}
+@supports not (position-area: block-start) {
+  .shortcuts {
+    position: fixed;
+    margin: 0;
+  }
+}
+.shortcuts__title {
+  margin: 0 0 var(--polo-space-3);
+  color: var(--polo-color-text-strong);
+  font-size: 14px;
+  font-weight: 800;
+}
+.shortcuts__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  margin: 0;
+}
+.shortcuts__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+  font-size: 12px;
+}
+.shortcuts__item dt {
+  color: var(--polo-color-text);
+}
+.shortcuts__item dd {
+  margin: 0;
+  text-align: right;
+}
+.shortcuts__guide {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  margin-top: var(--polo-space-4);
+  padding-top: var(--polo-space-3);
+  border-top: 1px solid var(--polo-color-border);
+  color: var(--polo-color-action);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.shortcuts__guide:hover {
+  text-decoration: underline;
+}
+.shortcuts__guide:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.shortcuts kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: 6px;
+  background: var(--polo-color-surface-subtle);
+  color: var(--polo-color-text-secondary);
+  font: 600 11px/1.6 var(--polo-font-ui);
+  white-space: normal;
+}
+
+/* A narrow board, beside the preview, keeps the view controls and drops the creation buttons:
+   the right-click menu still creates every kind of node. */
+.createMenu {
+  display: none;
+}
+@container board-chrome (max-width: 1000px) {
+  .controls--create {
+    display: none;
+  }
+  .createMenu {
+    display: block;
+  }
+  polo-basic-button.createMenu {
+    display: inline-flex;
+  }
+}
+@container board-chrome (max-width: 420px) {
+  .controls--end {
+    display: none;
+  }
+}
+
+/* Phones: one bar along the foot of the screen, above the project panel's backdrop, so the
+   button that opened the panel also closes it. */
+@media (max-width: 760px) {
+  .controls--start {
+    position: fixed;
+    z-index: 9;
+    inset: auto 0 0;
+    padding: var(--polo-space-2) var(--polo-space-4) max(var(--polo-space-2), env(safe-area-inset-bottom));
+    border-inline: 0;
+    border-bottom: 0;
+    border-radius: var(--polo-radius-panel) var(--polo-radius-panel) 0 0;
+  }
+  .controls--start polo-basic-button.createMenu {
+    display: inline-flex;
+    margin-left: auto;
+  }
+  .controls--start .separator.createMenu {
+    display: none;
+  }
+}

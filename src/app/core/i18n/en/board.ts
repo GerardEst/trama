@@ -13,7 +13,6 @@ export const board = {
     groupShortcut: 'Group selected nodes (Ctrl+G / ⌘G)',
     frameSelection: 'Frame selected nodes',
     frameShortcut: 'Frame selected nodes (Ctrl+F / ⌘F)',
-    selectHint: 'Ctrl + drag to select at least 2 nodes',
     defaultName: 'Group',
     name: 'Group name',
     nodeType: 'Group node',
@@ -51,6 +50,12 @@ export const board = {
   },
   create: {
     title: 'Create new node',
+    types: {
+      text: { name: 'Free text', description: 'The player types an answer' },
+      content: { name: 'Choice', description: 'Text with answers to choose from' },
+      distributor: { name: 'Distributor', description: 'Sends the player down a route by conditions' },
+      end: { name: 'End', description: 'Closes this path of the story' },
+    },
   },
   joins: {
     connect: 'Drag to a node to connect the story',

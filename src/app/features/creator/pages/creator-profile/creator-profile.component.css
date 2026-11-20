@@ -1,0 +1,238 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  align-items: start;
+  gap: 3rem;
+}
+
+.form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-6);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.form legend {
+  padding: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  max-width: 34rem;
+}
+
+.field label {
+  color: var(--polo-color-text-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field input, .field textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  box-sizing: border-box;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font: 400 14px/1.4 var(--polo-font-ui);
+}
+
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.field input:disabled, .field textarea:disabled {
+  background-color: var(--polo-color-surface-subtle);
+  color: var(--polo-color-text-secondary);
+  cursor: not-allowed;
+}
+
+.field__prefixed {
+  display: flex;
+  align-items: stretch;
+}
+
+.field__prefix {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--polo-space-3);
+  border: 1px solid var(--polo-color-border);
+  border-right: none;
+  border-radius: var(--polo-radius-control) 0 0 var(--polo-radius-control);
+  background-color: var(--polo-color-surface-muted);
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.field__prefixed input {
+  border-radius: 0 var(--polo-radius-control) var(--polo-radius-control) 0;
+}
+
+.field__hint {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.form__actions {
+  padding-top: var(--polo-space-4);
+  border-top: 1px solid var(--polo-color-border);
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.picture {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--polo-space-3);
+}
+
+.picture .sectionTitle {
+  margin: 0;
+}
+
+.picture__avatar, .previewCard__avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background-color: var(--polo-color-action-soft);
+  color: var(--polo-color-action);
+  font-weight: 800;
+}
+
+.picture__avatar {
+  width: 128px;
+  height: 128px;
+  font-size: 3rem;
+}
+
+.previewCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--polo-space-2);
+  margin-bottom: var(--polo-space-3);
+  padding: var(--polo-space-6) var(--polo-space-4);
+  text-align: center;
+}
+
+.previewCard__avatar {
+  width: 56px;
+  height: 56px;
+  font-size: 1.4rem;
+}
+
+.previewCard__name {
+  margin: var(--polo-space-1) 0 0;
+  color: var(--polo-color-text-strong);
+  font-weight: 750;
+}
+
+.previewCard__bio {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.brandsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+}
+
+.brandsHead .sectionTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--polo-space-2);
+  margin: 0;
+}
+
+.brandsText {
+  max-width: 60ch;
+  margin: var(--polo-space-2) 0 var(--polo-space-4);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.identities {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-4);
+}
+
+.identity__avatar {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  font-size: 16px;
+}
+
+.identity__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.identity__name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--polo-color-text-strong);
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identity__note {
+  margin: 2px 0 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .aside {
+    order: -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .preview {
+    flex: 1;
+    min-width: min(100%, 240px);
+  }
+
+  .picture__avatar {
+    width: 88px;
+    height: 88px;
+    font-size: 2rem;
+  }
+}

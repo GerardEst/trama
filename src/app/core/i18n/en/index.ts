@@ -5,6 +5,7 @@ import { dashboard } from './dashboard'
 import { board } from './board'
 import { playground } from './playground'
 import { contextHelp } from './context-help'
+import { settings } from './settings'
 
 export const en = {
   common,
@@ -14,4 +15,5 @@ export const en = {
   board,
   playground,
   contextHelp,
+  settings,
 }

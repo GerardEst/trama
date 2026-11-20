@@ -1,0 +1,58 @@
+<div class="shell">
+  <aside class="sidebar">
+    <polo-wordmark class="wordmark" [href]="homeUrl()" label="Trama"></polo-wordmark>
+
+    <a class="back" routerLink="/dashboard">
+      <img width="14" src="/assets/icons/chevron-left.svg" alt="" />
+      {{ 'dashboard.menu.home' | t }}
+    </a>
+
+    <!-- The story, and the way back into its editor, first: on phones too, outside the sections that scroll. -->
+    <div class="sidebar__story">
+      <p class="sidebar__title sidebar__title--keep" id="story-title">{{ state() === 'ready' ? activeStory.storyName() : ('dashboard.story.navLabel' | t) }}</p>
+      <a class="editorLink" [routerLink]="['/story', storyId(), 'board']">
+        <img width="14" src="/assets/icons/edit.svg" alt="" />
+        {{ 'dashboard.story.openEditor' | t }}
+      </a>
+    </div>
+
+    <nav class="nav" aria-labelledby="story-title">
+      <ul class="nav__group">
+        <li>
+          <a class="nav__item" [routerLink]="['/story', storyId()]" routerLinkActive="active" ariaCurrentWhenActive="page"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <img width="16" src="/assets/icons/configuration.svg" alt="" />
+            {{ 'dashboard.story.general' | t }}
+          </a>
+        </li>
+        <li>
+          <a class="nav__item" [routerLink]="['/story', storyId(), 'statistics']" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/stat.svg" alt="" />
+            {{ 'dashboard.story.statistics' | t }}
+          </a>
+        </li>
+      </ul>
+
+    </nav>
+
+    <!-- The person at the foot of the menu: the top is for moving around the app. -->
+    <polo-user-menu class="sidebar__user"></polo-user-menu>
+  </aside>
+
+  <main class="content">
+    @switch (state()) {
+      @case ('ready') {
+        <router-outlet />
+      }
+      @case ('missing') {
+        <div class="status">
+          <p role="alert">{{ 'dashboard.story.missing' | t }}</p>
+          <a routerLink="/dashboard">{{ 'dashboard.story.missingLink' | t }}</a>
+        </div>
+      }
+      @default {
+        <p class="status" aria-live="polite">{{ 'dashboard.story.loading' | t }}</p>
+      }
+    }
+  </main>
+</div>

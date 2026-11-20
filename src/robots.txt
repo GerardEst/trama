@@ -1,5 +1,8 @@
 User-agent: *
 Disallow: /dashboard
+Disallow: /board
+Disallow: /story
+Disallow: /settings
 Disallow: /stadistics
 Disallow: /private
 

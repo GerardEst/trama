@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, computed, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import {
   FormControl,
@@ -12,11 +12,15 @@ import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { TranslationKey } from 'src/app/core/i18n/i18n.types'
+import { WordmarkComponent } from 'src/app/shared/components/wordmark/wordmark.component'
+import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { siteUrl } from 'src/app/core/site-links'
 
 @Component({
   selector: 'polo-change-password',
   standalone: true,
   imports: [
+    WordmarkComponent,
     BasicButtonComponent,
     SeparatorComponent,
     CommonModule,
@@ -27,6 +31,9 @@ import { TranslationKey } from 'src/app/core/i18n/i18n.types'
   styleUrl: '../login-shared.css',
 })
 export class ChangePasswordComponent {
+  private readonly i18n = inject(I18nService)
+  readonly homeUrl = computed(() => siteUrl(this.i18n.lang()))
+
   constructor(
     private db: DatabaseService,
     private router: Router

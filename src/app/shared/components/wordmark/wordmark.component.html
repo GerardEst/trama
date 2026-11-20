@@ -1,0 +1,5 @@
+@if (link) {
+  <a class="wordmark" [routerLink]="link" [attr.aria-label]="label">Trama<span aria-hidden="true">.</span></a>
+} @else {
+  <a class="wordmark" [href]="href" [attr.aria-label]="label">Trama<span aria-hidden="true">.</span></a>
+}

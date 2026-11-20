@@ -9,10 +9,16 @@ import { Component, Input } from '@angular/core'
 })
 export class BasicButtonComponent {
   @Input() title?: string | undefined
+  /** The accessible name of an icon-only button when the title adds more, such as a shortcut. */
+  @Input() label?: string | undefined
+  /** For a button that shows and hides a region: whether it is open, and the region's id. */
+  @Input() expanded?: boolean | undefined
+  @Input() controls?: string | undefined
   @Input() text?: string | undefined
   @Input() icon?: string | undefined
   @Input() size?: 's' | undefined
-  @Input() type?: 'danger' | 'success' | undefined
+  /** `primary` is the one main action of a toolbar, such as sharing the story. */
+  @Input() type?: 'danger' | 'success' | 'primary' | undefined
   @Input() selected: boolean = false
   @Input() waiting: boolean = false
   @Input() transparent: boolean = false

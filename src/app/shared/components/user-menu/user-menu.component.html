@@ -1,0 +1,13 @@
+<button #trigger class="trigger" type="button" [attr.popovertarget]="menuId"
+  [attr.aria-label]="'settings.menu.open' | t: { name: name() }">
+  <span class="avatar" aria-hidden="true">{{ initial() }}</span>
+  <span class="trigger__name">{{ name() }}</span>
+  <img class="trigger__chevron" width="14" src="/assets/icons/chevron-down.svg" alt="" />
+</button>
+<div #menu class="menu" popover="auto" [id]="menuId" (beforetoggle)="tether($event, trigger, menu)">
+  <p class="menu__who">
+    <span class="menu__name">{{ name() }}</span>
+    <span class="menu__email">{{ email() }}</span>
+  </p>
+  <polo-account-links class="menu__items" (picked)="menu.hidePopover()"></polo-account-links>
+</div>

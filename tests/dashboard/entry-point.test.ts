@@ -42,7 +42,7 @@ test('moves and reconnects Start, previews its destination and allows deleting n
     else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   const marker = page.locator('polo-entry-point')
   await expect(marker).toHaveCount(1)
   await expect(marker).toBeVisible()

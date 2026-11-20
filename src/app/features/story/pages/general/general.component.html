@@ -1,0 +1,74 @@
+<div class="page page--narrow">
+  <header class="pageHeader">
+    <div>
+      <h1>{{ 'dashboard.story.generalTitle' | t }}</h1>
+      <p>{{ 'dashboard.story.generalSubtitle' | t }}</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="story-name-title">
+    <h2 class="sectionTitle" id="story-name-title">{{ 'dashboard.story.name' | t }}</h2>
+    <!-- Saved on leaving the field or pressing Enter, like every other option of the story. -->
+    <form class="panel row" (submit)="saveName($event, nameInput.value)">
+      <input #nameInput class="nameInput" type="text" required [value]="activeStory.storyName()"
+        aria-labelledby="story-name-title" aria-describedby="story-name-feedback" [readonly]="savingName()"
+        (input)="nameFeedback.set(null)" (change)="saveName($event, nameInput.value)" />
+    </form>
+    <p class="feedback" id="story-name-feedback" role="status" [class.feedback--error]="nameFeedback() === 'dashboard.story.nameError'">
+      {{ nameFeedback() ? (nameFeedback()! | t) : ('dashboard.story.nameHint' | t) }}
+    </p>
+  </section>
+
+  <section aria-labelledby="story-options-title">
+    <h2 class="sectionTitle" id="story-options-title">{{ 'dashboard.story.options' | t }}</h2>
+    <div class="panel options">
+      <polo-story-options class="inPanel" />
+    </div>
+  </section>
+
+  <!-- The same controls as the sharing dialog, so every setting of the story is also here. -->
+  <section aria-labelledby="story-sharing-title">
+    <h2 class="sectionTitle" id="story-sharing-title">{{ 'dashboard.story.sharing' | t }}</h2>
+    <div class="panel share">
+      <polo-share-story [embedded]="true" />
+    </div>
+  </section>
+
+  <section aria-labelledby="story-identity-title">
+    <h2 class="sectionTitle titleWithTags" id="story-identity-title">
+      {{ 'dashboard.story.publishedAs' | t }}
+      <span class="tag">{{ 'dashboard.home.pro' | t }}</span>
+      <span class="tag tag--soon">{{ 'dashboard.home.soon' | t }}</span>
+    </h2>
+    <div class="panel row">
+      <select class="identitySelect" disabled aria-labelledby="story-identity-title" aria-describedby="story-identity-help">
+        <option>{{ 'dashboard.story.creatorProfileOption' | t: { name: authorName() } }}</option>
+      </select>
+      <p class="message" id="story-identity-help">{{ 'dashboard.story.publishedAsHelp' | t }}</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="story-data-title">
+    <h2 class="sectionTitle" id="story-data-title">{{ 'dashboard.story.data' | t }}</h2>
+    <div class="panel row">
+      <p class="message">{{ 'dashboard.story.exportHelp' | t }}</p>
+      <button class="button" type="button" (click)="exportStory()">
+        <img width="14" src="/assets/icons/export.svg" alt="" />
+        {{ 'dashboard.top.exportJson' | t }}
+      </button>
+    </div>
+  </section>
+
+  <section aria-labelledby="story-danger-title">
+    <h2 class="sectionTitle" id="story-danger-title">{{ 'dashboard.story.danger' | t }}</h2>
+    <div class="panel row danger">
+      <p class="message">{{ 'dashboard.story.dangerHelp' | t }}</p>
+      <button class="button button--danger" type="button" (click)="deleteStory()">
+        {{ 'dashboard.story.deleteButton' | t }}
+      </button>
+    </div>
+    @if (deleteFailed()) {
+      <p class="feedback feedback--error" role="alert">{{ 'dashboard.story.deleteError' | t }}</p>
+    }
+  </section>
+</div>

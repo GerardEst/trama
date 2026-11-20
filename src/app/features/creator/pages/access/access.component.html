@@ -1,0 +1,61 @@
+<div class="page">
+  <header class="pageHeader">
+    <div>
+      <h1>
+        {{ 'dashboard.access.title' | t }}
+        <span class="tag">{{ 'dashboard.home.pro' | t }}</span>
+      </h1>
+      <p>{{ 'dashboard.access.subtitle' | t }}</p>
+    </div>
+    <div class="pageHeader__actions">
+      <span class="tag tag--soon">{{ 'dashboard.home.soon' | t }}</span>
+      <button type="button" class="button button--primary" disabled>
+        <img width="14" src="/assets/icons/plus.svg" alt="" />
+        {{ 'dashboard.access.invite' | t }}
+      </button>
+    </div>
+  </header>
+
+  <section aria-labelledby="readers-title">
+    <div class="toolbar">
+      <h2 class="sectionTitle" id="readers-title">{{ 'dashboard.access.readers' | t }}</h2>
+      <p class="toolbar__groups">{{ 'dashboard.access.groupsSoon' | t }}</p>
+    </div>
+    <div class="panel tableWrapper">
+      <table class="readers">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'dashboard.access.reader' | t }}</th>
+            <th scope="col">{{ 'dashboard.access.stories' | t }}</th>
+            <th scope="col">{{ 'dashboard.access.lastAccess' | t }}</th>
+            <th scope="col">{{ 'dashboard.access.status' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              <div class="empty">
+                <img width="28" src="/assets/icons/users.svg" alt="" />
+                <p class="empty__title">{{ 'dashboard.access.emptyTitle' | t }}</p>
+                <p class="message">{{ 'dashboard.access.emptyText' | t }}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="how-title">
+    <h2 class="sectionTitle" id="how-title">{{ 'dashboard.access.howTitle' | t }}</h2>
+    <ol class="steps">
+      @for (step of steps; track step.title; let index = $index) {
+        <li class="panel step">
+          <span class="step__number" aria-hidden="true">{{ index + 1 }}</span>
+          <h3>{{ step.title | t }}</h3>
+          <p class="message">{{ step.text | t }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+</div>

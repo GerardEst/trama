@@ -1,0 +1,35 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { provideRouter } from '@angular/router'
+import { BillingSettingsComponent } from './billing-settings.component'
+import { DatabaseService } from 'src/app/core/services/database.service'
+import { appUser } from 'src/app/core/interfaces/interfaces'
+
+describe('BillingSettingsComponent', () => {
+  let fixture: ComponentFixture<BillingSettingsComponent>
+  const host = () => fixture.nativeElement as HTMLElement
+
+  async function render(profile: Record<string, string>) {
+    await TestBed.configureTestingModule({
+      imports: [BillingSettingsComponent],
+      providers: [provideRouter([])],
+    }).compileComponents()
+    TestBed.inject(DatabaseService).user.set({ id: 'author-1', email: 'marta@example.com', profile } as unknown as appUser)
+    fixture = TestBed.createComponent(BillingSettingsComponent)
+    fixture.componentRef.setInput('heading', false)
+    fixture.detectChanges()
+  }
+
+  it('says first which plan the person has and when it renews, and hides the billing period they cannot use', async () => {
+    await render({ plan: 'creator', subscription_status: 'active', next_payment: '2026-12-20T00:00:00Z' })
+    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creator')
+    expect(host().querySelector('.summary__state')?.textContent).toContain('December')
+    expect(host().querySelector('polo-billing-cycle')).toBeNull()
+  })
+
+  it('offers the billing period to someone without a live subscription', async () => {
+    await render({ plan: 'pro', subscription_status: 'canceled' })
+    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Pro (legacy)')
+    expect(host().querySelector('.summary__state--off')?.textContent).toContain('Subscription canceled')
+    expect(host().querySelector('polo-billing-cycle')).not.toBeNull()
+  })
+})

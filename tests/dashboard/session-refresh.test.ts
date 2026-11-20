@@ -83,7 +83,7 @@ async function openMockedStory(page: Page, refreshWorks: boolean, serverError = 
   })
 
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   return { requests, initial, renewed, persisted: () => persistedTree }
 }
 
@@ -97,8 +97,8 @@ async function deleteNode(page: Page, nodeId: string) {
 test('a rejected JWT is refreshed and the deletion saves without logging out (mocked backend)', async ({ page }) => {
   const { requests, renewed, persisted } = await openMockedStory(page, true)
   await deleteNode(page, 'node_1')
-  await expect(page.getByRole('status')).toContainText('Board changes saved')
-  await expect(page).toHaveURL(/\/dashboard$/)
+  await expect(page.getByRole('status')).toContainText('Saved')
+  await expect(page).toHaveURL(/\/board$/)
   expect(requests.refreshes).toBe(1)
   expect(requests.signOuts).toBe(0)
   expect(requests.writes).toHaveLength(2)
@@ -112,12 +112,12 @@ test('an Auth HTTP 500 preserves the refresh token and edits until the server re
   await deleteNode(page, 'node_1')
   await expect(page.getByRole('status')).toContainText('Board changes not saved')
   await expect(page.getByRole('alert')).toHaveCount(0)
-  await expect(page).toHaveURL(/\/dashboard$/)
+  await expect(page).toHaveURL(/\/board$/)
   expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).refresh_token, authKey)).toBe(initial.refresh_token)
   expect(requests.signOuts).toBe(0)
 
   await page.getByRole('button', { name: 'Retry save', exact: true }).click()
-  await expect(page.getByRole('status')).toContainText('Board changes saved')
+  await expect(page.getByRole('status')).toContainText('Saved')
   expect(persisted().nodes.map((node) => node.id)).toEqual(['node_0', 'node_2'])
   expect(requests.refreshes).toBe(2)
   expect(requests.signOuts).toBe(0)
@@ -128,7 +128,7 @@ test('an invalid refresh token pauses writes but keeps subsequent deletions in t
   await deleteNode(page, 'node_1')
   await expect(page.getByRole('alert')).toContainText('Your session has ended')
   await expect(page.getByRole('status')).toContainText('Board changes not saved')
-  await expect(page).toHaveURL(/\/dashboard$/)
+  await expect(page).toHaveURL(/\/board$/)
   await deleteNode(page, 'node_2')
   await page.getByRole('button', { name: 'Retry save', exact: true }).click()
 

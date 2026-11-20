@@ -31,13 +31,7 @@
   color: var(--polo-color-text-strong);
 }
 .login-intro__brand {
-  color: var(--polo-color-text-strong);
-  font: 800 27px var(--polo-font-ui);
-  letter-spacing: -0.075em;
-  text-decoration: none;
-}
-.login-intro__brand span {
-  color: var(--polo-color-wordmark-dot);
+  align-self: flex-start;
 }
 .login-intro__eyebrow {
   margin-top: 100px;
@@ -165,6 +159,7 @@
   --polo-button-text: var(--polo-color-text-on-accent);
   --polo-button-background: var(--polo-color-accent);
   --polo-button-background-hover: var(--polo-color-accent-hover);
+  --polo-button-border: transparent;
   display: block;
   border: 1px solid var(--polo-color-accent-border);
   border-radius: var(--polo-radius-control);

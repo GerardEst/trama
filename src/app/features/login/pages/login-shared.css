@@ -27,11 +27,8 @@
   width: 100%;
 }
 .box .logo {
-  font-family: "LibreBaskerville", serif;
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--text-color);
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 .box h3 {
   font-family: "LibreBaskerville", serif;
@@ -143,9 +140,6 @@ form p {
   .box {
     padding: 2rem;
     margin: 0 10px;
-  }
-  .box .header .logo {
-    font-size: 1.5rem;
   }
   .box .header h3 {
     font-size: 1.25rem;

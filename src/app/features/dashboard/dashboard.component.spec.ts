@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { provideRouter } from '@angular/router'
 import { By } from '@angular/platform-browser'
-import { MenuTreeLegendComponent } from './components/menu-tree-legend/menu-tree-legend.component'
+import { BoardActionsComponent } from './components/board-actions/board-actions.component'
+import { BoardControlsComponent } from './components/board-controls/board-controls.component'
 
 import { DashboardComponent } from './dashboard.component'
 import { DatabaseService } from 'src/app/core/services/database.service'
@@ -75,13 +76,53 @@ describe('DashboardComponent', () => {
     expect(component.resizing()).toBeFalse()
   })
 
-  it('opens the linear view only from the legend action, without a duplicate top button', () => {
+  it('opens the preview from the story actions and keeps the panels inside the board pane', () => {
     const open = spyOn(component, 'openLinearView')
-    const legend = fixture.debugElement.query(By.directive(MenuTreeLegendComponent)).componentInstance as MenuTreeLegendComponent
-    legend.linearRequested.emit()
+    const actions = fixture.debugElement.query(By.directive(BoardActionsComponent)).componentInstance as BoardActionsComponent
+    actions.previewRequested.emit()
     expect(open).toHaveBeenCalledTimes(1)
     expect(fixture.nativeElement.querySelector('.workspaceToggle')).toBeNull()
-    expect(fixture.nativeElement.querySelector('.workspace > polo-menu-top')).not.toBeNull()
+    for (const panel of ['polo-board-header', 'polo-board-actions', 'polo-story-panel', 'polo-board-controls']) {
+      expect(fixture.nativeElement.querySelector(`.boardPane > .chrome > ${panel}`)).withContext(panel).not.toBeNull()
+    }
+  })
+
+  it('opens and closes the project panel and remembers it', () => {
+    const previous = localStorage.getItem('polo-board-panel')
+    try {
+      const controls = fixture.debugElement.query(By.directive(BoardControlsComponent)).componentInstance as BoardControlsComponent
+      component.setSidebar(false)
+      controls.sidebarToggled.emit()
+      fixture.detectChanges()
+      expect(component.sidebarOpen()).toBeTrue()
+      expect(localStorage.getItem('polo-board-panel')).toBe('open')
+      expect(fixture.nativeElement.querySelector('#story-panel').inert).toBeFalse()
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '.', ctrlKey: true, bubbles: true, cancelable: true }))
+      expect(component.sidebarOpen()).toBeFalse()
+      expect(localStorage.getItem('polo-board-panel')).toBe('closed')
+    } finally {
+      if (previous === null) localStorage.removeItem('polo-board-panel')
+      else localStorage.setItem('polo-board-panel', previous)
+    }
+  })
+
+  it('sends the view controls to the board, fitting the story clear of the open panel', () => {
+    const board = component.board!
+    const zoomBy = spyOn(board, 'zoomBy')
+    const zoomTo = spyOn(board, 'zoomTo')
+    const fit = spyOn(board, 'fitToView')
+    const start = spyOn(board, 'centerToEntryPoint')
+    component.changeView('zoomIn')
+    component.changeView('zoomOut')
+    component.changeView('zoomReset')
+    component.setSidebar(true)
+    component.changeView('fit')
+    component.changeView('start')
+    expect(zoomBy.calls.allArgs()).toEqual([[1.25], [0.8]])
+    expect(zoomTo).toHaveBeenCalledOnceWith(1)
+    expect(fit.calls.mostRecent().args[0].left).toBeGreaterThan(300)
+    expect(start).toHaveBeenCalledTimes(1)
+    localStorage.removeItem('polo-board-panel')
   })
 
   it('keeps explicit location independent of highlighting and cancels following when cleared', () => {
@@ -96,11 +137,7 @@ describe('DashboardComponent', () => {
     expect(cancel).toHaveBeenCalledTimes(1)
   })
 
-  it('shows the grouping control before any nodes are selected', () => {
-    const button: HTMLButtonElement | null = fixture.nativeElement.querySelector(
-      '.groupToolbar button'
-    )
-    expect(button).not.toBeNull()
-    expect(button?.disabled).toBeTrue()
+  it('keeps the grouping control out of the way until several nodes are selected', () => {
+    expect(fixture.nativeElement.querySelector('.groupToolbar')).toBeNull()
   })
 })

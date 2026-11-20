@@ -60,13 +60,7 @@ async function mockStory(page: Page) {
 }
 
 async function openLinearView(page: Page) {
-  // On mobile the initially pinned story list covers the board's bottom tools.
-  const viewport = page.viewportSize()!
-  if (viewport.width <= 760 && await page.locator('polo-menu .menu').evaluate(element => element.classList.contains('fixedMenu'))) {
-    await page.getByRole('navigation', { name: 'Your stories', exact: true }).getByRole('button', { name: 'Toggle menu', exact: true }).click()
-    await page.mouse.move(viewport.width - 8, 200)
-  }
-  await page.locator('polo-menu-tree-legend').getByRole('button', { name: 'Preview', exact: true }).click()
+  await page.locator('polo-board-actions').getByRole('button', { name: 'Preview', exact: true }).click()
 }
 
 test('preview and editing share text and preserve the path and player state (mocked backend)', async ({ page }) => {
@@ -74,7 +68,7 @@ test('preview and editing share text and preserve the path and player state (moc
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   await expect(linear.getByText('Hello Anna', { exact: true })).toBeVisible()
@@ -133,7 +127,7 @@ test('preview and editing share text and preserve the path and player state (moc
 test('one toolbar edits plain answer surfaces below a divider without pencils or answer navigation (mocked backend)', async ({ page }) => {
   const backend = await mockStory(page)
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   await linear.getByRole('button', { name: 'Edit', exact: true }).click()
@@ -173,7 +167,7 @@ test('one toolbar edits plain answer surfaces below a divider without pencils or
 test('removing the edited node rewinds and retargets the shared toolbar (mocked backend)', async ({ page }) => {
   await mockStory(page)
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   await linear.getByRole('button', { name: 'Keep going', exact: true }).click()
@@ -192,7 +186,7 @@ test('removing the edited node rewinds and retargets the shared toolbar (mocked 
 test('disabling follow removes the highlight, including after navigation and explicit location (mocked backend)', async ({ page }) => {
   await mockStory(page)
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   const highlighted = page.locator('polo-node.node--playing')
@@ -220,7 +214,7 @@ test('disabling follow removes the highlight, including after navigation and exp
 test('mobile switching preserves the visit and edit mode (mocked backend)', async ({ page }) => {
   await mockStory(page)
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   await expect(linear.getByText('Hello Anna', { exact: true })).toBeVisible()
@@ -229,16 +223,16 @@ test('mobile switching preserves the visit and edit mode (mocked backend)', asyn
   expect(bounds!.width).toBeGreaterThan(370)
   expect(bounds!.y).toBe(16)
   expect(bounds!.height).toBe(844 - 32)
-  await expect(page.locator('polo-menu-top .menu')).toBeHidden()
-  await expect(page.locator('polo-menu .openMenu')).toBeHidden()
+  await expect(page.locator('polo-board-controls .controls--start')).toBeHidden()
+  await expect(page.locator('polo-board-header .header')).toBeHidden()
   await linear.getByRole('button', { name: 'Keep going', exact: true }).click()
   await expect(linear.getByRole('button', { name: 'Finish with 4 gold', exact: true })).toBeVisible()
   await linear.getByRole('button', { name: 'Edit', exact: true }).click()
   await expect(linear.getByRole('textbox', { name: 'Passage', exact: true })).toHaveText('Gold: #stat_gold')
   await linear.getByRole('button', { name: 'Show board', exact: true }).click()
   await expect(page.locator('.boardPane')).toBeVisible()
-  await expect(page.locator('polo-menu-top .menu')).toBeVisible()
-  await expect(page.locator('polo-menu .openMenu')).toBeVisible()
+  await expect(page.locator('polo-board-controls .controls--start')).toBeVisible()
+  await expect(page.locator('polo-board-header .header')).toBeVisible()
   await expect(linear).toBeHidden()
   await openLinearView(page)
   await expect(linear.getByRole('textbox', { name: 'Passage', exact: true })).toHaveText('Gold: #stat_gold')
@@ -249,33 +243,30 @@ test('mobile switching preserves the visit and edit mode (mocked backend)', asyn
 test('split view can be resized with the keyboard (mocked backend)', async ({ page }) => {
   await mockStory(page)
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
-  await expect(page.locator('polo-menu-tree-legend').getByRole('button', { name: 'Preview', exact: true })).toHaveCount(1)
+  // The preview is open, so the actions drop its button.
+  await expect(page.locator('polo-board-actions').getByRole('button', { name: 'Preview', exact: true })).toHaveCount(0)
   await expect(page.locator('.workspaceToggle')).toHaveCount(0)
   const linear = page.locator('polo-linear-editor')
-  const top = page.locator('polo-menu-top .menu')
-  const legend = page.locator('polo-menu-tree-legend .legend')
-  const sidebar = page.getByRole('navigation', { name: 'Your stories', exact: true })
+  const top = page.locator('polo-board-controls .controls--start')
+  const legend = page.locator('polo-board-actions .actions')
+  const header = page.locator('polo-board-header .header')
   const linearBox = (await linear.boundingBox())!
-  const sidebarBox = (await sidebar.boundingBox())!
   expect(linearBox.width).toBe(550)
-  expect(linearBox.y).toBe(sidebarBox.y)
-  expect(linearBox.height).toBe(sidebarBox.height)
-  for (const menu of [top, legend]) {
+  expect(linearBox.y).toBe(16)
+  expect(linearBox.height).toBe(1000 - 32)
+  for (const menu of [top, legend, header]) {
     const box = (await menu.boundingBox())!
     expect(box.x + box.width).toBeLessThan(linearBox.x)
   }
-  await page.getByRole('button', { name: 'Story options', exact: true }).click()
-  const dropdown = (await page.locator('polo-menu-top .dropdown').boundingBox())!
-  expect(dropdown.x + dropdown.width).toBeLessThan(linearBox.x)
-  await page.getByRole('button', { name: 'Story options', exact: true }).click()
   const separator = page.getByRole('separator', { name: 'Resize board and preview' })
   await separator.focus()
   await separator.press('ArrowLeft')
   await expect(separator).toHaveAttribute('aria-valuenow', '65')
+  // The story's actions follow the edge of the board; the controls on the left stay there.
   await expect.poll(async () => {
-    const menu = (await top.boundingBox())!
+    const menu = (await legend.boundingBox())!
     const pane = (await linear.boundingBox())!
     return pane.x - menu.x - menu.width
   }).toBeGreaterThan(0)
@@ -286,8 +277,7 @@ test('split view can be resized with the keyboard (mocked backend)', async ({ pa
   await page.mouse.down()
   await page.mouse.move(1000, divider.y + 100)
   await expect(page.locator('.workspace')).toHaveClass(/workspace--resizing/)
-  await expect(top).toHaveCSS('transition-duration', '0s')
-  const menu = (await top.boundingBox())!
+  const menu = (await legend.boundingBox())!
   const pane = (await linear.boundingBox())!
   expect(pane.x - menu.x - menu.width).toBeCloseTo(24, 0)
   await page.mouse.up()
@@ -298,7 +288,7 @@ test('preview keeps its desktop minimum and adapts on viewport resize (mocked ba
   await mockStory(page)
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.setViewportSize({ width: 2000, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await openLinearView(page)
   const linear = page.locator('polo-linear-editor')
   await expect.poll(async () => (await linear.boundingBox())!.width).toBe(576)
@@ -309,10 +299,10 @@ test('preview keeps its desktop minimum and adapts on viewport resize (mocked ba
     const board = (await page.locator('.boardPane').boundingBox())!
     expect(pane.x).toBe(board.width + 8)
     expect(pane.x + pane.width).toBe(width - 16)
-    for (const selector of ['polo-menu-top .menu', 'polo-menu-tree-legend .legend']) {
-      const menu = (await page.locator(selector).boundingBox())!
-      expect(menu.x + menu.width).toBe(board.width - 16)
-    }
+    const actions = (await page.locator('polo-board-actions .actions').boundingBox())!
+    expect(actions.x + actions.width).toBe(board.width - 16)
+    // The board's controls stay at its foot, on its left.
+    expect((await page.locator('polo-board-controls .controls--start').boundingBox())!.x).toBe(16)
   }
   await page.setViewportSize({ width: 390, height: 844 })
   await expect.poll(async () => (await linear.boundingBox())!.width).toBe(374)
@@ -324,12 +314,12 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     await mockStory(page)
     await page.setViewportSize({ width: 1600, height: 1000 })
     await page.emulateMedia({ reducedMotion })
-    await page.goto('/dashboard')
-    // Freeze all three motions at insertion, without racing the frame clock.
+    await page.goto('/board')
+    // Freeze the motion at insertion, without racing the frame clock.
     await page.locator('.workspace').evaluate(workspace => {
       const observer = new MutationObserver(() => {
         if (!workspace.classList.contains('workspace--linear')) return
-        for (const element of workspace.querySelectorAll('.linearPane, polo-menu-top .menu, polo-menu-tree-legend .legend')) {
+        for (const element of workspace.querySelectorAll('.linearPane')) {
           for (const animation of element.getAnimations()) {
             animation.pause()
             animation.currentTime = 0
@@ -345,11 +335,9 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
     if (reducedMotion === 'reduce') {
       await expect(pane).toHaveCSS('animation-name', 'none')
       expect((await pane.boundingBox())!.x).toBe(1034)
-      await expect(page.locator('polo-menu-top .menu')).toHaveCSS('transition-duration', '0s')
-      await expect(page.locator('polo-menu-tree-legend .legend')).toHaveCSS('transition-duration', '0s')
     } else {
       const positions = await page.locator('.workspace').evaluate(workspace => {
-        return [...workspace.querySelectorAll('.linearPane, polo-menu-top .menu, polo-menu-tree-legend .legend')].map(element => {
+        return [...workspace.querySelectorAll('.linearPane')].map(element => {
           const animation = element.getAnimations()[0]
           animation.currentTime = 0
           const start = element.getBoundingClientRect().left
@@ -359,7 +347,7 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
           return { start, middle, end: element.getBoundingClientRect().left }
         })
       })
-      expect(positions).toHaveLength(3)
+      expect(positions).toHaveLength(1)
       expect(positions[0].start).toBeGreaterThanOrEqual(1600)
       expect(positions[0].end).toBe(1034)
       for (const position of positions) {

@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  height: 44px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  background: var(--polo-color-action-soft);
+  color: var(--polo-color-action);
+}
+
+.copy {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--polo-color-text-secondary);
+}
+
+h2 {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font: 400 30px/1.15 var(--polo-font-story);
+  color: var(--polo-color-text-strong);
+  overflow-wrap: anywhere;
+}

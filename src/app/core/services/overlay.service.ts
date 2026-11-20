@@ -4,7 +4,13 @@ import {
   createComponent,
   inject,
 } from '@angular/core'
-import { NavigationEnd, Router } from '@angular/router'
+import { NavigationEnd, NavigationStart, Router } from '@angular/router'
+
+/**
+ * Navigation state for a navigation that only rewrites the address of the page on screen, such as
+ * the board naming its story. Overlays stay open through it; any other navigation closes them.
+ */
+export const KEEP_OVERLAYS = 'keepOverlays'
 
 /**
  * Shared logic for dynamically mounting a component over the page (modals,
@@ -19,8 +25,14 @@ export abstract class OverlayService {
 
   constructor() {
     this.pageContent = document.querySelector('.content')
-    inject(Router).events.subscribe((event) => {
-      if (event instanceof NavigationEnd) this.close()
+    const router = inject(Router)
+    let keep = false
+    router.events.subscribe((event) => {
+      // Going back or forward restores a stored state too, but always leaves the page.
+      if (event instanceof NavigationStart) {
+        keep = event.navigationTrigger === 'imperative' && !!router.getCurrentNavigation()?.extras.state?.[KEEP_OVERLAYS]
+      }
+      if (event instanceof NavigationEnd && !keep) this.close()
     })
   }
 

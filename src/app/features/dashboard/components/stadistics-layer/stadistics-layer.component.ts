@@ -1,42 +1,64 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, effect, signal, untracked } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { StatisticsService } from 'src/app/shared/services/statistics.service'
+import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 
 @Component({
   selector: 'polo-stadistics-layer',
   standalone: true,
-  imports: [BasicButtonComponent],
+  imports: [BasicButtonComponent, TranslatePipe],
   templateUrl: './stadistics-layer.component.html',
   styleUrl: './stadistics-layer.component.css',
 })
-export class StadisticsLayerComponent implements OnInit {
-  games?: any
+export class StadisticsLayerComponent implements OnDestroy {
+  readonly games = signal<any[] | undefined>(undefined)
+  /** The board elements this panel highlighted, so they can be cleared. */
+  private readonly highlighted = new Set<string>()
+  private loadRequest = 0
 
   constructor(
     private story: ActiveStoryService,
     private stadistics: StatisticsService
-  ) {}
-
-  async ngOnInit() {
-    this.games = await this.stadistics.getGamesOf(this.story.storyId())
-
-    console.log(this.games)
+  ) {
+    // The board stays open while the author switches stories, and so does this panel.
+    effect(() => {
+      const storyId = this.story.storyId()
+      untracked(() => void this.load(storyId))
+    })
   }
 
-  toggleGame(game: any) {
-    console.log(game)
-    for (const step of game.path) {
-      if (step.type === 'node') {
-        document.querySelector('#' + step.id)?.classList.add('highlighted')
-      }
-      if (step.type === 'answer') {
-        document.querySelector('#' + step.id)?.classList.add('highlighted')
-      }
+  private async load(storyId: string) {
+    const request = ++this.loadRequest
+    this.clearHighlights()
+    this.games.set(undefined)
+    if (!storyId) return
+    const games = await this.stadistics.getGamesOf(storyId)
+    if (request !== this.loadRequest) return
+    this.games.set(games || undefined)
+  }
+
+  toggleGame(game: any, event: Event) {
+    const show = (event.target as HTMLInputElement).checked
+    for (const step of game.path ?? []) {
+      if (step.type !== 'node' && step.type !== 'answer') continue
+      document.getElementById(step.id)?.classList.toggle('highlighted', show)
+      if (show) this.highlighted.add(step.id)
+      else this.highlighted.delete(step.id)
     }
   }
 
-  showGameData(game: any) {
-    console.log('open a modal with all the data about the game')
+  showGameData(_game: any) {
+    // Not built yet: a modal with everything about the game.
+  }
+
+  ngOnDestroy() {
+    this.loadRequest++
+    this.clearHighlights()
+  }
+
+  private clearHighlights() {
+    for (const id of this.highlighted) document.getElementById(id)?.classList.remove('highlighted')
+    this.highlighted.clear()
   }
 }

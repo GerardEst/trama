@@ -11,6 +11,9 @@ export const pricing = {
   canceledPlan: 'Subscription canceled',
   cancel: 'Cancel subscription',
   cancelFailed: 'Failed to cancel subscription',
+  cancelConfirm: 'Cancel your subscription?',
+  cancelConfirmText: 'Your stories stay yours, but you will lose the editor features of your plan when the period you have paid ends.',
+  keep: 'Keep subscription',
   successIcon: 'Included',
   legacyPro: 'You have a legacy Pro subscription. It is separate from the planned one-time Pro purchase and has not been migrated automatically.',
   creator: {

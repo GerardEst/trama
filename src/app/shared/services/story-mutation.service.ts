@@ -21,6 +21,8 @@ export class StoryMutationService implements OnDestroy {
   private readonly recoveredStories = new Set<string>()
   /** Stories shown before they exist in the database, by id, with their name. */
   private readonly drafts = new Map<string, string>()
+  /** Bumped when a story becomes or stops being a draft, so `isDraft` can be read in templates. */
+  private readonly draftsChanged = signal(0)
   private readonly draftWaiters = new Map<string, Array<(saved: boolean) => void>>()
   private readonly createdDraft = signal<{ id: string; name: string } | undefined>(undefined)
   /** The last draft that became a stored story. */
@@ -99,16 +101,32 @@ export class StoryMutationService implements OnDestroy {
   /** Shows a story that is only stored the first time the author changes it. */
   loadDraft(storyId: string, name: string, draftTree: Partial<tree>) {
     this.drafts.set(storyId, name)
+    this.draftsChanged.update((version) => version + 1)
     this.loadStory(storyId, name, draftTree)
   }
 
   isDraft(storyId = this.activeStory.storyId()): boolean {
+    this.draftsChanged()
     return this.drafts.has(storyId)
   }
 
   /** Renames a draft before it is stored; stored stories are renamed in the database. */
   renameDraft(storyId: string, name: string) {
     if (this.drafts.has(storyId)) this.drafts.set(storyId, name)
+  }
+
+  /** Renames the open story, storing it first if it is still a draft. Says whether it was saved. */
+  async renameStory(value: string): Promise<boolean> {
+    const storyId = this.activeStory.storyId()
+    const name = value.trim()
+    if (!storyId || name.length === 0) return false
+
+    this.renameDraft(storyId, name)
+    if (!(await this.ensureSaved())) return false
+    if (!(await this.database.saveNewStoryName(storyId, name))) return false
+
+    this.activeStory.setStoryName(name)
+    return true
   }
 
   /** Stores the active draft now, for changes that are not tree edits (settings, sharing). */
@@ -226,6 +244,7 @@ export class StoryMutationService implements OnDestroy {
         if (draftName !== undefined) {
           if (saved) {
             this.drafts.delete(storyId)
+            this.draftsChanged.update((version) => version + 1)
             this.createdDraft.set({ id: storyId, name: draftName })
           }
           this.draftWaiters.get(storyId)?.forEach(resolve => resolve(saved))

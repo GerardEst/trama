@@ -43,14 +43,9 @@ async function prepareAuthor(page: Page) {
   return { story, routeApi, reject: () => { rejected = true }, allow: () => { rejected = false }, patches: () => patches }
 }
 
-async function openShare(page: Page, labels = { navigation: 'Your stories', toggle: 'Toggle menu', share: 'Share', readingLink: 'Reading link' }) {
-  await page.goto('/dashboard')
-  const nav = page.getByRole('navigation', { name: labels.navigation, exact: true })
-  if (page.viewportSize()!.width <= 760) {
-    await nav.getByRole('button', { name: labels.toggle, exact: true }).click()
-    await page.mouse.move(page.viewportSize()!.width - 8, 200)
-  }
-  await page.locator('polo-menu-tree-legend').getByRole('button', { name: labels.share, exact: true }).click()
+async function openShare(page: Page, labels = { share: 'Share', readingLink: 'Reading link' }) {
+  await page.goto('/board')
+  await page.locator('polo-board-actions').getByRole('button', { name: labels.share, exact: true }).click()
   await expect(page.getByLabel(labels.readingLink, { exact: true })).toBeVisible()
   return page.locator('polo-share-story')
 }
@@ -99,9 +94,9 @@ for (const width of [1440, 375, 320]) {
 }
 
 const localizedLabels = {
-  en: { navigation: 'Your stories', toggle: 'Toggle menu', share: 'Share', readingLink: 'Reading link', copy: 'Copy link' },
-  ca: { navigation: 'Les teves històries', toggle: 'Mostra o amaga el menú', share: 'Comparteix', readingLink: 'Enllaç de lectura', copy: 'Copia l’enllaç' },
-  es: { navigation: 'Tus historias', toggle: 'Mostrar u ocultar el menú', share: 'Compartir', readingLink: 'Enlace de lectura', copy: 'Copia el enlace' },
+  en: { share: 'Share', readingLink: 'Reading link', copy: 'Copy link' },
+  ca: { share: 'Comparteix', readingLink: 'Enllaç de lectura', copy: 'Copia l’enllaç' },
+  es: { share: 'Compartir', readingLink: 'Enlace de lectura', copy: 'Copia el enlace' },
 }
 
 for (const lang of ['en', 'ca', 'es'] as const) {
@@ -174,14 +169,13 @@ test('an unfinished story must have a connected start before sharing', async ({ 
   await expect(modal.getByText('Open as a player', { exact: false })).not.toHaveAttribute('href')
 })
 
-test('story options use the same keyboard-accessible sharing dialog with all features unlocked', async ({ page }) => {
+test('the story toolbar reopens the keyboard-accessible sharing dialog with all features unlocked', async ({ page }) => {
   const backend = await prepareAuthor(page)
   const modal = await openShare(page)
   await expect(page.getByRole('dialog', { name: 'Share your story' })).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(modal).toHaveCount(0)
-  await page.getByRole('button', { name: 'Story options', exact: true }).click()
-  await page.getByRole('button', { name: 'Share your story', exact: true }).click()
+  await page.locator('polo-board-actions').getByRole('button', { name: 'Share', exact: true }).click()
   await expect(page.getByRole('dialog', { name: 'Share your story' })).toBeVisible()
   const lastInput = page.getByLabel('Show a share button at the end of the story')
   await expect(lastInput).toBeEnabled()
@@ -196,7 +190,7 @@ test('story options use the same keyboard-accessible sharing dialog with all fea
 
 test('legacy subscription metadata does not lock tracking, branding, analytics or external links', async ({ page }) => {
   const backend = await prepareAuthor(page)
-  await page.goto('/dashboard')
+  await page.goto('/board')
   const node = page.locator('.node[data-board-join-node="node_0"]')
   await expect(node.getByRole('button', { name: 'add', exact: true })).toBeEnabled()
   await page.getByRole('button', { name: 'Story options', exact: true }).click()
@@ -206,7 +200,7 @@ test('legacy subscription metadata does not lock tracking, branding, analytics o
   await expect(page.getByLabel('Hide Trama link', { exact: true })).toBeEnabled()
   await expect(page.getByLabel('Footer text', { exact: true })).toBeEnabled()
   await expect(page.getByLabel('Footer link', { exact: true })).toBeEnabled()
-  await expect(page.getByRole('button', { name: 'Open analytics', exact: true })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Analytics', exact: true })).toBeEnabled()
   await tracking.check()
   await expect.poll(() => backend.story.tracking).toBe(true)
   await page.getByLabel('Footer text', { exact: true }).fill('My author page')

@@ -33,6 +33,19 @@ describe('I18nService', () => {
     expect(i18n.t('common.cancel')).toBe('Cancel·la')
   })
 
+  it('says how long ago something happened during a week, and the date after that', async () => {
+    withBrowserLanguages(['en-US'])
+    const i18n = TestBed.inject(I18nService)
+    await i18n.init()
+    const now = Date.parse('2026-11-19T12:00:00Z')
+    const ago = (seconds: number) => new Date(now - seconds * 1000)
+    expect(i18n.formatRelative(ago(20), now)).toBe('this minute')
+    expect(i18n.formatRelative(ago(5 * 60), now)).toBe('5 minutes ago')
+    expect(i18n.formatRelative(ago(2 * 3600), now)).toBe('2 hours ago')
+    expect(i18n.formatRelative(ago(86400), now)).toBe('yesterday')
+    expect(i18n.formatRelative(ago(10 * 86400), now)).toBe('Nov 9, 2026')
+  })
+
   it('falls back to English for unsupported browser languages', async () => {
     withBrowserLanguages(['fr-FR', 'de'])
     const i18n = TestBed.inject(I18nService)
@@ -90,6 +103,13 @@ describe('Translations', () => {
     'dashboard.paywall.upgradeEnd',
     'board.groups.nodes',
     'board.frames.nodes',
+    'dashboard.home.pro', 'dashboard.story.general', 'dashboard.story.generalTitle',
+    // Key combinations and the board's own words that the languages share.
+    'dashboard.controls.createShort', 'dashboard.shortcuts.zoom', 'dashboard.shortcuts.helpKeys',
+    'dashboard.shortcuts.duplicateKeys', 'dashboard.shortcuts.imageKeys', 'dashboard.shortcuts.groupKeys',
+    'dashboard.shortcuts.frameKeys', 'dashboard.shortcuts.panelKeys',
+    // The plan's own name, and a plain no in a statistics table.
+    'settings.billing.creator', 'dashboard.statistics.no',
   ])
 
   for (const [lang, dictionary] of Object.entries({ es, ca })) {

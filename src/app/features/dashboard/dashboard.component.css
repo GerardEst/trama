@@ -8,7 +8,6 @@
 .workspace {
   --polo-workspace-motion-duration: 320ms;
   --polo-workspace-motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
-  --polo-board-controls-offset: 0px;
   --preview-min-width: 550px;
   --board-pane-width: min(var(--board-width), calc(100vw - var(--preview-min-width) - 24px));
   --preview-entry-offset: calc(100vw - var(--board-pane-width));
@@ -26,6 +25,16 @@ polo-board {
   display: block;
   width: 100%;
   height: 100%;
+}
+/* The panels over the board, laid out against its pane. Clicks pass through to the board. */
+.chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  container: board-chrome / inline-size;
+}
+.workspace--panel {
+  --polo-board-left-inset: 332px;
 }
 .workspace--linear .boardPane {
   right: auto;
@@ -90,18 +99,12 @@ polo-board {
   outline: 2px solid var(--polo-color-focus);
   outline-offset: 2px;
 }
-.workspace--linear {
-  --polo-board-controls-offset: calc(var(--board-pane-width) - 100vw);
-  --polo-legend-width: min(350px, calc(var(--board-pane-width) - 32px));
-  --polo-menu-top-width: min(340px, calc(var(--board-pane-width) - 32px));
-  --polo-menu-top-dropdown-width: min(340px, calc(var(--board-pane-width) - 32px));
-}
 @media (max-width: 760px) {
-  .workspace--linear:not(.workspace--mobile-board) .boardPane,
-  .workspace--linear:not(.workspace--mobile-board) polo-menu-tree-legend,
-  .workspace--linear:not(.workspace--mobile-board) polo-menu-top,
-  .workspace--linear:not(.workspace--mobile-board) polo-menu {
+  .workspace--linear:not(.workspace--mobile-board) .boardPane {
     display: none;
+  }
+  .workspace--panel {
+    --polo-board-left-inset: 0px;
   }
   .workspaceDivider {
     display: none;
@@ -116,11 +119,25 @@ polo-board {
   .workspace--mobile-board .linearPane {
     display: none;
   }
-  .workspace--linear {
-    --polo-board-controls-offset: 0px;
-    --preview-entry-offset: 100vw;
-    --polo-legend-width: min(350px, calc(100vw - 32px));
-    --polo-menu-top-width: min(340px, calc(100vw - 80px));
-    --polo-menu-top-dropdown-width: min(340px, calc(100vw - 32px));
-  }
+}
+.missing {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-6);
+  text-align: center;
+  color: var(--polo-color-text-secondary);
+  background: var(--polo-color-canvas);
+}
+.missing p {
+  margin: 0;
+}
+.missing a {
+  color: var(--polo-color-action);
+  font-weight: 700;
 }

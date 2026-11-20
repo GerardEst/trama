@@ -188,14 +188,14 @@ describe('BoardComponent', () => {
     fixture.detectChanges()
     try {
       for (const [lang, names] of [
-        ['en', ['Content node - Free text', 'Content node - Selection', 'Distributor node', 'End node']],
-        ['ca', ['Node de contingut - Text lliure', 'Node de contingut - Selecció', 'Node distribuidor', 'Node final']],
-        ['es', ['Nodo de contenido - Texto libre', 'Nodo de contenido - Selección', 'Nodo distribuidor', 'Nodo final']],
+        ['en', ['Content node - Selection', 'Content node - Free text', 'Distributor node', 'End node']],
+        ['ca', ['Node de contingut - Selecció', 'Node de contingut - Text lliure', 'Node distribuidor', 'Node final']],
+        ['es', ['Nodo de contenido - Selección', 'Nodo de contenido - Texto libre', 'Nodo distribuidor', 'Nodo final']],
       ] as const) {
         await i18n.setLang(lang, { persist: false })
         fixture.detectChanges()
         const host = fixture.nativeElement as HTMLElement
-        const options = Array.from(host.querySelectorAll('.contextMenu__create'))
+        const options = Array.from(host.querySelectorAll('.contextMenu__name'))
         const headers = Array.from(host.querySelectorAll('polo-node .node__type'))
         expect(options.map(option => option.textContent?.trim())).toEqual([...names])
         expect(headers.map(header => header.textContent?.trim())).toEqual([...names])
@@ -637,16 +637,12 @@ describe('BoardComponent', () => {
     nodeRects.forEach((rect) => expect(rect).not.toHaveBeenCalled())
   })
 
-  it('shows a disabled group button on dashboard boards until selection is valid', () => {
+  it('hides the group and frame buttons on dashboard boards until several nodes are selected', () => {
     component.groupControls = true
     fixture.detectChanges()
     const host: HTMLElement = fixture.nativeElement
-    const button = host.querySelector<HTMLButtonElement>(
-      '.groupToolbar button'
-    )!
-    expect(button).not.toBeNull()
-    expect(button.disabled).toBeTrue()
-    expect(fixture.nativeElement.textContent).toContain('Ctrl + drag')
+    expect(host.querySelector('.groupToolbar')).toBeNull()
+    expect(host.textContent).not.toContain('Ctrl + drag')
   })
 
   it('groups a valid multi-selection with Ctrl+G without requiring an active node', () => {
@@ -660,11 +656,11 @@ describe('BoardComponent', () => {
         { id: 'node_2', type: 'end', left: 400, top: 0 },
       ],
     })
+    component.selectedNodeIds = new Set(['node_1', 'node_2'])
     fixture.detectChanges()
     const groupButton = (fixture.nativeElement as HTMLElement)
       .querySelector<HTMLButtonElement>('.groupToolbar button')!
     expect(groupButton.title).toContain('Ctrl+G / ⌘G')
-    component.selectedNodeIds = new Set(['node_1', 'node_2'])
     expect(component.activeNodeId()).toBeUndefined()
 
     const shortcut = new KeyboardEvent('keydown', {
@@ -688,6 +684,7 @@ describe('BoardComponent', () => {
         { id: 'node_1', type: 'end', left: 200, top: 0 },
       ],
     })
+    component.selectedNodeIds = new Set(['node_0', 'node_1'])
     fixture.detectChanges()
     const host: HTMLElement = fixture.nativeElement
     expect(host.querySelectorAll<HTMLButtonElement>('.groupToolbar button')[1].title)
@@ -780,8 +777,7 @@ describe('BoardComponent', () => {
     component.selectedNodeIds = new Set(['node_1'])
     component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     fixture.detectChanges()
-    expect(groupStartButton.disabled).toBeTrue()
-    expect(fixture.nativeElement.textContent).toContain('Ctrl + drag')
+    expect((fixture.nativeElement as HTMLElement).querySelector('.groupToolbar')).toBeNull()
     component.selectedNodeIds = new Set(['node_1', 'node_2'])
     component.boardElement!.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     fixture.detectChanges()
@@ -1507,6 +1503,53 @@ describe('BoardComponent', () => {
     component.historyRestored()
     expect(component.activeNodeId()).toBeUndefined()
     expect(component.selectedNodeIds.size).toBe(0)
+  })
+
+  it('also starts a marquee with Shift or Cmd, and Ctrl+click on macOS does not open the creation menu', () => {
+    TestBed.inject(ActiveStoryService).load('marquee-keys', 'Story', { nodes: [] })
+    fixture.detectChanges()
+    const board = component.boardElement!.nativeElement
+    spyOn(board, 'setPointerCapture')
+    spyOn(board, 'hasPointerCapture').and.returnValue(false)
+    for (const [key, pointerId] of [['shiftKey', 11], ['metaKey', 12], ['ctrlKey', 13]] as const) {
+      board.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, [key]: true, pointerId, clientX: 20, clientY: 20 }))
+      expect(component.selectionBox).withContext(key).toBeDefined()
+      // macOS turns Ctrl+click into a right click as well.
+      board.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, ctrlKey: true }))
+      expect(component.contextMenuActive).withContext(key).toBeFalse()
+      board.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerId, clientX: 30, clientY: 30 }))
+      expect(component.selectionBox).withContext(key).toBeUndefined()
+    }
+  })
+
+  it('creates a node in the middle of the visible board, next to one created there before', () => {
+    const story = TestBed.inject(ActiveStoryService)
+    spyOn(TestBed.inject(DatabaseService), 'saveTreeToDB').and.resolveTo(true)
+    fixture.componentRef.setInput('focusElements', false)
+    story.load('create-in-view', 'Story', { nodes: [] })
+    fixture.detectChanges()
+    const viewport = component.boardElement!.nativeElement.parentElement!
+    spyOn(viewport, 'getBoundingClientRect').and.returnValue(new DOMRect(0, 0, 800, 600))
+    spyOn(component.boardElement!.nativeElement, 'getBoundingClientRect').and.returnValue(
+      new DOMRect(-1000, -2000, component.boardElement!.nativeElement.offsetWidth, 10000)
+    )
+    const first = component.createNodeInView('content')
+    const second = component.createNodeInView('end')
+    expect(story.entireTree().nodes.map(({ id, type, left, top }) => ({ id, type, left, top }))).toEqual([
+      { id: first.id, type: 'content', left: 1270, top: 2220 },
+      { id: second.id, type: 'end', left: 1310, top: 2260 },
+    ])
+    expect(component.activeNodeId()).toBe(second.id)
+  })
+
+  it('opens the creation menu from a button at full size, whatever the zoom', () => {
+    spyOn(component.panzoom, 'getScale').and.returnValue(0.5)
+    fixture.detectChanges()
+    component.openCreateMenu()
+    fixture.detectChanges()
+    const menu = fixture.nativeElement.querySelector('.contextMenu') as HTMLElement
+    expect(menu).not.toBeNull()
+    expect(menu.style.scale).toBe('2')
   })
 
   it('creates a node and its dragged connection as one undo step', () => {

@@ -260,4 +260,46 @@ describe('DatabaseService story saves', () => {
       jasmine.clock().uninstall()
     }
   })
+
+  it('counts the plays of every story, most recently edited first, and maps them for the dashboard', async () => {
+    fetchRequest.and.resolveTo(new Response(JSON.stringify([
+      {
+        id: 'story-1', name: 'The island', custom_id: 'the-island', tracking: true, updated_at: '2026-11-18T08:00:00+00:00',
+        plays: [{ count: 12 }], recent: [{ count: 3 }], last: [{ created_at: '2026-11-10T09:00:00+00:00' }],
+      },
+      { id: 'story-2', name: 'Draft', custom_id: null, tracking: null, updated_at: null, plays: [{ count: 0 }], recent: [], last: [] },
+    ]), { status: 200 }))
+
+    const overview = await database.getStoriesOverview('author-1', new Date('2026-10-18T00:00:00Z'))
+
+    const params = new URL(String(fetchRequest.calls.mostRecent().args[0])).searchParams
+    expect(params.get('select')).toBe('id,name,custom_id,tracking,updated_at,plays:games(count),recent:games(count),last:games(created_at)')
+    expect(params.get('profile_id')).toBe('eq.author-1')
+    expect(params.get('recent.created_at')).toBe('gte.2026-10-18T00:00:00.000Z')
+    expect(params.get('order')).toBe('updated_at.desc')
+    expect(params.get('last.order')).toBe('created_at.desc')
+    expect(params.get('last.limit')).toBe('1')
+    expect(overview).toEqual([
+      { id: 'story-1', name: 'The island', slug: 'the-island', tracking: true, plays: 12, recentPlays: 3, lastPlayedAt: '2026-11-10T09:00:00+00:00', editedAt: '2026-11-18T08:00:00+00:00' },
+      { id: 'story-2', name: 'Draft', slug: null, tracking: false, plays: 0, recentPlays: 0, lastPlayedAt: null, editedAt: null },
+    ])
+  })
+
+  it('reports an overview it could not load instead of an empty list', async () => {
+    fetchRequest.and.resolveTo(new Response('{"message":"boom"}', { status: 500 }))
+    expect(await database.getStoriesOverview('author-1', new Date())).toBeNull()
+  })
+
+  it('creates a blank story for the author and says which one', async () => {
+    database.user.set({ id: 'author-1' } as never)
+    fetchRequest.and.resolveTo(new Response(JSON.stringify([{ id: 'story-9', name: 'My new tree', tree: {} }]), { status: 201 }))
+    expect(await database.createEmptyStory('My new tree')).toEqual({ id: 'story-9', name: 'My new tree' })
+    const body = JSON.parse(String(fetchRequest.calls.mostRecent().args[1]?.body))
+    expect(body).toEqual([{ name: 'My new tree', tree: { nodes: [], refs: {}, entryPoint: { left: 5000, top: 5000 } }, profile_id: 'author-1' }])
+  })
+
+  it('throws when a story could not be deleted, so callers do not report it gone', async () => {
+    fetchRequest.and.resolveTo(new Response('{"message":"denied"}', { status: 403 }))
+    await expectAsync(database.deleteStory('story-1')).toBeRejected()
+  })
 })

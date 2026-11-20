@@ -1,0 +1,40 @@
+@if (isEmpty) {
+  <p class="empty">{{ 'dashboard.legend.emptyRefs' | t }}</p>
+} @else {
+  <ul class="refs">
+    @for (ref of usedRefs; track ref.id) {
+      <li class="ref" (mouseenter)="highlightNodesWith(ref.id, true)" (mouseleave)="highlightNodesWith(ref.id, false)">
+        <span class="ref__type ref__type--{{ ref.type }}" [title]="refTypeName(ref.type)"></span>
+        <div class="ref__names">
+          <polo-editable-name
+            [label]="'dashboard.legend.refName' | t: { type: refTypeName(ref.type), id: ref.id }"
+            [value]="ref.name"
+            (valueChanged)="updateRefName($event, ref.id)"
+          ></polo-editable-name>
+          <span class="ref__id">{{ ref.id }}</span>
+        </div>
+        <span class="ref__times">{{ 'dashboard.legend.usedBefore' | t }} {{ ref.times }} {{ 'dashboard.legend.usedAfter' | t }}</span>
+        <button type="button" class="ref__category" [class.ref__category--empty]="!ref.category" (click)="openSelectorFor($event, ref.id)">
+          {{ ref.category || ('dashboard.legend.addCategory' | t) }}
+        </button>
+      </li>
+    }
+    @for (ref of unusedRefs; track ref.id) {
+      <li class="ref ref--unused">
+        <span class="ref__type ref__type--{{ ref.type }}" [title]="refTypeName(ref.type)"></span>
+        <div class="ref__names">
+          <polo-editable-name
+            [label]="'dashboard.legend.refName' | t: { type: refTypeName(ref.type), id: ref.id }"
+            [value]="ref.name"
+            (valueChanged)="updateRefName($event, ref.id)"
+          ></polo-editable-name>
+          <span class="ref__id">{{ ref.id }}</span>
+        </div>
+        <button type="button" class="ref__delete" [attr.aria-label]="'dashboard.legend.refDelete' | t: { name: ref.name || ref.id }"
+          [title]="'dashboard.legend.refDelete' | t: { name: ref.name || ref.id }" (click)="deleteRef(ref.id)">
+          <img width="14" src="/assets/icons/trash.svg" alt="" />
+        </button>
+      </li>
+    }
+  </ul>
+}

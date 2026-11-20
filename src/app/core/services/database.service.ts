@@ -2,7 +2,19 @@ import { Inject, Injectable, InjectionToken, OnDestroy, WritableSignal, signal }
 import { createClient, SupabaseClient, Subscription } from '@supabase/supabase-js'
 import { environment } from 'src/environments/environment'
 import { appUser, result, tree, userProfile } from 'src/app/core/interfaces/interfaces'
+import { StoryOverview } from 'src/app/core/interfaces/story-overview'
 import { withRetryableRefreshErrors } from './supabase-fetch'
+
+interface StoryOverviewRow {
+  id: string
+  name: string
+  custom_id: string | null
+  tracking: boolean | null
+  updated_at: string | null
+  plays: { count: number }[] | null
+  recent: { count: number }[] | null
+  last: { created_at: string }[] | null
+}
 
 export const SUPABASE_CLIENT = new InjectionToken<SupabaseClient>('Supabase client', {
   providedIn: 'root',
@@ -119,6 +131,38 @@ export class DatabaseService implements OnDestroy {
     return stories
   }
 
+  /**
+   * Every story of the author, newest first, with its plays: all of them, those since
+   * `recentSince` and the date of the last one. Counted in the database, not downloaded.
+   * Only stories with tracking on record plays, and RLS only lets authors read their own.
+   */
+  async getStoriesOverview(userId: string, recentSince: Date): Promise<StoryOverview[] | null> {
+    const { data, error } = await this.supabase
+      .from('stories')
+      .select('id, name, custom_id, tracking, updated_at, plays:games(count), recent:games(count), last:games(created_at)')
+      .eq('profile_id', userId)
+      .gte('recent.created_at', recentSince.toISOString())
+      .order('updated_at', { ascending: false })
+      .order('created_at', { referencedTable: 'last', ascending: false })
+      .limit(1, { referencedTable: 'last' })
+
+    if (error || !data) {
+      console.error('Could not load the overview of the stories', error)
+      return null
+    }
+
+    return (data as unknown as StoryOverviewRow[]).map((row) => ({
+      id: row.id,
+      name: row.name,
+      slug: row.custom_id,
+      tracking: !!row.tracking,
+      plays: row.plays?.[0]?.count ?? 0,
+      recentPlays: row.recent?.[0]?.count ?? 0,
+      lastPlayedAt: row.last?.[0]?.created_at ?? null,
+      editedAt: row.updated_at ?? null,
+    }))
+  }
+
   async getStoryWithID(storyId: string, basicInfo = false) {
     if (!environment.production)
       console.log(
@@ -175,6 +219,16 @@ export class DatabaseService implements OnDestroy {
 
     if (error) return false
     return data
+  }
+
+  /** A blank story for the signed-in author, ready to open in the editor. */
+  async createEmptyStory(name: string): Promise<{ id: string; name: string } | null> {
+    const created = await this.createNewTree([{
+      name,
+      tree: { nodes: [], refs: {}, entryPoint: { left: 5000, top: 5000 } },
+      profile_id: this.user()?.id,
+    }])
+    return created ? { id: created[0].id, name: created[0].name } : null
   }
 
   /** Stores a story the author has only had in memory, under the id it already uses. */
@@ -471,10 +525,26 @@ export class DatabaseService implements OnDestroy {
         .delete()
         .eq('id', storyId)
 
+      if (error) throw error
       return data
     } catch (err) {
       console.error('error deleting the story:', err)
       throw err
     }
+  }
+
+  /**
+   * Asks Stripe, through the edge function, to cancel the person's subscription. The client sends
+   * the session itself, so nothing about it is read from storage here.
+   */
+  async cancelSubscription(): Promise<boolean> {
+    const { error } = await this.supabase.functions.invoke('cancel-subscription-request', { method: 'POST' })
+    if (error) {
+      console.error('Could not cancel the subscription', error)
+      return false
+    }
+    const user = this.user()
+    if (user) this.user.set({ ...user, profile: { ...user.profile, subscription_status: 'canceled' } })
+    return true
   }
 }

@@ -1,133 +1,34 @@
-import { UnavailableAnswerDisplay } from 'src/app/core/interfaces/interfaces'
-import { AnswerDisplaySelectComponent } from 'src/app/shared/components/answer-display-select/answer-display-select.component'
-import { Component, Output, EventEmitter } from '@angular/core'
-import { DatabaseService } from 'src/app/core/services/database.service'
-import { Router } from '@angular/router'
+import { Component, Input, output } from '@angular/core'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
-import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
-import { normalizeLink } from 'src/app/shared/utils/normalizers'
-import { AlertService } from 'src/app/core/services/alert.service'
-import { DeleteStoryComponent } from '../delete-story/delete-story.component'
-import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
-import { StoryExportService } from 'src/app/shared/services/story-export.service'
-import { StoryMutationService } from 'src/app/shared/services/story-mutation.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
-import { TranslationKey } from 'src/app/core/i18n/i18n.types'
 import { ViewportService } from 'src/app/core/services/viewport.service'
+import { StoryReferencesComponent } from '../story-references/story-references.component'
+import { StadisticsLayerComponent } from '../stadistics-layer/stadistics-layer.component'
+import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 
+export const STORY_PANEL_ID = 'story-panel'
+
+/**
+ * The project panel, down the left side of the board: the project the open story belongs to, with
+ * its stories, characters and locations, and what this story holds, its references and the games
+ * played. Projects are not stored yet, so it lists this story alone and the rest is coming soon.
+ * It opens and closes from the board's controls; on phones it covers the board.
+ */
 @Component({
-  selector: 'polo-menu-top',
+  selector: 'polo-story-panel',
   standalone: true,
-  imports: [BasicButtonComponent, EditableNameComponent, TranslatePipe, AnswerDisplaySelectComponent],
-  templateUrl: './menu-top.component.html',
-  styleUrl: './menu-top.component.css',
+  imports: [TranslatePipe, StoryReferencesComponent, StadisticsLayerComponent, ContextHelpComponent],
+  templateUrl: './story-panel.component.html',
+  styleUrl: './story-panel.component.css',
 })
-export class MenuTopComponent {
-  showOptions: boolean = false
-  exportError: TranslationKey | null = null
-
-  @Output() onDeleteStory: EventEmitter<any> = new EventEmitter()
-  @Output() historyRequested = new EventEmitter<'undo' | 'redo'>()
-  @Output() shareRequested = new EventEmitter<void>()
+export class StoryPanelComponent {
+  @Input() open = false
+  readonly closed = output<void>()
+  readonly panelId = STORY_PANEL_ID
+  mode: 'refs' | 'games' = 'refs'
 
   constructor(
-    public db: DatabaseService,
-    private router: Router,
     public activeStory: ActiveStoryService,
-    private alertService: AlertService,
-    private storyExport: StoryExportService,
-    public mutations: StoryMutationService,
     public viewport: ViewportService
   ) {}
-
-  signInAgain() {
-    this.router.navigate(['/login'])
-  }
-
-  async updateStoryName(value: string) {
-    const storyId = this.activeStory.storyId()
-    const newName = value.trim()
-    if (!storyId || newName.length === 0) return
-
-    this.mutations.renameDraft(storyId, value)
-    if (!(await this.mutations.ensureSaved())) return
-    await this.db.saveNewStoryName(storyId, value)
-
-    this.activeStory.setStoryName(newName)
-  }
-
-  toggleOptions() {
-    this.showOptions = !this.showOptions
-  }
-
-  async toggleTracking() {
-    if (this.db.authenticationRequired() || !this.activeStory.storyId()) return
-
-    const tracking = !this.activeStory.storyConfiguration().tracking
-    this.activeStory.patchConfiguration({ tracking })
-    if (await this.mutations.ensureSaved()) this.db.setTrackingOf(this.activeStory.storyId(), tracking)
-  }
-
-  setAnswerDisplay(value: UnavailableAnswerDisplay | undefined) {
-    this.mutations.update(tree => { tree.unavailableAnswerDisplay = value })
-  }
-
-  async toggleCumulativeMode() {
-    const cumulativeMode = !this.activeStory.storyConfiguration().cumulativeMode
-    this.activeStory.patchConfiguration({ cumulativeMode })
-    if (await this.mutations.ensureSaved()) this.db.setCumulativeModeOf(this.activeStory.storyId(), cumulativeMode)
-  }
-
-  async toggleAppLink() {
-    const tapLink = !this.activeStory.storyConfiguration().tapLink
-    this.activeStory.patchConfiguration({ tapLink })
-    if (await this.mutations.ensureSaved()) this.db.setTapLinkOf(this.activeStory.storyId(), tapLink)
-  }
-
-  async updateFooter(option: 'text' | 'link', event: any) {
-    let newValue = event.target.value
-    if (option === 'link') {
-      newValue = normalizeLink(newValue)
-    }
-    const footer = {
-      ...this.activeStory.storyConfiguration().footer,
-      [option]: newValue,
-    }
-    this.activeStory.patchConfiguration({ footer })
-    if (!(await this.mutations.ensureSaved())) return
-    this.db.updateFooterOf(this.activeStory.storyId(), {
-      text: footer.text ?? '',
-      link: footer.link ?? '',
-    })
-  }
-
-  async openStadistics() {
-    this.router.navigate(['/stadistics', this.activeStory.storyId()])
-  }
-
-  exportTree() {
-    if (!this.activeStory.storyId()) return
-
-    this.exportError = null
-    try {
-      this.storyExport.downloadJson()
-      this.closePopup()
-    } catch (error: unknown) {
-      console.error('Could not export the story', error)
-      this.exportError = 'dashboard.top.exportError'
-    }
-  }
-
-  async deleteTree() {
-    const result = await this.alertService.launch(DeleteStoryComponent)
-
-    if (result) {
-      this.onDeleteStory.emit(this.activeStory.storyId())
-      this.closePopup()
-    }
-  }
-
-  closePopup() {
-    this.showOptions = false
-  }
 }

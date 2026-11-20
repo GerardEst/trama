@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
-import { AnchoredPopoverComponent } from './anchored-popover.component'
+import { AnchoredPopoverComponent, placeBeside } from './anchored-popover.component'
 import { AnchoredPopoverContentDirective } from './anchored-popover-content.directive'
 
 @Component({
@@ -178,21 +178,56 @@ describe('AnchoredPopoverComponent', () => {
     expect(document.activeElement).toBe(button)
   })
 
-  it('configures four-way placement and a viewport-safe fallback', async () => {
+  it('opens beside its trigger inside a panned and zoomed board', async () => {
+    // CSS anchors ignore the board's transform, which left the menus far from their buttons.
     const host: HTMLElement = fixture.nativeElement
-    const button = host.querySelector<HTMLButtonElement>('button')!
-    button.click()
+    // A narrow panel near the corner, so it fits beside the trigger in the test runner's small frame.
+    host.style.cssText = 'position: absolute; top: 0; left: 0; transform: matrix(0.8, 0, 0, 0.8, 40, 30); transform-origin: 0 0; --polo-popover-width: 120px'
+    host.querySelector<HTMLElement>('polo-anchored-popover')!.style.cssText = 'position: absolute; top: 10px; left: 10px'
+    const trigger = host.querySelector<HTMLButtonElement>('[popoverTrigger]')!
+    trigger.click()
     fixture.detectChanges()
     await new Promise<void>((resolve) => setTimeout(resolve, 0))
 
+    const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!.getBoundingClientRect()
+    const button = trigger.getBoundingClientRect()
+    const gap = Math.max(panel.left - button.right, button.left - panel.right)
+    expect(gap).toBeGreaterThanOrEqual(0)
+    expect(gap).toBeLessThanOrEqual(13)
+    expect(panel.top).toBeCloseTo(button.top, 0)
+    expect(parseFloat(getComputedStyle(host.querySelector('.anchoredPopover__panel')!).maxHeight)).toBeLessThan(window.innerHeight)
+  })
+
+  it('follows its trigger while the board moves, and stops once closed', async () => {
+    const host: HTMLElement = fixture.nativeElement
+    host.querySelector<HTMLElement>('polo-anchored-popover')!.style.cssText = 'position: absolute; top: 40px; left: 40px'
+    const trigger = host.querySelector<HTMLButtonElement>('[popoverTrigger]')!
+    trigger.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 0))
     const panel = host.querySelector<HTMLElement>('.anchoredPopover__panel')!
-    const style = getComputedStyle(panel)
-    expect(style.getPropertyValue('position-anchor')).toBe('--context-popover')
-    expect(style.getPropertyValue('position-try-fallbacks')).toBe(
-      'flip-inline, flip-block, flip-inline flip-block'
-    )
-    expect(style.getPropertyValue('position-try-order')).toBe('most-height')
-    expect(parseFloat(style.maxHeight)).toBeLessThan(window.innerHeight)
+    const before = panel.getBoundingClientRect().top
+
+    host.style.transform = 'translateY(30px)'
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    const moved = trigger.getBoundingClientRect().top
+    expect(moved).toBeGreaterThan(before)
+    expect(panel.getBoundingClientRect().top).toBeCloseTo(moved, 0)
+
+    const frames = spyOn(window, 'requestAnimationFrame').and.callThrough()
+    host.querySelector<HTMLButtonElement>('[role="dialog"] button')!.click()
+    fixture.detectChanges()
+    await new Promise<void>((resolve) => setTimeout(resolve, 50))
+    expect(frames).not.toHaveBeenCalled()
+  })
+
+  it('places itself before the trigger when there is no room after it, always inside the viewport', () => {
+    const viewport = { width: 1000, height: 700 }
+    const panel = { width: 300, height: 200 }
+    expect(placeBeside({ top: 100, left: 100, right: 132 }, panel, viewport)).toEqual({ top: 100, left: 144 })
+    expect(placeBeside({ top: 100, left: 800, right: 832 }, panel, viewport)).toEqual({ top: 100, left: 488 })
+    expect(placeBeside({ top: 650, left: 200, right: 232 }, panel, viewport)).toEqual({ top: 484, left: 244 })
+    expect(placeBeside({ top: -40, left: 200, right: 232 }, { width: 900, height: 200 }, viewport)).toEqual({ top: 16, left: 84 })
   })
 
   it('closes on a click on its own panel, which is the modal backdrop on phones', async () => {

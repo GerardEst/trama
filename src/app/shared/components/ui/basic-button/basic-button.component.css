@@ -2,28 +2,33 @@
   display: inline-flex;
 }
 
+/* One size and one look for every button: a light surface with a fine border, as on the board's panels. */
 button {
   display: inline-flex;
   width: 100%;
-  min-height: 3.25rem;
+  min-height: 32px;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1rem;
-  color: var(--polo-button-text, var(--polo-color-text));
-  font-size: var(--polo-button-font-size, 1rem);
-  font-weight: 650;
-  background: var(--polo-button-background, var(--polo-color-surface-muted));
-  border: 1px solid transparent;
-  border-radius: var(--polo-button-radius, 0.65rem);
+  gap: var(--polo-space-2);
+  box-sizing: border-box;
+  padding: 0 var(--polo-space-3);
+  color: var(--polo-button-text, var(--polo-color-text-strong));
+  font: 700 var(--polo-button-font-size, 13px) / 1.2 var(--polo-font-ui);
+  background: var(--polo-button-background, var(--polo-color-surface));
+  border: 1px solid var(--polo-button-border, var(--polo-color-border));
+  border-radius: var(--polo-button-radius, 8px);
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+/* An icon before the text sits closer to the edge, like the text after it. */
+button:has(> img:first-child):not(.onlyIcon) {
+  padding-inline-start: var(--polo-space-2);
 }
 button img {
   flex: 0 0 auto;
 }
-button:hover:not(:disabled) {
-  background: var(--polo-button-background-hover, var(--polo-color-border));
+button:hover:not(:disabled), button[aria-expanded='true'] {
+  background: var(--polo-button-background-hover, var(--polo-color-surface-subtle));
 }
 button:active:not(:disabled) {
   transform: scale(0.97);
@@ -44,28 +49,34 @@ button.danger {
 button.success {
   color: var(--polo-color-text-on-success);
   background: var(--polo-color-success);
+  border-color: transparent;
+}
+button.primary {
+  color: var(--polo-color-text-on-action);
+  background: var(--polo-color-action);
+  border-color: transparent;
+}
+button.primary:hover:not(:disabled) {
+  background: var(--polo-color-action-hover);
+}
+button.primary img {
+  filter: var(--polo-icon-on-action-filter);
 }
 button.transparent {
   background: transparent;
+  border-color: transparent;
 }
 button.transparent:hover:not(:disabled) {
   background: var(--polo-color-surface-muted);
 }
-button.sizeS {
-  min-height: 2.75rem;
-  padding: 0.5rem 0.65rem;
-}
+/* Kept for older templates: every button has the same size now. */
 button.sizeS img {
-  width: 1rem;
+  width: 14px;
 }
 button.onlyIcon {
-  width: 3.25rem;
-  padding: 0.65rem;
+  width: 32px;
+  padding: 0;
   aspect-ratio: 1;
-}
-button.onlyIcon.sizeS {
-  width: 2.75rem;
-  padding: 0.55rem;
 }
 button.selected {
   color: var(--polo-color-action);
@@ -73,11 +84,11 @@ button.selected {
   border-color: var(--polo-color-focus);
 }
 button.border {
-  background: var(--polo-color-surface);
   border-color: var(--polo-color-border-strong);
 }
 button.alignLeft {
   justify-content: flex-start;
+  text-align: left;
 }
 button.alignRight {
   justify-content: flex-end;

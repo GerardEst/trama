@@ -8,6 +8,8 @@ import { CheckoutService, CreatorBillingPeriod } from 'src/app/core/services/che
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { TranslationKey } from 'src/app/core/i18n/i18n.types'
+import { AlertService } from 'src/app/core/services/alert.service'
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component'
 
 @Component({
   selector: 'polo-pricing',
@@ -32,12 +34,14 @@ export class PricingComponent {
   @Input() compactFeatures: boolean = false
 
   cancelingSubscription: boolean = false
+  cancelFailed = false
 
   constructor(
     private router: Router,
     public db: DatabaseService,
     private i18n: I18nService,
-    private checkout: CheckoutService
+    private checkout: CheckoutService,
+    private alert: AlertService
   ) {}
 
   price(value: number) {
@@ -71,40 +75,20 @@ export class PricingComponent {
     return this.checkout.start(plan, period, email)
   }
 
-  cancelSubscription() {
+  /** Cancelling is asked first: it ends the plan the person pays for. Failures are said in place. */
+  async cancelSubscription() {
+    this.cancelFailed = false
+    const confirmed = await this.alert.launch(ConfirmDialogComponent, {
+      title: this.i18n.t('pricing.cancelConfirm'),
+      message: this.i18n.t('pricing.cancelConfirmText'),
+      confirmText: this.i18n.t('pricing.cancel'),
+      cancelText: this.i18n.t('pricing.keep'),
+      danger: true,
+    })
+    if (!confirmed) return
     this.cancelingSubscription = true
-
-    const jwtToken = localStorage.getItem('sb-hiibhbkawimlepxhhavm-auth-token')
-    if (!jwtToken) {
-      return console.error('No present JWT. Cant cancel plan.')
-    }
-
-    fetch(
-      'https://hiibhbkawimlepxhhavm.supabase.co/functions/v1/cancel-subscription-request',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${JSON.parse(jwtToken).access_token}`,
-        },
-      }
-    )
-      .then((response) => {
-        if (response.status === 200) {
-          const user = this.db.user()
-          if (user) user.profile.subscription_status = 'canceled'
-        } else {
-          alert(this.i18n.t('pricing.cancelFailed'))
-        }
-
-        this.cancelingSubscription = false
-      })
-      .catch((error) => {
-        console.error(error)
-        alert(this.i18n.t('pricing.cancelFailed'))
-
-        this.cancelingSubscription = false
-      })
+    this.cancelFailed = !(await this.db.cancelSubscription())
+    this.cancelingSubscription = false
   }
 }
 

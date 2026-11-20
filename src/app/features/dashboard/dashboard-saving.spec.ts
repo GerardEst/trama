@@ -55,6 +55,23 @@ describe('Dashboard save/load races', () => {
     else localStorage.setItem('polo-id', previousStoryId)
   })
 
+  it('says a story named in the address is gone instead of opening another one', fakeAsync(() => {
+    database.getStoryWithID.and.resolveTo(false)
+    Object.assign(database, { getNewestStory: jasmine.createSpy('getNewestStory').and.resolveTo(story('other')) })
+    void component.initBoard('deleted')
+    flushMicrotasks()
+    tick()
+    expect(component.missing()).toBeTrue()
+    expect(database.getNewestStory).not.toHaveBeenCalled()
+    expect(activeStory.storyId()).not.toBe('other')
+
+    void component.initBoard('deleted', { remembered: true })
+    flushMicrotasks()
+    tick()
+    expect(component.missing()).toBeFalse()
+    expect(activeStory.storyId()).toBe('other')
+  }))
+
   it('ignores a delayed response for a story the author has already switched away from', fakeAsync(() => {
     let finishFirst: (value: StoryRecord) => void = () => undefined
     let finishSecond: (value: StoryRecord) => void = () => undefined
@@ -112,10 +129,13 @@ describe('Dashboard save/load races', () => {
     mutations.update(draft => { draft.nodes[0].left = 20 })
     mutations.undo()
     const before = activeStory.entireTree()
+    // The address naming the open story, as when a saved example gains its id, must not end the edit.
+    const commit = spyOn(component, 'commitEdits')
     void component.initBoard('story-1')
     flushMicrotasks()
     tick()
     expect(database.getStoryWithID).not.toHaveBeenCalled()
+    expect(commit).not.toHaveBeenCalled()
     expect(activeStory.entireTree()).toBe(before)
     expect(activeStory.canUndo()).toBeTrue()
     expect(activeStory.canRedo()).toBeTrue()

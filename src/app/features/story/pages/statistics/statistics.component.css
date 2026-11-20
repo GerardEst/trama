@@ -1,0 +1,203 @@
+.notice {
+  margin: 0;
+  padding: var(--polo-space-3) var(--polo-space-4);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  background: var(--polo-color-surface-subtle);
+  color: var(--polo-color-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.notice a {
+  color: var(--polo-color-action);
+  font-weight: 700;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  padding: var(--polo-space-6);
+  text-align: center;
+}
+.empty__title {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-weight: 700;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--polo-space-3);
+  margin: 0;
+}
+.total {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--polo-space-1);
+  padding: var(--polo-space-4);
+}
+.total dt {
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+}
+.total dd {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 1.6rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.total .total__date {
+  font-size: 1.1rem;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-3);
+  margin: 0;
+  padding: var(--polo-space-4);
+  list-style: none;
+}
+.bar {
+  display: grid;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--polo-space-3);
+  font-size: 13px;
+}
+.bar__label {
+  overflow: hidden;
+  color: var(--polo-color-text);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bar--unfinished .bar__label {
+  color: var(--polo-color-text-secondary);
+  font-style: italic;
+}
+.bar__track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--polo-color-surface-muted);
+}
+.bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--polo-color-action);
+}
+.bar--unfinished .bar__fill {
+  background: var(--polo-color-border-strong);
+}
+.bar__value {
+  color: var(--polo-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: var(--polo-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--polo-space-3) var(--polo-space-4);
+}
+.result__name {
+  overflow: hidden;
+  color: var(--polo-color-text);
+  font-size: 12px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.result__value {
+  color: var(--polo-color-text-strong);
+  font-size: 1.3rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.result__hint {
+  color: var(--polo-color-text-secondary);
+  font-size: 11px;
+}
+
+/* Many stats make the table wider than a phone: it scrolls inside its panel, not the page. */
+.tableWrapper {
+  overflow-x: auto;
+}
+.games {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.games th, .games td {
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border-bottom: 1px solid var(--polo-color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+.games tbody tr:last-child td {
+  border-bottom: 0;
+}
+.games .number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.games .date {
+  color: var(--polo-color-text-secondary);
+}
+.sort {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--polo-color-text-secondary);
+  font: 700 12px var(--polo-font-ui);
+  cursor: pointer;
+}
+.sort::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+}
+th[aria-sort='ascending'] .sort, th[aria-sort='descending'] .sort {
+  color: var(--polo-color-text-strong);
+}
+th[aria-sort='ascending'] .sort::after {
+  content: ' ↑';
+}
+th[aria-sort='descending'] .sort::after {
+  content: ' ↓';
+}
+.sort:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.met {
+  color: var(--polo-color-text-secondary);
+}
+.met--yes {
+  color: var(--polo-color-success);
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .bar__track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

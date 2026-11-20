@@ -1,7 +1,7 @@
 <div class="loginBox">
   <div class="login-layout">
     <aside class="login-intro">
-      <a class="login-intro__brand" href="/" [attr.aria-label]="'login.home' | t">Trama<span>.</span></a>
+      <polo-wordmark class="login-intro__brand" [href]="homeUrl()" [label]="'login.home' | t"></polo-wordmark>
       <p class="login-intro__eyebrow">{{ 'login.eyebrow' | t }}</p>
       <p class="login-intro__title">
         {{ 'login.titleStart' | t }} <em>{{ 'login.titleEnd' | t }}</em>
@@ -11,7 +11,7 @@
     </aside>
     <div class="box">
       <div class="login-top">
-        <a class="login-back" href="/">{{ 'login.back' | t }}</a>
+        <a class="login-back" [href]="homeUrl()">{{ 'login.back' | t }}</a>
         <polo-language-selector></polo-language-selector>
       </div>
       @if (subscribing) {

@@ -1,0 +1,49 @@
+/* The same dialog as sharing the story. */
+polo-modal-window {
+  --polo-dialog-width: min(560px, calc(100vw - 32px));
+  --polo-modal-padding: 24px;
+  --polo-modal-content-inset: 0px;
+  --polo-modal-gap: 20px;
+  --polo-modal-radius: var(--polo-radius-card);
+  --polo-modal-shadow: var(--polo-shadow-popover);
+  --polo-modal-max-height: calc(100dvh - 32px);
+  --polo-modal-body-overflow: auto;
+  --polo-modal-empty-options-display: none;
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.optionsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  color: var(--polo-color-text);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--polo-space-2);
+  padding-top: 20px;
+  border-top: 1px solid var(--polo-color-border);
+}
+
+.allOptions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  color: var(--polo-color-action);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.allOptions:hover {
+  text-decoration: underline;
+}
+.allOptions:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}

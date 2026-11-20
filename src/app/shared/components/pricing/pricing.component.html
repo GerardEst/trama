@@ -2,9 +2,12 @@
   <div class="legacySubscription" role="status">
     <p>{{ 'pricing.legacyPro' | t }}</p>
     @if (!preventEasyDowngrading && !canceledSubscription) {
-      <polo-basic-button (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" type="danger" />
+      <polo-basic-button class="cancel" (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" />
     }
   </div>
+}
+@if (cancelFailed) {
+  <p class="cancelError" role="alert">{{ 'pricing.cancelFailed' | t }}</p>
 }
 <div class="pricing" [class.pricing--compact]="compactFeatures">
   <div class="pricing__plan recommendedPlan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'creator'">
@@ -34,9 +37,10 @@
     </details>
     @if (userPlan === 'creator' && !canceledSubscription) {
       @if (!preventEasyDowngrading) {
-        <polo-basic-button (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" type="danger" />
+        <polo-basic-button class="cancel" (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" />
       }
-    } @else if (userPlan !== 'legacy-pro') {
+    } @else if (userPlan !== 'legacy-pro' || canceledSubscription) {
+      <!-- Anyone without a live subscription can take Creator, including after an old Pro was canceled. -->
       <polo-landing-link (click)="subscribe('creator', payAnnually)" [highlight]="true" [text]="'pricing.creator.choose' | t" />
     }
   </div>

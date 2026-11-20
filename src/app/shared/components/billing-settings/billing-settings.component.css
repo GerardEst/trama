@@ -1,0 +1,46 @@
+.billing {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-2) var(--polo-space-4);
+  padding: var(--polo-space-4);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  background: var(--polo-color-surface);
+}
+.summary__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.summary__label {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+}
+.summary__plan {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+.summary__state {
+  margin: 0;
+  padding: 2px var(--polo-space-3);
+  border-radius: 999px;
+  background: var(--polo-color-action-soft);
+  color: var(--polo-color-action);
+  font-size: 12px;
+  font-weight: 700;
+}
+.summary__state--off {
+  background: var(--polo-color-surface-muted);
+  color: var(--polo-color-text-secondary);
+}

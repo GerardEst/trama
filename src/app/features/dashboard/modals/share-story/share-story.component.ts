@@ -1,4 +1,5 @@
-import { Component, computed, OnDestroy, OnInit } from '@angular/core'
+import { Component, computed, Input, OnDestroy, OnInit } from '@angular/core'
+import { NgTemplateOutlet } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { A11yModule } from '@angular/cdk/a11y'
 import { ModalWindowComponent } from 'src/app/shared/components/ui/modal-window/modal-window.component'
@@ -7,6 +8,7 @@ import { StoryMutationService } from 'src/app/shared/services/story-mutation.ser
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { BasicButtonComponent } from '../../../../shared/components/ui/basic-button/basic-button.component'
 import { environment } from 'src/environments/environment'
+import { DialogHeaderComponent } from 'src/app/shared/components/dialog-header/dialog-header.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslationKey } from 'src/app/core/i18n/i18n.types'
@@ -15,11 +17,14 @@ import { brokenStoryAnswerCount, copyStoryLink, shareStoryLink, storyReadingUrl,
 @Component({
   selector: 'polo-share-story',
   standalone: true,
-  imports: [ModalWindowComponent, BasicButtonComponent, TranslatePipe, FormsModule, A11yModule],
+  imports: [ModalWindowComponent, BasicButtonComponent, TranslatePipe, FormsModule, A11yModule, NgTemplateOutlet, DialogHeaderComponent],
   templateUrl: './share-story.component.html',
   styleUrl: './share-story.component.css',
 })
+/** Sharing the open story: in a dialog from the editor, or embedded in the story's own page. */
 export class ShareStoryComponent implements OnInit, OnDestroy {
+  /** Without the dialog around it, for a page that titles it itself. */
+  @Input() embedded = false
   readonly storyId = this.activeStory.storyId()
   readonly baseRoute = environment.baseRoute
   readonly readingUrl = computed(() => storyReadingUrl(this.baseRoute, this.storyId, this.activeStory.storyConfiguration().customId))

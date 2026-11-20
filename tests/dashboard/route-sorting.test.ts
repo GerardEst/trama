@@ -38,7 +38,7 @@ test('distributor routes can be dragged and keyboard-sorted without moving the f
     } else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1400 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   const node = page.locator('.node[data-board-join-node="node_0"]')
   const routes = node.locator('polo-condition[data-sortable-id]')
   const fallback = node.locator('polo-condition').filter({ hasText: 'Otherwise' })

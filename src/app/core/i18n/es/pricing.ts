@@ -13,6 +13,9 @@ export const pricing: Dictionary['pricing'] = {
   canceledPlan: 'Suscripción cancelada',
   cancel: 'Cancelar suscripción',
   cancelFailed: 'No se ha podido cancelar la suscripción',
+  cancelConfirm: '¿Cancelar la suscripción?',
+  cancelConfirmText: 'Tus historias siguen siendo tuyas, pero perderás las funciones del editor de tu plan cuando termine el periodo pagado.',
+  keep: 'Mantener la suscripción',
   successIcon: 'Incluido',
   legacyPro: 'Tienes una suscripción Pro antigua. Es independiente del futuro Pro de pago único y no se ha migrado automáticamente.',
   creator: {

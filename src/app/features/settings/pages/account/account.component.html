@@ -1,0 +1,57 @@
+<div class="page page--narrow">
+  <header class="pageHeader">
+    <div>
+      <h1>{{ 'settings.account.title' | t }}</h1>
+      <p>{{ 'settings.account.subtitle' | t }}</p>
+    </div>
+  </header>
+  @if (db.user(); as user) {
+    <section aria-labelledby="account-identity-title">
+      <h2 class="sectionTitle" id="account-identity-title">{{ 'settings.account.identity' | t }}</h2>
+      <ul class="panel settings">
+        <li class="setting">
+          <div class="setting__text">
+            <p class="setting__label">{{ 'dashboard.profile.email' | t }}</p>
+            <p class="setting__value">{{ user.email }}</p>
+          </div>
+        </li>
+        <li class="setting">
+          <div class="setting__text">
+            <p class="setting__label">{{ 'dashboard.profile.name' | t }}</p>
+            <p class="setting__value">{{ name || '—' }}</p>
+            <p class="setting__hint">{{ 'settings.account.nameHint' | t }}</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="account-security-title">
+      <h2 class="sectionTitle" id="account-security-title">{{ 'settings.account.security' | t }}</h2>
+      <ul class="panel settings">
+        @if (user.app_metadata.provider === 'email') {
+          <li class="setting">
+            <div class="setting__text">
+              <p class="setting__label">{{ 'settings.account.password' | t }}</p>
+              <p class="setting__hint">{{ 'settings.account.passwordHint' | t }}</p>
+            </div>
+            <button class="button" type="button" (click)="changePassword()">{{ 'dashboard.profile.changePassword' | t }}</button>
+          </li>
+        } @else {
+          <li class="setting">
+            <div class="setting__text">
+              <p class="setting__label">{{ 'settings.account.password' | t }}</p>
+              <p class="setting__hint">{{ 'settings.account.providerHint' | t: { provider: providerName } }}</p>
+            </div>
+          </li>
+        }
+        <li class="setting">
+          <div class="setting__text">
+            <p class="setting__label">{{ 'settings.account.session' | t }}</p>
+            <p class="setting__hint">{{ 'settings.account.sessionHint' | t }}</p>
+          </div>
+          <button class="button" type="button" (click)="logout()">{{ 'dashboard.profile.logout' | t }}</button>
+        </li>
+      </ul>
+    </section>
+  }
+</div>

@@ -1,0 +1,21 @@
+<ul class="links">
+  <li>
+    <a class="links__item" routerLink="/settings/account" (click)="picked.emit()">
+      <img width="16" src="/assets/icons/configuration.svg" alt="" />
+      {{ 'settings.menu.account' | t }}
+    </a>
+  </li>
+  <li>
+    <a class="links__item" [href]="docsUrl()" (click)="picked.emit()">
+      <img width="16" src="/assets/icons/docs.svg" alt="" />
+      {{ 'settings.menu.guide' | t }}
+    </a>
+  </li>
+  <li class="links__separator" role="presentation"></li>
+  <li>
+    <button class="links__item" type="button" (click)="logout()">
+      <img width="16" src="/assets/icons/arrow-right.svg" alt="" />
+      {{ 'dashboard.profile.logout' | t }}
+    </button>
+  </li>
+</ul>

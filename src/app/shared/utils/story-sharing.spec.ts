@@ -23,6 +23,8 @@ describe('story sharing links', () => {
     }
     expect(validateStorySlug('ca')).toBe('reserved')
     expect(validateStorySlug('dashboard')).toBe('reserved')
+    // The editor's route matches /board and /story/:id/board without a static path.
+    for (const root of ['board', 'story', 'settings']) expect(validateStorySlug(root)).withContext(root).toBe('reserved')
   })
 
   it('prefers the saved alias, with a stable fallback for absent or unsafe legacy aliases', () => {

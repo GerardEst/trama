@@ -1,21 +1,18 @@
 :host {
   display: inline-block;
-  anchor-scope: --context-popover;
 }
 
 .anchoredPopover__trigger {
   display: inline-flex;
-  anchor-name: --context-popover;
 }
 
+/* Beside the trigger: the component measures the trigger's on-screen box, since CSS anchors
+   ignore the transform that pans and zooms the board. */
 .anchoredPopover__panel {
   position: fixed;
   inset: auto;
-  top: max(1rem, anchor(top));
-  left: max(1rem, anchor(right) + 0.75rem);
-  position-anchor: --context-popover;
-  position-try-fallbacks: flip-inline, flip-block, flip-inline flip-block;
-  position-try-order: most-height;
+  top: var(--anchored-popover-top, 1rem);
+  left: var(--anchored-popover-left, 1rem);
   width: min(var(--polo-popover-width, 32rem), 100vw - 2rem);
   max-height: calc(100dvh - 2rem);
   margin: 0;
@@ -37,7 +34,6 @@
     padding: 1rem;
     overscroll-behavior: contain;
     background: var(--polo-color-overlay);
-    position-try-fallbacks: none;
   }
   .anchoredPopover__panel:popover-open {
     display: flex;

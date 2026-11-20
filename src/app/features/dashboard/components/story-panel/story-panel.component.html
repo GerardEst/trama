@@ -1,139 +1,71 @@
-@if (showOptions) {
-  <div (click)="closePopup()" class="overlay"></div>
+@if (open && viewport.mobile()) {
+  <div class="overlay" (click)="closed.emit()"></div>
 }
-<div class="menu" [class.menu--open]="showOptions">
-  <polo-editable-name
-    [label]="'dashboard.top.storyName' | t"
-    [value]="activeStory.storyName()"
-    (valueChanged)="updateStoryName($event)"
-  ></polo-editable-name>
-  <!-- Phones collapse the whole panel into this button, so it carries the save alert. -->
-  <polo-basic-button
-    class="optionsToggle"
-    [class.optionsToggle--alert]="db.authenticationRequired() || mutations.saveState() === 'error'"
-    icon="/assets/icons/configuration.svg"
-    (click)="toggleOptions()"
-    [text]="viewport.mobile() && !showOptions ? '' : ('dashboard.top.options' | t)"
-    [title]="'dashboard.top.options' | t"
-  ></polo-basic-button>
-  <div class="historyControls">
-    <polo-basic-button
-      size="s"
-      [text]="'dashboard.top.undo' | t"
-      [title]="'dashboard.top.undoShortcut' | t"
-      [disabled]="!activeStory.canUndo()"
-      (click)="historyRequested.emit('undo')"
-    ></polo-basic-button>
-    <polo-basic-button
-      size="s"
-      [text]="'dashboard.top.redo' | t"
-      [title]="'dashboard.top.redoShortcut' | t"
-      [disabled]="!activeStory.canRedo()"
-      (click)="historyRequested.emit('redo')"
-    ></polo-basic-button>
-  </div>
-  @if (db.authenticationRequired()) {
-    <div class="saveStatus saveStatus--error" role="alert">
-      <span>{{ 'dashboard.top.sessionEnded' | t }}</span>
-      <polo-basic-button [text]="'dashboard.top.signInAgain' | t" size="s" (click)="signInAgain()"></polo-basic-button>
-      <polo-basic-button [text]="'dashboard.top.exportJson' | t" size="s" (click)="exportTree()" [disabled]="!activeStory.storyId()"></polo-basic-button>
+<aside class="panel" [class.panel--closed]="!open" [inert]="!open" [id]="panelId" [attr.aria-label]="'dashboard.project.panel' | t">
+  <!-- What the open story belongs to. Projects are not stored yet, so it holds this story alone. -->
+  <section class="section" aria-labelledby="story-panel-project-title">
+    <div class="section__head">
+      <h2 class="section__title" id="story-panel-project-title">{{ 'dashboard.project.title' | t }}</h2>
+      <button class="close" type="button" [attr.aria-label]="'dashboard.project.close' | t" [title]="'dashboard.project.close' | t"
+        (click)="closed.emit()">
+        <img width="12" src="/assets/icons/close.svg" alt="" />
+      </button>
     </div>
-  }
-  @if (mutations.saveState() !== 'idle') {
-    <div class="saveStatus" [class.saveStatus--error]="mutations.saveState() === 'error'" role="status" aria-live="polite">
-      @switch (mutations.saveState()) {
-        @case ('saving') {
-          <span>{{ 'dashboard.top.saving' | t }}</span>
-        }
-        @case ('saved') {
-          <span>{{ 'dashboard.top.saved' | t }}</span>
-        }
-        @case ('error') {
-          <span>
-            {{ (mutations.recoveredDraft() ? 'dashboard.top.recovered' : 'dashboard.top.notSaved') | t }}
-            {{ 'dashboard.top.keepOpen' | t }}
-          </span>
-          <polo-basic-button [text]="'dashboard.top.retry' | t" size="s" (click)="mutations.retry()"></polo-basic-button>
-          <polo-basic-button [text]="'dashboard.top.exportJson' | t" size="s" (click)="exportTree()"></polo-basic-button>
-        }
+    <h3 class="section__group" id="story-panel-project-stories">{{ 'dashboard.project.stories' | t }}</h3>
+    <ul class="list" aria-labelledby="story-panel-project-stories">
+      <li>
+        <span class="item item--current" aria-current="true">
+          <span class="item__dot" aria-hidden="true"></span>
+          <span class="item__name">{{ activeStory.storyName() }}</span>
+        </span>
+      </li>
+      <li>
+        <button class="item" type="button" disabled>
+          <img width="14" src="/assets/icons/plus.svg" alt="" />
+          {{ 'dashboard.project.addStory' | t }}
+          <span class="soon">{{ 'dashboard.home.soon' | t }}</span>
+        </button>
+      </li>
+    </ul>
+    <ul class="list list--soon">
+      <li>
+        <span class="item item--soon">
+          <img width="14" src="/assets/icons/user.svg" alt="" />
+          {{ 'dashboard.project.characters' | t }}
+          <span class="soon">{{ 'dashboard.home.soon' | t }}</span>
+        </span>
+      </li>
+      <li>
+        <span class="item item--soon">
+          <img width="14" src="/assets/icons/location.svg" alt="" />
+          {{ 'dashboard.project.locations' | t }}
+          <span class="soon">{{ 'dashboard.home.soon' | t }}</span>
+        </span>
+      </li>
+    </ul>
+  </section>
+  <!-- What this story holds: its stats, conditions and properties, and the games played. -->
+  <section class="section section--story" aria-labelledby="story-panel-story-title">
+    <div class="section__head">
+      <h2 class="section__title" id="story-panel-story-title">{{ 'dashboard.project.thisStory' | t }}</h2>
+      <polo-context-help topic="board.references"></polo-context-help>
+    </div>
+    <div class="tabs" role="group">
+      <button type="button" class="tab" [attr.aria-pressed]="mode === 'refs'" [title]="'dashboard.legend.statsTitle' | t" (click)="mode = 'refs'">
+        <img width="14" src="/assets/icons/tag.svg" alt="" />
+        {{ 'dashboard.project.references' | t }}
+      </button>
+      <button type="button" class="tab" [attr.aria-pressed]="mode === 'games'" [title]="'dashboard.legend.activityTitle' | t" (click)="mode = 'games'">
+        <img width="14" src="/assets/icons/user-info.svg" alt="" />
+        {{ 'dashboard.legend.activity' | t }}
+      </button>
+    </div>
+    <div class="section__body">
+      @if (mode === 'refs') {
+        <polo-story-references></polo-story-references>
+      } @else {
+        <polo-stadistics-layer></polo-stadistics-layer>
       }
     </div>
-  }
-  @if (showOptions) {
-    <div class="dropdown">
-      <div class="dropdown__section">
-        <label>
-          <span>{{ 'dashboard.top.tracking' | t }}</span>
-          <input
-            (change)="toggleTracking()"
-            type="checkbox"
-            [disabled]="db.authenticationRequired() || !activeStory.storyId()"
-            [checked]="activeStory.storyConfiguration().tracking"
-          />
-        </label>
-        <polo-answer-display-select
-          [value]="activeStory.entireTree().unavailableAnswerDisplay"
-          (changed)="setAnswerDisplay($event)"
-        />
-        <label>
-          <span>{{ 'dashboard.top.cumulative' | t }}</span>
-          <input
-            type="checkbox"
-            (change)="toggleCumulativeMode()"
-            [checked]="activeStory.storyConfiguration().cumulativeMode"
-          />
-        </label>
-      </div>
-      <div class="dropdown__section">
-        <polo-basic-button [text]="'dashboard.share.title' | t" [disabled]="!activeStory.storyId()"
-          (click)="closePopup(); shareRequested.emit()" />
-      </div>
-      <div class="dropdown__section">
-        <p class="txt-weight-bold">{{ 'dashboard.top.footer' | t }}</p>
-        <label>
-          <span>{{ 'dashboard.top.hideLink' | t }}</span>
-          <input
-            (change)="toggleAppLink()"
-            type="checkbox"
-            [checked]="!activeStory.storyConfiguration().tapLink"
-          />
-        </label>
-
-        <label class="label--column">
-          <span>{{ 'dashboard.top.footerText' | t }}</span>
-          <input
-            (change)="updateFooter('text', $event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().footer.text || ''"
-          />
-        </label>
-        <label class="label--column">
-          <span>{{ 'dashboard.top.footerLink' | t }}</span>
-          <input
-            (change)="updateFooter('link', $event)"
-            type="text"
-            [value]="activeStory.storyConfiguration().footer.link || ''"
-          />
-        </label>
-      </div>
-      <polo-basic-button
-        (click)="openStadistics()"
-        [disabled]="!activeStory.storyId()"
-        [text]="'dashboard.top.analytics' | t"
-      ></polo-basic-button>
-      <polo-basic-button
-        (click)="exportTree()"
-        icon="/assets/icons/export.svg"
-        [text]="'dashboard.top.exportJson' | t"
-        [disabled]="!activeStory.storyId()"
-      ></polo-basic-button>
-      @if (exportError) {
-        <p role="alert">{{ exportError | t }}</p>
-      }
-      <polo-basic-button (click)="deleteTree()" icon="/assets/icons/trash.svg"
-        [text]="'dashboard.top.deleteTree' | t"
-      >
-      </polo-basic-button>
-    </div>
-  }
-</div>
+  </section>
+</aside>

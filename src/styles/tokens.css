@@ -10,6 +10,9 @@
   --polo-amber-300: #f6ce6a;
   --polo-amber-400: #f3c24c;
   --polo-amber-600: #d79829;
+  /* The vermilion of Trama's mark: the dot after its name, and the landing's call to action. */
+  --polo-vermilion-600: #c2391e;
+  --polo-vermilion-300: #ff8a6e;
 
   /* Surfaces and readable text. */
   --polo-color-canvas: light-dark(var(--polo-paper-50), #1b211d);
@@ -39,7 +42,7 @@
   --polo-color-accent: var(--polo-amber-300);
   --polo-color-accent-hover: var(--polo-amber-400);
   --polo-color-accent-border: #d8b354;
-  --polo-color-wordmark-dot: var(--polo-amber-600);
+  --polo-color-wordmark-dot: light-dark(var(--polo-vermilion-600), var(--polo-vermilion-300));
   --polo-color-control-disabled: light-dark(#c5c8b9, #64715f);
 
   /* Pastel palette for editor-only visual frames. */
@@ -106,6 +109,8 @@
   --polo-board-port-radius: 0.375rem;
 
   --polo-icon-filter: none;
+  /* Icons on the action colour, which is dark on light and light on dark. */
+  --polo-icon-on-action-filter: brightness(0) invert(1);
   --polo-icon-edit: url('/assets/icons/edit.svg');
   --polo-icon-play: url('/assets/icons/play.svg');
   --polo-icon-drag: url('/assets/icons/drag.svg');
@@ -157,6 +162,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-polo-theme='light']):not([data-storybook-theme='light']) {
     --polo-icon-filter: brightness(0) invert(1);
+    --polo-icon-on-action-filter: brightness(0);
     --polo-icon-edit: url('/assets/icons/edit-white.svg');
     --polo-icon-play: url('/assets/icons/play-white.svg');
     --polo-icon-drag: url('/assets/icons/drag-white.svg');
@@ -166,6 +172,7 @@
 :root[data-polo-theme='dark']:not([data-storybook-theme='light']),
 :root[data-storybook-theme='dark'] {
   --polo-icon-filter: brightness(0) invert(1);
+  --polo-icon-on-action-filter: brightness(0);
   --polo-icon-edit: url('/assets/icons/edit-white.svg');
   --polo-icon-play: url('/assets/icons/play-white.svg');
   --polo-icon-drag: url('/assets/icons/drag-white.svg');
@@ -182,7 +189,7 @@
   --polo-color-text-muted: light-dark(#696f78, #8f97a3);
   --polo-color-border: light-dark(#e3dfd2, #2a3242);
   --polo-color-border-strong: light-dark(#c8c2b1, #414c60);
-  --polo-color-action: light-dark(#c2391e, #ff8a6e);
+  --polo-color-action: var(--polo-color-wordmark-dot);
   --polo-color-action-hover: var(--polo-color-action);
   --polo-color-text-on-action: light-dark(#ffffff, #10151d);
   --polo-color-action-soft: light-dark(#f7e7df, #3a2018);

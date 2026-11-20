@@ -1,0 +1,45 @@
+@if (db.user(); as user) {
+  <section class="billing">
+    @if (heading) {
+      <p class="txt-l txt-weight-bold">{{ 'dashboard.profile.billing' | t }}</p>
+    }
+    <!-- What the person has, before what they could buy. -->
+    <div class="summary" role="status">
+      <div class="summary__text">
+        <p class="summary__label">{{ 'settings.billing.yourPlan' | t }}</p>
+        <p class="summary__plan">{{ planName() | t }}</p>
+      </div>
+      <p class="summary__state" [class.summary__state--off]="status() !== 'active'">
+        @switch (status()) {
+          @case ('active') {
+            {{ user.profile.next_payment
+              ? ('dashboard.profile.nextPayment' | t: { date: paymentDate(user.profile.next_payment) })
+              : ('settings.billing.active' | t) }}
+          }
+          @case ('canceled') {
+            {{ 'pricing.canceledPlan' | t }}
+          }
+          @case ('incomplete') {
+            {{ 'dashboard.profile.incomplete' | t }}
+          }
+          @default {
+            {{ 'settings.billing.noPlan' | t }}
+          }
+        }
+      </p>
+    </div>
+    @if (canChoosePlan()) {
+      <polo-billing-cycle
+        [small]="true"
+        (onChangePayingPeriod)="payAnnually = $event === 'annual' ? true : false"
+      ></polo-billing-cycle>
+    }
+    <polo-pricing
+      [dashed]="true"
+      [canceledSubscription]="user.profile.subscription_status === 'canceled'"
+      [userPlan]="user.profile.plan || 'free'"
+      [payAnnually]="payAnnually"
+      [email]="user.email"
+    ></polo-pricing>
+  </section>
+}

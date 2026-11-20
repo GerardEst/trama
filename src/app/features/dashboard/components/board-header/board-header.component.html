@@ -1,0 +1,77 @@
+<header #bar class="header">
+  <!-- Home says where it goes, unlike a logo: the stories, their activity and everything around them. -->
+  <a class="home" routerLink="/dashboard">
+    <img width="16" src="/assets/icons/home.svg" alt="" />
+    <span class="home__label">{{ 'dashboard.menu.home' | t }}</span>
+  </a>
+  <span class="separator" aria-hidden="true">/</span>
+  <polo-editable-name
+    class="name"
+    [label]="'dashboard.top.storyName' | t"
+    [value]="activeStory.storyName()"
+    (valueChanged)="rename($event)"
+  ></polo-editable-name>
+  <button class="switcher" type="button" [attr.popovertarget]="switcherId"
+    [attr.aria-label]="'dashboard.menu.switchProject' | t" [title]="'dashboard.menu.switchProject' | t">
+    <img width="14" src="/assets/icons/chevron-down.svg" alt="" />
+  </button>
+  <div #switcher class="switcherMenu" popover="auto" [id]="switcherId" (beforetoggle)="openSwitcher($event, bar, switcher)">
+    <p class="switcherMenu__title" [id]="switcherId + '-title'">{{ 'dashboard.menu.projects' | t }}</p>
+    <ul class="switcherMenu__stories" [attr.aria-labelledby]="switcherId + '-title'">
+      @for (story of stories(); track story.id) {
+        <li>
+          <a class="switcherMenu__item story" [routerLink]="['/story', story.id, 'board']"
+            [attr.aria-current]="story.id === activeStory.storyId() ? 'page' : null" (click)="switcher.hidePopover()">
+            <span class="story__dot" aria-hidden="true"></span>
+            <span class="story__name">{{ story.name }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+    <hr />
+    <button class="switcherMenu__item" type="button" (click)="createStory(switcher)">
+      <img width="14" src="/assets/icons/plus.svg" alt="" />
+      {{ 'dashboard.menu.newProject' | t }}
+    </button>
+  </div>
+  <!-- Beside the name it belongs to, like a document's. A failure explains itself under the header. -->
+  @switch (saveState()) {
+    @case ('saving') {
+      <span class="saveState" role="status" aria-live="polite">{{ 'dashboard.top.savingShort' | t }}</span>
+    }
+    @case ('saved') {
+      <span class="saveState saveState--saved" role="status" aria-live="polite">
+        <img width="12" src="/assets/icons/tick.svg" alt="" />
+        {{ 'dashboard.top.savedShort' | t }}
+      </span>
+    }
+    @case ('error') {
+      <span class="saveState saveState--error" aria-hidden="true">{{ 'dashboard.top.notSavedShort' | t }}</span>
+    }
+  }
+</header>
+@if (db.authenticationRequired() || saveState() === 'error') {
+  <div class="saveAlert" [attr.aria-label]="'dashboard.top.saveDetails' | t" role="group">
+    @if (db.authenticationRequired()) {
+      <div class="saveAlert__row" role="alert">
+        <span>{{ 'dashboard.top.sessionEnded' | t }}</span>
+        <span class="saveAlert__actions">
+          <polo-basic-button [text]="'dashboard.top.signInAgain' | t" (click)="signInAgain()"></polo-basic-button>
+          <polo-basic-button [text]="'dashboard.top.exportJson' | t" (click)="exportTree()" [disabled]="!activeStory.storyId()"></polo-basic-button>
+        </span>
+      </div>
+    }
+    @if (saveState() === 'error') {
+      <div class="saveAlert__row" role="status" aria-live="polite">
+        <span>
+          {{ (mutations.recoveredDraft() ? 'dashboard.top.recovered' : 'dashboard.top.notSaved') | t }}
+          {{ 'dashboard.top.keepOpen' | t }}
+        </span>
+        <span class="saveAlert__actions">
+          <polo-basic-button [text]="'dashboard.top.retry' | t" (click)="mutations.retry()"></polo-basic-button>
+          <polo-basic-button [text]="'dashboard.top.exportJson' | t" (click)="exportTree()"></polo-basic-button>
+        </span>
+      </div>
+    }
+  </div>
+}

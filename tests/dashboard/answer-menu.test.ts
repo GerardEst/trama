@@ -33,7 +33,7 @@ test('answer menu adds logic, keeps pills editable and persists display settings
     } else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1100 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   const answer = page.locator('polo-answer').filter({ hasText: 'Enter the door' })
   const trigger = answer.getByRole('button', { name: 'Answer options', exact: true })
   await expect(trigger).toBeVisible()

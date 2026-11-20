@@ -1,0 +1,33 @@
+<div class="page page--narrow">
+  <header class="pageHeader">
+    <div>
+      <h1>{{ 'settings.preferences.title' | t }}</h1>
+      <p>{{ 'settings.preferences.subtitle' | t }}</p>
+    </div>
+  </header>
+  <ul class="panel settings">
+    <li class="setting">
+      <div class="setting__text">
+        <p class="setting__label" id="preference-night">{{ 'dashboard.profile.nightMode' | t }}</p>
+        <p class="setting__hint">{{ 'settings.preferences.nightModeHint' | t }}</p>
+      </div>
+      <polo-toggle [label]="'dashboard.profile.nightMode' | t" [hideLabel]="true" [checked]="theme.dark()"
+        (checkedChange)="theme.setDark($event)" />
+    </li>
+    <li class="setting">
+      <div class="setting__text">
+        <p class="setting__label">{{ 'contextHelp.preference' | t }}</p>
+        <p class="setting__hint">{{ 'settings.preferences.helpHint' | t }}</p>
+      </div>
+      <polo-toggle [label]="'contextHelp.preference' | t" [hideLabel]="true" [checked]="help.enabled()"
+        (checkedChange)="help.setEnabled($event)" />
+    </li>
+    <li class="setting">
+      <div class="setting__text">
+        <p class="setting__label">{{ 'dashboard.profile.language' | t }}</p>
+        <p class="setting__hint">{{ 'settings.preferences.languageHint' | t }}</p>
+      </div>
+      <polo-language-selector></polo-language-selector>
+    </li>
+  </ul>
+</div>

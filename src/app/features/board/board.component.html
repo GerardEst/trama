@@ -1,30 +1,17 @@
-@if (groupControls) {
+<!-- Only while there is something to do: leave the open group, or group or frame a multiple selection. -->
+@if (groupControls && (currentGroupId || canGroupSelection() || canFrameSelection())) {
   <nav class="groupToolbar" [class.groupToolbar--embedded]="embedded" [attr.aria-label]="'board.groups.label' | t">
     @if (currentGroupId) {
-      <button type="button" (click)="leaveGroup()">
-        {{ 'board.groups.exit' | t: { name: currentGroup()?.text || ('board.groups.group' | t) } }}
-      </button>
+      <polo-basic-button size="s" [border]="true" (click)="leaveGroup()"
+        [text]="'board.groups.exit' | t: { name: currentGroup()?.text || ('board.groups.group' | t) }"></polo-basic-button>
     }
-    <button
-      type="button"
-      [title]="'board.groups.groupShortcut' | t"
-      [disabled]="!canGroupSelection()"
-      (click)="groupSelection()"
-    >
-      {{ 'board.groups.groupSelection' | t }}
-    </button>
-    <button
-      type="button"
-      [title]="'board.groups.frameShortcut' | t"
-      [disabled]="!canFrameSelection()"
-      (click)="frameSelection()"
-    >
-      {{ 'board.groups.frameSelection' | t }}
-    </button>
-    @if (!canGroupSelection()) {
-      <span>
-        {{ 'board.groups.selectHint' | t }}
-      </span>
+    @if (canGroupSelection()) {
+      <polo-basic-button size="s" [border]="true" [title]="'board.groups.groupShortcut' | t" (click)="groupSelection()"
+        [text]="'board.groups.groupSelection' | t"></polo-basic-button>
+    }
+    @if (canFrameSelection()) {
+      <polo-basic-button size="s" [border]="true" [title]="'board.groups.frameShortcut' | t" (click)="frameSelection()"
+        [text]="'board.groups.frameSelection' | t"></polo-basic-button>
     }
   </nav>
 }
@@ -51,6 +38,7 @@
       (touchstart)="$event.stopPropagation()"
       [style.left.px]="viewport.mobile() ? null : contextMenuPosition.x"
       [style.top.px]="viewport.mobile() ? null : contextMenuPosition.y"
+      [style.scale]="viewport.mobile() ? null : 1 / contextMenuScale"
     >
       <header>
         <p>{{ 'board.create.title' | t }}</p>
@@ -58,7 +46,8 @@
       @for (type of creatableNodeTypes; track type) {
         <div class="contextMenu__item" [attr.data-node-type]="type">
           <button type="button" class="contextMenu__create" (click)="addNode($event, type)">
-            {{ nodeTypeName(type) }}
+            <span class="contextMenu__name">{{ nodeTypeName(type) }}</span>
+            <span class="contextMenu__description">{{ nodeTypeDescription(type) | t }}</span>
           </button>
           <polo-context-help [topic]="nodeHelpTopics[type]"></polo-context-help>
         </div>

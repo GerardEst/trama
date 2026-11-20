@@ -82,7 +82,7 @@ describe('Dashboard history shortcuts', () => {
     shortcut(document, { repeat: true })
     const handled = new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, cancelable: true })
     handled.preventDefault()
-    component.handleHistoryShortcut(handled)
+    component.handleShortcut(handled)
     expect(story.entireTree().nodes[0].left).toBe(10)
     flushMicrotasks()
   }))

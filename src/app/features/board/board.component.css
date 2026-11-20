@@ -33,23 +33,21 @@
   pointer-events: none;
 }
 
+/* Centred over the board, under the header, and over the part the project panel leaves free. */
 .groupToolbar {
-  position: fixed;
-  top: 88px;
-  left: 272px;
-  max-width: calc(100vw - 288px);
+  position: absolute;
+  top: var(--workspace-toolbar-top, 88px);
+  left: calc(50% + var(--polo-board-left-inset, 0px) / 2);
+  translate: -50% 0;
+  max-width: calc(100% - 32px);
   flex-wrap: wrap;
+  justify-content: center;
   z-index: 4;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--polo-color-text-secondary);
   font-size: 0.85rem;
-}
-.groupToolbar--embedded {
-  position: absolute;
-  top: var(--workspace-toolbar-top, 88px);
-  max-width: calc(100% - 288px);
 }
 polo-node.node--playing {
   box-shadow: 0 0 0 5px var(--polo-color-accent);
@@ -66,43 +64,11 @@ polo-node.node--playing::before {
   font: 700 11px/1.5 var(--polo-font-ui);
   pointer-events: none;
 }
-.groupToolbar button {
-  cursor: pointer;
-  border: 1px solid var(--polo-color-border-strong);
-  border-radius: 8px;
-  background: var(--polo-color-surface);
-  color: var(--text-color);
-  padding: 0.7rem 1rem;
-  font-weight: 700;
+/* Floating over the board, like the panels around it. */
+.groupToolbar polo-basic-button {
+  border-radius: var(--polo-button-radius, 0.65rem);
   box-shadow: var(--polo-shadow-control);
 }
-.groupToolbar button:focus-visible {
-  outline: 2px solid var(--polo-color-focus);
-  outline-offset: 3px;
-}
-.groupToolbar button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-.groupToolbar span {
-  border: 1px solid var(--polo-color-border);
-  border-radius: 8px;
-  background: var(--polo-color-surface);
-  padding: 0.7rem 1rem;
-  line-height: 1.5;
-}
-@media (max-width: 760px) {
-  .groupToolbar {
-    left: 16px;
-    max-width: calc(100vw - 32px);
-    top: 88px;
-  }
-  .groupToolbar--embedded {
-    top: var(--workspace-toolbar-top, 88px);
-    max-width: calc(100% - 32px);
-  }
-}
-
 .boardFrame {
   position: absolute;
   z-index: 0;
@@ -275,40 +241,66 @@ polo-node.node--playing::before {
   left: -5px;
 }
 
+/* Where the board was right-clicked, at full size whatever the zoom. */
 .contextMenu {
   display: none;
-  position: fixed;
-  background-color: var(--polo-color-surface);
+  position: absolute;
   z-index: 2;
   flex-direction: column;
-  padding: 0.2rem;
-  border-radius: 5px;
-  border: 1px solid var(--dark-gray);
-  gap: 0.2rem;
+  gap: 2px;
+  width: 280px;
+  box-sizing: border-box;
+  padding: var(--polo-space-2);
+  transform-origin: 0 0;
+  color: var(--polo-color-text);
+  background-color: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-popover);
+  font-family: var(--polo-font-ui);
 }
 .contextMenu header {
-  border-bottom: 1px solid var(--medium-gray);
-  padding: 0.4rem;
-  color: var(--light-text);
-  border-radius: 3px 3px 0 0;
+  padding: var(--polo-space-1) var(--polo-space-2) var(--polo-space-2);
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+.contextMenu header p {
+  margin: 0;
 }
 .contextMenu__item {
   display: flex;
   align-items: center;
   gap: var(--polo-space-2);
+  padding-right: var(--polo-space-1);
+  border-radius: var(--polo-radius-control);
+}
+.contextMenu__item:hover {
+  background-color: var(--polo-color-surface-subtle);
 }
 .contextMenu__create {
+  display: flex;
   flex: 1;
-  padding: 0.4rem;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--polo-space-2);
   border: 0;
-  border-radius: 3px;
+  border-radius: var(--polo-radius-control);
   color: var(--polo-color-text);
   background: transparent;
   text-align: left;
   cursor: pointer;
 }
-.contextMenu__create:hover {
-  background-color: var(--medium-gray);
+.contextMenu__name {
+  color: var(--polo-color-text-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+.contextMenu__description {
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
 }
 .contextMenu__create:focus-visible {
   outline: 2px solid var(--polo-color-focus);
@@ -318,22 +310,17 @@ polo-node.node--playing::before {
   display: flex;
 }
 .contextMenu.mobileModal {
+  width: auto;
   padding: var(--polo-space-2);
 }
 .contextMenu.mobileModal .contextMenu__create {
   min-height: 44px;
   padding: 0.6rem 0.8rem;
-  font-size: 14px;
 }
 
 @media (max-width: 760px) {
   .groupToolbar {
     top: 72px;
-    left: 16px;
-    max-width: calc(100vw - 32px);
-  }
-  /* Multi-selection needs Ctrl + drag, so its hint and idle actions only add clutter. */
-  .groupToolbar span, .groupToolbar button:disabled {
-    display: none;
+    left: 50%;
   }
 }

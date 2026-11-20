@@ -66,6 +66,20 @@ export class I18nService {
     return new Intl.DateTimeFormat(this.lang(), options).format(date)
   }
 
+  /** "2 hours ago" for the last week, a date after that. */
+  formatRelative(value: string | number | Date, now = Date.now()) {
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return String(value)
+    const seconds = Math.round((date.getTime() - now) / 1000)
+    const units: [Intl.RelativeTimeFormatUnit, number][] = [['day', 86400], ['hour', 3600], ['minute', 60]]
+    if (Math.abs(seconds) >= 7 * 86400) return this.formatDate(date, { dateStyle: 'medium' })
+    const format = new Intl.RelativeTimeFormat(this.lang(), { numeric: 'auto' })
+    for (const [unit, size] of units) {
+      if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit)
+    }
+    return format.format(0, 'minute')
+  }
+
   formatNumber(value: number, options?: Intl.NumberFormatOptions) {
     return new Intl.NumberFormat(this.lang(), options).format(value)
   }

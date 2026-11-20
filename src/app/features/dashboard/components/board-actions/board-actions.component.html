@@ -1,0 +1,47 @@
+<div class="actions" role="toolbar" [attr.aria-label]="'dashboard.top.options' | t">
+  @if (!previewOpen) {
+    <polo-basic-button
+      icon="/assets/icons/play.svg"
+      [text]="viewport.mobile() ? '' : ('dashboard.legend.preview' | t)"
+      [label]="'dashboard.legend.preview' | t"
+      (click)="previewRequested.emit()"
+    ></polo-basic-button>
+  }
+  <polo-basic-button
+    class="share"
+    type="primary"
+    icon="/assets/icons/share.svg"
+    [text]="viewport.mobile() ? '' : ('dashboard.legend.share' | t)"
+    [label]="'dashboard.legend.share' | t"
+    [disabled]="!activeStory.storyId()"
+    (click)="shareRequested.emit()"
+  ></polo-basic-button>
+  @if (viewport.mobile()) {
+    <button #moreTrigger class="more" type="button" [attr.popovertarget]="moreId"
+      [attr.aria-label]="'dashboard.top.more' | t" [title]="'dashboard.top.more' | t">
+      <img width="16" src="/assets/icons/more-options.svg" alt="" />
+    </button>
+    <div #more class="moreMenu" popover="auto" [id]="moreId" (beforetoggle)="tether($event, moreTrigger, more)">
+      <button class="moreMenu__item" type="button" [disabled]="analyticsDisabled()" (click)="more.hidePopover(); openAnalytics()">
+        <img width="16" src="/assets/icons/stat.svg" alt="" />
+        {{ 'dashboard.top.analytics' | t }}
+      </button>
+      <button class="moreMenu__item" type="button" (click)="more.hidePopover(); optionsRequested.emit()">
+        <img width="16" src="/assets/icons/configuration.svg" alt="" />
+        {{ 'dashboard.top.options' | t }}
+      </button>
+    </div>
+  } @else {
+    <polo-basic-button
+      icon="/assets/icons/stat.svg"
+      [title]="'dashboard.top.analytics' | t"
+      [disabled]="analyticsDisabled()"
+      (click)="openAnalytics()"
+    ></polo-basic-button>
+    <polo-basic-button
+      icon="/assets/icons/configuration.svg"
+      [title]="'dashboard.top.options' | t"
+      (click)="optionsRequested.emit()"
+    ></polo-basic-button>
+  }
+</div>

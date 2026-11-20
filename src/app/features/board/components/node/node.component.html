@@ -42,7 +42,7 @@
     <polo-anchored-popover
       #nodePopover
       class="node__menu"
-      [style.--polo-popover-width]="nodePanel === 'menu' ? '14rem' : '32rem'"
+      [style.--polo-popover-width]="nodePanel === 'menu' ? '20rem' : '32rem'"
       [closeOnEscape]="nodePanel === 'menu'"
     >
       <polo-basic-button
@@ -51,7 +51,7 @@
         size="s"
         [transparent]="true"
         [title]="'board.node.options' | t"
-        icon="/assets/icons/hamburger-menu.svg"
+        icon="/assets/icons/more-options.svg"
         (pointerdown)="$event.stopPropagation()"
         (click)="toggleNodeOptions()"
       ></polo-basic-button>

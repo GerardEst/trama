@@ -15,7 +15,6 @@ export const board: Dictionary['board'] = {
     groupShortcut: 'Agrupa els nodes seleccionats (Ctrl+G / ⌘G)',
     frameSelection: 'Emmarca els nodes seleccionats',
     frameShortcut: 'Emmarca els nodes seleccionats (Ctrl+F / ⌘F)',
-    selectHint: 'Ctrl + arrossega per seleccionar almenys 2 nodes',
     defaultName: 'Grup',
     name: 'Nom del grup',
     nodeType: 'Node de grup',
@@ -53,6 +52,12 @@ export const board: Dictionary['board'] = {
   },
   create: {
     title: 'Crea un node',
+    types: {
+      text: { name: 'Text lliure', description: 'El jugador escriu una resposta' },
+      content: { name: 'Selecció', description: 'Text amb respostes per triar' },
+      distributor: { name: 'Distribuïdor', description: 'Envia el jugador per una ruta segons condicions' },
+      end: { name: 'Final', description: 'Tanca aquest camí de la història' },
+    },
   },
   joins: {
     connect: 'Arrossega fins a un node per connectar-hi la història',

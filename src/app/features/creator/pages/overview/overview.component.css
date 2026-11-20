@@ -1,0 +1,382 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--polo-space-6);
+}
+
+.side, .main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-6);
+}
+
+.activity__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: var(--polo-space-4);
+  border-bottom: 1px solid var(--polo-color-border);
+}
+.activity__number {
+  color: var(--polo-color-text-strong);
+  font-size: 2rem;
+  font-weight: 750;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.activity__caption {
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+}
+
+.activity__list {
+  margin: 0;
+  padding: var(--polo-space-2) var(--polo-space-4);
+}
+
+.activity__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-2) 0;
+  font-size: 13px;
+}
+
+.activity__row dd {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.teaser {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-6) var(--polo-space-4);
+  text-align: center;
+}
+
+.teaser p {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--polo-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.continue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--polo-space-3) var(--polo-space-4);
+  padding: var(--polo-space-4);
+  border-color: var(--polo-color-border-strong);
+}
+
+.continue__text {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.continue__name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--polo-color-text-strong);
+  font-size: 15px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.continue__meta {
+  margin: 2px 0 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+}
+
+.deleteError {
+  margin-bottom: var(--polo-space-3);
+  color: var(--polo-color-danger-text);
+}
+
+/* The whole card opens the story; the menu button sits above that link. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-4);
+  padding: var(--polo-space-4);
+  transition: border-color 160ms ease;
+}
+.card:hover {
+  border-color: var(--polo-color-border-hover);
+}
+.card:has(.card__link:focus-visible) {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.card__link {
+  color: inherit;
+  text-decoration: none;
+}
+.card__link:focus-visible {
+  outline: none;
+}
+.card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--polo-space-3);
+}
+
+.card__monogram {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--polo-radius-control);
+  background-color: var(--polo-color-surface-muted);
+  color: var(--polo-color-text-strong);
+  font-weight: 800;
+}
+
+.card__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__title h3 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--polo-color-text-strong);
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__address {
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--polo-space-2);
+  margin: 0;
+}
+
+.card__stats dt {
+  color: var(--polo-color-text-secondary);
+  font-size: 11px;
+}
+
+.card__stats dd {
+  margin: 2px 0 0;
+  color: var(--polo-color-text-strong);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.card__stats dd.card__date {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.card__more {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -4px -4px 0 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  cursor: pointer;
+}
+.card__more:hover, .card__more:has(+ .storyMenu:popover-open) {
+  border-color: var(--polo-color-border);
+  background-color: var(--polo-color-surface-subtle);
+}
+.card__more:focus-visible, .storyMenu__item:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.storyMenu {
+  width: 200px;
+  padding: var(--polo-space-2);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-popover);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+}
+
+/* Under the button, aligned to its right edge, flipping when there is no room.
+   Without anchor positioning, tetherPopover sets the edges before opening. */
+@supports (position-area: block-end) {
+  .card {
+    anchor-scope: --story-menu;
+  }
+  .card__more {
+    anchor-name: --story-menu;
+  }
+  .storyMenu {
+    inset: auto;
+    margin: var(--polo-space-1) 0;
+    position-anchor: --story-menu;
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
+}
+
+@supports not (position-area: block-end) {
+  .storyMenu {
+    position: fixed;
+    margin: 0;
+  }
+}
+
+.storyMenu hr {
+  margin: var(--polo-space-2) 0;
+  border: none;
+  border-top: 1px solid var(--polo-color-border);
+}
+
+.storyMenu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border: none;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  color: var(--polo-color-text);
+  font: 600 13px var(--polo-font-ui);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.storyMenu__item:hover {
+  background-color: var(--polo-color-surface-subtle);
+}
+.storyMenu__item--danger {
+  color: var(--polo-color-danger-text);
+}
+.storyMenu__item--danger:hover {
+  background-color: var(--polo-color-danger-soft);
+}
+
+.card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--polo-space-2);
+  min-height: 22px;
+  padding-top: var(--polo-space-3);
+  border-top: 1px solid var(--polo-color-border);
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+}
+.card__foot .tag {
+  margin-left: auto;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-6);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main {
+    order: -1;
+  }
+}
+
+.storiesHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-2) var(--polo-space-4);
+  margin-bottom: var(--polo-space-3);
+}
+.storiesHead .sectionTitle {
+  margin: 0;
+}
+.storiesTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--polo-space-2);
+}
+.search, .sort {
+  min-height: 34px;
+  box-sizing: border-box;
+  padding: 0 var(--polo-space-3);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font: 13px var(--polo-font-ui);
+}
+.search {
+  width: min(16rem, 100%);
+}
+.search:focus-visible, .sort:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+/* Above the card's own link, which covers the whole card. */
+.tag--link {
+  position: relative;
+  z-index: 1;
+  text-decoration: none;
+}
+.tag--link:hover {
+  border-color: var(--polo-color-border-hover);
+  color: var(--polo-color-text-strong);
+}

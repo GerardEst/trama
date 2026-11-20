@@ -9,7 +9,7 @@ describe('shared application theme', () => {
     delete document.documentElement.dataset['poloTheme']
     delete document.documentElement.dataset['storybookTheme']
     pages = [
-      'polo-dashboard', 'polo-stadistics', 'polo-profile-modal', 'polo-playground',
+      'polo-dashboard', 'polo-stadistics', 'polo-settings-shell', 'polo-playground',
       'polo-landingpage', 'polo-login', 'polo-feature-guide', 'polo-share-story',
     ].map(selector => document.createElement(selector))
     document.body.append(...pages)

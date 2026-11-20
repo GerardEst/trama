@@ -38,7 +38,7 @@ test('answer dragging and keyboard sorting persist without moving the node (mock
     } else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1100 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   const node = page.locator('.node[data-board-join-node="node_0"]')
   const answers = node.locator('polo-answer')
   await expect(answers).toHaveCount(3)

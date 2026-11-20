@@ -6,11 +6,37 @@ import {
   DestroyRef,
   ElementRef,
   Input,
+  NgZone,
   Renderer2,
   ViewChild,
 } from '@angular/core'
 import { AnchoredPopoverContentDirective } from './anchored-popover-content.directive'
 import { activeElementIn } from 'src/app/shared/utils/dom'
+import { isMobileLayout } from 'src/app/core/constants'
+
+/** Space between the trigger and the panel, and between the panel and the viewport edges. */
+const TRIGGER_GAP = 12
+const VIEWPORT_MARGIN = 16
+
+/**
+ * Beside the trigger, towards the end of the line, or before it when it does not fit; top-aligned
+ * with it and kept inside the viewport. Takes the trigger's on-screen box, so a zoomed or panned
+ * board, whose transform CSS anchor positioning ignores, still opens the panel next to it.
+ */
+export function placeBeside(
+  trigger: Pick<DOMRect, 'top' | 'left' | 'right'>,
+  panel: { width: number; height: number },
+  viewport: { width: number; height: number }
+): { top: number; left: number } {
+  const maxLeft = viewport.width - VIEWPORT_MARGIN - panel.width
+  let left = trigger.right + TRIGGER_GAP
+  if (left > maxLeft) {
+    const before = trigger.left - TRIGGER_GAP - panel.width
+    left = before >= VIEWPORT_MARGIN ? before : Math.max(VIEWPORT_MARGIN, maxLeft)
+  }
+  const top = Math.max(VIEWPORT_MARGIN, Math.min(trigger.top, viewport.height - VIEWPORT_MARGIN - panel.height))
+  return { top, left }
+}
 
 // Project a [popoverTrigger] button and an <ng-template poloPopoverContent>.
 @Component({
@@ -32,6 +58,7 @@ export class AnchoredPopoverComponent {
   private pointerStart?: { x: number; y: number }
   private boardPanned = false
   private stopListening?: () => void
+  private trackingFrame?: number
 
   @ViewChild('panel')
   set panel(element: ElementRef<HTMLElement> | undefined) {
@@ -42,6 +69,7 @@ export class AnchoredPopoverComponent {
         if (!panel.isConnected || !this.isOpen) return
 
         panel.showPopover()
+        this.trackTrigger(panel)
         const preferredControl = this.initialFocusSelector
           ? panel.querySelector<HTMLElement>(this.initialFocusSelector)
           : null
@@ -63,9 +91,13 @@ export class AnchoredPopoverComponent {
     private elementRef: ElementRef<HTMLElement>,
     private renderer: Renderer2,
     private changeDetector: ChangeDetectorRef,
+    private zone: NgZone,
     destroyRef: DestroyRef
   ) {
-    destroyRef.onDestroy(() => this.stopListening?.())
+    destroyRef.onDestroy(() => {
+      this.stopListening?.()
+      this.stopTracking()
+    })
   }
 
   open() {
@@ -80,7 +112,47 @@ export class AnchoredPopoverComponent {
     this.boardPanned = false
     this.isOpen = false
     this.stopListening?.()
+    this.stopTracking()
     if (focusWasInside) this.focusTrigger()
+  }
+
+  /**
+   * Keeps the open panel beside its trigger while the board pans or zooms and while its content
+   * grows. Only one panel is open at a time, and the frames run outside Angular and stop on close.
+   */
+  private trackTrigger(panel: HTMLElement) {
+    this.stopTracking()
+    const trigger = this.elementRef.nativeElement.querySelector<HTMLElement>('.anchoredPopover__trigger')
+    if (!trigger) return
+    let placed = ''
+    const place = () => {
+      // Phones open it as a centred modal, laid out by its CSS.
+      if (isMobileLayout()) return
+      const { top, left } = placeBeside(
+        trigger.getBoundingClientRect(),
+        { width: panel.offsetWidth, height: panel.offsetHeight },
+        { width: window.innerWidth, height: window.innerHeight }
+      )
+      const position = `${Math.round(top)},${Math.round(left)}`
+      if (position === placed) return
+      placed = position
+      panel.style.setProperty('--anchored-popover-top', `${Math.round(top)}px`)
+      panel.style.setProperty('--anchored-popover-left', `${Math.round(left)}px`)
+    }
+    place()
+    this.zone.runOutsideAngular(() => {
+      const follow = () => {
+        if (!panel.isConnected) return this.stopTracking()
+        place()
+        this.trackingFrame = requestAnimationFrame(follow)
+      }
+      this.trackingFrame = requestAnimationFrame(follow)
+    })
+  }
+
+  private stopTracking() {
+    if (this.trackingFrame !== undefined) cancelAnimationFrame(this.trackingFrame)
+    this.trackingFrame = undefined
   }
 
   // A board renders hundreds of closed popovers. Permanent document listeners

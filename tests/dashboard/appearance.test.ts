@@ -47,7 +47,7 @@ async function openWorkspace(page: Page) {
       await route.abort()
     }
   })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await expect(page.getByLabel('Story name', { exact: true })).toHaveValue('The garden of branching paths')
 }
 
@@ -56,96 +56,55 @@ for (const theme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: theme })
     await page.setViewportSize({ width: 1440, height: 960 })
     await openWorkspace(page)
-    await expect(page.getByRole('link', { name: 'Trama', exact: true })).toHaveAttribute('href', /\/$/)
-    await expect(page.getByRole('link', { name: 'Docs', exact: true })).toHaveAttribute('href', /\/docs\/features$/)
-    await expect(page.getByRole('button', { name: 'The garden of branching paths', exact: true })).toHaveAttribute('aria-current', 'true')
+    await expect(page.locator('polo-board-header').getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('href', '/dashboard')
+    await expect(page.locator('polo-board-header .header')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
     await expect(page.locator('.board')).toHaveCSS('background-color', theme === 'light' ? 'rgb(251, 249, 244)' : 'rgb(27, 33, 29)')
     await expect(page.locator('.node').first()).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
-    await expect(page.getByRole('button', { name: 'Create new story', exact: true })).toHaveCSS('background-color', 'rgb(246, 206, 106)')
     await page.screenshot({ path: test.info().outputPath(`workspace-${theme}.png`) })
     await page.getByRole('button', { name: 'Story options', exact: true }).click()
-    await expect(page.getByRole('button', { name: 'Export JSON', exact: true })).toBeVisible()
-    await expect(page.locator('.dropdown')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
-    await page.getByRole('button', { name: 'Story options', exact: true }).click()
-    await page.getByRole('button', { name: 'Your account', exact: true }).click()
-    await expect(page.locator('polo-profile-modal .modal')).toBeVisible()
-    await expect(page.locator('polo-profile-modal .modal')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
-    const nightMode = page.getByRole('switch')
-    await nightMode.setChecked(theme !== 'dark')
+    await expect(page.getByRole('switch', { name: 'Enable tracking', exact: true })).toBeVisible()
+    await expect(page.locator('polo-story-options-modal .modal')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('dialog', { name: 'Story options' })).toHaveCount(0)
+    await page.getByRole('button', { name: 'Switch project', exact: true }).click()
+    await expect(page.getByRole('link', { name: 'The garden of branching paths', exact: true })).toHaveAttribute('aria-current', 'page')
+    await expect(page.locator('.switcherMenu')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 254, 250)' : 'rgb(38, 46, 40)')
+    await page.keyboard.press('Escape')
+    // The guide is in the board's help; the person's settings are a step away, at Home.
+    await page.getByRole('button', { name: 'Keyboard shortcuts', exact: true }).click()
+    await expect(page.getByRole('link', { name: /Full guide/ })).toHaveAttribute('href', /\/docs\/features$/)
+    await page.keyboard.press('Escape')
+    // Night mode lives in the person's preferences, and the board follows it on return.
+    await page.goto('/settings/preferences')
+    await page.getByRole('switch', { name: 'Night mode', exact: true }).setChecked(theme !== 'dark')
+    await page.goBack()
     await expect(page.locator('.board')).toHaveCSS('background-color', theme === 'dark' ? 'rgb(251, 249, 244)' : 'rgb(27, 33, 29)')
   })
 }
 
-test('the unpinned sidebar hides, floats near the edge, and stays open only when pinned (mocked backend)', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 960 })
-  await openWorkspace(page)
-  const sidebar = page.getByRole('navigation', { name: 'Your stories', exact: true })
-  const menu = page.locator('polo-menu .menu')
-  const panelRight = () => sidebar.evaluate(element => element.getBoundingClientRect().right)
-  const panelHeight = () => sidebar.evaluate(element => element.getBoundingClientRect().height)
-  const fixedHeight = await panelHeight()
-
-  await sidebar.getByRole('button', { name: 'Toggle menu', exact: true }).click()
-  // Do not blur the clicked control: minimizing must not leave the panel stuck open.
-  await page.mouse.move(900, 700)
-  await expect.poll(panelRight).toBeLessThanOrEqual(0)
-
-  // The whole left edge must be reachable, not just the hamburger button.
-  await page.mouse.move(4, 300)
-  await expect.poll(panelRight).toBeGreaterThan(200)
-  await expect(menu).not.toHaveClass(/fixedMenu/)
-  expect(await panelHeight()).toBeLessThan(fixedHeight)
-  await page.screenshot({ path: test.info().outputPath('workspace-floating-menu.png') })
-  await sidebar.getByRole('button', { name: 'The garden of branching paths', exact: true }).click()
-  await page.mouse.move(900, 700)
-  await expect.poll(panelRight).toBeLessThanOrEqual(0)
-
-  // Moving from the reveal button into the floating panel must not close it.
-  await page.locator('.openMenu').hover()
-  await expect.poll(panelRight).toBeGreaterThan(200)
-  await sidebar.getByRole('link', { name: 'Docs', exact: true }).hover()
-  await expect.poll(panelRight).toBeGreaterThan(200)
-  const floatingBox = await sidebar.boundingBox()
-  await page.mouse.move(120, floatingBox!.y + floatingBox!.height + 40)
-  await expect.poll(panelRight).toBeLessThanOrEqual(0)
-
-  await page.locator('.openMenu').getByRole('button', { name: 'Toggle menu', exact: true }).click()
-  await page.mouse.move(900, 700)
-  await expect(menu).toHaveClass(/fixedMenu/)
-  await expect.poll(panelRight).toBeGreaterThan(200)
-  expect(await panelHeight()).toBe(fixedHeight)
-})
-
-test('mobile menus fit the viewport and the sidebar can be reopened (mocked backend)', async ({ page }) => {
+test('mobile menus fit the viewport beside the header (mocked backend)', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' })
   await page.setViewportSize({ width: 375, height: 812 })
   await openWorkspace(page)
-  const sidebar = page.getByRole('navigation', { name: 'Your stories', exact: true })
-  const menu = page.locator('polo-menu .menu')
-  const sidebarRight = () => sidebar.evaluate(element => element.getBoundingClientRect().right)
-  // Phones start with the drawer closed so the board is visible.
-  await expect(menu).not.toHaveClass(/fixedMenu/)
-  await expect.poll(sidebarRight).toBeLessThanOrEqual(0)
+  // The header keeps the top row up to the story's actions, without covering them.
+  const header = (await page.locator('polo-board-header .header').boundingBox())!
+  const actions = (await page.locator('polo-board-actions .actions').boundingBox())!
+  expect(header.x).toBeGreaterThanOrEqual(0)
+  expect(header.x + header.width).toBeLessThanOrEqual(actions.x)
+  expect(actions.x + actions.width).toBeLessThanOrEqual(375)
+  await expect(page.getByRole('textbox', { name: 'Story name', exact: true })).toBeVisible()
   await page.screenshot({ path: test.info().outputPath('workspace-mobile.png') })
 
-  await page.locator('.openMenu').getByRole('button', { name: 'Toggle menu', exact: true }).click()
-  await expect(menu).toHaveClass(/fixedMenu/)
-  await expect.poll(() => sidebar.evaluate(element => element.getBoundingClientRect().left)).toBe(0)
-  const sidebarBox = await sidebar.boundingBox()
-  expect(sidebarBox!.x + sidebarBox!.width).toBeLessThanOrEqual(375)
-  expect(sidebarBox!.height).toBe(812)
+  await page.getByRole('button', { name: 'Switch project', exact: true }).click()
+  const switcher = (await page.locator('.switcherMenu').boundingBox())!
+  expect(switcher.x).toBeGreaterThanOrEqual(0)
+  expect(switcher.x + switcher.width).toBeLessThanOrEqual(375)
+  await page.keyboard.press('Escape')
 
-  await sidebar.getByRole('button', { name: 'Toggle menu', exact: true }).click()
-  await page.mouse.move(370, 400)
-  await expect.poll(sidebarRight).toBeLessThanOrEqual(0)
-  await expect(menu).not.toHaveClass(/fixedMenu/)
-  await page.locator('.openMenu').getByRole('button', { name: 'Toggle menu', exact: true }).click()
-  await expect(menu).toHaveClass(/fixedMenu/)
-  await page.locator('.menu__backdrop').click({ position: { x: 360, y: 400 } })
-  await expect(menu).not.toHaveClass(/fixedMenu/)
-
+  // Phones fold the analytics and the options into one menu.
+  await page.getByRole('button', { name: 'More actions', exact: true }).click()
   await page.getByRole('button', { name: 'Story options', exact: true }).click()
-  const dropdown = page.locator('.dropdown')
+  const dropdown = page.locator('polo-story-options-modal .modal')
   await expect(dropdown).toBeVisible()
   const box = await dropdown.boundingBox()
   expect(box!.x).toBeGreaterThanOrEqual(0)

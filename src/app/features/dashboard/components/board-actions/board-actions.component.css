@@ -1,0 +1,97 @@
+:host {
+  pointer-events: none;
+  anchor-scope: --board-more;
+}
+
+/* The top corner of the board, inside its pane, so the preview beside it never covers it. */
+.actions {
+  position: absolute;
+  z-index: 6;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  padding: 6px;
+  pointer-events: auto;
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  box-shadow: var(--polo-shadow-floating);
+  white-space: nowrap;
+}
+
+.more {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--polo-color-border);
+  border-radius: 8px;
+  background: var(--polo-color-surface);
+  cursor: pointer;
+  anchor-name: --board-more;
+}
+.more:focus-visible, .moreMenu__item:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.moreMenu {
+  width: min(240px, calc(100vw - 32px));
+  padding: var(--polo-space-2);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-popover);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+}
+/* Under its button, towards the middle of the screen. Without anchor positioning, tetherPopover
+   sets the edges before opening. */
+@supports (position-area: block-end) {
+  .moreMenu {
+    inset: auto;
+    margin: var(--polo-space-1) 0;
+    position-anchor: --board-more;
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
+}
+@supports not (position-area: block-end) {
+  .moreMenu {
+    position: fixed;
+    margin: 0;
+  }
+}
+.moreMenu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border: none;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  color: var(--polo-color-text);
+  font: 600 13px var(--polo-font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+.moreMenu__item:hover:not(:disabled) {
+  background-color: var(--polo-color-surface-subtle);
+}
+.moreMenu__item:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+@media (max-width: 760px) {
+  .actions {
+    gap: var(--polo-space-1);
+    padding: 4px;
+  }
+}

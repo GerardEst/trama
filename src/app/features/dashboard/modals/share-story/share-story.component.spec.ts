@@ -60,6 +60,15 @@ describe('ShareStoryComponent', () => {
     expect(component.unavailable).toBeFalse()
   })
 
+  it('renders without the dialog when a page embeds it', () => {
+    expect(fixture.nativeElement.querySelector('polo-modal-window')).not.toBeNull()
+    fixture.componentRef.setInput('embedded', true)
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('polo-modal-window')).toBeNull()
+    expect(fixture.nativeElement.querySelector('#story-reading-link')).not.toBeNull()
+    expect(fixture.nativeElement.textContent).toContain('without an account')
+  })
+
   it('keeps the saved URL and editable field when a duplicate alias is rejected', async () => {
     db.updateCustomIdOf.and.resolveTo('taken')
     const previous = component.readingUrl()

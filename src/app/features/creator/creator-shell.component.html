@@ -1,0 +1,38 @@
+<div class="shell">
+  <aside class="sidebar">
+    <polo-wordmark class="wordmark" [href]="homeUrl()" label="Trama"></polo-wordmark>
+
+    <nav class="nav" [attr.aria-label]="'dashboard.home.navLabel' | t">
+      <ul class="nav__group">
+        <li>
+          <a class="nav__item" routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <img width="16" src="/assets/icons/home.svg" alt="" />
+            {{ 'dashboard.menu.home' | t }}
+          </a>
+        </li>
+        <li>
+          <a class="nav__item" routerLink="/dashboard/access" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/users.svg" alt="" />
+            {{ 'dashboard.home.access' | t }}
+            <span class="badge badge--soon">{{ 'dashboard.home.soon' | t }}</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav__item" routerLink="/dashboard/profile" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <img width="16" src="/assets/icons/user.svg" alt="" />
+            {{ 'dashboard.home.creatorProfile' | t }}
+            <span class="badge badge--soon">{{ 'dashboard.home.soon' | t }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- The person at the foot of the menu: the top is for moving around the app. -->
+    <polo-user-menu class="sidebar__user"></polo-user-menu>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

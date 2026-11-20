@@ -1,0 +1,91 @@
+<div class="page">
+  <header class="pageHeader">
+    <div>
+      <h1>{{ 'dashboard.creatorProfile.title' | t }}</h1>
+      <p>{{ 'dashboard.creatorProfile.subtitle' | t }}</p>
+    </div>
+    <div class="pageHeader__actions">
+      <span class="tag tag--soon">{{ 'dashboard.home.soon' | t }}</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <form class="form" (submit)="$event.preventDefault()">
+      <fieldset disabled>
+        <legend class="sectionTitle">{{ 'dashboard.creatorProfile.identity' | t }}</legend>
+
+        <div class="field">
+          <label for="creator-name">{{ 'dashboard.creatorProfile.publicName' | t }}</label>
+          <input id="creator-name" type="text" [value]="name()" aria-describedby="creator-name-hint" />
+          <p class="field__hint" id="creator-name-hint">{{ 'dashboard.creatorProfile.publicNameHint' | t }}</p>
+        </div>
+
+        <div class="field">
+          <label for="creator-address">{{ 'dashboard.creatorProfile.address' | t }}</label>
+          <div class="field__prefixed">
+            <span class="field__prefix">{{ host }}/&#64;</span>
+            <input id="creator-address" type="text" aria-describedby="creator-address-hint" />
+          </div>
+          <p class="field__hint" id="creator-address-hint">{{ 'dashboard.creatorProfile.addressHint' | t }}</p>
+        </div>
+
+        <div class="field">
+          <label for="creator-bio">{{ 'dashboard.creatorProfile.bio' | t }}</label>
+          <textarea id="creator-bio" rows="4" [placeholder]="'dashboard.creatorProfile.bioPlaceholder' | t"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="creator-website">{{ 'dashboard.creatorProfile.website' | t }}</label>
+          <input id="creator-website" type="url" placeholder="https://" />
+        </div>
+
+        <div class="form__actions">
+          <button type="submit" class="button button--primary">{{ 'dashboard.creatorProfile.save' | t }}</button>
+        </div>
+      </fieldset>
+    </form>
+
+    <aside class="aside">
+      <div class="picture">
+        <p class="sectionTitle">{{ 'dashboard.creatorProfile.picture' | t }}</p>
+        <span class="picture__avatar" aria-hidden="true">{{ initial() }}</span>
+        <button type="button" class="button" disabled>{{ 'dashboard.creatorProfile.change' | t }}</button>
+      </div>
+
+      <section class="preview" aria-labelledby="preview-title">
+        <h2 class="sectionTitle" id="preview-title">{{ 'dashboard.creatorProfile.previewTitle' | t }}</h2>
+        <div class="panel previewCard">
+          <span class="previewCard__avatar" aria-hidden="true">{{ initial() }}</span>
+          <p class="previewCard__name">{{ name() }}</p>
+          <p class="previewCard__bio">{{ 'dashboard.creatorProfile.previewBio' | t }}</p>
+        </div>
+        <p class="field__hint">{{ 'dashboard.creatorProfile.separateNote' | t }}</p>
+      </section>
+    </aside>
+  </div>
+
+  <section aria-labelledby="brands-title">
+    <div class="brandsHead">
+      <h2 class="sectionTitle" id="brands-title">
+        {{ 'dashboard.creatorProfile.brands' | t }}
+        <span class="tag">{{ 'dashboard.home.pro' | t }}</span>
+        <span class="tag tag--soon">{{ 'dashboard.home.soon' | t }}</span>
+      </h2>
+      <button type="button" class="button" disabled>
+        <img width="14" src="/assets/icons/plus.svg" alt="" />
+        {{ 'dashboard.creatorProfile.addBrand' | t }}
+      </button>
+    </div>
+    <p class="message brandsText">{{ 'dashboard.creatorProfile.brandsText' | t }}</p>
+    <ul class="panel identities">
+      <li class="identity">
+        <span class="previewCard__avatar identity__avatar" aria-hidden="true">{{ initial() }}</span>
+        <div class="identity__text">
+          <p class="identity__name">{{ name() }}</p>
+          <p class="identity__note">{{ 'dashboard.creatorProfile.defaultIdentityText' | t }}</p>
+        </div>
+        <span class="tag">{{ 'dashboard.creatorProfile.defaultIdentity' | t }}</span>
+      </li>
+    </ul>
+  </section>
+</div>

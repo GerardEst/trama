@@ -1,167 +1,217 @@
+:host {
+  pointer-events: none;
+}
+
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 7;
+  pointer-events: auto;
+  background: var(--polo-color-overlay);
 }
 
-.menu {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  translate: var(--polo-board-controls-offset, 0px) 0;
-  transition: translate var(--polo-workspace-motion-duration, 0s) var(--polo-workspace-motion-easing, ease);
-  z-index: 8;
+/* Down the left of the board, resting on the controls that open and close it, as tall as what it
+   holds and never past the header. It slides in from the left edge and back out of it. */
+.panel {
+  position: absolute;
+  z-index: 5;
+  bottom: 72px;
+  left: 16px;
+  max-height: calc(100% - 144px);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--polo-space-2);
-  width: var(--polo-menu-top-width, min(340px, 100vw - 80px));
+  flex-direction: column;
+  width: var(--polo-story-panel-width, 300px);
+  max-width: calc(100% - 32px);
   box-sizing: border-box;
-  padding: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
   color: var(--polo-color-text);
   background: var(--polo-color-surface);
   border: 1px solid var(--polo-color-border);
   border-radius: var(--polo-radius-panel);
   box-shadow: var(--polo-shadow-floating);
+  transition: translate 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms ease, visibility 0s;
 }
-.menu polo-editable-name {
-  min-width: 0;
-  flex: 1;
+/* Closed, it waits off the left edge, and only becomes invisible once it has slid there. */
+.panel--closed {
+  translate: calc(-100% - 24px) 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: translate 220ms cubic-bezier(0.55, 0, 0.75, 0.25), opacity 220ms ease, visibility 0s 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel, .panel--closed {
+    transition: none;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  padding: var(--polo-space-3);
+}
+.section + .section {
+  border-top: 1px solid var(--polo-color-border);
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  min-height: 28px;
+}
+
+.section__title {
+  margin: 0;
+  color: var(--polo-color-text-strong);
   font-size: 14px;
   font-weight: 800;
-  letter-spacing: -0.025em;
 }
-.menu .historyControls {
-  display: flex;
-  flex-basis: 100%;
-  gap: var(--polo-space-2);
+
+.section__group {
+  margin: var(--polo-space-1) 0 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
 }
-.menu .saveStatus {
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  cursor: pointer;
+}
+.close:hover {
+  background: var(--polo-color-surface-subtle);
+}
+
+.list {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  flex-basis: 100%;
-  padding: 8px 4px 0;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list--soon {
+  padding-top: var(--polo-space-2);
   border-top: 1px solid var(--polo-color-border);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 34px;
+  padding: 6px var(--polo-space-3);
+  border: none;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  color: var(--polo-color-text);
+  font: 600 13px var(--polo-font-ui);
+  text-align: left;
+}
+.item:disabled, .item--soon {
+  color: var(--polo-color-text-secondary);
+}
+.item:disabled {
+  cursor: not-allowed;
+}
+.item--current {
+  background-color: var(--polo-color-action-soft);
+  color: var(--polo-color-text-strong);
+  font-weight: 750;
+}
+
+.item__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-inline: 4px;
+  border-radius: 50%;
+  background-color: var(--polo-color-action);
+}
+
+.item__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.soon {
+  margin-left: auto;
+  padding: 1px var(--polo-space-2);
+  border-radius: 999px;
+  background-color: var(--polo-color-surface-muted);
   color: var(--polo-color-text-secondary);
   font-size: 11px;
-  line-height: 1.5;
+  font-weight: 650;
+  white-space: nowrap;
 }
-.menu .saveStatus--error {
-  color: var(--polo-color-danger-text);
-}
-.menu .dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+
+.tabs {
   display: flex;
-  flex-direction: column;
-  gap: var(--polo-space-2);
-  width: var(--polo-menu-top-dropdown-width, min(340px, 100vw - 32px));
-  max-height: calc(100dvh - 180px);
-  overflow-y: auto;
-  box-sizing: border-box;
-  padding: var(--polo-space-4);
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--polo-radius-control);
+  background: var(--polo-color-surface-muted);
+}
+.tab {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 var(--polo-space-2);
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--polo-color-text-secondary);
+  font: 700 12px var(--polo-font-ui);
+  cursor: pointer;
+}
+.tab[aria-pressed='true'] {
   background: var(--polo-color-surface);
-  border: 1px solid var(--polo-color-border);
-  border-radius: var(--polo-radius-panel);
-  box-shadow: var(--polo-shadow-popover);
+  color: var(--polo-color-text-strong);
+  box-shadow: var(--polo-shadow-control);
 }
-.menu .dropdown__section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 14px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid var(--polo-color-border);
-}
-.menu .dropdown input {
-  color: var(--polo-color-text);
-  background: var(--polo-color-surface-subtle);
-  border: 1px solid var(--polo-color-border-strong);
-  border-radius: 6px;
-  padding: 8px 10px;
-  accent-color: var(--polo-color-action);
-}
-.menu .dropdown input:focus-visible {
+
+.close:focus-visible, .tab:focus-visible {
   outline: 2px solid var(--polo-color-focus);
   outline-offset: 2px;
 }
-.menu .dropdown input.alert {
-  outline: 2px solid var(--polo-color-danger);
-}
-.menu .dropdown label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--polo-space-2);
-  line-height: 1.5;
-}
-.menu .dropdown label.label--column {
-  flex-direction: column;
-  align-items: stretch;
+
+.section__body {
+  min-height: 0;
 }
 
-/* Phones: only the options button until it is opened, then a full-width sheet. */
+/* Phones: a sheet over the board, resting on the bar along the foot that opens it. */
 @media (max-width: 760px) {
-  .menu:not(.menu--open) {
+  .panel {
+    position: fixed;
+    z-index: 8;
+    inset: auto 0 calc(49px + env(safe-area-inset-bottom));
     width: auto;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-  }
-  .menu:not(.menu--open) > :not(.optionsToggle) {
-    display: none;
-  }
-  /* Matches the menu drawer's opening button in the other corner. */
-  .menu:not(.menu--open) .optionsToggle {
-    border: 1px solid var(--polo-color-border);
-    border-radius: 9px;
-    box-shadow: var(--polo-shadow-control);
-  }
-  .menu--open {
-    inset: 0 0 auto;
-    width: auto;
-    max-height: 100dvh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: max(12px, env(safe-area-inset-top)) 16px 16px;
-    translate: none;
-    border-block-start: 0;
+    max-width: none;
+    max-height: calc(100dvh - 49px - env(safe-area-inset-bottom) - 16px);
+    border-block-end: 0;
     border-inline: 0;
-    border-radius: 0 0 var(--polo-radius-panel) var(--polo-radius-panel);
+    border-radius: var(--polo-radius-panel) var(--polo-radius-panel) 0 0;
   }
-  .menu--open .dropdown {
-    position: static;
-    flex-basis: 100%;
-    width: auto;
-    max-height: none;
-    overflow: visible;
-    padding: var(--polo-space-4) 0 0;
-    border: 0;
-    border-top: 1px solid var(--polo-color-border);
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .overlay {
-    background: var(--polo-color-overlay);
-  }
-  .menu:not(.menu--open) .optionsToggle--alert {
-    position: relative;
-  }
-  .menu:not(.menu--open) .optionsToggle--alert::after {
-    content: "";
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 10px;
-    height: 10px;
-    border: 2px solid var(--polo-color-surface);
-    border-radius: 50%;
-    background: var(--polo-color-danger);
-    pointer-events: none;
+  .panel--closed {
+    translate: -100% 0;
   }
 }

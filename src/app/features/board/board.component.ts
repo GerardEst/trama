@@ -28,7 +28,7 @@ import {
 import { BoardFlowsComponent } from './components/board-flows/board-flows.component'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { boardFrame, node, storyEntryPoint } from 'src/app/core/interfaces/interfaces'
-import { PanzoomService } from 'src/app/features/board/services/panzoom.service'
+import { BoardBounds, BoardInsets, PanzoomService } from 'src/app/features/board/services/panzoom.service'
 import { BoardDragAutoPanService } from './services/board-drag-auto-pan.service'
 import { generateIDForNewNode } from 'src/app/shared/utils/tree-searching'
 import { StoryEditorService } from './services/story-editor.service'
@@ -38,6 +38,7 @@ import { BoardJoinStroke, BoardPoint, ENTRY_POINT_ORIGIN, isBoardControl } from 
 import { EntryPointComponent } from './components/entry-point/entry-point.component'
 import { FrameColorsService } from './services/frame-colors.service'
 import { FrameColorPickerComponent } from './components/frame-color-picker/frame-color-picker.component'
+import { BasicButtonComponent } from 'src/app/shared/components/ui/basic-button/basic-button.component'
 import { projectBoardJoins } from './board-join-projection'
 import { BoardAnchorDirective } from './directives/board-anchor.directive'
 import { EditableNameComponent } from 'src/app/shared/components/ui/editable-name/editable-name.component'
@@ -89,6 +90,12 @@ import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { ContextHelpComponent } from 'src/app/shared/context-help/context-help.component'
 import { NODE_CONTEXT_HELP_TOPICS } from 'src/app/shared/context-help/context-help.topics'
 import { elementAt } from 'src/app/shared/utils/dom'
+import type { TranslationKey } from 'src/app/core/i18n/i18n.types'
+
+export type CreatableNodeType = 'text' | 'content' | 'distributor' | 'end'
+
+/** A new node's size before it is measured, to centre it where it is created. */
+const NEW_NODE_SIZE = { width: 260, height: 160 }
 
 @Component({
   selector: 'polo-board',
@@ -105,6 +112,7 @@ import { elementAt } from 'src/app/shared/utils/dom'
     ContextHelpComponent,
     FrameColorPickerComponent,
     MobileModalDirective,
+    BasicButtonComponent,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
@@ -130,11 +138,15 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Dragging near an edge moves the board; off for the small boards of the public site. */
   @Input() edgePan: boolean = true
 
-  // Context menu
-  readonly creatableNodeTypes = ['text', 'content', 'distributor', 'end'] as const
+  // Context menu: the most used kind first, in the same order as the creation buttons.
+  readonly creatableNodeTypes: readonly CreatableNodeType[] = ['content', 'text', 'distributor', 'end']
   readonly nodeHelpTopics = NODE_CONTEXT_HELP_TOPICS
   contextMenuPosition = { x: 0, y: 0 }
   contextMenuActive = false
+  /** The zoom when the menu opened: the menu undoes it, so it reads at full size on a small board. */
+  contextMenuScale = 1
+  /** The board's zoom as a percentage, for the controls that show it. */
+  readonly zoomPercent = computed(() => Math.round(this.panzoom.scale() * 100))
   // Touch has no right click, so holding still on the board opens the same menu.
   private readonly changeDetector = inject(ChangeDetectorRef)
   readonly viewport = inject(ViewportService)
@@ -389,6 +401,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (target.classList.contains('board')) {
       event.preventDefault() // Prevent the default context menu from appearing
+      // On macOS, Ctrl+click is a right click: the marquee it starts is not a request for the menu.
+      if (this.selectionPointerId !== undefined) return
       if (this.isDrawingJoin) {
         this.stopDragging()
         this.panzoom.resumeDrag()
@@ -681,16 +695,85 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeStory.endHistoryCoalescing()
   }
 
-  nodeTypeName(type: (typeof this.creatableNodeTypes)[number]) {
+  nodeTypeName(type: CreatableNodeType) {
     return this.i18n.t(`board.node.types.${type}`)
+  }
+
+  nodeTypeDescription(type: CreatableNodeType): TranslationKey {
+    return `board.create.types.${type}.description`
   }
 
   openContextMenu(event: MouseEvent) {
     event.preventDefault()
 
     this.contextMenuPosition = this.getBoardPosition(event)
+    this.contextMenuScale = this.panzoom.getScale()
 
     this.contextMenuActive = true
+  }
+
+  /** The creation menu from a button, as a right click in the middle of the visible board. */
+  openCreateMenu() {
+    this.contextMenuPosition = this.visibleCenter()
+    this.contextMenuScale = this.panzoom.getScale()
+    this.contextMenuActive = true
+    this.changeDetector.markForCheck()
+  }
+
+  /**
+   * A node of a kind in the middle of the visible board, or, on the spot of a node created there
+   * before, a little further down and right so it is not hidden behind it.
+   */
+  createNodeInView(type: CreatableNodeType) {
+    this.closeContextMenu()
+    const center = this.visibleCenter()
+    const position = { left: Math.round(center.x - NEW_NODE_SIZE.width / 2), top: Math.round(center.y - NEW_NODE_SIZE.height / 2) }
+    const taken = (left: number, top: number) => this.visibleNodes().some((storyNode) =>
+      Math.abs((Number(storyNode.left) || 0) - left) < 24 && Math.abs((Number(storyNode.top) || 0) - top) < 24)
+    while (taken(position.left, position.top)) {
+      position.left += 40
+      position.top += 40
+    }
+    const created = this.createNode(position, type)
+    this.activateNode(created.id)
+    this.changeDetector.markForCheck()
+    return created
+  }
+
+  zoomBy(factor: number) {
+    this.panzoom.zoomBy(factor)
+  }
+
+  zoomTo(scale: number) {
+    this.panzoom.zoomTo(scale)
+  }
+
+  /** Show every node and Start of the open level at once, clear of the panels over the board. */
+  fitToView(insets: BoardInsets) {
+    const sizes = this.nodeSizes()
+    const items: { left: number; top: number; width: number; height: number }[] = this.visibleNodes().map((storyNode) => ({
+      left: Number(storyNode.left) || 0,
+      top: Number(storyNode.top) || 0,
+      ...(sizes.get(storyNode.id) ?? NEW_NODE_SIZE),
+    }))
+    const entry = this.currentGroupId ? undefined : this.activeStory.entireTree().entryPoint
+    if (entry) items.push({ left: Number(entry.left) || 0, top: Number(entry.top) || 0, width: 140, height: 60 })
+    if (!items.length) return
+    const bounds: BoardBounds = {
+      left: Math.min(...items.map((item) => item.left)),
+      top: Math.min(...items.map((item) => item.top)),
+      right: Math.max(...items.map((item) => item.left + item.width)),
+      bottom: Math.max(...items.map((item) => item.top + item.height)),
+    }
+    this.panzoom.fitBounds(bounds, insets)
+    this.refreshFlows()
+  }
+
+  /** The middle of the part of the board on screen, in board coordinates. */
+  private visibleCenter(): BoardPoint {
+    const viewport = this.boardElement?.nativeElement.parentElement?.getBoundingClientRect()
+    if (!viewport) return { x: 0, y: 0 }
+    return this.getBoardPosition({ x: viewport.left + viewport.width / 2, y: viewport.top + viewport.height / 2 })
   }
 
   closeContextMenu() {
@@ -705,7 +788,8 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const board = this.boardElement?.nativeElement
     if (event.target === board) {
-      if (event.ctrlKey) {
+      // Shift, Ctrl or Cmd: Shift is what other canvases use, and Ctrl+click is a right click on macOS.
+      if (event.shiftKey || event.ctrlKey || event.metaKey) {
         this.selectionPointerId = event.pointerId
         this.selectionOrigin = this.getBoardOrigin()
         this.selectionTargets = this.measureSelectionTargets()
@@ -1094,7 +1178,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addNode(
     event: MouseEvent,
-    type: 'text' | 'content' | 'distributor' | 'end'
+    type: CreatableNodeType
   ): void {
     if (this.contextMenuActive) {
       this.contextMenuActive = false
@@ -1124,7 +1208,7 @@ export class BoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createNode(
     position: { top: string | number; left: string | number },
-    type: 'text' | 'content' | 'distributor' | 'end'
+    type: CreatableNodeType
   ) {
     const newNodeInfo: node = {
       id: generateIDForNewNode(this.activeStory.entireTree().nodes),

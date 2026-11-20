@@ -1,9 +1,48 @@
-import { Injectable } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
 import { node } from 'src/app/core/interfaces/interfaces'
 import createPanZoom, { PanZoom } from 'panzoom'
 import { isBoardControl } from '../board-interactions'
 
 const CENTERING_DURATION_MS = 320
+export const MIN_ZOOM = 0.1
+export const MAX_ZOOM = 1
+
+/** Room to leave, in screen pixels, between the fitted story and each edge of the board. */
+export interface BoardInsets {
+  top: number
+  right: number
+  bottom: number
+  left: number
+}
+
+/** A rectangle in board coordinates. */
+export interface BoardBounds {
+  left: number
+  top: number
+  right: number
+  bottom: number
+}
+
+/**
+ * The zoom and translation that show `bounds` whole and centred in a viewport, without
+ * enlarging it past the board's maximum zoom.
+ */
+export function fitTransform(
+  bounds: BoardBounds,
+  viewport: { width: number; height: number },
+  insets: BoardInsets
+): { scale: number; x: number; y: number } {
+  const width = Math.max(1, viewport.width - insets.left - insets.right)
+  const height = Math.max(1, viewport.height - insets.top - insets.bottom)
+  const boundsWidth = Math.max(1, bounds.right - bounds.left)
+  const boundsHeight = Math.max(1, bounds.bottom - bounds.top)
+  const scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.min(width / boundsWidth, height / boundsHeight)))
+  return {
+    scale,
+    x: insets.left + (width - boundsWidth * scale) / 2 - bounds.left * scale,
+    y: insets.top + (height - boundsHeight * scale) / 2 - bounds.top * scale,
+  }
+}
 
 @Injectable()
 export class PanzoomService {
@@ -13,6 +52,8 @@ export class PanzoomService {
   private centeringFrame?: number
 
   focusElements: boolean = true
+  /** The board's zoom, for the controls that show it. */
+  readonly scale = signal(1)
 
   createPanzoomBoard(
     element: HTMLElement | undefined,
@@ -29,8 +70,8 @@ export class PanzoomService {
 
     //https://github.com/anvaka/panzoom
     this.boardReference = createPanZoom(element, {
-      maxZoom: 1,
-      minZoom: 0.1,
+      maxZoom: MAX_ZOOM,
+      minZoom: MIN_ZOOM,
       filterKey: function (/* e, dx, dy, dz */) {
         // don't let panzoom handle this event:
         return true
@@ -56,7 +97,12 @@ export class PanzoomService {
         new CustomEvent('poloBoardPanStart', { bubbles: true })
       )
     })
-    this.boardReference.on('zoom', () => this.stopCentering())
+    this.scale.set(this.boardReference.getTransform().scale)
+    this.boardReference.on('zoom', () => {
+      this.stopCentering()
+      const scale = this.boardReference?.getTransform().scale ?? 1
+      if (scale !== this.scale()) this.scale.set(scale)
+    })
 
     this.initialPositionTimer = setTimeout(() => {
       this.boardReference?.moveTo(
@@ -131,6 +177,45 @@ export class PanzoomService {
         `matrix(${applied.scale}, 0, 0, ${applied.scale}, ${applied.x}, ${applied.y})`
     }
     return { x: applied.x - x, y: applied.y - y }
+  }
+
+  /** Zoom by a factor around the middle of the visible board, within the board's limits. */
+  zoomBy(factor: number) {
+    const board = this.boardReference
+    const viewport = this.boardElement?.parentElement
+    if (!board || !viewport) return
+    this.stopCentering()
+    this.stopGliding()
+    const scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, board.getTransform().scale * factor))
+    board.zoomAbs(viewport.clientWidth / 2, viewport.clientHeight / 2, scale)
+  }
+
+  zoomTo(scale: number) {
+    const current = this.boardReference?.getTransform().scale
+    if (current) this.zoomBy(scale / current)
+  }
+
+  /** Show a region of the board whole, leaving `insets` free for the panels over the board. */
+  fitBounds(bounds: BoardBounds, insets: BoardInsets) {
+    const board = this.boardReference
+    const viewport = this.boardElement?.parentElement
+    if (!board || !viewport) return
+    this.stopCentering()
+    this.stopGliding()
+    const { scale, x, y } = fitTransform(bounds, { width: viewport.clientWidth, height: viewport.clientHeight }, insets)
+    board.zoomAbs(0, 0, scale)
+    board.moveTo(x, y)
+  }
+
+  /**
+   * A released pan keeps gliding for a moment, and would carry the board away from a zoom or a fit
+   * asked for meanwhile. Pausing is panzoom's only way to stop it; a pan paused by a drag stays so.
+   */
+  private stopGliding() {
+    const board = this.boardReference
+    if (!board || board.isPaused()) return
+    board.pause()
+    board.resume()
   }
 
   getScale() {

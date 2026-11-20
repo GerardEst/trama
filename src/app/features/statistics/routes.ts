@@ -1,12 +1,6 @@
 import { Routes } from '@angular/router'
-import { authGuard } from 'src/app/core/guards/auth.guard'
 
+// Statistics live with the rest of the story now; old links and bookmarks still arrive there.
 export const statisticsRoutes: Routes = [
-  {
-    path: 'stadistics/:storyId',
-    title: 'dashboard.statistics.title',
-    loadComponent: () =>
-      import('./statistics.component').then((m) => m.StatisticsComponent),
-    canActivate: [authGuard],
-  },
+  { path: 'stadistics/:storyId', redirectTo: 'story/:storyId/statistics' },
 ]

@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
     } else await route.abort()
   })
   await page.setViewportSize({ width: 1600, height: 1100 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
 })
 
 for (const placement of ['right', 'bottom', 'bottom-right']) {
@@ -93,3 +93,29 @@ for (const placement of ['right', 'bottom', 'bottom-right']) {
     })
   }
 }
+
+test('node and answer menus open beside their buttons on a panned and zoomed board (mocked backend)', async ({ page }) => {
+  const node = page.locator('.node[data-board-join-node="node_0"]')
+  await expect(node).toBeVisible()
+  // CSS anchors ignore the board's transform, which once opened these menus far from their buttons.
+  await page.getByRole('button', { name: 'Zoom out', exact: true }).click()
+  await page.mouse.move(800, 300)
+  await page.mouse.down()
+  await page.mouse.move(650, 380, { steps: 6 })
+  await page.mouse.up()
+  const expectBeside = async (trigger: import('@playwright/test').Locator) => {
+    const button = (await trigger.boundingBox())!
+    const panel = (await page.locator('.anchoredPopover__panel:popover-open').boundingBox())!
+    const gap = Math.max(panel.x - (button.x + button.width), button.x - (panel.x + panel.width))
+    expect(gap).toBeGreaterThanOrEqual(0)
+    expect(gap).toBeLessThanOrEqual(13)
+    expect(Math.abs(panel.y - button.y)).toBeLessThanOrEqual(1)
+  }
+  const nodeMenu = node.locator('.node__menuButton button')
+  await nodeMenu.click()
+  await expectBeside(nodeMenu)
+  await page.keyboard.press('Escape')
+  const answerMenu = node.locator('polo-answer').filter({ hasText: 'Enter the door' }).getByRole('button', { name: 'Answer options', exact: true })
+  await answerMenu.click()
+  await expectBeside(answerMenu)
+})

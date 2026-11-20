@@ -1,7 +1,20 @@
 <div class="workspace" [class.workspace--linear]="linearOpen()" [class.workspace--mobile-board]="mobileBoard()" [class.workspace--resizing]="resizing()"
-  [style.--board-width]="boardWidth() + 'vw'" [style.--workspace-toolbar-top]="toolbarTop() + 'px'">
+  [class.workspace--panel]="sidebarOpen()" [style.--board-width]="boardWidth() + 'vw'" [style.--workspace-toolbar-top]="toolbarTop() + 'px'"
+  [attr.inert]="missing() ? '' : null">
   <div class="boardPane">
     <polo-board #board [grid]="true" [groupControls]="true" [embedded]="linearOpen()" [playingNodeId]="playingNodeId()" />
+    <!-- Everything around the board sits inside its pane, so the preview beside it never covers it:
+         where the author is and what they can do with the story along the top, the project down
+         the left, and the board's own controls along the foot. -->
+    <div class="chrome">
+      <polo-board-header #header (newStory)="createNewStory()" />
+      <polo-board-actions [previewOpen]="linearOpen() && !mobileBoard()" (previewRequested)="openLinearView()" (shareRequested)="openShare()"
+        (optionsRequested)="openStoryOptions()" />
+      <polo-story-panel [open]="sidebarOpen()" (closed)="setSidebar(false)" />
+      <polo-board-controls #controls [sidebarOpen]="sidebarOpen()" [zoom]="board.zoomPercent()" (sidebarToggled)="setSidebar(!sidebarOpen())"
+        (historyRequested)="restoreHistory($event)" (createRequested)="board.createNodeInView($event)"
+        (createMenuRequested)="board.openCreateMenu()" (viewRequested)="changeView($event)" />
+    </div>
   </div>
   @if (linearOpen()) {
     <button type="button" class="workspaceDivider" role="separator" aria-orientation="vertical"
@@ -15,7 +28,11 @@
         (highlightedNodeChanged)="highlightPlayingNode($event)" (boardRequested)="mobileBoard.set(true)" />
     </aside>
   }
-  <polo-menu-tree-legend [showLegend]="false" (linearRequested)="openLinearView()" (shareRequested)="openShare()" />
-  <polo-menu-top #menuTop (onDeleteStory)="deleteStory($event)" (historyRequested)="restoreHistory($event)" (shareRequested)="openShare()" />
-  <polo-menu #menuSide (onNewStory)="createNewStory()" (onChangeTree)="initBoard($event)" />
 </div>
+@if (missing()) {
+  <!-- Over the editor, which stays alive for the next story the author opens. -->
+  <div class="missing">
+    <p role="alert">{{ 'dashboard.story.missing' | t }}</p>
+    <a routerLink="/dashboard">{{ 'dashboard.story.missingLink' | t }}</a>
+  </div>
+}

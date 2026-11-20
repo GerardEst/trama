@@ -3,7 +3,7 @@ import { storyPlainText } from './story-html'
 
 // Root-level application routes and static resources must never become story URLs.
 export const RESERVED_STORY_PATHS = new Set([
-  'ca', 'es', 'en', 'login', 'dashboard', 'reset-password', 'change-password',
+  'ca', 'es', 'en', 'login', 'dashboard', 'settings', 'board', 'story', 'reset-password', 'change-password',
   'stadistics', 'private', 'not-found', 'docs', 'use-cases', 'pricing', 'assets', 'api',
 ])
 

@@ -1,0 +1,84 @@
+<div class="controls controls--start" role="toolbar" [attr.aria-label]="'dashboard.controls.label' | t">
+  <polo-basic-button
+    icon="/assets/icons/sidebar.svg"
+    [label]="'dashboard.controls.sidebar' | t"
+    [title]="'dashboard.controls.sidebarShortcut' | t"
+    [expanded]="sidebarOpen"
+    [controls]="panelId"
+    [selected]="sidebarOpen"
+    (click)="sidebarToggled.emit()"
+  ></polo-basic-button>
+  <span class="separator" aria-hidden="true"></span>
+  <polo-basic-button
+    icon="/assets/icons/undo.svg"
+    [label]="'dashboard.top.undo' | t"
+    [title]="'dashboard.top.undoShortcut' | t"
+    [disabled]="!activeStory.canUndo()"
+    [transparent]="true"
+    (click)="historyRequested.emit('undo')"
+  ></polo-basic-button>
+  <polo-basic-button
+    icon="/assets/icons/redo.svg"
+    [label]="'dashboard.top.redo' | t"
+    [title]="'dashboard.top.redoShortcut' | t"
+    [disabled]="!activeStory.canRedo()"
+    [transparent]="true"
+    (click)="historyRequested.emit('redo')"
+  ></polo-basic-button>
+  <!-- Where the creation buttons do not fit: on phones and on a board narrowed by the preview. -->
+  <span class="separator createMenu" aria-hidden="true"></span>
+  <polo-basic-button
+    class="createMenu"
+    icon="/assets/icons/plus.svg"
+    [text]="'dashboard.controls.createShort' | t"
+    [label]="'dashboard.controls.create' | t"
+    (click)="createMenuRequested.emit()"
+  ></polo-basic-button>
+</div>
+
+@if (!viewport.mobile()) {
+  <div class="controls controls--create" role="toolbar" [attr.aria-label]="'dashboard.controls.create' | t">
+    @for (type of nodeTypes; track type) {
+      <button type="button" class="create" [attr.data-node-type]="type"
+        [title]="typeKey(type) | t" (click)="createRequested.emit(type)">
+        <img width="12" src="/assets/icons/plus.svg" alt="" />
+        {{ shortNameKey(type) | t }}
+      </button>
+    }
+  </div>
+
+  <div class="controls controls--end" role="toolbar" [attr.aria-label]="'dashboard.controls.label' | t">
+    <polo-basic-button icon="/assets/icons/minus.svg" [transparent]="true" [title]="'dashboard.controls.zoomOut' | t"
+      (click)="viewRequested.emit('zoomOut')"></polo-basic-button>
+    <button type="button" class="zoom" [title]="'dashboard.controls.zoomReset' | t: { zoom: zoom }"
+      [attr.aria-label]="'dashboard.controls.zoomReset' | t: { zoom: zoom }" (click)="viewRequested.emit('zoomReset')">{{ zoom }}%</button>
+    <polo-basic-button icon="/assets/icons/plus.svg" [transparent]="true" [title]="'dashboard.controls.zoomIn' | t"
+      (click)="viewRequested.emit('zoomIn')"></polo-basic-button>
+    <span class="separator" aria-hidden="true"></span>
+    <polo-basic-button icon="/assets/icons/maximize.svg" [transparent]="true" [title]="'dashboard.controls.fit' | t"
+      (click)="viewRequested.emit('fit')"></polo-basic-button>
+    <polo-basic-button icon="/assets/icons/flag.svg" [transparent]="true" [title]="'dashboard.controls.start' | t"
+      (click)="viewRequested.emit('start')"></polo-basic-button>
+    <span class="separator" aria-hidden="true"></span>
+    <button #shortcutsTrigger type="button" class="help" [attr.popovertarget]="shortcutsId"
+      [attr.aria-label]="'dashboard.controls.shortcuts' | t" [title]="'dashboard.controls.shortcuts' | t">?</button>
+    <div #shortcutsPanel class="shortcuts" popover="auto" [id]="shortcutsId" role="dialog" [attr.aria-labelledby]="shortcutsId + '-title'"
+      (beforetoggle)="tether($event, shortcutsTrigger, shortcutsPanel)">
+      <h2 class="shortcuts__title" [id]="shortcutsId + '-title'">{{ 'dashboard.shortcuts.title' | t }}</h2>
+      <dl class="shortcuts__list">
+        @for (shortcut of shortcuts; track shortcut) {
+          <div class="shortcuts__item">
+            <dt>{{ shortcutKeys(shortcut)[0] | t }}</dt>
+            <dd><kbd>{{ shortcutKeys(shortcut)[1] | t }}</kbd></dd>
+          </div>
+        }
+      </dl>
+      <!-- The rest of the help, for the questions shortcuts do not answer. -->
+      <a class="shortcuts__guide" [href]="docsUrl()" target="_blank" rel="noopener noreferrer">
+        <img width="14" src="/assets/icons/docs.svg" alt="" />
+        {{ 'dashboard.shortcuts.guide' | t }}
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+}

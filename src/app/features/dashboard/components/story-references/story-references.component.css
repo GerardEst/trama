@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+.empty {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.refs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Two lines in the narrow panel: what it is, then how it is used. */
+.ref {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'type names category'
+    '. times times';
+  align-items: center;
+  column-gap: var(--polo-space-2);
+  row-gap: 2px;
+  padding: 6px var(--polo-space-2);
+  border-radius: var(--polo-radius-control);
+  font-size: 12px;
+}
+.ref:hover {
+  background-color: var(--polo-color-surface-subtle);
+}
+.ref--unused {
+  grid-template-areas: 'type names category';
+}
+
+.ref__type {
+  grid-area: type;
+  align-self: start;
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background: no-repeat center / 15px;
+  filter: var(--polo-icon-filter, none);
+}
+.ref__type--stat {
+  background-image: url('/assets/icons/stat.svg');
+}
+.ref__type--condition {
+  background-image: url('/assets/icons/condition.svg');
+}
+.ref__type--property {
+  background-image: url('/assets/icons/tag.svg');
+}
+
+.ref__names {
+  grid-area: names;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  --polo-edit-icon-size: 12px;
+  --polo-edit-icon-indent: 1rem;
+}
+.ref__names polo-editable-name {
+  font-weight: 700;
+}
+
+.ref__id {
+  overflow: hidden;
+  color: var(--polo-color-text-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ref__times {
+  grid-area: times;
+  color: var(--polo-color-text-secondary);
+  font-size: 11px;
+}
+
+.ref__category, .ref__delete {
+  grid-area: category;
+  border: 1px solid var(--polo-color-border);
+  background: var(--polo-color-surface);
+  color: var(--polo-color-text-strong);
+  cursor: pointer;
+}
+.ref__category {
+  max-width: 110px;
+  overflow: hidden;
+  padding: 2px var(--polo-space-2);
+  border-radius: 999px;
+  font: 600 11px/1.4 var(--polo-font-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ref__category--empty {
+  border-style: dashed;
+  color: var(--polo-color-text-secondary);
+}
+.ref__delete {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-color: transparent;
+  border-radius: var(--polo-radius-control);
+  background: transparent;
+}
+.ref__delete:hover {
+  background: var(--polo-color-danger-soft);
+}
+.ref__category:hover {
+  background: var(--polo-color-surface-subtle);
+}
+.ref__category:focus-visible, .ref__delete:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}

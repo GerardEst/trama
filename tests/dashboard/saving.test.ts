@@ -56,7 +56,7 @@ test('failed batch deletions survive reload and are saved after retry (mocked ba
   })
 
   await page.setViewportSize({ width: 1600, height: 1000 })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   for (const id of ['node_1', 'node_2']) {
     const node = page.locator(`.node[data-board-join-node="${id}"]`)
     await node.getByRole('button', { name: 'Node options', exact: true }).click()
@@ -76,7 +76,7 @@ test('failed batch deletions survive reload and are saved after retry (mocked ba
 
   rejectSaves = false
   await page.getByRole('button', { name: 'Retry save', exact: true }).click()
-  await expect(status).toContainText('Board changes saved')
+  await expect(status).toContainText('Saved')
   expect(persistedTree.nodes.map((node) => node.id)).toEqual(['node_0'])
   await page.reload()
   await expect(page.locator('.node[data-board-join-node="node_0"]')).toHaveCount(1)

@@ -10,8 +10,9 @@ export class AlertService extends OverlayService {
    * viceversa. The difference is that launching an alert returns a Promise
    * that the alert component resolves itself. */
 
-  launch(component: any) {
-    this.mount(component)
+  launch(component: any, inputs: Record<string, unknown> = {}) {
+    const componentRef = this.mount(component)
+    for (const [name, value] of Object.entries(inputs)) componentRef.setInput(name, value)
 
     return new Promise((resolve) => {
       // We pass the promise resolve function to the component, so

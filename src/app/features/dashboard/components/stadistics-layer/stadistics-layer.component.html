@@ -1,9 +1,14 @@
-<div class="gamesList">
-  @for (game of games; track $index) {
-    <li class="gamesList__game">
-      <input type="checkbox" (change)="toggleGame(game)" />
-      <p>{{ game.user_name }}</p>
-      <polo-basic-button (click)="showGameData(game)"></polo-basic-button>
-    </li>
+@if (games(); as games) {
+  @if (!games.length) {
+    <p class="empty">{{ 'dashboard.legend.emptyGames' | t }}</p>
   }
-</div>
+  <div class="gamesList">
+    @for (game of games; track $index) {
+      <li class="gamesList__game">
+        <input type="checkbox" (change)="toggleGame(game, $event)" />
+        <p>{{ game.user_name }}</p>
+        <polo-basic-button (click)="showGameData(game)"></polo-basic-button>
+      </li>
+    }
+  </div>
+}

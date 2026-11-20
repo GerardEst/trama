@@ -1,0 +1,117 @@
+<div class="page">
+  <header class="pageHeader">
+    <div>
+      <h1>{{ 'dashboard.statistics.title' | t }}</h1>
+      <p>{{ 'dashboard.statistics.subtitle' | t }}</p>
+    </div>
+  </header>
+
+  @if (!activeStory.storyConfiguration().tracking) {
+    <p class="notice" role="status">
+      {{ 'dashboard.statistics.trackingOff' | t }}
+      <a [routerLink]="['/story', activeStory.storyId()]">{{ 'dashboard.statistics.trackingOffLink' | t }}</a>
+    </p>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="message" aria-live="polite">{{ 'dashboard.statistics.loading' | t }}</p>
+    }
+    @case ('failed') {
+      <p class="message" role="alert">{{ 'dashboard.statistics.error' | t }}</p>
+    }
+    @default {
+      @if (!games().length) {
+        <div class="panel empty">
+          <p class="empty__title">{{ 'dashboard.statistics.emptyTitle' | t }}</p>
+          <p class="message">{{ 'dashboard.statistics.emptyText' | t }}</p>
+        </div>
+      } @else {
+        <dl class="totals">
+          <div class="panel total">
+            <dt>{{ 'dashboard.statistics.plays' | t }}</dt>
+            <dd>{{ summary().plays }}</dd>
+          </div>
+          <div class="panel total">
+            <dt>{{ 'dashboard.statistics.recent' | t: { days: recentDays } }}</dt>
+            <dd>{{ summary().recent }}</dd>
+          </div>
+          <div class="panel total">
+            <dt>{{ 'dashboard.statistics.lastPlayed' | t }}</dt>
+            <dd class="total__date">{{ summary().lastPlayed ? formatRelative(summary().lastPlayed!) : '—' }}</dd>
+          </div>
+        </dl>
+
+        <section aria-labelledby="endings-title">
+          <h2 class="sectionTitle" id="endings-title">{{ 'dashboard.statistics.endings' | t }}</h2>
+          <ul class="panel bars">
+            @for (ending of summary().endings; track ending.nodeId) {
+              <li class="bar" [class.bar--unfinished]="!ending.nodeId">
+                <span class="bar__label">{{ ending.nodeId ? (ending.name || ending.nodeId) : ('dashboard.statistics.unfinished' | t) }}</span>
+                <span class="bar__track" aria-hidden="true"><span class="bar__fill" [style.width.%]="ending.count / maxEnding() * 100"></span></span>
+                <span class="bar__value">{{ ending.count }} · {{ formatPercent(ending.count / summary().plays) }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+
+        @if (references().length) {
+          <section aria-labelledby="results-title">
+            <h2 class="sectionTitle" id="results-title">{{ 'dashboard.statistics.results' | t }}</h2>
+            <ul class="results">
+              @for (ref of references(); track ref.id) {
+                <li class="panel result">
+                  <span class="result__name">{{ ref.name }}</span>
+                  <span class="result__value">{{ ref.type === 'stat' ? formatAverage(ref.value) : formatPercent(ref.value) }}</span>
+                  <span class="result__hint">{{ (ref.type === 'stat' ? 'dashboard.statistics.average' : 'dashboard.statistics.met') | t }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <section aria-labelledby="games-title">
+          <h2 class="sectionTitle" id="games-title">{{ 'dashboard.statistics.games' | t }}</h2>
+          <div class="panel tableWrapper">
+            <table class="games">
+              <thead>
+                <tr>
+                  <th scope="col" [attr.aria-sort]="ariaSort('name')">
+                    <button type="button" class="sort" (click)="sortBy('name')">{{ 'dashboard.statistics.name' | t }}</button>
+                  </th>
+                  @for (ref of references(); track ref.id) {
+                    <th scope="col" class="number" [attr.aria-sort]="ariaSort(ref.id)">
+                      <button type="button" class="sort" (click)="sortBy(ref.id)">{{ ref.name }}</button>
+                    </th>
+                  }
+                  <th scope="col" [attr.aria-sort]="ariaSort('date')">
+                    <button type="button" class="sort" (click)="sortBy('date')">{{ 'dashboard.statistics.date' | t }}</button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (gameRow of rows(); track $index) {
+                  <tr>
+                    <td>{{ gameRow.user_name }}</td>
+                    @for (ref of references(); track ref.id) {
+                      <td class="number">
+                        @if (ref.type === 'stat') {
+                          {{ statValue(gameRow, ref) }}
+                        } @else {
+                          <span class="met" [class.met--yes]="met(gameRow, ref)">
+                            {{ (met(gameRow, ref) ? 'dashboard.statistics.yes' : 'dashboard.statistics.no') | t }}
+                          </span>
+                        }
+                      </td>
+                    }
+                    <td class="date">{{ formatDate(gameRow.created_at) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+    }
+  }
+</div>

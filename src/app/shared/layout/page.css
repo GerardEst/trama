@@ -1,0 +1,229 @@
+/* Shared by every page of the author's dashboard and settings. */
+:host {
+  display: block;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 2.5rem var(--polo-space-6) 4rem;
+  box-sizing: border-box;
+}
+
+/* A page of forms: the same frame as the others, so it starts where they start, with a column
+   narrow enough to read. */
+.page--narrow > * {
+  max-width: 760px;
+}
+
+.pageHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--polo-space-4);
+  padding-bottom: var(--polo-space-6);
+  border-bottom: 1px solid var(--polo-color-border);
+}
+
+.pageHeader h1 {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-3);
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 1.6rem;
+  font-weight: 750;
+}
+
+.pageHeader p {
+  max-width: 60ch;
+  margin: var(--polo-space-2) 0 0;
+  color: var(--polo-color-text-secondary);
+  line-height: 1.5;
+}
+
+.pageHeader__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--polo-space-2);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--polo-space-3);
+  color: var(--polo-color-text-strong);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.panel {
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  background-color: var(--polo-color-surface);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--polo-space-2);
+  border: 1px solid var(--polo-color-border);
+  border-radius: 999px;
+  color: var(--polo-color-text-secondary);
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.tag--soon {
+  border-color: transparent;
+  background-color: var(--polo-color-surface-muted);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  min-height: 36px;
+  padding: var(--polo-space-2) var(--polo-space-4);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-control);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font: 650 13px/1.4 var(--polo-font-ui);
+  text-decoration: none;
+  cursor: pointer;
+}
+.button:hover:not(:disabled) {
+  border-color: var(--polo-color-border-hover);
+  background-color: var(--polo-color-surface-subtle);
+}
+.button--primary {
+  border-color: transparent;
+  background-color: var(--polo-color-action);
+  color: var(--polo-color-text-on-action);
+}
+.button--primary img {
+  filter: var(--polo-icon-on-action-filter);
+}
+.button--primary:hover:not(:disabled) {
+  border-color: transparent;
+  background-color: var(--polo-color-action-hover);
+}
+.button--danger {
+  border-color: transparent;
+  background-color: var(--polo-color-danger);
+  color: var(--polo-color-text-on-action);
+}
+.button--danger:hover:not(:disabled) {
+  border-color: transparent;
+  background-color: var(--polo-color-danger-hover);
+}
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.button:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.message {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+}
+
+/* "How it will work" for features that are still being designed. */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--polo-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  padding: var(--polo-space-4);
+}
+
+.step__number {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--polo-color-action-soft);
+  color: var(--polo-color-action);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.step h3 {
+  margin: var(--polo-space-1) 0 0;
+  color: var(--polo-color-text-strong);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.step .message {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 1.5rem var(--polo-space-4) 3rem;
+  }
+}
+
+/* A list of settings: what each one is, a line about it and its control, one per row. */
+.settings {
+  --polo-toggle-color-off: var(--polo-color-border-strong);
+  --polo-toggle-color-on: var(--polo-color-action);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-2) var(--polo-space-4);
+  padding: var(--polo-space-4);
+}
+.setting + .setting {
+  border-top: 1px solid var(--polo-color-border);
+}
+.setting__text {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.setting__label {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+.setting__value {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--polo-color-text);
+  font-size: 13px;
+}
+.setting__hint {
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+

@@ -1,0 +1,68 @@
+<!-- Every option is saved as soon as it changes; each says what it does. -->
+<div class="section">
+  <div class="option">
+    <div class="option__text">
+      <span class="option__label">{{ 'dashboard.top.tracking' | t }}</span>
+      <span class="option__hint">{{ 'dashboard.top.trackingHint' | t }}</span>
+    </div>
+    <polo-toggle
+      [label]="'dashboard.top.tracking' | t"
+      [hideLabel]="true"
+      [checked]="activeStory.storyConfiguration().tracking"
+      [disabled]="db.authenticationRequired() || !activeStory.storyId()"
+      (checkedChange)="toggleTracking()"
+    />
+  </div>
+  <div class="option option--column">
+    <polo-answer-display-select
+      [value]="activeStory.entireTree().unavailableAnswerDisplay"
+      (changed)="setAnswerDisplay($event)"
+    />
+    <span class="option__hint">{{ 'dashboard.top.answerDisplayHint' | t }}</span>
+  </div>
+  <div class="option">
+    <div class="option__text">
+      <span class="option__label">{{ 'dashboard.top.cumulative' | t }}</span>
+      <span class="option__hint">{{ 'dashboard.top.cumulativeHint' | t }}</span>
+    </div>
+    <polo-toggle
+      [label]="'dashboard.top.cumulative' | t"
+      [hideLabel]="true"
+      [checked]="activeStory.storyConfiguration().cumulativeMode"
+      (checkedChange)="toggleCumulativeMode()"
+    />
+  </div>
+</div>
+<div class="section">
+  <p class="section__title">{{ 'dashboard.top.footer' | t }}</p>
+  <span class="option__hint">{{ 'dashboard.top.footerHint' | t }}</span>
+  <div class="option">
+    <div class="option__text">
+      <span class="option__label">{{ 'dashboard.top.hideLink' | t }}</span>
+    </div>
+    <polo-toggle
+      [label]="'dashboard.top.hideLink' | t"
+      [hideLabel]="true"
+      [checked]="!activeStory.storyConfiguration().tapLink"
+      (checkedChange)="toggleAppLink()"
+    />
+  </div>
+  <label class="label--column">
+    <span>{{ 'dashboard.top.footerText' | t }}</span>
+    <input
+      (change)="updateFooter('text', $event)"
+      type="text"
+      [value]="activeStory.storyConfiguration().footer.text || ''"
+    />
+  </label>
+  <label class="label--column">
+    <span>{{ 'dashboard.top.footerLink' | t }}</span>
+    <input
+      (change)="updateFooter('link', $event)"
+      type="text"
+      inputmode="url"
+      placeholder="https://"
+      [value]="activeStory.storyConfiguration().footer.link || ''"
+    />
+  </label>
+</div>

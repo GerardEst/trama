@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, computed } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
@@ -12,11 +12,13 @@ import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { CheckoutService, isCreatorCheckout } from 'src/app/core/services/checkout.service'
 import { PRICING } from 'src/app/core/constants'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
+import { WordmarkComponent } from 'src/app/shared/components/wordmark/wordmark.component'
+import { siteUrl } from 'src/app/core/site-links'
 
 @Component({
   selector: 'polo-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SeparatorComponent, BasicButtonComponent, GoogleLoginComponent, LanguageSelectorComponent, TranslatePipe],
+  imports: [WordmarkComponent, CommonModule, ReactiveFormsModule, SeparatorComponent, BasicButtonComponent, GoogleLoginComponent, LanguageSelectorComponent, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrls: ['../login-shared.css', './login.component.css'],
 })
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
   checkoutUnavailable = false
   authenticationError = false
   checkMail = false
+  readonly homeUrl = computed(() => siteUrl(this.i18n.lang()))
 
   constructor(
     private db: DatabaseService,

@@ -1,0 +1,270 @@
+:host {
+  pointer-events: none;
+}
+
+.header, .saveAlert {
+  pointer-events: auto;
+}
+
+/* In the top corner of the board, inside its pane, whatever the width of the preview beside it. */
+.header {
+  position: absolute;
+  z-index: 6;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-1);
+  box-sizing: border-box;
+  max-width: min(560px, calc(100% - 32px));
+  padding: 6px;
+  color: var(--polo-color-text);
+  background: var(--polo-color-surface);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  box-shadow: var(--polo-shadow-floating);
+}
+
+
+/* The way back to the author's stories: a labelled button, not a logo people have to guess at. */
+.home {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 var(--polo-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--polo-radius-control);
+  color: var(--polo-color-text);
+  font: 700 13px/1 var(--polo-font-ui);
+  text-decoration: none;
+}
+.home:hover {
+  border-color: var(--polo-color-border);
+  background-color: var(--polo-color-surface-subtle);
+}
+.home:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.separator {
+  flex: none;
+  color: var(--polo-color-border-strong);
+  font: 400 16px/1 var(--polo-font-ui);
+}
+
+.name {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+/* Short, and quiet once saved: the name stays the first thing in the header. */
+.saveState {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--polo-space-1);
+  padding: 0 var(--polo-space-2) 0 var(--polo-space-1);
+  color: var(--polo-color-text-secondary);
+  font: 600 12px/1 var(--polo-font-ui);
+  white-space: nowrap;
+}
+.saveState--error {
+  color: var(--polo-color-danger-text);
+}
+
+.saveAlert {
+  position: absolute;
+  z-index: 9;
+  top: 70px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--polo-space-2);
+  box-sizing: border-box;
+  max-width: min(560px, calc(100% - 32px));
+  padding: var(--polo-space-3);
+  color: var(--polo-color-danger-text);
+  background: var(--polo-color-danger-soft);
+  border: 1px solid var(--polo-color-danger-border);
+  border-radius: var(--polo-radius-panel);
+  box-shadow: var(--polo-shadow-floating);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.saveAlert__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--polo-space-2);
+}
+.saveAlert__actions {
+  display: flex;
+  gap: var(--polo-space-2);
+  margin-left: auto;
+}
+
+.switcher {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  cursor: pointer;
+}
+.switcher:hover, .switcher:has(+ .switcherMenu:popover-open) {
+  border-color: var(--polo-color-border);
+  background-color: var(--polo-color-surface-subtle);
+}
+
+
+.switcher:focus-visible, .switcherMenu__item:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+
+.switcherMenu {
+  /* Set to the header's width as it opens. */
+  width: min(280px, calc(100vw - 32px));
+  max-height: min(70dvh, 480px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: var(--polo-space-2);
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-card);
+  box-shadow: var(--polo-shadow-popover);
+  background-color: var(--polo-color-surface);
+  color: var(--polo-color-text);
+  font-family: var(--polo-font-ui);
+}
+
+/* Under the whole header, from its left edge, so it fits a phone beside the header.
+   Without anchor positioning, tetherPopover sets the edges before opening. */
+@supports (position-area: block-end) {
+  :host {
+    anchor-scope: --story-switcher;
+  }
+  .header {
+    anchor-name: --story-switcher;
+  }
+  .switcherMenu {
+    inset: auto;
+    margin: var(--polo-space-2) 0;
+    position-anchor: --story-switcher;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-inline, flip-block, flip-block flip-inline;
+  }
+}
+
+@supports not (position-area: block-end) {
+  .switcherMenu {
+    position: fixed;
+    margin: 0;
+  }
+}
+
+.switcherMenu__title {
+  margin: 0;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  color: var(--polo-color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.switcherMenu__stories {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.switcherMenu hr {
+  margin: var(--polo-space-2) 0;
+  border: none;
+  border-top: 1px solid var(--polo-color-border);
+}
+
+.switcherMenu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border: none;
+  border-radius: var(--polo-radius-control);
+  background: none;
+  color: var(--polo-color-text);
+  font: 600 13px var(--polo-font-ui);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.switcherMenu__item:hover {
+  background-color: var(--polo-color-surface-subtle);
+}
+
+.story__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-inline: 4px;
+  border-radius: 50%;
+  background-color: var(--polo-color-border-strong);
+}
+
+.story__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.story[aria-current='page'] {
+  background-color: var(--polo-color-action-soft);
+  color: var(--polo-color-text-strong);
+  font-weight: 750;
+}
+.story[aria-current='page'] .story__dot {
+  background-color: var(--polo-color-action);
+}
+
+/* Phones: the header takes the top row up to the story's actions; Home keeps only its icon. */
+@media (max-width: 760px) {
+  .header {
+    max-width: calc(100% - 32px - var(--polo-board-actions-width, 120px));
+    padding-left: 6px;
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .home {
+    padding: 0 6px;
+  }
+
+  /* Still read out, so the icon keeps its name. */
+  .home__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .saveAlert {
+    max-width: calc(100% - 32px);
+    top: 66px;
+  }
+}

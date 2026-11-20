@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The same item as the menus around it: the user menu and the board's project menu. */
+.links__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  padding: var(--polo-space-2) var(--polo-space-3);
+  border-radius: var(--polo-radius-control);
+  color: var(--polo-color-text);
+  font: 600 13px var(--polo-font-ui);
+  text-decoration: none;
+}
+.links__item:hover {
+  background-color: var(--polo-color-surface-subtle);
+}
+.links__item:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+button.links__item {
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.links__separator {
+  margin: var(--polo-space-2) 0;
+  border-top: 1px solid var(--polo-color-border);
+}

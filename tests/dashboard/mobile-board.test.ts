@@ -40,7 +40,7 @@ async function openPhoneDashboard(page: Page) {
       await route.fulfill({ json: [{ id: storyId, name: 'Mobile board', tree: persisted, tracking: false, sharing: false, tapLink: false, cumulativeMode: false, footer: {}, custom_id: null }] })
     } else await route.abort()
   })
-  await page.goto('/dashboard')
+  await page.goto('/board')
   await expect(page.locator('polo-node').first()).toBeVisible()
 }
 
@@ -50,27 +50,49 @@ const tapBackdrop = (page: Page) => page.touchscreen.tap(8, 8)
 test('phone workspace collapses the menus and opens them full size (mocked backend)', async ({ page }) => {
   await openPhoneDashboard(page)
 
-  const stories = page.getByRole('navigation', { name: 'Your stories' })
-  await expect(stories).not.toBeInViewport()
-  await page.getByRole('button', { name: 'Toggle menu' }).tap()
-  await expect(stories).toBeInViewport()
-  expect((await stories.boundingBox())!.height).toBeGreaterThan(800)
-  await page.locator('.menu__backdrop').tap({ position: { x: 380, y: 400 } })
-  await expect(stories).not.toBeInViewport()
+  // The story stays named in the header; switching opens a list that fits the phone.
+  await expect(page.getByRole('textbox', { name: 'Story name' })).toBeInViewport()
+  await page.getByRole('button', { name: 'Switch project' }).tap()
+  const switcher = page.locator('.switcherMenu')
+  await expect(switcher.getByRole('link', { name: 'Mobile board' })).toHaveAttribute('aria-current', 'page')
+  const switcherBox = (await switcher.boundingBox())!
+  expect(switcherBox.x).toBeGreaterThanOrEqual(0)
+  expect(switcherBox.x + switcherBox.width).toBeLessThanOrEqual(393)
+  await page.touchscreen.tap(200, 700)
+  await expect(switcher).toBeHidden()
 
-  const storyOptions = page.getByRole('button', { name: 'Story options' })
-  await expect(page.getByRole('textbox', { name: 'Story name' })).toBeHidden()
-  await storyOptions.tap()
-  await expect(page.getByText('Enable tracking')).toBeVisible()
-  const topMenu = page.locator('polo-menu-top .menu')
-  expect((await topMenu.boundingBox())!.width).toBe(393)
-  await storyOptions.tap()
-  await expect(page.getByText('Enable tracking')).toBeHidden()
+  // The project panel opens full width from the bar along the foot.
+  const toggle = page.getByRole('button', { name: 'Project panel', exact: true })
+  await toggle.tap()
+  const panel = page.locator('#story-panel')
+  await expect(panel).toBeVisible()
+  await expect.poll(async () => Math.round((await panel.boundingBox())!.x)).toBe(0)
+  expect(Math.round((await panel.boundingBox())!.width)).toBe(393)
+  await toggle.tap()
+  await expect(panel).toBeHidden()
 
-  const preview = (await page.getByRole('button', { name: 'Preview', exact: true }).boundingBox())!
-  const share = (await page.getByRole('button', { name: 'Share', exact: true }).boundingBox())!
-  expect(share.x + share.width).toBeGreaterThan(393 - 32)
-  expect(preview.width).toBeCloseTo(share.width, 0)
+  // The board's controls are one bar along the foot; trying and sharing are icons at the top,
+  // and the rest of the story's actions fold into one menu.
+  const bar = (await page.locator('polo-board-controls .controls--start').boundingBox())!
+  expect(bar.x).toBe(0)
+  expect(bar.width).toBe(393)
+  expect(Math.round(bar.y + bar.height)).toBe(851)
+  const actions = (await page.locator('polo-board-actions .actions').boundingBox())!
+  expect(actions.x + actions.width).toBeLessThanOrEqual(393)
+  await page.getByRole('button', { name: 'More actions', exact: true }).tap()
+  await page.getByRole('button', { name: 'Story options', exact: true }).tap()
+  await expect(page.getByRole('dialog', { name: 'Story options' }).getByText('Enable tracking')).toBeVisible()
+})
+
+test('phone authors create nodes from the bar along the foot (mocked backend)', async ({ page }) => {
+  await openPhoneDashboard(page)
+  const nodes = page.locator('polo-node')
+  await expect(nodes).toHaveCount(2)
+  await page.getByRole('button', { name: 'Add a node', exact: true }).tap()
+  const menu = page.getByRole('group', { name: 'Create new node' })
+  await expect(menu).toBeVisible()
+  await menu.locator('[data-node-type="end"] .contextMenu__create').tap()
+  await expect(nodes).toHaveCount(3)
 })
 
 test('phone board menus open on tap as centered modals and close from the backdrop (mocked backend)', async ({ page }) => {
