@@ -133,7 +133,8 @@ h2 {
   max-width: 48rem;
   margin: 0 auto;
 }
-.authorSheet > polo-game-node {
+/* Nodes chained on the way keep their height; the one with the answers fills the sheet. */
+.authorSheet > polo-game-node:last-of-type {
   flex: 1;
 }
 .authorSheet--editing {

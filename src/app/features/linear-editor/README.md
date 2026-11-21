@@ -25,7 +25,9 @@ Opening the dashboard on mobile still defaults to the board in this version.
 - `GameSessionService` owns navigation, visit checkpoints and cancellable
   automatic transitions. `GameEngineService` owns the shared story rules.
 - Public single/cumulative presentations live in `playground/components/game/views/`.
-  The linear view defaults to a single `GameNodeComponent` preview. Editing
+  The linear view defaults to a `GameNodeComponent` preview of the current step:
+  like the public players, nodes chained by automatic joins show their passages
+  above the node that stops for answers. Editing stops at every node and
   replaces it with a lightweight authoring sheet, independently of cumulative mode.
 - The board receives a separate playing-node highlight and explicit reveal
   requests. Disabling Follow node clears the preview highlight; manual location

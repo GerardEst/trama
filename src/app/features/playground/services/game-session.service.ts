@@ -27,6 +27,8 @@ export class GameSessionService implements OnDestroy {
   readonly problem = computed(() => this.state()?.problem ?? null)
   readonly player = computed(() => this.state()?.player ?? EMPTY_PLAYER)
   readonly currentVisit = computed(() => this.visits()[this.cursor()])
+  /** Visits of the current step: the nodes chained automatically up to the current one. */
+  readonly activeVisits = computed(() => this.state()?.activeVisits ?? [])
   readonly currentNodeId = computed(() => this.currentVisit()?.nodeId)
   readonly canGoBack = computed(() => {
     const story = this.story()

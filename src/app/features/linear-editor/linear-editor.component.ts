@@ -43,18 +43,28 @@ export class LinearEditorComponent implements OnDestroy {
 
   readonly sourceNode = computed(() => this.story.entireTree().nodes.find(node => node.id === this.session.currentNodeId() && node.type !== 'group'))
   readonly currentNodes = computed(() => {
-    const source = this.sourceNode()
-    const visit = this.session.currentVisit()
-    // Refresh the visit with the latest edits, using the state it was reached with.
-    const scene = visit && renderScene(this.session.story(), visit.nodeId, visit.entry, visit.player)
-    if (!source || !visit || !scene) return []
-    const rendered = sceneToPlayableNode(scene, source, this.i18n, { key: visit.id })
-    return [{ ...rendered, source, storyId: this.story.storyId(),
-      authoredAnswers: (source.answers ?? []).map((answer, index) => {
-        const playable = rendered.answers?.find(candidate => candidate.id === answer.id)
-        return { source: answer, index, text: playable?.text ?? answer.text ?? '', disabled: !playable?.join?.length }
-      }) }]
+    const current = this.session.currentVisit()
+    if (!current || !this.sourceNode()) return []
+    // Previewing reads like playing: the nodes chained automatically on the way
+    // to the current one are shown too. Editing stops at, and shows, each node.
+    const active = this.session.activeVisits()
+    const visits = !this.editing() && active.at(-1)?.id === current.id ? active : [current]
+    const nodes = this.story.entireTree().nodes
+    return visits.flatMap(visit => {
+      const source = nodes.find(node => node.id === visit.nodeId && node.type !== 'group')
+      // Refresh the visit with the latest edits, using the state it was reached with.
+      const scene = source && renderScene(this.session.story(), visit.nodeId, visit.entry, visit.player)
+      if (!source || !scene) return []
+      const rendered = sceneToPlayableNode(scene, source, this.i18n, { key: visit.id })
+      return [{ ...rendered, source, storyId: this.story.storyId(),
+        authoredAnswers: (source.answers ?? []).map((answer, index) => {
+          const playable = rendered.answers?.find(candidate => candidate.id === answer.id)
+          return { source: answer, index, text: playable?.text ?? answer.text ?? '', disabled: !playable?.join?.length }
+        }) }]
+    })
   })
+  /** The node the reader is stopped at, which carries the ending or the Continue action. */
+  readonly lastNode = computed(() => this.currentNodes().at(-1))
   readonly history = computed(() => this.session.visits().slice(0, this.session.cursor() + 1).map((visit, index) => {
     const source = this.story.entireTree().nodes.find(node => node.id === visit.nodeId && node.type !== 'group')
     return { index, id: visit.id, nodeId: visit.nodeId, exists: !!source,
@@ -114,7 +124,7 @@ export class LinearEditorComponent implements OnDestroy {
   selectAnswer(answer: node_answer) {
     if (this.editing()) return
     this.commitEdits()
-    const current = this.currentNodes()[0]?.authoredAnswers.find(candidate => candidate.source.id === answer.id)
+    const current = this.currentNodes().flatMap(node => node.authoredAnswers).find(candidate => candidate.source.id === answer.id)
     if (current && !current.disabled) this.session.selectAnswer(current.source.id)
   }
 

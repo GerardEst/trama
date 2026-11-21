@@ -94,6 +94,40 @@ describe('LinearEditorComponent', () => {
     expect(component.currentNodes()[0].text).toContain('Ada')
   })
 
+  it('previews every passage chained automatically up to the answers, like the player', async () => {
+    story.load('bridge', 'Story', { entryPoint: { left: 0, top: 0, targetNodeId: 'node_0' }, nodes: [
+      { id: 'node_0', type: 'content', top: 0, left: 0, text: 'Choose',
+        answers: [{ id: 'answer_0_0', text: 'Go', join: [{ node: 'node_1' }] }] },
+      { id: 'node_1', type: 'content', top: 0, left: 0, text: 'Bridge one', join: [{ node: 'node_2' }] },
+      { id: 'node_2', type: 'content', top: 0, left: 0, text: 'Bridge two', join: [{ node: 'node_3' }] },
+      { id: 'node_3', type: 'content', top: 0, left: 0, text: 'Stop here',
+        answers: [{ id: 'answer_3_0', text: 'Onwards', join: [{ node: 'node_4' }] }] },
+      { id: 'node_4', type: 'end', top: 0, left: 0, text: 'The end' },
+    ] })
+    fixture.detectChanges()
+    component.selectAnswer(component.currentNodes()[0].answers![0])
+    fixture.detectChanges()
+    const host = fixture.nativeElement as HTMLElement
+    const passages = () => Array.from(host.querySelectorAll('polo-game-node')).map(node => node.textContent ?? '')
+    expect(component.session.currentNodeId()).toBe('node_3')
+    expect(passages()).toHaveSize(3)
+    expect(passages()[0]).toContain('Bridge one')
+    expect(passages()[1]).toContain('Bridge two')
+    expect(passages()[2]).toContain('Stop here')
+    expect(passages()[2]).toContain('Onwards')
+    expect(host.querySelector('.continueButton')).toBeNull()
+
+    component.selectAnswer(component.currentNodes()[2].answers![0])
+    fixture.detectChanges()
+    expect(passages()).toHaveSize(1)
+    expect(passages()[0]).toContain('The end')
+
+    // Editing still stops at, and shows, one node at a time.
+    component.back()
+    await edit()
+    expect(component.currentNodes().map(node => node.id)).toEqual(['node_3'])
+  })
+
   it('stops at automatic joins while editing and continues on request', async () => {
     story.load('automatic', 'Story', { entryPoint: { left: 0, top: 0, targetNodeId: 'node_0' }, nodes: [
       { id: 'node_0', type: 'content', top: 0, left: 0, text: 'First', join: [{ node: 'node_1' }] },
