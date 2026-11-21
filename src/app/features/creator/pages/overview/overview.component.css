@@ -318,12 +318,60 @@
   margin-left: auto;
 }
 
-.empty {
+/* The first visit: two ways to start, the example first. */
+.welcome {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--polo-space-3);
-  padding: var(--polo-space-6);
+  gap: var(--polo-space-4);
+  max-width: 760px;
+}
+.welcome__title {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+.welcome__text {
+  max-width: 560px;
+  line-height: 1.5;
+}
+.welcome__choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--polo-space-4);
+  width: 100%;
+  margin: var(--polo-space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.welcome__choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--polo-space-2);
+  padding: var(--polo-space-6) var(--polo-space-4) var(--polo-space-4);
+}
+.welcome__choice--example {
+  border-color: var(--polo-color-action);
+}
+.welcome__choice h3 {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 15px;
+  font-weight: 700;
+}
+.welcome__choice .message {
+  flex: 1;
+  margin-bottom: var(--polo-space-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.welcome__guide {
+  color: var(--polo-color-action);
+  font-size: 13px;
+  font-weight: 650;
+  text-underline-offset: 3px;
 }
 
 @media (max-width: 960px) {

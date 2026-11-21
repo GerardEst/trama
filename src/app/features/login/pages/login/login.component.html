@@ -16,7 +16,7 @@
       </div>
       @if (subscribing) {
         <div class="checkoutSummary" role="status">
-          <strong>Creator · {{ (period === 'yearly' ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: selectedPrice } }}</strong>
+          <strong>Creative · {{ (period === 'yearly' ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: selectedPrice } }}</strong>
           <p>{{ 'login.checkout.continue' | t }}</p>
         </div>
       }
@@ -29,15 +29,43 @@
       @if (authenticationError) {
         <p class="feedbackMessage feedbackMessage--error" role="alert">{{ 'login.checkout.authError' | t }}</p>
       }
-      @if (checkMail) {
-        <p class="feedbackMessage" role="status">{{ 'login.checkout.confirmEmail' | t }}</p>
-      }
-      @if (mode === 'register') {
+      @if (signedInEmail !== null) {
+        <!-- Back from checkout, or here by hand: never the sign-in form again, which would only loop to Stripe. -->
+        <h1>{{ 'login.signedIn.title' | t }}</h1>
+        <p class="login-subtitle">{{ 'login.signedIn.text' | t: { email: signedInEmail } }}</p>
+        <div class="login-actions">
+          @if (subscribing) {
+            <polo-basic-button class="login-primary" (click)="continueToPayment()" [text]="'login.signedIn.continuePayment' | t">
+            </polo-basic-button>
+          }
+          <a class="login-link" routerLink="/dashboard">{{ 'login.signedIn.stories' | t }}</a>
+          <button type="button" class="login-link" (click)="signOut()">{{ 'login.signedIn.signOut' | t }}</button>
+        </div>
+      } @else if (checkMail) {
+        <!-- The form is done: what is left is opening the link, so the page says only that. -->
+        <div class="checkMail" role="status">
+          <h1>{{ 'login.confirm.title' | t }}</h1>
+          <p class="login-subtitle">{{ (subscribing ? 'login.confirm.textCheckout' : 'login.confirm.text') | t: { email: checkMail } }}</p>
+        </div>
+        <div class="login-actions">
+          <polo-basic-button
+            (click)="resendConfirmation(checkMail)"
+            [waiting]="resendState === 'sending'"
+            [text]="'login.confirm.resend' | t"
+          ></polo-basic-button>
+          <button type="button" class="login-link" (click)="useAnotherEmail()">{{ 'login.confirm.otherEmail' | t }}</button>
+        </div>
+        @if (resendState === 'sent') {
+          <p class="feedbackMessage login-resend" role="status">{{ 'login.confirm.sent' | t }}</p>
+        } @else if (resendState === 'error') {
+          <p class="feedbackMessage feedbackMessage--error login-resend" role="alert">{{ 'login.confirm.resendError' | t }}</p>
+        }
+      } @else if (mode === 'register') {
         <h1>{{ 'login.register.title' | t }}</h1>
         <p class="login-subtitle">{{ 'login.register.subtitle' | t }}</p>
         <polo-google-login [isRegistering]="true" (click)="signInWithGoogle()"></polo-google-login>
         <polo-separator [space]="20" [word]="'login.or' | t"></polo-separator>
-        <form>
+        <form (submit)="signUpNewUser($event, register_email, register_password, register_username)">
           <label>
             <p>{{ 'login.register.username' | t }}</p>
             <input
@@ -46,8 +74,13 @@
               type="text"
               autocomplete="username"
               [formControl]="register_username"
+              [attr.aria-invalid]="!!fieldError(register_username, registerAttempted)"
+              [attr.aria-describedby]="fieldError(register_username, registerAttempted) ? 'register_username_error' : null"
             />
           </label>
+          @if (fieldError(register_username, registerAttempted); as error) {
+            <span class="fieldError" id="register_username_error">{{ error | t }}</span>
+          }
           <label>
             <p>{{ 'login.signIn.email' | t }}</p>
             <input
@@ -56,8 +89,13 @@
               type="email"
               autocomplete="email"
               [formControl]="register_email"
+              [attr.aria-invalid]="!!fieldError(register_email, registerAttempted)"
+              [attr.aria-describedby]="fieldError(register_email, registerAttempted) ? 'register_email_error' : null"
             />
           </label>
+          @if (fieldError(register_email, registerAttempted); as error) {
+            <span class="fieldError" id="register_email_error">{{ error | t }}</span>
+          }
           <label>
             <p>{{ 'login.register.password' | t }}</p>
             <input
@@ -65,22 +103,28 @@
               name="new-password"
               type="password"
               autocomplete="new-password"
+              [attr.minlength]="minPasswordLength"
               [formControl]="register_password"
+              [attr.aria-invalid]="!!fieldError(register_password, registerAttempted) || weakPassword"
+              aria-describedby="register_password_help"
             />
           </label>
+          @if (fieldError(register_password, registerAttempted); as error) {
+            <span class="fieldError" id="register_password_help">{{ error | t: { min: minPasswordLength } }}</span>
+          } @else if (weakPassword) {
+            <span class="fieldError" id="register_password_help">{{ 'login.validation.passwordWeak' | t }}</span>
+          } @else {
+            <span class="fieldHint" id="register_password_help">{{ 'login.validation.passwordHint' | t: { min: minPasswordLength } }}</span>
+          }
 
           @if (emailAlreadyRegistered) {
-            <div class="feedbackMessage feedbackMessage--error" role="alert">
-              <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_ALREADY_REGISTERED | t"></p>
+            <div class="feedbackMessage feedbackMessage--error feedbackMessage--action" role="alert">
+              <p>{{ 'login.feedback.emailAlreadyRegistered' | t }}</p>
+              <button type="button" class="login-link" (click)="signInWithRegisteredEmail()">{{ 'login.signIn.submit' | t }}</button>
             </div>
           }
-          <!-- @if (checkMail) {
-      <div class="feedbackMessage feedbackMessage--success">
-        <p [innerHTML]="LOGIN_FEEDBACKS.CONFIRM_EMAIL | t"></p>
-      </div>
-      } -->
           <polo-basic-button
-            (click)="signUpNewUser($event, register_email, register_password, register_username)"
+            [submit]="true"
             [waiting]="waitingForSignUp"
             [text]="'login.register.submit' | t"
           >
@@ -96,7 +140,7 @@
         <h1>{{ 'login.signIn.title' | t }}</h1>
         <polo-google-login (click)="signInWithGoogle()"></polo-google-login>
         <polo-separator [space]="20" [word]="'login.or' | t"></polo-separator>
-        <form>
+        <form (submit)="signInWithEmail($event, login_email, login_password)">
           <div class="form__row">
             <label>
               <p>{{ 'login.signIn.email' | t }}</p>
@@ -106,8 +150,13 @@
                 type="email"
                 autocomplete="email"
                 [formControl]="login_email"
+                [attr.aria-invalid]="!!fieldError(login_email, loginAttempted)"
+                [attr.aria-describedby]="fieldError(login_email, loginAttempted) ? 'login_email_error' : null"
               />
             </label>
+            @if (fieldError(login_email, loginAttempted); as error) {
+              <span class="fieldError" id="login_email_error">{{ error | t }}</span>
+            }
             <label>
               <p>{{ 'login.signIn.password' | t }}</p>
               <input
@@ -116,18 +165,34 @@
                 type="password"
                 autocomplete="current-password"
                 [formControl]="login_password"
+                [attr.aria-invalid]="!!fieldError(login_password, loginAttempted)"
+                [attr.aria-describedby]="fieldError(login_password, loginAttempted) ? 'login_password_error' : null"
               />
             </label>
+            @if (fieldError(login_password, loginAttempted); as error) {
+              <span class="fieldError" id="login_password_error">{{ error | t }}</span>
+            }
           </div>
-          <!-- @if (mailNotConfirmed) {
-      <div class="feedbackMessage feedbackMessage--error">
-        <p [innerHTML]="LOGIN_FEEDBACKS.EMAIL_NOT_CONFIRMED | t"></p>
-      </div>
-      } -->
+          @if (emailNotConfirmed) {
+            <div class="feedbackMessage feedbackMessage--error feedbackMessage--action" role="alert">
+              <p>{{ 'login.feedback.emailNotConfirmed' | t }}</p>
+              <polo-basic-button
+                size="s"
+                (click)="resendConfirmation(login_email.value)"
+                [waiting]="resendState === 'sending'"
+                [text]="'login.confirm.resend' | t"
+              ></polo-basic-button>
+            </div>
+            @if (resendState === 'sent') {
+              <p class="feedbackMessage login-resend" role="status">{{ 'login.confirm.sent' | t }}</p>
+            } @else if (resendState === 'error') {
+              <p class="feedbackMessage feedbackMessage--error login-resend" role="alert">{{ 'login.confirm.resendError' | t }}</p>
+            }
+          }
           <div class="form__footer">
             <a href="/reset-password">{{ 'login.signIn.forgot' | t }}</a>
             <polo-basic-button
-              (click)="signInWithEmail($event, login_email, login_password)"
+              [submit]="true"
               [waiting]="waitingForSignUp"
               [text]="'login.signIn.submit' | t"
             >
@@ -135,23 +200,25 @@
           </div>
         </form>
       }
-      <polo-separator [space]="20"></polo-separator>
-      @if (mode === 'register') {
-        <div class="change">
-          <p>{{ 'login.register.hasAccount' | t }}</p>
-          <polo-basic-button
-            (click)="goToLogin()"
-            [text]="'login.signIn.submit' | t"
-          ></polo-basic-button>
-        </div>
-      } @else {
-        <div class="change">
-          <p>{{ 'login.signIn.noAccount' | t }}</p>
-          <polo-basic-button
-            (click)="goToRegister()"
-            [text]="'login.register.submit' | t"
-          ></polo-basic-button>
-        </div>
+      @if (signedInEmail === null && !checkMail) {
+        <polo-separator [space]="20"></polo-separator>
+        @if (mode === 'register') {
+          <div class="change">
+            <p>{{ 'login.register.hasAccount' | t }}</p>
+            <polo-basic-button
+              (click)="goToLogin()"
+              [text]="'login.signIn.submit' | t"
+            ></polo-basic-button>
+          </div>
+        } @else {
+          <div class="change">
+            <p>{{ 'login.signIn.noAccount' | t }}</p>
+            <polo-basic-button
+              (click)="goToRegister()"
+              [text]="'login.register.submit' | t"
+            ></polo-basic-button>
+          </div>
+        }
       }
     </div>
   </div>

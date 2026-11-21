@@ -162,10 +162,34 @@ describe('OverviewComponent', () => {
     expect(host().querySelector('[role="alert"]')?.textContent).toContain('could not be created')
   })
 
-  it('invites an author without stories to the board', async () => {
+  it('welcomes an author without stories with the example and a blank story, not a page of zeros', async () => {
     await render([])
     expect(cards().length).toBe(0)
-    expect(host().querySelector('.empty a')?.getAttribute('href')).toBe('/board')
+    expect(host().querySelector('.activity')).toBeNull()
+    expect(host().querySelector('.teaser')).toBeNull()
+    // One way to a blank story, in the welcome, so it is not mistaken for the example.
+    expect(host().querySelector('.pageHeader .button--primary')).toBeNull()
+    const choices = Array.from(host().querySelectorAll('.welcome__choice'))
+    expect(choices.map((choice) => choice.querySelector('h3')?.textContent?.trim())).toEqual(['Explore the example', 'Start from a blank board'])
+    expect(choices[0].querySelector('a')?.getAttribute('href')).toBe('/board')
+    expect(host().querySelector('.welcome__guide')?.getAttribute('href')).toContain('/docs/features')
+
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
+    const create = spyOn(database, 'createEmptyStory').and.resolveTo({ id: 'story-9', name: 'My new tree' })
+    choices[1].querySelector<HTMLButtonElement>('button')!.click()
+    await fixture.whenStable()
+    expect(create).toHaveBeenCalledTimes(1)
+    expect(navigate).toHaveBeenCalledOnceWith(['/story', 'story-9', 'board'])
+  })
+
+  it('welcomes the author again after deleting the last story', async () => {
+    await render([stories[1]])
+    spyOn(TestBed.inject(AlertService), 'launch').and.resolveTo(true)
+    spyOn(database, 'deleteStory').and.resolveTo(null)
+    cards()[0].querySelector<HTMLButtonElement>('.storyMenu__item--danger')!.click()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    expect(host().querySelector('.welcome')).not.toBeNull()
   })
 
   it('says it could not load the stories instead of showing none', async () => {

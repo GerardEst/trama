@@ -10,7 +10,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
   if (!user) {
     // A failed user check can be a temporary network error. Deny navigation
     // without revoking a recoverable session or clearing unsaved editor state.
-    router.navigate(['/login'])
+    // The login page returns to the page that was asked for.
+    router.navigate(['/login'], { queryParams: { returnUrl: state.url } })
     return false
   }
 

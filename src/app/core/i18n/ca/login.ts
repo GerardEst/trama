@@ -7,13 +7,12 @@ export const login: Dictionary['login'] = {
   titleEnd: 'tu pots explicar.',
   intro:
     'Dona-li un lloc on començar. Escriu-la, deixa que els teus lectors hi trobin el seu propi camí i comparteix-la quan estiguis a punt.',
-  note: 'Creator · Totes les funcions actuals de l’editor incloses',
+  note: 'Creative · Gratis · Totes les funcions actuals de l’editor incloses',
   checkout: {
     continue: 'Inicia sessió o crea un compte per continuar al pagament segur amb Stripe. La subscripció només comença quan es confirma el pagament.',
     unavailable: 'Aquest pagament no està disponible. Pro està previst com un pagament únic i encara no es pot comprar. Els antics enllaços de subscripció Pro ja no s’ofereixen.',
     viewPlans: 'Consulta els plans actuals',
     authError: 'No s’ha pogut iniciar sessió o crear el compte. Revisa les dades i torna-ho a provar.',
-    confirmEmail: 'Revisa el correu i confirma el compte abans de continuar al pagament.',
   },
   back: '← Torna a Trama',
   or: 'o',
@@ -46,12 +45,31 @@ export const login: Dictionary['login'] = {
     noAccount: 'No tens cap compte?',
   },
   feedback: {
-    emailNotConfirmed:
-      'Encara no has confirmat el teu correu electrònic. Revisa la safata d’entrada. <br><br>Si ha passat més d’una hora des que et vas registrar, escriu-nos a gesteve.12@gmail.com',
-    confirmEmail:
-      'Revisa la safata d’entrada per <strong>confirmar el teu correu electrònic</strong>',
-    emailAlreadyRegistered:
-      'Aquest correu electrònic ja està registrat. Prem el botó d’iniciar sessió per entrar',
+    emailNotConfirmed: 'Encara no has confirmat el correu. Obre l’enllaç que t’hem enviat o torna a enviar-lo.',
+    emailAlreadyRegistered: 'Aquest correu ja té un compte. Inicia sessió amb ell.',
+  },
+  validation: {
+    required: 'Omple aquest camp.',
+    email: 'Aquest correu no sembla correcte. Revisa’l.',
+    passwordHint: 'Com a mínim {min} caràcters.',
+    passwordLength: 'Fes servir com a mínim {min} caràcters.',
+    passwordWeak: 'Aquesta contrasenya és massa fàcil d’endevinar. Fes-la més llarga i barreja lletres, números i símbols.',
+  },
+  confirm: {
+    title: 'Revisa el correu',
+    text: 'Hem enviat un enllaç a {email}. Obre’l per confirmar el compte i començar a escriure.',
+    textCheckout: 'Hem enviat un enllaç a {email}. Obre’l per confirmar el compte i continuar al pagament.',
+    resend: 'Torna a enviar-lo',
+    sent: 'Enviat de nou. Pot trigar uns minuts; mira també la carpeta de correu brossa.',
+    resendError: 'No s’ha pogut tornar a enviar. Espera un minut i torna-ho a provar.',
+    otherEmail: 'Fes servir un altre correu',
+  },
+  signedIn: {
+    title: 'Ja has iniciat sessió',
+    text: 'Has iniciat sessió com a {email}.',
+    continuePayment: 'Continua al pagament',
+    stories: 'Ves a les meves històries',
+    signOut: 'Fes servir un altre compte',
   },
   reset: {
     title: 'Restableix la contrasenya',

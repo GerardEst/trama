@@ -7,13 +7,12 @@ export const login: Dictionary['login'] = {
   titleEnd: 'tú puedes contar.',
   intro:
     'Dale un lugar donde empezar. Escríbela, deja que tus lectores encuentren su propio camino y compártela cuando quieras.',
-  note: 'Creator · Todas las funciones actuales del editor incluidas',
+  note: 'Creative · Gratis · Todas las funciones actuales del editor incluidas',
   checkout: {
     continue: 'Inicia sesión o crea una cuenta para continuar al pago seguro con Stripe. La suscripción solo empieza cuando se confirma el pago.',
     unavailable: 'Este pago no está disponible. Pro está previsto como un pago único y aún no se puede comprar. Los antiguos enlaces de suscripción Pro ya no se ofrecen.',
     viewPlans: 'Consulta los planes actuales',
     authError: 'No se ha podido iniciar sesión o crear la cuenta. Revisa los datos e inténtalo de nuevo.',
-    confirmEmail: 'Revisa el correo y confirma la cuenta antes de continuar al pago.',
   },
   back: '← Volver a Trama',
   or: 'o',
@@ -46,12 +45,31 @@ export const login: Dictionary['login'] = {
     noAccount: '¿No tienes una cuenta?',
   },
   feedback: {
-    emailNotConfirmed:
-      'Todavía no has confirmado tu correo electrónico. Revisa tu bandeja de entrada. <br><br>Si ha pasado más de una hora desde que te registraste, escríbenos a gesteve.12@gmail.com',
-    confirmEmail:
-      'Revisa tu bandeja de entrada para <strong>confirmar tu correo electrónico</strong>',
-    emailAlreadyRegistered:
-      'Este correo electrónico ya está registrado. Pulsa el botón de iniciar sesión para entrar',
+    emailNotConfirmed: 'Todavía no has confirmado tu correo. Abre el enlace que te enviamos o vuelve a enviarlo.',
+    emailAlreadyRegistered: 'Este correo ya tiene una cuenta. Inicia sesión con él.',
+  },
+  validation: {
+    required: 'Rellena este campo.',
+    email: 'Este correo no parece correcto. Revísalo.',
+    passwordHint: 'Al menos {min} caracteres.',
+    passwordLength: 'Usa al menos {min} caracteres.',
+    passwordWeak: 'Esta contraseña es demasiado fácil de adivinar. Hazla más larga y mezcla letras, números y símbolos.',
+  },
+  confirm: {
+    title: 'Revisa tu correo',
+    text: 'Hemos enviado un enlace a {email}. Ábrelo para confirmar la cuenta y empezar a escribir.',
+    textCheckout: 'Hemos enviado un enlace a {email}. Ábrelo para confirmar la cuenta y continuar al pago.',
+    resend: 'Volver a enviarlo',
+    sent: 'Enviado de nuevo. Puede tardar unos minutos; mira también en la carpeta de spam.',
+    resendError: 'No se ha podido volver a enviar. Espera un minuto e inténtalo de nuevo.',
+    otherEmail: 'Usar otro correo',
+  },
+  signedIn: {
+    title: 'Ya has iniciado sesión',
+    text: 'Has iniciado sesión como {email}.',
+    continuePayment: 'Continuar al pago',
+    stories: 'Ir a mis historias',
+    signOut: 'Usar otra cuenta',
   },
   reset: {
     title: 'Restablece tu contraseña',

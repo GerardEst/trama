@@ -1,5 +1,5 @@
 <button
-  type="button"
+  [type]="submit ? 'submit' : 'button'"
   [attr.aria-label]="label ?? (!text ? title : null)"
   [attr.aria-expanded]="expanded ?? null"
   [attr.aria-controls]="controls ?? null"

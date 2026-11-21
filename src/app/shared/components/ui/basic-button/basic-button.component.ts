@@ -26,4 +26,6 @@ export class BasicButtonComponent {
   @Input() disabled: boolean = false
   @Input() align?: 'left' | 'right' | 'center' = 'center'
   @Input() border: boolean = false
+  /** Sends the form it is in, so Enter in any of its fields sends it too. */
+  @Input() submit: boolean = false
 }

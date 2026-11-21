@@ -12,6 +12,7 @@ import { ModalService } from 'src/app/core/services/modal.service'
 import { StoryOpenerService } from 'src/app/shared/services/story-opener.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { ShareStoryComponent } from 'src/app/features/dashboard/modals/share-story/share-story.component'
+import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
 
 export const RECENT_DAYS = 30
 
@@ -53,6 +54,9 @@ export class OverviewComponent implements OnInit {
         ? b.plays - a.plays
         : (b.editedAt ?? '').localeCompare(a.editedAt ?? ''))
   })
+
+  /** The guide to the editor, on the site, for an author who has not written anything yet. */
+  readonly guideUrl = computed(() => siteUrl(this.i18n.lang(), SITE_PAGES.features))
 
   /** The story last opened in the editor on this device, or else the last one edited anywhere. */
   readonly continueStory = computed(() => {

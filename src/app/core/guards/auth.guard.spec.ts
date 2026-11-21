@@ -23,13 +23,13 @@ describe('authGuard session preservation', () => {
   })
 
   const checkAccess = () => TestBed.runInInjectionContext(() =>
-    authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
+    authGuard({} as ActivatedRouteSnapshot, { url: '/story/story-1/statistics' } as RouterStateSnapshot)
   )
 
   it('denies access on a failed user check without signing out or clearing the editor', async () => {
     database.getUser.and.resolveTo(false)
     expect(await checkAccess()).toBeFalse()
-    expect(router.navigate).toHaveBeenCalledWith(['/login'])
+    expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { returnUrl: '/story/story-1/statistics' } })
     expect(auth.logoutUser).not.toHaveBeenCalled()
   })
 

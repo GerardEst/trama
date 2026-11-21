@@ -5,13 +5,12 @@ export const login = {
   titleEnd: 'you can tell.',
   intro:
     "Give it a place to begin. Write it, let your readers find their own way through it, and share it when you're ready.",
-  note: 'Creator · All current editor features included',
+  note: 'Creative · Free · All current editor features included',
   checkout: {
     continue: 'Sign in or create an account to continue to secure payment with Stripe. Your subscription starts only after payment is confirmed.',
     unavailable: 'This checkout is not available. Pro is planned as a one-time purchase and cannot be bought yet. Old Pro subscription links are no longer offered.',
     viewPlans: 'View current plans',
     authError: 'Could not sign in or create the account. Check your details and try again.',
-    confirmEmail: 'Check your inbox to confirm your account before continuing to payment.',
   },
   back: '← Back to Trama',
   or: 'or',
@@ -44,12 +43,31 @@ export const login = {
     noAccount: "Don't have an account?",
   },
   feedback: {
-    emailNotConfirmed:
-      'You have not confirmed your email yet, please check your mailbox <br><br>If more than one hour has passed since you signed up, please contact us at gesteve.12@gmail.com',
-    confirmEmail:
-      'Please check your mailbox to <strong>confirm your email</strong>',
-    emailAlreadyRegistered:
-      'This email is already registered. Click on login button to login',
+    emailNotConfirmed: 'You have not confirmed your email yet. Open the link we sent you, or send it again.',
+    emailAlreadyRegistered: 'This email already has an account. Sign in with it instead.',
+  },
+  validation: {
+    required: 'Fill in this field.',
+    email: 'This email does not look right. Check it.',
+    passwordHint: 'At least {min} characters.',
+    passwordLength: 'Use at least {min} characters.',
+    passwordWeak: 'This password is too easy to guess. Make it longer, mixing letters, numbers and symbols.',
+  },
+  confirm: {
+    title: 'Check your inbox',
+    text: 'We have sent a link to {email}. Open it to confirm your account and start writing.',
+    textCheckout: 'We have sent a link to {email}. Open it to confirm your account and continue to payment.',
+    resend: 'Send it again',
+    sent: 'Sent again. It can take a few minutes; check your spam folder too.',
+    resendError: 'It could not be sent again. Wait a minute and try again.',
+    otherEmail: 'Use a different email',
+  },
+  signedIn: {
+    title: 'You are already signed in',
+    text: 'Signed in as {email}.',
+    continuePayment: 'Continue to payment',
+    stories: 'Go to my stories',
+    signOut: 'Use another account',
   },
   reset: {
     title: 'Reset your password',

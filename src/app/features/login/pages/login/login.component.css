@@ -194,6 +194,79 @@
   outline-offset: 5px;
 }
 
+/* Under a field, outside its label so they are not part of its name: what it needs,
+   then what is wrong with it once the form was sent. They sit close to their field. */
+.box form .fieldHint,
+.box form .fieldError {
+  margin-top: -11px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.box form .fieldHint {
+  color: var(--polo-color-text-secondary);
+}
+.box form .fieldError {
+  color: var(--polo-color-danger-text);
+  font-weight: 600;
+}
+.box form label input[aria-invalid="true"] {
+  border-color: var(--polo-color-danger);
+}
+
+/* A message with the one thing the person can do about it. */
+.feedbackMessage--action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+  margin-bottom: 0;
+}
+.feedbackMessage--action p {
+  flex: 1 1 220px;
+}
+
+.login-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--polo-space-4);
+}
+.login-actions .login-primary {
+  --polo-button-text: var(--polo-color-text-on-accent);
+  --polo-button-background: var(--polo-color-accent);
+  --polo-button-background-hover: var(--polo-color-accent-hover);
+  --polo-button-border: transparent;
+  border: 1px solid var(--polo-color-accent-border);
+  border-radius: var(--polo-radius-control);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--polo-color-shadow) 13%, transparent);
+}
+.login-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--polo-color-action);
+  font: 700 13px/1.4 var(--polo-font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.login-link:focus-visible {
+  outline: 2px solid var(--polo-color-action);
+  outline-offset: 3px;
+}
+.login-resend {
+  margin: var(--polo-space-4) 0 0;
+  font-size: 13px;
+}
+.checkMail h1 {
+  margin-bottom: 24px;
+}
+.checkMail .login-subtitle {
+  margin-top: -15px;
+  overflow-wrap: anywhere;
+}
+
 .login-top {
   display: flex;
   align-items: center;
@@ -216,20 +289,17 @@
   }
   .login-layout {
     grid-template-columns: 1fr;
-    gap: 26px;
+    gap: 20px;
   }
-  .login-intro__eyebrow {
-    margin-top: 25px;
+  /* On a phone the form is what the person came for: only the name and the title stay above it. */
+  .login-intro__eyebrow,
+  .login-intro > p:not(.login-intro__eyebrow):not(.login-intro__title),
+  .login-intro__note {
+    display: none;
   }
   .login-intro__title {
-    margin: 12px 0;
-    font-size: 32px;
-  }
-  .login-intro > p:not(.login-intro__eyebrow):not(.login-intro__title) {
-    font-size: 14px;
-  }
-  .login-intro__note {
-    margin-top: 18px;
+    margin: 16px 0 0;
+    font-size: 26px;
   }
   .box {
     width: 100%;

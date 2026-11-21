@@ -4,98 +4,127 @@
       <h1>{{ 'dashboard.overview.title' | t }}</h1>
       <p>{{ 'dashboard.overview.subtitle' | t }}</p>
     </div>
-    <div class="pageHeader__actions">
-      <button type="button" class="button button--primary" [disabled]="creating()" (click)="createStory()">
-        <img width="14" src="/assets/icons/plus.svg" alt="" />
-        {{ 'dashboard.overview.newStory' | t }}
-      </button>
-    </div>
+    <!-- Without stories, the welcome below offers the blank story next to the example instead. -->
+    @if (stories()?.length !== 0) {
+      <div class="pageHeader__actions">
+        <button type="button" class="button button--primary" [disabled]="creating()" (click)="createStory()">
+          <img width="14" src="/assets/icons/plus.svg" alt="" />
+          {{ 'dashboard.overview.newStory' | t }}
+        </button>
+      </div>
+    }
   </header>
   @if (createFailed()) {
     <p class="message" role="alert">{{ 'dashboard.overview.createError' | t }}</p>
   }
 
   @if (stories(); as stories) {
-    <div class="layout">
-      <div class="side">
-        <section aria-labelledby="activity-title">
-          <h2 class="sectionTitle" id="activity-title">{{ 'dashboard.overview.activity' | t }}</h2>
-          <div class="panel activity">
-            <!-- The recent plays first, alone, so the window they cover is not read as the whole list's. -->
-            <p class="activity__headline">
-              <span class="activity__number">{{ totals().recentPlays }}</span>
-              <span class="activity__caption">{{ 'dashboard.overview.recentHeadline' | t: { days: recentDays } }}</span>
-            </p>
-            <dl class="activity__list">
-              <div class="activity__row">
-                <dt>{{ 'dashboard.overview.totalPlays' | t }}</dt>
-                <dd>{{ totals().plays }}</dd>
-              </div>
-              <div class="activity__row">
-                <dt>{{ 'dashboard.overview.stories' | t }}</dt>
-                <dd>{{ totals().stories }}</dd>
-              </div>
-              <div class="activity__row">
-                <dt>{{ 'dashboard.overview.tracked' | t }}</dt>
-                <dd>{{ 'dashboard.overview.trackedValue' | t: { tracked: totals().tracked, total: totals().stories } }}</dd>
-              </div>
-            </dl>
-          </div>
-        </section>
-
-        <section aria-labelledby="access-teaser-title">
-          <h2 class="sectionTitle" id="access-teaser-title">{{ 'dashboard.home.access' | t }}</h2>
-          <div class="panel teaser">
-            <img width="22" src="/assets/icons/users.svg" alt="" />
-            <p>{{ 'dashboard.overview.accessTeaser' | t }}</p>
-            <a class="button" routerLink="/dashboard/access">{{ 'dashboard.overview.accessTeaserLink' | t }}</a>
-          </div>
-        </section>
-      </div>
-
-      <div class="main">
-        @if (continueStory(); as last) {
-          <section aria-labelledby="continue-title">
-            <h2 class="sectionTitle" id="continue-title">{{ 'dashboard.overview.continueTitle' | t }}</h2>
-            <div class="panel continue">
-              <span class="card__monogram continue__monogram" aria-hidden="true">{{ initial(last) }}</span>
-              <div class="continue__text">
-                <p class="continue__name" id="continue-name">{{ last.name }}</p>
-                @if (edited(last); as when) {
-                  <p class="continue__meta">{{ 'dashboard.overview.edited' | t: { when } }}</p>
-                }
-              </div>
-              <a class="button button--primary" [routerLink]="['/story', last.id, 'board']"
-                aria-describedby="continue-name">
-                {{ 'dashboard.overview.continueAction' | t }}
-                <img width="14" src="/assets/icons/arrow-right.svg" alt="" />
-              </a>
+    @if (!stories.length) {
+      <!-- A new author: a first step to take, not a page of zeros and features still to come. -->
+      <section class="welcome" aria-labelledby="welcome-title">
+        <h2 class="welcome__title" id="welcome-title">{{ 'dashboard.overview.welcomeTitle' | t }}</h2>
+        <p class="message welcome__text">{{ 'dashboard.overview.welcomeText' | t }}</p>
+        <ul class="welcome__choices">
+          <li class="panel welcome__choice welcome__choice--example">
+            <h3>{{ 'dashboard.overview.exampleTitle' | t }}</h3>
+            <p class="message">{{ 'dashboard.overview.exampleText' | t }}</p>
+            <!-- The editor opens the example for an author without stories, stored once it is changed. -->
+            <a class="button button--primary" routerLink="/board">
+              {{ 'dashboard.overview.exampleAction' | t }}
+              <img width="14" src="/assets/icons/arrow-right.svg" alt="" />
+            </a>
+          </li>
+          <li class="panel welcome__choice">
+            <h3>{{ 'dashboard.overview.blankTitle' | t }}</h3>
+            <p class="message">{{ 'dashboard.overview.blankText' | t }}</p>
+            <button type="button" class="button" [disabled]="creating()" (click)="createStory()">
+              <img width="14" src="/assets/icons/plus.svg" alt="" />
+              {{ 'dashboard.overview.blankAction' | t }}
+            </button>
+          </li>
+        </ul>
+        <a class="welcome__guide" [href]="guideUrl()">{{ 'dashboard.overview.guide' | t }}</a>
+      </section>
+    } @else {
+      <div class="layout">
+        <div class="side">
+          <section aria-labelledby="activity-title">
+            <h2 class="sectionTitle" id="activity-title">{{ 'dashboard.overview.activity' | t }}</h2>
+            <div class="panel activity">
+              <!-- The recent plays first, alone, so the window they cover is not read as the whole list's. -->
+              <p class="activity__headline">
+                <span class="activity__number">{{ totals().recentPlays }}</span>
+                <span class="activity__caption">{{ 'dashboard.overview.recentHeadline' | t: { days: recentDays } }}</span>
+              </p>
+              <dl class="activity__list">
+                <div class="activity__row">
+                  <dt>{{ 'dashboard.overview.totalPlays' | t }}</dt>
+                  <dd>{{ totals().plays }}</dd>
+                </div>
+                <div class="activity__row">
+                  <dt>{{ 'dashboard.overview.stories' | t }}</dt>
+                  <dd>{{ totals().stories }}</dd>
+                </div>
+                <div class="activity__row">
+                  <dt>{{ 'dashboard.overview.tracked' | t }}</dt>
+                  <dd>{{ 'dashboard.overview.trackedValue' | t: { tracked: totals().tracked, total: totals().stories } }}</dd>
+                </div>
+              </dl>
             </div>
           </section>
-        }
 
-        <section aria-labelledby="stories-title">
-          <div class="storiesHead">
-            <h2 class="sectionTitle" id="stories-title">{{ 'dashboard.overview.yourStories' | t }}</h2>
-            @if (stories.length > 1) {
-              <div class="storiesTools">
-                <input class="search" type="search" [value]="query()" (input)="query.set($any($event.target).value)"
-                  [placeholder]="'dashboard.overview.search' | t" [attr.aria-label]="'dashboard.overview.search' | t" />
-                <select class="sort" [value]="sort()" (change)="sort.set($any($event.target).value)" [attr.aria-label]="'dashboard.overview.sort' | t">
-                  <option value="edited">{{ 'dashboard.overview.sortEdited' | t }}</option>
-                  <option value="plays">{{ 'dashboard.overview.sortPlays' | t }}</option>
-                  <option value="name">{{ 'dashboard.overview.sortName' | t }}</option>
-                </select>
+          <section aria-labelledby="access-teaser-title">
+            <h2 class="sectionTitle" id="access-teaser-title">{{ 'dashboard.home.access' | t }}</h2>
+            <div class="panel teaser">
+              <img width="22" src="/assets/icons/users.svg" alt="" />
+              <p>{{ 'dashboard.overview.accessTeaser' | t }}</p>
+              <a class="button" routerLink="/dashboard/access">{{ 'dashboard.overview.accessTeaserLink' | t }}</a>
+            </div>
+          </section>
+        </div>
+
+        <div class="main">
+          @if (continueStory(); as last) {
+            <section aria-labelledby="continue-title">
+              <h2 class="sectionTitle" id="continue-title">{{ 'dashboard.overview.continueTitle' | t }}</h2>
+              <div class="panel continue">
+                <span class="card__monogram continue__monogram" aria-hidden="true">{{ initial(last) }}</span>
+                <div class="continue__text">
+                  <p class="continue__name" id="continue-name">{{ last.name }}</p>
+                  @if (edited(last); as when) {
+                    <p class="continue__meta">{{ 'dashboard.overview.edited' | t: { when } }}</p>
+                  }
+                </div>
+                <a class="button button--primary" [routerLink]="['/story', last.id, 'board']"
+                  aria-describedby="continue-name">
+                  {{ 'dashboard.overview.continueAction' | t }}
+                  <img width="14" src="/assets/icons/arrow-right.svg" alt="" />
+                </a>
               </div>
+            </section>
+          }
+
+          <section aria-labelledby="stories-title">
+            <div class="storiesHead">
+              <h2 class="sectionTitle" id="stories-title">{{ 'dashboard.overview.yourStories' | t }}</h2>
+              @if (stories.length > 1) {
+                <div class="storiesTools">
+                  <input class="search" type="search" [value]="query()" (input)="query.set($any($event.target).value)"
+                    [placeholder]="'dashboard.overview.search' | t" [attr.aria-label]="'dashboard.overview.search' | t" />
+                  <select class="sort" [value]="sort()" (change)="sort.set($any($event.target).value)" [attr.aria-label]="'dashboard.overview.sort' | t">
+                    <option value="edited">{{ 'dashboard.overview.sortEdited' | t }}</option>
+                    <option value="plays">{{ 'dashboard.overview.sortPlays' | t }}</option>
+                    <option value="name">{{ 'dashboard.overview.sortName' | t }}</option>
+                  </select>
+                </div>
+              }
+            </div>
+            @if (deleteFailed(); as name) {
+              <p class="message deleteError" role="alert">{{ 'dashboard.overview.deleteError' | t: { name } }}</p>
             }
-          </div>
-          @if (deleteFailed(); as name) {
-            <p class="message deleteError" role="alert">{{ 'dashboard.overview.deleteError' | t: { name } }}</p>
-          }
-          @if (stories.length && !shownStories().length) {
-            <p class="message" role="status">{{ 'dashboard.overview.noMatches' | t: { query: query() } }}</p>
-          }
-          @if (stories.length) {
+            @if (stories.length && !shownStories().length) {
+              <p class="message" role="status">{{ 'dashboard.overview.noMatches' | t: { query: query() } }}</p>
+            }
             <ul class="cards">
               @for (story of shownStories(); track story.id) {
                 <li class="panel card">
@@ -163,15 +192,10 @@
                 </li>
               }
             </ul>
-          } @else {
-            <div class="panel empty">
-              <p class="message">{{ 'dashboard.overview.empty' | t }}</p>
-              <a class="button button--primary" routerLink="/board">{{ 'dashboard.overview.createFirst' | t }}</a>
-            </div>
-          }
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
+    }
   } @else if (failed()) {
     <p class="message" role="alert">{{ 'dashboard.overview.error' | t }}</p>
   } @else {
