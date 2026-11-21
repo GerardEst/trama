@@ -89,6 +89,9 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   async displayGame(event?: Event) {
     event?.preventDefault()
 
+    // Automated browsers (the e2e suites run against trama.app) would inflate it.
+    if (!navigator.webdriver) this.db.registerPlayStart(this.activeStory.storyId())
+
     if (this.activeStory.storyConfiguration().tracking) {
       this.gameId = self.crypto.randomUUID()
 

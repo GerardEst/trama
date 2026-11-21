@@ -490,6 +490,13 @@ export class DatabaseService implements OnDestroy {
     return arrayOfRefs
   }
 
+  // Anonymous record of a game start, for the public statistics. It counts
+  // every story, with or without tracking, and keeps no player data.
+  async registerPlayStart(storyId: string) {
+    const { error } = await this.supabase.schema('stats').rpc('start_play', { story_id: storyId })
+    if (error) console.error(error)
+  }
+
   async saveNewGameTo(
     id: string,
     username: string,
