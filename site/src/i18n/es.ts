@@ -31,7 +31,7 @@ export const landing: Copy = {
     openDashboard: 'Abre tu panel',
     startStory: 'Crea tu primera historia',
     tryStory: 'Juega una historia',
-    free: '✓ Todas las funciones del editor incluidas',
+    free: '✓ Gratis, con todas las funciones del editor',
     noAccount: '✓ Los lectores no necesitan cuenta',
     demoLabel: 'Juega a El último umbral',
   },

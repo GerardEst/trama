@@ -47,34 +47,36 @@ describe('LoginComponent', () => {
     component.register_username.setValue('Author')
   }
 
-  it('starts Creator checkout only after successful login, using the authenticated email', async () => {
+  it('registers old Creator links for free and opens the dashboard, never Stripe', async () => {
     await selectCreator('yearly')
+    fixture.detectChanges()
+    expect(component.subscribing).toBeFalse()
+    expect(component.checkoutUnavailable).toBeFalse()
+    expect((fixture.nativeElement as HTMLElement).querySelector('.checkoutSummary, .checkoutNotice')).toBeNull()
+    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
+    await component.signUpNewUser(new Event('submit'), component.register_email, component.register_password, component.register_username)
+    expect(navigate).toHaveBeenCalledWith(['/dashboard'])
     await component.signInWithEmail(new Event('submit'), component.login_email, component.login_password)
-    expect(redirect).toHaveBeenCalledTimes(1)
-    expect(new URL(redirect.calls.mostRecent().args[0]).searchParams.get('prefilled_email')).toBe(session.user.email!)
-    expect(component.waitingForSignUp).toBeFalse()
-  })
-
-  it('does not open checkout when login fails or its request rejects', async () => {
-    await selectCreator()
-    auth.signInWithPassword.and.resolveTo({ data: { user: null, session: null }, error: new AuthApiError('Invalid credentials', 400) })
-    await component.signInWithEmail(new Event('submit'), component.login_email, component.login_password)
-    expect(redirect).not.toHaveBeenCalled()
-    auth.signInWithPassword.and.rejectWith(new Error('Network error'))
-    await component.signInWithEmail(new Event('submit'), component.login_email, component.login_password)
-    expect(component.authenticationError).toBeTrue()
+    expect(navigate).toHaveBeenCalledTimes(2)
     expect(redirect).not.toHaveBeenCalled()
   })
 
-  it('requires a real signup session before opening payment', async () => {
-    await selectCreator()
-    auth.signUp.and.resolveTo({ data: { user: session.user, session: null }, error: null })
-    await component.signUpNewUser(new Event('submit'), component.register_email, component.register_password, component.register_username)
-    expect(component.checkMail).toBeTrue()
+  it('returns Google OAuth and email confirmation to the dashboard, with no checkout to continue', async () => {
+    await selectCreator('yearly')
+    await component.signInWithGoogle()
+    const url = new URL(auth.signInWithOAuth.calls.mostRecent().args[0].options!.redirectTo!)
+    expect(url.pathname).toBe('/dashboard')
+    expect(url.searchParams.has('checkout')).toBeFalse()
     expect(redirect).not.toHaveBeenCalled()
-    auth.signUp.and.resolveTo({ data: { user: session.user, session }, error: null })
-    await component.signUpNewUser(new Event('submit'), component.register_email, component.register_password, component.register_username)
-    expect(redirect).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not open a checkout from an old callback URL', async () => {
+    await selectCreator()
+    component.checkout = 'continue'
+    getUser.and.resolveTo({ email: session.user.email })
+    spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
+    await component.ngOnInit()
+    expect(redirect).not.toHaveBeenCalled()
   })
 
   it('rejects old Pro subscription links instead of silently buying Creator', async () => {
@@ -85,36 +87,6 @@ describe('LoginComponent', () => {
     expect(component.checkoutUnavailable).toBeTrue()
     expect(fixture.nativeElement.textContent).toContain('Pro is planned as a one-time purchase')
     await component.signInWithEmail(new Event('submit'), component.login_email, component.login_password)
-    expect(redirect).not.toHaveBeenCalled()
-  })
-
-  it('keeps the billing selection across Google OAuth and returns to the app, not Stripe', async () => {
-    await selectCreator('yearly')
-    await component.signInWithGoogle()
-    const options = auth.signInWithOAuth.calls.mostRecent().args[0].options!
-    const url = new URL(options.redirectTo!)
-    expect(url.pathname).toBe('/login')
-    expect(url.searchParams.get('period')).toBe('yearly')
-    expect(url.searchParams.get('checkout')).toBe('continue')
-    expect(redirect).not.toHaveBeenCalled()
-  })
-
-  it('verifies the returned identity and clears the callback marker before continuing', async () => {
-    await selectCreator()
-    component.checkout = 'continue'
-    getUser.and.resolveTo({ email: session.user.email })
-    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
-    await component.ngOnInit()
-    expect(getUser).toHaveBeenCalledTimes(1)
-    expect(navigate).toHaveBeenCalledWith([], { queryParams: { checkout: null }, queryParamsHandling: 'merge', replaceUrl: true })
-    expect(redirect).toHaveBeenCalledTimes(1)
-  })
-
-  it('does not trust the callback URL as proof of authentication or payment', async () => {
-    await selectCreator()
-    component.checkout = 'continue'
-    await component.ngOnInit()
-    expect(getUser).toHaveBeenCalledTimes(1)
     expect(redirect).not.toHaveBeenCalled()
   })
 

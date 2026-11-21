@@ -31,7 +31,7 @@ export const landing: Copy = {
     openDashboard: 'Obre el teu panell',
     startStory: 'Crea la teva primera història',
     tryStory: 'Juga una història',
-    free: '✓ Totes les funcions de l’editor incloses',
+    free: '✓ Gratis, amb totes les funcions de l’editor',
     noAccount: '✓ Els lectors no necessiten compte',
     demoLabel: 'Juga a El darrer llindar',
   },

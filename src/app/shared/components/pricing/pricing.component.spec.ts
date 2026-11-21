@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { PricingComponent } from './pricing.component'
-import { provideRouter, Router } from '@angular/router'
+import { provideRouter } from '@angular/router'
 import { DatabaseService } from 'src/app/core/services/database.service'
 import { CHECKOUT_REDIRECT } from 'src/app/core/services/checkout.service'
 import { AlertService } from 'src/app/core/services/alert.service'
@@ -36,25 +36,26 @@ describe('PricingComponent', () => {
     expect(host.textContent).not.toContain('Basic')
   })
 
-  it('changes only Creator when switching to annual billing', () => {
-    component.payAnnually = true
-    fixture.detectChanges()
-    expect(fixture.nativeElement.textContent).toContain('49.95€/year')
-    expect(fixture.nativeElement.querySelector('.pricing__plan--pro').textContent).toContain('Around 200€')
+  it('shows Creator as the free plan of someone without a subscription, with nothing to buy', () => {
+    const creator = (fixture.nativeElement as HTMLElement).querySelector('.recommendedPlan')!
+    expect(creator.querySelector('.pricing__plan__header')?.textContent).toContain('Free')
+    expect(creator.textContent).not.toContain('5.95')
+    expect(creator.querySelector('.currentPlan')?.textContent).toContain('Your current plan')
+    expect(creator.querySelector('polo-landing-link')).toBeNull()
   })
 
-  it('takes unauthenticated buyers to registration with their selected period', () => {
-    const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
-    component.subscribe('creator', true)
-    expect(navigate).toHaveBeenCalledWith(['/login'], { queryParams: { mode: 'register', plan: 'creator', period: 'yearly' } })
+  it('never opens a Creator checkout, even when asked directly', () => {
+    component.email = 'author@example.com'
+    component.subscribe('creator', false)
     expect(redirect).not.toHaveBeenCalled()
   })
 
-  it('takes a signed-in author to Creator checkout without opening a popup', () => {
-    component.email = 'author@example.com'
-    component.subscribe('creator', false)
-    expect(redirect).toHaveBeenCalledTimes(1)
-    expect(new URL(redirect.calls.mostRecent().args[0]).searchParams.get('prefilled_email')).toBe('author@example.com')
+  it('still shows what an old Creator subscriber pays, so they can cancel it', () => {
+    fixture.componentRef.setInput('userPlan', 'creator')
+    fixture.detectChanges()
+    const creator = (fixture.nativeElement as HTMLElement).querySelector('.recommendedPlan')!
+    expect(creator.textContent).toContain('5.95€/month')
+    expect(Array.from(creator.querySelectorAll('button')).some((item) => item.textContent?.includes('Cancel subscription'))).toBeTrue()
   })
 
   it('does not mislabel a legacy Pro subscription as owning the planned one-time offer', () => {
@@ -79,12 +80,9 @@ describe('PricingComponent', () => {
   it('keeps the same styles regardless of its container', () => {
     const host = fixture.nativeElement as HTMLElement
     const plan = host.querySelector('.pricing__plan')!
-    const link = host.querySelector('polo-landing-link button')!
     const background = getComputedStyle(plan).backgroundColor
-    const radius = getComputedStyle(link).borderRadius
     host.classList.add('landing-pricing')
     expect(getComputedStyle(plan).backgroundColor).toBe(background)
-    expect(getComputedStyle(link).borderRadius).toBe(radius)
   })
 
   it('asks before canceling a subscription and cancels only when confirmed', async () => {
@@ -117,12 +115,13 @@ describe('PricingComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('.cancelError[role="alert"]')?.textContent).toContain('Failed to cancel')
   })
 
-  it('offers Creator again once an old Pro subscription is canceled', () => {
+  it('gives free Creator once an old Pro subscription is canceled', () => {
     fixture.componentRef.setInput('userPlan', 'pro')
     fixture.componentRef.setInput('canceledSubscription', true)
     fixture.detectChanges()
     const host = fixture.nativeElement as HTMLElement
-    expect(host.querySelector('.recommendedPlan polo-landing-link')?.textContent).toContain('Choose Creator')
+    expect(host.querySelector('.recommendedPlan.currentPlan')).not.toBeNull()
+    expect(host.querySelector('.recommendedPlan polo-landing-link')).toBeNull()
     expect(Array.from(host.querySelectorAll('button')).some((item) => item.textContent?.includes('Cancel subscription'))).toBeFalse()
   })
 })

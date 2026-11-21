@@ -9,6 +9,7 @@ export const pricing: Dictionary['pricing'] = {
   },
   perMonth: '{price} €/mes',
   perYear: '{price} €/año',
+  free: 'Gratis',
   currentPlan: 'Tu plan actual',
   canceledPlan: 'Suscripción cancelada',
   cancel: 'Cancelar suscripción',
@@ -19,7 +20,7 @@ export const pricing: Dictionary['pricing'] = {
   successIcon: 'Incluido',
   legacyPro: 'Tienes una suscripción Pro antigua. Es independiente del futuro Pro de pago único y no se ha migrado automáticamente.',
   creator: {
-    description: 'Escribe, prueba y comparte con todas las funciones actuales del editor incluidas. Suscripción mensual o anual.',
+    description: 'Escribe, prueba y comparte con todas las funciones actuales del editor incluidas.',
     included: 'Qué incluye Creator',
     everything: 'Sin bloqueos de funciones en el editor:',
     stories: 'Crea y organiza historias ramificadas',

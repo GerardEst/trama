@@ -24,7 +24,7 @@ export const login: Dictionary['login'] = {
   },
   register: {
     title: 'Crea el teu compte',
-    subtitle: 'Crea un compte per a les teves històries. Si has triat Creator, el pagament és el pas següent.',
+    subtitle: 'Crea un compte per a les teves històries. És gratis.',
     username: 'Nom d’usuari',
     email: 'El teu correu electrònic',
     password: 'Contrasenya nova',

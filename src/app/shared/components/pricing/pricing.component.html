@@ -10,17 +10,23 @@
   <p class="cancelError" role="alert">{{ 'pricing.cancelFailed' | t }}</p>
 }
 <div class="pricing" [class.pricing--compact]="compactFeatures">
-  <div class="pricing__plan recommendedPlan" [class.dashed]="dashed" [class.currentPlan]="userPlan === 'creator'">
+  <div class="pricing__plan recommendedPlan" [class.dashed]="dashed" [class.currentPlan]="hasCreator">
     <div class="pricing__plan__header">
       <h2 class="txt-baskerville txt-2">Creator</h2>
       <p class="txt-ralewayItalic">
-        {{ (payAnnually ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: price(payAnnually ? pricing.CREATOR_YEARLY_PRICE : pricing.CREATOR_MONTHLY_PRICE) } }}
+        @if (creatorCheckoutOpen || paysForCreator) {
+          {{ (payAnnually ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: price(payAnnually ? pricing.CREATOR_YEARLY_PRICE : pricing.CREATOR_MONTHLY_PRICE) } }}
+        } @else {
+          {{ 'pricing.free' | t }}
+        }
       </p>
     </div>
     @if (userPlan === 'creator') {
       <p class="currentPlan" [class.currentPlan--canceled]="canceledSubscription">
         {{ (canceledSubscription ? 'pricing.canceledPlan' : 'pricing.currentPlan') | t }}
       </p>
+    } @else if (hasCreator) {
+      <p class="currentPlan">{{ 'pricing.currentPlan' | t }}</p>
     }
     <p>{{ 'pricing.creator.description' | t }}</p>
     <details class="pricing__details" [open]="!compactFeatures">
@@ -39,7 +45,7 @@
       @if (!preventEasyDowngrading) {
         <polo-basic-button class="cancel" (click)="cancelSubscription()" [waiting]="cancelingSubscription" [text]="'pricing.cancel' | t" />
       }
-    } @else if (userPlan !== 'legacy-pro' || canceledSubscription) {
+    } @else if (creatorCheckoutOpen && (userPlan !== 'legacy-pro' || canceledSubscription)) {
       <!-- Anyone without a live subscription can take Creator, including after an old Pro was canceled. -->
       <polo-landing-link (click)="subscribe('creator', payAnnually)" [highlight]="true" [text]="'pricing.creator.choose' | t" />
     }

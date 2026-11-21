@@ -22,7 +22,7 @@ export const login = {
   },
   register: {
     title: 'Create your account',
-    subtitle: 'Create an account for your stories. If you chose Creator, payment comes next.',
+    subtitle: 'Create an account for your stories. It is free.',
     username: 'User name',
     email: 'Your email',
     password: 'New password',

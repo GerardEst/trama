@@ -27,7 +27,7 @@ test.describe('Landing story experience', () => {
     expect(editorScripts).toEqual([])
   })
 
-  test('finishes a story and takes readers to Creator registration', async ({ page }) => {
+  test('finishes a story and takes readers to the free registration', async ({ page }) => {
     await page.goto('/')
     const demo = page.locator('#try-it')
     await demo.getByRole('button', { name: 'Run to the lighthouse' }).click()
@@ -41,7 +41,8 @@ test.describe('Landing story experience', () => {
     await create.click()
     await expect(page).toHaveURL(/\/login\?mode=register/)
     await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
-    await expect(page.locator('.checkoutSummary')).toContainText('Creator · 5.95€/month')
+    await expect(page.locator('.checkoutSummary')).toHaveCount(0)
+    await expect(page.getByText('It is free.')).toBeVisible()
   })
 
   test('follows the other ending and restarts in the independent story demo', async ({ page }) => {

@@ -54,7 +54,7 @@ export const es: AtlasCopy = {
     { label: 'Lectores', value: 'Juegan desde un enlace, sin cuenta' },
     { label: 'Texto', value: 'Lo escribes tú. Trama no lo genera' },
     { label: 'Idiomas de la interfaz', value: 'Español, catalán e inglés' },
-    { label: 'Precio', value: 'Plan Creative: 5,95 € al mes o 49,95 € al año. Pro añade analíticas' },
+    { label: 'Precio', value: 'Plan Creative: gratis. Pro, con analíticas, próximamente' },
     { label: 'Motor', value: '@trama-app/engine: gratuito, de código abierto, MIT, sin dependencias' },
   ],
   chapters: {
@@ -279,7 +279,7 @@ export const es: AtlasCopy = {
     },
     price: {
       label: 'Precio',
-      trama: '5,95 € al mes o 49,95 € al año',
+      trama: 'Gratis. Pro, con analíticas, próximamente',
       twine: 'Gratuito',
       ink: 'Gratuito',
       choicescript: 'Gratuito para uso no comercial',
@@ -300,7 +300,7 @@ export const es: AtlasCopy = {
     { question: '¿Tengo que saber programar?', answer: 'No. Escribes pasajes en un editor de texto, conectas escenas en el tablero y configuras eventos y requisitos con formularios.' },
     { question: '¿Trama escribe la historia por mí?', answer: 'No. Trama no genera el texto. Las palabras, los personajes y las decisiones son tuyos.' },
     { question: '¿Los lectores necesitan una cuenta?', answer: 'No. Abren el enlace y empiezan, sin instalar nada.' },
-    { question: '¿Cuánto cuesta?', answer: 'El plan Creative cuesta 5,95 € al mes o 49,95 € al año e incluye todo el editor. Pro añade las analíticas de las historias publicadas. No hay plan gratuito. Trama Engine es gratuito y de código abierto con licencia MIT.' },
+    { question: '¿Cuánto cuesta?', answer: 'Nada. El plan Creative es gratis e incluye todo el editor. Pro, próximamente, añadirá las analíticas de las historias publicadas. Trama Engine es gratuito y de código abierto con licencia MIT.' },
     { question: '¿Trama es una alternativa a Twine?', answer: 'Sí, si quieres un enlace alojado, estadísticas y lógica configurada con formularios en lugar de macros. Twine es gratuito y publica un archivo HTML que alojas tú, así que es mejor opción si eso es lo que más te importa.' },
     { question: '¿Puedo usar una historia dentro de Unity o Unreal?', answer: 'No directamente. El motor de Trama es JavaScript y funciona en navegadores, Node 18+, Deno y workers. Para un flujo nativo con Unity o Unreal, son más adecuados ink, Arcweave o articy:draft X.' },
     { question: '¿Puedo alojar una historia jugable en mi web?', answer: 'Sí, con Trama Engine. Tu interfaz en tu web carga la historia de Trama por su id, de modo que la historia se queda en Trama. La descarga JSON contiene datos de la historia, no un juego HTML independiente.' },

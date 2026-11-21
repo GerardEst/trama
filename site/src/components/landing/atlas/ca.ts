@@ -54,7 +54,7 @@ export const ca: AtlasCopy = {
     { label: 'Lectors', value: 'Juguen des d’un enllaç, sense compte' },
     { label: 'Text', value: 'L’escrius tu. Trama no el genera' },
     { label: 'Idiomes de la interfície', value: 'Català, castellà i anglès' },
-    { label: 'Preu', value: 'Pla Creative: 5,95 € al mes o 49,95 € l’any. Pro hi afegeix analítiques' },
+    { label: 'Preu', value: 'Pla Creative: gratis. Pro, amb analítiques, properament' },
     { label: 'Motor', value: '@trama-app/engine: gratuït, de codi obert, MIT, sense dependències' },
   ],
   chapters: {
@@ -279,7 +279,7 @@ export const ca: AtlasCopy = {
     },
     price: {
       label: 'Preu',
-      trama: '5,95 € al mes o 49,95 € l’any',
+      trama: 'Gratis. Pro, amb analítiques, properament',
       twine: 'Gratuït',
       ink: 'Gratuït',
       choicescript: 'Gratuït per a ús no comercial',
@@ -300,7 +300,7 @@ export const ca: AtlasCopy = {
     { question: 'He de saber programar?', answer: 'No. Escrius passatges en un editor de text, connectes escenes al tauler i configures esdeveniments i requisits amb formularis.' },
     { question: 'Trama escriu la història per mi?', answer: 'No. Trama no genera el text. Les paraules, els personatges i les decisions són teus.' },
     { question: 'Els lectors necessiten un compte?', answer: 'No. Obren l’enllaç i comencen, sense instal·lar res.' },
-    { question: 'Quant costa?', answer: 'El pla Creative costa 5,95 € al mes o 49,95 € l’any i inclou tot l’editor. Pro hi afegeix les analítiques de les històries publicades. No hi ha pla gratuït. Trama Engine és gratuït i de codi obert amb llicència MIT.' },
+    { question: 'Quant costa?', answer: 'Res. El pla Creative és gratis i inclou tot l’editor. Pro, properament, hi afegirà les analítiques de les històries publicades. Trama Engine és gratuït i de codi obert amb llicència MIT.' },
     { question: 'Trama és una alternativa a Twine?', answer: 'Sí, si vols un enllaç allotjat, estadístiques i lògica configurada amb formularis en lloc de macros. Twine és gratuït i publica un fitxer HTML que allotges tu, així que és millor opció si això és el que més t’importa.' },
     { question: 'Puc fer servir una història dins d’Unity o Unreal?', answer: 'No directament. El motor de Trama és JavaScript i funciona en navegadors, Node 18+, Deno i workers. Per a un flux natiu amb Unity o Unreal, són més adequats ink, Arcweave o articy:draft X.' },
     { question: 'Puc allotjar una història jugable al meu web?', answer: 'Sí, amb Trama Engine. La teva interfície al teu web carrega la història de Trama pel seu id, de manera que la història es queda a Trama. La descàrrega JSON conté dades de la història, no un joc HTML independent.' },

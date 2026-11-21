@@ -72,7 +72,7 @@ test('feature links and direct URLs land on the relevant chapter without loading
   await expect(page.locator('polo-board, polo-story-player, polo-rich-text-editor')).toHaveCount(0)
   expect(storyRequests).toEqual([])
   await page.getByRole('link', { name: 'Open the editor', exact: true }).click()
-  await expect(page).toHaveURL(/\/login\?mode=register&plan=creator&period=monthly$/)
+  await expect(page).toHaveURL(/\/login\?mode=register$/)
 })
 
 test('explains current limitations instead of advertising unsupported behaviour', async ({ page }) => {

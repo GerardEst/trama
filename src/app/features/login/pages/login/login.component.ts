@@ -9,7 +9,7 @@ import { LOGIN_FEEDBACKS } from '../../constants'
 import { GoogleLoginComponent } from 'src/app/shared/components/ui/google-login/google-login.component'
 import { LanguageSelectorComponent } from 'src/app/shared/components/ui/language-selector/language-selector.component'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
-import { CheckoutService, isCreatorCheckout } from 'src/app/core/services/checkout.service'
+import { CheckoutService, isCreatorCheckout, isCreatorLink } from 'src/app/core/services/checkout.service'
 import { PRICING } from 'src/app/core/constants'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { WordmarkComponent } from 'src/app/shared/components/wordmark/wordmark.component'
@@ -66,7 +66,8 @@ export class LoginComponent implements OnInit {
 
   async ngOnInit() {
     this.subscribing = isCreatorCheckout(this.plan, this.period)
-    this.checkoutUnavailable = !!(this.plan || this.period) && !this.subscribing
+    // Creator is free for now: its old links register like any other, without a notice.
+    this.checkoutUnavailable = !!(this.plan || this.period) && !this.subscribing && !isCreatorLink(this.plan)
     if (this.checkout === 'continue' && this.subscribing) {
       // OAuth and email confirmation return to the app first, never straight to Stripe.
       try {

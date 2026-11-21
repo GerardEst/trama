@@ -4,7 +4,7 @@ import { copyFor, pricingCopyFor, useCasesCopyFor, type Lang } from '../../i18n'
 import { APP_LINKS } from '../../lib/links'
 import { localePath } from '../../lib/locale'
 import { PAGES } from '../../lib/pages'
-import { PLANS, formatPrice, type PlanId } from '../../lib/plans'
+import { PLANS, formatPrice, isFree, type PlanId } from '../../lib/plans'
 import LandingLayout from '../../layouts/LandingLayout.astro'
 import Header from '../landing/Header.astro'
 import Footer from '../landing/Footer.astro'
@@ -125,7 +125,7 @@ const structuredData = {
               <p class="uc-plan">
                 <span class="uc-plan__label">{u.planLabel}</span>
                 <span class="uc-plan__name">
-                  <b>{plan.name}</b> {formatPrice(lang, plan.monthly)} {p.perMonth}
+                  <b>{plan.name}</b> {isFree(item.plan) ? p.free : `${formatPrice(lang, plan.monthly)} ${p.perMonth}`}
                   {!plan.available && <span class="uc-tag uc-tag--soon">{p.plans.pro.soon}</span>}
                 </span>
                 <span class="uc-plan__why">{copy.plan}</span>

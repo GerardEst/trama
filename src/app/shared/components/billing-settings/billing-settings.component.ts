@@ -5,6 +5,7 @@ import { DatabaseService } from 'src/app/core/services/database.service'
 import { TranslatePipe } from 'src/app/core/i18n/translate.pipe'
 import { I18nService } from 'src/app/core/i18n/i18n.service'
 import { TranslationKey } from 'src/app/core/i18n/i18n.types'
+import { CREATOR_CHECKOUT_OPEN } from 'src/app/core/services/checkout.service'
 
 /** The author's plan and subscription: what they have first, then the plans they can take. */
 @Component({
@@ -32,12 +33,18 @@ export class BillingSettingsComponent {
     const plan = this.db.user()?.profile?.plan ?? ''
     if (plan.includes('creator')) return 'settings.billing.creator'
     if (plan.includes('pro')) return 'settings.billing.legacyPro'
-    return 'settings.billing.none'
+    // While Creator is free, everyone without another plan has it.
+    return CREATOR_CHECKOUT_OPEN ? 'settings.billing.none' : 'settings.billing.creator'
   }
 
-  /** The billing period only matters to someone about to subscribe. */
+  /** The billing period only matters to someone about to subscribe, and Creator is free for now. */
   canChoosePlan(): boolean {
-    return this.status() !== 'active' || this.planName() === 'settings.billing.none'
+    return CREATOR_CHECKOUT_OPEN && (this.status() !== 'active' || this.planName() === 'settings.billing.none')
+  }
+
+  /** What someone without a subscription pays: nothing while Creator is free. */
+  noSubscriptionLabel(): TranslationKey {
+    return CREATOR_CHECKOUT_OPEN ? 'settings.billing.noPlan' : 'pricing.free'
   }
 
   paymentDate(date: string) {

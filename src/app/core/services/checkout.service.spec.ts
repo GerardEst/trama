@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { CHECKOUT_REDIRECT, CheckoutService } from './checkout.service'
+import { CHECKOUT_REDIRECT, CREATOR_CHECKOUT_OPEN, CheckoutService, isCreatorCheckout } from './checkout.service'
 import { environment } from 'src/environments/environment'
 
 describe('CheckoutService', () => {
@@ -11,14 +11,13 @@ describe('CheckoutService', () => {
     service = TestBed.inject(CheckoutService)
   })
 
-  it('uses only the configured Creator payment link and encodes the verified email', () => {
+  it('never sends anyone to pay for Creator while it is free', () => {
+    expect(CREATOR_CHECKOUT_OPEN).toBeFalse()
     for (const period of ['monthly', 'yearly']) {
-      expect(service.start('creator', period, 'author+story@example.com')).toBeTrue()
-      const url = new URL(redirect.calls.mostRecent().args[0])
-      expect(url.origin + url.pathname).toBe(period === 'yearly'
-        ? environment.subscriptionLinks.CREATOR_YEARLY_LINK : environment.subscriptionLinks.CREATOR_MONTHLY_LINK)
-      expect(url.searchParams.get('prefilled_email')).toBe('author+story@example.com')
+      expect(isCreatorCheckout('creator', period)).toBeFalse()
+      expect(service.start('creator', period, 'author+story@example.com')).toBeFalse()
     }
+    expect(redirect).not.toHaveBeenCalled()
   })
 
   it('never opens old Pro subscriptions, malformed periods or empty identities', () => {
@@ -30,12 +29,8 @@ describe('CheckoutService', () => {
     expect(redirect).not.toHaveBeenCalled()
   })
 
-  it('returns OAuth and email confirmation to the app with a validated billing selection', () => {
-    const url = new URL(service.authReturnUrl('creator', 'yearly'))
-    expect(url.origin).toBe(new URL(environment.baseRoute).origin)
-    expect(url.pathname).toBe('/login')
-    expect(url.searchParams.get('period')).toBe('yearly')
-    expect(url.searchParams.get('checkout')).toBe('continue')
+  it('returns OAuth and email confirmation straight to the dashboard, with no checkout to continue', () => {
+    expect(service.authReturnUrl('creator', 'yearly')).toBe(`${environment.baseRoute}/dashboard`)
     expect(service.authReturnUrl('pro', 'monthly')).toBe(`${environment.baseRoute}/dashboard`)
   })
 })

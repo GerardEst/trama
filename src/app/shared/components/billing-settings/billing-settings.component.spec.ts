@@ -26,11 +26,18 @@ describe('BillingSettingsComponent', () => {
     expect(host().querySelector('polo-billing-cycle')).toBeNull()
   })
 
-  it('offers the billing period to someone without a live subscription', async () => {
+  it('gives free Creator to someone without a subscription, with no billing period to choose', async () => {
+    await render({ plan: '', subscription_status: '' })
+    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creator')
+    expect(host().querySelector('.summary__state')?.textContent?.trim()).toBe('Free')
+    expect(host().querySelector('polo-billing-cycle')).toBeNull()
+  })
+
+  it('says an old canceled subscription is canceled, without offering to pay for Creator', async () => {
     await render({ plan: 'pro', subscription_status: 'canceled' })
     expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Pro (legacy)')
     expect(host().querySelector('.summary__state--off')?.textContent).toContain('Subscription canceled')
-    expect(host().querySelector('polo-billing-cycle')).not.toBeNull()
+    expect(host().querySelector('polo-billing-cycle')).toBeNull()
   })
 
   it('shows until when a canceled plan lasts, and nothing once it has ended', async () => {

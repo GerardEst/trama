@@ -8,7 +8,6 @@ import {
   BILLING_PERIODS,
   PLANS,
   formatPrice,
-  checkoutLink,
   planOffers,
   twelveMonths,
   type PlanId,
@@ -24,7 +23,8 @@ import '../../styles/landing.css'
 import '../../styles/pages.css'
 
 // The pricing page: two plans laid on the landing's squared paper, like pages of
-// the same book. Both billing periods are in the HTML; the choice only hides one.
+// the same book. Creative is free; Pro has both billing periods in the HTML and
+// the choice only hides one.
 interface Props {
   lang: Lang
 }
@@ -42,7 +42,6 @@ const offers = (id: PlanId) => ({
   monthly: { amount: price(PLANS[id].monthly), unit: p.perMonth, was: undefined },
   yearly: { amount: price(PLANS[id].yearly), unit: p.perYear, was: price(twelveMonths(id)) },
 })
-const creative = offers('creative')
 const pro = offers('pro')
 
 // Creative is the whole editor: every capability of the landing, by chapter,
@@ -54,12 +53,11 @@ const chapters = ATLAS_CHAPTERS.map(chapter => ({
 }))
 
 const prices = {
-  creativeMonthly: price(PLANS.creative.monthly),
-  creativeYearly: price(PLANS.creative.yearly),
+  proMonthly: price(PLANS.pro.monthly),
   proYearly: price(PLANS.pro.yearly),
 }
 const faq = p.faq.map(item => ({ question: item.question, answer: format(item.answer, prices) }))
-const description = format(p.meta.description, { monthly: prices.creativeMonthly, yearly: prices.creativeYearly })
+const description = p.meta.description
 
 const structuredData = {
   '@graph': [
@@ -93,7 +91,7 @@ const structuredData = {
       <div class="pg-hero__paper" aria-hidden="true"></div>
       <div class="pg-hero__copy">
         <p class="e-eyebrow">{p.eyebrow}</p>
-        <h1 id="pr-title">{p.titleStart}<br />{format(p.titleEnd, { price: prices.creativeMonthly })}</h1>
+        <h1 id="pr-title">{p.titleStart}<br />{p.titleEnd}</h1>
         <p class="pg-hero__lead">{p.lead}</p>
       </div>
 
@@ -117,29 +115,15 @@ const structuredData = {
               <p class="pp-plan__lead">{p.plans.creative.lead}</p>
             </header>
             <div class="pp-plan__price">
-              {BILLING_PERIODS.map(period => (
-                <p class="pp-price" data-period={period}>
-                  {creative[period].was && (
-                    <s class="pp-price__was"><span class="e-visually-hidden">{p.wasLabel} </span>{creative[period].was}</s>
-                  )}
-                  {creative[period].was && <span class="e-visually-hidden">{p.nowLabel} </span>}
-                  <span class="pp-price__amount">{creative[period].amount}</span>
-                  <span class="pp-price__unit">{creative[period].unit}</span>
-                </p>
-              ))}
+              <p class="pp-price">
+                <span class="pp-price__amount">{p.free}</span>
+              </p>
             </div>
             <div class="pp-plan__action">
-              {BILLING_PERIODS.map(period => (
-                <a
-                  class="e-btn e-btn--solid"
-                  href={checkoutLink(period)}
-                  data-signed-in-href={APP_LINKS.dashboard}
-                  data-period={period}
-                >
-                  <AuthLabel signedOut={p.plans.creative.cta} signedIn={t.hero.openDashboard} />
-                  <span aria-hidden="true">→</span>
-                </a>
-              ))}
+              <a class="e-btn e-btn--solid" href={APP_LINKS.register} data-signed-in-href={APP_LINKS.dashboard}>
+                <AuthLabel signedOut={p.plans.creative.cta} signedIn={t.hero.openDashboard} />
+                <span aria-hidden="true">→</span>
+              </a>
               <p class="pp-plan__action-note">{p.plans.creative.ctaNote}</p>
             </div>
             <div class="pp-plan__includes">
@@ -199,7 +183,7 @@ const structuredData = {
       </div>
     </section>
 
-    <!-- The one thing that costs nothing on either plan. -->
+    <!-- The engine, free like Creative and with no account at all. -->
     <section class="e-wrap pe" aria-labelledby="pe-title">
       <span class="pe__icon"><FeatureIcon id="engine" /></span>
       <div class="pe__text">

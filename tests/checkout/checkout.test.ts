@@ -5,6 +5,7 @@ import { environment as development } from '../../src/environments/environment.d
 const environment = process.env['CI'] ? production : development
 
 // Synthetic auth only. Stripe and Supabase requests are intercepted: no account or charge is created.
+// Creator is free for now, so these check that nothing opens its checkout.
 test.use({ storageState: { cookies: [], origins: [] } })
 
 async function mockCheckout(page: Page, options: { invalidPassword?: boolean; confirmEmail?: boolean; signedIn?: boolean } = {}) {
@@ -43,21 +44,18 @@ async function mockCheckout(page: Page, options: { invalidPassword?: boolean; co
   return { user, checkoutVisits: () => checkoutVisits, oauthRedirect: () => oauthRedirect }
 }
 
+// Creator is free for now: links that still name it only open the sign-up.
 for (const period of ['monthly', 'yearly'] as const) {
-  test(`Creator ${period}: selected plan survives registration and goes to the right hosted checkout`, async ({ page }) => {
+  test(`old Creator ${period} links register for free and open the dashboard, never Stripe`, async ({ page }) => {
     const backend = await mockCheckout(page)
-    // The landing has no pricing for now: registration links carry the plan.
     await page.goto(`/login?mode=register&plan=creator&period=${period}`)
-    await expect(page.locator('.checkoutSummary')).toContainText(period === 'yearly' ? '49.95€/year' : '5.95€/month')
+    await expect(page.locator('.checkoutSummary, .checkoutNotice')).toHaveCount(0)
     await page.getByLabel('User name', { exact: true }).fill('Author')
     await page.getByLabel('Your email', { exact: true }).fill('submitted@example.com')
-    await page.getByLabel('New password', { exact: true }).fill('test-password')
+    await page.locator('#register_password').fill('test-password')
     await page.locator('form').getByRole('button', { name: 'Register', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'Mock Stripe checkout' })).toBeVisible()
-    const url = new URL(page.url())
-    expect(url.origin + url.pathname).toBe(period === 'yearly' ? environment.subscriptionLinks.CREATOR_YEARLY_LINK : environment.subscriptionLinks.CREATOR_MONTHLY_LINK)
-    expect(url.searchParams.get('prefilled_email')).toBe(backend.user.email)
-    expect(backend.checkoutVisits()).toBe(1)
+    await expect(page).toHaveURL(/\/dashboard$/)
+    expect(backend.checkoutVisits()).toBe(0)
   })
 }
 
@@ -72,12 +70,12 @@ test('failed login never opens checkout or grants a plan', async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?/)
 })
 
-test('email confirmation is required before signup can continue to checkout', async ({ page }) => {
+test('email confirmation is asked for without any checkout', async ({ page }) => {
   const backend = await mockCheckout(page, { confirmEmail: true })
   await page.goto('/login?mode=register&plan=creator&period=yearly')
   await page.getByLabel('User name', { exact: true }).fill('Author')
   await page.getByLabel('Your email', { exact: true }).fill('submitted@example.com')
-  await page.getByLabel('New password', { exact: true }).fill('test-password')
+  await page.locator('#register_password').fill('test-password')
   await page.locator('form').getByRole('button', { name: 'Register', exact: true }).click()
   await expect(page.getByRole('status').filter({ hasText: 'Check your inbox' })).toBeVisible()
   expect(backend.checkoutVisits()).toBe(0)
@@ -98,26 +96,21 @@ for (const period of ['monthly', 'yearly']) {
   })
 }
 
-test('OAuth returns to an internal callback with the selected billing period, never straight to Stripe', async ({ page }) => {
+test('OAuth from an old Creator link returns to the dashboard, never to Stripe', async ({ page }) => {
   const backend = await mockCheckout(page)
   await page.goto('/login?mode=register&plan=creator&period=yearly')
   await page.getByRole('button', { name: /Register with Google/ }).click()
   await expect(page.getByRole('heading', { name: 'Mock OAuth provider' })).toBeVisible()
   const callback = new URL(backend.oauthRedirect())
   expect(callback.origin).toBe(new URL(environment.baseRoute).origin)
-  expect(callback.pathname).toBe('/login')
-  expect(callback.searchParams.get('period')).toBe('yearly')
-  expect(callback.searchParams.get('checkout')).toBe('continue')
+  expect(callback.pathname).toBe('/dashboard')
+  expect(callback.searchParams.has('checkout')).toBe(false)
   expect(backend.checkoutVisits()).toBe(0)
 })
 
-test('a verified OAuth or confirmation return continues checkout once, without a browser-back loop', async ({ page }) => {
+test('an old checkout callback never opens Stripe', async ({ page }) => {
   const backend = await mockCheckout(page, { signedIn: true })
   await page.goto('/login?mode=login&plan=creator&period=yearly&checkout=continue')
-  await expect(page.getByRole('heading', { name: 'Mock Stripe checkout' })).toBeVisible()
-  expect(backend.checkoutVisits()).toBe(1)
-  await page.goBack()
-  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
-  expect(new URL(page.url()).searchParams.has('checkout')).toBe(false)
-  expect(backend.checkoutVisits()).toBe(1)
+  await expect(page).toHaveURL(/\/dashboard$/)
+  expect(backend.checkoutVisits()).toBe(0)
 })

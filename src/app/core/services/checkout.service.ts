@@ -8,8 +8,19 @@ export const CHECKOUT_REDIRECT = new InjectionToken<(url: string) => void>('Chec
   factory: () => url => window.location.assign(url),
 })
 
+/**
+ * Creator (Creative on the site) is free for now, so nothing sends anyone to pay for it.
+ * The checkout stays here, closed, for when it costs money again.
+ */
+export const CREATOR_CHECKOUT_OPEN = false
+
+/** A link that names Creator: while it is free, it only opens the sign-up. */
+export function isCreatorLink(plan: unknown): boolean {
+  return plan === 'creator'
+}
+
 export function isCreatorCheckout(plan: unknown, period: unknown): period is CreatorBillingPeriod {
-  return plan === 'creator' && (period === 'monthly' || period === 'yearly')
+  return CREATOR_CHECKOUT_OPEN && isCreatorLink(plan) && (period === 'monthly' || period === 'yearly')
 }
 
 @Injectable({ providedIn: 'root' })

@@ -29,7 +29,7 @@ export const landing = {
     openDashboard: 'Open your dashboard',
     startStory: 'Create your first story',
     tryStory: 'Play a story',
-    free: '✓ All editor features included',
+    free: '✓ Free, with every editor feature',
     noAccount: '✓ Readers don’t need an account',
     demoLabel: 'Play The Last Threshold',
   },

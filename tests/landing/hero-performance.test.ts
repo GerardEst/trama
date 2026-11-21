@@ -139,7 +139,7 @@ for (const lang of ['en', 'es', 'ca'] as const) {
     await page.goto(path)
     await expect(page.locator('h1')).toContainText(copy.hero.titleStart)
     await expect(page.locator('.e-hero__lead')).toHaveText(atlasFor(lang).meta.definition)
-    await expect(page.locator('.e-hero').getByRole('link', { name: copy.hero.startStory })).toHaveAttribute('href', '/login?mode=register&plan=creator&period=monthly')
+    await expect(page.locator('.e-hero').getByRole('link', { name: copy.hero.startStory })).toHaveAttribute('href', '/login?mode=register')
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://trama.app${path}`)
     await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(0)
     const decoration = page.locator('written-world')

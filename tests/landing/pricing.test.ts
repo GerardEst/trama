@@ -2,37 +2,34 @@ import { test, expect } from '@playwright/test'
 
 const plan = (page: import('@playwright/test').Page, name: string) => page.getByRole('article', { name, exact: true })
 
-test('the pricing page shows both plans and switches between monthly and yearly', async ({ page }) => {
+test('the pricing page shows Creative free and switches Pro between monthly and yearly', async ({ page }) => {
   await page.goto('/pricing')
   await expect(page).toHaveTitle('Pricing — Trama')
-  await expect(page.locator('h1')).toHaveText(/The whole editor\s*for €5\.95 a month\./)
+  await expect(page.locator('h1')).toHaveText(/The whole editor\s*for free\./)
   const creative = plan(page, 'Creative')
   const pro = plan(page, 'Pro')
 
   await expect(page.getByRole('radio', { name: 'Monthly' })).toBeChecked()
-  await expect(creative.locator('.pp-price:visible')).toContainText('€5.95')
-  // Monthly shows the price alone, without the yearly one.
-  await expect(creative.locator('.pp-price:visible')).not.toContainText('€49.95')
-  await expect(creative.locator('.pp-price__was:visible')).toHaveCount(0)
+  await expect(creative.locator('.pp-price:visible')).toHaveText('Free')
+  await expect(creative).not.toContainText('€')
   await expect(pro.locator('.pp-price:visible')).toContainText('€19.95')
-  await expect(creative.getByRole('link', { name: /Start with Creative/ }))
-    .toHaveAttribute('href', '/login?mode=register&plan=creator&period=monthly')
+  // Monthly shows the price alone, without the yearly one.
+  await expect(pro.locator('.pp-price__was:visible')).toHaveCount(0)
+  await expect(creative.getByRole('link', { name: /Start for free/ })).toHaveAttribute('href', '/login?mode=register')
 
   await page.getByRole('radio', { name: 'Yearly' }).check()
-  await expect(creative.locator('.pp-price:visible')).toHaveCount(1)
-  await expect(creative.locator('.pp-price:visible')).toContainText('€49.95')
+  await expect(creative.locator('.pp-price:visible')).toHaveText('Free')
+  await expect(pro.locator('.pp-price:visible')).toHaveCount(1)
+  await expect(pro.locator('.pp-price:visible')).toContainText('€199.95')
   // Yearly strikes through what twelve monthly payments would cost.
-  await expect(creative.locator('.pp-price__was:visible')).toHaveText('Twelve monthly payments: €71.40')
-  await expect(creative.locator('.pp-price__was:visible')).toHaveCSS('text-decoration-line', 'line-through')
+  await expect(pro.locator('.pp-price__was:visible')).toHaveText('Twelve monthly payments: €239.40')
+  await expect(pro.locator('.pp-price__was:visible')).toHaveCSS('text-decoration-line', 'line-through')
   // It stands on the line above the price, not beside it.
-  const was = await creative.locator('.pp-price__was:visible').boundingBox()
-  const amount = await creative.locator('.pp-price__amount:visible').boundingBox()
+  const was = await pro.locator('.pp-price__was:visible').boundingBox()
+  const amount = await pro.locator('.pp-price__amount:visible').boundingBox()
   expect(was!.y + was!.height).toBeLessThanOrEqual(amount!.y + 1)
   expect(Math.abs(was!.x - amount!.x)).toBeLessThan(2)
-  await expect(pro.locator('.pp-price:visible')).toContainText('€199.95')
-  await expect(pro.locator('.pp-price__was:visible')).toContainText('€239.40')
-  await expect(creative.getByRole('link', { name: /Start with Creative/ }))
-    .toHaveAttribute('href', '/login?mode=register&plan=creator&period=yearly')
+  await expect(creative.getByRole('link', { name: /Start for free/ })).toHaveAttribute('href', '/login?mode=register')
 })
 
 test('Creative lists the whole editor and leaves analytics to Pro', async ({ page }) => {
@@ -81,8 +78,8 @@ test('signed-in readers go to their dashboard instead of the checkout', async ({
 test('the pricing page ends on its questions, without the voyage or the map', async ({ page }) => {
   await page.goto('/pricing')
   const faq = page.locator('#faq')
-  await expect(faq.locator('details')).toHaveCount(7)
-  await expect(faq.locator('details[open]')).toContainText('Creative costs €5.95 a month')
+  await expect(faq.locator('details')).toHaveCount(6)
+  await expect(faq.locator('details[open]')).toContainText('Creative includes the whole editor and costs nothing')
   await faq.getByText('Do my readers pay or need an account?').click()
   await expect(faq).toContainText('Readers open the link and play, on either plan.')
   await expect(page.locator('story-voyage, map-closing')).toHaveCount(0)
@@ -90,9 +87,9 @@ test('the pricing page ends on its questions, without the voyage or the map', as
 })
 
 for (const [lang, path, title, price] of [
-  ['en', '/pricing', 'Pricing — Trama', '€5.95'],
-  ['es', '/es/pricing', 'Precios — Trama', '5,95 €'],
-  ['ca', '/ca/pricing', 'Preus — Trama', '5,95 €'],
+  ['en', '/pricing', 'Pricing — Trama', 'free'],
+  ['es', '/es/pricing', 'Precios — Trama', 'gratis'],
+  ['ca', '/ca/pricing', 'Preus — Trama', 'gratis'],
 ] as const) {
   test(`${lang}: the pricing page is published with its translations and offers`, async ({ page, request }) => {
     await page.addInitScript(language => localStorage.setItem('polo-lang', language), lang)
@@ -107,21 +104,19 @@ for (const [lang, path, title, price] of [
     const data = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? '{}')
     expect(data.inLanguage).toBe(lang)
     const app = data['@graph'].find((item: { '@type': string }) => item['@type'] === 'WebApplication')
-    expect(app.offers).toEqual(expect.arrayContaining([
-      expect.objectContaining({ name: 'Creative (monthly)', price: '5.95', priceCurrency: 'EUR' }),
-      expect.objectContaining({ name: 'Creative (yearly)', price: '49.95' }),
-    ]))
-    expect(app.offers).toHaveLength(2)
+    expect(app.offers).toEqual([{ '@type': 'Offer', name: 'Creative', price: '0.00', priceCurrency: 'EUR' }])
     expect(data['@graph']).toEqual(expect.arrayContaining([expect.objectContaining({ '@type': 'FAQPage', inLanguage: lang })]))
     expect(await (await request.get('/sitemap.xml')).text()).toContain(`<loc>https://trama.app${path}</loc>`)
     await expect(page.locator('polo-root')).toHaveCount(0)
   })
 }
 
-test('the landing quotes the same price as the pricing page', async ({ page }) => {
+test('the landing says Creative is free, like the pricing page', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('#faq')).toContainText('The Creative plan costs €5.95 a month or €49.95 a year')
-  await expect(page.locator('#compare')).toContainText('€5.95 a month or €49.95 a year')
+  await expect(page.locator('#faq')).toContainText('The Creative plan is free and includes the whole editor')
+  await expect(page.locator('#compare')).toContainText('Free. Pro, with analytics, coming soon')
+  await expect(page.locator('#faq')).not.toContainText('€5.95')
+  await expect(page.locator('#compare')).not.toContainText('€5.95')
 })
 
 test.describe('without JavaScript', () => {
@@ -129,10 +124,10 @@ test.describe('without JavaScript', () => {
 
   test('both plans, their prices and the menu are in the page', async ({ page }) => {
     await page.goto('/ca/pricing')
-    await expect(plan(page, 'Creative')).toContainText('5,95 €')
+    await expect(plan(page, 'Creative')).toContainText('Gratis')
     await expect(plan(page, 'Pro')).toContainText('19,95 €')
     await page.getByRole('radio', { name: 'Anual' }).check()
-    await expect(plan(page, 'Creative').locator('.pp-price:visible')).toContainText('49,95 €')
+    await expect(plan(page, 'Pro').locator('.pp-price:visible')).toContainText('199,95 €')
     await expect(page.getByRole('navigation', { name: 'Navegació principal' }).getByRole('link', { name: 'Casos d’ús' })).toBeVisible()
   })
 })

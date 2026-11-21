@@ -54,7 +54,7 @@ export const en: AtlasCopy = {
     { label: 'Readers', value: 'Play from a link, with no account' },
     { label: 'Text', value: 'Written by you. Trama does not generate it' },
     { label: 'Interface languages', value: 'English, Spanish and Catalan' },
-    { label: 'Price', value: 'Creative plan: €5.95 a month or €49.95 a year. Pro adds analytics' },
+    { label: 'Price', value: 'Creative plan: free. Pro, with analytics, coming soon' },
     { label: 'Engine', value: '@trama-app/engine: free, open source, MIT, no dependencies' },
   ],
   chapters: {
@@ -279,7 +279,7 @@ export const en: AtlasCopy = {
     },
     price: {
       label: 'Price',
-      trama: '€5.95 a month or €49.95 a year',
+      trama: 'Free. Pro, with analytics, coming soon',
       twine: 'Free',
       ink: 'Free',
       choicescript: 'Free for non-commercial use',
@@ -300,7 +300,7 @@ export const en: AtlasCopy = {
     { question: 'Do I need to know how to code?', answer: 'No. You write passages in a text editor, connect scenes on the board and set up events and requirements with forms.' },
     { question: 'Does Trama write the story for me?', answer: 'No. Trama does not generate your text. The words, characters and choices are yours.' },
     { question: 'Do readers need an account?', answer: 'No. They open your link and start, with nothing to install.' },
-    { question: 'How much does it cost?', answer: 'The Creative plan costs €5.95 a month or €49.95 a year and includes the whole editor. Pro adds analytics for published stories. There is no free plan. Trama Engine is free and open source under the MIT licence.' },
+    { question: 'How much does it cost?', answer: 'Nothing. The Creative plan is free and includes the whole editor. Pro, coming soon, will add analytics for published stories. Trama Engine is free and open source under the MIT licence.' },
     { question: 'Is Trama an alternative to Twine?', answer: 'Yes, if you want a hosted link, statistics and logic set up with forms instead of macros. Twine is free and publishes an HTML file you host yourself, so it is the better choice if those matter most.' },
     { question: 'Can I use a story inside Unity or Unreal?', answer: 'Not directly. Trama’s engine is JavaScript and runs in browsers, Node 18+, Deno and workers. For a native Unity or Unreal pipeline, ink, Arcweave or articy:draft X fit better.' },
     { question: 'Can I host a playable story on my own website?', answer: 'Yes, with Trama Engine. Your own interface on your site loads the story from Trama by its id, so the story stays in Trama. The JSON download holds story data, not a standalone HTML game.' },

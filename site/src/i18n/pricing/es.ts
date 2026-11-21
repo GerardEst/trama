@@ -4,30 +4,31 @@ export const pricing: PricingCopy = {
   meta: {
     title: 'Precios — Trama',
     description:
-      'Trama tiene dos planes y ninguno gratuito. Creative incluye todo el editor por {monthly} al mes o {yearly} al año. Pro añade las analíticas de las historias publicadas.',
+      'Creative, todo el editor de Trama, es gratuito. Pro añadirá las analíticas de las historias publicadas y llegará pronto.',
   },
   eyebrow: 'Precios',
   titleStart: 'Todo el editor',
-  titleEnd: 'por {price} al mes.',
-  lead: 'Creative tiene todas las herramientas para escribir, probar y publicar historias interactivas. Pro añade las analíticas de las historias que publicas, para marcas que necesitan saber cómo se juegan.',
+  titleEnd: 'gratis.',
+  lead: 'Creative tiene todas las herramientas para escribir, probar y publicar historias interactivas, y no cuesta nada. Pro añadirá las analíticas de las historias que publicas, para marcas que necesitan saber cómo se juegan.',
   billing: { label: 'Periodo de facturación', monthly: 'Mensual', yearly: 'Anual' },
   perMonth: 'al mes',
   perYear: 'al año',
   wasLabel: 'Doce mensualidades:',
   nowLabel: 'pagando el año:',
+  free: 'Gratis',
   plans: {
     creative: {
       audience: 'Para quien escribe',
       lead: 'Todas las herramientas para escribir una historia con ramas, probarla y compartirla con un enlace.',
-      cta: 'Empieza con Creative',
-      ctaNote: 'Cancela cuando quieras, desde tu perfil.',
+      cta: 'Empieza gratis',
+      ctaNote: 'Sin tarjeta y sin periodo de prueba: crea una cuenta y escribe.',
       includes: 'Todo el editor, sin nada bloqueado:',
     },
     pro: {
       audience: 'Para marcas',
       lead: 'Todo lo que incluye Creative y, además, los datos: cada partida de las historias que publicas.',
       soon: 'Próximamente',
-      ctaNote: 'Mientras tanto, Creative ya incluye todo el editor.',
+      ctaNote: 'Mientras tanto, Creative ya incluye todo el editor, gratis.',
       includes: 'Todo lo que incluye Creative, y además:',
       analytics: [
         {
@@ -45,14 +46,14 @@ export const pricing: PricingCopy = {
   engine: {
     eyebrow: 'Gratis, sea cual sea el plan',
     title: 'Trama Engine es gratuito y de código abierto',
-    body: 'El motor que juega todas las historias de Trama tiene licencia MIT y no cuesta nada. Úsalo para jugar tus historias en cualquier interfaz que construyas: en tu web, en un juego o en un chat. Los planes pagan el editor, la historia que crees es tuya.',
+    body: 'El motor que juega todas las historias de Trama tiene licencia MIT y no cuesta nada. Úsalo para jugar tus historias en cualquier interfaz que construyas: en tu web, en un juego o en un chat. Sea cual sea tu plan, la historia que crees es tuya.',
     more: 'Cómo funciona',
   },
   faqTitle: 'Antes de elegir.',
   faq: [
     {
-      question: '¿Hay un plan gratuito o un periodo de prueba?',
-      answer: 'No. Trama es de pago desde el primer día: Creative cuesta {creativeMonthly} al mes e incluye todo el editor. Antes de pagar puedes jugar una historia entera y usar el editor real en la página de inicio, sin cuenta.',
+      question: '¿Creative es gratis de verdad?',
+      answer: 'Sí. Creative incluye todo el editor y no cuesta nada. No necesitas tarjeta y no hay ningún periodo de prueba que se acabe.',
     },
     {
       question: '¿Qué añade Pro?',
@@ -63,20 +64,16 @@ export const pricing: PricingCopy = {
       answer: 'No. Los lectores abren el enlace y juegan, con cualquiera de los dos planes.',
     },
     {
-      question: '¿Puedo pagar por años?',
-      answer: 'Sí. Creative cuesta {creativeYearly} al año y Pro {proYearly} al año, menos que doce mensualidades. El pago se procesa con Stripe.',
-    },
-    {
-      question: '¿Puedo cancelar la suscripción?',
-      answer: 'Sí, cuando quieras. La cancelas tú mismo, desde tu perfil.',
+      question: '¿Cuánto costará Pro?',
+      answer: 'Pro costará {proMonthly} al mes o {proYearly} al año, menos que doce mensualidades. El pago se procesará con Stripe.',
     },
     {
       question: '¿Cuándo podré contratar Pro?',
-      answer: 'Pronto. Pro todavía no está a la venta. Mientras tanto, Creative ya incluye todo el editor.',
+      answer: 'Pronto. Pro todavía no está a la venta. Mientras tanto, Creative ya incluye todo el editor, gratis.',
     },
     {
       question: '¿Trama Engine es de pago?',
-      answer: 'No. El motor es gratuito y de código abierto con licencia MIT. El plan paga el editor donde escribes las historias, no el código que las juega.',
+      answer: 'No. El motor es gratuito y de código abierto con licencia MIT.',
     },
   ],
 }

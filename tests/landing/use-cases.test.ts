@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 const cases = [
-  { id: 'writers', name: 'Creative writers', plan: 'Creative', price: '€5.95 a month' },
-  { id: 'games', name: 'Narrative games', plan: 'Creative', price: '€5.95 a month' },
+  { id: 'writers', name: 'Creative writers', plan: 'Creative', price: 'Free' },
+  { id: 'games', name: 'Narrative games', plan: 'Creative', price: 'Free' },
   { id: 'brands', name: 'Brands', plan: 'Pro', price: '€19.95 a month' },
 ]
 
@@ -101,7 +101,7 @@ test('the language selector keeps the reader on the same page', async ({ page })
   await expect(page).toHaveURL(/\/ca\/use-cases#games$/)
   await expect(page.locator('#games .e-chapter__name')).toHaveText('Jocs narratius')
   await page.locator('.footer a[href="/ca/pricing"]').click()
-  await expect(page.locator('h1')).toContainText('per 5,95 € al mes.')
+  await expect(page.locator('h1')).toHaveText(/Tot l’editor\s*gratis\./)
 })
 
 for (const [lang, path, title] of [

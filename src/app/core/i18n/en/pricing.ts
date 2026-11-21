@@ -7,6 +7,7 @@ export const pricing = {
   },
   perMonth: '{price}€/month',
   perYear: '{price}€/year',
+  free: 'Free',
   currentPlan: 'Your current plan',
   canceledPlan: 'Subscription canceled',
   cancel: 'Cancel subscription',
@@ -17,7 +18,7 @@ export const pricing = {
   successIcon: 'Included',
   legacyPro: 'You have a legacy Pro subscription. It is separate from the planned one-time Pro purchase and has not been migrated automatically.',
   creator: {
-    description: 'Write, test and share with all current editor features included. Monthly or annual subscription.',
+    description: 'Write, test and share with all current editor features included.',
     included: 'What’s included in Creator',
     everything: 'No feature gates in the editor:',
     stories: 'Create and organise branching stories',
