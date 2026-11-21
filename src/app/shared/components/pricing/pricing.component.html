@@ -12,7 +12,7 @@
 <div class="pricing" [class.pricing--compact]="compactFeatures">
   <div class="pricing__plan recommendedPlan" [class.dashed]="dashed" [class.currentPlan]="hasCreator">
     <div class="pricing__plan__header">
-      <h2 class="txt-baskerville txt-2">Creator</h2>
+      <h2 class="txt-baskerville txt-2">Creative</h2>
       <p class="txt-ralewayItalic">
         @if (creatorCheckoutOpen || paysForCreator) {
           {{ (payAnnually ? 'pricing.perYear' : 'pricing.perMonth') | t: { price: price(payAnnually ? pricing.CREATOR_YEARLY_PRICE : pricing.CREATOR_MONTHLY_PRICE) } }}

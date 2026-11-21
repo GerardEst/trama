@@ -29,7 +29,7 @@ export const settings = {
     yourPlan: 'Your plan',
     active: 'Active',
     noPlan: 'No subscription',
-    creator: 'Creator',
+    creator: 'Creative',
     legacyPro: 'Pro (legacy)',
     none: 'No plan',
   },

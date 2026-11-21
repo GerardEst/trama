@@ -21,14 +21,14 @@ describe('BillingSettingsComponent', () => {
 
   it('says first which plan the person has and when it renews, and hides the billing period they cannot use', async () => {
     await render({ plan: 'creator', subscription_status: 'active', next_payment: '2026-12-20T00:00:00Z' })
-    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creator')
+    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creative')
     expect(host().querySelector('.summary__state')?.textContent).toContain('December')
     expect(host().querySelector('polo-billing-cycle')).toBeNull()
   })
 
   it('gives free Creator to someone without a subscription, with no billing period to choose', async () => {
     await render({ plan: '', subscription_status: '' })
-    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creator')
+    expect(host().querySelector('.summary__plan')?.textContent?.trim()).toBe('Creative')
     expect(host().querySelector('.summary__state')?.textContent?.trim()).toBe('Free')
     expect(host().querySelector('polo-billing-cycle')).toBeNull()
   })

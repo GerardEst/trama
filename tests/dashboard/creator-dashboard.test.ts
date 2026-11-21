@@ -468,5 +468,5 @@ test('canceling the subscription is asked first, and afterwards Creator is offer
   await expect(page.locator('.summary__state')).toHaveText('Subscription canceled')
   expect(cancellations).toBe(1)
   await expect(page.locator('polo-billing-cycle')).toHaveCount(1)
-  await expect(page.locator('.recommendedPlan')).toContainText('Choose Creator')
+  await expect(page.locator('.recommendedPlan')).toContainText('Choose Creative')
 })

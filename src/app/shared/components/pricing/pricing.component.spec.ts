@@ -27,7 +27,7 @@ describe('PricingComponent', () => {
 
   it('offers Creator and a clearly unavailable one-time Pro reference, never Basic', () => {
     const host = fixture.nativeElement as HTMLElement
-    expect(Array.from(host.querySelectorAll('.pricing__plan h2')).map(node => node.textContent?.trim())).toEqual(['Creator', 'Pro'])
+    expect(Array.from(host.querySelectorAll('.pricing__plan h2')).map(node => node.textContent?.trim())).toEqual(['Creative', 'Pro'])
     const pro = host.querySelector('.pricing__plan--pro')!
     expect(pro.textContent).toContain('Around 200€')
     expect(pro.textContent).toContain('One-time payment')

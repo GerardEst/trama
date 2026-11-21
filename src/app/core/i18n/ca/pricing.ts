@@ -2,7 +2,7 @@ import type { Dictionary } from '../i18n.types'
 
 export const pricing: Dictionary['pricing'] = {
   billing: {
-    label: 'Període de facturació de Creator',
+    label: 'Període de facturació de Creative',
     monthly: 'Facturació mensual',
     annual: 'Facturació anual',
     save: 'Estalvia un 30%',
@@ -21,7 +21,7 @@ export const pricing: Dictionary['pricing'] = {
   legacyPro: 'Tens una subscripció Pro antiga. És independent del futur Pro de pagament únic i no s’ha migrat automàticament.',
   creator: {
     description: 'Escriu, prova i comparteix amb totes les funcions actuals de l’editor incloses.',
-    included: 'Què inclou Creator',
+    included: 'Què inclou Creative',
     everything: 'Sense bloquejos de funcions a l’editor:',
     stories: 'Crea i organitza històries amb branques',
     images: 'Afegeix imatges a les escenes',
@@ -29,7 +29,7 @@ export const pricing: Dictionary['pricing'] = {
     sharing: 'Enllaços de lectura, botons per compartir i enllaços externs',
     analytics: 'Seguiment de jugadors i analítiques de la història',
     data: 'Descarrega les dades de la història en JSON',
-    choose: 'Tria Creator',
+    choose: 'Tria Creative',
   },
   pro: {
     referencePrice: 'Uns {price} €',

@@ -2,7 +2,7 @@ import type { Dictionary } from '../i18n.types'
 
 export const pricing: Dictionary['pricing'] = {
   billing: {
-    label: 'Periodo de facturación de Creator',
+    label: 'Periodo de facturación de Creative',
     monthly: 'Facturación mensual',
     annual: 'Facturación anual',
     save: 'Ahorra un 30%',
@@ -21,7 +21,7 @@ export const pricing: Dictionary['pricing'] = {
   legacyPro: 'Tienes una suscripción Pro antigua. Es independiente del futuro Pro de pago único y no se ha migrado automáticamente.',
   creator: {
     description: 'Escribe, prueba y comparte con todas las funciones actuales del editor incluidas.',
-    included: 'Qué incluye Creator',
+    included: 'Qué incluye Creative',
     everything: 'Sin bloqueos de funciones en el editor:',
     stories: 'Crea y organiza historias ramificadas',
     images: 'Añade imágenes a las escenas',
@@ -29,7 +29,7 @@ export const pricing: Dictionary['pricing'] = {
     sharing: 'Enlaces de lectura, botones para compartir y enlaces externos',
     analytics: 'Seguimiento de jugadores y analíticas de la historia',
     data: 'Descarga los datos de la historia en JSON',
-    choose: 'Elige Creator',
+    choose: 'Elige Creative',
   },
   pro: {
     referencePrice: 'Unos {price} €',

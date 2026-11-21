@@ -31,7 +31,7 @@ export const settings: Dictionary['settings'] = {
     yourPlan: 'Tu plan',
     active: 'Activo',
     noPlan: 'Sin suscripción',
-    creator: 'Creator',
+    creator: 'Creative',
     legacyPro: 'Pro (antiguo)',
     none: 'Ningún plan',
   },

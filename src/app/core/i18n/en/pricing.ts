@@ -1,6 +1,6 @@
 export const pricing = {
   billing: {
-    label: 'Creator billing period',
+    label: 'Creative billing period',
     monthly: 'Monthly billing',
     annual: 'Annual billing',
     save: 'Save 30%',
@@ -19,7 +19,7 @@ export const pricing = {
   legacyPro: 'You have a legacy Pro subscription. It is separate from the planned one-time Pro purchase and has not been migrated automatically.',
   creator: {
     description: 'Write, test and share with all current editor features included.',
-    included: 'What’s included in Creator',
+    included: 'What’s included in Creative',
     everything: 'No feature gates in the editor:',
     stories: 'Create and organise branching stories',
     images: 'Add images to your scenes',
@@ -27,7 +27,7 @@ export const pricing = {
     sharing: 'Reading links, share buttons and external links',
     analytics: 'Player tracking and story analytics',
     data: 'Download your story data as JSON',
-    choose: 'Choose Creator',
+    choose: 'Choose Creative',
   },
   pro: {
     referencePrice: 'Around {price}€',

@@ -31,7 +31,7 @@ export const settings: Dictionary['settings'] = {
     yourPlan: 'El teu pla',
     active: 'Actiu',
     noPlan: 'Sense subscripció',
-    creator: 'Creator',
+    creator: 'Creative',
     legacyPro: 'Pro (antic)',
     none: 'Cap pla',
   },
