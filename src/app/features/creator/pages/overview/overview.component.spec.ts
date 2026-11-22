@@ -27,7 +27,7 @@ describe('OverviewComponent', () => {
     else localStorage.setItem('polo-id', previousStoryId)
   })
 
-  async function render(overview: StoryOverview[] | null) {
+  async function render(overview: StoryOverview[] | null, playDates: string[] = []) {
     await TestBed.configureTestingModule({
       imports: [OverviewComponent],
       providers: [provideRouter([])],
@@ -35,6 +35,7 @@ describe('OverviewComponent', () => {
     database = TestBed.inject(DatabaseService)
     database.user.set({ id: 'author-1', profile: { user_name: 'Author' } } as unknown as appUser)
     spyOn(database, 'getStoriesOverview').and.resolveTo(overview)
+    spyOn(database, 'getRecentPlayDates').and.resolveTo(playDates)
     fixture = TestBed.createComponent(OverviewComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
@@ -55,16 +56,34 @@ describe('OverviewComponent', () => {
     expect(before - since.getTime()).toBeLessThanOrEqual(windowMs + 1000)
   })
 
-  it('adds up the activity of every story and shows one card per story', async () => {
+  it('adds up the activity of every story and shows one card per story after the new one', async () => {
     await render(stories)
     expect(component.totals()).toEqual({ stories: 2, tracked: 1, plays: 12, recentPlays: 3 })
-    // The recent plays stand alone, so their window is not read as the whole list's.
-    expect(host().querySelector('.activity__number')?.textContent?.trim()).toBe('3')
-    expect(host().querySelector('.activity__caption')?.textContent).toContain('last 30 days')
-    const activity = Array.from(host().querySelectorAll('.activity dd')).map((dd) => dd.textContent?.trim())
+    expect(host().querySelector('.activity__number')?.textContent?.trim()).toMatch(/^3\s*plays$/)
+    const activity = Array.from(host().querySelectorAll('.activity__legend dd')).map((dd) => dd.textContent?.trim())
     expect(activity).toEqual(['12', '2', '1 of 2'])
+    expect(host().querySelector('.shelf > li .tile--new')).not.toBeNull()
     expect(cards().length).toBe(2)
     expect(cards()[0].querySelector('.card__address')?.textContent).toContain('/the-island')
+    // A story keeps its colour, and its first letter stands for it.
+    expect(cards()[0].className).toMatch(/tint--\w+/)
+    expect(cards()[0].querySelector('.card__preview')?.textContent?.trim()).toBe('T')
+    // The first visit's first step is only for an author without stories.
+    expect(host().querySelector('polo-first-steps')).toBeNull()
+    expect(host().querySelector('.tile--empty')).toBeNull()
+  })
+
+  it('draws the recent plays day by day, and asks for them only when there are any', async () => {
+    const today = new Date().toISOString()
+    await render(stories, [today, today, new Date(Date.now() - 86_400_000).toISOString()])
+    expect(database.getRecentPlayDates).toHaveBeenCalledOnceWith(['story-1', 'story-2'], jasmine.any(Date))
+    const days = Array.from(host().querySelectorAll<HTMLElement>('.activity__days i'))
+    expect(days.length).toBe(RECENT_DAYS)
+    expect(days.map((day) => day.style.getPropertyValue('--fill')).slice(-3)).toEqual(['0%', '50%', '100%'])
+
+    TestBed.resetTestingModule()
+    await render([stories[1]])
+    expect(database.getRecentPlayDates).not.toHaveBeenCalled()
   })
 
   it('warns only on the stories that do not record plays', async () => {
@@ -84,19 +103,6 @@ describe('OverviewComponent', () => {
     // Sharing opens its dialog in place instead of leading to another page.
     expect(Array.from(menu.querySelectorAll('button')).map((item) => item.textContent?.trim())).toEqual(['Share', 'Delete'])
     expect(cards()[0].querySelector('.card__foot')?.textContent).toContain('Edited 2 hours ago')
-  })
-
-  it('continues with the story last opened here, or else the last one edited', async () => {
-    localStorage.setItem('polo-id', 'story-2')
-    await render(stories)
-    expect(host().querySelector('.continue__name')?.textContent).toContain('Draft')
-    expect(host().querySelector('.continue a')?.getAttribute('href')).toBe('/story/story-2/board')
-
-    localStorage.setItem('polo-id', 'a-deleted-story')
-    component.stories.set([...stories])
-    fixture.detectChanges()
-    expect(host().querySelector('.continue__name')?.textContent).toContain('The island')
-    expect(host().querySelector('.continue__meta')?.textContent).toContain('Edited 2 hours ago')
   })
 
   it('deletes a story only after the author confirms it by name', async () => {
@@ -148,7 +154,7 @@ describe('OverviewComponent', () => {
     await render(stories)
     const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
     const create = spyOn(database, 'createEmptyStory').and.resolveTo({ id: 'story-9', name: 'My new tree' })
-    const newStory = () => host().querySelector<HTMLButtonElement>('.pageHeader .button--primary')!
+    const newStory = () => host().querySelector<HTMLButtonElement>('.tile--new')!
     newStory().click()
     await fixture.whenStable()
     expect(create).toHaveBeenCalledOnceWith('My new tree')
@@ -162,24 +168,40 @@ describe('OverviewComponent', () => {
     expect(host().querySelector('[role="alert"]')?.textContent).toContain('could not be created')
   })
 
-  it('welcomes an author without stories with the example and a blank story, not a page of zeros', async () => {
+  it('welcomes an author without stories with a blank story first, the example, an empty shelf and what to learn', async () => {
     await render([])
     expect(cards().length).toBe(0)
-    expect(host().querySelector('.activity')).toBeNull()
     expect(host().querySelector('.teaser')).toBeNull()
-    // One way to a blank story, in the welcome, so it is not mistaken for the example.
-    expect(host().querySelector('.pageHeader .button--primary')).toBeNull()
-    const choices = Array.from(host().querySelectorAll('.welcome__choice'))
-    expect(choices.map((choice) => choice.querySelector('h3')?.textContent?.trim())).toEqual(['Explore the example', 'Start from a blank board'])
-    expect(choices[0].querySelector('a')?.getAttribute('href')).toBe('/board')
-    expect(host().querySelector('.welcome__guide')?.getAttribute('href')).toContain('/docs/features')
+    // The header keeps only its title, as on every visit: the blank story is on the shelf.
+    expect(host().querySelector('.pageHeader button')).toBeNull()
+    expect(host().querySelector('.steps__title')?.textContent?.trim()).toBe('Write your first story')
+    expect(host().querySelector('polo-first-steps a')?.getAttribute('href')).toBe('/board')
+    expect(host().querySelector('.tile--empty')?.textContent).toContain('You have no stories yet')
+
+    // The activity is there from the start, at zero, one mark for each day of the window.
+    expect(host().querySelector('.activity__number')?.textContent).toContain('0')
+    expect(host().querySelectorAll('.activity__days i').length).toBe(RECENT_DAYS)
+    expect(Array.from(host().querySelectorAll('.activity__legend dd')).map((dd) => dd.textContent?.trim())).toEqual(['0', '0', '0 of 0'])
+    expect(database.getRecentPlayDates).not.toHaveBeenCalled()
+
+    const lessons = Array.from(host().querySelectorAll<HTMLAnchorElement>('.lesson'))
+    expect(lessons.map((lesson) => lesson.querySelector('.lesson__title')?.textContent?.trim())).toEqual([
+      'Content nodes', 'Events', 'Conditional paths', 'Variables in your text', 'Images in nodes', 'Share and end nodes',
+    ])
+    // Each lesson opens its own chapter of the guide on the site.
+    expect(lessons.map((lesson) => lesson.getAttribute('href')?.split('/docs/features')[1])).toEqual([
+      '#content-nodes', '#events', '#conditional-paths', '#variables', '#images', '#share-node',
+    ])
+    expect(host().querySelector('.learn__guide')?.getAttribute('href')).toMatch(/\/docs\/features$/)
 
     const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true)
     const create = spyOn(database, 'createEmptyStory').and.resolveTo({ id: 'story-9', name: 'My new tree' })
-    choices[1].querySelector<HTMLButtonElement>('button')!.click()
-    await fixture.whenStable()
-    expect(create).toHaveBeenCalledTimes(1)
-    expect(navigate).toHaveBeenCalledOnceWith(['/story', 'story-9', 'board'])
+    for (const button of [host().querySelector<HTMLButtonElement>('.stepsButton--ink')!, host().querySelector<HTMLButtonElement>('.tile--new')!]) {
+      button.click()
+      await fixture.whenStable()
+    }
+    expect(create).toHaveBeenCalledTimes(2)
+    expect(navigate).toHaveBeenCalledWith(['/story', 'story-9', 'board'])
   })
 
   it('welcomes the author again after deleting the last story', async () => {
@@ -189,7 +211,7 @@ describe('OverviewComponent', () => {
     cards()[0].querySelector<HTMLButtonElement>('.storyMenu__item--danger')!.click()
     await fixture.whenStable()
     fixture.detectChanges()
-    expect(host().querySelector('.welcome')).not.toBeNull()
+    expect(host().querySelector('polo-first-steps')).not.toBeNull()
   })
 
   it('says it could not load the stories instead of showing none', async () => {

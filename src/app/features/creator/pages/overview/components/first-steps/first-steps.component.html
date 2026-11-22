@@ -1,0 +1,14 @@
+<div class="steps__text">
+  <p class="steps__eyebrow"><span aria-hidden="true">✦</span> {{ 'dashboard.overview.welcomeEyebrow' | t }}</p>
+  <h2 class="steps__title" id="first-steps-title">{{ 'dashboard.overview.welcomeTitle' | t }}</h2>
+  <p class="steps__lead">{{ 'dashboard.overview.welcomeText' | t }}</p>
+  <div class="steps__actions">
+    <button type="button" class="stepsButton stepsButton--ink" [disabled]="creating" (click)="create.emit()">
+      <span class="stepsButton__plus" aria-hidden="true"></span>
+      {{ 'dashboard.overview.newStory' | t }}
+    </button>
+    <!-- The editor opens the example for an author without stories, stored once it is changed. -->
+    <a class="stepsButton" routerLink="/board">{{ 'dashboard.overview.exampleAction' | t }}</a>
+  </div>
+</div>
+<div class="steps__art" aria-hidden="true"></div>

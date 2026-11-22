@@ -110,6 +110,8 @@ describe('Translations', () => {
     'dashboard.shortcuts.frameKeys', 'dashboard.shortcuts.panelKeys',
     // The plan's own name, and a plain no in a statistics table.
     'settings.billing.creator', 'dashboard.statistics.no',
+    // A minute is abbreviated alike in the three languages.
+    'dashboard.overview.learnTime',
   ])
 
   for (const [lang, dictionary] of Object.entries({ es, ca })) {

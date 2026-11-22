@@ -1,0 +1,18 @@
+<div class="learn__head">
+  <h2 id="learn-title">{{ 'dashboard.overview.learnTitle' | t }}</h2>
+  <a class="learn__guide" [href]="guideUrl()">{{ 'dashboard.overview.guide' | t }} →</a>
+</div>
+<ul class="learn__list">
+  @for (lesson of lessons(); track lesson.id) {
+    <li>
+      <a [class]="'lesson lesson--' + lesson.color" [href]="lesson.href">
+        <span class="lesson__icon"><img width="15" [src]="'/assets/icons/' + lesson.icon + '.svg'" alt="" /></span>
+        <span class="lesson__text">
+          <span class="lesson__title">{{ lesson.title | t }}</span>
+          <span class="lesson__time">{{ 'dashboard.overview.learnTime' | t }}</span>
+        </span>
+        <img class="lesson__chevron" width="12" src="/assets/icons/chevron-right.svg" alt="" />
+      </a>
+    </li>
+  }
+</ul>

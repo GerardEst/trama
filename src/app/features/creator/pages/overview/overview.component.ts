@@ -12,15 +12,21 @@ import { ModalService } from 'src/app/core/services/modal.service'
 import { StoryOpenerService } from 'src/app/shared/services/story-opener.service'
 import { ActiveStoryService } from 'src/app/shared/services/active-story.service'
 import { ShareStoryComponent } from 'src/app/features/dashboard/modals/share-story/share-story.component'
-import { SITE_PAGES, siteUrl } from 'src/app/core/site-links'
+import { FirstStepsComponent } from './components/first-steps/first-steps.component'
+import { ActivityPanelComponent } from './components/activity-panel/activity-panel.component'
+import { LearnPanelComponent } from './components/learn-panel/learn-panel.component'
+import { RECENT_DAYS, playsPerDay } from './recent-days'
 
-export const RECENT_DAYS = 30
+export { RECENT_DAYS }
 
-/** The dashboard's home: where the author left off, and every story with how much it is played. */
+/** The frame colours a story's card is tinted with, picked from its id so it keeps its colour. */
+const TINTS = ['blue', 'lavender', 'mint', 'yellow', 'peach', 'rose'] as const
+
+/** The dashboard's home: every story with how much it is played, the activity of all of them and the guide at hand. */
 @Component({
   selector: 'polo-creator-overview',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, FirstStepsComponent, ActivityPanelComponent, LearnPanelComponent],
   templateUrl: './overview.component.html',
   styleUrls: ['../../../../shared/layout/page.css', './overview.component.css'],
 })
@@ -42,6 +48,8 @@ export class OverviewComponent implements OnInit {
   readonly tether = tetherPopover
   readonly query = signal('')
   readonly sort = signal<'edited' | 'plays' | 'name'>('edited')
+  /** Plays on each day of the recent window, today last, once they are known. */
+  readonly playDays = signal<number[] | null>(null)
 
   /** The stories the author is looking for, in the order they asked for. */
   readonly shownStories = computed(() => {
@@ -55,15 +63,6 @@ export class OverviewComponent implements OnInit {
         : (b.editedAt ?? '').localeCompare(a.editedAt ?? ''))
   })
 
-  /** The guide to the editor, on the site, for an author who has not written anything yet. */
-  readonly guideUrl = computed(() => siteUrl(this.i18n.lang(), SITE_PAGES.features))
-
-  /** The story last opened in the editor on this device, or else the last one edited anywhere. */
-  readonly continueStory = computed(() => {
-    const stories = this.stories() ?? []
-    const lastOpened = readLastOpened()
-    return stories.find((story) => story.id === lastOpened) ?? stories[0] ?? null
-  })
   readonly totals = computed(() => {
     const stories = this.stories() ?? []
     return {
@@ -74,12 +73,28 @@ export class OverviewComponent implements OnInit {
     }
   })
 
+  private readonly since = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000)
+
   async ngOnInit() {
     const userId = this.db.user()?.id
-    const since = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000)
-    const stories = userId ? await this.db.getStoriesOverview(userId, since) : null
-    if (stories) this.stories.set(stories)
-    else this.failed.set(true)
+    const stories = userId ? await this.db.getStoriesOverview(userId, this.since) : null
+    if (!stories) {
+      this.failed.set(true)
+      return
+    }
+    this.stories.set(stories)
+    await this.loadPlayDays()
+  }
+
+  /** The strip of days needs each play's date, asked for only when there are recent plays to draw. */
+  private async loadPlayDays() {
+    const stories = this.stories() ?? []
+    if (!stories.some((story) => story.recentPlays > 0)) {
+      this.playDays.set(null)
+      return
+    }
+    const dates = await this.db.getRecentPlayDates(stories.map((story) => story.id), this.since)
+    this.playDays.set(dates ? playsPerDay(dates) : null)
   }
 
   private readonly host = new URL(environment.baseRoute).host
@@ -87,6 +102,12 @@ export class OverviewComponent implements OnInit {
   /** Where readers find the story when it has its own address. */
   address(story: StoryOverview) {
     return story.slug ? `${this.host}/${story.slug}` : null
+  }
+
+  tint(story: StoryOverview) {
+    let hash = 0
+    for (const char of story.id) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+    return TINTS[hash % TINTS.length]
   }
 
   initial(story: StoryOverview) {
@@ -128,6 +149,7 @@ export class OverviewComponent implements OnInit {
       return
     }
     this.stories.update((stories) => stories?.filter((item) => item.id !== story.id) ?? null)
+    void this.loadPlayDays()
     if (readLastOpened() === story.id) forgetLastOpened()
     // As from its own page: a deleted story must not stay open, or opening it again would show it.
     if (this.activeStory.storyId() === story.id) this.activeStory.reset()

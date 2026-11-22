@@ -1,201 +1,139 @@
 <div class="page">
-  <header class="pageHeader">
-    <div>
-      <h1>{{ 'dashboard.overview.title' | t }}</h1>
-      <p>{{ 'dashboard.overview.subtitle' | t }}</p>
-    </div>
-    <!-- Without stories, the welcome below offers the blank story next to the example instead. -->
-    @if (stories()?.length !== 0) {
-      <div class="pageHeader__actions">
-        <button type="button" class="button button--primary" [disabled]="creating()" (click)="createStory()">
-          <img width="14" src="/assets/icons/plus.svg" alt="" />
-          {{ 'dashboard.overview.newStory' | t }}
-        </button>
-      </div>
-    }
+  <header class="pageHeader pageHeader--bare">
+    <h1>{{ 'dashboard.overview.title' | t }}</h1>
   </header>
   @if (createFailed()) {
     <p class="message" role="alert">{{ 'dashboard.overview.createError' | t }}</p>
   }
 
   @if (stories(); as stories) {
-    @if (!stories.length) {
-      <!-- A new author: a first step to take, not a page of zeros and features still to come. -->
-      <section class="welcome" aria-labelledby="welcome-title">
-        <h2 class="welcome__title" id="welcome-title">{{ 'dashboard.overview.welcomeTitle' | t }}</h2>
-        <p class="message welcome__text">{{ 'dashboard.overview.welcomeText' | t }}</p>
-        <ul class="welcome__choices">
-          <li class="panel welcome__choice welcome__choice--example">
-            <h3>{{ 'dashboard.overview.exampleTitle' | t }}</h3>
-            <p class="message">{{ 'dashboard.overview.exampleText' | t }}</p>
-            <!-- The editor opens the example for an author without stories, stored once it is changed. -->
-            <a class="button button--primary" routerLink="/board">
-              {{ 'dashboard.overview.exampleAction' | t }}
-              <img width="14" src="/assets/icons/arrow-right.svg" alt="" />
-            </a>
-          </li>
-          <li class="panel welcome__choice">
-            <h3>{{ 'dashboard.overview.blankTitle' | t }}</h3>
-            <p class="message">{{ 'dashboard.overview.blankText' | t }}</p>
-            <button type="button" class="button" [disabled]="creating()" (click)="createStory()">
-              <img width="14" src="/assets/icons/plus.svg" alt="" />
-              {{ 'dashboard.overview.blankAction' | t }}
-            </button>
-          </li>
-        </ul>
-        <a class="welcome__guide" [href]="guideUrl()">{{ 'dashboard.overview.guide' | t }}</a>
-      </section>
-    } @else {
-      <div class="layout">
-        <div class="side">
-          <section aria-labelledby="activity-title">
-            <h2 class="sectionTitle" id="activity-title">{{ 'dashboard.overview.activity' | t }}</h2>
-            <div class="panel activity">
-              <!-- The recent plays first, alone, so the window they cover is not read as the whole list's. -->
-              <p class="activity__headline">
-                <span class="activity__number">{{ totals().recentPlays }}</span>
-                <span class="activity__caption">{{ 'dashboard.overview.recentHeadline' | t: { days: recentDays } }}</span>
-              </p>
-              <dl class="activity__list">
-                <div class="activity__row">
-                  <dt>{{ 'dashboard.overview.totalPlays' | t }}</dt>
-                  <dd>{{ totals().plays }}</dd>
-                </div>
-                <div class="activity__row">
-                  <dt>{{ 'dashboard.overview.stories' | t }}</dt>
-                  <dd>{{ totals().stories }}</dd>
-                </div>
-                <div class="activity__row">
-                  <dt>{{ 'dashboard.overview.tracked' | t }}</dt>
-                  <dd>{{ 'dashboard.overview.trackedValue' | t: { tracked: totals().tracked, total: totals().stories } }}</dd>
-                </div>
-              </dl>
-            </div>
-          </section>
+    <div class="layout">
+      <div class="main">
+        @if (!stories.length) {
+          <!-- A new author: a first step to take before the shelf the stories will fill. -->
+          <polo-first-steps [creating]="creating()" (create)="createStory()" />
+        }
 
-          <section aria-labelledby="access-teaser-title">
-            <h2 class="sectionTitle" id="access-teaser-title">{{ 'dashboard.home.access' | t }}</h2>
-            <div class="panel teaser">
-              <img width="22" src="/assets/icons/users.svg" alt="" />
-              <p>{{ 'dashboard.overview.accessTeaser' | t }}</p>
-              <a class="button" routerLink="/dashboard/access">{{ 'dashboard.overview.accessTeaserLink' | t }}</a>
-            </div>
-          </section>
-        </div>
+        <section aria-labelledby="stories-title">
+          <div class="storiesHead">
+            <h2 class="storiesHead__title" id="stories-title">{{ 'dashboard.overview.yourStories' | t }}</h2>
+            <span class="storiesHead__count">{{ stories.length }}</span>
+            @if (stories.length > 1) {
+              <div class="storiesTools">
+                <input class="search" type="search" [value]="query()" (input)="query.set($any($event.target).value)"
+                  [placeholder]="'dashboard.overview.search' | t" [attr.aria-label]="'dashboard.overview.search' | t" />
+                <select class="sort" [value]="sort()" (change)="sort.set($any($event.target).value)" [attr.aria-label]="'dashboard.overview.sort' | t">
+                  <option value="edited">{{ 'dashboard.overview.sortEdited' | t }}</option>
+                  <option value="plays">{{ 'dashboard.overview.sortPlays' | t }}</option>
+                  <option value="name">{{ 'dashboard.overview.sortName' | t }}</option>
+                </select>
+              </div>
+            }
+          </div>
+          @if (deleteFailed(); as name) {
+            <p class="message deleteError" role="alert">{{ 'dashboard.overview.deleteError' | t: { name } }}</p>
+          }
+          @if (stories.length && !shownStories().length) {
+            <p class="message noMatches" role="status">{{ 'dashboard.overview.noMatches' | t: { query: query() } }}</p>
+          }
+          <ul class="shelf">
+            <!-- The new story first, on the board's own dots: a board still empty. -->
+            <li>
+              <button type="button" class="tile tile--new" [disabled]="creating()" (click)="createStory()">
+                <span class="tile__preview"><span class="tile__plus" aria-hidden="true"></span></span>
+                <span class="tile__body">
+                  <span class="tile__name">{{ 'dashboard.overview.newStory' | t }}</span>
+                  <span class="tile__meta">{{ 'dashboard.overview.blankText' | t }}</span>
+                </span>
+              </button>
+            </li>
 
-        <div class="main">
-          @if (continueStory(); as last) {
-            <section aria-labelledby="continue-title">
-              <h2 class="sectionTitle" id="continue-title">{{ 'dashboard.overview.continueTitle' | t }}</h2>
-              <div class="panel continue">
-                <span class="card__monogram continue__monogram" aria-hidden="true">{{ initial(last) }}</span>
-                <div class="continue__text">
-                  <p class="continue__name" id="continue-name">{{ last.name }}</p>
-                  @if (edited(last); as when) {
-                    <p class="continue__meta">{{ 'dashboard.overview.edited' | t: { when } }}</p>
+            @for (story of shownStories(); track story.id) {
+              <li class="tile card" [class]="'tint--' + tint(story)">
+                <span class="tile__preview card__preview" aria-hidden="true">{{ initial(story) }}</span>
+                <div class="card__head">
+                  <div class="card__title">
+                    <h3><a class="card__link" [routerLink]="['/story', story.id, 'board']">{{ story.name }}</a></h3>
+                    <p class="card__address">{{ address(story) ?? ('dashboard.overview.noSlug' | t) }}</p>
+                  </div>
+                  <button #more type="button" class="card__more" [attr.popovertarget]="'story-menu-' + story.id"
+                    [attr.aria-label]="'dashboard.overview.more' | t: { name: story.name }">
+                    <img width="16" src="/assets/icons/more-options.svg" alt="" />
+                  </button>
+                  <div #menu class="storyMenu" popover="auto" [id]="'story-menu-' + story.id"
+                    (beforetoggle)="tether($event, more, menu)">
+                    <a class="storyMenu__item" [routerLink]="['/story', story.id, 'board']" (click)="menu.hidePopover()">
+                      <img width="14" src="/assets/icons/edit.svg" alt="" />
+                      {{ 'dashboard.story.openEditor' | t }}
+                    </a>
+                    <a class="storyMenu__item" [routerLink]="['/story', story.id]" (click)="menu.hidePopover()">
+                      <img width="14" src="/assets/icons/configuration.svg" alt="" />
+                      {{ 'dashboard.overview.options' | t }}
+                    </a>
+                    <!-- The same sharing dialog as in the editor, over the stories. -->
+                    <button type="button" class="storyMenu__item" (click)="share(story, menu)">
+                      <img width="14" src="/assets/icons/share.svg" alt="" />
+                      {{ 'dashboard.overview.share' | t }}
+                    </button>
+                    <a class="storyMenu__item" [routerLink]="['/story', story.id, 'statistics']" (click)="menu.hidePopover()">
+                      <img width="14" src="/assets/icons/stat.svg" alt="" />
+                      {{ 'dashboard.overview.statistics' | t }}
+                    </a>
+                    <hr />
+                    <button type="button" class="storyMenu__item storyMenu__item--danger" (click)="deleteStory(story, menu)">
+                      <img width="14" src="/assets/icons/trash.svg" alt="" />
+                      {{ 'dashboard.overview.delete' | t }}
+                    </button>
+                  </div>
+                </div>
+                <dl class="card__stats">
+                  <div>
+                    <dt>{{ 'dashboard.overview.plays' | t }}</dt>
+                    <dd>{{ story.plays }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'dashboard.overview.recentColumn' | t: { days: recentDays } }}</dt>
+                    <dd>{{ story.recentPlays }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'dashboard.overview.lastPlayed' | t }}</dt>
+                    <dd class="card__date">{{ lastPlayed(story) ?? ('dashboard.overview.never' | t) }}</dd>
+                  </div>
+                </dl>
+                <div class="card__foot">
+                  @if (edited(story); as when) {
+                    <span>{{ 'dashboard.overview.edited' | t: { when } }}</span>
+                  }
+                  @if (!story.tracking) {
+                    <!-- No plays are recorded until tracking is on: the label leads to where it is turned on. -->
+                    <a class="tag tag--link" [routerLink]="['/story', story.id]" [title]="'dashboard.overview.trackingOffHint' | t">
+                      {{ 'dashboard.overview.trackingOff' | t }}
+                    </a>
                   }
                 </div>
-                <a class="button button--primary" [routerLink]="['/story', last.id, 'board']"
-                  aria-describedby="continue-name">
-                  {{ 'dashboard.overview.continueAction' | t }}
-                  <img width="14" src="/assets/icons/arrow-right.svg" alt="" />
-                </a>
-              </div>
-            </section>
-          }
+              </li>
+            }
 
-          <section aria-labelledby="stories-title">
-            <div class="storiesHead">
-              <h2 class="sectionTitle" id="stories-title">{{ 'dashboard.overview.yourStories' | t }}</h2>
-              @if (stories.length > 1) {
-                <div class="storiesTools">
-                  <input class="search" type="search" [value]="query()" (input)="query.set($any($event.target).value)"
-                    [placeholder]="'dashboard.overview.search' | t" [attr.aria-label]="'dashboard.overview.search' | t" />
-                  <select class="sort" [value]="sort()" (change)="sort.set($any($event.target).value)" [attr.aria-label]="'dashboard.overview.sort' | t">
-                    <option value="edited">{{ 'dashboard.overview.sortEdited' | t }}</option>
-                    <option value="plays">{{ 'dashboard.overview.sortPlays' | t }}</option>
-                    <option value="name">{{ 'dashboard.overview.sortName' | t }}</option>
-                  </select>
-                </div>
-              }
-            </div>
-            @if (deleteFailed(); as name) {
-              <p class="message deleteError" role="alert">{{ 'dashboard.overview.deleteError' | t: { name } }}</p>
+            @if (!stories.length) {
+              <!-- Where the stories will stand: the first place says so, the next one only hints at it. -->
+              <li class="tile tile--empty">
+                <p class="tile__preview">{{ 'dashboard.overview.emptyShelf' | t }}</p>
+                <span class="tile__lines" aria-hidden="true"><i></i><i></i></span>
+              </li>
+              <li class="tile tile--empty tile--faint" aria-hidden="true">
+                <span class="tile__preview"></span>
+                <span class="tile__lines"><i></i><i></i></span>
+              </li>
             }
-            @if (stories.length && !shownStories().length) {
-              <p class="message" role="status">{{ 'dashboard.overview.noMatches' | t: { query: query() } }}</p>
-            }
-            <ul class="cards">
-              @for (story of shownStories(); track story.id) {
-                <li class="panel card">
-                  <div class="card__head">
-                    <span class="card__monogram" aria-hidden="true">{{ initial(story) }}</span>
-                    <div class="card__title">
-                      <h3><a class="card__link" [routerLink]="['/story', story.id, 'board']">{{ story.name }}</a></h3>
-                      <p class="card__address">{{ address(story) ?? ('dashboard.overview.noSlug' | t) }}</p>
-                    </div>
-                    <button #more type="button" class="card__more" [attr.popovertarget]="'story-menu-' + story.id"
-                      [attr.aria-label]="'dashboard.overview.more' | t: { name: story.name }">
-                      <img width="16" src="/assets/icons/more-options.svg" alt="" />
-                    </button>
-                    <div #menu class="storyMenu" popover="auto" [id]="'story-menu-' + story.id"
-                      (beforetoggle)="tether($event, more, menu)">
-                      <a class="storyMenu__item" [routerLink]="['/story', story.id, 'board']" (click)="menu.hidePopover()">
-                        <img width="14" src="/assets/icons/edit.svg" alt="" />
-                        {{ 'dashboard.story.openEditor' | t }}
-                      </a>
-                      <a class="storyMenu__item" [routerLink]="['/story', story.id]" (click)="menu.hidePopover()">
-                        <img width="14" src="/assets/icons/configuration.svg" alt="" />
-                        {{ 'dashboard.overview.options' | t }}
-                      </a>
-                      <!-- The same sharing dialog as in the editor, over the stories. -->
-                      <button type="button" class="storyMenu__item" (click)="share(story, menu)">
-                        <img width="14" src="/assets/icons/share.svg" alt="" />
-                        {{ 'dashboard.overview.share' | t }}
-                      </button>
-                      <a class="storyMenu__item" [routerLink]="['/story', story.id, 'statistics']" (click)="menu.hidePopover()">
-                        <img width="14" src="/assets/icons/stat.svg" alt="" />
-                        {{ 'dashboard.overview.statistics' | t }}
-                      </a>
-                      <hr />
-                      <button type="button" class="storyMenu__item storyMenu__item--danger" (click)="deleteStory(story, menu)">
-                        <img width="14" src="/assets/icons/trash.svg" alt="" />
-                        {{ 'dashboard.overview.delete' | t }}
-                      </button>
-                    </div>
-                  </div>
-                  <dl class="card__stats">
-                    <div>
-                      <dt>{{ 'dashboard.overview.plays' | t }}</dt>
-                      <dd>{{ story.plays }}</dd>
-                    </div>
-                    <div>
-                      <dt>{{ 'dashboard.overview.recentColumn' | t: { days: recentDays } }}</dt>
-                      <dd>{{ story.recentPlays }}</dd>
-                    </div>
-                    <div>
-                      <dt>{{ 'dashboard.overview.lastPlayed' | t }}</dt>
-                      <dd class="card__date">{{ lastPlayed(story) ?? ('dashboard.overview.never' | t) }}</dd>
-                    </div>
-                  </dl>
-                  <div class="card__foot">
-                    @if (edited(story); as when) {
-                      <span>{{ 'dashboard.overview.edited' | t: { when } }}</span>
-                    }
-                    @if (!story.tracking) {
-                      <!-- No plays are recorded until tracking is on: the label leads to where it is turned on. -->
-                      <a class="tag tag--link" [routerLink]="['/story', story.id]" [title]="'dashboard.overview.trackingOffHint' | t">
-                        {{ 'dashboard.overview.trackingOff' | t }}
-                      </a>
-                    }
-                  </div>
-                </li>
-              }
-            </ul>
-          </section>
-        </div>
+          </ul>
+        </section>
       </div>
-    }
+
+      <div class="side">
+        <polo-activity-panel [totals]="totals()" [days]="playDays()" />
+        <polo-learn-panel />
+      </div>
+    </div>
   } @else if (failed()) {
     <p class="message" role="alert">{{ 'dashboard.overview.error' | t }}</p>
   } @else {

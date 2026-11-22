@@ -1,0 +1,91 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+  min-height: 300px;
+  padding: 22px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-sheet);
+  background-color: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-sheet);
+}
+.activity__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+}
+.activity__head h2 {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 15px;
+  font-weight: 750;
+}
+.activity__head span {
+  color: var(--polo-color-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+.activity__number {
+  margin: 6px 0 0;
+  color: var(--polo-color-text-strong);
+  font: 750 44px/1 var(--polo-font-ui);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.activity__number small {
+  margin-left: 6px;
+  color: var(--polo-color-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+/* A strip of days: each one a muted track, filled from the foot by its share of the busiest day. */
+.activity__days {
+  display: flex;
+  gap: 3px;
+  height: 26px;
+}
+.activity__days i {
+  flex: 1;
+  border-radius: 2px;
+  background: linear-gradient(to top, var(--polo-color-action) var(--fill, 0%), var(--polo-color-surface-muted) var(--fill, 0%));
+}
+.activity__legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--polo-space-2) var(--polo-space-3);
+  margin: auto 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--polo-color-border);
+  font-size: 12.5px;
+}
+.activity__legend dd {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-weight: 750;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.activity__key {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  color: var(--polo-color-text-secondary);
+}
+.activity__key::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background-color: var(--key);
+}
+.activity__key--plays {
+  --key: var(--polo-color-frame-blue);
+}
+.activity__key--stories {
+  --key: var(--polo-color-frame-mint);
+}
+.activity__key--tracked {
+  --key: var(--polo-color-frame-peach);
+}

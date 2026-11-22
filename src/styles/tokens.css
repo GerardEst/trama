@@ -91,6 +91,8 @@
   --polo-shadow-popover: 0 14px 36px color-mix(in srgb, var(--polo-color-shadow) 18%, transparent), 0 3px 0 color-mix(in srgb, var(--polo-color-shadow) 6%, transparent);
   --polo-shadow-control: 0 2px 0 color-mix(in srgb, var(--polo-color-shadow) 8%, transparent);
   --polo-shadow-dialog: 0 5px 15px color-mix(in srgb, var(--polo-color-shadow) 50%, transparent);
+  /* The dashboard's sheets: a hairline under them and a wide, faint shadow. */
+  --polo-shadow-sheet: 0 1px 0 color-mix(in srgb, var(--polo-color-shadow) 4%, transparent), 0 12px 32px color-mix(in srgb, var(--polo-color-shadow) 5%, transparent);
 
   /* Shared type, spacing and corners; story typography remains configurable. */
   --polo-font-ui: Raleway, sans-serif;
@@ -103,6 +105,7 @@
   --polo-radius-control: 10px;
   --polo-radius-panel: 12px;
   --polo-radius-card: 14px;
+  --polo-radius-sheet: 20px;
 
   /* Board connections use compact directional tabs, not round sockets. */
   --polo-board-port-size: 1.5rem;

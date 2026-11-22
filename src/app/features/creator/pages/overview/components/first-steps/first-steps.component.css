@@ -1,0 +1,108 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  min-height: 300px;
+  overflow: hidden;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-sheet);
+  background-color: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-sheet);
+}
+.steps__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--polo-space-3);
+  padding: 32px 28px 32px 34px;
+}
+.steps__eyebrow {
+  margin: 0;
+  color: var(--polo-color-action);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.steps__title {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font: 400 36px/1.08 var(--polo-font-story);
+  letter-spacing: -0.015em;
+}
+.steps__lead {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--polo-color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.steps__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.steps__art {
+  margin: 10px 10px 10px 0;
+  border-radius: 14px;
+  background: url('/assets/images/welcome/night.webp') 30% 60% / cover;
+}
+
+.stepsButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--polo-space-2);
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-panel);
+  background-color: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-control);
+  color: var(--polo-color-text-strong);
+  font: 700 13px var(--polo-font-ui);
+  text-decoration: none;
+  cursor: pointer;
+}
+.stepsButton:hover:not(:disabled) {
+  border-color: var(--polo-color-border-hover);
+}
+.stepsButton--ink {
+  border-color: transparent;
+  background-color: var(--polo-color-text-strong);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--polo-color-shadow) 22%, transparent);
+  color: var(--polo-color-canvas);
+}
+.stepsButton--ink:hover:not(:disabled) {
+  border-color: transparent;
+  background-color: var(--polo-color-action);
+}
+.stepsButton:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.stepsButton:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+/* The plus takes the button's own colour, which turns over with the theme. */
+.stepsButton__plus {
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  mask: url('/assets/icons/plus.svg') center / contain no-repeat;
+}
+
+@media (max-width: 640px) {
+  :host {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .steps__text {
+    padding: 28px 24px;
+  }
+  .steps__title {
+    font-size: 30px;
+  }
+  .steps__art {
+    display: none;
+  }
+}

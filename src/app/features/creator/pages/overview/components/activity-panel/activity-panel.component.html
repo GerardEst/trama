@@ -1,0 +1,18 @@
+<div class="activity__head">
+  <h2 id="activity-title">{{ 'dashboard.overview.activity' | t }}</h2>
+  <span>{{ 'dashboard.overview.lastDays' | t: { days: recentDays } }}</span>
+</div>
+<p class="activity__number">{{ totals.recentPlays }}<small>{{ 'dashboard.overview.playsUnit' | t }}</small></p>
+<div class="activity__days" aria-hidden="true">
+  @for (bar of bars(); track $index) {
+    <i [style.--fill]="bar"></i>
+  }
+</div>
+<dl class="activity__legend">
+  <dt class="activity__key activity__key--plays">{{ 'dashboard.overview.totalPlays' | t }}</dt>
+  <dd>{{ totals.plays }}</dd>
+  <dt class="activity__key activity__key--stories">{{ 'dashboard.overview.stories' | t }}</dt>
+  <dd>{{ totals.stories }}</dd>
+  <dt class="activity__key activity__key--tracked">{{ 'dashboard.overview.tracked' | t }}</dt>
+  <dd>{{ 'dashboard.overview.trackedValue' | t: { tracked: totals.tracked, total: totals.stories } }}</dd>
+</dl>

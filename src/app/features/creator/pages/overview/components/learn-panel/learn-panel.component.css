@@ -1,0 +1,96 @@
+:host {
+  display: block;
+  padding: 18px 14px 10px;
+  border: 1px solid var(--polo-color-border);
+  border-radius: var(--polo-radius-sheet);
+  background-color: var(--polo-color-surface);
+  box-shadow: var(--polo-shadow-sheet);
+}
+.learn__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--polo-space-3);
+  padding: 0 var(--polo-space-2) var(--polo-space-2);
+}
+.learn__head h2 {
+  margin: 0;
+  color: var(--polo-color-text-strong);
+  font-size: 15px;
+  font-weight: 750;
+}
+.learn__guide {
+  color: var(--polo-color-action);
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.learn__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lesson {
+  display: flex;
+  align-items: center;
+  gap: var(--polo-space-3);
+  padding: var(--polo-space-2);
+  border-radius: var(--polo-radius-panel);
+  color: inherit;
+  text-decoration: none;
+}
+.lesson:hover {
+  background-color: var(--polo-color-surface-subtle);
+}
+.lesson:focus-visible, .learn__guide:focus-visible {
+  outline: 2px solid var(--polo-color-focus);
+  outline-offset: 2px;
+}
+.lesson__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--polo-radius-control);
+  background-color: color-mix(in srgb, var(--lesson) 45%, var(--polo-color-surface));
+}
+.lesson--blue {
+  --lesson: var(--polo-color-frame-blue);
+}
+.lesson--lavender {
+  --lesson: var(--polo-color-frame-lavender);
+}
+.lesson--mint {
+  --lesson: var(--polo-color-frame-mint);
+}
+.lesson--yellow {
+  --lesson: var(--polo-color-frame-yellow);
+}
+.lesson--peach {
+  --lesson: var(--polo-color-frame-peach);
+}
+.lesson--rose {
+  --lesson: var(--polo-color-frame-rose);
+}
+.lesson__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.lesson__title {
+  color: var(--polo-color-text-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+.lesson__time {
+  color: var(--polo-color-text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+.lesson__chevron {
+  margin-left: auto;
+  opacity: 0.5;
+}

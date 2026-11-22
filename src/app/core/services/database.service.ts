@@ -163,6 +163,27 @@ export class DatabaseService implements OnDestroy {
     }))
   }
 
+  /**
+   * When each play of these stories since `since` happened, newest first, for the dashboard's
+   * strip of days. Capped, so an author with very many plays sees the most recent ones.
+   */
+  async getRecentPlayDates(storyIds: string[], since: Date, cap = 5000): Promise<string[] | null> {
+    if (!storyIds.length) return []
+    const { data, error } = await this.supabase
+      .from('games')
+      .select('created_at')
+      .in('story', storyIds)
+      .gte('created_at', since.toISOString())
+      .order('created_at', { ascending: false })
+      .limit(cap)
+
+    if (error || !data) {
+      console.error('Could not load the recent plays', error)
+      return null
+    }
+    return data.map((row) => row.created_at as string)
+  }
+
   async getStoryWithID(storyId: string, basicInfo = false) {
     if (!environment.production)
       console.log(

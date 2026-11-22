@@ -43,7 +43,7 @@ async function mockNewAuthor(page: Page, options: { confirmEmail?: boolean; unco
   return { calls: (path: string) => calls.filter(call => call === path).length }
 }
 
-test('registers with Enter and welcomes the new author with the example first', async ({ page }) => {
+test('registers with Enter and welcomes the new author with a blank story and the example', async ({ page }) => {
   const backend = await mockNewAuthor(page)
   await page.goto('/login?mode=register')
   await page.getByLabel('User name', { exact: true }).fill('Author')
@@ -53,10 +53,11 @@ test('registers with Enter and welcomes the new author with the example first', 
 
   await expect(page).toHaveURL(/\/dashboard$/)
   expect(backend.calls('/auth/v1/signup')).toBe(1)
-  await expect(page.getByRole('heading', { name: 'Start your first story' })).toBeVisible()
-  // No page of zeros, and one way to a blank story instead of two that look the same.
-  await expect(page.locator('.activity')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'New story', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Write your first story' })).toBeVisible()
+  await expect(page.getByText('You have no stories yet.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Learn in two minutes' })).toBeVisible()
+  // The blank story is offered in the welcome and on the shelf, never in the header.
+  await expect(page.locator('.pageHeader').getByRole('button', { name: 'New story' })).toHaveCount(0)
 
   await page.getByRole('link', { name: 'Open the example' }).click()
   await expect(page).toHaveURL(/\/board$/)

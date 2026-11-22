@@ -42,6 +42,8 @@ test.beforeEach(async ({ page }) => {
       { id: pickedStory, name: names[pickedStory], custom_id: 'the-lighthouse', tracking: true, updated_at: new Date(Date.now() - 3 * 3600 * 1000).toISOString(), plays: [{ count: 42 }], recent: [{ count: 7 }], last: [{ created_at: '2026-11-12T10:00:00Z' }] },
       { id: lastStory, name: names[lastStory], custom_id: null, tracking: false, updated_at: '2026-10-01T10:00:00Z', plays: [{ count: 0 }], recent: [{ count: 0 }], last: [] },
     ].filter((story) => !deleted.includes(story.id)) })
+    // The plays of the recent window, for the strip of days: two today.
+    else if (url.pathname === '/rest/v1/games') await route.fulfill({ json: [{ created_at: new Date().toISOString() }, { created_at: new Date().toISOString() }] })
     else if (url.pathname === '/rest/v1/stories' && request.method() === 'PATCH') {
       const body = request.postDataJSON() as Record<string, unknown>
       patches.push({ id: id!, body })
@@ -71,8 +73,12 @@ test('the dashboard lists every story with its plays and opens the one the autho
   await page.goto('/dashboard')
 
   await expect(page.getByRole('heading', { level: 1, name: 'Stories' })).toBeVisible()
-  await expect(page.locator('.activity__number')).toHaveText('7')
-  await expect(page.locator('.activity dd')).toHaveText(['42', '2', '1 of 2'])
+  await expect(page.locator('.activity__number')).toHaveText(/^7\s*plays$/)
+  await expect(page.locator('.activity__legend dd')).toHaveText(['42', '2', '1 of 2'])
+  await expect(page.locator('.activity__days i').last()).toHaveAttribute('style', /--fill: 100%/)
+  // The new story comes first on the shelf, and the first visit's welcome is gone.
+  await expect(page.locator('.shelf > li').first().getByRole('button', { name: /New story/ })).toBeVisible()
+  await expect(page.locator('polo-first-steps')).toHaveCount(0)
   const cards = page.locator('.card')
   await expect(cards).toHaveCount(2)
   await expect(cards.nth(0)).toContainText('The lighthouse')
@@ -93,16 +99,9 @@ test('the dashboard lists every story with its plays and opens the one the autho
   await expect(page.getByRole('heading', { level: 1, name: 'Stories' })).toBeVisible()
 })
 
-test('the dashboard continues the last story and deletes another from its card menu (mocked backend)', async ({ page }) => {
+test('the dashboard deletes a story from its card menu (mocked backend)', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/dashboard')
-
-  // The last story opened on this device comes first, even if another was edited later.
-  const resume = page.locator('.continue')
-  await expect(resume).toContainText('The island')
-  await resume.getByRole('link', { name: 'Continue', exact: true }).click()
-  await expect(page).toHaveURL(new RegExp(`/story/${lastStory}/board$`))
-  await page.goBack()
   await expect(page.locator('.card').first()).toContainText('Edited 3 hours ago')
 
   const lighthouse = page.locator('.card').filter({ hasText: 'The lighthouse' })
@@ -116,7 +115,7 @@ test('the dashboard continues the last story and deletes another from its card m
   await expect(page.locator('.card')).toHaveCount(1)
   await expect(page.locator('.card')).toContainText('The island')
   expect(deleted).toEqual([pickedStory])
-  await expect(page.locator('.activity dd').nth(1)).toHaveText('1')
+  await expect(page.locator('.activity__legend dd').nth(1)).toHaveText('1')
 })
 
 test('a story has its own page with the editor options, its sharing and deleting it (mocked backend)', async ({ page }) => {
