@@ -34,6 +34,7 @@ export const legal: LegalCopy = {
               'Continguts: les històries, els textos i les imatges que l’usuari crea o puja al servei.',
               'Dades de la subscripció: pla contractat, estat de la subscripció i data del cobrament següent. Les dades de la targeta es faciliten directament a Stripe i el Titular no hi té accés.',
               'Dades tècniques: adreça IP, tipus de navegador i registres d’accés que generen els proveïdors d’allotjament per al funcionament i la seguretat del servei.',
+              'Dades d’ús: les pàgines de trama.app que visita l’usuari, el lloc des del qual hi arriba, el navegador, el dispositiu i el país aproximat, mesurats sense galetes (vegeu l’[apartat 9](cookies)).',
               'Dades dels jugadors de les històries, únicament quan l’autor activa el seguiment (vegeu l’[apartat 4](players)).',
             ],
           },
@@ -50,6 +51,7 @@ export const legal: LegalCopy = {
               'Gestionar la subscripció, els cobraments i la facturació. Base jurídica: execució del contracte i compliment de les obligacions fiscals i comptables (art. 6.1.b i 6.1.c RGPD).',
               'Enviar les comunicacions necessàries per al servei: confirmació del compte, restabliment de la contrasenya i avisos relatius a la subscripció o a la modificació d’aquests textos. Base jurídica: execució del contracte (art. 6.1.b RGPD).',
               'Garantir la seguretat del servei i prevenir usos fraudulents o abusius. Base jurídica: interès legítim del Titular a protegir el servei i els seus usuaris (art. 6.1.f RGPD).',
+              'Mesurar de manera agregada l’ús del lloc web i de l’aplicació per millorar-los. Base jurídica: interès legítim del Titular a conèixer com s’utilitza el servei (art. 6.1.f RGPD). L’usuari s’hi pot oposar en qualsevol moment escrivint al Titular; bloquejar l’script de DataFast al navegador també n’impedeix la mesura.',
             ],
           },
           'El Titular no ven dades personals, no les utilitza amb finalitats publicitàries, no elabora perfils ni pren decisions automatitzades. Tampoc no envia comunicacions comercials; si en el futur ho fes, en sol·licitaria prèviament el consentiment de l’usuari.',
@@ -74,6 +76,7 @@ export const legal: LegalCopy = {
               'Supabase Pte. Ltd.: base de dades, autenticació, emmagatzematge d’imatges i enviament dels correus del compte. Les dades s’allotgen en servidors de la Unió Europea (París).',
               'Vercel Inc.: allotjament del lloc web i de l’aplicació.',
               'Amazon Web Services: redimensionament de les imatges pujades, en servidors situats a Londres.',
+              'JustShipIt Pte. Ltd. (DataFast): analítica del lloc web i de l’aplicació, sense galetes.',
             ],
           },
           'Els proveïdors següents tracten, a més, determinades dades com a responsables independents, d’acord amb les seves pròpies polítiques de privacitat:',
@@ -90,7 +93,7 @@ export const legal: LegalCopy = {
         id: 'transfers',
         title: 'Transferències internacionals',
         blocks: [
-          'Alguns d’aquests proveïdors tenen la seu o poden tractar dades fora de l’Espai Econòmic Europeu: Supabase (Singapur i els Estats Units), Vercel, Stripe i Google (els Estats Units) i Amazon Web Services (el Regne Unit). Aquestes transferències s’emparen en les clàusules contractuals tipus aprovades per la Comissió Europea, en el Marc de Privacitat de Dades UE-EUA per a les entitats que s’hi han adherit i, en el cas del Regne Unit, en la decisió d’adequació de la Comissió Europea.',
+          'Alguns d’aquests proveïdors tenen la seu o poden tractar dades fora de l’Espai Econòmic Europeu: Supabase (Singapur i els Estats Units), Vercel, Stripe i Google (els Estats Units), Amazon Web Services (el Regne Unit) i DataFast (Singapur, amb servidors principalment als Estats Units). Aquestes transferències s’emparen en les clàusules contractuals tipus aprovades per la Comissió Europea (en el cas de DataFast, les que apliquen els seus propis proveïdors), en el Marc de Privacitat de Dades UE-EUA per a les entitats que s’hi han adherit i, en el cas del Regne Unit, en la decisió d’adequació de la Comissió Europea.',
         ],
       },
       {
@@ -103,6 +106,7 @@ export const legal: LegalCopy = {
               'Partides registrades: mentre existeixi la història o fins que el seu autor les elimini.',
               'Dades de facturació: durant els terminis que exigeix la normativa fiscal i mercantil, amb caràcter general entre quatre i sis anys.',
               'Registres tècnics: durant els terminis limitats que fixen els proveïdors d’allotjament.',
+              'Dades d’analítica: els visitants es compten amb un identificador que canvia cada 24 hores, de manera que les visites de dies diferents no es poden vincular a la mateixa persona; les estadístiques resultants es conserven mentre el Titular utilitzi DataFast.',
             ],
           },
           'Un cop acabats aquests terminis, les dades es podran conservar bloquejades únicament durant el temps necessari per atendre possibles responsabilitats legals.',
@@ -120,7 +124,7 @@ export const legal: LegalCopy = {
         id: 'cookies',
         title: 'Galetes i emmagatzematge local',
         blocks: [
-          'Trama no utilitza galetes publicitàries ni analítiques, ni eines de seguiment de tercers. El servei només desa al navegador de l’usuari (localStorage) la informació necessària per al seu funcionament:',
+          'Trama no utilitza galetes publicitàries ni analítiques. Per comptar les visites utilitza DataFast en el mode sense galetes: identifica cada visitant amb un codi derivat de l’adreça IP i del navegador que canvia cada 24 hores i, com a màxim, desa al navegador un registre temporal que s’esborra en acabar la sessió de navegació. A banda d’això, el servei només desa al navegador de l’usuari (localStorage) la informació necessària per al seu funcionament:',
           {
             list: [
               'la sessió iniciada;',

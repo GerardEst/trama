@@ -34,6 +34,7 @@ export const legal: LegalCopy = {
               'Contenidos: las historias, los textos y las imágenes que el usuario crea o sube al servicio.',
               'Datos de la suscripción: plan contratado, estado de la suscripción y fecha del siguiente cobro. Los datos de la tarjeta se facilitan directamente a Stripe y el Titular no tiene acceso a ellos.',
               'Datos técnicos: dirección IP, tipo de navegador y registros de acceso que generan los proveedores de alojamiento para el funcionamiento y la seguridad del servicio.',
+              'Datos de uso: las páginas de trama.app que visita el usuario, el sitio desde el que llega, el navegador, el dispositivo y el país aproximado, medidos sin cookies (véase el [apartado 9](cookies)).',
               'Datos de los jugadores de las historias, únicamente cuando el autor activa el seguimiento (véase el [apartado 4](players)).',
             ],
           },
@@ -50,6 +51,7 @@ export const legal: LegalCopy = {
               'Gestionar la suscripción, los cobros y la facturación. Base jurídica: ejecución del contrato y cumplimiento de las obligaciones fiscales y contables (art. 6.1.b y 6.1.c RGPD).',
               'Enviar las comunicaciones necesarias para el servicio: confirmación de la cuenta, restablecimiento de la contraseña y avisos relativos a la suscripción o a la modificación de estos textos. Base jurídica: ejecución del contrato (art. 6.1.b RGPD).',
               'Garantizar la seguridad del servicio y prevenir usos fraudulentos o abusivos. Base jurídica: interés legítimo del Titular en proteger el servicio y a sus usuarios (art. 6.1.f RGPD).',
+              'Medir de forma agregada el uso del sitio web y de la aplicación para mejorarlos. Base jurídica: interés legítimo del Titular en conocer cómo se utiliza el servicio (art. 6.1.f RGPD). El usuario puede oponerse en cualquier momento escribiendo al Titular; bloquear el script de DataFast en el navegador también impide la medición.',
             ],
           },
           'El Titular no vende datos personales, no los utiliza con fines publicitarios, no elabora perfiles ni adopta decisiones automatizadas. Tampoco envía comunicaciones comerciales; si en el futuro lo hiciera, solicitaría previamente el consentimiento del usuario.',
@@ -74,6 +76,7 @@ export const legal: LegalCopy = {
               'Supabase Pte. Ltd.: base de datos, autenticación, almacenamiento de imágenes y envío de los correos de la cuenta. Los datos se alojan en servidores de la Unión Europea (París).',
               'Vercel Inc.: alojamiento del sitio web y de la aplicación.',
               'Amazon Web Services: redimensionado de las imágenes subidas, en servidores situados en Londres.',
+              'JustShipIt Pte. Ltd. (DataFast): analítica del sitio web y de la aplicación, sin cookies.',
             ],
           },
           'Los siguientes proveedores tratan además determinados datos como responsables independientes, conforme a sus propias políticas de privacidad:',
@@ -90,7 +93,7 @@ export const legal: LegalCopy = {
         id: 'transfers',
         title: 'Transferencias internacionales',
         blocks: [
-          'Algunos de estos proveedores tienen su sede o pueden tratar datos fuera del Espacio Económico Europeo: Supabase (Singapur y Estados Unidos), Vercel, Stripe y Google (Estados Unidos) y Amazon Web Services (Reino Unido). Estas transferencias se amparan en las cláusulas contractuales tipo aprobadas por la Comisión Europea, en el Marco de Privacidad de Datos UE-EE. UU. para las entidades adheridas a él y, en el caso del Reino Unido, en la decisión de adecuación de la Comisión Europea.',
+          'Algunos de estos proveedores tienen su sede o pueden tratar datos fuera del Espacio Económico Europeo: Supabase (Singapur y Estados Unidos), Vercel, Stripe y Google (Estados Unidos), Amazon Web Services (Reino Unido) y DataFast (Singapur, con servidores principalmente en Estados Unidos). Estas transferencias se amparan en las cláusulas contractuales tipo aprobadas por la Comisión Europea (en el caso de DataFast, las que aplican sus propios proveedores), en el Marco de Privacidad de Datos UE-EE. UU. para las entidades adheridas a él y, en el caso del Reino Unido, en la decisión de adecuación de la Comisión Europea.',
         ],
       },
       {
@@ -103,6 +106,7 @@ export const legal: LegalCopy = {
               'Partidas registradas: mientras exista la historia o hasta que su autor las elimine.',
               'Datos de facturación: durante los plazos que exige la normativa fiscal y mercantil, con carácter general entre cuatro y seis años.',
               'Registros técnicos: durante los plazos limitados que fijan los proveedores de alojamiento.',
+              'Datos de analítica: los visitantes se cuentan con un identificador que cambia cada 24 horas, de modo que las visitas de días distintos no pueden vincularse a la misma persona; las estadísticas resultantes se conservan mientras el Titular utilice DataFast.',
             ],
           },
           'Finalizados estos plazos, los datos podrán conservarse bloqueados únicamente durante el tiempo necesario para atender posibles responsabilidades legales.',
@@ -120,7 +124,7 @@ export const legal: LegalCopy = {
         id: 'cookies',
         title: 'Cookies y almacenamiento local',
         blocks: [
-          'Trama no utiliza cookies publicitarias ni analíticas, ni herramientas de seguimiento de terceros. El servicio solo almacena en el navegador del usuario (localStorage) la información necesaria para su funcionamiento:',
+          'Trama no utiliza cookies publicitarias ni analíticas. Para contar las visitas utiliza DataFast en su modo sin cookies: identifica a cada visitante con un código derivado de la dirección IP y del navegador que cambia cada 24 horas y, como máximo, guarda en el navegador un registro temporal que se borra al terminar la sesión de navegación. Aparte de esto, el servicio solo almacena en el navegador del usuario (localStorage) la información necesaria para su funcionamiento:',
           {
             list: [
               'la sesión iniciada;',

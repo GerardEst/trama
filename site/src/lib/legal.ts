@@ -9,7 +9,7 @@ export const OWNER = {
 }
 
 /** When the legal texts last changed, shown at the top of both pages. */
-export const LEGAL_UPDATED = '2026-11-19'
+export const LEGAL_UPDATED = '2026-11-24'
 
 /** Places the legal texts link to with [label](key). */
 export type LegalLinks = Record<string, string>
